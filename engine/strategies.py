@@ -4204,3 +4204,60 @@ def composite_adaptive_ddguard_signal(df, entry_type, ep1, ep2,
                 sig[i] = 0
 
     return pd.Series(sig, index=df.index)
+
+
+def composite_addg_volscaled_signal(df, entry_type, ep1, ep2,
+                                     guard_lookback, base_threshold,
+                                     atr_period, atr_mult,
+                                     trend_lookback, recovery_mult):
+    """Volatility-scaled Adaptive DDGuard: threshold adapts to market volatility.
+
+    In low-vol: tight threshold catches crashes early
+    In high-vol: wider threshold avoids whipsaw
+    Bull regime: threshold disabled (same as ADDG)
+    """
+    import numpy as np
+    sig = combo_signal(df, entry_type, int(ep1), int(ep2), "none", 0, 0).values.copy()
+    close = df["close"].values
+    high = df["high"].values
+    n = len(df)
+    lb = int(guard_lookback)
+    base_th = float(base_threshold) / 100.0
+    atr_p = int(atr_period)
+    atr_m = float(atr_mult)
+    trend_lb = int(trend_lookback)
+    rec = float(recovery_mult)
+
+    sma = pd.Series(close).rolling(trend_lb, min_periods=1).mean().values
+    tr = np.maximum(high - df["low"].values,
+                    np.maximum(np.abs(high - np.roll(close, 1)),
+                               np.abs(df["low"].values - np.roll(close, 1))))
+    tr[0] = high[0] - df["low"].values[0]
+    atr = pd.Series(tr).rolling(atr_p, min_periods=1).mean().values
+    atr_pct = atr / np.maximum(close, 1e-10)
+
+    risk_off = False
+    active_thresh = base_th
+
+    for i in range(lb, n):
+        rolling_hi = high[max(0, i - lb):i + 1].max()
+        dd_val = (close[i] / rolling_hi - 1)
+
+        is_bull = close[i] > sma[i]
+        if is_bull:
+            cur_thresh = 1.0
+        else:
+            cur_thresh = max(base_th, atr_pct[i] * atr_m)
+
+        if not risk_off:
+            if dd_val < -cur_thresh:
+                risk_off = True
+                active_thresh = cur_thresh
+                sig[i] = 0
+        else:
+            if dd_val > -active_thresh * rec:
+                risk_off = False
+            else:
+                sig[i] = 0
+
+    return pd.Series(sig, index=df.index)

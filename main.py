@@ -207,7 +207,8 @@ def _generate_tips(results: list[dict]) -> list[dict]:
             "content": (f'{len(good_trades)}戦略が30-80トレードのスイートスポットに到達。'
                         f'flearn.pdf: 統計的有意性には最低30トレード必要。'),
             "data": [{"name": r["name"], "trades": r["metrics"]["total_trades"],
-                       "pf": r["metrics"]["profit_factor"], "alpha": r["metrics"]["alpha_pct"]}
+                       "pf": r["metrics"]["profit_factor"], "alpha": r["metrics"]["alpha_pct"],
+                       "days": r["metrics"].get("num_days", 270)}
                       for r in sorted(good_trades, key=lambda r: r["metrics"]["alpha_pct"], reverse=True)],
             "timestamp": now,
         })
@@ -1867,7 +1868,7 @@ def _generate_novel_strategies(results: list[dict], batch_id: int) -> list[str]:
     return new_names
 
 
-async def _run_optimization_parallel(df, names, progress_cb, result_cb=None, df_oos2=None, df_oos3=None):
+async def _run_optimization_parallel(df, names, progress_cb, result_cb=None, df_oos2=None, df_oos3=None, early_stop_check=None):
     """Run walk-forward optimization in parallel using ProcessPoolExecutor."""
     from engine.optimizer import create_executor, _wf_single
     from engine.strategies import STRATEGIES as _S
@@ -1881,9 +1882,13 @@ async def _run_optimization_parallel(df, names, progress_cb, result_cb=None, df_
         if mde_missing:
             log.warning(f"Missing MDE strategies: {mde_missing[:5]}")
 
-    executor = create_executor(df, df_oos2, names, n_workers=4, df_oos3=df_oos3)
+    import os
+    n_cpu = os.cpu_count() or 4
+    n_workers = max(1, n_cpu // 2)  # 半分のコア: Web応答用に残りを確保
+    executor = create_executor(df, df_oos2, names, n_workers=n_workers, df_oos3=df_oos3)
     loop = asyncio.get_event_loop()
     total = len(names)
+    _early_stop = False
 
     try:
         futures = [loop.run_in_executor(executor, _wf_single, name)
@@ -1899,9 +1904,16 @@ async def _run_optimization_parallel(df, names, progress_cb, result_cb=None, df_
                 result_cb(result)
             if progress_cb:
                 progress_cb(idx, total, sname)
+
+            # Early stop: break loop if goal achieved and enough explored
+            if not _early_stop and early_stop_check and idx >= 50:
+                if early_stop_check():
+                    log.info(f"Early stop triggered at {idx}/{total} — goal achieved")
+                    _early_stop = True
+                    break
     finally:
-        executor.shutdown(wait=True)
-        log.info("Executor shut down cleanly")
+        executor.shutdown(wait=False, cancel_futures=True)
+        log.info(f"Executor shut down ({'early stop' if _early_stop else 'clean'})")
 
 
 async def _auto_optimize():
@@ -1914,6 +1926,7 @@ async def _auto_optimize():
     _run_status.update(running=True, progress="自動最適化開始...", strategies_completed=0)
 
     try:
+        import pandas as pd
         from engine.data import fetch_full_dataset
         from engine.strategies import STRATEGIES
 
@@ -1947,13 +1960,20 @@ async def _auto_optimize():
             oos3_d = round(oos3_bars / bars_per_day)
             log.info(f"OOS2: {len(df_oos2)} bars (~{oos2_d}d), Main: {len(df)} bars (~270d), OOS3: {len(df_oos3)} bars (~{oos3_d}d)")
         elif len(df_full) > main_bars + 50 * bars_per_day:
-            # Enough for OOS2 + IS/OOS but not OOS3
+            # Enough for OOS2 + IS/OOS but not OOS3 from MEXC
             oos2_bars = len(df_full) - main_bars
             df_oos2 = df_full.iloc[:oos2_bars].reset_index(drop=True)
             df = df_full.iloc[oos2_bars:].reset_index(drop=True)
-            df_oos3 = None
             oos2_d = round(oos2_bars / bars_per_day)
-            log.info(f"OOS2: {len(df_oos2)} bars (~{oos2_d}d), Main: {len(df)} bars (~270d), OOS3: disabled (insufficient data)")
+            # Try loading OOS3 from separate Binance cache
+            oos3_cache = Path("cache/BTCUSDT_15m_oos3.parquet")
+            if oos3_cache.exists():
+                df_oos3 = pd.read_parquet(oos3_cache)
+                df_oos3["open_time"] = pd.to_datetime(df_oos3["open_time"])
+                log.info(f"OOS2: {len(df_oos2)} bars (~{oos2_d}d), Main: {len(df)} bars (~270d), OOS3: {len(df_oos3)} bars (~{round(len(df_oos3)/bars_per_day)}d) [Binance]")
+            else:
+                df_oos3 = None
+                log.info(f"OOS2: {len(df_oos2)} bars (~{oos2_d}d), Main: {len(df)} bars (~270d), OOS3: disabled (no cache)")
         else:
             # Not enough data for OOS2 split
             df = df_full.reset_index(drop=True)
@@ -1972,14 +1992,14 @@ async def _auto_optimize():
         _save_results()
         _save_tips()
 
-        ALPHA_TARGET = 150.0
+        ALPHA_TARGET = 300.0       # 厳格化: ISα ≥ 300%
         OOS_ALPHA_TARGET = 100.0   # IS/OOS乖離を抑制: OOS >= 100%
         PBO_LIMIT = 0.3            # より厳格なPBO
         MIN_TRADES = 50            # 統計的信頼性: 350日期間で最低50トレード(≈週1回)
         MAX_DD = -35.0             # MaxDD > -35%（緩和済み目標ライン）
-        MIN_EQUITY_R2 = 0.7       # エクイティR² > 0.7（右肩上がり）
-        MIN_DAILY_RET = 0.75       # 最低目標: IS/OOS/OOS2全てreturn_daily_pct ≥ 0.75%
-        GOAL_DAILY_RET = 1.0       # 努力目標: IS/OOS/OOS2全てreturn_daily_pct ≥ 1.0%
+        MIN_EQUITY_R2 = 0.75      # エクイティR² > 0.75（右肩上がり）
+        MIN_DAILY_RET = 1.0        # 厳格化: IS/OOS/OOS2全てreturn_daily_pct ≥ 1.0%
+        GOAL_DAILY_RET = 1.5       # 努力目標: IS/OOS/OOS2全てreturn_daily_pct ≥ 1.5%
         GOAL_COUNT = 10
         round_num = 1
         run_names = None
@@ -2002,7 +2022,7 @@ async def _auto_optimize():
             ss_tot = np.sum((arr - np.mean(arr)) ** 2)
             return 1 - ss_res / ss_tot if ss_tot > 0 else 0
 
-        OOS2_ALPHA_TARGET = 100.0  # OOS2 α ≥ 100%
+        OOS2_ALPHA_TARGET = 120.0  # 厳格化: OOS2 α ≥ 120%
         def _qualifying():
             qualified = []
             for r in _results:
@@ -4258,13 +4278,15 @@ async def _auto_optimize():
         # Result: IS α=450-736% DD>-35% + O2α=100-163% simultaneously
         from engine.strategies import composite_adaptive_ddguard_signal
         _adaptive_tl_configs = []
-        # Focused on proven sweet spot from testing: LB=150-160, BTH=2.5, TLB=7000-10000
-        for entry, ep1, ep2 in [("mean_rev_st", 6, 12)]:
-            for lb in [150, 155, 160, 165]:
+        # Extended: multiple entries + aggressive leverage combos
+        for entry, ep1, ep2 in [("mean_rev_st", 6, 12), ("mean_rev_st", 8, 14)]:
+            for lb in [150, 155, 160, 165, 170, 175]:
                 for bear_th in [2.0, 2.5, 3.0]:
                     for trend_lb in [5000, 7000, 10000]:
-                        for rec in [0.3, 0.35, 0.4, 0.5]:
-                            for bull_lev, bear_lev in [(4.5, 3.5), (5.0, 3.0), (5.0, 3.5), (5.5, 3.0), (6.0, 3.0), (6.0, 3.5)]:
+                        for rec in [0.3, 0.35, 0.4, 0.45, 0.5]:
+                            for bull_lev, bear_lev in [(4.5, 3.5), (5.0, 3.0), (5.0, 3.5), (5.5, 3.0), (6.0, 3.0), (6.0, 3.5),
+                                                       (6.5, 3.0), (6.5, 3.5), (7.0, 3.0), (7.0, 3.5),
+                                                       (5.0, 4.0), (5.5, 4.0), (6.0, 4.0)]:
                                 cname = f"(複)ADDG_TL_{entry[:4]}{ep1}_{ep2}_LB{lb}_BTH{bear_th}_TLB{trend_lb}_R{rec}_B{bull_lev}b{bear_lev}x"
                                 if cname not in STRATEGIES:
                                     STRATEGIES[cname] = {
@@ -4284,6 +4306,36 @@ async def _auto_optimize():
         _COMPOSITE_STRATS.extend(_adaptive_tl_configs)
         log.info(f"Registered {len(_adaptive_tl_configs)} Adaptive DDGuard + trend_lev strategies")
 
+        # ── NEW: Volatility-scaled Adaptive DDGuard ──
+        # Dynamic threshold based on ATR: tighter in calm markets, wider in volatile
+        from engine.strategies import composite_addg_volscaled_signal
+        _volscaled_configs = []
+        for entry, ep1, ep2 in [("mean_rev_st", 6, 12), ("mean_rev_st", 8, 14)]:
+            for lb in [155, 160, 165, 170]:
+                for base_th in [1.5, 2.0, 2.5]:
+                    for atr_p, atr_m in [(960, 2.0), (960, 2.5), (960, 3.0), (1440, 2.0), (1440, 2.5)]:
+                        for trend_lb in [7000, 10000]:
+                            for rec in [0.3, 0.4]:
+                                for bull_lev, bear_lev in [(5.5, 3.0), (6.0, 3.0), (6.0, 3.5), (6.5, 3.0), (6.5, 3.5), (7.0, 3.0)]:
+                                    cname = f"(複)ADDG_VS_{entry[:4]}{ep1}_{ep2}_LB{lb}_BT{base_th}_ATR{atr_p}x{atr_m}_TLB{trend_lb}_R{rec}_B{bull_lev}b{bear_lev}x"
+                                    if cname not in STRATEGIES:
+                                        STRATEGIES[cname] = {
+                                            "fn": composite_addg_volscaled_signal,
+                                            "param_grid": {
+                                                "entry_type": [entry], "ep1": [ep1], "ep2": [ep2],
+                                                "guard_lookback": [lb], "base_threshold": [base_th],
+                                                "atr_period": [atr_p], "atr_mult": [atr_m],
+                                                "trend_lookback": [trend_lb], "recovery_mult": [rec],
+                                            },
+                                            "risk": {"cooldown_bars": 0,
+                                                     "trend_lev_sma": trend_lb,
+                                                     "trend_lev_bull": bull_lev,
+                                                     "trend_lev_bear": bear_lev},
+                                        }
+                                        _volscaled_configs.append(cname)
+        _COMPOSITE_STRATS.extend(_volscaled_configs)
+        log.info(f"Registered {len(_volscaled_configs)} Volatility-scaled ADDG strategies")
+
         # Prioritize: ADDG_TL (breakthrough) first, then tight DDG, then VG/VL, then rest
         _addg_tl_set = set(_adaptive_tl_configs)
         _tight_ddg_set = set(_tight_ddg_configs)
@@ -4294,7 +4346,7 @@ async def _auto_optimize():
         _other_proven = [n for n in pre_names if n not in set(_other_proven_priority) and n not in set(_targeted_dual)]
         _priority_composites = [n for n in _COMPOSITE_STRATS if 'DDG' in n and n not in set(_ts_pls_composites) and n not in set(_vg_vl_composites) and n not in _tight_ddg_set and n not in _addg_tl_set]
         _other_composites = [n for n in _COMPOSITE_STRATS if n not in set(_priority_composites) and n not in set(_ts_pls_composites) and n not in set(_vg_vl_composites) and n not in _tight_ddg_set and n not in _addg_tl_set]
-        pre_names = _adaptive_tl_configs + _tight_ddg_configs + _vg_vl_composites + _targeted_dual + _ts_pls_composites + _priority_composites + _other_proven_priority + _other_composites + _other_proven
+        pre_names = _adaptive_tl_configs + _volscaled_configs + _tight_ddg_configs + _vg_vl_composites + _targeted_dual + _ts_pls_composites + _priority_composites + _other_proven_priority + _other_composites + _other_proven
         log.info(f"Pre-registered {len(_COMPOSITE_STRATS)} composite (複合) strategies "
                  f"(priority: {len(_adaptive_tl_configs)} ADDG_TL + {len(_tight_ddg_configs)} tight-DDG + {len(_vg_vl_composites)} VG/VL + {len(_ts_pls_composites)} TS/PLS + {len(_priority_composites)} DDG)")
 
@@ -4356,7 +4408,12 @@ async def _auto_optimize():
                     return
                 _update_results_incremental(result, _rn)
 
-            await _run_optimization_parallel(df, run_names, progress_cb, on_result, df_oos2=df_oos2, df_oos3=df_oos3)
+            def _goal_check():
+                return len(_qualifying()) >= GOAL_COUNT
+
+            await _run_optimization_parallel(df, run_names, progress_cb, on_result,
+                                             df_oos2=df_oos2, df_oos3=df_oos3,
+                                             early_stop_check=_goal_check)
 
             _run_status["last_run"] = datetime.now().isoformat()
             profitable = [r for r in _results if r["metrics"]["alpha_pct"] > 0]

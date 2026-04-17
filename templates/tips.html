@@ -188,10 +188,20 @@ const plotStyle = {
     traces.push({x:trendX, y:trendY, mode:'lines', name:'Trend (poly2)',
       line:{color:'rgba(251,191,36,0.7)', width:2, dash:'dot'}});
   }
+  // Compute analysis period from data
+  const avgDays = data.length > 0 ? Math.round(data.reduce((s,d)=>s+(d.days||270),0)/data.length) : 270;
+  const tradesPerDay = data.length > 0 ? (data.reduce((s,d)=>s+d.trades,0)/data.length/avgDays).toFixed(2) : '?';
   Plotly.newPlot('chart_trade_count', traces,
     {...plotStyle, title:'Trades vs Alpha (bubble=PF, line=poly2 trend)',
     xaxis:{title:'Trade Count'}, yaxis:{title:'Alpha (%)'},
-    showlegend:true, legend:{x:0.01,y:0.99,bgcolor:'rgba(0,0,0,0.3)'}}, {responsive:true});
+    showlegend:true, legend:{x:0.01,y:0.99,bgcolor:'rgba(0,0,0,0.3)'},
+    annotations:[{
+      text:`IS期間: ${avgDays}日 (avg ${tradesPerDay} trades/day)`,
+      xref:'paper', yref:'paper', x:0.99, y:0.01,
+      xanchor:'right', yanchor:'bottom',
+      font:{size:10, color:'#94a3b8'}, showarrow:false,
+      bgcolor:'rgba(0,0,0,0.4)', borderpad:4
+    }]}, {responsive:true});
 })();
 {% endif %}
 {% endfor %}
