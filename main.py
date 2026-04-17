@@ -4375,14 +4375,14 @@ async def _auto_optimize():
         _COMPOSITE_STRATS.extend(_volscaled_configs)
         log.info(f"Registered {len(_volscaled_configs)} Volatility-scaled ADDG strategies")
 
-        # ── NEW: Gradient Leverage ADDG — smooth regime transition ──
-        # GM5.0 is the sweet spot: all GM5.0 have positive OOS3 (+12%~+71%)
-        # GM3.0 also positive (+14%~+44%), GM2.0 all negative
-        # LB165 slightly better than LB160 for OOS3
-        # Best: LB165_BTH2.5_R0.4_GM5.0_B5.5b3.0x (OOS3α=+71%, R²=0.877)
+        # ── Gradient Leverage ADDG — smooth regime transition ──
+        # PROVEN: GM5.0 only qualifying set. PBO=0 at LB160_BTH2.5_R0.4
+        # GM7/10 fail PBO(0.5+) & OOS_daily. GM5.0 is optimal sweet spot.
+        # Best qualifying: LB160_BTH2.5_R0.4_GM5.0_B5.5b3.0x (OOS3=+57%)
         from engine.strategies import composite_addg_gradient_lev_signal
         _gradient_configs = []
-        for entry, ep1, ep2 in [("mean_rev_st", 6, 12)]:  # best entry
+        for entry, ep1, ep2 in [("mean_rev_st", 6, 12)]:
+            # Phase 1: Wide search (GM5/7/10, already computed)
             for lb in [160, 165, 170]:
                 for bear_th in [2.0, 2.5, 3.0]:
                     for trend_lb in [7000]:
@@ -4391,6 +4391,34 @@ async def _auto_optimize():
                                 for bull_lev, bear_lev in [
                                     (4.5, 3.0), (5.0, 3.0), (5.0, 3.5),
                                     (5.5, 3.0), (5.5, 3.5), (6.0, 3.0),
+                                ]:
+                                    cname = f"(複)ADDG_GL_{entry[:4]}{ep1}_{ep2}_LB{lb}_BTH{bear_th}_TLB{trend_lb}_R{rec}_GM{grad_margin}_B{bull_lev}b{bear_lev}x"
+                                    if cname not in STRATEGIES:
+                                        STRATEGIES[cname] = {
+                                            "fn": composite_addg_gradient_lev_signal,
+                                            "param_grid": {
+                                                "entry_type": [entry], "ep1": [ep1], "ep2": [ep2],
+                                                "guard_lookback": [lb], "bear_threshold": [bear_th],
+                                                "trend_lookback": [trend_lb], "recovery_mult": [rec],
+                                                "gradient_margin": [grad_margin],
+                                            },
+                                            "risk": {"cooldown_bars": 0,
+                                                     "trend_lev_sma": trend_lb,
+                                                     "trend_lev_bull": bull_lev,
+                                                     "trend_lev_bear": bear_lev},
+                                        }
+                                        _gradient_configs.append(cname)
+            # Phase 2: Fine-grained around proven sweet spot
+            # LB160_BTH2.5_R0.4_GM5.0 = PBO=0.0, qualifies
+            # Try nearby LB, BTH, REC, GM values + extra leverage combos
+            for lb in [155, 158, 160, 162]:
+                for bear_th in [2.0, 2.3, 2.5, 2.7, 3.0]:
+                    for trend_lb in [7000]:
+                        for rec in [0.35, 0.4, 0.45]:
+                            for grad_margin in [4.0, 5.0, 6.0]:
+                                for bull_lev, bear_lev in [
+                                    (4.5, 3.0), (5.0, 2.5), (5.0, 3.0), (5.0, 3.5),
+                                    (5.5, 2.5), (5.5, 3.0), (5.5, 3.5),
                                 ]:
                                     cname = f"(複)ADDG_GL_{entry[:4]}{ep1}_{ep2}_LB{lb}_BTH{bear_th}_TLB{trend_lb}_R{rec}_GM{grad_margin}_B{bull_lev}b{bear_lev}x"
                                     if cname not in STRATEGIES:
