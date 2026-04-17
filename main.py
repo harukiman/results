@@ -109,7 +109,11 @@ def _save_results():
             "days": _run_status["days"],
             "last_run": _run_status["last_run"],
         }}
-        RESULTS_FILE.write_text(json.dumps(data, default=str, ensure_ascii=False))
+        # Atomic write: write to temp file first, then rename
+        import tempfile
+        tmp = RESULTS_FILE.with_suffix('.json.tmp')
+        tmp.write_text(json.dumps(data, default=str, ensure_ascii=False))
+        tmp.rename(RESULTS_FILE)
     except Exception as e:
         log.warning(f"Failed to save results: {e}")
 
@@ -1918,7 +1922,7 @@ async def _run_optimization_parallel(df, names, progress_cb, result_cb=None, df_
                     submitted += 1
 
             # Yield to event loop for web responsiveness
-            await asyncio.sleep(0.5)
+            await asyncio.sleep(1.0)
 
             # Early stop check
             if not _early_stop and early_stop_check and idx >= 200:
@@ -4699,17 +4703,20 @@ async def strategy_detail(request: Request, idx: int):
     })
 
 
-ALTCOIN_SYMBOLS = [
+# 20 coins for data caching; display random 3 per request
+ALTCOIN_POOL = [
     "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT",
     "DOGEUSDT", "AVAXUSDT", "DOTUSDT", "LINKUSDT", "MATICUSDT",
+    "ATOMUSDT", "NEARUSDT", "APTUSDT", "SUIUSDT", "ARBUSDT",
+    "OPUSDT", "FILUSDT", "LTCUSDT", "UNIUSDT", "AAVEUSDT",
 ]
-
+_altcoin_data_cache: dict[str, object] = {}  # symbol -> DataFrame (persistent)
 
 _altcoin_computing: set = set()  # names currently being computed
 
 @app.get("/api/strategy/{idx}/altcoins")
 async def strategy_altcoins(idx: int):
-    """Run strategy backtest on altcoins and return cross-asset analysis."""
+    """Run strategy backtest on random 3 altcoins from 20-coin pool."""
     if idx < 0 or idx >= len(_results):
         return JSONResponse({"error": "Strategy not found"}, status_code=404)
 
@@ -4727,7 +4734,7 @@ async def strategy_altcoins(idx: int):
     # Start background computation and return immediately
     _altcoin_computing.add(name)
     asyncio.create_task(_compute_altcoins(idx))
-    return {"status": "computing", "message": "Altcoin analysis started. Refresh in 30-60 seconds."}
+    return {"status": "computing", "message": "Altcoin analysis started (3 random coins)..."}
 
 
 async def _compute_altcoins(idx: int):
@@ -4813,12 +4820,24 @@ async def _run_altcoin_analysis(r):
         )
 
     from concurrent.futures import ThreadPoolExecutor
+    import random
     loop = asyncio.get_event_loop()
     _alt_executor = ThreadPoolExecutor(max_workers=1)
 
-    for symbol in ALTCOIN_SYMBOLS:
+    # Pick random 3 from the 20-coin pool
+    available = [s for s in ALTCOIN_POOL if s != "BTCUSDT"]
+    selected = random.sample(available, min(3, len(available)))
+
+    for symbol in selected:
         try:
-            df_alt = await fetch_full_dataset(symbol=symbol, interval="15m", days=270)
+            # Use cached data if available, otherwise fetch and cache
+            if symbol in _altcoin_data_cache:
+                df_alt = _altcoin_data_cache[symbol]
+            else:
+                df_alt = await fetch_full_dataset(symbol=symbol, interval="15m", days=270)
+                if not df_alt.empty and len(df_alt) >= 500:
+                    _altcoin_data_cache[symbol] = df_alt
+
             if df_alt.empty or len(df_alt) < 500:
                 results_list.append({
                     "symbol": symbol, "total_return_pct": 0, "alpha_pct": 0,
@@ -4857,13 +4876,13 @@ async def _run_altcoin_analysis(r):
     avg_alpha = round(sum(r["alpha_pct"] for r in valid) / max(1, len(valid)), 2) if valid else 0
     avg_rd = round(sum(r["return_daily_pct"] for r in valid) / max(1, len(valid)), 4) if valid else 0
     pos_count = len(positive_alpha)
-    total_count = len(ALTCOIN_SYMBOLS)
+    total_count = len(selected)
 
-    if pos_count >= 7:
+    if pos_count == total_count:
         robustness = "Highly Robust (cross-asset)"
-    elif pos_count >= 4:
-        robustness = "Moderately Robust"
     elif pos_count >= 2:
+        robustness = "Moderately Robust"
+    elif pos_count >= 1:
         robustness = "BTC-leaning"
     else:
         robustness = "BTC-specific"
@@ -4876,6 +4895,7 @@ async def _run_altcoin_analysis(r):
             "avg_alpha": avg_alpha,
             "avg_return_daily": avg_rd,
             "robustness": robustness,
+            "coins_tested": [s.replace("USDT","") for s in selected],
         }
     }
 

@@ -30,39 +30,89 @@
 {% set oos3_m = wf.oos3_metrics if wf and wf.oos3_metrics is defined and wf.oos3_metrics else None %}
 <div class="card" style="border:1px solid var(--accent)">
   <h2 style="margin-top:0">Summary Overview</h2>
-  <div class="grid grid-2" style="gap:4px">
-    <div>
-      <div class="metric-row"><span class="metric-label">Alpha (IS)</span><span class="metric-value {% if m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ m.alpha_pct }}%</span></div>
-      <div class="metric-row"><span class="metric-label">Return/day (IS)</span><span class="metric-value {% if m.get('return_daily_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ m.get('return_daily_pct', 0) }}%</span></div>
-      <div class="metric-row"><span class="metric-label">Total Return</span><span class="metric-value {% if m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ m.total_return_pct }}%</span></div>
-      <div class="metric-row"><span class="metric-label">Benchmark (BTC)</span><span class="metric-value">{{ m.benchmark_return_pct }}%</span></div>
-      <div class="metric-row"><span class="metric-label">Sharpe</span><span class="metric-value">{{ m.sharpe_ratio }}</span></div>
-      <div class="metric-row"><span class="metric-label">Max DD</span><span class="metric-value negative">{{ m.max_drawdown_pct }}%</span></div>
-      <div class="metric-row"><span class="metric-label">Calmar</span><span class="metric-value">{{ m.get('calmar_ratio', 0) }}</span></div>
-      <div class="metric-row"><span class="metric-label">Trades</span><span class="metric-value" {% if m.total_trades < 50 %}style="color:var(--red)"{% endif %}>{{ m.total_trades }}</span></div>
-      <div class="metric-row"><span class="metric-label">PF</span><span class="metric-value">{{ m.profit_factor }}</span></div>
-      <div class="metric-row"><span class="metric-label">Equity R²</span><span class="metric-value">{{ r.r2 if r.r2 is defined else '-' }}</span></div>
-    </div>
-    <div>
-      {% if wf %}
-      <div class="metric-row" style="border-bottom:1px solid var(--accent)"><span class="metric-label" style="font-weight:600">Walk-Forward</span><span class="metric-value"></span></div>
-      <div class="metric-row"><span class="metric-label">PBO</span><span class="metric-value {% if wf.pbo_score is defined and wf.pbo_score < 0.3 %}positive{% elif wf.pbo_score is defined and wf.pbo_score >= 0.5 %}negative{% endif %}">{{ wf.pbo_score if wf.pbo_score is defined else '-' }}</span></div>
-      <div class="metric-row"><span class="metric-label">OOS Alpha</span><span class="metric-value {% if oos_m and oos_m.get('alpha_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ oos_m.get('alpha_pct', '-') if oos_m else '-' }}{% if oos_m and oos_m.get('alpha_pct') is not none %}%{% endif %}</span></div>
-      <div class="metric-row"><span class="metric-label">OOS Ret/day</span><span class="metric-value {% if oos_m and oos_m.get('return_daily_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ oos_m.get('return_daily_pct', '-') if oos_m else '-' }}{% if oos_m and oos_m.get('return_daily_pct') is not none %}%{% endif %}</span></div>
-      {% if oos2_m %}
-      <div class="metric-row" style="border-top:1px dashed var(--accent)"><span class="metric-label">OOS2 Alpha</span><span class="metric-value {% if oos2_m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ oos2_m.alpha_pct }}%</span></div>
-      <div class="metric-row"><span class="metric-label">OOS2 Ret/day</span><span class="metric-value {% if oos2_m.return_daily_pct > 0 %}positive{% else %}negative{% endif %}">{{ oos2_m.return_daily_pct }}%</span></div>
-      <div class="metric-row"><span class="metric-label">PBO2</span><span class="metric-value {% if wf.pbo2_score is defined and wf.pbo2_score < 0.3 %}positive{% elif wf.pbo2_score is defined and wf.pbo2_score >= 0.5 %}negative{% endif %}">{{ wf.pbo2_score if wf.pbo2_score is defined else '-' }}</span></div>
-      {% endif %}
-      {% if oos3_m %}
-      <div class="metric-row" style="border-top:1px dashed var(--yellow)"><span class="metric-label">OOS3 Alpha</span><span class="metric-value {% if oos3_m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ oos3_m.alpha_pct }}%</span></div>
-      <div class="metric-row"><span class="metric-label">OOS3 Ret/day</span><span class="metric-value {% if oos3_m.return_daily_pct > 0 %}positive{% else %}negative{% endif %}">{{ oos3_m.return_daily_pct }}%</span></div>
-      <div class="metric-row"><span class="metric-label">PBO3</span><span class="metric-value {% if wf.pbo3_score is defined and wf.pbo3_score < 0.3 %}positive{% elif wf.pbo3_score is defined and wf.pbo3_score >= 0.5 %}negative{% endif %}">{{ wf.pbo3_score if wf.pbo3_score is defined else '-' }}</span></div>
-      {% endif %}
-      {% else %}
-      <div class="metric-row"><span class="metric-label" style="color:var(--dim)">Walk-forward data not available</span></div>
-      {% endif %}
-    </div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px">
+    <div class="metric-row" style="flex:none"><span class="metric-label">Equity R²</span><span class="metric-value">{{ r.r2 if r.r2 is defined else '-' }}</span></div>
+    <div class="metric-row" style="flex:none"><span class="metric-label">PBO</span><span class="metric-value {% if wf and wf.pbo_score is defined and wf.pbo_score < 0.3 %}positive{% elif wf and wf.pbo_score is defined and wf.pbo_score >= 0.5 %}negative{% endif %}">{{ wf.pbo_score if wf and wf.pbo_score is defined else '-' }}</span></div>
+    {% if wf and wf.pbo2_score is defined %}<div class="metric-row" style="flex:none"><span class="metric-label">PBO2</span><span class="metric-value {% if wf.pbo2_score < 0.3 %}positive{% elif wf.pbo2_score >= 0.5 %}negative{% endif %}">{{ wf.pbo2_score }}</span></div>{% endif %}
+    {% if wf and wf.pbo3_score is defined %}<div class="metric-row" style="flex:none"><span class="metric-label">PBO3</span><span class="metric-value {% if wf.pbo3_score < 0.3 %}positive{% elif wf.pbo3_score >= 0.5 %}negative{% endif %}">{{ wf.pbo3_score }}</span></div>{% endif %}
+  </div>
+  <div style="overflow-x:auto">
+    <table style="font-size:0.82rem;width:100%">
+      <thead><tr>
+        <th style="text-align:left">Period</th>
+        <th>Alpha%</th><th>Ret/day%</th><th>Return%</th><th>BTC%</th>
+        <th>MaxDD%</th><th>Sharpe</th><th>Trades</th><th>PF</th><th>Days</th>
+      </tr></thead>
+      <tbody>
+        {% set is_m = wf.is_metrics if wf and wf.is_metrics is defined else m %}
+        <tr>
+          <td style="text-align:left;font-weight:600">IS</td>
+          <td class="{% if is_m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ "%.1f"|format(is_m.alpha_pct) }}</td>
+          <td class="{% if is_m.get('return_daily_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ "%.2f"|format(is_m.get('return_daily_pct', 0)) }}</td>
+          <td class="{% if is_m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ "%.1f"|format(is_m.total_return_pct) }}</td>
+          <td>{{ "%.1f"|format(is_m.get('benchmark_return_pct', 0)) }}</td>
+          <td class="negative">{{ "%.1f"|format(is_m.max_drawdown_pct) }}</td>
+          <td>{{ "%.2f"|format(is_m.sharpe_ratio) }}</td>
+          <td {% if is_m.total_trades < 50 %}style="color:var(--red)"{% endif %}>{{ is_m.total_trades }}</td>
+          <td>{{ "%.2f"|format(is_m.profit_factor) }}</td>
+          <td>{{ "%.0f"|format(is_m.get('num_days', 0)) }}</td>
+        </tr>
+        {% if oos_m %}
+        <tr style="background:rgba(59,130,246,0.08)">
+          <td style="text-align:left;font-weight:600;color:var(--accent)">OOS</td>
+          <td class="{% if oos_m.get('alpha_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ "%.1f"|format(oos_m.get('alpha_pct', 0)) }}</td>
+          <td class="{% if oos_m.get('return_daily_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ "%.2f"|format(oos_m.get('return_daily_pct', 0)) }}</td>
+          <td class="{% if oos_m.get('total_return_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ "%.1f"|format(oos_m.get('total_return_pct', 0)) }}</td>
+          <td>{{ "%.1f"|format(oos_m.get('benchmark_return_pct', 0)) }}</td>
+          <td class="negative">{{ "%.1f"|format(oos_m.get('max_drawdown_pct', 0)) }}</td>
+          <td>{{ "%.2f"|format(oos_m.get('sharpe_ratio', 0)) }}</td>
+          <td>{{ oos_m.get('total_trades', '-') }}</td>
+          <td>{{ "%.2f"|format(oos_m.get('profit_factor', 0)) }}</td>
+          <td>{{ "%.0f"|format(oos_m.get('num_days', 0)) }}</td>
+        </tr>
+        {% endif %}
+        {% if oos2_m %}
+        <tr style="background:rgba(16,185,129,0.08)">
+          <td style="text-align:left;font-weight:600;color:var(--green)">OOS2</td>
+          <td class="{% if oos2_m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ "%.1f"|format(oos2_m.alpha_pct) }}</td>
+          <td class="{% if oos2_m.return_daily_pct > 0 %}positive{% else %}negative{% endif %}">{{ "%.2f"|format(oos2_m.return_daily_pct) }}</td>
+          <td class="{% if oos2_m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ "%.1f"|format(oos2_m.total_return_pct) }}</td>
+          <td>{{ "%.1f"|format(oos2_m.get('benchmark_return_pct', 0)) }}</td>
+          <td class="negative">{{ "%.1f"|format(oos2_m.max_drawdown_pct) }}</td>
+          <td>{{ "%.2f"|format(oos2_m.sharpe_ratio) }}</td>
+          <td>{{ oos2_m.total_trades }}</td>
+          <td>{{ "%.2f"|format(oos2_m.profit_factor) }}</td>
+          <td>{{ "%.0f"|format(oos2_m.num_days) }}</td>
+        </tr>
+        {% endif %}
+        {% if oos3_m %}
+        <tr style="background:rgba(234,179,8,0.08)">
+          <td style="text-align:left;font-weight:600;color:var(--yellow)">OOS3</td>
+          <td class="{% if oos3_m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ "%.1f"|format(oos3_m.alpha_pct) }}</td>
+          <td class="{% if oos3_m.return_daily_pct > 0 %}positive{% else %}negative{% endif %}">{{ "%.2f"|format(oos3_m.return_daily_pct) }}</td>
+          <td class="{% if oos3_m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ "%.1f"|format(oos3_m.total_return_pct) }}</td>
+          <td>{{ "%.1f"|format(oos3_m.get('benchmark_return_pct', 0)) }}</td>
+          <td class="negative">{{ "%.1f"|format(oos3_m.max_drawdown_pct) }}</td>
+          <td>{{ "%.2f"|format(oos3_m.sharpe_ratio) }}</td>
+          <td>{{ oos3_m.total_trades }}</td>
+          <td>{{ "%.2f"|format(oos3_m.profit_factor) }}</td>
+          <td>{{ "%.0f"|format(oos3_m.num_days) }}</td>
+        </tr>
+        {% endif %}
+        <tr style="border-top:2px solid var(--border)">
+          <td style="text-align:left;font-weight:600">Full</td>
+          <td class="{% if m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ "%.1f"|format(m.alpha_pct) }}</td>
+          <td class="{% if m.get('return_daily_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ "%.2f"|format(m.get('return_daily_pct', 0)) }}</td>
+          <td class="{% if m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ "%.1f"|format(m.total_return_pct) }}</td>
+          <td>{{ "%.1f"|format(m.benchmark_return_pct) }}</td>
+          <td class="negative">{{ "%.1f"|format(m.max_drawdown_pct) }}</td>
+          <td>{{ "%.2f"|format(m.sharpe_ratio) }}</td>
+          <td {% if m.total_trades < 50 %}style="color:var(--red)"{% endif %}>{{ m.total_trades }}</td>
+          <td>{{ "%.2f"|format(m.profit_factor) }}</td>
+          <td>{{ "%.0f"|format(m.get('num_days', 270)) }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -73,42 +123,26 @@
 
 <div class="grid grid-2">
   <div class="card">
-    <h2>Performance Metrics</h2>
+    <h2>Full Period Performance</h2>
     <div class="metric-row"><span class="metric-label">Total Return</span><span class="metric-value {% if m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ m.total_return_pct }}%</span></div>
     <div class="metric-row"><span class="metric-label">Benchmark Return</span><span class="metric-value">{{ m.benchmark_return_pct }}%</span></div>
     <div class="metric-row"><span class="metric-label">Alpha</span><span class="metric-value {% if m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ m.alpha_pct }}%</span></div>
-    <div class="metric-row"><span class="metric-label">Return/day</span><span class="metric-value {% if m.get('return_daily_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ m.get('return_daily_pct', 0) }}%</span></div>
-    <div class="metric-row"><span class="metric-label">Sharpe Ratio</span><span class="metric-value">{{ m.sharpe_ratio }}</span></div>
-    <div class="metric-row"><span class="metric-label">Sortino Ratio</span><span class="metric-value">{{ m.sortino_ratio }}</span></div>
-    <div class="metric-row"><span class="metric-label">Max Drawdown</span><span class="metric-value negative">{{ m.max_drawdown_pct }}%</span></div>
-    <div class="metric-row"><span class="metric-label">Calmar Ratio</span><span class="metric-value">{{ m.get('calmar_ratio', 0) }}</span></div>
-    <div class="metric-row"><span class="metric-label">Profit Factor</span><span class="metric-value">{{ m.profit_factor }}</span></div>
+    <div class="metric-row"><span class="metric-label">Sharpe / Sortino</span><span class="metric-value">{{ m.sharpe_ratio }} / {{ m.sortino_ratio }}</span></div>
+    <div class="metric-row"><span class="metric-label">Calmar</span><span class="metric-value">{{ m.get('calmar_ratio', 0) }}</span></div>
     <div class="metric-row"><span class="metric-label">Expectancy</span><span class="metric-value">{{ m.expectancy_pct }}%</span></div>
     <div class="metric-row"><span class="metric-label">Win Rate</span><span class="metric-value">{{ m.win_rate_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Avg Win / Loss</span><span class="metric-value"><span class="positive">{{ m.avg_win_pct }}%</span> / <span class="negative">{{ m.avg_loss_pct }}%</span></span></div>
   </div>
   <div class="card">
-    <h2>Trade Statistics</h2>
-    <div class="metric-row"><span class="metric-label">Total Trades</span><span class="metric-value">{{ m.total_trades }}</span></div>
-    <div class="metric-row"><span class="metric-label">Win Rate</span><span class="metric-value">{{ m.win_rate_pct }}%</span></div>
-    <div class="metric-row"><span class="metric-label">Avg Win</span><span class="metric-value positive">{{ m.avg_win_pct }}%</span></div>
-    <div class="metric-row"><span class="metric-label">Avg Loss</span><span class="metric-value negative">{{ m.avg_loss_pct }}%</span></div>
-    {% if oos2_m %}
-    <h3 style="margin-top:12px;margin-bottom:4px;border-top:1px solid var(--border);padding-top:8px">OOS2 Details (Earliest Holdout)</h3>
-    <div class="metric-row"><span class="metric-label">Total Return</span><span class="metric-value {% if oos2_m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ oos2_m.total_return_pct }}%</span></div>
-    <div class="metric-row"><span class="metric-label">BTC Return</span><span class="metric-value">{{ oos2_m.benchmark_return_pct }}%</span></div>
-    <div class="metric-row"><span class="metric-label">Max DD</span><span class="metric-value negative">{{ oos2_m.max_drawdown_pct }}%</span></div>
-    <div class="metric-row"><span class="metric-label">Sharpe</span><span class="metric-value">{{ oos2_m.sharpe_ratio }}</span></div>
-    <div class="metric-row"><span class="metric-label">Trades</span><span class="metric-value">{{ oos2_m.total_trades }}</span></div>
-    <div class="metric-row"><span class="metric-label">Days</span><span class="metric-value">{{ oos2_m.num_days }}</span></div>
-    {% endif %}
-    {% if oos3_m %}
-    <h3 style="margin-top:12px;margin-bottom:4px;border-top:1px solid var(--yellow);padding-top:8px">OOS3 Details (Most Recent Holdout)</h3>
-    <div class="metric-row"><span class="metric-label">Total Return</span><span class="metric-value {% if oos3_m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ oos3_m.total_return_pct }}%</span></div>
-    <div class="metric-row"><span class="metric-label">BTC Return</span><span class="metric-value">{{ oos3_m.benchmark_return_pct }}%</span></div>
-    <div class="metric-row"><span class="metric-label">Max DD</span><span class="metric-value negative">{{ oos3_m.max_drawdown_pct }}%</span></div>
-    <div class="metric-row"><span class="metric-label">Sharpe</span><span class="metric-value">{{ oos3_m.sharpe_ratio }}</span></div>
-    <div class="metric-row"><span class="metric-label">Trades</span><span class="metric-value">{{ oos3_m.total_trades }}</span></div>
-    <div class="metric-row"><span class="metric-label">Days</span><span class="metric-value">{{ oos3_m.num_days }}</span></div>
+    <h2>Walk-Forward Splits</h2>
+    {% if wf and wf.oos_per_split is defined %}
+    <div style="font-size:0.82rem">
+      <div class="metric-row"><span class="metric-label">Splits</span><span class="metric-value">{{ wf.n_splits if wf.n_splits is defined else '-' }}</span></div>
+      <div class="metric-row"><span class="metric-label">OOS per split</span><span class="metric-value">{{ wf.oos_per_split }}</span></div>
+      <div class="metric-row"><span class="metric-label">PBO per split</span><span class="metric-value">{{ wf.pbo_per_split if wf.pbo_per_split is defined else '-' }}</span></div>
+    </div>
+    {% else %}
+    <p style="color:var(--dim)">Walk-forward split data not available</p>
     {% endif %}
   </div>
 </div>
