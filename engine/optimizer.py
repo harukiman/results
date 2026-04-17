@@ -13,13 +13,15 @@ log = logging.getLogger(__name__)
 
 _mp_df = None  # Set per-worker by initializer
 _mp_df_oos2 = None  # OOS2 holdout data
+_mp_df_oos3 = None  # OOS3 holdout data (most recent period)
 
 
-def _init_mp_spawn(df, df_oos2, strats_dict):
+def _init_mp_spawn(df, df_oos2, strats_dict, df_oos3=None):
     """Initialize worker: store DataFrames and register dynamic strategies."""
-    global _mp_df, _mp_df_oos2
+    global _mp_df, _mp_df_oos2, _mp_df_oos3
     _mp_df = df
     _mp_df_oos2 = df_oos2
+    _mp_df_oos3 = df_oos3
     from engine.strategies import STRATEGIES
     STRATEGIES.update(strats_dict)
 
@@ -34,7 +36,7 @@ def _wf_single(name):
         _log.warning(f"WF_SINGLE: {name} NOT in STRATEGIES (worker has {len(STRATEGIES)} strategies)")
         return (name, None)
     try:
-        wf = walk_forward_optimize(name, _mp_df, df_oos2=_mp_df_oos2)
+        wf = walk_forward_optimize(name, _mp_df, df_oos2=_mp_df_oos2, df_oos3=_mp_df_oos3)
         if wf["best"]:
             result = wf["best"]
             result["optimization"] = {
@@ -43,6 +45,8 @@ def _wf_single(name):
                 "pbo_score": wf["pbo_score"],
                 "oos2_metrics": wf.get("oos2_metrics"),
                 "pbo2_score": wf.get("pbo2_score", 1.0),
+                "oos3_metrics": wf.get("oos3_metrics"),
+                "pbo3_score": wf.get("pbo3_score", 1.0),
             }
             return (name, result)
         else:
@@ -52,7 +56,7 @@ def _wf_single(name):
     return (name, None)
 
 
-def create_executor(df, df_oos2, names, n_workers=6):
+def create_executor(df, df_oos2, names, n_workers=6, df_oos3=None):
     """Create ProcessPoolExecutor with spawn context for async use."""
     from concurrent.futures import ProcessPoolExecutor
     from engine.strategies import STRATEGIES
@@ -60,7 +64,7 @@ def create_executor(df, df_oos2, names, n_workers=6):
     ctx = mp.get_context("spawn")
     return ProcessPoolExecutor(
         max_workers=n_workers, mp_context=ctx,
-        initializer=_init_mp_spawn, initargs=(df, df_oos2, strats),
+        initializer=_init_mp_spawn, initargs=(df, df_oos2, strats, df_oos3),
     )
 
 
@@ -129,6 +133,9 @@ def optimize_strategy(name: str, df: pd.DataFrame) -> dict:
                 sl_cooldown_bars=risk.get("sl_cooldown_bars", 0),
                 vol_lev_atr=risk.get("vol_lev_atr", 0),
                 vol_lev_threshold=risk.get("vol_lev_threshold", 0.0),
+                trend_lev_sma=risk.get("trend_lev_sma", 0),
+                trend_lev_bull=risk.get("trend_lev_bull", 0.0),
+                trend_lev_bear=risk.get("trend_lev_bear", 0.0),
             )
             score = _score(result["metrics"])
             all_results.append({"params": params, "score": score, "metrics": result["metrics"]})
@@ -210,6 +217,9 @@ async def run_all_strategies(df: pd.DataFrame, optimize: bool = True,
                 sl_cooldown_bars=risk.get("sl_cooldown_bars", 0),
                 vol_lev_atr=risk.get("vol_lev_atr", 0),
                 vol_lev_threshold=risk.get("vol_lev_threshold", 0.0),
+                trend_lev_sma=risk.get("trend_lev_sma", 0),
+                trend_lev_bull=risk.get("trend_lev_bull", 0.0),
+                trend_lev_bear=risk.get("trend_lev_bear", 0.0),
             )
 
         if result:

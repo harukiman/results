@@ -82,7 +82,10 @@ def _grid_search(fn, df, combos, keys, name, risk, bpy):
                                price_lev_lb=risk.get("price_lev_lb", 200),
                                sl_cooldown_bars=risk.get("sl_cooldown_bars", 0),
                                vol_lev_atr=risk.get("vol_lev_atr", 0),
-                               vol_lev_threshold=risk.get("vol_lev_threshold", 0.0))
+                               vol_lev_threshold=risk.get("vol_lev_threshold", 0.0),
+                               trend_lev_sma=risk.get("trend_lev_sma", 0),
+                               trend_lev_bull=risk.get("trend_lev_bull", 0.0),
+                               trend_lev_bear=risk.get("trend_lev_bear", 0.0))
             sc = _score(res["metrics"], dd_penalty=dd_pen)
             if sc > best_score:
                 best_score = sc
@@ -94,13 +97,15 @@ def _grid_search(fn, df, combos, keys, name, risk, bpy):
 
 
 def walk_forward_optimize(name: str, df: pd.DataFrame,
-                          df_oos2: pd.DataFrame | None = None) -> dict:
-    """Multi-split validation with optional OOS2 holdout.
+                          df_oos2: pd.DataFrame | None = None,
+                          df_oos3: pd.DataFrame | None = None) -> dict:
+    """Multi-split validation with optional OOS2/OOS3 holdout.
 
     Args:
         name: strategy name in STRATEGIES registry
         df: main dataset for IS/OOS walk-forward
-        df_oos2: separate holdout data for OOS2 validation (never seen in IS/OOS)
+        df_oos2: separate holdout data for OOS2 validation (earliest period)
+        df_oos3: separate holdout data for OOS3 validation (most recent period, reference only)
     """
     spec = STRATEGIES[name]
     fn = spec["fn"]
@@ -151,7 +156,10 @@ def walk_forward_optimize(name: str, df: pd.DataFrame,
                                     price_lev_lb=risk.get("price_lev_lb", 200),
                                     sl_cooldown_bars=risk.get("sl_cooldown_bars", 0),
                                vol_lev_atr=risk.get("vol_lev_atr", 0),
-                               vol_lev_threshold=risk.get("vol_lev_threshold", 0.0))
+                               vol_lev_threshold=risk.get("vol_lev_threshold", 0.0),
+                               trend_lev_sma=risk.get("trend_lev_sma", 0),
+                               trend_lev_bull=risk.get("trend_lev_bull", 0.0),
+                               trend_lev_bear=risk.get("trend_lev_bear", 0.0))
             oos_m = test_res["metrics"]
         except Exception:
             oos_m = {}
@@ -193,7 +201,10 @@ def walk_forward_optimize(name: str, df: pd.DataFrame,
                              mde_cooldown_bars=risk.get("mde_cooldown_bars", 0),
                              price_lev_scale=risk.get("price_lev_scale", 0.0),
                              price_lev_lb=risk.get("price_lev_lb", 200),
-                             sl_cooldown_bars=risk.get("sl_cooldown_bars", 0))
+                             sl_cooldown_bars=risk.get("sl_cooldown_bars", 0),
+                             trend_lev_sma=risk.get("trend_lev_sma", 0),
+                             trend_lev_bull=risk.get("trend_lev_bull", 0.0),
+                             trend_lev_bear=risk.get("trend_lev_bear", 0.0))
         final["walkforward"] = {
             "oos_metrics": {"alpha_pct": round(avg_oos_alpha * final["metrics"].get("num_days", 270) / max(1, len(SPLIT_RATIOS)), 2),
                             "return_daily_pct": avg_oos_ret_daily},
@@ -227,7 +238,10 @@ def walk_forward_optimize(name: str, df: pd.DataFrame,
                 mde_cooldown_bars=risk.get("mde_cooldown_bars", 0),
                 price_lev_scale=risk.get("price_lev_scale", 0.0),
                 price_lev_lb=risk.get("price_lev_lb", 200),
-                sl_cooldown_bars=risk.get("sl_cooldown_bars", 0))
+                sl_cooldown_bars=risk.get("sl_cooldown_bars", 0),
+                trend_lev_sma=risk.get("trend_lev_sma", 0),
+                trend_lev_bull=risk.get("trend_lev_bull", 0.0),
+                trend_lev_bear=risk.get("trend_lev_bear", 0.0))
             oos2_m = oos2_res["metrics"]
             oos2_alpha = oos2_m.get("alpha_pct", 0)
             oos2_days = oos2_m.get("num_days", max(1, len(df_oos2) / bars_per_day))
@@ -253,6 +267,56 @@ def walk_forward_optimize(name: str, df: pd.DataFrame,
         except Exception as e:
             log.warning(f"OOS2 eval failed for {name}: {e}")
 
+    # ── OOS3: holdout validation on most recent unseen data (reference only) ──
+    oos3_metrics = None
+    pbo3_score = 1.0
+    if final is not None and df_oos3 is not None and len(df_oos3) >= 100:
+        try:
+            bpy3 = _detect_bpy(df_oos3)
+            sig_oos3 = fn(df_oos3, **best_params_overall)
+            oos3_res = run_backtest(
+                df_oos3, sig_oos3, name, best_params_overall,
+                risk.get("stop_loss_pct", 0), risk.get("take_profit_pct", 0),
+                risk.get("trailing_stop_pct", 0), risk.get("cooldown_bars", 0), bpy3,
+                leverage=risk.get("leverage", 1.0),
+                equity_ma_bars=risk.get("equity_ma_bars", 0),
+                dd_throttle_pct=risk.get("dd_throttle_pct", 0.0),
+                lev_scale_dd=risk.get("lev_scale_dd", 0.0),
+                cond_ts_pct=risk.get("cond_ts_pct", 0.0),
+                cond_ts_dd_pct=risk.get("cond_ts_dd_pct", 0.0),
+                max_dd_exit_pct=risk.get("max_dd_exit_pct", 0.0),
+                mde_cooldown_bars=risk.get("mde_cooldown_bars", 0),
+                price_lev_scale=risk.get("price_lev_scale", 0.0),
+                price_lev_lb=risk.get("price_lev_lb", 200),
+                sl_cooldown_bars=risk.get("sl_cooldown_bars", 0),
+                trend_lev_sma=risk.get("trend_lev_sma", 0),
+                trend_lev_bull=risk.get("trend_lev_bull", 0.0),
+                trend_lev_bear=risk.get("trend_lev_bear", 0.0))
+            oos3_m = oos3_res["metrics"]
+            oos3_alpha = oos3_m.get("alpha_pct", 0)
+            oos3_days = oos3_m.get("num_days", max(1, len(df_oos3) / bars_per_day))
+            oos3_alpha_daily = oos3_alpha / max(1, oos3_days)
+            oos3_ret_daily = oos3_m.get("total_return_pct", 0) / max(1, oos3_days)
+            oos3_metrics = {
+                "alpha_pct": oos3_alpha,
+                "return_daily_pct": round(oos3_ret_daily, 4),
+                "num_days": round(oos3_days, 1),
+                "total_return_pct": oos3_m.get("total_return_pct", 0),
+                "benchmark_return_pct": oos3_m.get("benchmark_return_pct", 0),
+                "max_drawdown_pct": oos3_m.get("max_drawdown_pct", 0),
+                "total_trades": oos3_m.get("total_trades", 0),
+                "sharpe_ratio": oos3_m.get("sharpe_ratio", 0),
+                "profit_factor": oos3_m.get("profit_factor", 0),
+            }
+            # PBO3: compare IS daily alpha vs OOS3 daily alpha
+            is_alpha_daily3 = best_is_metrics.get("alpha_pct", 0) / max(1, best_is_metrics.get("num_days", 270)) if best_is_metrics else 0
+            pbo3_score = round(_pbo_single(is_alpha_daily3, oos3_alpha_daily), 3)
+
+            final["walkforward"]["oos3_metrics"] = oos3_metrics
+            final["walkforward"]["pbo3_score"] = pbo3_score
+        except Exception as e:
+            log.warning(f"OOS3 eval failed for {name}: {e}")
+
     return {
         "best": final,
         "oos_metrics": {"alpha_pct": round(avg_oos_alpha * (n / bars_per_day) / max(1, len(SPLIT_RATIOS)), 2),
@@ -261,4 +325,6 @@ def walk_forward_optimize(name: str, df: pd.DataFrame,
         "pbo_score": avg_pbo,
         "oos2_metrics": oos2_metrics,
         "pbo2_score": pbo2_score,
+        "oos3_metrics": oos3_metrics,
+        "pbo3_score": pbo3_score,
     }

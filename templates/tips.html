@@ -128,15 +128,70 @@ const plotStyle = {
 {% if tip.id == 'trade_count' and tip.data %}
 (function(){
   const data = {{ tip.data | tojson }};
-  Plotly.newPlot('chart_trade_count', [
-    {x: data.map(d=>d.trades), y: data.map(d=>d.alpha),
+  const xs = data.map(d=>d.trades), ys = data.map(d=>d.alpha);
+  // Polynomial regression (degree 2) for trend line
+  function polyFit(x, y, deg) {
+    const n = x.length;
+    const m = deg + 1;
+    const X = []; const Y = [];
+    for (let i = 0; i < n; i++) {
+      const row = [];
+      for (let j = 0; j < m; j++) row.push(Math.pow(x[i], j));
+      X.push(row);
+      Y.push(y[i]);
+    }
+    // Normal equation: (X^T X) coeff = X^T Y
+    const XtX = Array.from({length:m}, ()=>Array(m).fill(0));
+    const XtY = Array(m).fill(0);
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < m; j++) {
+        XtY[j] += X[i][j] * Y[i];
+        for (let k = 0; k < m; k++) XtX[j][k] += X[i][j] * X[i][k];
+      }
+    }
+    // Solve via Gaussian elimination
+    for (let i = 0; i < m; i++) {
+      let maxR = i;
+      for (let r = i+1; r < m; r++) if (Math.abs(XtX[r][i]) > Math.abs(XtX[maxR][i])) maxR = r;
+      [XtX[i], XtX[maxR]] = [XtX[maxR], XtX[i]];
+      [XtY[i], XtY[maxR]] = [XtY[maxR], XtY[i]];
+      for (let r = i+1; r < m; r++) {
+        const f = XtX[r][i] / XtX[i][i];
+        for (let c = i; c < m; c++) XtX[r][c] -= f * XtX[i][c];
+        XtY[r] -= f * XtY[i];
+      }
+    }
+    const coeff = Array(m).fill(0);
+    for (let i = m-1; i >= 0; i--) {
+      coeff[i] = XtY[i];
+      for (let j = i+1; j < m; j++) coeff[i] -= XtX[i][j] * coeff[j];
+      coeff[i] /= XtX[i][i];
+    }
+    return coeff;
+  }
+  const coeff = xs.length >= 3 ? polyFit(xs, ys, 2) : null;
+  const traces = [
+    {x: xs, y: ys,
      text: data.map(d=>d.name),
      hovertemplate: '<b>%{text}</b><br>Trades: %{x}<br>Alpha: %{y:.1f}%<br>PF: %{marker.color:.2f}<extra></extra>',
-     mode:'markers',
+     mode:'markers', name:'Strategies',
      marker:{size: data.map(d=>Math.max(8, d.pf*8)), color: data.map(d=>d.pf),
              colorscale:'Viridis', showscale:true, colorbar:{title:'PF'}}},
-  ], {...plotStyle, title:'Trades vs Alpha (bubble=PF) — hover for name',
-    xaxis:{title:'Trade Count'}, yaxis:{title:'Alpha (%)'}}, {responsive:true});
+  ];
+  if (coeff) {
+    const xMin = Math.min(...xs), xMax = Math.max(...xs);
+    const trendX = [], trendY = [];
+    for (let t = xMin; t <= xMax; t += (xMax-xMin)/50) {
+      trendX.push(t);
+      trendY.push(coeff[0] + coeff[1]*t + coeff[2]*t*t);
+    }
+    traces.push({x:trendX, y:trendY, mode:'lines', name:'Trend (poly2)',
+      line:{color:'rgba(251,191,36,0.7)', width:2, dash:'dot'}});
+  }
+  Plotly.newPlot('chart_trade_count', traces,
+    {...plotStyle, title:'Trades vs Alpha (bubble=PF, line=poly2 trend)',
+    xaxis:{title:'Trade Count'}, yaxis:{title:'Alpha (%)'},
+    showlegend:true, legend:{x:0.01,y:0.99,bgcolor:'rgba(0,0,0,0.3)'}}, {responsive:true});
 })();
 {% endif %}
 {% endfor %}

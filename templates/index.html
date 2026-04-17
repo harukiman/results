@@ -71,8 +71,8 @@
 <!-- Controls: view toggle + sort selector -->
 <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" class="no-print">
   <span style="color:var(--dim);font-size:0.8rem">View:</span>
-  <button class="btn" style="font-size:0.75rem;padding:4px 10px" onclick="toggleView('table')" id="btnTable">Table</button>
-  <button class="btn" style="font-size:0.75rem;padding:4px 10px;opacity:0.5" onclick="toggleView('card')" id="btnCard">Card</button>
+  <button class="btn" style="font-size:0.75rem;padding:4px 10px;opacity:0.5" onclick="toggleView('table')" id="btnTable">Table</button>
+  <button class="btn" style="font-size:0.75rem;padding:4px 10px" onclick="toggleView('card')" id="btnCard">Card</button>
   <span style="color:var(--dim);font-size:0.8rem;margin-left:12px">Sort:</span>
   <select id="sortSelect" onchange="sortResults()" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:0.8rem">
     <option value="default">Default</option>
@@ -103,6 +103,9 @@
     <option value="oos2_a_desc">OOS2 α% ↓</option>
     <option value="oos2_rd_desc">OOS2 Ret/day% ↓</option>
     <option value="pbo2_asc">PBO2 ↑ (best)</option>
+    <option value="oos3_a_desc">OOS3 α% ↓</option>
+    <option value="oos3_rd_desc">OOS3 Ret/day% ↓</option>
+    <option value="pbo3_asc">PBO3 ↑ (best)</option>
     <option value="bench_desc">Benchmark% ↓</option>
   </select>
 </div>
@@ -111,13 +114,13 @@
 <script>
 var _results = [
 {% for r in results %}
-{idx:{{ loop.index0 }},name:"{{ r.name }}",grade:"{{ r.grade }}",alpha:{{ r.metrics.alpha_pct }},ret:{{ r.metrics.total_return_pct }},ret_day:{{ r.metrics.get('return_daily_pct', 0) }},bench:{{ r.metrics.benchmark_return_pct }},sharpe:{{ r.metrics.sharpe_ratio }},sortino:{{ r.metrics.get('sortino_ratio', 0) }},dd:{{ r.metrics.max_drawdown_pct }},calmar:{{ r.metrics.get('calmar_ratio', 0) }},pf:{{ r.metrics.profit_factor }},wr:{{ r.metrics.win_rate_pct }},trades:{{ r.metrics.total_trades }},avg_win:{{ r.metrics.get('avg_win_pct', 0) }},avg_loss:{{ r.metrics.get('avg_loss_pct', 0) }},expect:{{ r.metrics.get('expectancy_pct', 0) }},r2:{{ r.r2 if r.r2 is defined else 0 }},pbo:{{ r.walkforward.pbo_score if r.walkforward else 1.0 }},oos_a:{{ r.walkforward.oos_metrics.alpha_pct if r.walkforward else -999 }},oos_rd:{{ r.walkforward.oos_metrics.get('return_daily_pct', 0) if r.walkforward else 0 }},oos2_a:{{ r.walkforward.oos2_metrics.alpha_pct if r.walkforward and r.walkforward.oos2_metrics is defined and r.walkforward.oos2_metrics else -999 }},oos2_rd:{{ r.walkforward.oos2_metrics.get('return_daily_pct', 0) if r.walkforward and r.walkforward.oos2_metrics is defined and r.walkforward.oos2_metrics else 0 }},pbo2:{{ r.walkforward.pbo2_score if r.walkforward and r.walkforward.pbo2_score is defined else 1.0 }},stype:"{{ r.strategy_type if r.strategy_type is defined else 'unique' }}",round:{{ r.get('round', 1) }},has_wf:{{ 'true' if r.walkforward else 'false' }},has_oos2:{{ 'true' if r.walkforward and r.walkforward.oos2_metrics is defined and r.walkforward.oos2_metrics else 'false' }}},
+{idx:{{ loop.index0 }},name:"{{ r.name }}",grade:"{{ r.grade }}",alpha:{{ r.metrics.alpha_pct }},ret:{{ r.metrics.total_return_pct }},ret_day:{{ r.metrics.get('return_daily_pct', 0) }},bench:{{ r.metrics.benchmark_return_pct }},sharpe:{{ r.metrics.sharpe_ratio }},sortino:{{ r.metrics.get('sortino_ratio', 0) }},dd:{{ r.metrics.max_drawdown_pct }},calmar:{{ r.metrics.get('calmar_ratio', 0) }},pf:{{ r.metrics.profit_factor }},wr:{{ r.metrics.win_rate_pct }},trades:{{ r.metrics.total_trades }},avg_win:{{ r.metrics.get('avg_win_pct', 0) }},avg_loss:{{ r.metrics.get('avg_loss_pct', 0) }},expect:{{ r.metrics.get('expectancy_pct', 0) }},r2:{{ r.r2 if r.r2 is defined else 0 }},pbo:{{ r.walkforward.pbo_score if r.walkforward else 1.0 }},oos_a:{{ r.walkforward.oos_metrics.alpha_pct if r.walkforward else -999 }},oos_rd:{{ r.walkforward.oos_metrics.get('return_daily_pct', 0) if r.walkforward else 0 }},oos2_a:{{ r.walkforward.oos2_metrics.alpha_pct if r.walkforward and r.walkforward.oos2_metrics is defined and r.walkforward.oos2_metrics else -999 }},oos2_rd:{{ r.walkforward.oos2_metrics.get('return_daily_pct', 0) if r.walkforward and r.walkforward.oos2_metrics is defined and r.walkforward.oos2_metrics else 0 }},pbo2:{{ r.walkforward.pbo2_score if r.walkforward and r.walkforward.pbo2_score is defined else 1.0 }},oos3_a:{{ r.walkforward.oos3_metrics.alpha_pct if r.walkforward and r.walkforward.oos3_metrics is defined and r.walkforward.oos3_metrics else -999 }},oos3_rd:{{ r.walkforward.oos3_metrics.get('return_daily_pct', 0) if r.walkforward and r.walkforward.oos3_metrics is defined and r.walkforward.oos3_metrics else 0 }},pbo3:{{ r.walkforward.pbo3_score if r.walkforward and r.walkforward.pbo3_score is defined else 1.0 }},stype:"{{ r.strategy_type if r.strategy_type is defined else 'unique' }}",round:{{ r.get('round', 1) }},has_wf:{{ 'true' if r.walkforward else 'false' }},has_oos2:{{ 'true' if r.walkforward and r.walkforward.oos2_metrics is defined and r.walkforward.oos2_metrics else 'false' }},has_oos3:{{ 'true' if r.walkforward and r.walkforward.oos3_metrics is defined and r.walkforward.oos3_metrics else 'false' }}},
 {% endfor %}
 ];
 </script>
 
-<!-- Table view (default) -->
-<div id="tableView" class="card" style="overflow-x:auto;padding:8px">
+<!-- Table view (hidden by default) -->
+<div id="tableView" class="card" style="overflow-x:auto;padding:8px;display:none">
 <table id="resultsTable">
 <thead>
 <tr>
@@ -144,14 +147,17 @@ var _results = [
   <th data-col="oos2_a" data-type="num" class="sortable" style="cursor:pointer">OOS2 α%</th>
   <th data-col="oos2_rd" data-type="num" class="sortable" style="cursor:pointer">OOS2 Ret/d%</th>
   <th data-col="pbo2" data-type="num" class="sortable" style="cursor:pointer">PBO2</th>
+  <th data-col="oos3_a" data-type="num" class="sortable" style="cursor:pointer">OOS3 α%</th>
+  <th data-col="oos3_rd" data-type="num" class="sortable" style="cursor:pointer">OOS3 Ret/d%</th>
+  <th data-col="pbo3" data-type="num" class="sortable" style="cursor:pointer">PBO3</th>
 </tr>
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
 </div>
 
-<!-- Card view (hidden by default) -->
-<div id="cardView" class="grid grid-2" style="display:none"></div>
+<!-- Card view (default) -->
+<div id="cardView" class="grid grid-2"></div>
 
 {% else %}
 <div class="card" style="text-align:center;padding:40px">
@@ -192,6 +198,9 @@ function renderTable(data) {
     <td class="${r.oos2_a>0?'positive':'negative'}">${r.has_oos2?r.oos2_a:'-'}</td>
     <td class="${r.oos2_rd>0?'positive':'negative'}">${r.has_oos2?r.oos2_rd:'-'}</td>
     <td class="${r.pbo2<0.3?'positive':r.pbo2>=0.5?'negative':''}">${r.has_oos2?r.pbo2:'-'}</td>
+    <td class="${r.oos3_a>0?'positive':'negative'}">${r.has_oos3?r.oos3_a:'-'}</td>
+    <td class="${r.oos3_rd>0?'positive':'negative'}">${r.has_oos3?r.oos3_rd:'-'}</td>
+    <td class="${r.pbo3<0.3?'positive':r.pbo3>=0.5?'negative':''}">${r.has_oos3?r.pbo3:'-'}</td>
   </tr>`).join('');
 }
 
@@ -223,6 +232,11 @@ function renderCards(data) {
     <div class="metric-row" style="border-top:1px dashed var(--accent)"><span class="metric-label">OOS2 Alpha</span><span class="metric-value ${r.oos2_a>0?'positive':'negative'}">${r.oos2_a}%</span></div>
     <div class="metric-row"><span class="metric-label">OOS2 Return/day</span><span class="metric-value ${r.oos2_rd>0?'positive':'negative'}">${r.oos2_rd}%</span></div>
     <div class="metric-row"><span class="metric-label">PBO2</span><span class="metric-value ${r.pbo2<0.3?'positive':r.pbo2>=0.5?'negative':''}">${r.pbo2}</span></div>
+    `:''}
+    ${r.has_oos3?`
+    <div class="metric-row" style="border-top:1px dashed var(--yellow)"><span class="metric-label">OOS3 Alpha</span><span class="metric-value ${r.oos3_a>0?'positive':'negative'}">${r.oos3_a}%</span></div>
+    <div class="metric-row"><span class="metric-label">OOS3 Return/day</span><span class="metric-value ${r.oos3_rd>0?'positive':'negative'}">${r.oos3_rd}%</span></div>
+    <div class="metric-row"><span class="metric-label">PBO3</span><span class="metric-value ${r.pbo3<0.3?'positive':r.pbo3>=0.5?'negative':''}">${r.pbo3}</span></div>
     `:''}
     <div style="margin-top:8px"><a href="/strategy/${r.idx}">詳細 →</a></div>
   </div>`).join('');

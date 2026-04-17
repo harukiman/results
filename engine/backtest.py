@@ -41,6 +41,11 @@ def run_backtest(
                                   # e.g. 0.003 = at 0.3% ATR/close, start reducing leverage
                                   # full lev below threshold, linear scale to 1x at 2*threshold
                                   # set ONCE at entry (prospective), not adjusted mid-trade
+    trend_lev_sma: int = 0,       # trend-based leverage: SMA lookback bars. 0=disabled
+                                  # e.g. 200 = use SMA(200) to detect bull/bear regime
+    trend_lev_bull: float = 0.0,  # leverage when price > SMA (bull regime). 0=use base leverage
+    trend_lev_bear: float = 0.0,  # leverage when price < SMA (bear regime). 0=use base leverage
+                                  # set ONCE at entry (prospective), not adjusted mid-trade
 ) -> dict:
     df = df.copy()
     signals = signals.reindex(df.index, fill_value=0)
@@ -87,6 +92,10 @@ def run_backtest(
         _tr[0] = _high[0] - _low[0]
         _vol_atr = pd.Series(_tr).rolling(vol_lev_atr, min_periods=1).mean().values
     _max_dd_exit = max_dd_exit_pct > 0  # hard DD cap with forced liquidation
+    _trend_lev = trend_lev_sma > 0 and (trend_lev_bull > 0 or trend_lev_bear > 0)
+    _trend_sma = None
+    if _trend_lev:
+        _trend_sma = pd.Series(_close).rolling(trend_lev_sma, min_periods=1).mean().values
 
     for i in range(_n):
         price = _close[i]
@@ -218,7 +227,11 @@ def run_backtest(
             position = sig
             equity *= (1 - FEE_RATE)
             # Compute effective leverage for this trade
-            if _price_lev and sig == 1:
+            if _trend_lev:
+                # Trend-based leverage: bull/bear regime from SMA
+                _is_bull = close_price > _trend_sma[i]
+                _eff_lev = max(1.0, trend_lev_bull if _is_bull else trend_lev_bear)
+            elif _price_lev and sig == 1:
                 # Price-based leverage scaling for LONGS only
                 # Shorts keep full leverage to profit from crashes
                 _start = max(0, i - _price_lev_lb)

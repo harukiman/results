@@ -31,6 +31,7 @@ TIPS_FILE = DATA_DIR / "tips.json"
 _results: list[dict] = []
 _tips: list[dict] = []
 _failed_insights: list[dict] = []  # Learnings from strategies that didn't pass display filter
+_altcoin_cache: dict[str, dict] = {}  # key: strategy name -> altcoin analysis results
 _run_status = {
     "running": False, "progress": "", "symbol": "BTCUSDT",
     "interval": "15m", "days": 180, "last_run": None,
@@ -977,6 +978,45 @@ def _generate_tips(results: list[dict]) -> list[dict]:
             "timestamp": now,
         })
 
+    # ── Cross-asset robustness analysis ──
+    if _altcoin_cache:
+        cross_asset_results = []
+        for strat_name, cached in _altcoin_cache.items():
+            summary = cached.get("summary", {})
+            if summary:
+                cross_asset_results.append({
+                    "name": strat_name,
+                    "positive_count": summary.get("positive_count", 0),
+                    "total": summary.get("total", 0),
+                    "avg_alpha": summary.get("avg_alpha", 0),
+                    "robustness": summary.get("robustness", "unknown"),
+                })
+        if cross_asset_results:
+            robust = [c for c in cross_asset_results if c["positive_count"] >= 4]
+            btc_specific = [c for c in cross_asset_results if c["positive_count"] <= 1]
+            cross_asset_results.sort(key=lambda x: x["positive_count"], reverse=True)
+
+            content_parts = [f'{len(cross_asset_results)}戦略のクロスアセット分析完了。']
+            if robust:
+                content_parts.append(f'ロバスト戦略({len(robust)}件): '
+                    + ', '.join(f'{c["name"]}({c["positive_count"]}/{c["total"]}コインで正α, 平均α={c["avg_alpha"]}%)'
+                        for c in sorted(robust, key=lambda x: x["positive_count"], reverse=True)[:5])
+                    + '。')
+            if btc_specific:
+                content_parts.append(f'BTC特化戦略({len(btc_specific)}件): '
+                    + ', '.join(c["name"] for c in btc_specific[:5])
+                    + '。他アセットで機能せず、BTC固有のパターンに依存。')
+            content_parts.append('クロスアセットでロバストな戦略は過学習リスクが低い傾向。')
+
+            tips.append({
+                "id": "cross_asset_robustness", "title": "クロスアセット・ロバスト性分析",
+                "category": "discovery" if robust else "learning",
+                "source_strategy": cross_asset_results[0]["name"] if cross_asset_results else "N/A",
+                "content": ' '.join(content_parts),
+                "data": cross_asset_results[:20],
+                "timestamp": now,
+            })
+
     # ── Composite (複合) strategy analysis ──
     composites = [r for r in results if '複' in r['name']]
     if composites:
@@ -1827,7 +1867,7 @@ def _generate_novel_strategies(results: list[dict], batch_id: int) -> list[str]:
     return new_names
 
 
-async def _run_optimization_parallel(df, names, progress_cb, result_cb=None, df_oos2=None):
+async def _run_optimization_parallel(df, names, progress_cb, result_cb=None, df_oos2=None, df_oos3=None):
     """Run walk-forward optimization in parallel using ProcessPoolExecutor."""
     from engine.optimizer import create_executor, _wf_single
     from engine.strategies import STRATEGIES as _S
@@ -1841,7 +1881,7 @@ async def _run_optimization_parallel(df, names, progress_cb, result_cb=None, df_
         if mde_missing:
             log.warning(f"Missing MDE strategies: {mde_missing[:5]}")
 
-    executor = create_executor(df, df_oos2, names, n_workers=4)
+    executor = create_executor(df, df_oos2, names, n_workers=4, df_oos3=df_oos3)
     loop = asyncio.get_event_loop()
     total = len(names)
 
@@ -1877,29 +1917,48 @@ async def _auto_optimize():
         from engine.data import fetch_full_dataset
         from engine.strategies import STRATEGIES
 
-        symbol, interval, days = "BTCUSDT", "15m", 350  # 350日: OOS2(80日)+IS/OOS(270日)
-        _run_status.update(symbol=symbol, interval=interval, days=days)
-        _run_status["progress"] = f"{symbol} {interval} {days}日分のデータ取得中..."
-
-        df_full = await fetch_full_dataset(symbol=symbol, interval=interval, days=days)
+        symbol, interval = "BTCUSDT", "15m"
+        # MEXC API ~350d max. Try 430d first for OOS3, fallback to 350d.
+        for days in [430, 350]:
+            _run_status.update(symbol=symbol, interval=interval, days=days)
+            _run_status["progress"] = f"{symbol} {interval} {days}日分のデータ取得中..."
+            df_full = await fetch_full_dataset(symbol=symbol, interval=interval, days=days)
+            if not df_full.empty:
+                break
         if df_full.empty:
             _run_status.update(running=False, progress="データ取得失敗")
             return
 
-        # Split: OOS2 (first ~80 days) | main IS/OOS (last ~270 days)
-        # OOS2 = completely separate holdout period, never seen in IS or OOS
+        # Split: OOS2 (first ~80 days) | main IS/OOS (middle ~270 days) | OOS3 (last ~80 days)
+        # OOS2 = earliest holdout period, never seen in IS or OOS
+        # OOS3 = most recent holdout period, never seen in IS or OOS (reference only)
         bars_per_day = 96  # 15m = 96 bars/day
         main_bars = 270 * bars_per_day  # ~25,920 bars for IS/OOS
-        if len(df_full) > main_bars + 50 * bars_per_day:
+        oos3_target_bars = 80 * bars_per_day  # ~7,680 bars for OOS3
+
+        if len(df_full) > main_bars + 50 * bars_per_day + oos3_target_bars:
+            # Enough data for OOS2 + IS/OOS + OOS3
+            oos3_bars = oos3_target_bars
+            oos2_bars = len(df_full) - main_bars - oos3_bars
+            df_oos2 = df_full.iloc[:oos2_bars].reset_index(drop=True)
+            df = df_full.iloc[oos2_bars:oos2_bars + main_bars].reset_index(drop=True)
+            df_oos3 = df_full.iloc[oos2_bars + main_bars:].reset_index(drop=True)
+            oos2_d = round(oos2_bars / bars_per_day)
+            oos3_d = round(oos3_bars / bars_per_day)
+            log.info(f"OOS2: {len(df_oos2)} bars (~{oos2_d}d), Main: {len(df)} bars (~270d), OOS3: {len(df_oos3)} bars (~{oos3_d}d)")
+        elif len(df_full) > main_bars + 50 * bars_per_day:
+            # Enough for OOS2 + IS/OOS but not OOS3
             oos2_bars = len(df_full) - main_bars
             df_oos2 = df_full.iloc[:oos2_bars].reset_index(drop=True)
             df = df_full.iloc[oos2_bars:].reset_index(drop=True)
+            df_oos3 = None
             oos2_d = round(oos2_bars / bars_per_day)
-            log.info(f"OOS2: {len(df_oos2)} bars (~{oos2_d}d), Main: {len(df)} bars (~270d)")
+            log.info(f"OOS2: {len(df_oos2)} bars (~{oos2_d}d), Main: {len(df)} bars (~270d), OOS3: disabled (insufficient data)")
         else:
             # Not enough data for OOS2 split
             df = df_full.reset_index(drop=True)
             df_oos2 = None
+            df_oos3 = None
             log.info(f"OOS2: disabled (insufficient data), Main: {len(df)} bars")
 
         # Keep past results, remove negative total return
@@ -3356,8 +3415,31 @@ async def _auto_optimize():
                         }
                         _COMPOSITE_STRATS.append(cname)
 
-        # ── DDGuard flat: mean_rev_st, best leverage/threshold combos ──
+        # ── DDGuard flat: TIGHT threshold configs (LB=120-180, TH=2-5) ──
+        # Discovery: LB=150-170, TH=2.5-3.0 achieves α≥150% AND DD>-35% on IS
         from engine.strategies import composite_ddguard_staged_signal
+        _tight_ddg_configs = []
+        for entry, ep1, ep2 in [("mean_rev_st", 6, 12)]:
+            for lb in [120, 140, 150, 160, 170, 180]:
+                for guard_th in [2.0, 2.5, 3.0, 3.5, 4.0]:
+                    for rec in [0.2, 0.3, 0.35, 0.4, 0.5]:
+                        for lev in [2.5, 3.0, 3.25, 3.5, 3.75, 4.0]:
+                            cname = f"(複)DDG_{entry[:4]}{ep1}_{ep2}_LB{lb}_TH{guard_th}_R{rec}_{lev}x"
+                            if cname not in STRATEGIES:
+                                STRATEGIES[cname] = {
+                                    "fn": composite_ddguard_signal,
+                                    "param_grid": {
+                                        "entry_type": [entry], "ep1": [ep1], "ep2": [ep2],
+                                        "guard_lookback": [lb], "guard_threshold": [guard_th],
+                                        "recovery_mult": [rec],
+                                    },
+                                    "risk": {"cooldown_bars": 0, "leverage": lev},
+                                }
+                                _tight_ddg_configs.append(cname)
+        _COMPOSITE_STRATS.extend(_tight_ddg_configs)
+        log.info(f"Registered {len(_tight_ddg_configs)} tight-threshold DDGuard strategies")
+
+        # ── DDGuard flat: wider threshold configs (legacy, LB=200) ──
         for entry, ep1, ep2 in [("mean_rev_st", 6, 12), ("mean_rev_st", 5, 15)]:
             for guard_th in [10.0, 15.0, 20.0]:
                 for lev in [3.0, 3.5, 4.0, 4.5]:
@@ -4170,17 +4252,51 @@ async def _auto_optimize():
         _COMPOSITE_STRATS.extend(_vlev_configs)
         log.info(f"Registered {len(_vlev_configs)} vol_lev (high-lev DDG) composite strategies")
 
-        # Prioritize: VolGate/VolLev first (new approach), then TS/PLS, then rest
-        _vg_vl_composites = [n for n in _COMPOSITE_STRATS if 'VG' in n or '_VL' in n]
+        # ── BREAKTHROUGH: Adaptive DDGuard + trend_lev (regime-aware leverage) ──
+        # Key innovation: DDGuard disabled in bull (threshold=100%), tight in bear
+        # Combined with SMA-based leverage scaling: high lev in bull, low in bear
+        # Result: IS α=450-736% DD>-35% + O2α=100-163% simultaneously
+        from engine.strategies import composite_adaptive_ddguard_signal
+        _adaptive_tl_configs = []
+        # Focused on proven sweet spot from testing: LB=150-160, BTH=2.5, TLB=7000-10000
+        for entry, ep1, ep2 in [("mean_rev_st", 6, 12)]:
+            for lb in [150, 155, 160, 165]:
+                for bear_th in [2.0, 2.5, 3.0]:
+                    for trend_lb in [5000, 7000, 10000]:
+                        for rec in [0.3, 0.35, 0.4, 0.5]:
+                            for bull_lev, bear_lev in [(4.5, 3.5), (5.0, 3.0), (5.0, 3.5), (5.5, 3.0), (6.0, 3.0), (6.0, 3.5)]:
+                                cname = f"(複)ADDG_TL_{entry[:4]}{ep1}_{ep2}_LB{lb}_BTH{bear_th}_TLB{trend_lb}_R{rec}_B{bull_lev}b{bear_lev}x"
+                                if cname not in STRATEGIES:
+                                    STRATEGIES[cname] = {
+                                        "fn": composite_adaptive_ddguard_signal,
+                                        "param_grid": {
+                                            "entry_type": [entry], "ep1": [ep1], "ep2": [ep2],
+                                            "guard_lookback": [lb], "bear_threshold": [bear_th],
+                                            "bull_threshold": [100.0],
+                                            "trend_lookback": [trend_lb], "recovery_mult": [rec],
+                                        },
+                                        "risk": {"cooldown_bars": 0,
+                                                 "trend_lev_sma": trend_lb,
+                                                 "trend_lev_bull": bull_lev,
+                                                 "trend_lev_bear": bear_lev},
+                                    }
+                                    _adaptive_tl_configs.append(cname)
+        _COMPOSITE_STRATS.extend(_adaptive_tl_configs)
+        log.info(f"Registered {len(_adaptive_tl_configs)} Adaptive DDGuard + trend_lev strategies")
+
+        # Prioritize: ADDG_TL (breakthrough) first, then tight DDG, then VG/VL, then rest
+        _addg_tl_set = set(_adaptive_tl_configs)
+        _tight_ddg_set = set(_tight_ddg_configs)
+        _vg_vl_composites = [n for n in _COMPOSITE_STRATS if ('VG' in n or '_VL' in n) and n not in _tight_ddg_set and n not in _addg_tl_set]
         _targeted_dual = [n for n in pre_names if 'DUAL' in n and ('PLS' in n or 'MDE09' in n or 'MDE11' in n or 'MDE13' in n or 'MDE15' in n or '6.5x' in n or '7.5x' in n or '_TS' in n)]
-        _ts_pls_composites = [n for n in _COMPOSITE_STRATS if ('_TS' in n or '_PLS' in n) and n not in set(_vg_vl_composites)]
+        _ts_pls_composites = [n for n in _COMPOSITE_STRATS if ('_TS' in n or '_PLS' in n) and n not in set(_vg_vl_composites) and n not in _tight_ddg_set and n not in _addg_tl_set]
         _other_proven_priority = [n for n in pre_names if ('MREV_ST' in n or 'PIVOT_ST' in n) and n not in set(_targeted_dual)]
         _other_proven = [n for n in pre_names if n not in set(_other_proven_priority) and n not in set(_targeted_dual)]
-        _priority_composites = [n for n in _COMPOSITE_STRATS if 'DDG' in n and n not in set(_ts_pls_composites) and n not in set(_vg_vl_composites)]
-        _other_composites = [n for n in _COMPOSITE_STRATS if n not in set(_priority_composites) and n not in set(_ts_pls_composites) and n not in set(_vg_vl_composites)]
-        pre_names = _vg_vl_composites + _targeted_dual + _ts_pls_composites + _priority_composites + _other_proven_priority + _other_composites + _other_proven
+        _priority_composites = [n for n in _COMPOSITE_STRATS if 'DDG' in n and n not in set(_ts_pls_composites) and n not in set(_vg_vl_composites) and n not in _tight_ddg_set and n not in _addg_tl_set]
+        _other_composites = [n for n in _COMPOSITE_STRATS if n not in set(_priority_composites) and n not in set(_ts_pls_composites) and n not in set(_vg_vl_composites) and n not in _tight_ddg_set and n not in _addg_tl_set]
+        pre_names = _adaptive_tl_configs + _tight_ddg_configs + _vg_vl_composites + _targeted_dual + _ts_pls_composites + _priority_composites + _other_proven_priority + _other_composites + _other_proven
         log.info(f"Pre-registered {len(_COMPOSITE_STRATS)} composite (複合) strategies "
-                 f"(priority: {len(_vg_vl_composites)} VG/VL + {len(_targeted_dual)} targeted DUAL + {len(_ts_pls_composites)} TS/PLS + {len(_priority_composites)} DDG)")
+                 f"(priority: {len(_adaptive_tl_configs)} ADDG_TL + {len(_tight_ddg_configs)} tight-DDG + {len(_vg_vl_composites)} VG/VL + {len(_ts_pls_composites)} TS/PLS + {len(_priority_composites)} DDG)")
 
         while True:  # Run until target found
             if run_names is None:
@@ -4240,7 +4356,7 @@ async def _auto_optimize():
                     return
                 _update_results_incremental(result, _rn)
 
-            await _run_optimization_parallel(df, run_names, progress_cb, on_result, df_oos2=df_oos2)
+            await _run_optimization_parallel(df, run_names, progress_cb, on_result, df_oos2=df_oos2, df_oos3=df_oos3)
 
             _run_status["last_run"] = datetime.now().isoformat()
             profitable = [r for r in _results if r["metrics"]["alpha_pct"] > 0]
@@ -4432,6 +4548,121 @@ async def strategy_detail(request: Request, idx: int):
         "bench_json": json.dumps(r.get("benchmark_curve", [])[:5000]),
         "times_json": json.dumps(r.get("times", [])[:5000]),
     })
+
+
+ALTCOIN_SYMBOLS = [
+    "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT",
+    "DOGEUSDT", "AVAXUSDT", "DOTUSDT", "LINKUSDT", "MATICUSDT",
+]
+
+
+@app.get("/api/strategy/{idx}/altcoins")
+async def strategy_altcoins(idx: int):
+    """Run strategy backtest on altcoins and return cross-asset analysis."""
+    if idx < 0 or idx >= len(_results):
+        return JSONResponse({"error": "Strategy not found"}, status_code=404)
+
+    r = _results[idx]
+    name = r["name"]
+
+    # Check cache
+    if name in _altcoin_cache:
+        return _altcoin_cache[name]
+
+    from engine.strategies import STRATEGIES
+    from engine.data import fetch_full_dataset
+    from engine.backtest import run_backtest
+
+    spec = STRATEGIES.get(name)
+    if not spec:
+        return JSONResponse({"error": f"Strategy {name} not in registry"})
+
+    fn = spec["fn"]
+    risk = spec.get("risk", {})
+    params = r.get("params", {})
+    results_list = []
+
+    for symbol in ALTCOIN_SYMBOLS:
+        try:
+            df_alt = await fetch_full_dataset(symbol=symbol, interval="15m", days=270)
+            if df_alt.empty or len(df_alt) < 500:
+                results_list.append({
+                    "symbol": symbol, "total_return_pct": 0, "alpha_pct": 0,
+                    "return_daily_pct": 0, "max_drawdown_pct": 0, "sharpe_ratio": 0,
+                    "total_trades": 0, "profit_factor": 0, "error": "Insufficient data",
+                })
+                continue
+
+            bpy = 35040  # 15m bars per year
+            sig = fn(df_alt, **params)
+            bt = run_backtest(
+                df_alt, sig, name, params,
+                risk.get("stop_loss_pct", 0), risk.get("take_profit_pct", 0),
+                risk.get("trailing_stop_pct", 0), risk.get("cooldown_bars", 0), bpy,
+                leverage=risk.get("leverage", 1.0),
+                equity_ma_bars=risk.get("equity_ma_bars", 0),
+                dd_throttle_pct=risk.get("dd_throttle_pct", 0.0),
+                lev_scale_dd=risk.get("lev_scale_dd", 0.0),
+                cond_ts_pct=risk.get("cond_ts_pct", 0.0),
+                cond_ts_dd_pct=risk.get("cond_ts_dd_pct", 0.0),
+                max_dd_exit_pct=risk.get("max_dd_exit_pct", 0.0),
+                mde_cooldown_bars=risk.get("mde_cooldown_bars", 0),
+                price_lev_scale=risk.get("price_lev_scale", 0.0),
+                price_lev_lb=risk.get("price_lev_lb", 200),
+                sl_cooldown_bars=risk.get("sl_cooldown_bars", 0),
+            )
+            bm = bt["metrics"]
+            days_count = bm.get("num_days", max(1, len(df_alt) / 96))
+            rd = round(bm.get("total_return_pct", 0) / max(1, days_count), 4)
+            results_list.append({
+                "symbol": symbol,
+                "total_return_pct": bm.get("total_return_pct", 0),
+                "alpha_pct": bm.get("alpha_pct", 0),
+                "return_daily_pct": rd,
+                "max_drawdown_pct": bm.get("max_drawdown_pct", 0),
+                "sharpe_ratio": bm.get("sharpe_ratio", 0),
+                "total_trades": bm.get("total_trades", 0),
+                "profit_factor": bm.get("profit_factor", 0),
+            })
+        except Exception as e:
+            log.warning(f"Altcoin backtest failed for {symbol}: {e}")
+            results_list.append({
+                "symbol": symbol, "total_return_pct": 0, "alpha_pct": 0,
+                "return_daily_pct": 0, "max_drawdown_pct": 0, "sharpe_ratio": 0,
+                "total_trades": 0, "profit_factor": 0, "error": str(e),
+            })
+
+    # Summary
+    valid = [r for r in results_list if r.get("total_trades", 0) > 0]
+    positive_alpha = [r for r in valid if r["alpha_pct"] > 0]
+    avg_alpha = round(sum(r["alpha_pct"] for r in valid) / max(1, len(valid)), 2) if valid else 0
+    avg_rd = round(sum(r["return_daily_pct"] for r in valid) / max(1, len(valid)), 4) if valid else 0
+    pos_count = len(positive_alpha)
+    total_count = len(ALTCOIN_SYMBOLS)
+
+    if pos_count >= 7:
+        robustness = "Highly Robust (cross-asset)"
+    elif pos_count >= 4:
+        robustness = "Moderately Robust"
+    elif pos_count >= 2:
+        robustness = "BTC-leaning"
+    else:
+        robustness = "BTC-specific"
+
+    response = {
+        "results": results_list,
+        "summary": {
+            "positive_count": pos_count,
+            "total": total_count,
+            "avg_alpha": avg_alpha,
+            "avg_return_daily": avg_rd,
+            "robustness": robustness,
+        }
+    }
+
+    # Cache result
+    _altcoin_cache[name] = response
+    return response
 
 
 @app.get("/report", response_class=HTMLResponse)

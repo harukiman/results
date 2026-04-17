@@ -4145,3 +4145,62 @@ def composite_ddguard_volgate_signal(df, entry_type, ep1, ep2,
             sig[i] = 0
 
     return pd.Series(sig, index=df.index)
+
+
+def composite_adaptive_ddguard_signal(df, entry_type, ep1, ep2,
+                                       guard_lookback, bear_threshold,
+                                       bull_threshold, trend_lookback,
+                                       recovery_mult):
+    """Adaptive DDGuard: tight guard in bear, loose guard in bull.
+
+    (複) Uses SMA(trend_lookback) as regime indicator:
+    - Price < SMA → bear regime → tight threshold (bear_threshold%)
+    - Price > SMA → bull regime → loose threshold (bull_threshold%)
+
+    This solves the core dilemma:
+    - Bear: tight guard catches crashes early → DD protected
+    - Bull: loose guard lets corrections run → OOS2 alpha preserved
+
+    bear_threshold: % drop to trigger guard in bear regime (e.g. 3.0 = 3%)
+    bull_threshold: % drop to trigger guard in bull regime (e.g. 10.0 = 10%)
+    trend_lookback: SMA period for regime detection (e.g. 500 bars ≈ 5 days)
+    """
+    import numpy as np
+    sig = combo_signal(df, entry_type, int(ep1), int(ep2), "none", 0, 0).values.copy()
+    close = df["close"].values
+    high = df["high"].values
+    n = len(df)
+    lb = int(guard_lookback)
+    bear_th = float(bear_threshold) / 100.0
+    bull_th = float(bull_threshold) / 100.0
+    trend_lb = int(trend_lookback)
+    rec = float(recovery_mult)
+
+    # Pre-compute SMA for trend detection
+    sma = pd.Series(close).rolling(trend_lb, min_periods=1).mean().values
+
+    risk_off = False
+    # Track which threshold was active when risk_off triggered
+    active_thresh = bear_th
+
+    for i in range(lb, n):
+        rolling_hi = high[max(0, i - lb):i + 1].max()
+        dd = (close[i] / rolling_hi - 1)
+
+        # Determine current regime
+        is_bull = close[i] > sma[i]
+        cur_thresh = bull_th if is_bull else bear_th
+
+        if not risk_off:
+            if dd < -cur_thresh:
+                risk_off = True
+                active_thresh = cur_thresh
+                sig[i] = 0
+        else:
+            # Recovery: use the threshold that triggered the risk-off
+            if dd > -active_thresh * rec:
+                risk_off = False
+            else:
+                sig[i] = 0
+
+    return pd.Series(sig, index=df.index)

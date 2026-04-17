@@ -12,10 +12,58 @@
 
 <div class="card">
   <div class="strat-header">
-    <h1>{{ r.name }} <span class="grade grade-{{ r.grade }}">{{ r.grade }}</span></h1>
+    <h1>{{ r.name }} <span class="grade grade-{{ r.grade }}">{{ r.grade }}</span>
+      {% if r.strategy_type is defined and r.strategy_type == 'utility' %}<span style="font-size:0.7rem;background:var(--green);color:#fff;padding:2px 8px;border-radius:4px;margin-left:8px">Utility</span>{% endif %}
+      {% if r.strategy_type is defined and r.strategy_type == 'unique' %}<span style="font-size:0.7rem;background:var(--accent);color:#fff;padding:2px 8px;border-radius:4px;margin-left:8px">Unique</span>{% endif %}
+      {% if r.round is defined and r.round > 1 %}<span style="font-size:0.65rem;background:var(--accent);color:#fff;padding:1px 5px;border-radius:3px;margin-left:8px">R{{ r.round }}</span>{% endif %}
+    </h1>
   </div>
   <p style="color:var(--dim);margin-bottom:12px">{{ desc }}</p>
   <p style="font-size:0.85rem;color:var(--dim)">Params: {{ r.params }}</p>
+</div>
+
+<!-- Summary overview: key metrics at a glance -->
+{% set m = r.metrics %}
+{% set wf = r.walkforward if r.walkforward is defined and r.walkforward else {} %}
+{% set oos_m = wf.oos_metrics if wf and wf.oos_metrics is defined else {} %}
+{% set oos2_m = wf.oos2_metrics if wf and wf.oos2_metrics is defined and wf.oos2_metrics else None %}
+{% set oos3_m = wf.oos3_metrics if wf and wf.oos3_metrics is defined and wf.oos3_metrics else None %}
+<div class="card" style="border:1px solid var(--accent)">
+  <h2 style="margin-top:0">Summary Overview</h2>
+  <div class="grid grid-2" style="gap:4px">
+    <div>
+      <div class="metric-row"><span class="metric-label">Alpha (IS)</span><span class="metric-value {% if m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ m.alpha_pct }}%</span></div>
+      <div class="metric-row"><span class="metric-label">Return/day (IS)</span><span class="metric-value {% if m.get('return_daily_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ m.get('return_daily_pct', 0) }}%</span></div>
+      <div class="metric-row"><span class="metric-label">Total Return</span><span class="metric-value {% if m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ m.total_return_pct }}%</span></div>
+      <div class="metric-row"><span class="metric-label">Benchmark (BTC)</span><span class="metric-value">{{ m.benchmark_return_pct }}%</span></div>
+      <div class="metric-row"><span class="metric-label">Sharpe</span><span class="metric-value">{{ m.sharpe_ratio }}</span></div>
+      <div class="metric-row"><span class="metric-label">Max DD</span><span class="metric-value negative">{{ m.max_drawdown_pct }}%</span></div>
+      <div class="metric-row"><span class="metric-label">Calmar</span><span class="metric-value">{{ m.get('calmar_ratio', 0) }}</span></div>
+      <div class="metric-row"><span class="metric-label">Trades</span><span class="metric-value" {% if m.total_trades < 50 %}style="color:var(--red)"{% endif %}>{{ m.total_trades }}</span></div>
+      <div class="metric-row"><span class="metric-label">PF</span><span class="metric-value">{{ m.profit_factor }}</span></div>
+      <div class="metric-row"><span class="metric-label">Equity R²</span><span class="metric-value">{{ r.r2 if r.r2 is defined else '-' }}</span></div>
+    </div>
+    <div>
+      {% if wf %}
+      <div class="metric-row" style="border-bottom:1px solid var(--accent)"><span class="metric-label" style="font-weight:600">Walk-Forward</span><span class="metric-value"></span></div>
+      <div class="metric-row"><span class="metric-label">PBO</span><span class="metric-value {% if wf.pbo_score is defined and wf.pbo_score < 0.3 %}positive{% elif wf.pbo_score is defined and wf.pbo_score >= 0.5 %}negative{% endif %}">{{ wf.pbo_score if wf.pbo_score is defined else '-' }}</span></div>
+      <div class="metric-row"><span class="metric-label">OOS Alpha</span><span class="metric-value {% if oos_m and oos_m.get('alpha_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ oos_m.get('alpha_pct', '-') if oos_m else '-' }}{% if oos_m and oos_m.get('alpha_pct') is not none %}%{% endif %}</span></div>
+      <div class="metric-row"><span class="metric-label">OOS Ret/day</span><span class="metric-value {% if oos_m and oos_m.get('return_daily_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ oos_m.get('return_daily_pct', '-') if oos_m else '-' }}{% if oos_m and oos_m.get('return_daily_pct') is not none %}%{% endif %}</span></div>
+      {% if oos2_m %}
+      <div class="metric-row" style="border-top:1px dashed var(--accent)"><span class="metric-label">OOS2 Alpha</span><span class="metric-value {% if oos2_m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ oos2_m.alpha_pct }}%</span></div>
+      <div class="metric-row"><span class="metric-label">OOS2 Ret/day</span><span class="metric-value {% if oos2_m.return_daily_pct > 0 %}positive{% else %}negative{% endif %}">{{ oos2_m.return_daily_pct }}%</span></div>
+      <div class="metric-row"><span class="metric-label">PBO2</span><span class="metric-value {% if wf.pbo2_score is defined and wf.pbo2_score < 0.3 %}positive{% elif wf.pbo2_score is defined and wf.pbo2_score >= 0.5 %}negative{% endif %}">{{ wf.pbo2_score if wf.pbo2_score is defined else '-' }}</span></div>
+      {% endif %}
+      {% if oos3_m %}
+      <div class="metric-row" style="border-top:1px dashed var(--yellow)"><span class="metric-label">OOS3 Alpha</span><span class="metric-value {% if oos3_m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ oos3_m.alpha_pct }}%</span></div>
+      <div class="metric-row"><span class="metric-label">OOS3 Ret/day</span><span class="metric-value {% if oos3_m.return_daily_pct > 0 %}positive{% else %}negative{% endif %}">{{ oos3_m.return_daily_pct }}%</span></div>
+      <div class="metric-row"><span class="metric-label">PBO3</span><span class="metric-value {% if wf.pbo3_score is defined and wf.pbo3_score < 0.3 %}positive{% elif wf.pbo3_score is defined and wf.pbo3_score >= 0.5 %}negative{% endif %}">{{ wf.pbo3_score if wf.pbo3_score is defined else '-' }}</span></div>
+      {% endif %}
+      {% else %}
+      <div class="metric-row"><span class="metric-label" style="color:var(--dim)">Walk-forward data not available</span></div>
+      {% endif %}
+    </div>
+  </div>
 </div>
 
 <div class="card">
@@ -26,16 +74,17 @@
 <div class="grid grid-2">
   <div class="card">
     <h2>Performance Metrics</h2>
-    {% set m = r.metrics %}
     <div class="metric-row"><span class="metric-label">Total Return</span><span class="metric-value {% if m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ m.total_return_pct }}%</span></div>
     <div class="metric-row"><span class="metric-label">Benchmark Return</span><span class="metric-value">{{ m.benchmark_return_pct }}%</span></div>
     <div class="metric-row"><span class="metric-label">Alpha</span><span class="metric-value {% if m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ m.alpha_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Return/day</span><span class="metric-value {% if m.get('return_daily_pct', 0) > 0 %}positive{% else %}negative{% endif %}">{{ m.get('return_daily_pct', 0) }}%</span></div>
     <div class="metric-row"><span class="metric-label">Sharpe Ratio</span><span class="metric-value">{{ m.sharpe_ratio }}</span></div>
     <div class="metric-row"><span class="metric-label">Sortino Ratio</span><span class="metric-value">{{ m.sortino_ratio }}</span></div>
     <div class="metric-row"><span class="metric-label">Max Drawdown</span><span class="metric-value negative">{{ m.max_drawdown_pct }}%</span></div>
-    <div class="metric-row"><span class="metric-label">Calmar Ratio</span><span class="metric-value">{{ m.calmar_ratio }}</span></div>
+    <div class="metric-row"><span class="metric-label">Calmar Ratio</span><span class="metric-value">{{ m.get('calmar_ratio', 0) }}</span></div>
     <div class="metric-row"><span class="metric-label">Profit Factor</span><span class="metric-value">{{ m.profit_factor }}</span></div>
     <div class="metric-row"><span class="metric-label">Expectancy</span><span class="metric-value">{{ m.expectancy_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Win Rate</span><span class="metric-value">{{ m.win_rate_pct }}%</span></div>
   </div>
   <div class="card">
     <h2>Trade Statistics</h2>
@@ -43,7 +92,43 @@
     <div class="metric-row"><span class="metric-label">Win Rate</span><span class="metric-value">{{ m.win_rate_pct }}%</span></div>
     <div class="metric-row"><span class="metric-label">Avg Win</span><span class="metric-value positive">{{ m.avg_win_pct }}%</span></div>
     <div class="metric-row"><span class="metric-label">Avg Loss</span><span class="metric-value negative">{{ m.avg_loss_pct }}%</span></div>
+    {% if oos2_m %}
+    <h3 style="margin-top:12px;margin-bottom:4px;border-top:1px solid var(--border);padding-top:8px">OOS2 Details (Earliest Holdout)</h3>
+    <div class="metric-row"><span class="metric-label">Total Return</span><span class="metric-value {% if oos2_m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ oos2_m.total_return_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">BTC Return</span><span class="metric-value">{{ oos2_m.benchmark_return_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Max DD</span><span class="metric-value negative">{{ oos2_m.max_drawdown_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Sharpe</span><span class="metric-value">{{ oos2_m.sharpe_ratio }}</span></div>
+    <div class="metric-row"><span class="metric-label">Trades</span><span class="metric-value">{{ oos2_m.total_trades }}</span></div>
+    <div class="metric-row"><span class="metric-label">Days</span><span class="metric-value">{{ oos2_m.num_days }}</span></div>
+    {% endif %}
+    {% if oos3_m %}
+    <h3 style="margin-top:12px;margin-bottom:4px;border-top:1px solid var(--yellow);padding-top:8px">OOS3 Details (Most Recent Holdout)</h3>
+    <div class="metric-row"><span class="metric-label">Total Return</span><span class="metric-value {% if oos3_m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ oos3_m.total_return_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">BTC Return</span><span class="metric-value">{{ oos3_m.benchmark_return_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Max DD</span><span class="metric-value negative">{{ oos3_m.max_drawdown_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Sharpe</span><span class="metric-value">{{ oos3_m.sharpe_ratio }}</span></div>
+    <div class="metric-row"><span class="metric-label">Trades</span><span class="metric-value">{{ oos3_m.total_trades }}</span></div>
+    <div class="metric-row"><span class="metric-label">Days</span><span class="metric-value">{{ oos3_m.num_days }}</span></div>
+    {% endif %}
   </div>
+</div>
+
+<!-- Altcoin Cross-Asset Analysis -->
+<div class="card" id="altcoinSection">
+  <h2>Cross-Asset Analysis (Altcoins)</h2>
+  <div id="altcoinLoading" style="text-align:center;padding:20px;color:var(--dim)">Loading altcoin analysis...</div>
+  <div id="altcoinResults" style="display:none">
+    <div style="overflow-x:auto">
+      <table id="altcoinTable">
+        <thead><tr>
+          <th>Symbol</th><th>Return%</th><th>Alpha%</th><th>Ret/day%</th>
+          <th>MaxDD%</th><th>Sharpe</th><th>Trades</th><th>PF</th>
+        </tr></thead>
+        <tbody id="altcoinBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div id="altcoinError" style="display:none;color:var(--red);text-align:center;padding:20px"></div>
 </div>
 
 <div class="card">
@@ -95,6 +180,53 @@ trades.slice(-50).reverse().forEach(t => {
     <td class="${cls}">${t.pnl_pct}%</td>
   </tr>`;
 });
+
+// Altcoin analysis (async)
+(async function loadAltcoins() {
+  try {
+    const resp = await fetch('/api/strategy/{{ idx }}/altcoins');
+    if (!resp.ok) throw new Error('API error: ' + resp.status);
+    const data = await resp.json();
+    if (data.error) {
+      document.getElementById('altcoinLoading').style.display = 'none';
+      document.getElementById('altcoinError').style.display = '';
+      document.getElementById('altcoinError').textContent = data.error;
+      return;
+    }
+    const atbody = document.getElementById('altcoinBody');
+    data.results.forEach(a => {
+      const cls_r = a.total_return_pct > 0 ? 'positive' : 'negative';
+      const cls_a = a.alpha_pct > 0 ? 'positive' : 'negative';
+      const cls_rd = a.return_daily_pct > 0 ? 'positive' : 'negative';
+      atbody.innerHTML += `<tr>
+        <td style="text-align:left;font-weight:600">${a.symbol}</td>
+        <td class="${cls_r}">${a.total_return_pct}%</td>
+        <td class="${cls_a}">${a.alpha_pct}%</td>
+        <td class="${cls_rd}">${a.return_daily_pct}%</td>
+        <td class="negative">${a.max_drawdown_pct}%</td>
+        <td>${a.sharpe_ratio}</td>
+        <td>${a.total_trades}</td>
+        <td>${a.profit_factor}</td>
+      </tr>`;
+    });
+    document.getElementById('altcoinLoading').style.display = 'none';
+    document.getElementById('altcoinResults').style.display = '';
+    // Summary
+    if (data.summary) {
+      const sumDiv = document.createElement('div');
+      sumDiv.style.cssText = 'margin-top:12px;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:0.85rem';
+      sumDiv.innerHTML = `<strong>Cross-Asset Summary:</strong> ${data.summary.positive_count}/${data.summary.total} coins with positive alpha. `
+        + `Avg Alpha: <span class="${data.summary.avg_alpha > 0 ? 'positive' : 'negative'}">${data.summary.avg_alpha}%</span>, `
+        + `Avg Return/day: <span class="${data.summary.avg_return_daily > 0 ? 'positive' : 'negative'}">${data.summary.avg_return_daily}%</span>. `
+        + `Robustness: <strong>${data.summary.robustness}</strong>`;
+      document.getElementById('altcoinResults').appendChild(sumDiv);
+    }
+  } catch (e) {
+    document.getElementById('altcoinLoading').style.display = 'none';
+    document.getElementById('altcoinError').style.display = '';
+    document.getElementById('altcoinError').textContent = 'Failed to load altcoin analysis: ' + e.message;
+  }
+})();
 </script>
 </body>
 </html>
