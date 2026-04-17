@@ -181,24 +181,26 @@ trades.slice(-50).reverse().forEach(t => {
   </tr>`;
 });
 
-// Altcoin analysis (async)
+// Altcoin analysis (async with polling)
 (async function loadAltcoins() {
-  try {
+  const loadEl = document.getElementById('altcoinLoading');
+  const resEl = document.getElementById('altcoinResults');
+  const errEl = document.getElementById('altcoinError');
+  const bodyEl = document.getElementById('altcoinBody');
+
+  async function fetchAltcoins() {
     const resp = await fetch('/api/strategy/{{ idx }}/altcoins');
     if (!resp.ok) throw new Error('API error: ' + resp.status);
-    const data = await resp.json();
-    if (data.error) {
-      document.getElementById('altcoinLoading').style.display = 'none';
-      document.getElementById('altcoinError').style.display = '';
-      document.getElementById('altcoinError').textContent = data.error;
-      return;
-    }
-    const atbody = document.getElementById('altcoinBody');
+    return await resp.json();
+  }
+
+  function renderResults(data) {
+    bodyEl.innerHTML = '';
     data.results.forEach(a => {
       const cls_r = a.total_return_pct > 0 ? 'positive' : 'negative';
       const cls_a = a.alpha_pct > 0 ? 'positive' : 'negative';
       const cls_rd = a.return_daily_pct > 0 ? 'positive' : 'negative';
-      atbody.innerHTML += `<tr>
+      bodyEl.innerHTML += `<tr>
         <td style="text-align:left;font-weight:600">${a.symbol}</td>
         <td class="${cls_r}">${a.total_return_pct}%</td>
         <td class="${cls_a}">${a.alpha_pct}%</td>
@@ -209,22 +211,65 @@ trades.slice(-50).reverse().forEach(t => {
         <td>${a.profit_factor}</td>
       </tr>`;
     });
-    document.getElementById('altcoinLoading').style.display = 'none';
-    document.getElementById('altcoinResults').style.display = '';
-    // Summary
+    loadEl.style.display = 'none';
+    resEl.style.display = '';
     if (data.summary) {
+      const existing = resEl.querySelector('.altcoin-summary');
+      if (existing) existing.remove();
       const sumDiv = document.createElement('div');
+      sumDiv.className = 'altcoin-summary';
       sumDiv.style.cssText = 'margin-top:12px;padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;font-size:0.85rem';
       sumDiv.innerHTML = `<strong>Cross-Asset Summary:</strong> ${data.summary.positive_count}/${data.summary.total} coins with positive alpha. `
         + `Avg Alpha: <span class="${data.summary.avg_alpha > 0 ? 'positive' : 'negative'}">${data.summary.avg_alpha}%</span>, `
         + `Avg Return/day: <span class="${data.summary.avg_return_daily > 0 ? 'positive' : 'negative'}">${data.summary.avg_return_daily}%</span>. `
         + `Robustness: <strong>${data.summary.robustness}</strong>`;
-      document.getElementById('altcoinResults').appendChild(sumDiv);
+      resEl.appendChild(sumDiv);
+    }
+  }
+
+  try {
+    let data = await fetchAltcoins();
+    // If computing, poll every 10 seconds
+    if (data.status === 'computing') {
+      loadEl.textContent = data.message || 'Computing altcoin analysis...';
+      let retries = 0;
+      const maxRetries = 12; // 2 minutes max
+      const poll = setInterval(async () => {
+        retries++;
+        try {
+          data = await fetchAltcoins();
+          if (data.status !== 'computing') {
+            clearInterval(poll);
+            if (data.error) {
+              loadEl.style.display = 'none';
+              errEl.style.display = '';
+              errEl.textContent = data.error;
+            } else {
+              renderResults(data);
+            }
+          } else {
+            loadEl.textContent = `Computing... (${retries * 10}s)`;
+          }
+        } catch (e) {
+          if (retries >= maxRetries) {
+            clearInterval(poll);
+            loadEl.style.display = 'none';
+            errEl.style.display = '';
+            errEl.textContent = 'Altcoin analysis timed out. Try refreshing later.';
+          }
+        }
+      }, 10000);
+    } else if (data.error) {
+      loadEl.style.display = 'none';
+      errEl.style.display = '';
+      errEl.textContent = data.error;
+    } else {
+      renderResults(data);
     }
   } catch (e) {
-    document.getElementById('altcoinLoading').style.display = 'none';
-    document.getElementById('altcoinError').style.display = '';
-    document.getElementById('altcoinError').textContent = 'Failed to load altcoin analysis: ' + e.message;
+    loadEl.style.display = 'none';
+    errEl.style.display = '';
+    errEl.textContent = 'Failed to load altcoin analysis: ' + e.message;
   }
 })();
 </script>

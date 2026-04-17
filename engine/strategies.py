@@ -4261,3 +4261,65 @@ def composite_addg_volscaled_signal(df, entry_type, ep1, ep2,
                 sig[i] = 0
 
     return pd.Series(sig, index=df.index)
+
+
+def composite_addg_gradient_lev_signal(df, entry_type, ep1, ep2,
+                                        guard_lookback, bear_threshold,
+                                        trend_lookback, recovery_mult,
+                                        gradient_margin):
+    """ADDG with gradient leverage zone around SMA.
+
+    Instead of binary bull/bear regime, creates a transition zone:
+    - Deep bull (close >> SMA): full bull leverage
+    - Near SMA: interpolated leverage (reduces whipsaw DD at transitions)
+    - Deep bear (close << SMA): full bear leverage
+
+    gradient_margin: % width of transition zone (e.g. 2.0 = ±2% around SMA)
+    DDGuard: interpolated threshold — tight in bear, disabled in bull.
+    """
+    import numpy as np
+    sig = combo_signal(df, entry_type, int(ep1), int(ep2), "none", 0, 0).values.copy()
+    close = df["close"].values
+    high = df["high"].values
+    n = len(df)
+    lb = int(guard_lookback)
+    bear_th = float(bear_threshold) / 100.0
+    bull_th = 1.0  # disabled in bull
+    trend_lb = int(trend_lookback)
+    rec = float(recovery_mult)
+    margin = float(gradient_margin) / 100.0
+
+    sma = pd.Series(close).rolling(trend_lb, min_periods=1).mean().values
+
+    risk_off = False
+    active_thresh = bear_th
+
+    for i in range(lb, n):
+        rolling_hi = high[max(0, i - lb):i + 1].max()
+        dd = (close[i] / rolling_hi - 1)
+
+        # Gradient regime: 0=full bear, 1=full bull
+        if sma[i] > 0:
+            dist = (close[i] - sma[i]) / sma[i]
+        else:
+            dist = 0
+        if margin > 0:
+            regime_strength = max(0.0, min(1.0, (dist + margin) / (2 * margin)))
+        else:
+            regime_strength = 1.0 if dist > 0 else 0.0
+
+        # Interpolated threshold: tighter in bear, looser in bull
+        cur_thresh = bear_th + (bull_th - bear_th) * regime_strength
+
+        if not risk_off:
+            if dd < -cur_thresh:
+                risk_off = True
+                active_thresh = cur_thresh
+                sig[i] = 0
+        else:
+            if dd > -active_thresh * rec:
+                risk_off = False
+            else:
+                sig[i] = 0
+
+    return pd.Series(sig, index=df.index)

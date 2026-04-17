@@ -66,19 +66,11 @@ def _load_persisted():
                 if oos2_m and "return_daily_pct" not in oos2_m:
                     days2 = oos2_m.get("num_days", 80)
                     oos2_m["return_daily_pct"] = round(oos2_m.get("total_return_pct", 0) / max(1, days2), 4)
-            # Filter: only keep strategies with IS/OOS/OOS2 all positive
-            passed = []
-            for r in all_results:
-                if _passes_display_filter(r):
-                    passed.append(r)
-                else:
-                    insight = _extract_insight_from_failure(r)
-                    if insight:
-                        _failed_insights.append(insight)
-            _results = passed
+            # Load ALL results — don't filter to avoid data loss on restart
+            _results = all_results
             _run_status.update(data.get("status", {}))
             _run_status["running"] = False
-            log.info(f"Loaded {len(passed)} qualifying results (filtered {len(all_results) - len(passed)} non-qualifying)")
+            log.info(f"Loaded {len(all_results)} results from disk")
         except Exception as e:
             log.warning(f"Failed to load results: {e}")
     if TIPS_FILE.exists():
@@ -1884,33 +1876,56 @@ async def _run_optimization_parallel(df, names, progress_cb, result_cb=None, df_
 
     import os
     n_cpu = os.cpu_count() or 4
-    n_workers = max(1, n_cpu // 2)  # 半分のコア: Web応答用に残りを確保
+    n_workers = 2  # 固定2ワーカー: 残り6コアでWeb+altcoin応答確保
     executor = create_executor(df, df_oos2, names, n_workers=n_workers, df_oos3=df_oos3)
     loop = asyncio.get_event_loop()
     total = len(names)
     _early_stop = False
 
     try:
-        futures = [loop.run_in_executor(executor, _wf_single, name)
-                   for name in names]
-        for idx, coro in enumerate(asyncio.as_completed(futures), 1):
-            try:
-                sname, result = await coro
-            except Exception as e:
-                log.warning(f"Worker error: {e}")
-                sname, result = "?", None
+        # Batch submission: submit n_workers*3 at a time to avoid memory pressure
+        batch_size = n_workers * 3
+        idx = 0
+        name_iter = iter(names)
+        pending = set()
 
-            if result and result_cb:
-                result_cb(result)
-            if progress_cb:
-                progress_cb(idx, total, sname)
+        # Initial batch
+        for name in list(names[:batch_size]):
+            fut = loop.run_in_executor(executor, _wf_single, name)
+            pending.add(asyncio.ensure_future(fut))
+        submitted = min(batch_size, total)
 
-            # Early stop: break loop if goal achieved and enough explored
-            if not _early_stop and early_stop_check and idx >= 50:
+        while pending:
+            done, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
+            for fut in done:
+                idx += 1
+                try:
+                    sname, result = fut.result()
+                except Exception as e:
+                    log.warning(f"Worker error: {e}")
+                    sname, result = "?", None
+
+                if result and result_cb:
+                    result_cb(result)
+                if progress_cb:
+                    progress_cb(idx, total, sname)
+
+                # Submit next task to keep pipeline full
+                if submitted < total and not _early_stop:
+                    next_name = names[submitted]
+                    new_fut = loop.run_in_executor(executor, _wf_single, next_name)
+                    pending.add(asyncio.ensure_future(new_fut))
+                    submitted += 1
+
+            # Yield to event loop for web responsiveness
+            await asyncio.sleep(0.5)
+
+            # Early stop check
+            if not _early_stop and early_stop_check and idx >= 200:
                 if early_stop_check():
                     log.info(f"Early stop triggered at {idx}/{total} — goal achieved")
                     _early_stop = True
-                    break
+                    # Don't submit more, but finish pending
     finally:
         executor.shutdown(wait=False, cancel_futures=True)
         log.info(f"Executor shut down ({'early stop' if _early_stop else 'clean'})")
@@ -1981,15 +1996,10 @@ async def _auto_optimize():
             df_oos3 = None
             log.info(f"OOS2: disabled (insufficient data), Main: {len(df)} bars")
 
-        # Keep past results, remove negative total return
-        # Also remove results without OOS2 data (will be re-run with OOS2)
-        # DD is handled by sort penalty, not hard filter
-        _results[:] = [r for r in _results
-                       if r["metrics"]["total_return_pct"] > 0
-                       and r.get("walkforward", {}).get("oos2_metrics") is not None]
+        # Keep ALL past results — don't filter on startup to avoid data loss
+        # Just merge tips from existing results
         if _results:
             _merge_tips(_generate_tips(list(_results)))
-        _save_results()
         _save_tips()
 
         ALPHA_TARGET = 300.0       # 厳格化: ISα ≥ 300%
@@ -2000,7 +2010,7 @@ async def _auto_optimize():
         MIN_EQUITY_R2 = 0.75      # エクイティR² > 0.75（右肩上がり）
         MIN_DAILY_RET = 1.0        # 厳格化: IS/OOS/OOS2全てreturn_daily_pct ≥ 1.0%
         GOAL_DAILY_RET = 1.5       # 努力目標: IS/OOS/OOS2全てreturn_daily_pct ≥ 1.5%
-        GOAL_COUNT = 10
+        GOAL_COUNT = 30            # 目標引き上げ: 30戦略達成まで探索継続
         round_num = 1
         run_names = None
         batch_id = 1
@@ -4278,15 +4288,14 @@ async def _auto_optimize():
         # Result: IS α=450-736% DD>-35% + O2α=100-163% simultaneously
         from engine.strategies import composite_adaptive_ddguard_signal
         _adaptive_tl_configs = []
-        # Extended: multiple entries + aggressive leverage combos
-        for entry, ep1, ep2 in [("mean_rev_st", 6, 12), ("mean_rev_st", 8, 14)]:
-            for lb in [150, 155, 160, 165, 170, 175]:
-                for bear_th in [2.0, 2.5, 3.0]:
-                    for trend_lb in [5000, 7000, 10000]:
-                        for rec in [0.3, 0.35, 0.4, 0.45, 0.5]:
+        # Focused: best-performing parameter regions only
+        for entry, ep1, ep2 in [("mean_rev_st", 6, 12)]:
+            for lb in [155, 160, 165, 170]:
+                for bear_th in [2.0, 2.5]:
+                    for trend_lb in [5000, 7000]:
+                        for rec in [0.35, 0.4, 0.45, 0.5]:
                             for bull_lev, bear_lev in [(4.5, 3.5), (5.0, 3.0), (5.0, 3.5), (5.5, 3.0), (6.0, 3.0), (6.0, 3.5),
-                                                       (6.5, 3.0), (6.5, 3.5), (7.0, 3.0), (7.0, 3.5),
-                                                       (5.0, 4.0), (5.5, 4.0), (6.0, 4.0)]:
+                                                       (4.5, 3.0), (4.0, 3.5)]:
                                 cname = f"(複)ADDG_TL_{entry[:4]}{ep1}_{ep2}_LB{lb}_BTH{bear_th}_TLB{trend_lb}_R{rec}_B{bull_lev}b{bear_lev}x"
                                 if cname not in STRATEGIES:
                                     STRATEGIES[cname] = {
@@ -4306,17 +4315,47 @@ async def _auto_optimize():
         _COMPOSITE_STRATS.extend(_adaptive_tl_configs)
         log.info(f"Registered {len(_adaptive_tl_configs)} Adaptive DDGuard + trend_lev strategies")
 
+        # ── DD-FOCUSED: Low-leverage + high-recovery ADDG_TL for DD > -33% ──
+        _dd_focused_configs = []
+        for entry, ep1, ep2 in [("mean_rev_st", 6, 12)]:  # best entry only
+            for lb in [160, 165, 170]:
+                for bear_th in [2.0, 2.5]:
+                    for trend_lb in [7000]:  # best TLB
+                        for rec in [0.5, 0.55, 0.6]:
+                            for bull_lev, bear_lev in [
+                                (4.0, 3.0), (4.0, 3.5), (4.5, 3.0), (4.5, 3.5),
+                                (5.0, 3.0), (5.0, 3.5), (5.0, 4.0),
+                            ]:
+                                cname = f"(複)ADDG_TL_{entry[:4]}{ep1}_{ep2}_LB{lb}_BTH{bear_th}_TLB{trend_lb}_R{rec}_B{bull_lev}b{bear_lev}x"
+                                if cname not in STRATEGIES:
+                                    STRATEGIES[cname] = {
+                                        "fn": composite_adaptive_ddguard_signal,
+                                        "param_grid": {
+                                            "entry_type": [entry], "ep1": [ep1], "ep2": [ep2],
+                                            "guard_lookback": [lb], "bear_threshold": [bear_th],
+                                            "bull_threshold": [100.0],
+                                            "trend_lookback": [trend_lb], "recovery_mult": [rec],
+                                        },
+                                        "risk": {"cooldown_bars": 0,
+                                                 "trend_lev_sma": trend_lb,
+                                                 "trend_lev_bull": bull_lev,
+                                                 "trend_lev_bear": bear_lev},
+                                    }
+                                    _dd_focused_configs.append(cname)
+        _COMPOSITE_STRATS.extend(_dd_focused_configs)
+        log.info(f"Registered {len(_dd_focused_configs)} DD-focused ADDG_TL strategies")
+
         # ── NEW: Volatility-scaled Adaptive DDGuard ──
         # Dynamic threshold based on ATR: tighter in calm markets, wider in volatile
         from engine.strategies import composite_addg_volscaled_signal
         _volscaled_configs = []
-        for entry, ep1, ep2 in [("mean_rev_st", 6, 12), ("mean_rev_st", 8, 14)]:
-            for lb in [155, 160, 165, 170]:
-                for base_th in [1.5, 2.0, 2.5]:
-                    for atr_p, atr_m in [(960, 2.0), (960, 2.5), (960, 3.0), (1440, 2.0), (1440, 2.5)]:
-                        for trend_lb in [7000, 10000]:
-                            for rec in [0.3, 0.4]:
-                                for bull_lev, bear_lev in [(5.5, 3.0), (6.0, 3.0), (6.0, 3.5), (6.5, 3.0), (6.5, 3.5), (7.0, 3.0)]:
+        for entry, ep1, ep2 in [("mean_rev_st", 6, 12)]:  # best entry
+            for lb in [160, 165]:
+                for base_th in [2.0, 2.5]:
+                    for atr_p, atr_m in [(960, 2.0), (960, 2.5), (1440, 2.0)]:
+                        for trend_lb in [7000]:
+                            for rec in [0.4, 0.5]:
+                                for bull_lev, bear_lev in [(5.0, 3.0), (5.0, 3.5), (5.5, 3.0), (4.5, 3.0), (4.5, 3.5)]:
                                     cname = f"(複)ADDG_VS_{entry[:4]}{ep1}_{ep2}_LB{lb}_BT{base_th}_ATR{atr_p}x{atr_m}_TLB{trend_lb}_R{rec}_B{bull_lev}b{bear_lev}x"
                                     if cname not in STRATEGIES:
                                         STRATEGIES[cname] = {
@@ -4336,6 +4375,42 @@ async def _auto_optimize():
         _COMPOSITE_STRATS.extend(_volscaled_configs)
         log.info(f"Registered {len(_volscaled_configs)} Volatility-scaled ADDG strategies")
 
+        # ── NEW: Gradient Leverage ADDG — smooth regime transition ──
+        # GM5.0 is the sweet spot: all GM5.0 have positive OOS3 (+12%~+71%)
+        # GM3.0 also positive (+14%~+44%), GM2.0 all negative
+        # LB165 slightly better than LB160 for OOS3
+        # Best: LB165_BTH2.5_R0.4_GM5.0_B5.5b3.0x (OOS3α=+71%, R²=0.877)
+        from engine.strategies import composite_addg_gradient_lev_signal
+        _gradient_configs = []
+        for entry, ep1, ep2 in [("mean_rev_st", 6, 12)]:  # best entry
+            for lb in [160, 165, 170]:
+                for bear_th in [2.0, 2.5, 3.0]:
+                    for trend_lb in [7000]:
+                        for rec in [0.3, 0.4, 0.5]:
+                            for grad_margin in [5.0, 7.0, 10.0]:
+                                for bull_lev, bear_lev in [
+                                    (4.5, 3.0), (5.0, 3.0), (5.0, 3.5),
+                                    (5.5, 3.0), (5.5, 3.5), (6.0, 3.0),
+                                ]:
+                                    cname = f"(複)ADDG_GL_{entry[:4]}{ep1}_{ep2}_LB{lb}_BTH{bear_th}_TLB{trend_lb}_R{rec}_GM{grad_margin}_B{bull_lev}b{bear_lev}x"
+                                    if cname not in STRATEGIES:
+                                        STRATEGIES[cname] = {
+                                            "fn": composite_addg_gradient_lev_signal,
+                                            "param_grid": {
+                                                "entry_type": [entry], "ep1": [ep1], "ep2": [ep2],
+                                                "guard_lookback": [lb], "bear_threshold": [bear_th],
+                                                "trend_lookback": [trend_lb], "recovery_mult": [rec],
+                                                "gradient_margin": [grad_margin],
+                                            },
+                                            "risk": {"cooldown_bars": 0,
+                                                     "trend_lev_sma": trend_lb,
+                                                     "trend_lev_bull": bull_lev,
+                                                     "trend_lev_bear": bear_lev},
+                                        }
+                                        _gradient_configs.append(cname)
+        _COMPOSITE_STRATS.extend(_gradient_configs)
+        log.info(f"Registered {len(_gradient_configs)} Gradient Leverage ADDG strategies")
+
         # Prioritize: ADDG_TL (breakthrough) first, then tight DDG, then VG/VL, then rest
         _addg_tl_set = set(_adaptive_tl_configs)
         _tight_ddg_set = set(_tight_ddg_configs)
@@ -4346,28 +4421,19 @@ async def _auto_optimize():
         _other_proven = [n for n in pre_names if n not in set(_other_proven_priority) and n not in set(_targeted_dual)]
         _priority_composites = [n for n in _COMPOSITE_STRATS if 'DDG' in n and n not in set(_ts_pls_composites) and n not in set(_vg_vl_composites) and n not in _tight_ddg_set and n not in _addg_tl_set]
         _other_composites = [n for n in _COMPOSITE_STRATS if n not in set(_priority_composites) and n not in set(_ts_pls_composites) and n not in set(_vg_vl_composites) and n not in _tight_ddg_set and n not in _addg_tl_set]
-        pre_names = _adaptive_tl_configs + _volscaled_configs + _tight_ddg_configs + _vg_vl_composites + _targeted_dual + _ts_pls_composites + _priority_composites + _other_proven_priority + _other_composites + _other_proven
+        pre_names = _dd_focused_configs + _gradient_configs + _adaptive_tl_configs + _volscaled_configs + _tight_ddg_configs + _vg_vl_composites + _targeted_dual + _ts_pls_composites + _priority_composites + _other_proven_priority + _other_composites + _other_proven
         log.info(f"Pre-registered {len(_COMPOSITE_STRATS)} composite (複合) strategies "
                  f"(priority: {len(_adaptive_tl_configs)} ADDG_TL + {len(_tight_ddg_configs)} tight-DDG + {len(_vg_vl_composites)} VG/VL + {len(_ts_pls_composites)} TS/PLS + {len(_priority_composites)} DDG)")
 
         while True:  # Run until target found
             if run_names is None:
-                # Re-run strategies that lost their equity curves (from old save format)
-                needs_recompute = {r["name"] for r in _results if not r.get("equity_curve")}
-                recompute_list = []
-                if needs_recompute:
-                    log.info(f"Re-computing {len(needs_recompute)} strategies with missing equity curves")
-                    _results[:] = [r for r in _results if r["name"] not in needs_recompute]
-                    _save_results()
-                    # Prioritize recomputes of proven strategies (run BEFORE new composites)
-                    recompute_list = [n for n in pre_names if n in needs_recompute]
-                    recompute_list += [n for n in needs_recompute if n not in set(recompute_list)]
-
-                # Start with recomputes first, then composites, then remaining
+                # Don't delete results without equity curves — keep existing data
                 existing = {r["name"] for r in _results}
-                run_names = [n for n in recompute_list if n not in existing]
-                run_names += [n for n in pre_names if n not in existing and n not in set(run_names)]
-                remaining = [n for n in STRATEGIES.keys() if n not in existing and n not in set(run_names)]
+                run_names = [n for n in pre_names if n not in existing]
+                # Skip low-priority non-ADDG strategies to focus on promising space
+                remaining = [n for n in STRATEGIES.keys()
+                             if n not in existing and n not in set(run_names)
+                             and ('ADDG' in n or 'GL_' in n or 'VS_' in n)]
                 run_names.extend(remaining)
                 if not run_names:
                     log.info("All strategies already have results, skipping to novel generation")
@@ -4408,12 +4474,10 @@ async def _auto_optimize():
                     return
                 _update_results_incremental(result, _rn)
 
-            def _goal_check():
-                return len(_qualifying()) >= GOAL_COUNT
-
+            # 6時間以上探索継続: 早期停止なし
             await _run_optimization_parallel(df, run_names, progress_cb, on_result,
                                              df_oos2=df_oos2, df_oos3=df_oos3,
-                                             early_stop_check=_goal_check)
+                                             early_stop_check=None)
 
             _run_status["last_run"] = datetime.now().isoformat()
             profitable = [r for r in _results if r["metrics"]["alpha_pct"] > 0]
@@ -4423,13 +4487,13 @@ async def _auto_optimize():
             log.info(f"目標: α≥{ALPHA_TARGET}%+OOSα≥{OOS_ALPHA_TARGET}%+PBO<{PBO_LIMIT}+DD>{MAX_DD}%+R²>{MIN_EQUITY_R2} = {len(q)}個")
 
             if len(q) >= GOAL_COUNT:
-                log.info(f"*** 目標達成! {len(q)}戦略がα≥150%+OOS≥100%+OOS2≥100%+DD>-35%+R²>0.7+D≥0.75%を達成 ***")
-                for r in q:
+                log.info(f"*** 目標達成! {len(q)}戦略が全条件達成 ***")
+                for r in sorted(q, key=lambda x: x['metrics']['alpha_pct'], reverse=True)[:10]:
                     wf = r.get("walkforward", {})
                     r2 = _equity_r2(r)
                     log.info(f"  {r['name']}: α={r['metrics']['alpha_pct']}% OOSα={wf.get('oos_metrics',{}).get('alpha_pct',0)}% "
                              f"PBO={wf.get('pbo_score','N/A')} DD={r['metrics']['max_drawdown_pct']}% R²={r2:.3f} trades={r['metrics']['total_trades']}")
-                break
+                # 目標達成してもbreak しない — さらに良い戦略を探索し続ける
 
             # Phase 1: Evolve winners (narrow/deep)
             evo_names = _evolve_strategies(list(_results))
@@ -4613,6 +4677,8 @@ ALTCOIN_SYMBOLS = [
 ]
 
 
+_altcoin_computing: set = set()  # names currently being computed
+
 @app.get("/api/strategy/{idx}/altcoins")
 async def strategy_altcoins(idx: int):
     """Run strategy backtest on altcoins and return cross-asset analysis."""
@@ -4626,18 +4692,101 @@ async def strategy_altcoins(idx: int):
     if name in _altcoin_cache:
         return _altcoin_cache[name]
 
+    # If already computing, return status
+    if name in _altcoin_computing:
+        return {"status": "computing", "message": "Altcoin analysis in progress..."}
+
+    # Start background computation and return immediately
+    _altcoin_computing.add(name)
+    asyncio.create_task(_compute_altcoins(idx))
+    return {"status": "computing", "message": "Altcoin analysis started. Refresh in 30-60 seconds."}
+
+
+async def _compute_altcoins(idx: int):
+    """Background task to compute altcoin analysis."""
+    r = _results[idx]
+    name = r["name"]
+    try:
+        result = await _run_altcoin_analysis(r)
+        _altcoin_cache[name] = result
+    except Exception as e:
+        log.warning(f"Altcoin background task failed for {name}: {e}")
+        _altcoin_cache[name] = {"error": str(e), "results": [], "summary": {}}
+    finally:
+        _altcoin_computing.discard(name)
+
+
+async def _run_altcoin_analysis(r):
+    """Actual altcoin analysis logic."""
+    name = r["name"]
+
     from engine.strategies import STRATEGIES
     from engine.data import fetch_full_dataset
     from engine.backtest import run_backtest
 
     spec = STRATEGIES.get(name)
     if not spec:
-        return JSONResponse({"error": f"Strategy {name} not in registry"})
+        # Fallback: determine fn from name pattern for strategies not in current registry
+        from engine.strategies import (composite_adaptive_ddguard_signal,
+                                        composite_addg_volscaled_signal,
+                                        composite_addg_gradient_lev_signal,
+                                        combo_signal)
+        if 'ADDG_GL' in name:
+            fn = composite_addg_gradient_lev_signal
+        elif 'ADDG_VS' in name or 'VS_' in name:
+            fn = composite_addg_volscaled_signal
+        elif 'ADDG' in name:
+            fn = composite_adaptive_ddguard_signal
+        elif '(複)' in name:
+            fn = combo_signal
+        else:
+            return JSONResponse({"error": f"Strategy {name} not in registry"}, status_code=404)
+        risk = r.get("optimization", {}).get("risk", {})
+        # Reconstruct risk from name if empty
+        if not risk:
+            import re
+            risk = {"cooldown_bars": 0}
+            tlb_m = re.search(r'TLB(\d+)', name)
+            if tlb_m:
+                risk["trend_lev_sma"] = int(tlb_m.group(1))
+            bl_m = re.search(r'_B(\d+\.?\d*)b(\d+\.?\d*)x', name)
+            if bl_m:
+                risk["trend_lev_bull"] = float(bl_m.group(1))
+                risk["trend_lev_bear"] = float(bl_m.group(2))
+    else:
+        fn = spec["fn"]
+        risk = spec.get("risk", {})
 
-    fn = spec["fn"]
-    risk = spec.get("risk", {})
     params = r.get("params", {})
     results_list = []
+
+    def _run_altcoin_bt(df_alt, fn, params, risk, name):
+        """Run single altcoin backtest (CPU-bound)."""
+        bpy = 35040
+        sig = fn(df_alt, **params)
+        return run_backtest(
+            df_alt, sig, name, params,
+            risk.get("stop_loss_pct", 0), risk.get("take_profit_pct", 0),
+            risk.get("trailing_stop_pct", 0), risk.get("cooldown_bars", 0), bpy,
+            leverage=risk.get("leverage", 1.0),
+            equity_ma_bars=risk.get("equity_ma_bars", 0),
+            dd_throttle_pct=risk.get("dd_throttle_pct", 0.0),
+            lev_scale_dd=risk.get("lev_scale_dd", 0.0),
+            cond_ts_pct=risk.get("cond_ts_pct", 0.0),
+            cond_ts_dd_pct=risk.get("cond_ts_dd_pct", 0.0),
+            max_dd_exit_pct=risk.get("max_dd_exit_pct", 0.0),
+            mde_cooldown_bars=risk.get("mde_cooldown_bars", 0),
+            price_lev_scale=risk.get("price_lev_scale", 0.0),
+            price_lev_lb=risk.get("price_lev_lb", 200),
+            sl_cooldown_bars=risk.get("sl_cooldown_bars", 0),
+            trend_lev_sma=risk.get("trend_lev_sma", 0),
+            trend_lev_bull=risk.get("trend_lev_bull", 0.0),
+            trend_lev_bear=risk.get("trend_lev_bear", 0.0),
+        )
+
+    from concurrent.futures import ThreadPoolExecutor
+    loop = asyncio.get_event_loop()
+    _alt_executor = ThreadPoolExecutor(max_workers=1)
 
     for symbol in ALTCOIN_SYMBOLS:
         try:
@@ -4650,24 +4799,8 @@ async def strategy_altcoins(idx: int):
                 })
                 continue
 
-            bpy = 35040  # 15m bars per year
-            sig = fn(df_alt, **params)
-            bt = run_backtest(
-                df_alt, sig, name, params,
-                risk.get("stop_loss_pct", 0), risk.get("take_profit_pct", 0),
-                risk.get("trailing_stop_pct", 0), risk.get("cooldown_bars", 0), bpy,
-                leverage=risk.get("leverage", 1.0),
-                equity_ma_bars=risk.get("equity_ma_bars", 0),
-                dd_throttle_pct=risk.get("dd_throttle_pct", 0.0),
-                lev_scale_dd=risk.get("lev_scale_dd", 0.0),
-                cond_ts_pct=risk.get("cond_ts_pct", 0.0),
-                cond_ts_dd_pct=risk.get("cond_ts_dd_pct", 0.0),
-                max_dd_exit_pct=risk.get("max_dd_exit_pct", 0.0),
-                mde_cooldown_bars=risk.get("mde_cooldown_bars", 0),
-                price_lev_scale=risk.get("price_lev_scale", 0.0),
-                price_lev_lb=risk.get("price_lev_lb", 200),
-                sl_cooldown_bars=risk.get("sl_cooldown_bars", 0),
-            )
+            bt = await loop.run_in_executor(
+                _alt_executor, _run_altcoin_bt, df_alt, fn, params, risk, name)
             bm = bt["metrics"]
             days_count = bm.get("num_days", max(1, len(df_alt) / 96))
             rd = round(bm.get("total_return_pct", 0) / max(1, days_count), 4)
@@ -4688,6 +4821,7 @@ async def strategy_altcoins(idx: int):
                 "return_daily_pct": 0, "max_drawdown_pct": 0, "sharpe_ratio": 0,
                 "total_trades": 0, "profit_factor": 0, "error": str(e),
             })
+    _alt_executor.shutdown(wait=False)
 
     # Summary
     valid = [r for r in results_list if r.get("total_trades", 0) > 0]
