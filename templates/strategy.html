@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ r.name }} — Strategy Detail</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+<div class="no-print" style="margin-bottom:12px"><a href="/">← Dashboard</a> | <a href="/report">Full Report</a></div>
+
+<div class="card">
+  <div class="strat-header">
+    <h1>{{ r.name }} <span class="grade grade-{{ r.grade }}">{{ r.grade }}</span></h1>
+  </div>
+  <p style="color:var(--dim);margin-bottom:12px">{{ desc }}</p>
+  <p style="font-size:0.85rem;color:var(--dim)">Params: {{ r.params }}</p>
+</div>
+
+<div class="card">
+  <h2>Equity Curve vs Benchmark</h2>
+  <div id="equityChart" style="width:100%;height:350px"></div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h2>Performance Metrics</h2>
+    {% set m = r.metrics %}
+    <div class="metric-row"><span class="metric-label">Total Return</span><span class="metric-value {% if m.total_return_pct > 0 %}positive{% else %}negative{% endif %}">{{ m.total_return_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Benchmark Return</span><span class="metric-value">{{ m.benchmark_return_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Alpha</span><span class="metric-value {% if m.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ m.alpha_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Sharpe Ratio</span><span class="metric-value">{{ m.sharpe_ratio }}</span></div>
+    <div class="metric-row"><span class="metric-label">Sortino Ratio</span><span class="metric-value">{{ m.sortino_ratio }}</span></div>
+    <div class="metric-row"><span class="metric-label">Max Drawdown</span><span class="metric-value negative">{{ m.max_drawdown_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Calmar Ratio</span><span class="metric-value">{{ m.calmar_ratio }}</span></div>
+    <div class="metric-row"><span class="metric-label">Profit Factor</span><span class="metric-value">{{ m.profit_factor }}</span></div>
+    <div class="metric-row"><span class="metric-label">Expectancy</span><span class="metric-value">{{ m.expectancy_pct }}%</span></div>
+  </div>
+  <div class="card">
+    <h2>Trade Statistics</h2>
+    <div class="metric-row"><span class="metric-label">Total Trades</span><span class="metric-value">{{ m.total_trades }}</span></div>
+    <div class="metric-row"><span class="metric-label">Win Rate</span><span class="metric-value">{{ m.win_rate_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Avg Win</span><span class="metric-value positive">{{ m.avg_win_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Avg Loss</span><span class="metric-value negative">{{ m.avg_loss_pct }}%</span></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Trade History (latest 50)</h2>
+  <div style="overflow-x:auto">
+  <table>
+    <thead><tr><th>Entry</th><th>Exit</th><th>Entry $</th><th>Exit $</th><th>PnL %</th></tr></thead>
+    <tbody id="tradeTable"></tbody>
+  </table>
+  </div>
+</div>
+
+<script>
+const times = {{ times_json | safe }};
+const equity = {{ equity_json | safe }};
+const bench = {{ bench_json | safe }};
+const trades = {{ trades_json | safe }};
+
+// Normalize BTC to same scale as equity curve for visual overlay
+const eqMax = Math.max(...equity);
+const eqMin = Math.min(...equity);
+const bMax = Math.max(...bench);
+const bMin = Math.min(...bench);
+// Map bench range → equity range so shapes are proportionally visible
+const benchNorm = bench.map(b => eqMin + (b - bMin) / (bMax - bMin) * (eqMax - eqMin));
+
+Plotly.newPlot('equityChart', [
+  {x: times, y: benchNorm, name: 'BTC (相対)', fill: 'tozeroy',
+   fillcolor: 'rgba(148,163,184,0.08)', line: {color: 'rgba(148,163,184,0.3)', width: 1}},
+  {x: times, y: equity, name: '{{ r.name }}', line: {color: '#3b82f6', width: 2}},
+], {
+  paper_bgcolor: '#111827', plot_bgcolor: '#111827',
+  font: {color: '#e2e8f0', size: 11},
+  margin: {l: 50, r: 20, t: 10, b: 40},
+  legend: {x: 0, y: 1, bgcolor: 'rgba(0,0,0,0)'},
+  xaxis: {gridcolor: '#1e293b'},
+  yaxis: {gridcolor: '#1e293b', title: 'Equity'},
+}, {responsive: true});
+
+// Trade table
+const tbody = document.getElementById('tradeTable');
+trades.slice(-50).reverse().forEach(t => {
+  const cls = t.pnl_pct > 0 ? 'positive' : 'negative';
+  tbody.innerHTML += `<tr>
+    <td>${t.entry_time.slice(0,16)}</td>
+    <td>${t.exit_time.slice(0,16)}</td>
+    <td>${t.entry_price}</td>
+    <td>${t.exit_price}</td>
+    <td class="${cls}">${t.pnl_pct}%</td>
+  </tr>`;
+});
+</script>
+</body>
+</html>

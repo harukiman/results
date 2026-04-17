@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tips & Discoveries — Crypto Strategy Lab</title>
+<link rel="stylesheet" href="/static/style.css">
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+<div class="no-print" style="margin-bottom:12px">
+  <a href="/">← Dashboard</a>
+</div>
+
+<h1>Tips & Discoveries</h1>
+<p style="color:var(--dim);margin-bottom:16px">
+  戦略分析から自動生成された発見・学習内容。flearn.pdf (金融機械学習ノートブック) の知見を適用。
+  {% if status.last_run %}最終更新: {{ status.last_run[:19] }}{% endif %}
+</p>
+
+{% if not tips %}
+<div class="card" style="text-align:center;padding:40px">
+  <p style="color:var(--dim)">最適化完了後にTipsが自動生成されます。ページを更新してください。</p>
+</div>
+{% endif %}
+
+{% for tip in tips %}
+<div class="card" style="{% if tip.category == 'warning' %}border-left:4px solid var(--red){% elif tip.category == 'discovery' %}border-left:4px solid var(--green){% elif tip.category == 'validation' %}border-left:4px solid var(--accent){% else %}border-left:4px solid var(--yellow){% endif %}">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <h2 style="margin:0;font-size:1.1rem">
+      {% if tip.category == 'warning' %}<span style="color:var(--red)">[WARNING]</span>
+      {% elif tip.category == 'discovery' %}<span style="color:var(--green)">[DISCOVERY]</span>
+      {% elif tip.category == 'validation' %}<span style="color:var(--accent)">[VALIDATION]</span>
+      {% else %}<span style="color:var(--yellow)">[LEARNING]</span>{% endif %}
+      {{ tip.title }}
+    </h2>
+    <span style="font-size:0.75rem;color:var(--dim)">{{ tip.timestamp[:10] if tip.timestamp else '' }}</span>
+  </div>
+
+  <p style="line-height:1.7;margin-bottom:10px">{{ tip.content }}</p>
+  <p style="font-size:0.8rem;color:var(--dim);margin-bottom:8px">Source: <strong>{{ tip.source_strategy }}</strong></p>
+
+  {% if tip.metrics %}
+  <div class="grid grid-2" style="gap:6px;margin-bottom:10px">
+    <div class="metric-row"><span class="metric-label">Alpha</span><span class="metric-value {% if tip.metrics.alpha_pct > 0 %}positive{% else %}negative{% endif %}">{{ tip.metrics.alpha_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Sharpe</span><span class="metric-value">{{ tip.metrics.sharpe_ratio }}</span></div>
+    <div class="metric-row"><span class="metric-label">PF</span><span class="metric-value">{{ tip.metrics.profit_factor }}</span></div>
+    <div class="metric-row"><span class="metric-label">Win Rate</span><span class="metric-value">{{ tip.metrics.win_rate_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Max DD</span><span class="metric-value negative">{{ tip.metrics.max_drawdown_pct }}%</span></div>
+    <div class="metric-row"><span class="metric-label">Trades</span><span class="metric-value">{{ tip.metrics.total_trades }}</span></div>
+  </div>
+  {% endif %}
+
+  {% if tip.data %}
+  <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          {% if tip.id == 'wf_robust' or tip.id == 'wf_overfit' %}
+          <th>Strategy</th><th>PBO</th>
+          {% if tip.id == 'wf_robust' %}<th>IS Alpha</th><th>OOS Alpha</th>{% else %}<th>Degradation</th>{% endif %}
+          {% elif tip.id == 'trade_count' %}
+          <th>Strategy</th><th>Trades</th><th>PF</th><th>Alpha</th>
+          {% elif tip.id == 'profit_factor' %}
+          <th>Strategy</th><th>PF</th><th>Trades</th><th>Win%</th>
+          {% elif tip.id == 'fee_impact' %}
+          <th>Strategy</th><th>Expectancy</th><th>Trades</th>
+          {% elif tip.id == 'mtf_insight' %}
+          <th>Strategy</th><th>Alpha</th><th>Win%</th><th>Trades</th>
+          {% else %}
+          <th>Name</th><th>Value</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in tip.data %}
+        <tr>
+          <td>{{ row.name }}</td>
+          {% if tip.id == 'wf_robust' %}
+          <td>{{ row.pbo }}</td><td class="{% if row.is_alpha > 0 %}positive{% else %}negative{% endif %}">{{ row.is_alpha }}%</td><td class="{% if row.oos_alpha > 0 %}positive{% else %}negative{% endif %}">{{ row.oos_alpha }}%</td>
+          {% elif tip.id == 'wf_overfit' %}
+          <td>{{ row.pbo }}</td><td class="negative">{{ row.degradation }}%</td>
+          {% elif tip.id == 'trade_count' %}
+          <td>{{ row.trades }}</td><td>{{ row.pf }}</td><td class="{% if row.alpha > 0 %}positive{% else %}negative{% endif %}">{{ row.alpha }}%</td>
+          {% elif tip.id == 'profit_factor' %}
+          <td>{{ row.pf }}</td><td>{{ row.trades }}</td><td>{{ row.win_rate }}%</td>
+          {% elif tip.id == 'fee_impact' %}
+          <td class="{% if row.expectancy > 0 %}positive{% else %}negative{% endif %}">{{ row.expectancy }}%</td><td>{{ row.trades }}</td>
+          {% elif tip.id == 'mtf_insight' %}
+          <td class="{% if row.alpha > 0 %}positive{% else %}negative{% endif %}">{{ row.alpha }}%</td><td>{{ row.win_rate }}%</td><td>{{ row.trades }}</td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- Chart for WF validation -->
+  {% if tip.id == 'wf_robust' and tip.data %}
+  <div id="chart_{{ tip.id }}" style="width:100%;height:250px;margin-top:10px"></div>
+  {% endif %}
+  {% if tip.id == 'trade_count' and tip.data %}
+  <div id="chart_{{ tip.id }}" style="width:100%;height:250px;margin-top:10px"></div>
+  {% endif %}
+</div>
+{% endfor %}
+
+<script>
+const plotStyle = {
+  paper_bgcolor: '#111827', plot_bgcolor: '#111827',
+  font: {color: '#e2e8f0', size: 10},
+  margin: {l: 50, r: 15, t: 30, b: 40},
+};
+
+{% for tip in tips %}
+{% if tip.id == 'wf_robust' and tip.data %}
+(function(){
+  const data = {{ tip.data | tojson }};
+  Plotly.newPlot('chart_wf_robust', [
+    {x: data.map(d=>d.name), y: data.map(d=>d.is_alpha), name:'IS Alpha', type:'bar', marker:{color:'#3b82f6'}},
+    {x: data.map(d=>d.name), y: data.map(d=>d.oos_alpha), name:'OOS Alpha', type:'bar', marker:{color:'#22c55e'}},
+  ], {...plotStyle, title:'Walk-Forward: IS vs OOS Alpha (%)', barmode:'group',
+    xaxis:{tickangle:-30}, yaxis:{title:'Alpha (%)'}}, {responsive:true});
+})();
+{% endif %}
+
+{% if tip.id == 'trade_count' and tip.data %}
+(function(){
+  const data = {{ tip.data | tojson }};
+  Plotly.newPlot('chart_trade_count', [
+    {x: data.map(d=>d.trades), y: data.map(d=>d.alpha),
+     text: data.map(d=>d.name),
+     hovertemplate: '<b>%{text}</b><br>Trades: %{x}<br>Alpha: %{y:.1f}%<br>PF: %{marker.color:.2f}<extra></extra>',
+     mode:'markers',
+     marker:{size: data.map(d=>Math.max(8, d.pf*8)), color: data.map(d=>d.pf),
+             colorscale:'Viridis', showscale:true, colorbar:{title:'PF'}}},
+  ], {...plotStyle, title:'Trades vs Alpha (bubble=PF) — hover for name',
+    xaxis:{title:'Trade Count'}, yaxis:{title:'Alpha (%)'}}, {responsive:true});
+})();
+{% endif %}
+{% endfor %}
+</script>
+</body>
+</html>

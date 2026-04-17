@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crypto Strategy Lab</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<h1>Crypto Strategy Lab</h1>
+
+<!-- Status bar -->
+<div class="card" id="statusCard">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div>
+      <span id="statusMsg" class="status">
+        {% if status.running %}
+          {{ status.progress }}
+        {% elif status.last_run %}
+          最終実行: {{ status.last_run[:19] }} ({{ status.symbol }} {{ status.interval }} {{ status.days }}日)
+        {% else %}
+          自動最適化を開始中...
+        {% endif %}
+      </span>
+      {% if status.running %}
+      <div style="margin-top:4px">
+        <div style="background:var(--border);border-radius:4px;height:6px;width:200px;display:inline-block">
+          <div id="progressBar" style="background:var(--accent);height:100%;border-radius:4px;width:{{ (status.strategies_completed / status.strategies_total * 100) if status.strategies_total > 0 else 0 }}%;transition:width 0.3s"></div>
+        </div>
+        <span style="color:var(--dim);font-size:0.8rem;margin-left:6px">{{ status.strategies_completed }}/{{ status.strategies_total }} (累計 <strong id="totalAnalyses">{{ status.total_analyses }}</strong> 解析)</span>
+      </div>
+      {% endif %}
+    </div>
+    <div style="display:flex;gap:8px;align-items:center" class="no-print">
+      {% if results %}
+      <a href="/report" class="btn" style="text-decoration:none;font-size:0.85rem">レポート</a>
+      <a href="/tips" class="btn" style="text-decoration:none;font-size:0.85rem;background:var(--yellow);color:#000">Tips</a>
+      {% endif %}
+      <button class="btn" style="font-size:0.85rem" onclick="location.reload()">更新</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tips preview -->
+{% if tips %}
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <h2 style="margin:0">Tips & Discoveries</h2>
+    <a href="/tips" style="font-size:0.85rem">全て見る ({{ tips|length }}) →</a>
+  </div>
+  <div class="grid grid-2" style="gap:8px">
+    {% for tip in tips[:4] %}
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:10px;
+                {% if tip.category == 'warning' %}border-left:3px solid var(--red){% elif tip.category == 'discovery' %}border-left:3px solid var(--green){% elif tip.category == 'validation' %}border-left:3px solid var(--accent){% else %}border-left:3px solid var(--yellow){% endif %}">
+      <div style="font-weight:600;font-size:0.9rem;margin-bottom:4px">
+        {% if tip.category == 'warning' %}<span style="color:var(--red)">!</span>{% elif tip.category == 'discovery' %}<span style="color:var(--green)">+</span>{% elif tip.category == 'validation' %}<span style="color:var(--accent)">V</span>{% else %}<span style="color:var(--yellow)">i</span>{% endif %}
+        {{ tip.title }}
+      </div>
+      <div style="color:var(--dim);font-size:0.8rem;margin-bottom:4px">{{ tip.content[:120] }}{% if tip.content|length > 120 %}...{% endif %}</div>
+      <div style="font-size:0.75rem;color:var(--dim)">Source: {{ tip.source_strategy }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- Results -->
+{% if results %}
+<h2 style="margin-top:16px;margin-bottom:8px">Strategy Results ({{ results|length }})</h2>
+
+<!-- Controls: view toggle + sort selector -->
+<div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" class="no-print">
+  <span style="color:var(--dim);font-size:0.8rem">View:</span>
+  <button class="btn" style="font-size:0.75rem;padding:4px 10px" onclick="toggleView('table')" id="btnTable">Table</button>
+  <button class="btn" style="font-size:0.75rem;padding:4px 10px;opacity:0.5" onclick="toggleView('card')" id="btnCard">Card</button>
+  <span style="color:var(--dim);font-size:0.8rem;margin-left:12px">Sort:</span>
+  <select id="sortSelect" onchange="sortResults()" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:4px;font-size:0.8rem">
+    <option value="default">Default</option>
+    <option value="alpha_desc">Alpha% ↓</option>
+    <option value="alpha_asc">Alpha% ↑</option>
+    <option value="return_desc">Return% ↓</option>
+    <option value="return_asc">Return% ↑</option>
+    <option value="ret_day_desc">Ret/day% ↓</option>
+    <option value="ret_day_asc">Ret/day% ↑</option>
+    <option value="sharpe_desc">Sharpe ↓</option>
+    <option value="sharpe_asc">Sharpe ↑</option>
+    <option value="sortino_desc">Sortino ↓</option>
+    <option value="dd_desc">MaxDD% ↓ (worst)</option>
+    <option value="dd_asc">MaxDD% ↑ (best)</option>
+    <option value="calmar_desc">Calmar ↓</option>
+    <option value="pf_desc">PF ↓</option>
+    <option value="wr_desc">WR% ↓</option>
+    <option value="trades_desc">Trades ↓</option>
+    <option value="trades_asc">Trades ↑</option>
+    <option value="avg_win_desc">AvgWin% ↓</option>
+    <option value="avg_loss_asc">AvgLoss% ↑ (best)</option>
+    <option value="expect_desc">Expectancy% ↓</option>
+    <option value="r2_desc">R² ↓</option>
+    <option value="pbo_asc">PBO ↑ (best)</option>
+    <option value="pbo_desc">PBO ↓ (worst)</option>
+    <option value="oos_a_desc">OOS α% ↓</option>
+    <option value="oos_rd_desc">OOS Ret/day% ↓</option>
+    <option value="oos2_a_desc">OOS2 α% ↓</option>
+    <option value="oos2_rd_desc">OOS2 Ret/day% ↓</option>
+    <option value="pbo2_asc">PBO2 ↑ (best)</option>
+    <option value="bench_desc">Benchmark% ↓</option>
+  </select>
+</div>
+
+<!-- Hidden data store for sort -->
+<script>
+var _results = [
+{% for r in results %}
+{idx:{{ loop.index0 }},name:"{{ r.name }}",grade:"{{ r.grade }}",alpha:{{ r.metrics.alpha_pct }},ret:{{ r.metrics.total_return_pct }},ret_day:{{ r.metrics.get('return_daily_pct', 0) }},bench:{{ r.metrics.benchmark_return_pct }},sharpe:{{ r.metrics.sharpe_ratio }},sortino:{{ r.metrics.get('sortino_ratio', 0) }},dd:{{ r.metrics.max_drawdown_pct }},calmar:{{ r.metrics.get('calmar_ratio', 0) }},pf:{{ r.metrics.profit_factor }},wr:{{ r.metrics.win_rate_pct }},trades:{{ r.metrics.total_trades }},avg_win:{{ r.metrics.get('avg_win_pct', 0) }},avg_loss:{{ r.metrics.get('avg_loss_pct', 0) }},expect:{{ r.metrics.get('expectancy_pct', 0) }},r2:{{ r.r2 if r.r2 is defined else 0 }},pbo:{{ r.walkforward.pbo_score if r.walkforward else 1.0 }},oos_a:{{ r.walkforward.oos_metrics.alpha_pct if r.walkforward else -999 }},oos_rd:{{ r.walkforward.oos_metrics.get('return_daily_pct', 0) if r.walkforward else 0 }},oos2_a:{{ r.walkforward.oos2_metrics.alpha_pct if r.walkforward and r.walkforward.oos2_metrics is defined and r.walkforward.oos2_metrics else -999 }},oos2_rd:{{ r.walkforward.oos2_metrics.get('return_daily_pct', 0) if r.walkforward and r.walkforward.oos2_metrics is defined and r.walkforward.oos2_metrics else 0 }},pbo2:{{ r.walkforward.pbo2_score if r.walkforward and r.walkforward.pbo2_score is defined else 1.0 }},stype:"{{ r.strategy_type if r.strategy_type is defined else 'unique' }}",round:{{ r.get('round', 1) }},has_wf:{{ 'true' if r.walkforward else 'false' }},has_oos2:{{ 'true' if r.walkforward and r.walkforward.oos2_metrics is defined and r.walkforward.oos2_metrics else 'false' }}},
+{% endfor %}
+];
+</script>
+
+<!-- Table view (default) -->
+<div id="tableView" class="card" style="overflow-x:auto;padding:8px">
+<table id="resultsTable">
+<thead>
+<tr>
+  <th data-col="name" data-type="str" class="sortable" style="cursor:pointer;min-width:180px">Name <span class="sort-arrow"></span></th>
+  <th data-col="grade" data-type="str" class="sortable" style="cursor:pointer">Grade</th>
+  <th data-col="alpha" data-type="num" class="sortable" style="cursor:pointer">Alpha%</th>
+  <th data-col="ret" data-type="num" class="sortable" style="cursor:pointer">Return%</th>
+  <th data-col="ret_day" data-type="num" class="sortable" style="cursor:pointer">Ret/day%</th>
+  <th data-col="bench" data-type="num" class="sortable" style="cursor:pointer">BTC%</th>
+  <th data-col="sharpe" data-type="num" class="sortable" style="cursor:pointer">Sharpe</th>
+  <th data-col="sortino" data-type="num" class="sortable" style="cursor:pointer">Sortino</th>
+  <th data-col="dd" data-type="num" class="sortable" style="cursor:pointer">MaxDD%</th>
+  <th data-col="calmar" data-type="num" class="sortable" style="cursor:pointer">Calmar</th>
+  <th data-col="pf" data-type="num" class="sortable" style="cursor:pointer">PF</th>
+  <th data-col="wr" data-type="num" class="sortable" style="cursor:pointer">WR%</th>
+  <th data-col="trades" data-type="num" class="sortable" style="cursor:pointer">Trades</th>
+  <th data-col="avg_win" data-type="num" class="sortable" style="cursor:pointer">AvgWin%</th>
+  <th data-col="avg_loss" data-type="num" class="sortable" style="cursor:pointer">AvgLoss%</th>
+  <th data-col="expect" data-type="num" class="sortable" style="cursor:pointer">Expect%</th>
+  <th data-col="r2" data-type="num" class="sortable" style="cursor:pointer">R²</th>
+  <th data-col="pbo" data-type="num" class="sortable" style="cursor:pointer">PBO</th>
+  <th data-col="oos_a" data-type="num" class="sortable" style="cursor:pointer">OOS α%</th>
+  <th data-col="oos_rd" data-type="num" class="sortable" style="cursor:pointer">OOS Ret/d%</th>
+  <th data-col="oos2_a" data-type="num" class="sortable" style="cursor:pointer">OOS2 α%</th>
+  <th data-col="oos2_rd" data-type="num" class="sortable" style="cursor:pointer">OOS2 Ret/d%</th>
+  <th data-col="pbo2" data-type="num" class="sortable" style="cursor:pointer">PBO2</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+
+<!-- Card view (hidden by default) -->
+<div id="cardView" class="grid grid-2" style="display:none"></div>
+
+{% else %}
+<div class="card" style="text-align:center;padding:40px">
+  <p style="color:var(--dim);font-size:1.1rem">自動最適化実行中... ページを更新すると最新結果が表示されます。</p>
+</div>
+{% endif %}
+
+<script>
+// === Rendering functions ===
+function cls(v, threshold) { return v > threshold ? 'positive' : (v < -threshold ? 'negative' : ''); }
+function clsDD(v) { return 'negative'; }
+function fmt(v, fallback) { return v === -999 ? fallback : v; }
+
+function renderTable(data) {
+  const tbody = document.getElementById('tableBody');
+  if (!tbody) return;
+  tbody.innerHTML = data.map(r => `<tr>
+    <td style="text-align:left"><a href="/strategy/${r.idx}">${r.stype==='utility'?'<span class="strat-badge strat-badge-utility">U</span>':''}${r.stype==='unique'?'<span class="strat-badge strat-badge-unique">Q</span>':''}${r.name}</a>${r.round>1?` <span style="font-size:0.6rem;background:var(--accent);color:#fff;padding:0 4px;border-radius:2px">R${r.round}</span>`:''}</td>
+    <td><span class="grade grade-${r.grade}" style="width:24px;height:24px;line-height:24px;font-size:0.8rem">${r.grade}</span></td>
+    <td class="${cls(r.alpha,0)}">${r.alpha}</td>
+    <td class="${cls(r.ret,0)}">${r.ret}</td>
+    <td class="${cls(r.ret_day,0)}">${r.ret_day}</td>
+    <td class="${cls(r.bench,0)}">${r.bench}</td>
+    <td>${r.sharpe}</td>
+    <td>${r.sortino}</td>
+    <td class="negative">${r.dd}</td>
+    <td>${r.calmar}</td>
+    <td>${r.pf}</td>
+    <td>${r.wr}</td>
+    <td ${r.trades<50?'style="color:var(--red)"':''}>${r.trades}</td>
+    <td class="positive">${r.avg_win}</td>
+    <td class="negative">${r.avg_loss}</td>
+    <td class="${cls(r.expect,0)}">${r.expect}</td>
+    <td class="${r.r2>=0.7?'positive':r.r2<0.5?'negative':''}">${r.r2||'-'}</td>
+    <td class="${r.pbo<0.3?'positive':r.pbo>=0.5?'negative':''}">${r.has_wf?r.pbo:'-'}</td>
+    <td class="${r.oos_a>0?'positive':'negative'}">${r.has_wf?r.oos_a:'-'}</td>
+    <td class="${r.oos_rd>0?'positive':'negative'}">${r.has_wf?r.oos_rd:'-'}</td>
+    <td class="${r.oos2_a>0?'positive':'negative'}">${r.has_oos2?r.oos2_a:'-'}</td>
+    <td class="${r.oos2_rd>0?'positive':'negative'}">${r.has_oos2?r.oos2_rd:'-'}</td>
+    <td class="${r.pbo2<0.3?'positive':r.pbo2>=0.5?'negative':''}">${r.has_oos2?r.pbo2:'-'}</td>
+  </tr>`).join('');
+}
+
+function renderCards(data) {
+  const container = document.getElementById('cardView');
+  if (!container) return;
+  container.innerHTML = data.map(r => `<div class="card">
+    <div class="strat-header">
+      <span class="strat-name">${r.stype==='utility'?'<span class="strat-badge strat-badge-utility">Utility</span>':''}${r.stype==='unique'?'<span class="strat-badge strat-badge-unique">Unique</span>':''}${r.name}</span>
+      ${r.round>1?`<span style="font-size:0.65rem;background:var(--accent);color:#fff;padding:1px 5px;border-radius:3px;margin-right:4px">R${r.round}</span>`:''}
+      <span class="grade grade-${r.grade}">${r.grade}</span>
+    </div>
+    <div class="metric-row"><span class="metric-label">Total Return</span><span class="metric-value ${cls(r.ret,0)}">${r.ret}%</span></div>
+    <div class="metric-row"><span class="metric-label">Alpha</span><span class="metric-value ${cls(r.alpha,0)}">${r.alpha}%</span></div>
+    <div class="metric-row"><span class="metric-label">Return/day</span><span class="metric-value ${cls(r.ret_day,0)}">${r.ret_day}%</span></div>
+    <div class="metric-row"><span class="metric-label">Benchmark (BTC)</span><span class="metric-value ${cls(r.bench,0)}">${r.bench}%</span></div>
+    <div class="metric-row"><span class="metric-label">Sharpe</span><span class="metric-value">${r.sharpe}</span></div>
+    <div class="metric-row"><span class="metric-label">Max DD</span><span class="metric-value negative">${r.dd}%</span></div>
+    <div class="metric-row"><span class="metric-label">Win Rate</span><span class="metric-value">${r.wr}%</span></div>
+    <div class="metric-row"><span class="metric-label">PF</span><span class="metric-value">${r.pf}</span></div>
+    <div class="metric-row"><span class="metric-label">Trades</span><span class="metric-value" ${r.trades<50?'style="color:var(--red)"':''}>${r.trades}</span></div>
+    ${r.r2?`<div class="metric-row"><span class="metric-label">Equity R²</span><span class="metric-value ${r.r2>=0.7?'positive':r.r2<0.5?'negative':''}">${r.r2}</span></div>`:''}
+    ${r.has_wf?`
+    <div class="metric-row" style="border-top:1px solid var(--accent)"><span class="metric-label">PBO (overfit)</span><span class="metric-value ${r.pbo<0.3?'positive':r.pbo>=0.5?'negative':''}">${r.pbo}</span></div>
+    <div class="metric-row"><span class="metric-label">OOS Alpha</span><span class="metric-value ${r.oos_a>0?'positive':'negative'}">${r.oos_a}%</span></div>
+    <div class="metric-row"><span class="metric-label">OOS Return/day</span><span class="metric-value ${r.oos_rd>0?'positive':'negative'}">${r.oos_rd}%</span></div>
+    `:''}
+    ${r.has_oos2?`
+    <div class="metric-row" style="border-top:1px dashed var(--accent)"><span class="metric-label">OOS2 Alpha</span><span class="metric-value ${r.oos2_a>0?'positive':'negative'}">${r.oos2_a}%</span></div>
+    <div class="metric-row"><span class="metric-label">OOS2 Return/day</span><span class="metric-value ${r.oos2_rd>0?'positive':'negative'}">${r.oos2_rd}%</span></div>
+    <div class="metric-row"><span class="metric-label">PBO2</span><span class="metric-value ${r.pbo2<0.3?'positive':r.pbo2>=0.5?'negative':''}">${r.pbo2}</span></div>
+    `:''}
+    <div style="margin-top:8px"><a href="/strategy/${r.idx}">詳細 →</a></div>
+  </div>`).join('');
+}
+
+// === Sort ===
+var _currentOrder = [..._results]; // preserve initial order
+
+function sortResults() {
+  const sel = document.getElementById('sortSelect');
+  if (!sel) return;
+  const val = sel.value;
+  if (val === 'default') {
+    _currentOrder = [..._results];
+  } else {
+    const [key, dir] = val.split('_');
+    const asc = dir === 'asc';
+    _currentOrder = [..._results].sort((a, b) => {
+      const va = a[key] === undefined ? -9999 : a[key];
+      const vb = b[key] === undefined ? -9999 : b[key];
+      return asc ? va - vb : vb - va;
+    });
+  }
+  renderTable(_currentOrder);
+  renderCards(_currentOrder);
+}
+
+// === Table header click sort (enhanced) ===
+function setupTableSort() {
+  const table = document.getElementById('resultsTable');
+  if (!table) return;
+  let currentSort = {col: null, asc: false};
+  table.querySelectorAll('th.sortable').forEach(th => {
+    th.style.cursor = 'pointer';
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      const type = th.dataset.type;
+      if (currentSort.col === col) {
+        currentSort.asc = !currentSort.asc;
+      } else {
+        currentSort.col = col;
+        currentSort.asc = (type === 'num') ? false : true;
+      }
+      // Update visual
+      table.querySelectorAll('th.sortable').forEach(h => h.style.background = '');
+      th.style.background = 'rgba(59,130,246,0.1)';
+
+      _currentOrder = [..._results].sort((a, b) => {
+        const va = a[col] === undefined ? -9999 : a[col];
+        const vb = b[col] === undefined ? -9999 : b[col];
+        if (type === 'num') {
+          return currentSort.asc ? va - vb : vb - va;
+        } else {
+          return currentSort.asc ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va));
+        }
+      });
+      renderTable(_currentOrder);
+      renderCards(_currentOrder);
+    });
+  });
+}
+
+// === View toggle ===
+function toggleView(mode) {
+  document.getElementById('tableView').style.display = mode === 'table' ? '' : 'none';
+  document.getElementById('cardView').style.display = mode === 'card' ? '' : 'none';
+  document.getElementById('btnTable').style.opacity = mode === 'table' ? '1' : '0.5';
+  document.getElementById('btnCard').style.opacity = mode === 'card' ? '1' : '0.5';
+}
+
+// === Initial render ===
+if (typeof _results !== 'undefined' && _results.length > 0) {
+  renderTable(_results);
+  renderCards(_results);
+  setupTableSort();
+}
+
+// Poll status only while optimization is running. Reload ONCE when done.
+(async function poll() {
+  let wasRunning = {{ 'true' if status.running else 'false' }};
+  if (!wasRunning && document.querySelectorAll('#tableBody tr').length > 0) return;
+
+  while (true) {
+    try {
+      const r = await fetch('/api/status');
+      const s = await r.json();
+      const msg = document.getElementById('statusMsg');
+      if (s.running) {
+        wasRunning = true;
+        msg.textContent = s.progress;
+        const bar = document.getElementById('progressBar');
+        if (bar && s.strategies_total > 0) {
+          bar.style.width = (s.strategies_completed / s.strategies_total * 100) + '%';
+        }
+        const ta = document.getElementById('totalAnalyses');
+        if (ta && s.total_analyses !== undefined) ta.textContent = s.total_analyses;
+      } else if (wasRunning) {
+        location.reload();
+        return;
+      } else {
+        return;
+      }
+    } catch {}
+    await new Promise(ok => setTimeout(ok, 3000));
+  }
+})();
+</script>
+</body>
+</html>
