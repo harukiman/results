@@ -264,6 +264,15 @@ def walk_forward_optimize(name: str, df: pd.DataFrame,
 
             final["walkforward"]["oos2_metrics"] = oos2_metrics
             final["walkforward"]["pbo2_score"] = pbo2_score
+            # Store downsampled equity curves for period visualization
+            _oos2_eq = oos2_res.get("equity_curve", [])
+            _oos2_bm = oos2_res.get("benchmark_curve", [])
+            _oos2_tm = oos2_res.get("times", [])
+            _max_pts = 500
+            _step2 = max(1, len(_oos2_eq) // _max_pts)
+            final["walkforward"]["oos2_equity"] = _oos2_eq[::_step2]
+            final["walkforward"]["oos2_bench"] = _oos2_bm[::_step2]
+            final["walkforward"]["oos2_times"] = _oos2_tm[::_step2]
         except Exception as e:
             log.warning(f"OOS2 eval failed for {name}: {e}")
 
@@ -314,6 +323,15 @@ def walk_forward_optimize(name: str, df: pd.DataFrame,
 
             final["walkforward"]["oos3_metrics"] = oos3_metrics
             final["walkforward"]["pbo3_score"] = pbo3_score
+            # Store downsampled equity curves for period visualization
+            _oos3_eq = oos3_res.get("equity_curve", [])
+            _oos3_bm = oos3_res.get("benchmark_curve", [])
+            _oos3_tm = oos3_res.get("times", [])
+            _max_pts3 = 500
+            _step3 = max(1, len(_oos3_eq) // _max_pts3)
+            final["walkforward"]["oos3_equity"] = _oos3_eq[::_step3]
+            final["walkforward"]["oos3_bench"] = _oos3_bm[::_step3]
+            final["walkforward"]["oos3_times"] = _oos3_tm[::_step3]
         except Exception as e:
             log.warning(f"OOS3 eval failed for {name}: {e}")
 

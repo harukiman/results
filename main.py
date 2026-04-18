@@ -4814,6 +4814,63 @@ async def _auto_optimize():
                                                      "trend_lev_bear": bear_lev},
                                         }
                                         _gradient_configs.append(cname)
+            # Phase 3: Next-gen exploration from analysis findings
+            # Key insights: LB↑→OOS3↑, BTH↓→OOS3↑, bear_lev↓→OOS3↑, R²→OOS3 corr=0.64
+            # Target: ISα≥500 + OOS2α≥150 + OOS3>0 + DD>-33 + R²≥0.80
+            # Explore: longer LB (165-175), tighter BTH (1.8-2.3), conservative bear (2.0-2.5)
+            for lb in [165, 168, 170, 172, 175]:
+                for bear_th in [1.8, 2.0, 2.2, 2.3, 2.5]:
+                    for trend_lb in [7000]:
+                        for rec in [0.35, 0.4, 0.45]:
+                            for grad_margin in [3.5, 4.0, 4.5]:
+                                for bull_lev, bear_lev in [
+                                    (5.5, 2.0), (5.5, 2.5), (5.5, 3.0),
+                                    (6.0, 2.0), (6.0, 2.5), (6.0, 3.0),
+                                ]:
+                                    cname = f"(複)ADDG_GL_{entry[:4]}{ep1}_{ep2}_LB{lb}_BTH{bear_th}_TLB{trend_lb}_R{rec}_GM{grad_margin}_B{bull_lev}b{bear_lev}x"
+                                    if cname not in STRATEGIES:
+                                        STRATEGIES[cname] = {
+                                            "fn": composite_addg_gradient_lev_signal,
+                                            "param_grid": {
+                                                "entry_type": [entry], "ep1": [ep1], "ep2": [ep2],
+                                                "guard_lookback": [lb], "bear_threshold": [bear_th],
+                                                "trend_lookback": [trend_lb], "recovery_mult": [rec],
+                                                "gradient_margin": [grad_margin],
+                                            },
+                                            "risk": {"cooldown_bars": 0,
+                                                     "trend_lev_sma": trend_lb,
+                                                     "trend_lev_bull": bull_lev,
+                                                     "trend_lev_bear": bear_lev},
+                                        }
+                                        _gradient_configs.append(cname)
+            # Phase 4: Ultra-precise around best near-miss zone
+            # LB162_BTH2.7_R0.35_GM4.0_B5.5b3.0 scored [..3DR]
+            # Try fine increments around that
+            for lb in [160, 162, 164, 166]:
+                for bear_th in [2.4, 2.5, 2.6, 2.7, 2.8]:
+                    for trend_lb in [7000]:
+                        for rec in [0.3, 0.35, 0.4]:
+                            for grad_margin in [3.8, 4.0, 4.2]:
+                                for bull_lev, bear_lev in [
+                                    (5.5, 2.5), (5.5, 3.0), (5.0, 2.5),
+                                    (6.0, 2.5), (6.0, 3.0),
+                                ]:
+                                    cname = f"(複)ADDG_GL_{entry[:4]}{ep1}_{ep2}_LB{lb}_BTH{bear_th}_TLB{trend_lb}_R{rec}_GM{grad_margin}_B{bull_lev}b{bear_lev}x"
+                                    if cname not in STRATEGIES:
+                                        STRATEGIES[cname] = {
+                                            "fn": composite_addg_gradient_lev_signal,
+                                            "param_grid": {
+                                                "entry_type": [entry], "ep1": [ep1], "ep2": [ep2],
+                                                "guard_lookback": [lb], "bear_threshold": [bear_th],
+                                                "trend_lookback": [trend_lb], "recovery_mult": [rec],
+                                                "gradient_margin": [grad_margin],
+                                            },
+                                            "risk": {"cooldown_bars": 0,
+                                                     "trend_lev_sma": trend_lb,
+                                                     "trend_lev_bull": bull_lev,
+                                                     "trend_lev_bear": bear_lev},
+                                        }
+                                        _gradient_configs.append(cname)
         _COMPOSITE_STRATS.extend(_gradient_configs)
         log.info(f"Registered {len(_gradient_configs)} Gradient Leverage ADDG strategies")
 
@@ -5075,12 +5132,19 @@ async def strategy_detail(request: Request, idx: int):
     r = _results[idx]
     from engine.strategies import STRATEGIES
     desc = STRATEGIES.get(r["name"], {}).get("desc", "")
+    wf = r.get("walkforward", {}) or {}
     return templates.TemplateResponse(request, "strategy.html", {
         "r": r, "idx": idx, "desc": desc,
         "trades_json": json.dumps(r.get("trades", [])[:200]),
         "equity_json": json.dumps(r.get("equity_curve", [])[:5000]),
         "bench_json": json.dumps(r.get("benchmark_curve", [])[:5000]),
         "times_json": json.dumps(r.get("times", [])[:5000]),
+        "oos2_equity_json": json.dumps(wf.get("oos2_equity", [])),
+        "oos2_bench_json": json.dumps(wf.get("oos2_bench", [])),
+        "oos2_times_json": json.dumps(wf.get("oos2_times", [])),
+        "oos3_equity_json": json.dumps(wf.get("oos3_equity", [])),
+        "oos3_bench_json": json.dumps(wf.get("oos3_bench", [])),
+        "oos3_times_json": json.dumps(wf.get("oos3_times", [])),
     })
 
 

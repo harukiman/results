@@ -118,6 +118,12 @@
 
 <div class="card">
   <h2>Equity Curve vs Benchmark</h2>
+  <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">
+    <button onclick="showPeriod('main')" id="btn_main" class="period-btn active" style="padding:4px 12px;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:4px;cursor:pointer;font-size:0.8rem">IS+OOS (Main 270d)</button>
+    <button onclick="showPeriod('oos2')" id="btn_oos2" class="period-btn" style="padding:4px 12px;border:1px solid var(--green);background:transparent;color:var(--green);border-radius:4px;cursor:pointer;font-size:0.8rem">OOS2 (Bull 80d)</button>
+    <button onclick="showPeriod('oos3')" id="btn_oos3" class="period-btn" style="padding:4px 12px;border:1px solid var(--yellow);background:transparent;color:var(--yellow);border-radius:4px;cursor:pointer;font-size:0.8rem">OOS3 (Recent 80d)</button>
+    <button onclick="showPeriod('all')" id="btn_all" class="period-btn" style="padding:4px 12px;border:1px solid var(--dim);background:transparent;color:var(--dim);border-radius:4px;cursor:pointer;font-size:0.8rem">All Periods</button>
+  </div>
   <div id="equityChart" style="width:100%;height:350px"></div>
 </div>
 
@@ -181,27 +187,84 @@ const times = {{ times_json | safe }};
 const equity = {{ equity_json | safe }};
 const bench = {{ bench_json | safe }};
 const trades = {{ trades_json | safe }};
+const oos2_eq = {{ oos2_equity_json | safe }};
+const oos2_bm = {{ oos2_bench_json | safe }};
+const oos2_tm = {{ oos2_times_json | safe }};
+const oos3_eq = {{ oos3_equity_json | safe }};
+const oos3_bm = {{ oos3_bench_json | safe }};
+const oos3_tm = {{ oos3_times_json | safe }};
 
-// Normalize BTC to same scale as equity curve for visual overlay
-const eqMax = Math.max(...equity);
-const eqMin = Math.min(...equity);
-const bMax = Math.max(...bench);
-const bMin = Math.min(...bench);
-// Map bench range → equity range so shapes are proportionally visible
-const benchNorm = bench.map(b => eqMin + (b - bMin) / (bMax - bMin) * (eqMax - eqMin));
-
-Plotly.newPlot('equityChart', [
-  {x: times, y: benchNorm, name: 'BTC (相対)', fill: 'tozeroy',
-   fillcolor: 'rgba(148,163,184,0.08)', line: {color: 'rgba(148,163,184,0.3)', width: 1}},
-  {x: times, y: equity, name: '{{ r.name }}', line: {color: '#3b82f6', width: 2}},
-], {
+const plotCfg = {
   paper_bgcolor: '#111827', plot_bgcolor: '#111827',
   font: {color: '#e2e8f0', size: 11},
   margin: {l: 50, r: 20, t: 10, b: 40},
   legend: {x: 0, y: 1, bgcolor: 'rgba(0,0,0,0)'},
   xaxis: {gridcolor: '#1e293b'},
   yaxis: {gridcolor: '#1e293b', title: 'Equity'},
-}, {responsive: true});
+};
+
+function normBench(eq, bm) {
+  if (!eq.length || !bm.length) return bm;
+  const eMax = Math.max(...eq), eMin = Math.min(...eq);
+  const bMax = Math.max(...bm), bMin = Math.min(...bm);
+  const bRange = bMax - bMin || 1;
+  return bm.map(b => eMin + (b - bMin) / bRange * (eMax - eMin));
+}
+
+function plotPeriod(t, eq, bm, label, color) {
+  const bmNorm = normBench(eq, bm);
+  Plotly.newPlot('equityChart', [
+    {x: t, y: bmNorm, name: 'BTC (相対)', fill: 'tozeroy',
+     fillcolor: 'rgba(148,163,184,0.08)', line: {color: 'rgba(148,163,184,0.3)', width: 1}},
+    {x: t, y: eq, name: label, line: {color: color, width: 2}},
+  ], {...plotCfg}, {responsive: true});
+}
+
+function showPeriod(period) {
+  document.querySelectorAll('.period-btn').forEach(b => {
+    b.style.background = 'transparent';
+    b.classList.remove('active');
+  });
+  const btn = document.getElementById('btn_' + period);
+  if (btn) { btn.style.background = period === 'oos2' ? 'var(--green)' : period === 'oos3' ? 'var(--yellow)' : period === 'all' ? 'var(--dim)' : 'var(--accent)'; btn.style.color = '#fff'; }
+
+  if (period === 'main') {
+    plotPeriod(times, equity, bench, 'Strategy (IS+OOS)', '#3b82f6');
+  } else if (period === 'oos2' && oos2_eq.length) {
+    plotPeriod(oos2_tm, oos2_eq, oos2_bm, 'OOS2 (Bull)', '#22c55e');
+  } else if (period === 'oos3' && oos3_eq.length) {
+    plotPeriod(oos3_tm, oos3_eq, oos3_bm, 'OOS3 (Recent)', '#eab308');
+  } else if (period === 'all') {
+    // Combine all periods into one relative performance chart
+    const traces = [];
+    // Main period
+    if (equity.length) {
+      const mainStart = equity[0] || 1;
+      traces.push({x: times, y: equity.map(v => (v / mainStart - 1) * 100), name: 'IS+OOS', line: {color: '#3b82f6', width: 2}});
+      traces.push({x: times, y: bench.map(v => (v / (bench[0]||1) - 1) * 100), name: 'BTC (IS+OOS)', line: {color: 'rgba(148,163,184,0.4)', width: 1, dash: 'dot'}});
+    }
+    if (oos2_eq.length) {
+      const s2 = oos2_eq[0] || 1;
+      traces.push({x: oos2_tm, y: oos2_eq.map(v => (v / s2 - 1) * 100), name: 'OOS2 (Bull)', line: {color: '#22c55e', width: 2}});
+      traces.push({x: oos2_tm, y: oos2_bm.map(v => (v / (oos2_bm[0]||1) - 1) * 100), name: 'BTC (OOS2)', line: {color: 'rgba(34,197,94,0.3)', width: 1, dash: 'dot'}});
+    }
+    if (oos3_eq.length) {
+      const s3 = oos3_eq[0] || 1;
+      traces.push({x: oos3_tm, y: oos3_eq.map(v => (v / s3 - 1) * 100), name: 'OOS3 (Recent)', line: {color: '#eab308', width: 2}});
+      traces.push({x: oos3_tm, y: oos3_bm.map(v => (v / (oos3_bm[0]||1) - 1) * 100), name: 'BTC (OOS3)', line: {color: 'rgba(234,179,8,0.3)', width: 1, dash: 'dot'}});
+    }
+    Plotly.newPlot('equityChart', traces, {
+      ...plotCfg,
+      yaxis: {...plotCfg.yaxis, title: 'Return (%)'},
+    }, {responsive: true});
+  } else {
+    // Fallback: no data for this period
+    plotPeriod(times, equity, bench, 'Strategy (IS+OOS)', '#3b82f6');
+  }
+}
+
+// Initial plot
+showPeriod('main');
 
 // Trade table
 const tbody = document.getElementById('tradeTable');
