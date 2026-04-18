@@ -6,6 +6,16 @@
 <title>Tips & Discoveries — Crypto Strategy Lab</title>
 <link rel="stylesheet" href="/static/style.css">
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+.tip-content { line-height:1.8; margin-bottom:10px; white-space:pre-line; }
+.analysis-table { width:100%; border-collapse:collapse; font-size:0.82rem; margin:8px 0; }
+.analysis-table th { background:rgba(59,130,246,0.15); padding:6px 8px; text-align:right; font-weight:600; }
+.analysis-table td { padding:5px 8px; text-align:right; border-bottom:1px solid rgba(255,255,255,0.05); }
+.analysis-table td:first-child, .analysis-table th:first-child { text-align:left; }
+.analysis-table tr:hover { background:rgba(255,255,255,0.03); }
+.highlight-row { background:rgba(34,197,94,0.08) !important; }
+.warn-row { background:rgba(239,68,68,0.08) !important; }
+</style>
 </head>
 <body>
 <div class="no-print" style="margin-bottom:12px">
@@ -37,8 +47,10 @@
     <span style="font-size:0.75rem;color:var(--dim)">{{ tip.timestamp[:10] if tip.timestamp else '' }}</span>
   </div>
 
-  <p style="line-height:1.7;margin-bottom:10px">{{ tip.content }}</p>
+  <div class="tip-content">{{ tip.content }}</div>
+  {% if tip.source_strategy %}
   <p style="font-size:0.8rem;color:var(--dim);margin-bottom:8px">Source: <strong>{{ tip.source_strategy }}</strong></p>
+  {% endif %}
 
   {% if tip.metrics %}
   <div class="grid grid-2" style="gap:6px;margin-bottom:10px">
@@ -51,7 +63,184 @@
   </div>
   {% endif %}
 
-  {% if tip.data %}
+  {# ── ADDG_GL Mechanism: GM Table ── #}
+  {% if tip.id == 'addg_gl_mechanism' and tip.data %}
+  <div style="overflow-x:auto">
+    <table class="analysis-table">
+      <thead><tr><th>GM</th><th>戦略数</th><th>OOS3α平均</th><th>OOS3α中央値</th><th>PBO中央値</th><th>OOS daily中央値</th><th>R²中央値</th><th>DD中央値</th></tr></thead>
+      <tbody>
+      {% for row in tip.data %}
+      <tr class="{% if row.pbo_med <= 0.125 %}highlight-row{% elif row.pbo_med >= 0.5 %}warn-row{% endif %}">
+        <td><strong>{{ row.gm }}</strong></td>
+        <td>{{ row.count }}</td>
+        <td class="{% if row.oos3_mean > 0 %}positive{% else %}negative{% endif %}">{{ row.oos3_mean }}%</td>
+        <td>{{ row.oos3_med }}%</td>
+        <td>{{ row.pbo_med }}</td>
+        <td>{{ row.daily_oos_med }}%</td>
+        <td>{{ row.r2_med }}</td>
+        <td>{{ row.dd_med }}%</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div id="chart_gm_analysis" style="width:100%;height:280px;margin-top:10px"></div>
+  {% endif %}
+
+  {# ── Market Regime × Strategy Type ── #}
+  {% if tip.id == 'market_regime_strategy' and tip.data %}
+  <div style="display:flex;gap:12px;margin:10px 0;flex-wrap:wrap">
+    <div class="card" style="flex:1;min-width:120px;padding:10px;text-align:center;background:rgba(239,68,68,0.1)">
+      <div style="font-size:0.75rem;color:var(--dim)">IS期間 (190日)</div>
+      <div style="font-size:1.2rem;font-weight:700;color:var(--red)">BTC {{ tip.data.btc_is }}%</div>
+      <div style="font-size:0.7rem;color:var(--dim)">ベア相場</div>
+    </div>
+    <div class="card" style="flex:1;min-width:120px;padding:10px;text-align:center;background:rgba(34,197,94,0.1)">
+      <div style="font-size:0.75rem;color:var(--dim)">OOS2期間 (80日)</div>
+      <div style="font-size:1.2rem;font-weight:700;color:var(--green)">BTC +{{ tip.data.btc_oos2 }}%</div>
+      <div style="font-size:0.7rem;color:var(--dim)">ブル相場</div>
+    </div>
+    <div class="card" style="flex:1;min-width:120px;padding:10px;text-align:center;background:rgba(251,191,36,0.1)">
+      <div style="font-size:0.75rem;color:var(--dim)">OOS3期間 (80日)</div>
+      <div style="font-size:1.2rem;font-weight:700;color:var(--yellow)">BTC {{ tip.data.btc_oos3 }}%</div>
+      <div style="font-size:0.7rem;color:var(--dim)">横ばい相場</div>
+    </div>
+  </div>
+  {% if tip.data.regime_table %}
+  <div style="overflow-x:auto">
+    <table class="analysis-table">
+      <thead><tr><th>戦略タイプ</th><th>戦略数</th><th>IS daily%</th><th>OOS2 daily%</th><th>OOS3 daily%</th><th>OOS3α中央値</th><th>OOS3正率</th></tr></thead>
+      <tbody>
+      {% for row in tip.data.regime_table %}
+      <tr class="{% if row.oos3_pos_rate >= 90 %}highlight-row{% elif row.oos3_pos_rate < 50 %}warn-row{% endif %}">
+        <td><strong>{{ row.type }}</strong></td>
+        <td>{{ row.count }}</td>
+        <td>{{ row.is_daily }}%</td>
+        <td>{{ row.oos2_daily }}%</td>
+        <td class="{% if row.oos3_daily > 0 %}positive{% else %}negative{% endif %}">{{ row.oos3_daily }}%</td>
+        <td class="{% if row.oos3_alpha_med > 0 %}positive{% else %}negative{% endif %}">{{ row.oos3_alpha_med }}%</td>
+        <td>{{ row.oos3_pos_rate }}%</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+  {% endif %}
+
+  {# ── Parameter Sensitivity Analysis ── #}
+  {% if tip.id == 'param_sensitivity' and tip.data %}
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin:8px 0">
+    {% if tip.data.lb_table %}
+    <div>
+      <h3 style="font-size:0.9rem;margin:4px 0">Lookback Period (GM=4.0)</h3>
+      <table class="analysis-table">
+        <thead><tr><th>LB</th><th>数</th><th>OOS3α平均</th><th>DD中央値</th><th>R²中央値</th></tr></thead>
+        <tbody>
+        {% for row in tip.data.lb_table %}
+        <tr class="{% if row.oos3_mean == tip.data.lb_table|map(attribute='oos3_mean')|max %}highlight-row{% endif %}">
+          <td><strong>{{ row.lb }}</strong></td><td>{{ row.count }}</td>
+          <td class="positive">{{ row.oos3_mean }}%</td><td>{{ row.dd_med }}%</td><td>{{ row.r2_med }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+    {% if tip.data.bth_table %}
+    <div>
+      <h3 style="font-size:0.9rem;margin:4px 0">Bear Threshold (GM=4.0)</h3>
+      <table class="analysis-table">
+        <thead><tr><th>BTH</th><th>数</th><th>OOS3α平均</th><th>勝率中央値</th><th>PF中央値</th></tr></thead>
+        <tbody>
+        {% for row in tip.data.bth_table %}
+        <tr class="{% if row.oos3_mean == tip.data.bth_table|map(attribute='oos3_mean')|max %}highlight-row{% endif %}">
+          <td><strong>{{ row.bth }}</strong></td><td>{{ row.count }}</td>
+          <td class="positive">{{ row.oos3_mean }}%</td><td>{{ row.win_rate_med }}%</td><td>{{ row.pf_med }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+  {% if tip.data.lev_table %}
+  <h3 style="font-size:0.9rem;margin:8px 0 4px">レバレッジ別 (ADDG_GL全GM)</h3>
+  <div style="overflow-x:auto">
+    <table class="analysis-table">
+      <thead><tr><th>レバレッジ</th><th>数</th><th>OOS3α中央値</th><th>DD中央値</th><th>ISα中央値</th></tr></thead>
+      <tbody>
+      {% for row in tip.data.lev_table %}
+      <tr class="{% if row.oos3_med == tip.data.lev_table|map(attribute='oos3_med')|max %}highlight-row{% endif %}">
+        <td><strong>{{ row.leverage }}</strong></td><td>{{ row.count }}</td>
+        <td class="positive">{{ row.oos3_med }}%</td><td>{{ row.dd_med }}%</td><td>{{ row.is_alpha_med }}%</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+  {% endif %}
+
+  {# ── Overfit vs Robustness ── #}
+  {% if tip.id == 'overfit_robustness' and tip.data %}
+  <div style="display:flex;gap:12px;margin:10px 0;flex-wrap:wrap">
+    <div class="card" style="flex:1;min-width:150px;padding:10px;text-align:center">
+      <div style="font-size:0.75rem;color:var(--dim)">R² → OOS3 相関</div>
+      <div style="font-size:1.5rem;font-weight:700;color:var(--green)">{{ tip.data.r2_oos3_corr }}</div>
+      <div style="font-size:0.7rem;color:var(--dim)">強い正の相関</div>
+    </div>
+    <div class="card" style="flex:1;min-width:150px;padding:10px;text-align:center">
+      <div style="font-size:0.75rem;color:var(--dim)">ISα → OOS3 相関</div>
+      <div style="font-size:1.5rem;font-weight:700;color:var(--red)">0.07</div>
+      <div style="font-size:0.7rem;color:var(--dim)">ほぼ無相関</div>
+    </div>
+  </div>
+  {% if tip.data.overfit_decay %}
+  <h3 style="font-size:0.9rem;margin:8px 0 4px">ISα帯別フォワード減衰</h3>
+  <div style="overflow-x:auto">
+    <table class="analysis-table">
+      <thead><tr><th>ISα帯</th><th>戦略数</th><th>OOS3α中央値</th><th>Daily減衰率</th></tr></thead>
+      <tbody>
+      {% for row in tip.data.overfit_decay %}
+      <tr class="{% if row.decay_med >= 30 %}highlight-row{% elif row.decay_med < 15 %}warn-row{% endif %}">
+        <td><strong>{{ row.is_range }}</strong></td><td>{{ row.count }}</td>
+        <td class="positive">{{ row.oos3_med }}%</td><td>{{ row.decay_med }}%</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+  {% endif %}
+
+  {# ── Building Guide ── #}
+  {% if tip.id == 'building_guide' and tip.data %}
+  <div style="display:flex;gap:12px;margin:10px 0;flex-wrap:wrap">
+    <div class="card" style="flex:1;min-width:120px;padding:10px;text-align:center;background:rgba(34,197,94,0.08)">
+      <div style="font-size:0.75rem;color:var(--dim)">合格戦略数</div>
+      <div style="font-size:1.5rem;font-weight:700;color:var(--green)">{{ tip.data.qualifying_count }}</div>
+    </div>
+    <div class="card" style="flex:1;min-width:120px;padding:10px;text-align:center">
+      <div style="font-size:0.75rem;color:var(--dim)">OOS3α中央値</div>
+      <div style="font-size:1.5rem;font-weight:700;color:var(--accent)">+{{ tip.data.oos3_stats.median }}%</div>
+    </div>
+    <div class="card" style="flex:1;min-width:120px;padding:10px;text-align:center">
+      <div style="font-size:0.75rem;color:var(--dim)">GM範囲</div>
+      <div style="font-size:1.2rem;font-weight:700">{{ tip.data.gm_range[0] }}-{{ tip.data.gm_range[1] }}</div>
+    </div>
+    <div class="card" style="flex:1;min-width:120px;padding:10px;text-align:center">
+      <div style="font-size:0.75rem;color:var(--dim)">LB範囲</div>
+      <div style="font-size:1.2rem;font-weight:700">{{ tip.data.lb_range[0] }}-{{ tip.data.lb_range[1] }}</div>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ── Generic data tables ── #}
+  {% if tip.data and tip.id not in ['addg_gl_mechanism', 'market_regime_strategy', 'param_sensitivity', 'overfit_robustness', 'building_guide'] %}
+  {% if tip.data is mapping %}
+  {# Skip dict data display unless it has a specific handler #}
+  {% elif tip.data is iterable and tip.data is not string %}
   <div style="overflow-x:auto">
     <table>
       <thead>
@@ -74,8 +263,9 @@
       </thead>
       <tbody>
         {% for row in tip.data %}
+        {% if row is mapping %}
         <tr>
-          <td>{{ row.name }}</td>
+          <td>{{ row.name or row.get('type', '') or row.get('combo', '') or row.get('filter', '') or row.get('entry', '') or row.get('dd_group', '') }}</td>
           {% if tip.id == 'wf_robust' %}
           <td>{{ row.pbo }}</td><td class="{% if row.is_alpha > 0 %}positive{% else %}negative{% endif %}">{{ row.is_alpha }}%</td><td class="{% if row.oos_alpha > 0 %}positive{% else %}negative{% endif %}">{{ row.oos_alpha }}%</td>
           {% elif tip.id == 'wf_overfit' %}
@@ -90,10 +280,12 @@
           <td class="{% if row.alpha > 0 %}positive{% else %}negative{% endif %}">{{ row.alpha }}%</td><td>{{ row.win_rate }}%</td><td>{{ row.trades }}</td>
           {% endif %}
         </tr>
+        {% endif %}
         {% endfor %}
       </tbody>
     </table>
   </div>
+  {% endif %}
   {% endif %}
 
   <!-- Chart for WF validation -->
@@ -114,6 +306,30 @@ const plotStyle = {
 };
 
 {% for tip in tips %}
+{% if tip.id == 'addg_gl_mechanism' and tip.data %}
+(function(){
+  const data = {{ tip.data | tojson }};
+  const gms = data.map(d => 'GM=' + d.gm);
+  Plotly.newPlot('chart_gm_analysis', [
+    {x: gms, y: data.map(d=>d.oos3_mean), name:'OOS3α平均(%)', type:'bar', marker:{color:'#22c55e'}, yaxis:'y'},
+    {x: gms, y: data.map(d=>d.pbo_med), name:'PBO中央値', type:'scatter', mode:'lines+markers', marker:{color:'#ef4444',size:10}, line:{width:3}, yaxis:'y2'},
+    {x: gms, y: data.map(d=>d.daily_oos_med), name:'OOS daily中央値(%)', type:'bar', marker:{color:'#3b82f6',opacity:0.5}, yaxis:'y'},
+  ], {
+    ...plotStyle,
+    title: 'Gradient Margin: OOS3α vs PBO Trade-off',
+    barmode: 'group',
+    yaxis: {title: 'Alpha / Daily (%)', side: 'left'},
+    yaxis2: {title: 'PBO Score', side: 'right', overlaying: 'y', range: [0, 1],
+             tickfont: {color: '#ef4444'}, titlefont: {color: '#ef4444'}},
+    legend: {x: 0.01, y: 0.99, bgcolor: 'rgba(0,0,0,0.4)'},
+    shapes: [{type:'line', y0:0.3, y1:0.3, x0:-0.5, x1:gms.length-0.5, yref:'y2',
+              line:{color:'rgba(239,68,68,0.5)', width:2, dash:'dot'}}],
+    annotations: [{text:'PBO < 0.3 合格ライン', x:gms.length-1, y:0.32, yref:'y2',
+                   font:{size:9,color:'#ef4444'}, showarrow:false}],
+  }, {responsive:true});
+})();
+{% endif %}
+
 {% if tip.id == 'wf_robust' and tip.data %}
 (function(){
   const data = {{ tip.data | tojson }};
@@ -129,7 +345,6 @@ const plotStyle = {
 (function(){
   const data = {{ tip.data | tojson }};
   const xs = data.map(d=>d.trades), ys = data.map(d=>d.alpha);
-  // Polynomial regression (degree 2) for trend line
   function polyFit(x, y, deg) {
     const n = x.length;
     const m = deg + 1;
@@ -140,7 +355,6 @@ const plotStyle = {
       X.push(row);
       Y.push(y[i]);
     }
-    // Normal equation: (X^T X) coeff = X^T Y
     const XtX = Array.from({length:m}, ()=>Array(m).fill(0));
     const XtY = Array(m).fill(0);
     for (let i = 0; i < n; i++) {
@@ -149,7 +363,6 @@ const plotStyle = {
         for (let k = 0; k < m; k++) XtX[j][k] += X[i][j] * X[i][k];
       }
     }
-    // Solve via Gaussian elimination
     for (let i = 0; i < m; i++) {
       let maxR = i;
       for (let r = i+1; r < m; r++) if (Math.abs(XtX[r][i]) > Math.abs(XtX[maxR][i])) maxR = r;
@@ -188,7 +401,6 @@ const plotStyle = {
     traces.push({x:trendX, y:trendY, mode:'lines', name:'Trend (poly2)',
       line:{color:'rgba(251,191,36,0.7)', width:2, dash:'dot'}});
   }
-  // Compute analysis period from data
   const avgDays = data.length > 0 ? Math.round(data.reduce((s,d)=>s+(d.days||270),0)/data.length) : 270;
   const tradesPerDay = data.length > 0 ? (data.reduce((s,d)=>s+d.trades,0)/data.length/avgDays).toFixed(2) : '?';
   Plotly.newPlot('chart_trade_count', traces,

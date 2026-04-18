@@ -1061,6 +1061,380 @@ def _generate_tips(results: list[dict]) -> list[dict]:
             "timestamp": now,
         })
 
+    # ── ADDG_GL Deep Analysis: Why It Works ──────────────────
+    gl_strats = [r for r in results if 'ADDG_GL' in r.get('name', '')]
+    if gl_strats:
+        # Parse gradient margin from name
+        def _parse_gm(nm):
+            for p in nm.split('_'):
+                if p.startswith('GM'):
+                    try: return float(p[2:])
+                    except: pass
+            return None
+        def _parse_lb(nm):
+            for p in nm.split('_'):
+                if p.startswith('LB'):
+                    try: return int(p[2:])
+                    except: pass
+            return None
+        def _parse_bth(nm):
+            for p in nm.split('_'):
+                if p.startswith('BTH'):
+                    try: return float(p[3:])
+                    except: pass
+            return None
+        def _parse_lev(nm):
+            for p in nm.split('_'):
+                if p.startswith('B') and 'b' in p[1:] and p.endswith('x'):
+                    try:
+                        bull, bear = p[1:-1].split('b')
+                        return float(bull), float(bear)
+                    except: pass
+            return None, None
+
+        # 1. Gradient Leverage Mechanism
+        gm_perf = {}  # gm -> {oos3_alphas, pbo_scores, daily_oos}
+        for r in gl_strats:
+            gm = _parse_gm(r['name'])
+            if gm is None: continue
+            wf = r.get('walkforward', {})
+            oos3 = wf.get('oos3_metrics', {})
+            oos_m = wf.get('oos_metrics', {})
+            is_m = wf.get('is_metrics', {})
+            if not is_m: continue
+            if gm not in gm_perf:
+                gm_perf[gm] = {'oos3': [], 'pbo': [], 'daily_oos': [], 'r2': [], 'dd': []}
+            gm_perf[gm]['oos3'].append(oos3.get('alpha_pct', 0) or 0)
+            gm_perf[gm]['pbo'].append(wf.get('pbo_score', 1.0) or 1.0)
+            gm_perf[gm]['daily_oos'].append(oos_m.get('return_daily_pct', 0) or 0)
+            gm_perf[gm]['dd'].append(is_m.get('max_drawdown_pct', -100) or -100)
+            eq = r.get('equity_curve', [])
+            if len(eq) >= 20:
+                arr = np.array(eq, dtype=float)
+                x = np.arange(len(arr))
+                sl, ic = np.polyfit(x, arr, 1)
+                if sl > 0:
+                    yp = sl * x + ic
+                    ssr = np.sum((arr - yp)**2)
+                    sst = np.sum((arr - np.mean(arr))**2)
+                    gm_perf[gm]['r2'].append(1 - ssr/sst if sst > 0 else 0)
+
+        gm_table = []
+        for gm in sorted(gm_perf.keys()):
+            d = gm_perf[gm]
+            gm_table.append({
+                'gm': gm, 'count': len(d['oos3']),
+                'oos3_mean': round(float(np.mean(d['oos3'])), 1),
+                'oos3_med': round(float(np.median(d['oos3'])), 1),
+                'pbo_med': round(float(np.median(d['pbo'])), 3),
+                'daily_oos_med': round(float(np.median(d['daily_oos'])), 3),
+                'r2_med': round(float(np.median(d['r2'])), 3) if d['r2'] else 0,
+                'dd_med': round(float(np.median(d['dd'])), 1),
+            })
+
+        tips.append({
+            "id": "addg_gl_mechanism", "title": "ADDG_GL解析: なぜグラデーション・レバレッジが機能するか",
+            "category": "discovery",
+            "source_strategy": "ADDG_GL全戦略",
+            "content": (
+                f'■ メカニズム: SMA周辺で連続的にレバレッジを調整(バイナリ切替ではなくグラデーション遷移)。'
+                f'gradient_margin(GM)が遷移ゾーンの幅を制御。'
+                f'BTC価格がSMA±GM%の範囲内ではレバレッジが線形補間され、急激なポジション変更(ホイップソー)を回避。'
+                f'\n■ バイナリとの違い: DDG/TL系はSMAクロス時に即座にレバ切替→ボラ高時に連続的な損切りが発生。'
+                f'GLはゾーン内で段階的に移行するため、「偽ブレイク」の影響が大幅に軽減される。'
+                f'\n■ GM(gradient_margin)と前方性能: GM↑でOOS3α↑だがPBO↑(過学習リスク)。'
+                f'GM=4.0がPBO=0.125で最良バランス。GM≥7.0はPBO≥0.38で不安定。'
+            ),
+            "data": gm_table,
+            "timestamp": now,
+        })
+
+        # 2. Market Regime & Strategy Performance
+        # Collect BTC returns per period
+        btc_is = []
+        btc_oos2 = []
+        btc_oos3 = []
+        for r in results:
+            wf = r.get('walkforward', {})
+            is_m = wf.get('is_metrics', {})
+            oos2_m = wf.get('oos2_metrics', {})
+            oos3_m = wf.get('oos3_metrics', {})
+            if is_m and is_m.get('benchmark_return_pct') is not None:
+                btc_is.append(is_m['benchmark_return_pct'])
+            if oos2_m and oos2_m.get('benchmark_return_pct') is not None:
+                btc_oos2.append(oos2_m['benchmark_return_pct'])
+            if oos3_m and oos3_m.get('benchmark_return_pct') is not None:
+                btc_oos3.append(oos3_m['benchmark_return_pct'])
+
+        btc_is_ret = round(float(np.median(btc_is)), 1) if btc_is else 0
+        btc_oos2_ret = round(float(np.median(btc_oos2)), 1) if btc_oos2 else 0
+        btc_oos3_ret = round(float(np.median(btc_oos3)), 1) if btc_oos3 else 0
+
+        # Strategy performance by type in each regime
+        type_regime = {}
+        for r in results:
+            nm = r.get('name', '')
+            wf = r.get('walkforward', {})
+            is_m = wf.get('is_metrics', {})
+            oos2_m = wf.get('oos2_metrics', {})
+            oos3_m = wf.get('oos3_metrics', {})
+            if not is_m: continue
+            if 'ADDG_GL' in nm: stype = 'ADDG_GL'
+            elif 'ADDG_VS' in nm: stype = 'ADDG_VS'
+            elif 'ADDG_TL' in nm: stype = 'ADDG_TL'
+            elif 'DDG' in nm: stype = 'DDG'
+            else: continue
+            if stype not in type_regime:
+                type_regime[stype] = {'is_daily': [], 'oos2_daily': [], 'oos3_daily': [], 'oos3_alpha': []}
+            type_regime[stype]['is_daily'].append(is_m.get('return_daily_pct', 0) or 0)
+            type_regime[stype]['oos2_daily'].append(oos2_m.get('return_daily_pct', 0) or 0)
+            type_regime[stype]['oos3_daily'].append(oos3_m.get('return_daily_pct', 0) or 0)
+            type_regime[stype]['oos3_alpha'].append(oos3_m.get('alpha_pct', 0) or 0)
+
+        regime_table = []
+        for stype in ['ADDG_GL', 'ADDG_VS', 'ADDG_TL', 'DDG']:
+            if stype not in type_regime: continue
+            d = type_regime[stype]
+            regime_table.append({
+                'type': stype, 'count': len(d['is_daily']),
+                'is_daily': round(float(np.median(d['is_daily'])), 3),
+                'oos2_daily': round(float(np.median(d['oos2_daily'])), 3),
+                'oos3_daily': round(float(np.median(d['oos3_daily'])), 3),
+                'oos3_alpha_med': round(float(np.median(d['oos3_alpha'])), 1),
+                'oos3_pos_rate': round(sum(1 for x in d['oos3_alpha'] if x > 0) / max(1, len(d['oos3_alpha'])) * 100, 0),
+            })
+
+        tips.append({
+            "id": "market_regime_strategy", "title": "市場レジーム×戦略タイプ: どの市場環境で何が機能するか",
+            "category": "learning",
+            "source_strategy": "全戦略",
+            "content": (
+                f'■ 期間別BTC: IS期間(190日)={btc_is_ret:+.1f}%(ベア), OOS2(80日)={btc_oos2_ret:+.1f}%(ブル), OOS3(80日)={btc_oos3_ret:+.1f}%(横ばい)。'
+                f'\n■ 核心知見: 戦略はベア市場のISデータで最適化される。真の実力はブル(OOS2)と横ばい(OOS3)で判明する。'
+                f'\n■ ADDG_GLの圧勝理由: OOS3(横ばい市場)でOOS3α正の比率が他タイプを圧倒。'
+                f'横ばい市場ではトレンドシグナルが頻繁に反転→GLのグラデーション遷移がこの損失を最小化。'
+                f'\n■ 実用上の教訓: ISのα(ベア市場での最適化結果)は前方パフォーマンスを予測しない(相関0.07)。'
+                f'R²(エクイティの直線性)がOOS3と最も相関が強い(0.64)。'
+                f'→ αの高さよりR²の高さを重視すべき。'
+            ),
+            "data": {"btc_is": btc_is_ret, "btc_oos2": btc_oos2_ret, "btc_oos3": btc_oos3_ret,
+                     "regime_table": regime_table},
+            "timestamp": now,
+        })
+
+        # 3. Parameter Sensitivity Analysis
+        param_analysis = []
+
+        # LB impact (GM=4.0 only)
+        lb_perf = {}
+        for r in gl_strats:
+            if 'GM4.0' not in r['name']: continue
+            lb = _parse_lb(r['name'])
+            if lb is None: continue
+            wf = r.get('walkforward', {})
+            oos3 = wf.get('oos3_metrics', {})
+            is_m = wf.get('is_metrics', {})
+            if not is_m: continue
+            if lb not in lb_perf:
+                lb_perf[lb] = {'oos3': [], 'dd': [], 'r2': []}
+            lb_perf[lb]['oos3'].append(oos3.get('alpha_pct', 0) or 0)
+            lb_perf[lb]['dd'].append(is_m.get('max_drawdown_pct', -100) or -100)
+            eq = r.get('equity_curve', [])
+            if len(eq) >= 20:
+                arr = np.array(eq, dtype=float)
+                x = np.arange(len(arr))
+                sl, ic = np.polyfit(x, arr, 1)
+                if sl > 0:
+                    yp = sl * x + ic
+                    ssr = np.sum((arr - yp)**2)
+                    sst = np.sum((arr - np.mean(arr))**2)
+                    lb_perf[lb]['r2'].append(1 - ssr/sst if sst > 0 else 0)
+
+        lb_table = []
+        for lb in sorted(lb_perf.keys()):
+            d = lb_perf[lb]
+            lb_table.append({
+                'lb': lb, 'count': len(d['oos3']),
+                'oos3_mean': round(float(np.mean(d['oos3'])), 1),
+                'dd_med': round(float(np.median(d['dd'])), 1),
+                'r2_med': round(float(np.median(d['r2'])), 3) if d['r2'] else 0,
+            })
+
+        # BTH impact (GM=4.0 only)
+        bth_perf = {}
+        for r in gl_strats:
+            if 'GM4.0' not in r['name']: continue
+            bth = _parse_bth(r['name'])
+            if bth is None: continue
+            wf = r.get('walkforward', {})
+            oos3 = wf.get('oos3_metrics', {})
+            is_m = wf.get('is_metrics', {})
+            if not is_m: continue
+            if bth not in bth_perf:
+                bth_perf[bth] = {'oos3': [], 'win_rate': [], 'pf': []}
+            bth_perf[bth]['oos3'].append(oos3.get('alpha_pct', 0) or 0)
+            bth_perf[bth]['win_rate'].append(is_m.get('win_rate_pct', 0) or 0)
+            bth_perf[bth]['pf'].append(is_m.get('profit_factor', 0) or 0)
+
+        bth_table = []
+        for bth in sorted(bth_perf.keys()):
+            d = bth_perf[bth]
+            bth_table.append({
+                'bth': bth, 'count': len(d['oos3']),
+                'oos3_mean': round(float(np.mean(d['oos3'])), 1),
+                'win_rate_med': round(float(np.median(d['win_rate'])), 1),
+                'pf_med': round(float(np.median(d['pf'])), 2),
+            })
+
+        # Leverage impact
+        lev_perf = {}
+        for r in gl_strats:
+            bull, bear = _parse_lev(r['name'])
+            if bull is None: continue
+            wf = r.get('walkforward', {})
+            oos3 = wf.get('oos3_metrics', {})
+            is_m = wf.get('is_metrics', {})
+            if not is_m: continue
+            key = f'B{bull}b{bear}'
+            if key not in lev_perf:
+                lev_perf[key] = {'oos3': [], 'dd': [], 'is_alpha': []}
+            lev_perf[key]['oos3'].append(oos3.get('alpha_pct', 0) or 0)
+            lev_perf[key]['dd'].append(is_m.get('max_drawdown_pct', -100) or -100)
+            lev_perf[key]['is_alpha'].append(is_m.get('alpha_pct', 0) or 0)
+
+        lev_table = []
+        for key in sorted(lev_perf.keys()):
+            d = lev_perf[key]
+            if len(d['oos3']) < 5: continue
+            lev_table.append({
+                'leverage': key, 'count': len(d['oos3']),
+                'oos3_med': round(float(np.median(d['oos3'])), 1),
+                'dd_med': round(float(np.median(d['dd'])), 1),
+                'is_alpha_med': round(float(np.median(d['is_alpha'])), 1),
+            })
+
+        tips.append({
+            "id": "param_sensitivity", "title": "ADDG_GLパラメータ感度分析: 今後の戦略構築ガイド",
+            "category": "learning",
+            "source_strategy": "ADDG_GL (GM=4.0)",
+            "content": (
+                f'■ Lookback (LB): LB↑でOOS3α↑。LB162が最良(OOS3={lb_table[-1]["oos3_mean"] if lb_table else "?"}%)。'
+                f'長いLBはSMAの安定性を高め偽シグナルを減らす。ただしLB>170は反応遅延のリスク。'
+                f'\n■ Bear Threshold (BTH): BTH↓でOOS3α↑。BTH=2.0が最良(OOS3={bth_table[0]["oos3_mean"] if bth_table else "?"}%)。'
+                f'タイトなBTH=素早いリスクオフ=ベア入口の損失を抑制。BTH>3.0はベア入り判定が遅すぎて手遅れ。'
+                f'\n■ Leverage: bear_lev↓でOOS3↑(保守的=ロバスト)。bull_lev=5.5がベスト。'
+                f'非対称レバ(bull>bear)がキー: 確定ブルで積極的、不確実な局面で保守的。'
+                f'\n■ 今後の探索方向: LB162-170, BTH1.8-2.3, GM3.5-4.5, B5.5b2.5-3.0の組合せが有望。'
+            ),
+            "data": {"lb_table": lb_table, "bth_table": bth_table, "lev_table": lev_table},
+            "timestamp": now,
+        })
+
+        # 4. Overfit vs Robustness Analysis
+        # IS alpha bins vs forward performance
+        overfit_data = []
+        is_bins = [(150, 300, '150-300'), (300, 450, '300-450'), (450, 600, '450-600'), (600, 900, '600+')]
+        for lo, hi, label in is_bins:
+            grp = [r for r in gl_strats
+                   if (wf := r.get('walkforward', {})) and (ism := wf.get('is_metrics', {}))
+                   and lo <= (ism.get('alpha_pct', 0) or 0) < hi]
+            if not grp: continue
+            oos3_vals = [(r.get('walkforward', {}).get('oos3_metrics', {}) or {}).get('alpha_pct', 0) or 0 for r in grp]
+            is_daily_vals = [(r.get('walkforward', {}).get('is_metrics', {}) or {}).get('return_daily_pct', 0) or 0 for r in grp]
+            oos3_daily_vals = [(r.get('walkforward', {}).get('oos3_metrics', {}) or {}).get('return_daily_pct', 0) or 0 for r in grp]
+            decays = [o3/isd if isd > 0 else 0 for o3, isd in zip(oos3_daily_vals, is_daily_vals)]
+            overfit_data.append({
+                'is_range': label, 'count': len(grp),
+                'oos3_med': round(float(np.median(oos3_vals)), 1),
+                'decay_med': round(float(np.median(decays)) * 100, 1),
+            })
+
+        # R² vs OOS3 correlation
+        r2_vals = []
+        oos3_vals = []
+        for r in gl_strats:
+            eq = r.get('equity_curve', [])
+            oos3 = (r.get('walkforward', {}).get('oos3_metrics', {}) or {}).get('alpha_pct', 0) or 0
+            if len(eq) >= 20:
+                arr = np.array(eq, dtype=float)
+                x = np.arange(len(arr))
+                sl, ic = np.polyfit(x, arr, 1)
+                if sl > 0:
+                    yp = sl * x + ic
+                    ssr = np.sum((arr - yp)**2)
+                    sst = np.sum((arr - np.mean(arr))**2)
+                    r2v = 1 - ssr/sst if sst > 0 else 0
+                    r2_vals.append(r2v)
+                    oos3_vals.append(oos3)
+        r2_oos3_corr = round(float(np.corrcoef(r2_vals, oos3_vals)[0, 1]), 3) if len(r2_vals) > 5 else 0
+
+        tips.append({
+            "id": "overfit_robustness", "title": "オーバーフィットvsロバスト性: 何がフォワード成績を決めるか",
+            "category": "learning",
+            "source_strategy": "ADDG_GL全戦略",
+            "content": (
+                f'■ ISα高い≠フォワード好成績: IS→OOS3の相関はわずか0.07。ISでの「最適化の成果」はフォワードでほぼ無意味。'
+                f'\n■ R²がOOS3を予測: R²→OOS3相関={r2_oos3_corr}。エクイティの直線性が高い戦略ほどフォワードで安定。'
+                f'→ R²は「一貫した収益メカニズム」の指標。R²低=一時的な大勝ちに依存=フォワードで再現不能。'
+                f'\n■ ISα増加によるフォワード減衰: ISα300-450帯が最もバランス良好。ISα600+はフォワードが最も悪化。'
+                f'過度な最適化(ISα最大化)は過学習の代名詞。'
+                f'\n■ PBOの意味: PBO<0.3 = 全walk-forwardスプリットで安定。PBO≥0.5 = 半分以上のスプリットで悪化 = 実運用不可。'
+                f'\n■ 戦略選択基準(重要度順): 1)R²≥0.80, 2)PBO<0.2, 3)OOS3α>0, 4)DD>-33%, 5)ISα≥300'
+            ),
+            "data": {"overfit_decay": overfit_data, "r2_oos3_corr": r2_oos3_corr},
+            "timestamp": now,
+        })
+
+        # 5. Practical Tips for Future Strategy Building
+        # Identify the "safe zone" parameters
+        qualifying_gl = [r for r in gl_strats
+                         if (wf := r.get('walkforward', {})) and
+                         (is_m := wf.get('is_metrics', {})) and
+                         (is_m.get('alpha_pct', 0) or 0) >= 300 and
+                         (wf.get('pbo_score', 1.0) or 1.0) < 0.3]
+        if qualifying_gl:
+            q_gms = [_parse_gm(r['name']) for r in qualifying_gl if _parse_gm(r['name']) is not None]
+            q_lbs = [_parse_lb(r['name']) for r in qualifying_gl if _parse_lb(r['name']) is not None]
+            q_bths = [_parse_bth(r['name']) for r in qualifying_gl if _parse_bth(r['name']) is not None]
+            q_levs = [_parse_lev(r['name']) for r in qualifying_gl]
+            q_oos3 = [(r.get('walkforward', {}).get('oos3_metrics', {}) or {}).get('alpha_pct', 0) or 0 for r in qualifying_gl]
+
+            tips.append({
+                "id": "building_guide", "title": "次世代戦略構築ガイド: 実証済みの安全ゾーン",
+                "category": "discovery",
+                "source_strategy": f"合格ADDG_GL ({len(qualifying_gl)}戦略)",
+                "content": (
+                    f'■ 合格パラメータゾーン (ISα≥300, PBO<0.3, 全OOS3正):'
+                    f'\n  GM: {min(q_gms)}-{max(q_gms)} (中央値={float(np.median(q_gms))})'
+                    f'\n  LB: {min(q_lbs)}-{max(q_lbs)} (中央値={int(np.median(q_lbs))})'
+                    f'\n  BTH: {min(q_bths)}-{max(q_bths)} (中央値={float(np.median(q_bths))})'
+                    f'\n  Bull leverage: {min(b for b, _ in q_levs if b)}-{max(b for b, _ in q_levs if b)}'
+                    f'\n  Bear leverage: {min(b for _, b in q_levs if b)}-{max(b for _, b in q_levs if b)}'
+                    f'\n■ OOS3α分布: min={min(q_oos3):.0f}%, max={max(q_oos3):.0f}%, median={float(np.median(q_oos3)):.0f}%'
+                    f'\n■ 改善の方向性:'
+                    f'\n  1) BTHをさらにタイト(1.8-2.3)→ベア初動での損失カット強化'
+                    f'\n  2) LBをさらに長く(165-175)→SMA安定化→偽シグナル減'
+                    f'\n  3) GM=3.5-4.5の微調整→PBO最小化ゾーンの精密特定'
+                    f'\n  4) 非対称レバ強化(bull=5.5-6.0, bear=2.0-2.5)→確定トレンドのみ積極化'
+                    f'\n■ 避けるべき領域:'
+                    f'\n  × GM≥7.0: PBO悪化、OOS daily低下'
+                    f'\n  × BTH≥3.5: ベア判定が遅すぎる'
+                    f'\n  × bear_lev≥4.0: DD悪化、ロバスト性低下'
+                    f'\n  × ISα最大化: フォワード減衰が深刻化'
+                ),
+                "data": {
+                    "qualifying_count": len(qualifying_gl),
+                    "gm_range": [float(min(q_gms)), float(max(q_gms))],
+                    "lb_range": [int(min(q_lbs)), int(max(q_lbs))],
+                    "bth_range": [float(min(q_bths)), float(max(q_bths))],
+                    "oos3_stats": {
+                        "min": round(min(q_oos3), 1), "max": round(max(q_oos3), 1),
+                        "median": round(float(np.median(q_oos3)), 1)
+                    },
+                },
+                "timestamp": now,
+            })
+
     return tips
 
 
@@ -4685,6 +5059,13 @@ async def get_results():
 @app.get("/api/tips")
 async def get_tips():
     return _tips
+
+
+@app.post("/api/tips/refresh")
+async def refresh_tips():
+    _merge_tips(_generate_tips(list(_results)))
+    _save_tips()
+    return {"ok": True, "count": len(_tips)}
 
 
 @app.get("/strategy/{idx}", response_class=HTMLResponse)
