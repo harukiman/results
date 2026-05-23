@@ -3,7 +3,7 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 566490,
+    "total_trials": 576138,
     "total_strategies": 6
   },
   "strategies": [
@@ -1079,6 +1079,35 @@
       "reason": "4,320 configs (1,440×3 SLTP), 0 healthy. Self-normalizing z-score of N-bar returns. Pure momentum signal cannot overcome cost on 4H — yet another confirmation that trend-following alone is insufficient without a compression gate.",
       "date": "2026-05-23",
       "configs_tested": 4320
+    },
+    {
+      "name": "Intrabar Gap",
+      "family": "Gap Signal",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "576 configs, 0 healthy. Intrabar gap (open vs prev close) cannot detect actionable quiet-market periods. 4H timeframe gaps are too small and noisy.",
+      "date": "2026-05-23",
+      "configs_tested": 576
+    },
+    {
+      "name": "Volatility Cone",
+      "family": "VolCone",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "3,888 configs, 890 'healthy' (22.89%) BUT uses cooldown_bars instead of max_hold_bars — positions held indefinitely until SL/TP. NOT comparable to 6 survivors. Top OOS Sharpe 4.205 (SUI). VolCone indicator correlates r=0.535 with VolReg — moderate overlap. Triple-window percentile compression is a variant of vol compression, NOT a new dimension. Requires re-validation with standardized max_hold_bars before promotion. PENDING REVALIDATION.",
+      "date": "2026-05-23",
+      "configs_tested": 3888,
+      "status": "PENDING_REVALIDATION"
+    },
+    {
+      "name": "Compression Duration",
+      "family": "CompDur",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "5,184 configs, 342 'healthy' (6.6%) BUT same cooldown_bars issue as VolCone. Top OOS Sharpe 2.934 (AVAX). CompDur measures consecutive compression bars — adds 'time' dimension to vol compression. Same re-validation needed. PENDING REVALIDATION.",
+      "date": "2026-05-23",
+      "configs_tested": 5184,
+      "status": "PENDING_REVALIDATION"
     }
   ]
 }

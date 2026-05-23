@@ -4,7 +4,7 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~566,490+ (前回553K + Wavelet/Renko/ZScore 12,960)
+- パラメータ組合せ試行数: ~576,138+ (前回566K + VolCone/Gap/CompDur 9,648)
 - **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
 - **6条件付き合格**:
@@ -1261,5 +1261,30 @@ GK volatility = sqrt(0.5×ln(H/L)² - (2ln2-1)×ln(C/O)²)。OHLC全4成分を�
 
 **累計棄却ファミリー**: 73+ (Wavelet, Renko, ZScore追加)
 **累計試行**: 566,490+
+
+### 2026-05-23: VolCone/Gap/CompDur スキャン (9,648 configs) → **Gap棄却 + VolCone/CompDur要再検証**
+
+| 戦略 | Configs | Healthy | 判定 |
+|------|---------|---------|------|
+| Volatility Cone | 3,888 | 890 (22.89%) | ⚠️ 要再検証 (cooldown_bars誤使用) |
+| Intrabar Gap | 576 | 0 | ✗ 4Hギャップはノイズ |
+| Compression Duration | 5,184 | 342 (6.6%) | ⚠️ 要再検証 (cooldown_bars誤使用) |
+
+**重要な注意**: VolCone/CompDurスキャンは`cooldown_bars=mh`を使用（`max_hold_bars`ではなく）。ポジションはSL/TPヒットまで無制限に保持される。6生存者のベンチマークとは**直接比較不可**。
+
+**VolCone構造分析**:
+- VolCone indicator vs VolReg: r=0.535（中程度）— 完全冗長ではないが同じ「ボラティリティ圧縮」次元
+- 三重窓（short/med/long）パーセンタイル条件は情報を追加するが、本質的にはrolling-std percentileの変種
+- OOS Sharpe 4.205（SUI最良）は印象的だが、max_hold_bars付きで再検証必要
+
+**CompDur構造分析**:
+- 圧縮の「持続時間」は新次元を追加する可能性 — 長期圧縮→より強い爆発?
+- OOS Sharpe 2.934（AVAX最良）
+- VolRegの閾値検出に「時間」を加えた概念 — ATR_Ratioと同じく圧縮ファミリーの拡張
+
+**Gap**: 4Hバー間のopen-close差は暗号資産の24/7市場では微小すぎてシグナルにならない。
+
+**累計棄却ファミリー**: 74+ (Gap追加, VolCone/CompDur再検証待ち)
+**累計試行**: 576,138+
 
 ---
