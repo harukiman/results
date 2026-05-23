@@ -3,7 +3,7 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 390120,
+    "total_trials": 406860,
     "total_strategies": 6
   },
   "strategies": [
@@ -762,6 +762,25 @@
       "timeframe": "4h",
       "reason": "4,176 configs. ClosePosition: 0 perm-sig (41 healthy). BodyShadow: 1 perm-sig (SOL only, p=0.042, borderline). RangeContraction: 22 perm-sig (14 DOGE, 8 SUI), BUT IS→OOS reversal pattern (IS 0.5-1.0 vs OOS 1.8-2.4), low trade counts (10-21 OOS), 0 on SOL. ATR独立 (r=0.10). Yellow flag: OOS>>IS ratio suggests period-specific rather than genuine edge.",
       "note": "RangeContraction marginally interesting but IS→OOS reversal pattern + low trades = not promoted"
+    },
+    {
+      "name": "Volatility-of-Volatility (VolOfVol)",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "6,480 configs. 4,175 passed IS filter but 0 met healthy criteria (IS>0.5 AND OOS>1.0 AND ratio<3). Vol-of-vol (rolling std of rolling std) partially correlates with VolReg (r=0.34) — captures same regime instability from a noisier angle. Second-order volatility adds noise without adding signal. Not independent enough to matter, not strong enough to stand alone."
+    },
+    {
+      "name": "Cross-Asset Momentum (BTC-relative)",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "1,620 configs. 568 passed IS filter but 0 healthy. ALT outperformance vs BTC as signal = no predictive power. BTC momentum state irrelevant for ALT direction at 4H. Cross-asset momentum exists at macro scales (weekly+) but 4H funding-aligned cycles are coin-specific, not BTC-driven."
+    },
+    {
+      "name": "Parkinson Volatility Ratio",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "8,640 configs. 1,450 healthy, 30 passed strict filter — BUT correlation with ATR_Ratio = 0.87 (DOGE), 0.84 (SUI), 0.89 (SOL). Parkinson uses log(H/L)² which is mathematically equivalent to ATR range-based measurement. All 30 survivors are DOGE (26) + SUI (4), same pattern as ATR_Ratio. Best OOS 4.765 with IS 1.196 = suspicious IS→OOS jump (ratio 0.25). Redundant with existing ATR_Ratio survivor — not an independent edge.",
+      "note": "REDUNDANT — Parkinson ≈ ATR_Ratio (r=0.87). 'Different math, same information.'"
     },
     {
       "name": "Autocorrelation / OU Half-Life / Directional Accuracy / Price Acceleration",
