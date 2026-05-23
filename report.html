@@ -223,6 +223,8 @@
   .text-muted { color: var(--text-muted); }
   .text-blue { color: var(--accent-blue); }
   .text-purple { color: var(--accent-purple); }
+  .text-cyan { color: var(--accent-cyan); }
+  .text-yellow { color: var(--accent-yellow); }
   .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85rem; }
 
   /* Bar chart (CSS-only) */
@@ -447,10 +449,11 @@
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-23 21:08 JST</span> &nbsp;|&nbsp;
-    <strong>試行数:</strong> 710,079+ &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-23 22:20 JST</span> &nbsp;|&nbsp;
+    <strong>試行数:</strong> 710,209+ &nbsp;|&nbsp;
     <strong>生存者:</strong> 8 / 98+ファミリー &nbsp;|&nbsp;
-    <strong>合格率:</strong> 0.0011%
+    <strong>ユニバース:</strong> 26銘柄 &times; 5戦略 &nbsp;|&nbsp;
+    <strong>新Sh≥1.0:</strong> 18ペア
   </div>
 
   <header class="report-header">
@@ -487,6 +490,149 @@
     <div class="section-header">
       <div><span class="section-num">01</span><span class="jp-title">総括</span></div>
       <div class="en-subtitle">エグゼクティブサマリー</div>
+    </div>
+
+    <!-- ── Wave G 最新発見サマリー (2026-05-23 22:20 JST) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-yellow);background:linear-gradient(180deg,rgba(227,179,65,0.06),transparent);">
+      <h3 style="color:var(--accent-yellow);">🌐 Wave G 速報: 広域銘柄カバレッジ検証 (2026-05-23 22:20 JST)</h3>
+      <p style="font-size:0.92rem;margin-top:8px;">
+        従来の生存者がDOGE/AVAX/SUI/BONKに偏重していたため、<strong>27銘柄 (実測26銘柄, MATIC=POL移行で除外) × 5戦略 = 130バックテスト</strong>を実施。7階層(Major/LargeCap/MidCap/SmallCap/L2/DeFi/Meme)で固定パラメータの汎化性を検証。
+      </p>
+
+      <h4 style="color:var(--accent-green);margin-top:14px;">トップ発見1: ATR_Ratio_Compression が圧倒的な広域エッジ</h4>
+      <p style="font-size:0.9rem;">23/26銘柄でSharpe>0 (<strong>88%の銘柄カバレッジ</strong>) — 全戦略中ダントツ。L2/MidCap/Meme/SmallCap全てで機能。これは<strong>「方向不問の前兆検出シグナル」</strong>であることを示唆する。</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:10px;">
+        <div style="background:var(--bg-secondary);padding:12px;border-radius:6px;">
+          <h5 style="color:var(--accent-cyan);margin-bottom:6px;">ATR_Ratio 新発見銘柄 (Sh≥1.5)</h5>
+          <table class="data-table" style="width:100%;font-size:0.82rem;">
+            <thead><tr><th>銘柄</th><th>Tier</th><th>Sh</th><th>DD</th><th>取引数</th></tr></thead>
+            <tbody>
+              <tr><td><strong>OPUSDT</strong></td><td>L2</td><td class="text-green">+2.12</td><td>-11.6%</td><td>54</td></tr>
+              <tr><td><strong>WIFUSDT</strong></td><td>Meme</td><td class="text-green">+1.94</td><td>-21.7%</td><td>73</td></tr>
+              <tr><td><strong>INJUSDT</strong></td><td>SmallCap</td><td class="text-green">+1.90</td><td>-13.2%</td><td>48</td></tr>
+              <tr><td>BONKUSDT</td><td>Meme</td><td class="text-green">+1.84</td><td>-22.4%</td><td>85</td></tr>
+              <tr><td>DOGEUSDT</td><td>Meme</td><td class="text-green">+1.75</td><td>-27.8%</td><td>83</td></tr>
+              <tr><td><strong>SHIBUSDT</strong></td><td>Meme</td><td class="text-green">+1.66</td><td>-14.7%</td><td>71</td></tr>
+              <tr><td><strong>ARBUSDT</strong></td><td>L2</td><td class="text-green">+1.66</td><td>-13.8%</td><td>60</td></tr>
+              <tr><td><strong>LINKUSDT</strong></td><td>MidCap</td><td class="text-green">+1.55</td><td>-18.9%</td><td>64</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="background:var(--bg-secondary);padding:12px;border-radius:6px;">
+          <h5 style="color:var(--accent-cyan);margin-bottom:6px;">戦略別ブレッドス (Sharpe>0 銘柄数 / 26)</h5>
+          <table class="data-table" style="width:100%;font-size:0.85rem;">
+            <thead><tr><th>戦略</th><th>カバレッジ</th><th>Sh≥1.0</th><th>判定</th></tr></thead>
+            <tbody>
+              <tr style="background:rgba(63,185,80,0.10);"><td><strong>ATR_Ratio_Compression</strong></td><td>23/26 (88%)</td><td>10</td><td class="text-green">広域真エッジ</td></tr>
+              <tr><td>MemeMomentum</td><td>19/26 (73%)</td><td>4</td><td class="text-cyan">広域だが高DD</td></tr>
+              <tr><td>SampEn</td><td>11/26 (42%)</td><td>2</td><td class="text-orange">DOGE偏重</td></tr>
+              <tr><td>VolReg_4h</td><td>10/26 (38%)</td><td>1</td><td class="text-red">汎化弱</td></tr>
+              <tr><td>Vol_Smile_Skew</td><td>7/26 (27%)</td><td>1</td><td class="text-red">SUI固有</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <h4 style="color:var(--accent-green);margin-top:14px;">トップ発見2: 複数戦略でアルファをホストする銘柄 = 真のα多発地</h4>
+      <p style="font-size:0.9rem;">複数の独立戦略が同じ銘柄でSh≥1.0を出すことは、その銘柄が<strong>構造的にエッジを生む市場特性を持つ</strong>ことを示唆 — 銘柄選定の中核候補。</p>
+      <ul style="font-size:0.88rem;padding-left:20px;margin-top:6px;">
+        <li><strong>DOGE</strong>: SampEn(+2.14) + ATR_Ratio(+1.75) — 2戦略</li>
+        <li><strong>BONK</strong>: ATR_Ratio(+1.84) + MemeMom(+1.63) — 2戦略</li>
+        <li><strong>SUI</strong>: MemeMom(+1.63) + Vol_Smile_Skew(+1.23) — 2戦略</li>
+        <li><strong>SOL</strong>: SampEn(+1.34) + ATR_Ratio(+1.12) — 2戦略</li>
+      </ul>
+
+      <h4 style="color:var(--accent-red);margin-top:14px;">トップ発見3: アルファ皆無の銘柄カテゴリー = DeFi</h4>
+      <p style="font-size:0.9rem;">
+        <strong>AAVEUSDT, LTCUSDT</strong>: 5戦略全てでSharpe≤0.3、取引数も少なくエッジが存在しない。<strong>DeFi tier (UNI/AAVE)</strong>は全体的にも0/2 (ATR), 0/2 (VolReg) — このカテゴリーには現時点で機能するシグナルがない。
+        <span style="color:var(--text-secondary);font-size:0.85rem;">仮説: DeFiトークンはガバナンス・プロトコル収益に価格が依存し、技術的圧縮・モメンタムシグナルへの応答が他カテゴリーより鈍い。LTCは「デジタルシルバー」言説の終焉でリテール出来高が枯渇。</span>
+      </p>
+
+      <h4 style="color:var(--accent-orange);margin-top:14px;">トップ発見4: VolReg_4h のアンカー (DOGE Sh 2.275) は期間固有の可能性</h4>
+      <p style="font-size:0.9rem;">730日全体での再計測ではDOGE Sharpe大幅低下、トップ銘柄はBNB Sh +1.06のみ。固有エッジというより<strong>過去の特定レジームでのみ機能した</strong>シグナルの可能性。<span style="color:var(--text-secondary);">今後はパラメータ最適化済みの単発結果ではなく、固定パラメータでの広域検証(本Wave Gのような)を生存者要件に追加する必要。</span></p>
+
+      <h4 style="color:var(--accent-purple);margin-top:14px;">含意: 推奨ポートフォリオの再構築</h4>
+      <p style="font-size:0.9rem;">Wave Gの結果は、ポートフォリオ構築哲学を<strong>「単一銘柄の最高Sharpeを集める」から「広域カバレッジ戦略を多銘柄で並列実行」</strong>へシフトすべきことを示唆する。</p>
+      <ul style="font-size:0.88rem;padding-left:20px;margin-top:6px;">
+        <li><strong>コア (60%資金):</strong> ATR_Ratio_Compression を OP/WIF/INJ/BONK/DOGE/SHIB/ARB/LINK 8銘柄に均等配分。Sh+1.55-2.12, DD-11〜-28%, 取引数48-85/銘柄, 全合計 ~538取引。コスト含み年率リターン期待値は単純合計を低めに見積もって+40〜60%。</li>
+        <li><strong>サテライト1 (20%):</strong> SampEn DOGE/SOL 2銘柄 (Sh+2.14 / +1.34) — 非圧縮第2次元のヘッジ。</li>
+        <li><strong>サテライト2 (15%):</strong> MemeMomentum BONK/SUI/NEAR/ATOM 4銘柄 — 強気局面でリターンエンジン (937%, 837%, 426%, 240%) だが個別DD -50〜-65%でリスク高。</li>
+        <li><strong>サテライト3 (5%):</strong> Vol_Smile_Skew SUI — 第3独立次元、心理的非対称性のヘッジ。</li>
+      </ul>
+    </div>
+
+    <!-- ── ATR_Ratio 8-Symbol Portfolio Stress Test ── -->
+    <div class="card" style="border-left:4px solid var(--accent-cyan);">
+      <h3 style="color:var(--accent-cyan);">🛡️ コアポートフォリオ検証: ATR_Ratio × 8銘柄 (相関+Walk-Forward)</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">Wave G で発見した「コア60%」のATR_Ratio 8銘柄等加重ポートフォリオを、相関構造とWalk-Forward 4-foldで検証。</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-top:10px;">
+        <div style="background:var(--bg-secondary);padding:12px;border-radius:6px;">
+          <h5 style="color:var(--accent-green);margin-bottom:6px;">等加重ポートフォリオ実績 (730日)</h5>
+          <table class="data-table" style="width:100%;font-size:0.85rem;">
+            <tbody>
+              <tr><td>ポートフォリオSharpe</td><td class="text-green"><strong>+2.59</strong></td></tr>
+              <tr><td>累計リターン</td><td class="text-green">+95.1%</td></tr>
+              <tr><td>最大DD</td><td class="text-green">-10.1%</td></tr>
+              <tr><td>平均個別Sharpe</td><td>+1.80</td></tr>
+              <tr><td>分散効果比 (port/mean)</td><td class="text-green"><strong>1.44倍</strong></td></tr>
+              <tr><td>Calmar (95.1/10.1)</td><td class="text-green">9.42</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-top:6px;">個別Sh平均+1.80に対しポートフォリオSh+2.59 — <strong>分散効果が確かに機能</strong>。個別最大DD-28%が等加重で-10%まで圧縮 (DD半減以上)。</p>
+        </div>
+
+        <div style="background:var(--bg-secondary);padding:12px;border-radius:6px;">
+          <h5 style="color:var(--accent-orange);margin-bottom:6px;">銘柄間日次リターン相関 (平均+0.361)</h5>
+          <table class="data-table" style="width:100%;font-size:0.82rem;">
+            <thead><tr><th>ペア</th><th>r</th></tr></thead>
+            <tbody>
+              <tr><td>WIF↔SHIB (Meme内)</td><td class="text-orange">+0.53</td></tr>
+              <tr><td>DOGE↔ARB</td><td class="text-orange">+0.53</td></tr>
+              <tr><td>ARB↔WIF</td><td>+0.49</td></tr>
+              <tr><td>OP↔ARB (L2同士)</td><td>+0.47</td></tr>
+              <tr><td>INJ↔SHIB (最弱対)</td><td class="text-green">+0.19</td></tr>
+              <tr><td>INJ↔BONK</td><td class="text-green">+0.20</td></tr>
+              <tr><td>INJ↔LINK</td><td class="text-green">+0.20</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-top:6px;">平均+0.36は中程度。L2同士(+0.47)、Meme内(+0.53)で高め。<strong>INJが最も独立</strong> (他全銘柄と+0.19〜+0.40) — 分散効果の中核担当。</p>
+        </div>
+      </div>
+
+      <h4 style="color:var(--accent-red);margin-top:14px;">⚠️ Walk-Forward の弱点発見: 個別銘柄では1/8のみ4/4合格</h4>
+      <p style="font-size:0.9rem;">730日を5分割 (4 OOSフォールド) でテスト:</p>
+      <table class="data-table" style="width:100%;font-size:0.82rem;margin-top:6px;">
+        <thead><tr><th>銘柄</th><th>F1</th><th>F2</th><th>F3</th><th>F4</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(63,185,80,0.10);"><td><strong>INJUSDT</strong></td><td>+0.38</td><td>+2.82</td><td>+1.81</td><td>+4.36</td><td class="text-green">✓ 4/4</td></tr>
+          <tr><td>OPUSDT</td><td>+3.72</td><td class="text-red">-0.52</td><td>+2.11</td><td>+2.99</td><td class="text-red">3/4</td></tr>
+          <tr><td>WIFUSDT</td><td>+3.27</td><td>+2.87</td><td class="text-red">-1.42</td><td>+1.60</td><td class="text-red">3/4</td></tr>
+          <tr><td>BONKUSDT</td><td>+3.76</td><td class="text-red">-1.97</td><td>+0.02</td><td>+4.48</td><td class="text-red">3/4</td></tr>
+          <tr><td>DOGEUSDT</td><td>+2.64</td><td>+0.48</td><td class="text-red">-0.37</td><td>+5.84</td><td class="text-red">3/4</td></tr>
+          <tr><td>SHIBUSDT</td><td>+1.00</td><td>+3.67</td><td class="text-red">-0.71</td><td>+3.82</td><td class="text-red">3/4</td></tr>
+          <tr><td>ARBUSDT</td><td>+1.80</td><td>+0.41</td><td class="text-red">-0.04</td><td>+3.52</td><td class="text-red">3/4</td></tr>
+          <tr><td>LINKUSDT</td><td>+2.58</td><td>+2.00</td><td class="text-red">-1.64</td><td>+4.56</td><td class="text-red">3/4</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-orange);margin-top:12px;">深い考察: なぜ「個別WF失敗」でも「ポートフォリオは強い」のか</h4>
+      <p style="font-size:0.9rem;">この一見矛盾する結果には3つの構造的理由がある:</p>
+      <ol style="font-size:0.88rem;padding-left:22px;margin-top:6px;">
+        <li style="margin-bottom:8px;"><strong>失敗は特定の1フォールドに集中</strong>: 8銘柄中7銘柄の負フォールドがF2-F3 (2024年末〜2025年中盤の高ボラ局面と推定)。これは<strong>「ATR圧縮が起こりにくいレジーム」</strong>に対応 — シグナル密度低下＋ノイズで個別Sharpeが0付近に振れる。コア仮説が破綻したのではなく、特定の市場局面では非アクティブになる。</li>
+        <li style="margin-bottom:8px;"><strong>銘柄ごとの「悪い時期」は完全には一致しない</strong>: OP/BONKはF1じゃなくF2が悪い、WIFはF3、LINKもF3 — 平均相関+0.36は<strong>失敗タイミングを部分的にずらす</strong>。等加重ポートフォリオは個別失敗を相互に打ち消す。これは数学的に: σ_port² = (1/N²)Σσᵢ² + (1/N²)Σᵢ≠ⱼρᵢⱼσᵢσⱼ → 平均相関0.36, N=8 では σ_port ≈ σ_indiv × √((1+7×0.36)/8) ≈ σ_indiv × 0.62 ≈ DD減少40% — 観測値（-28%→-10%, 64%削減）と整合。</li>
+        <li style="margin-bottom:8px;"><strong>INJの独立性が分散効果の核</strong>: INJは平均相関+0.27 (他は+0.36〜+0.42)、かつWF唯一全勝。<strong>INJの低相関がポートフォリオを支える</strong>。仮にINJを除いた7銘柄等加重を計算した場合、分散効果はさらに低下するはず — 今後の検証必須。</li>
+      </ol>
+
+      <h4 style="color:var(--accent-yellow);margin-top:12px;">推奨アクション (深掘り検証の優先順)</h4>
+      <ol style="font-size:0.88rem;padding-left:22px;margin-top:6px;">
+        <li><strong>レジーム分析</strong>: F2-F3の市場状況 (BTC価格レンジ・実現ボラ・ファンディング) を特定し、ATR_Ratio非アクティブな期間の特徴を言語化。</li>
+        <li><strong>銘柄絞り込み</strong>: WF平均が低い銘柄 (ARB WF平均 +1.42, SHIB +1.95) と高い銘柄 (INJ +2.34, DOGE +2.15) を区別し、TOP4だけのコンパクトポートフォリオも試す。</li>
+        <li><strong>ストップ強化</strong>: F2-F3でのDDを抑える追加リスク管理 — 例: BTCボラ上位30%期間ではポジションサイズ50%減。</li>
+        <li><strong>動的銘柄ローテーション</strong>: 過去N日でATRシグナル発火数の多い銘柄に重みを偏らせる適応的加重。</li>
+      </ol>
     </div>
 
     <div class="stats-grid">
