@@ -4,7 +4,7 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~516,378+ (前回503K + VolCluster/MeanRev/RelVol 12,528)
+- パラメータ組合せ試行数: ~538,410+ (前回516K + GK/VR/CrossTF 22,032)
 - **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
 - **6条件付き合格**:
@@ -1189,5 +1189,32 @@ SampEnが成功しBody Ratioが失敗する理由の仮説: SampEnは時系列�
 
 **累計棄却ファミリー**: 64+ (VolCluster, MeanRev Extreme, RelVol Breakout追加)
 **累計試行**: 516,378+
+
+### 2026-05-23: GK Vol / Variance Ratio / Cross-TF スキャン (22,032 configs) → **全棄却 + GK冗長確認**
+
+| 戦略 | Configs | Healthy | 判定 |
+|------|---------|---------|------|
+| Garman-Klass Compression | 5,184 | 0 | ✗ VolReg冗長 r=0.80, ATR冗長 r=0.88 |
+| Variance Ratio Regime | 11,664 | 0 | ✗ VR≈1 → 効率的市場に近く予測力なし |
+| Cross-TF VolReg (Daily→4H) | 5,184 | 0 | ✗ 時間足の組合せでもエッジ不変 |
+
+**Garman-Klass冗長性の決定的証拠**:
+GK volatility = sqrt(0.5×ln(H/L)² - (2ln2-1)×ln(C/O)²)。OHLC全4成分を使用するにもかかわらず:
+
+| 銘柄 | GK vs VolReg相関 | GK vs ATR相関 |
+|------|-----------------|---------------|
+| DOGE | **0.819** | **0.882** |
+| SUI | 0.801 | 0.854 |
+| SOL | 0.805 | **0.927** |
+| AVAX | 0.782 | 0.884 |
+
+**決定的結論**: OHLCV 4Hバーにおけるボラティリティ情報は**収束する**。VolReg（close std）、ATR（H-L range）、Parkinson（H/L log range）、BB Bandwidth（close std）、GK（OHLC全成分）— いずれの数学的定式化を用いても、抽出される情報は本質的に同一（r>0.78）。**ボラティリティは1次元の現象であり、OHLCV入力からは1つの独立な圧縮シグナルしか抽出できない。**
+
+**Variance Ratio**: VR(q) = Var(q-ret)/(q×Var(1-ret))。効率的市場ではVR≈1。4H暗号資産ではVRの偏差が小さすぎて安定したレジーム分類ができない。
+
+**Cross-TF**: Daily VolReg filter → 4H EMA entry。仮説「日足で大きな圧縮を検出→4Hでタイミングを合わせる」は魅力的だが、日足圧縮信号が4Hに伝搬する過程で情報が劣化。単一時間足の4H VolRegの方が優位。
+
+**累計棄却ファミリー**: 67+ (GK Compression, Variance Ratio, Cross-TF VolReg追加)
+**累計試行**: 538,410+
 
 ---

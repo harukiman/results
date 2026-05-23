@@ -3,7 +3,7 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 516378,
+    "total_trials": 538410,
     "total_strategies": 6
   },
   "strategies": [
@@ -914,6 +914,24 @@
       "symbol": "multi",
       "timeframe": "4h",
       "reason": "1,188 configs across 4 families. 0 perm-significant, 0 multi-symbol healthy. Autocorrelation: IS→OOS reversal (IS 0.31→OOS -1.06). OU Half-Life: SUI/SOL OOS bias, DOGE p=0.106. DirAccuracy: best p=0.144. PriceAccel: extreme IS overfit (IS 1.85→OOS -0.03). Serial dependence, mean-reversion speed, trend consistency, and momentum acceleration all fail on 4H crypto."
+    },
+    {
+      "name": "Garman-Klass Vol Compression",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "Part of 22,032 configs (GK+VR+CrossTF). 0 healthy. GK uses all OHLC components but correlates r=0.80 with VolReg and r=0.88 with ATR. Volatility information in OHLCV converges to one dimension."
+    },
+    {
+      "name": "Variance Ratio Regime",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "Part of 22,032 configs. 0 healthy. VR(q) ≈ 1 in 4H crypto — deviations too small for stable regime detection."
+    },
+    {
+      "name": "Cross-TF VolReg (Daily→4H)",
+      "symbol": "multi",
+      "timeframe": "4h+1d",
+      "reason": "Part of 22,032 configs. 0 healthy. Daily compression signal degrades when propagated to 4H bars. Single-timeframe is superior."
     }
   ]
 }
