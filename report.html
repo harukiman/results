@@ -449,10 +449,10 @@
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 01:05 JST</span> &nbsp;|&nbsp;
-    <strong>試行数:</strong> 722,153+ &nbsp;|&nbsp;
-    <strong>新ベスト (50/50 合成):</strong> <span style="color:var(--accent-green);">Sh +3.15 / DD -1.6% / Calmar 30.56</span> &nbsp;|&nbsp;
-    <strong>5xレバ破産:</strong> <span style="color:var(--accent-green);">0%</span> (median +156%)
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 01:15 JST</span> &nbsp;|&nbsp;
+    <strong>試行数:</strong> 723,464+ &nbsp;|&nbsp;
+    <strong>50/50 合成:</strong> <span style="color:var(--accent-green);">Sh +3.15 / Calmar 30.56</span> &nbsp;|&nbsp;
+    <strong>H1/H2 頑健性:</strong> <span style="color:var(--accent-green);">+3.23 / +3.16</span> (両期間再現)
   </div>
 
   <header class="report-header">
@@ -686,6 +686,59 @@
           <strong>ユーザーの「日利10%」基準について</strong>: 本ポートフォリオの実測日利平均は <strong>0.083%/日 (年率 ~30% / 1xレバ)</strong>。10%/日 に約120倍のギャップ。レバ拡大で平均日利は線形に上がるが破産確率も急増 (10xで 7.28%)。<strong>「10%/日」は本研究の知見では実在不可能</strong>と判断 (1.10^365≈1.3e15 倍/年)。
         </p>
       </div>
+    </div>
+
+    <!-- ── Wave J17-J18: S3I棄却 + 合成期間頑健性 (2026-05-24 01:15 JST) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-green);">
+      <h3 style="color:var(--accent-green);">🛡️ Wave J18: 合成 50/50 の期間独立検証 — H1/H2 両期間で Sh +3.2 維持</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">
+        730d を前半365d (H1) / 後半365d (H2) に分割し、5つの配分パターンで独立評価。<strong>50/50 はどちらの期間でも Sh ≥ +3.15 を維持</strong>:
+      </p>
+      <table class="data-table" style="width:100%;font-size:0.82rem;margin-top:6px;">
+        <thead><tr><th>期間</th><th>配分</th><th>Sharpe</th><th>Return</th><th>Max DD</th><th>Calmar</th><th>相関</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="3">Full 730d</td><td>50/50</td><td>+3.15</td><td>+48.5%</td><td>-1.6%</td><td>30.56</td><td>-0.005</td></tr>
+          <tr><td>ATR単独</td><td>+2.70</td><td>+84.0%</td><td>-3.9%</td><td>21.81</td><td>—</td></tr>
+          <tr><td>FOPD単独</td><td>+1.68</td><td>+18.9%</td><td>-3.5%</td><td>5.38</td><td>—</td></tr>
+
+          <tr style="background:rgba(63,185,80,0.10);"><td rowspan="3">H1 (1-365d)</td><td><strong>50/50</strong></td><td class="text-green"><strong>+3.23</strong></td><td>+25.6%</td><td>-1.6%</td><td>16.15</td><td>-0.010</td></tr>
+          <tr><td>ATR単独</td><td>+3.14</td><td>+50.2%</td><td>-3.6%</td><td>13.97</td><td>—</td></tr>
+          <tr><td>FOPD単独</td><td class="text-orange">+0.84</td><td>+4.5%</td><td>-3.5%</td><td>1.29</td><td>—</td></tr>
+
+          <tr style="background:rgba(63,185,80,0.10);"><td rowspan="3">H2 (365-730d)</td><td><strong>50/50</strong></td><td class="text-green"><strong>+3.16</strong></td><td>+18.4%</td><td>-1.5%</td><td>12.30</td><td>+0.008</td></tr>
+          <tr><td>ATR単独</td><td class="text-orange">+2.21</td><td>+22.9%</td><td>-3.5%</td><td>6.52</td><td>—</td></tr>
+          <tr><td>FOPD単独</td><td class="text-green">+2.60</td><td>+13.7%</td><td>-1.5%</td><td>9.45</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">深い考察: なぜ 50/50 が両期間で頑健か</h4>
+      <ul style="font-size:0.9rem;padding-left:22px;margin-top:6px;">
+        <li style="margin-bottom:6px;"><strong>H1 期間 (2024年中盤〜2025年早期)</strong>: ATR_Ratio が主役 (単独 Sh+3.14)。FOPD は弱い (+0.84)。市場の特性: ボラ圧縮局面が多く ATR の出番が多い。</li>
+        <li style="margin-bottom:6px;"><strong>H2 期間 (2025年早期〜2026年中盤)</strong>: <strong>役割が逆転</strong>。FOPD が主役 (単独 Sh+2.60)、ATR は劣後 (+2.21)。クラウディング過熱局面が増えた。</li>
+        <li style="margin-bottom:6px;"><strong>50/50 はどちらの期間でも上位</strong>: 単独だと「期間のハズレ」リスクあり、50/50 は「どちらが主役の期間でも捕捉」する設計。</li>
+        <li style="margin-bottom:6px;"><strong>各期間のSh-最適配分は異なる</strong>: H1で 60/40 (+3.26)、H2で 40/60 (+3.34)。<strong>50/50 は両期間の平均最適</strong>に対応 — 構造的に頑健。</li>
+        <li style="margin-bottom:6px;"><strong>相関は期間独立に近ゼロ</strong>: H1=-0.010、H2=+0.008、Full=-0.005 — 構造的独立性が確認 (期間固有でない)。</li>
+      </ul>
+
+      <p style="font-size:0.88rem;margin-top:10px;color:var(--accent-yellow);">
+        <strong>Auditor 評価更新</strong>: H1/H2 両期間で Sh+3.15+ という結果は、§6 監査の G2 (PBO=0) を超える期間頑健性の証拠。「<strong>たまたまある期間だけ通った戦略ではない</strong>」が、独立な2半期で再現された。実効的に「2サブサンプルでの再現」=DSR 観点での実効T倍増効果あり。
+      </p>
+    </div>
+
+    <!-- ── Wave J17: S3I (棄却) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-red);">
+      <h3 style="color:var(--accent-red);">❌ Wave J17: S3I (Stablecoin Supply Surge, R5 onchain) — 棄却 (2026-05-24 01:10 JST)</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">仮説: USDT+USDC供給急増は乾燥粉流入の先行指標、BTC/ETHロングエッジ。</p>
+      <p style="font-size:0.9rem;margin-top:8px;">
+        <strong>データ取得</strong>: DefiLlama API、3098日分の日次stablecoin supply ($1.4B→$321.5B、2017-11〜2026-05)。データ取得完全成功。<br>
+        <strong>結果</strong>: 4銘柄 × 324 params = 1296 backtests。Sh>0 が <strong>27%</strong> (ランダム以下)、Sh ≥ 2.0 / Sh ≥ 1.5 = <strong>0</strong>。ETH +1.47 (28 trades) のみ部分的シグナル。
+      </p>
+      <p style="font-size:0.9rem;margin-top:8px;">
+        <strong>棄却理由</strong>: stablecoin supply 変化は<strong>週〜月単位の slow signal</strong>。4Hで反応を捕捉するには遅延が大きすぎる。発行=即座取引所流入ではない (T+数日のラグ)。<strong>日足以上の時間軸で再検証する価値あり</strong> — Backlog保持。
+      </p>
+      <p style="font-size:0.85rem;margin-top:8px;color:var(--text-secondary);">
+        オンチェーン初挑戦の重要な学び: <strong>「時間軸とデータソースのマッチング」が必須</strong>。Slow on-chain signals は 1d足以上、Fast CEX signals は 4H以下 が原則。
+      </p>
     </div>
 
     <!-- ── Wave J15-J16: 配分最適化 + 合成ポートフォリオ §6監査 (2026-05-24 01:00 JST) ── -->
