@@ -4,7 +4,7 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~406,860+ (前回390K + VolOfVol 6,480 + CrossMom 1,620 + Parkinson 8,640)
+- パラメータ組合せ試行数: ~459,618+ (前回406K + RegimePersistence 52,758)
 - **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
 - **6条件付き合格**:
@@ -1041,5 +1041,29 @@ PriceAccelのIS overfit(IS 1.85→OOS -0.03)が最も極端。DirAccuracyのIS-O
 
 **累計棄却ファミリー**: 43+ (VolOfVol, CrossMomentum, Parkinson追加)
 **累計試行**: 406,860+
+
+### 2026-05-23: レジーム持続性スキャン (52,758 configs) → **HH/LL棄却、ReturnConsistency棄却、TrendAge ⚠ PENDING**
+
+| 戦略 | Configs | IS通過 | Healthy | Perm-Sig | 判定 |
+|------|---------|--------|---------|----------|------|
+| TrendAge (トレンド年齢) | 19,440 | — | 2,087 | 44 (26 DOGE, 18 SUI) | ⚠ IS→OOS改善パターン |
+| HH/LL Streaks (連続高値/安値) | 15,552 | — | 81 | 0 | ✗ 全棄却 |
+| ReturnConsistency (リターン一貫性) | 15,959 | — | 1,006 | 6 (SUI only) | ✗ SUI固有バイアス |
+
+**TrendAge詳細分析**:
+
+TrendAgeは「EMAクロスオーバーから何バー経過したか」を測定し、若いトレンド（min_age=8）のみをフィルタリングする。DOGE 4Hで26件のperm-sig（best OOS 3.16, p=0.004）を出したが、**全件でIS/OOS比率が0.22-0.47**（OOSがISの2-5倍）。
+
+**これが懸念される理由**: 本プロジェクトで棄却された40+ファミリーの最大の失敗パターンは「IS→OOS逆転」（IS正→OOS負）だが、TrendAgeは逆の「IS弱→OOS強」。一見良く見えるが:
+1. **OOS期間が特に有利だった可能性**: 直近30%がトレンド相場なら、「若いトレンド」フィルタが恩恵を受ける。これは期間固有であり将来も続く保証はない。
+2. **IS Sharpeが0.50-1.31と弱い**: 真のエッジなら、より長いIS期間で安定した正のSharpeを示すべき。IS 0.50はノイズと区別困難。
+3. **SOL = 0 perm-sig**: マルチシンボル一般化に失敗。SUI = 既知のOOSバイアス。
+
+**パラメータ台地の特徴**: min_age=8が26件中20件（77%）を支配。max_age=120と200は同数（13件ずつ）で感度低。ema_slow=80が16/26（62%）。**この一貫性は良いサイン**だが、IS→OOS改善パターンを覆すには不十分。
+
+**次ステップ**: Walk-Forward検証 + VolReg/ATR/SampEnとの相関チェック。WF 4/4正かつ既存シグナルとの相関 < 0.3 なら7番目の生存者候補として昇格検討。
+
+**累計棄却ファミリー**: 45+ (HH/LL, ReturnConsistency追加、TrendAge保留)
+**累計試行**: 459,618+
 
 ---

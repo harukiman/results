@@ -3,7 +3,7 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 406860,
+    "total_trials": 459618,
     "total_strategies": 6
   },
   "strategies": [
@@ -781,6 +781,25 @@
       "timeframe": "4h",
       "reason": "8,640 configs. 1,450 healthy, 30 passed strict filter — BUT correlation with ATR_Ratio = 0.87 (DOGE), 0.84 (SUI), 0.89 (SOL). Parkinson uses log(H/L)² which is mathematically equivalent to ATR range-based measurement. All 30 survivors are DOGE (26) + SUI (4), same pattern as ATR_Ratio. Best OOS 4.765 with IS 1.196 = suspicious IS→OOS jump (ratio 0.25). Redundant with existing ATR_Ratio survivor — not an independent edge.",
       "note": "REDUNDANT — Parkinson ≈ ATR_Ratio (r=0.87). 'Different math, same information.'"
+    },
+    {
+      "name": "Regime Persistence: TrendAge",
+      "symbol": "DOGE+SUI",
+      "timeframe": "4h",
+      "reason": "19,440 configs (of 52,758 total). 2,087 healthy, 44 perm-sig (26 DOGE, 18 SUI, 0 SOL). Best DOGE: OOS 3.16, IS 1.14, p=0.004, 90 trades. Tight param cluster (min_age=8, ema_slow=80). However, IS/OOS ratio 0.22-0.47 is a RED FLAG — OOS consistently 2-5x better than IS, matching the IS→OOS improvement pattern seen in all rejected families. SOL = 0 perm-sig. SUI = known OOS bias. PENDING deeper validation (walk-forward, correlation check).",
+      "note": "PENDING — TrendAge has promising p-values but IS→OOS improvement pattern needs walk-forward resolution before promotion"
+    },
+    {
+      "name": "Regime Persistence: HH/LL Streaks",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "15,552 configs. 81 healthy, 0 perm-sig. Higher-high / lower-low streak counting provides no edge. Sequential extremes are already embedded in EMA crossover signals."
+    },
+    {
+      "name": "Regime Persistence: ReturnConsistency",
+      "symbol": "SUI only",
+      "timeframe": "4h",
+      "reason": "15,959 configs. 1,006 healthy, 6 perm-sig (ALL SUI, identical core signal with SL/TP variants). IS 0.54 → OOS 2.95, p=0.010. SUI-only = known OOS trend bias. max_hold inert across all 6 configs (same OOS metrics regardless of max_hold). Rejected as SUI-specific artifact."
     },
     {
       "name": "Autocorrelation / OU Half-Life / Directional Accuracy / Price Acceleration",
