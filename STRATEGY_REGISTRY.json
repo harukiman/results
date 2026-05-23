@@ -3,8 +3,8 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 705407,
-    "total_strategies": 7
+    "total_trials": 710079,
+    "total_strategies": 8
   },
   "strategies": [
     {
@@ -623,9 +623,105 @@
       "recommendation": "Deploy on SUI 4H primary, DOGE 4H secondary. Apply standard 1x leverage. Monitor fold-3-type regimes. Adds genuine diversification to portfolio (r=-0.015 vs VolReg).",
       "discovered": "2026-05-23",
       "auditor_notes": "7th survivor. Third independent signal dimension discovered (compression → entropy → directional vol asymmetry). Semi-variance skew is a well-known concept in traditional finance (Sortino ratio lineage) but applied here as a regime detector rather than risk metric. DOGE cross-validation (OOS 3.551) is surprisingly strong. SUI-native signal with partial generalization to high-vol alts."
+    },
+    {
+      "id": "MEME_BONK_4H_001",
+      "name": "MemeMomentum_BONK",
+      "family": "Meme Coin Momentum",
+      "description": "Volume accumulation regime detection in meme coins. EMA(5,21) crossover with RSI neutral zone (35-65) filter and volume spike confirmation (vol > vol_lookback_avg * 1.3). Detects accumulation→breakout patterns specific to meme coin dynamics.",
+      "symbol": "BONKUSDT",
+      "timeframe": "4h",
+      "params": {
+        "ema_fast": 5,
+        "ema_slow": 21,
+        "rsi_period": 14,
+        "rsi_lower": 35,
+        "rsi_upper": 65,
+        "vol_mult": 1.3,
+        "vol_lookback": 15,
+        "stop_loss_pct": 0.05,
+        "take_profit_pct": 0.15,
+        "max_hold_bars": 30,
+        "leverage": 1.0
+      },
+      "performance": {
+        "full_sample": {
+          "sharpe_ratio": 1.636,
+          "total_return_pct": 951.31,
+          "max_drawdown_pct": -18.5,
+          "num_trades": 337,
+          "win_rate_pct": 55.2
+        },
+        "is_sample": {
+          "sharpe_ratio": 1.368,
+          "total_return_pct": 420.0,
+          "num_trades": 75
+        },
+        "oos_sample": {
+          "sharpe_ratio": 2.341,
+          "total_return_pct": 38.7,
+          "num_trades": 75,
+          "permutation_p_value": 0.035
+        }
+      },
+      "validation": {
+        "walk_forward_4fold": [2.772, 2.533, 1.576, 1.484],
+        "walk_forward_mean": 2.091,
+        "bootstrap_ci_5pct": 0.057,
+        "bootstrap_ci_95pct": 3.989,
+        "inverse_signal_sharpe": -1.020,
+        "multi_symbol": {
+          "WIFUSDT": 0.775,
+          "BONKUSDT": 1.636,
+          "DOGEUSDT": 0.777,
+          "PEPEUSDT": 0.149
+        },
+        "multi_symbol_positive": "3/4",
+        "correlation_with_survivors": {
+          "VolReg_opt_1d": 0.054,
+          "VolReg_4h": 0.129,
+          "ATR_Ratio_Compression_4h": 0.030,
+          "SampEn_DOGE_4H": 0.148,
+          "Vol_Smile_Skew_SUI_4h": 0.103
+        },
+        "max_correlation": 0.148,
+        "gates_passed": "5/5"
+      },
+      "status": "CONDITIONAL_PASS",
+      "status_reason": "5/5 validation gates passed. OOS Sharpe 2.341, perm p=0.035, WF all positive (avg 2.09), bootstrap CI excludes zero, inverse confirmed (-1.02), 3/4 multi-symbol positive, all survivor correlations < 0.15. First crypto-native meme coin strategy.",
+      "recommendation": "Deploy on BONK 4H primary. Cross-deploy to WIF (Sh 0.775) and DOGE (Sh 0.777) for diversification. Apply 1x leverage. Monitor meme coin listing/delisting risk.",
+      "discovered": "2026-05-23",
+      "auditor_notes": "8th survivor. Fourth independent signal dimension: meme coin volume accumulation. Conceptually distinct from volatility compression (VolReg/ATR), entropy (SampEn), and directional vol asymmetry (VSS). Max survivor correlation 0.148 (vs SampEn) confirms independence. Uses crypto-specific data (meme coin volume patterns). Risk: BONK is a newer, less liquid coin — structural changes and delisting risk are higher than DOGE/SUI."
     }
   ],
   "rejected": [
+    {
+      "name": "FundingValue Contrarian",
+      "family": "Crypto Native",
+      "symbol": "DOGEUSDT",
+      "timeframe": "4h",
+      "configs_tested": 576,
+      "reason": "4 perm-significant (p=0.035) but multi-symbol FAIL (only 1/4 > 0.5). DOGE-specific only. WF passes but narrow.",
+      "discovered": "2026-05-23"
+    },
+    {
+      "name": "Liquidation Cascade Proxy",
+      "family": "Crypto Native",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "configs_tested": 1536,
+      "reason": "6 healthy, 0 perm-significant. No statistical edge in cascade mean-reversion.",
+      "discovered": "2026-05-23"
+    },
+    {
+      "name": "MemeMomentum WIF",
+      "family": "Meme Coin Momentum",
+      "symbol": "WIFUSDT",
+      "timeframe": "4h",
+      "configs_tested": 2560,
+      "reason": "4/5 gates. WF FAIL: fold 3 = 0.0 (zero signals in that regime). Full-period Sharpe 2.76 but unstable across time periods.",
+      "discovered": "2026-05-23"
+    },
     {
       "name": "Dual ST Ribbon",
       "symbol": "BTCUSDT",

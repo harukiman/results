@@ -4,17 +4,18 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~705,407+ (前回676K + Wave16 29,160)
-- **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) + **VSS_SUI(4H)** = 7戦略ポートフォリオ
+- パラメータ組合せ試行数: ~710,079+ (前回705K + CryptoNative 4,672)
+- **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) + VSS_SUI(4H) + **MemeMom_BONK(4H)** = 8戦略ポートフォリオ
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
-- **7条件付き合格**:
+- **8条件付き合格**:
   1. VolReg_opt DOGE 日足 (Sh 2.30, perm p=0.0416, 22 OOS trades)
   2. Regime_V3 DOGE 日足 (Sh 2.66, perm p=0.015, 27 trades, 6/10 multi-sym)
   3. VolReg_4h DOGE 4H (Sh 2.275, perm p=0.000, WF 4/4, 204 trades, C2: 4/5 multi-sym) ✓ パラメータバグ修正済
   4. **ATR_Ratio_Compression 4H (Sh 1.76, perm p=0.010, 5/5 multi-sym, VolReg独立 Pearson 0.08)**
   5. **ATR_Ratio_AVAX 4H (Sh 3.06, perm p=0.012, WF 4/4, bootstrap CI [0.195,1.082])**
   6. **SampEn_DOGE_4H (Sh 2.26, perm p=0.012, WF 4/4 avg 2.05, inverse gap 5.13, VolReg独立 Pearson -0.03)** ← 初の非圧縮シグナル
-  7. **Vol_Smile_Skew_SUI_4H (Sh 2.286, perm p=0.022, WF 3/4 avg 1.206, bootstrap CI [0.316,3.372], VolReg独立 Pearson -0.015, 3/5 multi-sym)** ← NEW 第3の独立次元: 方向的ボラ非対称性
+  7. **Vol_Smile_Skew_SUI_4H (Sh 2.286, perm p=0.022, WF 3/4 avg 1.206, bootstrap CI [0.316,3.372], VolReg独立 Pearson -0.015, 3/5 multi-sym)** ← 第3の独立次元: 方向的ボラ非対称性
+  8. **MemeMomentum_BONK_4H (Sh 2.341, perm p=0.035, WF 4/4 avg 2.09, bootstrap CI [0.057,3.989], 全既存生存者との相関 <0.15, 3/4 multi-sym)** ← NEW 第4の独立次元: ミームコイン出来高蓄積
 - **棄却**: SpreadZ (p=0.239), Session_Europe (p=0.089), OI Price Div (p=0.103)
 - ポートフォリオ検証完了: Regime_V3 6銘柄ポートフォリオ Sh 1.14, 複合DOGE Sh 1.11
 - 追加探索進行中: 日足新ファミリー / 日足マイクロ構造 / 4h深掘り / VolReg拡張 / 5m-1h
@@ -1459,5 +1460,44 @@ SUI最良構成: window=24, skew_threshold=1.0, trend_window=40, SL=2%, TP=6%, M
 
 **累計棄却ファミリー**: 95+ (Regime Adaptive, VolReg Meme, VolReg L1, VSS Weekend追加)
 **累計試行**: 705,407+
+
+---
+
+### 2026-05-23: Crypto-Native スキャン (4,672 configs) → **第8生存者: MemeMomentum_BONK!**
+
+暗号資産特有のデータソースを活用した3つの戦略ファミリーをスキャン:
+
+| 戦略 | Configs | Healthy | Perm Sig | 判定 |
+|------|---------|---------|---------|------|
+| FundingValue Contrarian | 576 | 25 | 4 | ✗ DOGE専用 (multi-sym FAIL 1/4) |
+| Liquidation Cascade Proxy | 1,536 | 6 | 0 | ✗ カスケード平均回帰にエッジなし |
+| **MemeMomentum** | **2,560** | **93** | **12** | **✓ 第8生存者！5/5ゲート通過** |
+
+**MemeMomentum_BONK 完全検証結果:**
+
+| 検証項目 | 結果 | 詳細 |
+|---------|------|------|
+| IS/OOS Sharpe | ✓ | IS=1.368, OOS=2.341, ratio=0.58 |
+| 順列検定 | ✓ | p=0.035 (500 permutations) |
+| Walk-Forward 4-fold | ✓ | [2.772, 2.533, 1.576, 1.484] — 全フォールド正, 平均2.09 |
+| Bootstrap CI | ✓ | 5th pct=0.057, median=2.156, 95th=3.989 — ゼロ除外 |
+| 逆シグナル | ✓ | Original=1.636, Inverse=-1.020 — 明確にエッジ確認 |
+| マルチシンボル | ✓ | WIF=0.775, BONK=1.636, DOGE=0.777, PEPE=0.149 (3/4正) |
+| 既存生存者との相関 | ✓ | max |r|=0.148 (vs SampEn) — 完全独立 |
+
+**メカニズム:**
+ミームコインの出来高蓄積パターンを検出。EMA(5,21)クロスオーバー + RSI中立ゾーン(35-65) + 出来高スパイク確認(vol > avg*1.3)。
+ミームコインは「コミュニティ駆動の蓄積 → パラボリック上昇」サイクルが構造的に存在し、従来のボラティリティ圧縮とは異なるメカニズム。
+
+**4つの独立シグナル次元:**
+1. **ボラティリティ圧縮** (VolReg/ATR): リターン/レンジ標準偏差の縮小
+2. **エントロピー規則性** (SampEn): 時系列パターンの予測可能性
+3. **方向的ボラ非対称性** (Vol Smile Skew): upside/downside vol比率
+4. **ミームコイン出来高蓄積** (MemeMomentum): コミュニティ駆動の出来高パターン ← NEW
+
+**リスク:** BONKは新しい銘柄で流動性が比較的低い。上場廃止リスク、構造変化リスクが既存生存者より高い。
+
+**累計棄却ファミリー**: 98+ (FundingValue, LiquidationCascade, MemeMomentum WIF追加)
+**累計試行**: 710,079+
 
 ---
