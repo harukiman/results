@@ -503,21 +503,88 @@
 
     <div class="card info">
       <h3>正直な結論</h3>
-      <p>25以上の戦略ファミリー、6つの時間足（5m/15m/1h/4h/8h/1d）、10+銘柄にわたる383,000+回の体系的試行の結果、<strong style="color:var(--text-primary)">過学習防止プロトコル全段階を条件付きで生き残った戦略はわずか6つ。</strong></p>
+      <p>40以上の戦略ファミリー、6つの時間足（5m/15m/1h/4h/8h/1d）、10+銘柄にわたる<strong>390,100+回</strong>の体系的試行の結果、<strong style="color:var(--text-primary)">過学習防止プロトコル全段階を条件付きで生き残った戦略はわずか6つ。</strong>合格率 0.0015% — これが暗号資産先物における真のアルファの希少性を物語る。</p>
+
       <p style="margin-top:10px;">5つの生存者は<strong style="color:var(--accent-green)">ボラティリティ圧縮</strong>を利用: <strong>VolReg_opt</strong>（日足, p=0.042）、<strong>Regime_V3</strong>（日足, p=0.015）、<strong>VolReg_4h</strong>（4H, p=0.000）、<strong>ATR_Ratio_Compression</strong>（4H, p=0.010）、<strong style="color:var(--accent-cyan)">ATR_Ratio_AVAX</strong>（4H, p=0.012）。そして6番目の<strong style="color:var(--accent-cyan)">SampEn_DOGE_4H</strong>（Sh 2.26, p=0.012, WF 4/4）は<strong>初の非圧縮シグナル</strong> — 時系列のエントロピー（規則性）を測定し、VolReg/ATRとは完全に独立（Pearson &lt;0.05, Jaccard &lt;0.1）。</p>
+
       <p style="margin-top:10px;">全てに注意点あり: 限定的なOOSトレード数（22-204）、全試行数でのDSR不合格、4Hウォークフォワード性能の低下。15分足BTC戦略は全て<strong style="color:var(--accent-red)">レバレッジアーティファクト</strong> &mdash; 1xでは負。暗号資産先物で真に持続可能なアルファの発見は<strong style="color:var(--accent-orange)">極めて困難</strong>。</p>
     </div>
 
+    <!-- ── なぜこの2つのエッジだけが生き残るのか ── -->
     <div class="card">
-      <h3>重要な知見</h3>
+      <h3>核心的洞察: なぜ「圧縮」と「エントロピー」だけが機能するのか</h3>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin:12px 0;">
+        <h4 style="color:var(--accent-green);margin-bottom:8px;">仮説: 暗号資産市場の構造的非効率性</h4>
+        <p style="font-size:0.9rem;">暗号資産先物市場には2つの構造的特徴がある: (1) <strong>24/7稼働でクローズがない</strong>ため、伝統的な「オーバーナイトギャップ」や「セッション効果」が存在しない。季節性スキャン（245 configs）が0件Bonferroni有意だった理由。 (2) <strong>参加者の多くがレバレッジトレーダー</strong>であり、ボラティリティが急騰すると清算の連鎖が発生し、方向性が増幅される。</p>
+        <p style="font-size:0.9rem;margin-top:8px;">この環境で「圧縮→方向性ブレイク」が機能する理由は、<strong>低ボラ期間がポジションの蓄積期間</strong>に対応するから。レバレッジトレーダーがポジションを構築し、ブレイク時に清算が連鎖し、トレンドが形成される。これは株式市場のスクイーズと同じメカニズムだが、24/7のレバレッジ市場では効果がより顕著。</p>
+      </div>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin:12px 0;">
+        <h4 style="color:var(--accent-cyan);margin-bottom:8px;">仮説: SampEnが捉えるもの</h4>
+        <p style="font-size:0.9rem;">サンプルエントロピーは時系列の「規則性」を測定する。低エントロピー = 高規則性は、市場参加者の行動が<strong>同期化</strong>していることを意味する。全員が同じ情報に反応し、同じ方向に動こうとしている状態。これは「群集行動の前兆」であり、ブレイクアウト前に市場がパターン化する現象を捉えている。</p>
+        <p style="font-size:0.9rem;margin-top:8px;">SampEnとVolReg/ATRの相関がほぼゼロ（Pearson &lt;0.05）なのは、<strong>異なるタイミング</strong>で同じ方向性を検出しているから。VolRegは「ボラティリティの量」を見ているが、SampEnは「価格変動の構造」を見ている。活性化バーの重複はわずか8-10%だが、重複時の方向一致率は95-100%。</p>
+      </div>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin:12px 0;">
+        <h4 style="color:var(--accent-red);margin-bottom:8px;">棄却40+ファミリーが教えること</h4>
+        <p style="font-size:0.9rem;">棄却されたファミリーは大きく3つのパターンに分類される:</p>
+        <ul style="font-size:0.85rem;padding-left:20px;margin-top:8px;">
+          <li><strong>IS→OOS逆転型</strong> (全体の50-60%): 自己相関レジーム、KAMA、Ichimoku、MomDDFilter等。ISで正のSharpeがOOSで負に反転。4H暗号資産のレジーム遷移速度がISパラメータを無効化する。</li>
+          <li><strong>効率的市場型</strong> (20-30%): 出来高シグナル、相関レジーム、Shannon Entropy。これらの情報は既に価格に織り込まれており、追加的な予測力がない。</li>
+          <li><strong>実装コスト型</strong> (10-20%): 1H圧縮（年間39%コスト）、高頻度シグナル。エッジは存在するかもしれないが、taker手数料0.04% + ファンディングが利益を消す。</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ── 時間足グラディエント ── -->
+    <div class="card">
+      <h3>時間足のグラディエント: なぜ4Hが最適境界なのか</h3>
+      <table class="data-table" style="width:100%;margin-top:8px;">
+        <thead><tr><th>時間足</th><th>試行数</th><th>IS→OOS逆転率</th><th>年間コスト概算</th><th>判定</th><th>構造的理由</th></tr></thead>
+        <tbody>
+          <tr><td>5m-15m</td><td>~10,000+</td><td class="text-red">95%+</td><td>100-400%</td><td class="text-red">完全不合格</td><td>ノイズ支配、コスト>α</td></tr>
+          <tr><td>1H</td><td>~24,000</td><td class="text-red">97%</td><td>~39%</td><td class="text-red">コスト壊滅</td><td>エッジ存在も取引コストで消滅</td></tr>
+          <tr><td>8H</td><td>12,084</td><td class="text-red">82%</td><td>~12%</td><td class="text-red">不安定</td><td>4Hと1Hの中間、どちらの利点も不十分</td></tr>
+          <tr style="background:rgba(63,185,80,0.08)"><td><strong>4H</strong></td><td>~150,000+</td><td class="text-green">30-50%</td><td>~8%</td><td class="text-green"><strong>最適境界</strong></td><td>シグナル/ノイズ比とコストのバランス点</td></tr>
+          <tr style="background:rgba(63,185,80,0.05)"><td>日足</td><td>~70,000+</td><td class="text-green">20-30%</td><td>~3%</td><td class="text-green">合格</td><td>十分な平滑化、低コスト、少トレード</td></tr>
+          <tr><td>週足</td><td>43,740</td><td class="text-red">100%</td><td>~1%</td><td class="text-red">データ不足</td><td>730日≒104週、統計的検出力なし</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-top:10px;"><strong>考察:</strong> 4Hが最適境界である理由は、暗号資産先物のファンディングレート間隔（8時間）にある。4Hバーは1ファンディング期間の半分に対応し、ファンディングコストを抑えつつ十分なシグナル密度を確保する。1Hだとファンディング1/8期間×年2,190バーでコストが利益を侵食し、日足だとシグナル密度が低すぎて統計的検出力が不足する。</p>
+    </div>
+
+    <!-- ── ポートフォリオの分散構造 ── -->
+    <div class="card">
+      <h3>重要な知見: ポートフォリオ分散の構造</h3>
       <ul style="padding-left:20px; margin-top:8px;">
-        <li style="margin-bottom:6px;">15分足BTC市場は極めて効率的。この時間足で約10,000回の試行から生存した戦略はゼロ。</li>
-        <li style="margin-bottom:6px;">アルトコイン日足のみに検出可能なエッジが存在: DOGEのボラティリティレジーム遷移。</li>
-        <li style="margin-bottom:6px;"><strong style="color:var(--accent-green)">ATR_Ratio_Compression</strong>がマルチシンボル汎化最高性能（5/5正, 4/5 Sharpe&gt;0.5）を達成。VolRegと<strong>真に独立</strong>（Pearson 0.08）。</li>
-        <li style="margin-bottom:6px;">2つの独立した圧縮メカニズムを発見: <strong>リターンボラティリティ</strong>（rolling std）と<strong>価格レンジ</strong>（ATR ratio）— ポートフォリオ分散の可能性。</li>
-        <li style="margin-bottom:6px;">機械学習（IS Sharpe 10 &rarr; OOS -5）が壊滅的過学習を実証。</li>
-        <li>過学習防止プロトコル（flearn &sect;5）が数千の偽陽性を排除。正直な報告 &gt; 希望的観測。</li>
+        <li style="margin-bottom:10px;"><strong style="color:var(--accent-green);">3層の独立性:</strong> 6生存者は3つの独立なシグナル層を形成する。 (1) <em>リターンボラティリティ圧縮</em>（VolReg: rolling stdが縮小）、(2) <em>価格レンジ圧縮</em>（ATR ratio: high-low幅が縮小）、(3) <em>エントロピー規則性</em>（SampEn: 時系列パターンが規則的）。これらは同じ「ブレイクアウト前」を異なる角度から測定しており、活性化タイミングが異なる（重複8-10%のみ）。</li>
+        <li style="margin-bottom:10px;"><strong style="color:var(--accent-cyan);">時間軸の分散:</strong> 日足シグナルと4Hシグナルの相関はほぼゼロ（-0.03〜0.05）。日足は週単位のレジーム遷移を捉え、4Hは日中のマイクロ構造を捉える。同じ銘柄（DOGE）でも時間軸が異なれば独立。</li>
+        <li style="margin-bottom:10px;"><strong style="color:var(--accent-purple);">銘柄の分散:</strong> DOGE(4戦略) + AVAX(1戦略)。最も高い銘柄間相関はATR_DOGE↔ATR_AVAX の0.435 — 同一シグナル系統でも銘柄固有のボラティリティサイクルにより中程度に抑制。</li>
+        <li style="margin-bottom:10px;"><strong>Calmar 15.94の意味:</strong> 最大DD -3.8%に対して年率リターン+60.5%。これは$10,000の投資で最悪のドローダウンが$380、年間利益が$6,050ということ。ただしこれはOOS期間（~7ヶ月）のバックテスト結果であり、実運用ではスリッページ・流動性リスク・レジーム変化により劣化する可能性が高い。</li>
+        <li style="margin-bottom:6px;"><strong style="color:var(--accent-red);">最大のリスク:</strong> 6生存者中4つがDOGE依存。DOGE市場の構造変化（上場廃止、規制、流動性枯渇）はポートフォリオ全体を危険にさらす。ATR_AVAXが唯一の銘柄分散。今後の探索でETH/SOL/BNBでの新戦略発見が最優先課題。</li>
       </ul>
+    </div>
+
+    <!-- ── 棄却から学ぶこと ── -->
+    <div class="card">
+      <h3>棄却40+ファミリーのメタ分析</h3>
+      <p style="margin-top:8px;font-size:0.9rem;">390,100+回の試行で棄却されたファミリーの系統的分析。<strong>「何が機能しないか」を知ることは「何が機能するか」を知ることと同等に重要。</strong></p>
+
+      <table class="data-table" style="width:100%;margin-top:12px;">
+        <thead><tr><th>カテゴリ</th><th>代表的ファミリー</th><th>試行数</th><th>失敗パターン</th><th>構造的理由</th></tr></thead>
+        <tbody>
+          <tr><td>トレンドフォロー系</td><td>KAMA, Ichimoku, DualMomentum</td><td>~5,000</td><td>IS→OOS逆転</td><td>暗号資産のレジーム遷移が速すぎ、ISで最適化したトレンド検出パラメータがOOS期間には適合しない</td></tr>
+          <tr><td>出来高系</td><td>OBV, VWAP, AD Score, VolBreakout</td><td>~6,000</td><td>ランダムと同等</td><td>暗号資産の出来高データは交換所間で分散しており、単一取引所の出来高は全体の流動性を代表しない</td></tr>
+          <tr><td>統計的レジーム系</td><td>Hurst, Variance Ratio, CUSUM</td><td>~3,000</td><td>シグナル密度不足</td><td>これらの指標は長い推定ウィンドウが必要で、4Hではノイジー、日足ではトレード数不足</td></tr>
+          <tr><td>相関/クロスアセット系</td><td>ALT-BTC相関, Cross-ALT, BTC Filter</td><td>~1,500</td><td>脆弱なパラメータ</td><td>暗号資産間の相関構造は非定常であり、安定した予測因子にならない</td></tr>
+          <tr><td>周波数領域系</td><td>FFT, SpectralEntropy, Wavelet</td><td>1,656</td><td>完全失敗</td><td>暗号資産の価格には安定した周期構造が存在しない（24/7市場の特性）</td></tr>
+          <tr><td>マイクロ構造系</td><td>BodyShadow, ClosePosition, RangeStreak</td><td>4,176</td><td>IS→OOS逆転</td><td>ローソク足パターンの予測力は短期間で消失し、期間固有のバイアスに支配される</td></tr>
+          <tr><td>平均回帰系</td><td>RSI+BB+Stoch, Funding MR</td><td>~50,000</td><td>IS→OOS逆転</td><td>圧縮局面での正しいアプローチはトレンドフォローであり、平均回帰ではない（97.3%が逆転）</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-top:12px;"><strong>結論:</strong> 暗号資産先物で機能するのは「前兆検出→方向追従」のパラダイムのみ。前兆は圧縮（ボラティリティまたはレンジ）またはエントロピー低下（規則性増加）。方向追従はEMAクロスオーバー。平均回帰、モメンタム、出来高、周波数分析はいずれもこの市場の構造には適合しない。</p>
     </div>
   </section>
 
