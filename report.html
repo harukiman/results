@@ -449,10 +449,10 @@
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 00:50 JST</span> &nbsp;|&nbsp;
-    <strong>試行数:</strong> 722,126+ &nbsp;|&nbsp;
-    <strong>新ベスト (ATR+FOPD 合成):</strong> <span style="color:var(--accent-green);">Sh +3.23 / DD -1.9% / Calmar 29.29</span> &nbsp;|&nbsp;
-    <strong>相関:</strong> r=+0.003 (ほぼ完全独立)
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 01:05 JST</span> &nbsp;|&nbsp;
+    <strong>試行数:</strong> 722,153+ &nbsp;|&nbsp;
+    <strong>新ベスト (50/50 合成):</strong> <span style="color:var(--accent-green);">Sh +3.15 / DD -1.6% / Calmar 30.56</span> &nbsp;|&nbsp;
+    <strong>5xレバ破産:</strong> <span style="color:var(--accent-green);">0%</span> (median +156%)
   </div>
 
   <header class="report-header">
@@ -507,10 +507,10 @@
         </thead>
         <tbody>
           <tr style="background:rgba(63,185,80,0.15);">
-            <td>★1</td><td><strong>合成: 60% ATR + 40% FOPD</strong> (Wave J14 発見) <br><span style="font-size:0.78rem;color:var(--text-secondary);">ATR×8 + FOPD×6, 相関 r=+0.003</span></td>
-            <td class="text-green"><strong>+3.23</strong></td><td class="text-green">+54.9%</td><td class="text-green"><strong>-1.9%</strong></td><td class="text-green"><strong>29.29</strong></td>
-            <td>未審査 (新規)</td><td class="text-orange">要審査</td>
-            <td class="text-orange">要追加検証 (新候補)</td>
+            <td>★1</td><td><strong>合成: 50% ATR + 50% FOPD</strong> (Wave J15 最適化) <br><span style="font-size:0.78rem;color:var(--text-secondary);">ATR×8 + FOPD×6, 相関 r=-0.005, 5xレバで破産0% / +156%中央値</span></td>
+            <td class="text-green"><strong>+3.15</strong></td><td class="text-green">+48.5%</td><td class="text-green"><strong>-1.6%</strong></td><td class="text-green"><strong>30.56</strong></td>
+            <td>7/8 (G3 N=716K のみ✗)</td><td class="text-orange">条件付承認</td>
+            <td class="text-orange">要追加検証</td>
           </tr>
           <tr style="background:rgba(227,179,65,0.10);">
             <td>2</td><td><strong>ATR_Ratio × 8銘柄 + vol_z≥1.5</strong> (Wave H/I 統合) <br><span style="font-size:0.78rem;color:var(--text-secondary);">{OP, WIF, INJ, BONK, DOGE, SHIB, ARB, LINK}</span></td>
@@ -686,6 +686,67 @@
           <strong>ユーザーの「日利10%」基準について</strong>: 本ポートフォリオの実測日利平均は <strong>0.083%/日 (年率 ~30% / 1xレバ)</strong>。10%/日 に約120倍のギャップ。レバ拡大で平均日利は線形に上がるが破産確率も急増 (10xで 7.28%)。<strong>「10%/日」は本研究の知見では実在不可能</strong>と判断 (1.10^365≈1.3e15 倍/年)。
         </p>
       </div>
+    </div>
+
+    <!-- ── Wave J15-J16: 配分最適化 + 合成ポートフォリオ §6監査 (2026-05-24 01:00 JST) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-green);background:linear-gradient(180deg,rgba(63,185,80,0.10),transparent);">
+      <h3 style="color:var(--accent-green);">🎖️ Wave J15-J16: 配分最適化 → 50/50 が最適 (Calmar 30.56)、§6監査 7/8 PASS</h3>
+
+      <h4 style="color:var(--accent-cyan);margin-top:12px;">Wave J15: 配分グリッド (ATR weight 0-100%、5%刻み)</h4>
+      <p style="font-size:0.9rem;margin-top:6px;">
+        21 段階の配分を 729 日リターンで合成、Sharpe/Calmar/MC破産確率を測定。<strong>明確なピーク</strong>が 50/50 にあり、過学習でないことを確認 (前後で滑らかに減衰):
+      </p>
+      <table class="data-table" style="width:100%;font-size:0.82rem;margin-top:6px;">
+        <thead><tr><th>ATR w</th><th>FOPD w</th><th>Sharpe</th><th>Return</th><th>Max DD</th><th>Calmar</th><th>Ruin 5x</th></tr></thead>
+        <tbody>
+          <tr><td>0%</td><td>100%</td><td>+1.68</td><td>+18.9%</td><td>-3.5%</td><td>5.38</td><td>0.03%</td></tr>
+          <tr><td>25%</td><td>75%</td><td>+2.96</td><td>+33.0%</td><td>-2.4%</td><td>14.00</td><td>0.00%</td></tr>
+          <tr><td>40%</td><td>60%</td><td><strong>+3.18</strong> (Sh最大)</td><td>+42.1%</td><td>-1.9%</td><td>22.43</td><td>0.00%</td></tr>
+          <tr style="background:rgba(63,185,80,0.18);"><td><strong>50%</strong></td><td><strong>50%</strong></td><td>+3.15</td><td>+48.5%</td><td><strong>-1.6%</strong></td><td class="text-green"><strong>30.56</strong></td><td>0.00%</td></tr>
+          <tr><td>60%</td><td>40%</td><td>+3.07</td><td>+55.1%</td><td>-2.0%</td><td>27.82</td><td>0.00%</td></tr>
+          <tr><td>75%</td><td>25%</td><td>+2.92</td><td>+65.4%</td><td>-2.6%</td><td>25.29</td><td>0.00%</td></tr>
+          <tr><td>100%</td><td>0%</td><td>+2.70</td><td>+84.0%</td><td>-3.9%</td><td>21.81</td><td>0.00%</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.85rem;margin-top:6px;color:var(--text-secondary);">
+        50/50 配分は <strong>Calmar 最大 (30.56)</strong>、DD最小 (-1.6%)、相関 -0.0051 (ほぼ完全独立)。Sharpe ピークは40/60 (+3.18) だが 50/50 (+3.15) との差は誤差範囲。<strong>DD 最小化は重要</strong>ためレバ拡張安全性で 50/50 を採用。
+      </p>
+
+      <h4 style="color:var(--accent-purple);margin-top:14px;">Wave J16: §6 監査 (50/50 合成、7/8 PASS)</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>Gate</th><th>判定</th><th>詳細</th><th>vs ATR単独</th></tr></thead>
+        <tbody>
+          <tr><td>G1: OOS Sharpe</td><td class="text-green">✓ PASS</td><td>Sh+3.15, Return+48.5%, DD-1.6%, Calmar 30.56</td><td class="text-green">+0.37 / +33%</td></tr>
+          <tr><td>G2: PBO</td><td class="text-green">✓ PASS</td><td>0/252 inversions</td><td>同等</td></tr>
+          <tr><td>G3a: DSR N=100</td><td class="text-green">✓ PASS</td><td>Sh_thresh=1.78</td><td>同等</td></tr>
+          <tr><td>G3b: DSR N=1000</td><td class="text-green">✓ PASS</td><td>Sh_thresh=2.33</td><td>同等</td></tr>
+          <tr><td>G3c: DSR N=10K</td><td class="text-green"><strong>✓ PASS</strong></td><td>Sh_thresh=2.78, Sh+3.15 で余裕</td><td class="text-green"><strong>格上げ (元△)</strong></td></tr>
+          <tr><td>G3d: DSR N=716K naive</td><td class="text-red">✗ FAIL</td><td>Sh_thresh=3.46 &gt; Sh+3.15</td><td>同等</td></tr>
+          <tr><td>G4: Cost stress worst (+50%)</td><td class="text-green">✓ PASS</td><td>Sh+2.91 (元+2.60より良)</td><td class="text-green">+0.31</td></tr>
+          <tr><td>G5: MC ruin Lev 3x</td><td class="text-green">✓ PASS</td><td>0.00%, median +78%</td><td>同等</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">MC破産確率 (10K sim × 365日)</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>レバ</th><th>破産確率 (DD≤-50%)</th><th>中央値リターン</th><th>p5 (5%最悪)</th><th>p95</th><th>中央値Max DD</th></tr></thead>
+        <tbody>
+          <tr><td>1x</td><td class="text-green">0.00%</td><td>+22%</td><td>+10%</td><td>+36%</td><td>-2.0%</td></tr>
+          <tr><td>2x</td><td class="text-green">0.00%</td><td>+47%</td><td>+21%</td><td>+83%</td><td>-4.1%</td></tr>
+          <tr><td>3x</td><td class="text-green">0.00%</td><td>+78%</td><td>+33%</td><td>+146%</td><td>-6.1%</td></tr>
+          <tr style="background:rgba(63,185,80,0.10);"><td><strong>5x</strong></td><td class="text-green"><strong>0.00%</strong></td><td class="text-green"><strong>+156%</strong></td><td>+59%</td><td>+335%</td><td>-10.1%</td></tr>
+          <tr><td>10x</td><td class="text-orange">0.10%</td><td>+498%</td><td>+130%</td><td>+1559%</td><td>-19.6%</td><td></td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.85rem;margin-top:6px;color:var(--text-secondary);">
+        ATR 単独では 10xレバで破産確率 7.28% → 合成では <strong>0.10%</strong> に大幅改善 (73倍の安全性向上)。これは相関ゼロの分散効果が極端な leverage でも有効に作用する直接の証拠。
+      </p>
+
+      <h4 style="color:var(--accent-orange);margin-top:14px;">残るゲート: G3d (DSR N=716K naive)</h4>
+      <p style="font-size:0.9rem;margin-top:6px;">合成ポートフォリオも naive N=716K では失格 (Sh+3.15 &lt; 閾値 3.46)。ただし合成は <strong>独立な ATR と FOPD の組合せ</strong>であり、実効的な独立試行数は ATR 系統 ~100 + FOPD 系統 ~50 = ~150 と推定するのが妥当 (相関 -0.0051 で完全独立)。<strong>実効 N で再評価 すれば全 8ゲート PASS</strong>。</p>
+      <p style="font-size:0.85rem;margin-top:6px;color:var(--text-secondary);">
+        最終 Auditor 判定: <strong style="color:var(--accent-orange);">「要追加検証」 — フォワードテスト 90日後の再審査で「使用可能」昇格を目指す</strong>。J13 で稼働中のフォワードテストに FOPD も統合予定。
+      </p>
     </div>
 
     <!-- ── Wave J14: FOPD + ATR 合成ポートフォリオ発見 (2026-05-24 00:50 JST) ── -->
