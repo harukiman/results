@@ -484,6 +484,112 @@
     </ol>
   </nav>
 
+  <!-- ==================== 0. STRATEGY LEADERBOARD ==================== -->
+  <section class="section" id="strategy-leaderboard">
+    <div class="section-header">
+      <div><span class="section-num">00</span><span class="jp-title">戦略リーダーボード</span></div>
+      <div class="en-subtitle">Strategy Leaderboard — §6 Gate Status (2026-05-24)</div>
+    </div>
+
+    <div class="card">
+      <h3>現在の戦略受理状況</h3>
+      <p style="font-size:0.88rem;margin-top:6px;color:var(--text-secondary);">
+        §6 全6条件 (OOS/multi-regime/PBO+DSR/cost stress/破産確率/Auditorサインオフ) を全て満たした戦略のみ「使用可能」ラベル。一部不合格は「要追加検証」、致命的欠陥は「棄却」。
+      </p>
+
+      <table class="data-table" style="width:100%;margin-top:10px;font-size:0.85rem;">
+        <thead>
+          <tr>
+            <th>Rank</th><th>戦略 / ポートフォリオ</th>
+            <th>Sharpe</th><th>Return</th><th>Max DD</th><th>Calmar</th>
+            <th>§6 Gate</th><th>Auditor</th><th>判定</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:rgba(227,179,65,0.10);">
+            <td>1</td><td><strong>ATR_Ratio × 8銘柄 + vol_z≥1.5</strong> (Wave H/I 統合) <br><span style="font-size:0.78rem;color:var(--text-secondary);">{OP, WIF, INJ, BONK, DOGE, SHIB, ARB, LINK}</span></td>
+            <td class="text-green">+2.78</td><td class="text-green">+81.2%</td><td class="text-green">-3.5%</td><td class="text-green">22.96</td>
+            <td>7/8 (DSR N=710K のみ✗)</td><td class="text-orange">条件付承認</td>
+            <td class="text-orange">要追加検証</td>
+          </tr>
+          <tr>
+            <td>2</td><td>VolReg_opt DOGE 日足</td>
+            <td>+2.30</td><td>—</td><td>—</td><td>—</td>
+            <td>3/8 (§6未適用)</td><td class="text-orange">未審査</td>
+            <td>要追加検証 (個別)</td>
+          </tr>
+          <tr>
+            <td>3</td><td>Regime_V3 DOGE 日足</td>
+            <td>+2.66</td><td>—</td><td>—</td><td>—</td>
+            <td>3/8 (§6未適用)</td><td class="text-orange">未審査</td>
+            <td>要追加検証 (個別)</td>
+          </tr>
+          <tr>
+            <td>4</td><td>SampEn_DOGE 4H</td>
+            <td>+2.14</td><td>+386.5%</td><td>-18.6%</td><td>20.78</td>
+            <td>4/8 (§6未適用)</td><td class="text-orange">未審査</td>
+            <td>要追加検証 (個別、Wave G実測)</td>
+          </tr>
+          <tr>
+            <td>5</td><td>Vol_Smile_Skew_SUI 4H</td>
+            <td>+1.23</td><td>+53.0%</td><td>-16.3%</td><td>3.25</td>
+            <td>4/8 (§6未適用)</td><td class="text-orange">未審査</td>
+            <td>要追加検証 (個別、Wave G実測)</td>
+          </tr>
+          <tr>
+            <td>6</td><td>MemeMomentum_BONK 4H</td>
+            <td>+1.63</td><td>+939.7%</td><td>-65.8%</td><td>14.28</td>
+            <td>3/8 (高DD懸念)</td><td class="text-red">未審査</td>
+            <td>要追加検証 (DDが懸念)</td>
+          </tr>
+          <tr style="opacity:0.6;">
+            <td colspan="9" style="background:var(--bg-secondary);color:var(--text-secondary);font-size:0.82rem;">
+              — 候補 (BACKLOG、未検証 or 検証中) —
+            </td>
+          </tr>
+          <tr style="opacity:0.7;">
+            <td>—</td><td>FToD (Researcher TOP1) — Wave J8 検証完了</td>
+            <td>+1.65 (INJ)</td><td>+19.9%</td><td>-1.6%</td><td>12.4</td>
+            <td class="text-red">3/8 (Sh≥2なし)</td><td>—</td><td class="text-red">棄却 (4H, trade数不足)</td>
+          </tr>
+          <tr>
+            <td>—</td><td>FOPD (Funding-OI-Price Triple Decoupling)</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td>
+            <td>未実施</td><td>—</td><td>検証待ち</td>
+          </tr>
+          <tr>
+            <td>—</td><td>LISRM (L1 Intra-Sector Rotation)</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td>
+            <td>未実施</td><td>—</td><td>検証待ち</td>
+          </tr>
+          <tr>
+            <td>—</td><td>LiqCascadeFade (Tip TOP1)</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td>
+            <td>未実施</td><td>—</td><td>検証待ち</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4 style="margin-top:16px;color:var(--accent-cyan);">「使用可能」戦略 vs 「日利10%」目標の現実ギャップ</h4>
+      <table class="data-table" style="width:100%;margin-top:6px;font-size:0.85rem;">
+        <thead><tr><th>項目</th><th>本研究最良</th><th>ユーザー目標</th><th>ギャップ</th></tr></thead>
+        <tbody>
+          <tr><td>日利平均</td><td>0.083%/日</td><td>10%/日</td><td class="text-red">120倍</td></tr>
+          <tr><td>年率 (複利, 1x)</td><td>+34%</td><td>1.3 &times; 10<sup>15</sup>%</td><td class="text-red">数学的に実在不可</td></tr>
+          <tr><td>1xレバSharpe (730d)</td><td>+2.78</td><td>—</td><td>—</td></tr>
+          <tr><td>5xレバ 365d 中央値リターン (MC)</td><td>+290%</td><td>—</td><td>—</td></tr>
+          <tr><td>5xレバ 破産確率 (MC)</td><td class="text-green">0.01%</td><td>—</td><td>—</td></tr>
+          <tr><td>10xレバ 破産確率 (MC)</td><td class="text-red">7.28%</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.82rem;margin-top:8px;color:var(--text-secondary);">
+        Auditor 注釈: 「日利10%」は本研究の知見では実在しない目標。バックテストでこれを達成する戦略が出たら必ずデータリーク/コスト過小/ルックアヘッドを疑う。本リーダーボードは「リスク調整後の頑健性」で順位付け。
+      </p>
+    </div>
+  </section>
+
+  <hr class="divider">
+
   <!-- ==================== 1. EXECUTIVE SUMMARY ==================== -->
   <section class="section" id="executive-summary">
     <div class="section-header">
