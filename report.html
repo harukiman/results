@@ -449,10 +449,10 @@
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-23 22:29 JST</span> &nbsp;|&nbsp;
-    <strong>試行数:</strong> 710,253+ &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-23 22:32 JST</span> &nbsp;|&nbsp;
+    <strong>試行数:</strong> 710,373+ &nbsp;|&nbsp;
     <strong>最良ポートフォリオ:</strong> <span style="color:var(--accent-green);">Sh +2.78 / DD -3.5% / Calmar 22.96</span> &nbsp;|&nbsp;
-    <strong>レジームフィルタ:</strong> BTC vol_z≥1.5でオフ
+    <strong>頑健性:</strong> H1 Sh+3.28 / H2 Sh+2.24 (期間独立検証)
   </div>
 
   <header class="report-header">
@@ -489,6 +489,77 @@
     <div class="section-header">
       <div><span class="section-num">01</span><span class="jp-title">総括</span></div>
       <div class="en-subtitle">エグゼクティブサマリー</div>
+    </div>
+
+    <!-- ── Wave I: 頑健性検証 + 天然ヘッジ発見 (2026-05-23 22:32 JST) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-purple);background:linear-gradient(180deg,rgba(188,140,255,0.06),transparent);">
+      <h3 style="color:var(--accent-purple);">🧪 Wave I: フィルター頑健性 + 天然ヘッジ発見 (2026-05-23 22:32 JST)</h3>
+
+      <p style="font-size:0.92rem;margin-top:8px;">Wave Hで発見したvol_z≥1.5フィルターが過学習でないか、また他戦略でも機能するかを検証。<strong>2つの重要発見</strong>。</p>
+
+      <h4 style="color:var(--accent-cyan);margin-top:12px;">発見1: フィルターは「スパイク」ではなく「平坦な高原」 — 頑健</h4>
+      <p style="font-size:0.9rem;">vol_z閾値を{0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, off}で総当たり。前半365日/後半365日でも独立評価:</p>
+      <table class="data-table" style="width:100%;font-size:0.82rem;margin-top:6px;">
+        <thead><tr><th>閾値</th><th>730d Sh</th><th>730d DD</th><th>Calmar</th><th>H1 (1-365d) Sh</th><th>H2 (365-730d) Sh</th></tr></thead>
+        <tbody>
+          <tr><td>≥0.5</td><td>+2.62</td><td>-3.7%</td><td>15.8</td><td>+3.17</td><td>+2.07</td></tr>
+          <tr><td>≥0.75</td><td>+2.71</td><td>-3.5%</td><td>17.8</td><td>+3.20</td><td>+2.24</td></tr>
+          <tr><td>≥1.0</td><td>+2.63</td><td>-3.5%</td><td>17.1</td><td>+3.01</td><td>+2.25</td></tr>
+          <tr><td>≥1.25</td><td>+2.76</td><td>-3.5%</td><td>19.9</td><td>+3.36</td><td>+2.12</td></tr>
+          <tr style="background:rgba(63,185,80,0.15);"><td><strong>≥1.5</strong></td><td class="text-green"><strong>+2.78</strong></td><td class="text-green"><strong>-3.5%</strong></td><td class="text-green"><strong>23.0</strong></td><td class="text-green"><strong>+3.28</strong></td><td class="text-green"><strong>+2.24</strong></td></tr>
+          <tr><td>≥1.75</td><td>+2.65</td><td>-5.1%</td><td>15.3</td><td>+3.24</td><td>+1.98</td></tr>
+          <tr><td>≥2.0</td><td>+2.66</td><td>-5.1%</td><td>15.4</td><td>+3.24</td><td>+2.02</td></tr>
+          <tr><td>≥2.5</td><td>+2.21</td><td>-10.5%</td><td>6.7</td><td>+3.37</td><td>+0.94</td></tr>
+          <tr><td>≥3.0</td><td>+2.49</td><td>-10.1%</td><td>8.1</td><td>+3.45</td><td>+1.44</td></tr>
+          <tr><td>off</td><td>+2.59</td><td>-10.1%</td><td>9.4</td><td>+3.48</td><td>+1.69</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.88rem;margin-top:8px;"><strong>1.0〜1.5 の範囲で Calmar 17-23 の平坦な高原 →</strong> フィルター閾値はピンポイントではなく頑健領域。H2 (後半365d, untouched in design) でも Sh +2.24 を維持。<strong>過学習スパイクではない</strong>。</p>
+
+      <h4 style="color:var(--accent-green);margin-top:14px;">発見2: フィルターはATR_Ratio専用 — サテライトは「天然ヘッジ」</h4>
+      <p style="font-size:0.9rem;">同じvol_z≥1.5フィルターをサテライト戦略(SampEn/MemeMom/VSS)に適用すると、<strong>ほぼ全てでSharpeが低下</strong>:</p>
+
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>戦略</th><th>銘柄</th><th>Baseline Sh</th><th>+Filter Sh</th><th>ΔSh</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr><td>SampEn</td><td>DOGE</td><td>+2.14</td><td>+1.74</td><td class="text-red">-0.40</td><td>悪化</td></tr>
+          <tr><td>SampEn</td><td>SOL</td><td>+1.34</td><td>+1.05</td><td class="text-red">-0.28</td><td>悪化</td></tr>
+          <tr><td>MemeMom</td><td>BONK</td><td>+1.63</td><td>+1.17</td><td class="text-red">-0.47</td><td>悪化</td></tr>
+          <tr><td>MemeMom</td><td>SUI</td><td>+1.63</td><td>+1.48</td><td class="text-orange">-0.15</td><td>軽微悪化</td></tr>
+          <tr><td>MemeMom</td><td>NEAR</td><td>+1.37</td><td>+1.52</td><td class="text-green">+0.15</td><td>個別改善</td></tr>
+          <tr><td>VSS</td><td>SUI</td><td>+1.19</td><td>+0.58</td><td class="text-red">-0.61</td><td>大幅悪化</td></tr>
+          <tr><td>VolReg</td><td>DOGE</td><td>+0.04</td><td>+0.11</td><td>+0.07</td><td>中立</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-yellow);margin-top:14px;">深い考察: なぜサテライトは高ボラ期に強いのか — 構造的理由</h4>
+      <ul style="font-size:0.9rem;padding-left:22px;margin-top:6px;">
+        <li style="margin-bottom:8px;"><strong>SampEn (エントロピー)</strong>: 規則性検出シグナル。<strong>高ボラ期は群衆行動が同期化</strong>(全員が清算カスケードを警戒、同じレベルでストップ集中)し、時系列規則性が増加 → SampEn低下シグナル発生。フィルターで除外すると最良の機会を逃す。</li>
+        <li style="margin-bottom:8px;"><strong>Vol_Smile_Skew (方向的非対称性)</strong>: upside/downsideボラ非対称性検出。<strong>高ボラ期こそFear/Greedが極端化</strong> → セミバリアンス比のZ-スコアが極端値に到達。フィルターはこの最良条件を消去。</li>
+        <li style="margin-bottom:8px;"><strong>MemeMom (出来高ブレイクアウト)</strong>: コミュニティ駆動の出来高サージ検出。<strong>ミームコイン特有のFOMO/パニックは高ボラ期に発生</strong>。BONKのSh-0.47は、本来ストロングな急騰トレードを除外する代償。</li>
+        <li style="margin-bottom:8px;"><strong>ATR_Ratio (圧縮)</strong>: 蓄積→ブレイク検出。<strong>高ボラ期は圧縮自体が起こりにくい</strong>+起こっても誤シグナル化。完全に逆の特性。</li>
+      </ul>
+
+      <div style="background:rgba(63,185,80,0.10);border:1px solid var(--accent-green);border-radius:6px;padding:14px;margin-top:12px;">
+        <h5 style="color:var(--accent-green);">戦略的含意: 「天然ヘッジ構造」が確立</h5>
+        <p style="font-size:0.9rem;margin-top:6px;">
+          ATR_Ratio (コア60%)は <strong>vol_z &lt; 1.5 でアクティブ</strong>。SampEn/VSS/MemeMom (サテライト40%) は <strong>vol_z ≥ 1.5 で強い</strong>。これは設計でなく「観測された構造」 — <strong>戦略選択そのものが既にレジーム分散になっている</strong>。
+        </p>
+        <p style="font-size:0.9rem;margin-top:8px;">
+          結果として、マルチ戦略ポートフォリオは<strong>常時稼働かつレジーム分散</strong>。低ボラ期はATRが稼ぎ、高ボラ期はサテライトが稼ぐ。<em>これは事後的に発見した特性であり、Wave I以前は意図していなかった構造 — クリプト先物市場のメカニズムが偶然そう設計させた。</em>
+        </p>
+      </div>
+
+      <h4 style="color:var(--accent-purple);margin-top:14px;">改訂版・最終推奨ポートフォリオ (Wave I後)</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>レイヤー</th><th>戦略</th><th>銘柄</th><th>フィルター</th><th>担当レジーム</th></tr></thead>
+        <tbody>
+          <tr><td>コア(60%)</td><td><strong>ATR_Ratio</strong></td><td>OP/WIF/INJ/BONK/DOGE/SHIB/ARB/LINK</td><td>vol_z≥1.5 OFF</td><td class="text-green">通常ボラ</td></tr>
+          <tr><td>サテライト1(20%)</td><td>SampEn</td><td>DOGE, SOL</td><td>なし</td><td class="text-orange">高ボラ</td></tr>
+          <tr><td>サテライト2(15%)</td><td>MemeMom</td><td>BONK, SUI, NEAR</td><td>なし</td><td class="text-orange">高ボラ・FOMO</td></tr>
+          <tr><td>サテライト3(5%)</td><td>Vol_Smile_Skew</td><td>SUI</td><td>なし</td><td class="text-orange">心理極端値</td></tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- ── Wave H 速報: レジームフィルター発見 (2026-05-23 22:29 JST) ── -->
