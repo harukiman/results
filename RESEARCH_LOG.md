@@ -2349,3 +2349,75 @@ ATR (圧縮/4H/OHLCV) + FOPD (過熱/4H/FR+OI) + 8H Meme ATR (圧縮/8H/OHLCV) �
 **累計試行**: ~729,884 + 5 (variants) = ~729,889
 **累計棄却ファミリー**: 105+ (不変)
 **最新ベスト**: 80% Combined + 10% BONK_8H + 10% SHIB_8H = **Sh +3.57 / Calmar 32.63 / DD -2.1%**
+
+### 2026-05-24 02:10 JST: Wave J28 — §6監査 (80/10/10 三層合成) → **🏆 8/8 全ゲートPASS! (DSR N=730K でも PASS)**
+
+監査対象: 80% Combined (4H) + 10% BONK_8H + 10% SHIB_8H
+
+**結果**:
+| Gate | 判定 | 詳細 |
+|------|------|------|
+| G1: OOS Sharpe | ✓ PASS | Sh+3.57, Return+67.8%, DD-2.1%, Calmar 32.63 |
+| G2: PBO | ✓ PASS | 0/252 inversions |
+| G3a: DSR N=100 | ✓ PASS | Sh_thresh=1.79, DSR=1.0 |
+| G3b: DSR N=1000 | ✓ PASS | Sh_thresh=2.33, DSR=1.0 |
+| G3c: DSR N=10K | ✓ PASS | Sh_thresh=2.78, DSR=1.0 |
+| G3d: DSR N=100K | ✓ PASS | Sh_thresh=3.17, DSR=1.0 |
+| **G3e: DSR N=730K** | ✓ **PASS** | Sh_thresh=3.47, **DSR=0.9998 (50/50では失格だった)** |
+| G4: Cost stress | ✓ PASS | worst Sh+3.35 (all +50%) |
+| G5: MC ruin 3x/5x | ✓ PASS | 0%/0% (10x で 0.08%) |
+
+**MC破産確率詳細 (10K sim × 365日)**:
+| レバ | 破産確率 | Median Return | p5 | p95 |
+|------|----------|--------------|------|------|
+| 1x | 0% | +29% | +15% | +47% |
+| 2x | 0% | +66% | +33% | +113% |
+| 3x | 0% | +113% | +52% | +211% |
+| 5x | 0% | **+242%** | +96% | +531% |
+| 10x | 0.08% | +943% | +244% | +3240% |
+
+**重大成果**: これは crypto-lab 史上初の<strong>§6 厳密ゲート全合格戦略</strong>。50/50 Combined は G3 N=716K で失格していたが、80/10/10 は Sh+3.57 (vs +3.15) の余裕で N=730K でも通過。残るは G7 (Auditor 独立再実装) のみ → 実施で「使用可能」昇格。
+
+### 2026-05-24 02:14 JST: Wave J30 — 他8HMeme候補 → **BONK+SHIB ペアが最適、他Meme追加でむしろ希薄化**
+
+8H Meme候補の個別Sharpe (vol_z filter付き):
+| 銘柄 | Sh | Trades |
+|------|-----|--------|
+| **SHIBUSDT** | +2.28 | 64 |
+| **BONKUSDT** | +2.10 | 74 |
+| DOGEUSDT | +1.52 | 71 |
+| PEPEUSDT | +0.80 | 61 |
+| WIFUSDT | +0.44 | 63 |
+
+**8H Meme相関** (Combined 4H との):
+| 銘柄 | r |
+|------|-----|
+| BONK | +0.307 |
+| SHIB | +0.264 |
+| DOGE | +0.305 |
+| PEPE | +0.170 |
+| WIF | +0.313 |
+
+(全Meme間平均相関は +0.28〜+0.41 で互いに中程度依存)
+
+**配分バリアント結果**:
+| 構成 | Sharpe | Calmar |
+|------|--------|--------|
+| 80%C alone | +3.15 | 30.56 |
+| **★ 80%C + 10%BONK + 10%SHIB (best)** | **+3.57** | **32.63** |
+| 80%C + 10%BONK + 10%DOGE | +3.33 | 23.72 |
+| 80%C + 10%SHIB + 10%DOGE | +3.38 | 26.42 |
+| 80%C + 5%each (BONK/SHIB/DOGE/PEPE) | +3.41 | 29.17 |
+| 80%C + 5%each (5 Meme) | +3.28 | 27.99 |
+| 70%C + 6%each (5 Meme) | +3.18 | 27.01 |
+
+**重要発見**: 
+- **BONK+SHIB ペアが圧倒**: 個別Sh最強の2銘柄に集中投資が最適
+- 5銘柄分散は逆に Calmar 低下: 弱い候補 (PEPE/WIF) を含めると alpha 希釈
+- "ベスト2銘柄を厳選" > "多銘柄分散" の典型例
+- 「市場分散の効用は ≠ 銘柄数」 — quality > quantity
+
+**結論**: 80/10/10 (BONK+SHIB) は実証された<strong>local optimum</strong>。さらなる Meme追加は無効。
+
+**累計試行**: ~729,889 + 5 (J30 variants) = ~729,894
+**§6 全合格戦略数**: 1 (80/10/10 三層合成、Auditor reimpl 待ち)
