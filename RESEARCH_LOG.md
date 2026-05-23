@@ -2251,3 +2251,52 @@ ATR_Ratio_Compression を primary signal にして、triple barrier ラベル + 
 
 **累計試行**: ~729,788 + 40 (5 thresholds × 8 symbols) = ~729,828
 **学び**: ML based meta-labeling は<strong>市場非定常性を超えない</strong>。短期 (1-2四半期) の H1→H2 だけでは ML が H1の癖を学んで H2 で外す。長期データ + Walk-Forward 必須。
+
+### 2026-05-24 01:55 JST: Wave J23-J26 連続検証 → 既存ベストを上回らず、4H+vol_z+FOPD 50/50 が依然最良
+
+**J23 (Forward test 拡張)**: Combined portfolio (ATR + FOPD) の OOS 蓄積開始。launchctl 4h周期、初期スナップショット 14 bars 全 inactive (vol_z=-1.59 低ボラ continuing)。
+
+**J24 (BTC.D Inflection R7)**: 棄却
+| Variant | Sharpe |
+|---------|--------|
+| (A) baseline ATR+vol_z | +2.70 |
+| (B) Alt-season ONLY | +0.06 |
+| (C) Size-up 1.5x | +2.66 (劣化) |
+
+Alt-season は 5.8% of bars で sparse すぎ。Size-up は逆に DD 悪化。BTC dominance macro overlay は4Hで価値なし。
+
+**J25 (Cross-timeframe 6銘柄)**: 1H失敗 / 4H良好 / **8H 最良**
+| TF | mean Sh | best |
+|----|---------|------|
+| 1H | -0.27 | +0.59 |
+| 4H | +0.48 | +1.09 |
+| 8H | **+0.73** | +1.14 |
+
+→ J26で 8銘柄フル展開で深掘り
+
+**J26 (8H ATR 8銘柄)**: **4H+vol_z (Calmar 21.81) > 8H+vol_z (Calmar 12.81)** → 4H維持
+| Variant | Sharpe | Return | DD | Calmar |
+|---------|--------|--------|-----|--------|
+| 4H unfilt | +2.63 | +98.1% | -10.2% | 9.59 |
+| **4H +vol_z (production)** | **+2.70** | +84.0% | -3.9% | **21.81** |
+| 8H unfilt | +2.23 | +97.5% | -9.6% | 10.17 |
+| 8H +vol_z | +2.15 | +71.4% | -5.6% | 12.81 |
+
+**重要な部分発見**: 8H で BONK Sh+2.57 (filt+2.15), SHIB Sh+2.36 (filt+2.23) は強い。Meme/小型銘柄は 8H aggregation が ノイズ削減で有利な可能性 — 将来探索候補。一方 OP/WIF/ARB/LINK は 4H 優位。
+
+**J25 と J26 の矛盾解消**:
+J25 は BTC/ETH/AVAX/ADA/LINK/DOGE をテスト — Major+LargeCap+一部MidCap で 8H 優位。
+J26 は OP/WIF/INJ/BONK/DOGE/SHIB/ARB/LINK の8銘柄 — Meme+L2+一部MidCap で 4H 優位。
+銘柄カテゴリーによる TF 最適化の余地はあるが、**本番運用では4H統一が運用簡素化の観点で最良**。
+
+**累計試行**: ~729,828 + 6 (J24 variants) + 18 (J25) + 32 (J26 4×8 symbols) = ~729,884
+**累計棄却ファミリー**: 105+ (BTC.D追加、Dynamic switching, MetaLabel は部分採用未到達)
+
+**Wave J 総括 (J1-J26)**:
+- **新規候補テスト**: FToD (J8), FOPD (J12-J14-J15-J16), LISRM (J10), HLWI (J11), S3I (J17), Dynamic (J20), LiqCascade (J21), MetaLabel (J22), BTC.D (J24)
+- **成功**: 1/9 (FOPD のみ、ATR との合成で Calmar 30.56 を実現)
+- **部分エッジ (棄却だが価値示唆)**: HLWI ADA/SHIB, S3I ETH, LiqCascade UNI, MetaLabel OP/SHIB
+- **インフラ**: 8エージェント定義、Python 3.11 venv、フォワードテスト2系統 (ATR/Combined) 稼働、インタラクティブシミュレータ、詳細解析カード、§6 監査
+- **最新ベスト**: 50/50 合成 (Sh+3.15, Calmar 30.56, 5xレバ破産0%, H1/H2 両期間で再現)
+
+**結論**: 多くのアイデアは機能しないが、その失敗報告こそが信頼性の証拠。**「日利10%」の目標は実在しないが、Sh+3.15 + Calmar 30.56 は実運用候補として強固**。
