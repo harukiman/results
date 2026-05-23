@@ -449,10 +449,10 @@
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-23 22:32 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 00:01 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 710,373+ &nbsp;|&nbsp;
-    <strong>最良ポートフォリオ:</strong> <span style="color:var(--accent-green);">Sh +2.78 / DD -3.5% / Calmar 22.96</span> &nbsp;|&nbsp;
-    <strong>頑健性:</strong> H1 Sh+3.28 / H2 Sh+2.24 (期間独立検証)
+    <strong>最良ポートフォリオ:</strong> <span style="color:var(--accent-orange);">要追加検証 (Sh +2.78 / §6: 7/8 PASS)</span> &nbsp;|&nbsp;
+    <strong>判定:</strong> CONDITIONAL (DSR N=710K のみ FAIL)
   </div>
 
   <header class="report-header">
@@ -489,6 +489,97 @@
     <div class="section-header">
       <div><span class="section-num">01</span><span class="jp-title">総括</span></div>
       <div class="en-subtitle">エグゼクティブサマリー</div>
+    </div>
+
+    <!-- ── Wave J: ミッション v2 + §6 厳密ゲート遡及監査 (2026-05-24 JST) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-red);background:linear-gradient(180deg,rgba(248,81,73,0.07),transparent);">
+      <h3 style="color:var(--accent-red);">🛡️ Wave J: ミッション v2 + §6 厳密ゲート遡及監査 (2026-05-24 JST)</h3>
+
+      <p style="font-size:0.92rem;margin-top:8px;">
+        ユーザーから新ミッション (オーケストレーター/PM、8エージェント組織、§6厳密ゲート、止めるまで継続) が発令。<strong>既存トップポートフォリオ (ATR×8 + vol_z≥1.5) に §6 を遡及適用</strong>し、Auditor の独立再検証を経た正直な判定を以下に記録する。
+      </p>
+
+      <h4 style="color:var(--accent-yellow);margin-top:14px;">📊 §6 監査結果 (10項目、7/8 PASS — 「要追加検証」判定)</h4>
+      <table class="data-table" style="width:100%;margin-top:8px;font-size:0.85rem;">
+        <thead><tr><th>Gate</th><th>判定</th><th>詳細</th></tr></thead>
+        <tbody>
+          <tr><td>G1: OOS Sharpe (730d)</td><td class="text-green">✓ PASS</td><td>Sh +2.78, Return +81.2%, DD -3.5%, Calmar 22.96</td></tr>
+          <tr><td>G2: PBO (CPCV-style chunk inversion)</td><td class="text-green">✓ PASS</td><td><strong>PBO = 0.0</strong> (252組み合わせで反転0件)</td></tr>
+          <tr><td>G3a: DSR (N_trials=100, 独立系統)</td><td class="text-green">✓ PASS</td><td>Sh_thresh=1.79, DSR=1.0</td></tr>
+          <tr><td>G3b: DSR (N_trials=1000)</td><td class="text-green">✓ PASS</td><td>Sh_thresh=2.33, DSR=1.0</td></tr>
+          <tr><td>G3c: DSR (N_trials=10K)</td><td class="text-orange">△ 境界</td><td>Sh_thresh=2.78 ≈ 観測値、DSR=0.49 (50/50)</td></tr>
+          <tr><td>G3d: DSR (N_trials=710K naive)</td><td class="text-red">✗ FAIL</td><td>Sh_thresh=3.46 > 観測 2.78、DSR=0.0</td></tr>
+          <tr><td>G4: Cost stress (fee/slip/funding +50%)</td><td class="text-green">✓ PASS</td><td>worst Sh=+2.60, Return +73.8%, DD -4.2% — エッジ残存</td></tr>
+          <tr><td>G5: MC破産確率 (10K sim × 365d, Lev 3x)</td><td class="text-green">✓ PASS</td><td>ruin_p=0.00%, median +134%, p5=+42%, p95=+303%</td></tr>
+          <tr><td>G6: パラメータプラトー (Wave I)</td><td class="text-green">✓ PASS</td><td>vol_z 1.0-1.5 で Calmar 17-23 平坦</td></tr>
+          <tr><td>G7: Auditor 独立再実装</td><td class="text-green">✓ PASS</td><td>|ΔSh|=0.028 / |Δret|=0.83% (許容内)</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-orange);margin-top:14px;">深い考察: DSR N=710K vs N=100 の解釈ギャップ</h4>
+      <p style="font-size:0.9rem;">
+        DSR (Deflated Sharpe) は試行数 N で罰則がかかる。E[max Sh of N iid] ≈ Z(1-1/N)/√T → 年率換算。観測 Sh=2.78 (T=178日) に対し:
+      </p>
+      <ul style="font-size:0.88rem;padding-left:20px;margin-top:4px;">
+        <li>N=50: 閾値 1.59 (Sh+2.78 は余裕で超過)</li>
+        <li>N=100: 閾値 1.79 (なお余裕)</li>
+        <li>N=1000: 閾値 2.33 (まだ超過)</li>
+        <li>N=10K: 閾値 2.78 (<strong>ちょうど境界</strong>)</li>
+        <li>N=100K: 閾値 3.17 (Sh+2.78 < 閾値 → 失格)</li>
+        <li>N=710K: 閾値 3.46 (大幅に失格)</li>
+      </ul>
+      <p style="font-size:0.9rem;margin-top:8px;">
+        710K試行は<strong>パラメータ周辺の連続変動を全て含む</strong>。実際の「独立戦略系統」は ~5-10、「独立パラメータ集合」は ~100-1000 程度。<strong>実効 N ≈ 100-1000 と仮定すれば G3 は通過</strong>。
+      </p>
+      <p style="font-size:0.9rem;margin-top:8px;color:var(--text-secondary);">
+        Auditor 注釈: 「実効N」の正確な推定は本研究の最大の不確実性。710Kは保守的すぎ、100は楽観的すぎる。レジーム別検証 (Wave I で部分実施) や OOS フォワードテストでこのギャップを埋める必要がある。
+      </p>
+
+      <h4 style="color:var(--accent-red);margin-top:14px;">⚠️ Auditor の発見: 監査プロセス中に2バグ修正 (透明性のため記録)</h4>
+      <div style="background:var(--bg-secondary);padding:12px;border-radius:6px;margin-top:6px;font-size:0.88rem;">
+        <p><strong>Bug 1 (DSR formula annualization):</strong> 当初実装で Z(1-1/N) を per-period Sharpe scale に変換せず annualized scale でそのまま比較。結果、全 N で閾値 42-93 という非現実的値 (Sh+2.78 が全て不合格に見えた)。修正後 1.6-3.5 で合理的。<strong>修正済み (commit予定)</strong>。</p>
+        <p style="margin-top:8px;"><strong>Bug 2 (Cost stress no-op):</strong> 当初実装で cost_config の key 名を仮定 ("taker_fee" "slippage_bps") していたが実際は ("fee_rate" "slippage_rate" "funding_rate_8h")。結果 stress test が全シナリオ同値 (Sh+2.78) という不可能出力。修正後は ±50% で Sh ±0.18 の正しい感度。<strong>修正済み</strong>。</p>
+        <p style="margin-top:8px;color:var(--accent-yellow);">これら2バグは Auditor 独立再実装プロセスで発見。<strong>バグありの監査結果は invalid</strong> — 修正後の数値のみが信頼できる。Auditor サインオフは修正後の結果に対してのみ与えられる。</p>
+      </div>
+
+      <h4 style="color:var(--accent-purple);margin-top:14px;">📜 最終判定: 「要追加検証」</h4>
+      <div style="background:rgba(227,179,65,0.10);border:1px solid var(--accent-orange);border-radius:6px;padding:14px;margin-top:8px;">
+        <p style="font-size:0.95rem;"><strong>CONDITIONAL — 1 ゲート不合格 (DSR N=710K)、ただし他全項目クリア</strong></p>
+        <p style="font-size:0.88rem;margin-top:8px;">
+          7/8 のゲートに合格、Auditor 独立再実装で数値突合 (|ΔSh|=0.028)、PBO=0、MC破産確率=0% — 構造的に頑健。<strong>しかしユーザー指示の§6 厳密基準では「全ゲート合格」が必須</strong> ため「使用可能」ラベルは付与しない。DSR N=710K 失格は「過去の試行数全体を考慮した場合、観測Sharpeはランダム最良の閾値以下」を意味し、保留が妥当。
+        </p>
+        <p style="font-size:0.88rem;margin-top:8px;">
+          <strong>次に必要な検証</strong> (G3 改善ルート):
+          (1) フォワードテスト 90日以上で OOS 持続性確認 (実効 N=1で罰則最小)
+          (2) 完全独立期間 (2022-2024) の history 取得して二段階目 OOS
+          (3) 試行数の独立系統推定の改善 (相関行列で実効自由度算出)
+        </p>
+        <p style="font-size:0.88rem;margin-top:8px;color:var(--accent-orange);">
+          <strong>ユーザーの「日利10%」基準について</strong>: 本ポートフォリオの実測日利平均は <strong>0.083%/日 (年率 ~30% / 1xレバ)</strong>。10%/日 に約120倍のギャップ。レバ拡大で平均日利は線形に上がるが破産確率も急増 (10xで 7.28%)。<strong>「10%/日」は本研究の知見では実在不可能</strong>と判断 (1.10^365≈1.3e15 倍/年)。
+        </p>
+      </div>
+    </div>
+
+    <!-- ── 研究基盤・エージェント組織 (Wave J1) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-cyan);">
+      <h3 style="color:var(--accent-cyan);">🏛️ 研究基盤 — 8エージェント組織 (Wave J1, 2026-05-24)</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">ミッション v2 に従い <code>.claude/agents/</code> に 8 つのペルソナを定義。並列ディスパッチで研究/監査を加速。</p>
+      <table class="data-table" style="width:100%;margin-top:8px;font-size:0.85rem;">
+        <thead><tr><th>エージェント</th><th>役割</th><th>モデル</th><th>主要責務</th></tr></thead>
+        <tbody>
+          <tr><td><strong>pm-orchestrator</strong></td><td>PM・統合</td><td>opus</td><td>目標分解、タスク割当、成果統合、HTML更新、最終判断</td></tr>
+          <tr><td>data-engineer</td><td>データ</td><td>sonnet</td><td>パイプライン、PIT整合性、生存者バイアス排除、欠損処理</td></tr>
+          <tr><td>researcher</td><td>仮説</td><td>sonnet</td><td>アイデア生成、新規系統開拓、構造的説明</td></tr>
+          <tr><td><strong>quant</strong></td><td>検証</td><td>opus</td><td>flearn必読、§5プロトコル、PBO/DSR/CPCV/MC</td></tr>
+          <tr><td>pro-trader</td><td>実運用</td><td>sonnet</td><td>約定現実性、板流動性、MEXC固有事情</td></tr>
+          <tr><td><strong>auditor (拒否権)</strong></td><td>監査</td><td>opus</td><td>独立再実装、リーク検査、§6サインオフ</td></tr>
+          <tr><td>tip-scraper</td><td>収集</td><td>haiku</td><td>Qiita/X/note 等から戦略tips収集 → BACKLOG翻訳</td></tr>
+          <tr><td>onchain-analyst</td><td>オンチェーン</td><td>sonnet</td><td>Exchange flows, Whale tx, Stablecoin supply</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.85rem;margin-top:10px;color:var(--text-secondary);">
+        Wave J1 で並列稼働した Researcher は新規仮説 10案 (TOP3: FToD/FOPD/LISRM)、Tip-scraper は botter記事 15件収集 (TOP5: LiqCascadeFade/FundingNeutral/TripleSignal/MetaLabel/FundingSpread)。詳細は <code>BACKLOG.md</code> に記録。
+      </p>
     </div>
 
     <!-- ── Wave I: 頑健性検証 + 天然ヘッジ発見 (2026-05-23 22:32 JST) ── -->
@@ -3976,11 +4067,259 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 
   <hr class="divider">
 
+  <!-- ==================== INTERACTIVE EQUITY SIMULATOR ==================== -->
+  <section class="section" id="equity-simulator">
+    <div class="section-header">
+      <div><span class="section-num">14</span><span class="jp-title">資産推移シミュレータ</span></div>
+      <div class="en-subtitle">Interactive Equity Simulator (with Monte Carlo)</div>
+    </div>
+
+    <div class="card info">
+      <h3 style="color:var(--accent-yellow);">⚠️ 「日利10%」の正直な現実</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">
+        ユーザー指定の「日利10%」を一旦数学的に確認: <code style="background:var(--bg-secondary);padding:2px 4px;">1.10^365 ≈ 1.3 &times; 10^15 倍/年</code> — $1,000 が 1兆ドル超に。
+        実在しない数字です。<strong>バックテストでこれが出たら必ず偽陽性 (ルックアヘッド/コスト過小/データリーク) を疑ってください。</strong>
+      </p>
+      <p style="font-size:0.9rem;margin-top:8px;">
+        このシミュレータは「現実的に何が起こりうるか」を可視化するためのもの。プリセット = 本研究の最良ポートフォリオ (ATR×8+vol_z、730日実測 日利平均 ~0.083%/日 = 年率 ~30%相当 / 1xレバ) を出発点に、レバレッジ・複利・MCで分布を描画。
+      </p>
+    </div>
+
+    <!-- Plotly CDN -->
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
+
+    <div class="card">
+      <h3>シミュレータ入力</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:10px;font-size:0.88rem;">
+        <label>
+          <strong>初期元本 (USD)</strong>
+          <input type="number" id="sim-capital" value="10000" min="100" step="100" style="width:100%;padding:6px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);margin-top:4px;">
+        </label>
+        <label>
+          <strong>レバレッジ (x)</strong>
+          <input type="number" id="sim-leverage" value="1" min="0.1" max="50" step="0.5" style="width:100%;padding:6px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);margin-top:4px;">
+        </label>
+        <label>
+          <strong>シミュレーション日数</strong>
+          <input type="number" id="sim-days" value="365" min="30" max="3650" step="30" style="width:100%;padding:6px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);margin-top:4px;">
+        </label>
+        <label>
+          <strong>日利源</strong>
+          <select id="sim-source" style="width:100%;padding:6px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);margin-top:4px;">
+            <option value="historical">本研究実測 ATR×8+vol_z (推奨)</option>
+            <option value="historical_mean">本研究実測の平均日利 (定値)</option>
+            <option value="historical_median">本研究実測の中央値 (定値)</option>
+            <option value="fixed_10pct">日利 10% 固定 (非現実シナリオ)</option>
+            <option value="fixed_5pct">日利 5% 固定 (極大シナリオ)</option>
+            <option value="fixed_1pct">日利 1% 固定 (高アグレッシブ)</option>
+            <option value="fixed_0.1pct">日利 0.1% 固定 (現実的)</option>
+          </select>
+        </label>
+        <label>
+          <strong>複利 / 単利</strong>
+          <select id="sim-compound" style="width:100%;padding:6px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);margin-top:4px;">
+            <option value="compound">複利 (再投資)</option>
+            <option value="simple">単利 (元本固定)</option>
+          </select>
+        </label>
+        <label>
+          <strong>MC回数</strong>
+          <input type="number" id="sim-nmc" value="1000" min="100" max="10000" step="100" style="width:100%;padding:6px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:4px;color:var(--text-primary);margin-top:4px;">
+        </label>
+      </div>
+      <div style="margin-top:14px;text-align:center;">
+        <button id="sim-run" style="background:var(--accent-blue);color:white;border:none;padding:10px 24px;border-radius:6px;font-size:1rem;font-weight:600;cursor:pointer;">▶ シミュレーション実行</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>結果サマリ</h3>
+      <div id="sim-summary" style="font-size:0.92rem;padding:12px;background:var(--bg-secondary);border-radius:6px;font-family:'SF Mono','Fira Code',monospace;">
+        実行ボタンを押してください。
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>エクイティ推移 (MC パーセンタイル帯)</h3>
+      <div id="sim-equity-chart" style="width:100%;height:480px;"></div>
+    </div>
+
+    <div class="card">
+      <h3>最終リターン分布 (MC ヒストグラム)</h3>
+      <div id="sim-dist-chart" style="width:100%;height:380px;"></div>
+    </div>
+
+    <div class="card">
+      <h3>最大DD分布</h3>
+      <div id="sim-dd-chart" style="width:100%;height:380px;"></div>
+    </div>
+
+    <!-- Daily returns of the top portfolio (730d, ATR_Ratio × 8 + vol_z≥1.5 filter) -->
+    <script>
+      // Will be replaced with actual historical returns from audit run
+      window.SIM_HISTORICAL_RETURNS = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.001645, 0.002053, 0.0, 0.004182, 0.0, 0.0, 0.0, 0.0, 0.0, -0.006452, 0.014491, 0.00719, 0.0, 0.0, 0.0, 0.0, 0.004046, 0.037162, 0.0, 0.0, 0.0, 0.0, 0.0, -0.001998, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.000434, 0.013862, -0.012591, -0.017184, -0.001631, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.000542, 0.001185, 0.000774, 0.002267, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.007083, 0.011434, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.014087, 0.000632, 0.0, 0.0, 0.0, 0.0, 0.0, -8.7e-05, 0.001368, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.001736, -0.002123, 0.004743, 0.0, -0.000648, 0.003209, 0.002894, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.00093, 0.000717, 0.0, 0.0, 0.0, 0.0, 0.0, -0.000895, 0.007971, 0.0, 0.0, 0.0, 0.0, 0.0, 0.002447, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.009717, -0.00162, 0.0, 0.0, 0.000199, 0.006874, -0.008102, 0.008517, 0.007645, 0.00595, 0.0, 0.0, 0.0, 0.0, 0.0, -0.002802, -0.00888, 0.0, 0.0, 0.0, 0.0, 0.005592, 0.02178, 0.000574, -0.002219, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.00417, 0.040898, -0.018752, 0.007182, 0.003533, 0.00406, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.001646, 0.001542, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.009984, 0.057053, 0.0, 0.0, 0.0, -0.001343, 0.0, 0.0, 0.0, 0.0, -0.000175, 0.016118, 0.020296, 0.012238, -0.016638, 0.025572, -0.011151, 0.028722, 0.0, 0.0, 0.0, -8.7e-05, 0.007478, 0.0, 0.0, -8.7e-05, 0.002053, 0.0, -0.005892, 0.007701, 0.0, 0.0, 0.0, 0.0, 0.0, -0.000262, -0.010837, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.002281, -0.001333, 0.03093, 0.005571, 0.0, -0.002613, -0.000185, 0.0, 0.0, -0.001596, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.017378, 0.033843, 0.0, 0.0, 0.0, 0.0, -0.006213, -0.00617, 0.0, 0.0, 0.001922, 0.0, 0.0, -0.001427, -0.001192, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.002289, -0.002957, -0.005218, 0.003978, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.006013, 0.016204, -8.7e-05, 0.001925, 0.0, 0.0, 0.0, -0.002865, 0.000415, 0.0, 0.0, 0.0, 0.0, 0.0, 0.001128, -0.002321, 0.0, 0.0, 0.0, 0.0, 0.0, -0.002232, 0.00193, 0.0, 0.0, 0.0, 0.0, 0.0, -0.000233, -0.004206, 0.0, 0.0, 0.0, -0.010442, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.000933, 0.001269, 0.0, 0.0, 0.0, 0.0, 0.0, -0.001484, 0.00143, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.004213, 0.013489, 0.004128, 0.0, 0.0, 0.0, 0.0, 0.0, -0.010862, -0.019384, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.002031, 0.010218, 0.0, 0.0, 0.0, 0.0, 0.0, -0.000783, 0.002904, 0.0, 0.0, 0.0, 0.0, 0.0, -0.008593, 0.028644, 0.0, 0.0, 0.004996, 0.001588, 0.0, -0.011175, -0.001849, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.000216, 0.013214, 0.0, 0.0, 0.0, 0.0, 0.0, 0.019262, -0.010073, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.001222, -0.019106, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.00436, 0.002296, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.002621, -0.002031, 0.0, 0.0, 0.013419, 0.011394, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.001413, 0.0, 0.0, 0.0, -0.001122, -0.005589, -0.000163, 0.013995, 0.000161, -0.005106, -0.001104, 0.00465, 0.006546, -0.001207, -0.000428, 0.0, 0.0, 0.0, 0.0, 0.0, 0.00926, -0.002863, 0.0, 0.0, 0.0, 0.0, 0.0, 0.007437, 0.015655, 0.0, 0.0, 0.003041, 0.003746, -0.000491, -0.006385, 0.002578, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.002085, -0.001939, -0.010336, 0.0, 0.0, 0.0, 0.0, 0.0, 0.000202, 0.001121, 0.001393, 0.001044, 0.0, -8.7e-05, -0.001176, 0.005454, 0.052729, 0.0, -0.000481, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.002499, 0.0, 0.00991, 0.029289, 0.0, 0.0, 0.0, 0.002092, 0.01015, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.000875, 0.002119, 0.003644, 0.0, 0.0, 0.0, 0.0, 0.0, -0.000175, -0.000419, 0.0, 0.0, 0.0, 0.0, -0.000108, 0.010636, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.000379, 0.007999, -0.000756, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.000301, 0.002834, -0.001773, 0.0, 0.001164, 0.0, 0.001613, 0.0, -0.00034, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.002015, -0.003204, 0.0, 0.0, 0.0, 0.000741, 0.021417, 0.0, -0.004149, -0.002904, 0.0, 0.012908]; // 730 daily returns of ATR×8+vol_z portfolio (mean 0.083%/day)
+
+      // Math helpers
+      function quantile(arr, q) {
+        const sorted = [...arr].sort((a, b) => a - b);
+        const pos = (sorted.length - 1) * q;
+        const base = Math.floor(pos);
+        const rest = pos - base;
+        if (sorted[base + 1] !== undefined) return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+        return sorted[base];
+      }
+      function mean(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
+      function median(arr) { return quantile(arr, 0.5); }
+
+      function getReturnsSource(source, nDays, nSim) {
+        const hist = window.SIM_HISTORICAL_RETURNS || [0.0008]; // fallback
+        if (source === 'historical') {
+          // Bootstrap from historical (n_sim paths, n_days each)
+          const paths = [];
+          for (let s = 0; s < nSim; s++) {
+            const p = [];
+            for (let d = 0; d < nDays; d++) p.push(hist[Math.floor(Math.random() * hist.length)]);
+            paths.push(p);
+          }
+          return paths;
+        }
+        let dailyValue;
+        if (source === 'historical_mean') dailyValue = mean(hist);
+        else if (source === 'historical_median') dailyValue = median(hist);
+        else if (source === 'fixed_10pct') dailyValue = 0.10;
+        else if (source === 'fixed_5pct') dailyValue = 0.05;
+        else if (source === 'fixed_1pct') dailyValue = 0.01;
+        else if (source === 'fixed_0.1pct') dailyValue = 0.001;
+        else dailyValue = 0;
+        // Deterministic: single path with constant daily return
+        const path = new Array(nDays).fill(dailyValue);
+        return [path]; // single-sim (deterministic) — visualizer will plot just one line
+      }
+
+      function simulateOne(dailyRets, leverage, capital, compound) {
+        const eq = [capital];
+        for (let i = 0; i < dailyRets.length; i++) {
+          const r = Math.max(dailyRets[i] * leverage, -0.99); // cap at -99% per day
+          if (compound) eq.push(eq[eq.length - 1] * (1 + r));
+          else eq.push(eq[eq.length - 1] + capital * r);
+        }
+        return eq;
+      }
+
+      function maxDD(eq) {
+        let peak = eq[0], maxDDv = 0;
+        for (const v of eq) {
+          if (v > peak) peak = v;
+          const dd = (v / peak) - 1;
+          if (dd < maxDDv) maxDDv = dd;
+        }
+        return maxDDv;
+      }
+
+      document.getElementById('sim-run').addEventListener('click', () => {
+        const capital = parseFloat(document.getElementById('sim-capital').value);
+        const leverage = parseFloat(document.getElementById('sim-leverage').value);
+        const nDays = parseInt(document.getElementById('sim-days').value);
+        const source = document.getElementById('sim-source').value;
+        const compoundMode = document.getElementById('sim-compound').value === 'compound';
+        let nMC = parseInt(document.getElementById('sim-nmc').value);
+        if (source !== 'historical') nMC = 1; // deterministic for fixed/mean/median
+
+        const paths = getReturnsSource(source, nDays, nMC);
+        const equities = paths.map(p => simulateOne(p, leverage, capital, compoundMode));
+        const finalRets = equities.map(e => (e[e.length - 1] / capital - 1));
+        const maxDDs = equities.map(e => maxDD(e));
+        const ruined = maxDDs.filter(d => d <= -0.50).length;
+        const ruinProb = ruined / equities.length;
+
+        // Build percentile bands for equity chart
+        const T = nDays + 1;
+        const days = Array.from({length: T}, (_, i) => i);
+        const seriesAtT = (t) => equities.map(e => e[t]);
+        const p5 = days.map(t => quantile(seriesAtT(t), 0.05));
+        const p25 = days.map(t => quantile(seriesAtT(t), 0.25));
+        const p50 = days.map(t => quantile(seriesAtT(t), 0.50));
+        const p75 = days.map(t => quantile(seriesAtT(t), 0.75));
+        const p95 = days.map(t => quantile(seriesAtT(t), 0.95));
+
+        // Summary
+        const meanFR = mean(finalRets);
+        const medFR = median(finalRets);
+        const p5FR = quantile(finalRets, 0.05);
+        const p95FR = quantile(finalRets, 0.95);
+        const meanDD = mean(maxDDs);
+        const p5DD = quantile(maxDDs, 0.05);
+
+        const fmt = (v, asPct=true) => asPct ? (v*100).toFixed(1) + '%' : v.toFixed(0);
+        const fmtUSD = (v) => '$' + Math.round(v).toLocaleString();
+
+        document.getElementById('sim-summary').innerHTML = `
+          <strong>初期元本</strong> ${fmtUSD(capital)} → <strong>${nDays}日後</strong> 中央値 ${fmtUSD(capital * (1 + medFR))} (${fmt(medFR)})<br>
+          <strong>レバレッジ</strong> ${leverage}x &nbsp;|&nbsp; <strong>複利</strong>: ${compoundMode ? 'ON' : 'OFF'} &nbsp;|&nbsp; <strong>日利源</strong>: ${source} &nbsp;|&nbsp; <strong>MC</strong>: ${nMC}<br>
+          <strong>最終リターン</strong> 平均=${fmt(meanFR)} / 中央値=${fmt(medFR)} / 5%-95% 帯=[${fmt(p5FR)} 〜 ${fmt(p95FR)}]<br>
+          <strong>最大DD</strong> 中央値=${fmt(meanDD)} / 5%最悪=${fmt(p5DD)} &nbsp;|&nbsp; <strong>破産確率 (DD ≤ -50%)</strong>: <span style="color:${ruinProb > 0.1 ? 'var(--accent-red)' : ruinProb > 0.02 ? 'var(--accent-orange)' : 'var(--accent-green)'};font-weight:700;">${(ruinProb*100).toFixed(1)}%</span>
+        `;
+
+        // Plotly equity chart
+        const traces = [];
+        if (nMC > 1) {
+          // Bands
+          traces.push({x: days, y: p95, name: 'p95', line: {color: 'rgba(63,185,80,0.35)'}, mode: 'lines'});
+          traces.push({x: days, y: p75, name: 'p75', line: {color: 'rgba(63,185,80,0.55)'}, mode: 'lines', fill: 'tonexty', fillcolor: 'rgba(63,185,80,0.10)'});
+          traces.push({x: days, y: p50, name: '中央値', line: {color: '#58a6ff', width: 3}, mode: 'lines'});
+          traces.push({x: days, y: p25, name: 'p25', line: {color: 'rgba(248,81,73,0.55)'}, mode: 'lines', fill: 'tonexty', fillcolor: 'rgba(63,185,80,0.10)'});
+          traces.push({x: days, y: p5, name: 'p5', line: {color: 'rgba(248,81,73,0.35)'}, mode: 'lines', fill: 'tonexty', fillcolor: 'rgba(248,81,73,0.10)'});
+        } else {
+          traces.push({x: days, y: equities[0], name: '推移', line: {color: '#58a6ff', width: 3}, mode: 'lines'});
+        }
+        const useLog = compoundMode && (medFR > 5 || p95FR > 10);
+        Plotly.newPlot('sim-equity-chart', traces, {
+          paper_bgcolor: '#0d1117', plot_bgcolor: '#161b22',
+          font: {color: '#e6edf3'},
+          xaxis: {title: '日数', gridcolor: '#30363d'},
+          yaxis: {title: '資産 (USD)', gridcolor: '#30363d', type: useLog ? 'log' : 'linear'},
+          margin: {t: 30, l: 70, r: 30, b: 50},
+          legend: {orientation: 'h', y: -0.15},
+        }, {responsive: true});
+
+        // Distribution chart
+        if (nMC > 1) {
+          Plotly.newPlot('sim-dist-chart', [{
+            x: finalRets.map(r => r * 100), type: 'histogram', nbinsx: 50,
+            marker: {color: '#58a6ff', line: {color: '#0d1117', width: 1}},
+          }], {
+            paper_bgcolor: '#0d1117', plot_bgcolor: '#161b22', font: {color: '#e6edf3'},
+            xaxis: {title: '最終リターン (%)', gridcolor: '#30363d'},
+            yaxis: {title: '頻度', gridcolor: '#30363d'},
+            margin: {t: 30, l: 60, r: 30, b: 50},
+          }, {responsive: true});
+          Plotly.newPlot('sim-dd-chart', [{
+            x: maxDDs.map(d => d * 100), type: 'histogram', nbinsx: 50,
+            marker: {color: '#f85149', line: {color: '#0d1117', width: 1}},
+          }], {
+            paper_bgcolor: '#0d1117', plot_bgcolor: '#161b22', font: {color: '#e6edf3'},
+            xaxis: {title: '最大DD (%)', gridcolor: '#30363d'},
+            yaxis: {title: '頻度', gridcolor: '#30363d'},
+            margin: {t: 30, l: 60, r: 30, b: 50},
+            shapes: [{type: 'line', x0: -50, x1: -50, y0: 0, y1: 1, yref: 'paper',
+                      line: {color: 'var(--accent-red)', dash: 'dash'}}],
+            annotations: [{x: -50, y: 1, yref: 'paper', text: '破産閾値 -50%', showarrow: false, font: {color: '#f85149'}}],
+          }, {responsive: true});
+        } else {
+          document.getElementById('sim-dist-chart').innerHTML = '<p style="text-align:center;padding:80px;color:var(--text-secondary);">単一決定論的シナリオのため分布なし (日利源を「本研究実測」に変更してMCを実行)</p>';
+          document.getElementById('sim-dd-chart').innerHTML = '<p style="text-align:center;padding:80px;color:var(--text-secondary);">同上</p>';
+        }
+      });
+    </script>
+  </section>
+
+  <hr class="divider">
+
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
-    <p>MEXC先物戦略リサーチレポート &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v3.0</p>
-    <p style="margin-top:4px;">更新: 2026-05-23 &nbsp;|&nbsp; 98+ファミリーで710,079+試行 &nbsp;|&nbsp; 手法: flearn.pdf &sect;5</p>
-    <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。</p>
+    <p>MEXC先物戦略リサーチレポート &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v4.0</p>
+    <p style="margin-top:4px;">更新: 2026-05-24 &nbsp;|&nbsp; 98+ファミリーで710,373+試行 &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
+    <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 
 </div>

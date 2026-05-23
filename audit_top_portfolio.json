@@ -1,0 +1,160 @@
+{
+  "audit_target": "ATR_Ratio \u00d7 8 symbols + BTC vol_z\u22651.5 OFF filter",
+  "generated_at": "2026-05-24 00:17 JST",
+  "baseline_metrics": {
+    "sharpe": 2.78,
+    "return_pct": 81.18,
+    "max_dd_pct": -3.53,
+    "calmar": 22.96,
+    "T_days": 729
+  },
+  "gates": {
+    "G1_OOS_WF": {
+      "pass": true,
+      "note": "Already verified in Wave G/H/I (recomputed Sh+2.78)"
+    },
+    "G2_PBO": {
+      "PBO": 0.0,
+      "n_combinations": 252,
+      "n_chunks": 10,
+      "pass": true,
+      "interpretation": "Probability that IS-positive performance fails OOS"
+    },
+    "G3_DSR": {
+      "n_trials_assumed_710K": {
+        "DSR": 0.0,
+        "Sh_hat": 2.78,
+        "Sh_threshold": 3.461,
+        "DSR_z": -24.87,
+        "T_days": 729,
+        "n_trials": 710253,
+        "skew": 4.403,
+        "excess_kurtosis": 33.213,
+        "pass": false
+      },
+      "n_trials_assumed_independent": {
+        "DSR": 1.0,
+        "Sh_hat": 2.78,
+        "Sh_threshold": 1.785,
+        "DSR_z": 36.35,
+        "T_days": 729,
+        "n_trials": 100,
+        "skew": 4.403,
+        "excess_kurtosis": 33.213,
+        "pass": true
+      },
+      "verdict_critical": "DSR at N=710K is LOW \u2014 Sh+2.78 BELOW threshold sqrt(2 ln 710K) \u2248 5.2"
+    },
+    "G4_cost_stress": {
+      "baseline (1.0x)": {
+        "sharpe": 2.78,
+        "return_pct": 81.18,
+        "dd_pct": -3.53
+      },
+      "fee +50%": {
+        "sharpe": 2.686,
+        "return_pct": 77.14,
+        "dd_pct": -3.76
+      },
+      "slip +50%": {
+        "sharpe": 2.685,
+        "return_pct": 77.21,
+        "dd_pct": -3.92
+      },
+      "funding +50%": {
+        "sharpe": 2.792,
+        "return_pct": 81.72,
+        "dd_pct": -3.52
+      },
+      "all +50% (worst case)": {
+        "sharpe": 2.602,
+        "return_pct": 73.78,
+        "dd_pct": -4.24
+      },
+      "fee -50% (best case)": {
+        "sharpe": 2.874,
+        "return_pct": 85.3,
+        "dd_pct": -3.31
+      },
+      "all -50% (optimistic)": {
+        "sharpe": 2.929,
+        "return_pct": 87.79,
+        "dd_pct": -3.19
+      }
+    },
+    "G5_MC_ruin": {
+      "1": {
+        "ruin_prob": 0.0,
+        "median_final_return_pct": 34.21,
+        "p5_final_return_pct": 13.36,
+        "p95_final_return_pct": 61.61,
+        "median_max_dd_pct": -3.49,
+        "p5_max_dd_pct": -6.41
+      },
+      "2": {
+        "ruin_prob": 0.0,
+        "median_final_return_pct": 77.73,
+        "p5_final_return_pct": 28.1,
+        "p95_final_return_pct": 157.19,
+        "median_max_dd_pct": -6.85,
+        "p5_max_dd_pct": -12.72
+      },
+      "3": {
+        "ruin_prob": 0.0,
+        "median_final_return_pct": 134.06,
+        "p5_final_return_pct": 42.5,
+        "p95_final_return_pct": 303.49,
+        "median_max_dd_pct": -10.19,
+        "p5_max_dd_pct": -18.47
+      },
+      "5": {
+        "ruin_prob": 0.0001,
+        "median_final_return_pct": 290.37,
+        "p5_final_return_pct": 75.17,
+        "p95_final_return_pct": 856.14,
+        "median_max_dd_pct": -16.77,
+        "p5_max_dd_pct": -29.32
+      },
+      "10": {
+        "ruin_prob": 0.0728,
+        "median_final_return_pct": 1064.13,
+        "p5_final_return_pct": 153.4,
+        "p95_final_return_pct": 6443.49,
+        "median_max_dd_pct": -32.03,
+        "p5_max_dd_pct": -52.59
+      }
+    },
+    "G6_param_plateau": {
+      "note": "Verified in Wave I \u2014 vol_z 1.0-1.5 plateau, Calmar 17-23"
+    },
+    "auditor_reimplementation": {
+      "original": {
+        "sharpe": 2.78,
+        "return_pct": 81.18,
+        "dd_pct": -3.53
+      },
+      "auditor_reimpl": {
+        "sharpe": 2.752,
+        "return_pct": 80.35,
+        "dd_pct": -3.53
+      },
+      "delta": {
+        "sharpe": 0.028,
+        "return_pct": 0.83
+      },
+      "agreement": "True"
+    }
+  },
+  "pass_summary": {
+    "G1": true,
+    "G2": true,
+    "G3_independent_N100": true,
+    "G3_naive_N710K": false,
+    "G4_worst_case": true,
+    "G5_ruin_at_3x": true,
+    "G6_plateau": true,
+    "Auditor_agreement": "True"
+  },
+  "verdict": "CONDITIONAL \u2014 1\u30b2\u30fc\u30c8\u306e\u307f\u4e0d\u5408\u683c",
+  "runtime_sec": 10.8
+}

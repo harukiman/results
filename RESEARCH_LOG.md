@@ -1747,3 +1747,68 @@ SampEn/VSS/MemeMom: 高ボラ期こそアクティブ → ATRがアイドル時�
 1. 統合ポートフォリオ実測 (コア + サテライト) — 想定通り天然ヘッジか定量化
 2. レバレッジ最適化 (Kelly基準・Calmar最大化)
 3. ライブテスト準備 (forward-test scaffold)
+
+### 2026-05-24 00:01 JST: Wave J — ミッション v2 + §6 厳密ゲート遡及監査 → **CONDITIONAL (7/8 PASS, DSR N=710K のみFAIL)**
+
+ユーザー発令の新ミッション (オーケストレーター/PM/8エージェント組織/§6厳密ゲート/止めるまで継続) に従い、既存トップポートフォリオ (ATR×8 + vol_z≥1.5) に §6 を遡及適用。
+
+**Wave J1 - 研究基盤構築**:
+- .claude/agents/ に 8 エージェント定義 (pm-orchestrator/data-engineer/researcher/quant/pro-trader/auditor/tip-scraper/onchain-analyst)
+- Python 3.11 venv 構築 (ccxt 4.5.54, pandas 3.0.3, numpy 2.4.6, scipy 1.17.1, plotly 6.7.0)
+- Researcher subagent → 10新規仮説 (TOP3: FToD/FOPD/LISRM)
+- Tip-scraper subagent → 15記事収集 (TOP5: LiqCascadeFade/FundingNeutral/TripleSignal/MetaLabel/FundingSpread)
+- BACKLOG.md に統合候補リスト追加 (Researcher x Tip-scraper 重複後の検証優先度1-8)
+
+**Wave J2 - §6 監査結果**:
+| Gate | 判定 | 詳細 |
+|------|------|------|
+| G1: OOS Sharpe | ✓ PASS | Sh +2.78 / Return +81.2% / DD -3.5% / Calmar 22.96 (730d) |
+| G2: PBO (chunk inv) | ✓ PASS | 0/252 inversions |
+| G3a: DSR N=100 | ✓ PASS | Sh_thresh=1.79 |
+| G3b: DSR N=1000 | ✓ PASS | Sh_thresh=2.33 |
+| G3c: DSR N=10K | △ 境界 | Sh_thresh=2.78 |
+| G3d: DSR N=710K | ✗ FAIL | Sh_thresh=3.46 > 観測2.78 |
+| G4: Cost ±50% worst | ✓ PASS | Sh+2.60, Return+73.8%, DD-4.2% |
+| G5: MC ruin Lev 3x | ✓ PASS | 0.00%, median +134%, p5 +42%, p95 +303% |
+| G6: Param plateau | ✓ PASS | vol_z 1.0-1.5 で Calmar 17-23 (Wave I) |
+| G7: Auditor reimpl | ✓ PASS | |ΔSh|=0.028, |Δret|=0.83% |
+
+**Auditor 発見 - 2バグ (透明性で記載)**:
+1. **DSR formula bug**: Z(1-1/N) を per-period に変換せず annualized で比較 → 全N で閾値42-93の非現実値。修正後 1.6-3.5 で合理的。
+2. **Cost stress no-op bug**: cost_config key名仮定誤り ("taker_fee" vs 実 "fee_rate")。修正後±50%でSh±0.18の正しい感度。
+
+両バグ修正前は監査結果無効。**修正後の数値のみ信頼**。Auditor サインオフは修正後に対してのみ。
+
+**MC破産確率 (10K simulations × 365 days)**:
+| レバ | Ruin Prob | Median Final | p5 | p95 | Median Max DD |
+|------|-----------|--------------|------|------|---------------|
+| 1x | 0.00% | +34% | +13% | +62% | -3.5% |
+| 2x | 0.00% | +78% | +28% | +157% | -6.8% |
+| 3x | 0.00% | +134% | +42% | +303% | -10.2% |
+| 5x | 0.01% | +290% | +75% | +856% | -16.8% |
+| 10x | 7.28% | +1064% | +153% | +6443% | -32.0% |
+
+**最終判定**: 「要追加検証」(CONDITIONAL)
+理由: 7/8 ゲート合格、PBO=0、Auditor独立再実装で数値一致 — 構造的に頑健。だが §6 厳密基準は全ゲート必須。DSR N=710K 失格は実効N推定の不確実性に起因。
+
+**G3 改善ルート (次に必要な検証)**:
+1. フォワードテスト 90日以上 (実効N=1で罰則最小)
+2. 完全独立期間 (2022-2024 BTC) でのOOS
+3. 試行数の独立系統推定改善 (相関行列で実効自由度算出)
+
+**「日利10%」基準について (ユーザー指示)**:
+- 本ポートフォリオ実測日利平均 0.083%/日 (年率~30% / 1xレバ)
+- 10%/日 に約120倍ギャップ。レバ拡大で平均日利線形上昇するが破産確率急増 (10x で7.28%)
+- 1.10^365 ≈ 1.3e15 倍/年 — **実在しない数字**
+- バックテストで10%/日が出たら必ず偽陽性原因 (ルックアヘッド/コスト過小/データリーク) を疑う、と HTMLに明記
+
+**Wave J3 - インタラクティブ資産推移シミュレータ**:
+- report.html に Plotly.js ベースのシミュレータ埋込
+- 入力: 元本/レバ/日数/日利源 (実測bootstrap or 固定値) /複利/MC回数
+- 出力: エクイティ MC帯 (p5-p95)、最終リターン分布、最大DD分布、破産確率
+- 実測日利 729日 (mean=0.083%, nonzero=199/729) を JSON 注入
+- 「10%/日 固定」シナリオも選択可能で非現実性を可視化
+
+**累計試行**: 710,373+ (Wave J 監査自体は新規バックテスト不要、既存戦略の精査)
+**累計棄却ファミリー**: 98+ (変化なし)
+**コミット予定**: report.html (Wave J 監査セクション+シミュレータ) + .claude/agents/ + audit_top_portfolio.py + BACKLOG.md
