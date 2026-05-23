@@ -4,7 +4,7 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~538,410+ (前回516K + GK/VR/CrossTF 22,032)
+- パラメータ組合せ試行数: ~553,530+ (前回538K + Pattern/Funding/Expansion 15,120)
 - **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
 - **6条件付き合格**:
@@ -1216,5 +1216,32 @@ GK volatility = sqrt(0.5×ln(H/L)² - (2ln2-1)×ln(C/O)²)。OHLC全4成分を�
 
 **累計棄却ファミリー**: 67+ (GK Compression, Variance Ratio, Cross-TF VolReg追加)
 **累計試行**: 538,410+
+
+### 2026-05-23: Pattern/Funding/Symbol Expansion スキャン (15,120 configs) → **全棄却 + 重要発見**
+
+| 戦略 | Configs | Healthy | 判定 |
+|------|---------|---------|------|
+| Price Pattern Regime | ~5,184 | 0 | ✗ パターンベース圧縮は指標ベースに劣る |
+| Funding Rate Timing | ~648 | 0 | ✗ ファンディング決済タイミングにエッジなし |
+| VolReg Expansion (XRP) | ~2,322 | 0 | ✗ **エッジは汎化しない** |
+| VolReg Expansion (ETH) | ~2,322 | 0 | ✗ |
+| VolReg Expansion (ADA) | ~2,322 | 0 | ✗ |
+| VolReg Expansion (LINK) | ~2,322 | 0 | ✗ |
+
+**最も重要な発見: VolReg圧縮エッジは銘柄特異的**。
+既存生存者はDOGE/SOL/SUI/AVAXで機能するが、XRP/ETH/ADA/LINKではhealthy=0。
+
+仮説: 圧縮エッジが機能する条件:
+1. **中程度の時価総額**: DOGE/SOL/SUI/AVAXは「大きすぎず小さすぎない」流動性帯にある
+2. **リテール主導の構造**: ミームコイン（DOGE）やDeFi（SOL/SUI/AVAX）はリテールトレーダーの比率が高く、圧縮→ブレイクアウトパターンが頻出
+3. **ETH/XRP/LINKは機関投資家の比率が高い**: より効率的な価格形成により、圧縮の「前兆」が即座に織り込まれる
+4. **ADAはボラティリティ構造が異なる**: 長期的な低ボラティリティ期間が多く、圧縮→ブレイクアウトのリズムが合わない
+
+**Pattern Regime**: inside bar + narrow range barの計数は、VolRegと同等の情報を含みうるが、バイナリ（有/無）カウントが連続値（std ratio）より情報量が少ない。
+
+**Funding Timing**: MEXC 8H funding決済（0:00/8:00/16:00 UTC）前後のタイミングにはシステマティックなエッジなし。ファンディングレートの「値」ではなく「タイミング」のみのテストだが、タイミングだけでは不十分。
+
+**累計棄却ファミリー**: 70+ (Pattern Regime, Funding Timing, VolReg XRP/ETH/ADA/LINK追加)
+**累計試行**: 553,530+
 
 ---
