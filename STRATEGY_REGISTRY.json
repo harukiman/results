@@ -3,7 +3,7 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 467778,
+    "total_trials": 475338,
     "total_strategies": 6
   },
   "strategies": [
@@ -787,7 +787,19 @@
       "symbol": "DOGE+SUI",
       "timeframe": "4h",
       "reason": "19,440 configs (of 52,758 total). 2,087 healthy, 44 perm-sig (26 DOGE, 18 SUI, 0 SOL). Best DOGE: OOS 3.16, IS 1.14, p=0.004, 90 trades. Tight param cluster (min_age=8, ema_slow=80). However, IS/OOS ratio 0.22-0.47 is a RED FLAG — OOS consistently 2-5x better than IS, matching the IS→OOS improvement pattern seen in all rejected families. SOL = 0 perm-sig. SUI = known OOS bias. PENDING deeper validation (walk-forward, correlation check).",
-      "note": "PENDING — TrendAge has promising p-values but IS→OOS improvement pattern needs walk-forward resolution before promotion"
+      "note": "REJECTED after WF validation — WF 4/4 positive resolves IS→OOS concern, but VolReg correlation 0.444 (too high for independence), multi-symbol negative returns on SUI/SOL/AVAX. Not independent enough for 7th survivor."
+    },
+    {
+      "name": "Hurst Exponent (R/S method)",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "3,780 configs. 0 healthy. H > 0.5 trending filter produces no edge — the Hurst exponent fluctuates around 0.5 (random walk) too rapidly at 4H to be a reliable regime detector. Rolling Hurst is extremely noisy and computationally expensive with no benefit."
+    },
+    {
+      "name": "Amihud Illiquidity",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "3,780 configs. 0 healthy. Both low-illiquidity (deep market → stable trends) and high-illiquidity (thin market → large moves) fail. Volume on MEXC 4H bars doesn't reliably proxy real liquidity — wash trading, market maker activity, and aggregated exchange volume distort the signal."
     },
     {
       "name": "Regime Persistence: HH/LL Streaks",
