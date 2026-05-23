@@ -2478,3 +2478,89 @@ ATR (圧縮/4H/OHLCV) + FOPD (過熱/4H/FR+OI) + 8H Meme ATR (圧縮/8H/OHLCV) �
 2. フォワードテスト 30/60/90日後の真OOS実績確認
 3. 4軸目の探索 (テールリスクヘッジ、cross-exchange spread arb等)
 4. 国際クオンツ標準のさらなる適用 (Hansen SPA, White Reality Check)
+
+### 2026-05-24 02:35 JST: Wave K1 — 80/10/10 Kelly基準とレバレッジ最適化
+
+実運用に向けた最重要パラメータ「レバレッジ」を MC で精密検証。
+
+**Stats (1xレバ)**:
+- Mean daily return: +0.0543%
+- Daily std: 0.3677%
+- Annualized Sharpe (raw): +2.82 (※audit値+3.57より低いのは Sharpe annualization の取り扱い差。本Waveの値は std計算がより保守的)
+- Sortino: **+4.33** (downside risk が極めて小さい)
+
+**Kelly Fraction**:
+- Full Kelly: f* = μ/σ² = **40.14x** (理論最大、破産前提)
+- Half Kelly: 20.07x
+- Quarter Kelly: 10.03x
+
+**Leverage Sweep MC (10K sim × 365 days)**:
+| レバ | 破産確率 | p5 Return | Median Return | p95 Return | Median Max DD |
+|------|---------|-----------|---------------|-----------|---------------|
+| 1x | 0.00% | +9% | +21% | +37% | -2.5% |
+| 2x | 0.00% | +18% | +46% | +86% | -5.0% |
+| 3x | 0.00% | +27% | +76% | +152% | -7.5% |
+| **5x** | **0.00%** | +46% | **+150%** | +351% | -12.3% |
+| 7x | 0.02% | +66% | +250% | +691% | -17.0% |
+| **10x (Quarter Kelly)** | **0.60%** | +95% | **+462%** | +1664% | -23.6% |
+| 15x | 9.08% | +142% | +1043% | +6000% | -34.0% |
+| 20x | 30.11% | +174% | +2025% | +18711% | -43.5% |
+| 25x | 56.32% | +190% | +3487% | +52196% | -52.1% |
+| 30x | 77.52% | +181% | +5468% | +130312% | -59.9% |
+| 40x (Full Kelly) | 96.51% | +105% | +10565% | +628329% | -73.1% |
+
+**推奨レバ (実運用)**:
+- **保守的 (3-5x)**: 破産0%, median +76-150%/年, Med Max DD -7-12%
+- **中程度 (7x)**: 破産0.02%, median +250%/年, Med Max DD -17%
+- **積極的 (10x Quarter Kelly)**: 破産0.6%, median +462%/年, Med Max DD -24%
+- **15x以上は危険**: 急激に破産確率上昇
+
+**「日利10%」ギャップ再確認**:
+- 「日利10%」≈ 年率 1.3×10¹⁵ 倍
+- 10x レバで median +462%/年 ≈ 日利 +0.5% — まだ20倍のギャップ
+- 50x ≈ Full Kelly超え → 破産確率 96.5% で実在不可能
+- **結論**: 「日利10%」は本研究最高戦略 + 限界レバでも達成不能。<strong>1.1^365 という数学的天井そのものが実在しない</strong>。
+
+**実用的最大値**: 10x レバで median +462%/年、破産確率 0.6% (リスク許容次第で 7x が安全マージン高)。
+
+**累計試行**: ~729,894 + 13 (Kelly leverages) = ~729,907
+
+### 2026-05-24 02:50 JST: Wave K2 — Hansen SPA + White's Reality Check → **両 PASS で統計的根拠を一層強化**
+
+DSR は単一戦略の罰則だが、Hansen SPA + White RC は<strong>「複数戦略 vs no-skill」</strong>のより厳密な検定。
+Politis-Romano stationary bootstrap (block_size=20) で時系列依存性を保持しながら 2000回 re-sample。
+
+**戦略候補 (4種)**:
+| 戦略 | 平均日利 | 日次std | Sharpe |
+|------|---------|---------|---------|
+| 80/10/10 Triple | +0.054% | 0.368% | +2.82 |
+| 50/50 Combined | +0.054% | 0.337% | +3.07 |
+| ATR alone (8銘柄) | +0.084% | 0.633% | +2.54 |
+| FOPD alone (6銘柄) | +0.024% | 0.255% | +1.81 |
+
+**White's Reality Check**:
+- 検定統計: max観測平均日利 = 0.084% (ATR)
+- Bootstrap (n=2000) で no-skill 分布生成
+- **p-value: 0.001** ✓ PASS (no-skill 仮説強く棄却)
+
+**Hansen SPA Test**:
+- 検定統計: max studentized t = **4.339** (ATR が最良)
+- Bootstrap (n=2000) で studentized null 分布生成
+- **p-value: 0.0** ✓ PASS (Superior Predictive Ability 確認)
+
+**重要な学び**:
+- Hansen SPA は variance-adjusted で White RC より powerful → t-statistic でstrong rejection
+- White RC の素朴版実装にバグ (centered comparison誤り)、修正後 p=0.001 で PASS
+- 両テストとも合格 → **多重戦略候補の中で本当に statistical edge が存在**
+
+**国際クオンツ標準の総合判定 (80/10/10)**:
+- PBO (Bailey-LdP): 0.00 ✓
+- DSR (Bailey-LdP) N=100→730K: 全 PASS ✓
+- White's Reality Check (1997): p=0.001 ✓
+- Hansen SPA (2005): p=0.0 ✓
+- → **国際標準の主要4テスト全てクリア**
+
+**Auditor バグ追記**:
+White RC 初回実装で `p_value = mean(bootstrap_max + f_bar.max() >= f_max)` という誤った比較式 (実質 P(bootstrap≥0)で約0.5になる) → 修正後 `mean(bootstrap_max >= f_max)` (centered bootstrap vs 観測値) で正常動作。<strong>Auditor reimpl と同じ「コード書く側の保守的でない仮定」が再発</strong>。
+
+**累計試行**: ~729,907 + 4 (strategies × 2 tests) = ~729,915 (バックテスト追加なし、統計検定のみ)
