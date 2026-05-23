@@ -1030,6 +1030,13 @@ Leverage: 1x</div>
         <strong style="color:var(--accent-cyan);">4Hパラメータ台地:</strong> 2,808 DOGE設定 &mdash; 82.3% OOS正、47.4% シャープ &gt; 1.0、中央値シャープ 0.971。日足VolRegと同じメカニズムであり、ボラティリティ圧縮がマルチ時間足の構造的特徴であることを確認。
       </div>
 
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin:12px 0;">
+        <h4 style="color:var(--accent-orange);margin-bottom:8px;">パラメータバグ発見の教訓</h4>
+        <p style="font-size:0.85rem;">ポートフォリオスクリプトが<strong>誤ったパラメータ</strong>（SV=10, LV=25, TH=0.7）を使用していたため、VolReg_4hのSharpeが-0.23と壊滅的な値を示していた。原因調査の結果、パラメータが日足版の初期スキャン値からコピーされていたことが判明。<strong>正しいパラメータ</strong>（SV=20, LV=120, TH=0.8, EF=20, ES=80）に修正後、Sharpe +2.31を回復。</p>
+        <p style="font-size:0.85rem;margin-top:8px;"><strong>なぜlong_vol=120が機能するか:</strong> 120バー（4H×120=20日）のローリングウィンドウは、暗号資産の典型的なボラティリティサイクル（2-4週間）のほぼ1周期に対応する。短期vol（20バー≒3.3日）との比率は「直近3日のvolが過去3週間と比べてどれだけ圧縮されているか」を測定する。日足版（SV=10, LV=30 → 10日/30日）と比べて、4H版は<strong>より粒度の細かいvol構造</strong>を捉え、圧縮→ブレイクアウトの遷移タイミングをより正確に特定する。</p>
+        <p style="font-size:0.85rem;margin-top:8px;"><strong>ローリングウィンドウ全期間検証:</strong> 19個の6ヶ月ローリングウィンドウ全てで正のSharpe（0.46〜3.96）。これは市場レジーム変化ではなくパラメータエラーであったことの決定的証拠。</p>
+      </div>
+
       <div class="warning-box" style="margin-top:12px;">
         <strong>推奨:</strong> 日足戦略と並行してペーパートレード。マルチシンボルデプロイにはC2を使用 (SUI, SOL, ADA, XRP全て正)、DOGE専用にはC1。アルファ減衰を監視 (C1 WFがフォールド間で低下)。高いトレード数 (204) は日足 (22-27トレード) より速い統計的有意性を提供。
       </div>
@@ -1178,6 +1185,14 @@ Leverage:    1x | Cost: MEXC ALT taker 0.04%</div>
         </tbody>
       </table>
       <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">フォールド2の失敗: ~2024年Q4-2025年Q2のレジームで、方向性の強い動きが圧縮検出をホイップソーした。フォールド1と3は強いパフォーマンス (4.11, 5.11)。</p>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin:12px 0;">
+        <h4 style="color:var(--accent-purple);margin-bottom:8px;">ATR_RatioとVolRegの独立性の構造的理由</h4>
+        <p style="font-size:0.85rem;"><strong>VolReg</strong> = close-to-close returns のrolling std比率。終値間の変動を測定 → 日中の動きを無視。<strong>ATR_Ratio</strong> = (High-Low)/Close のrolling比率。バー内レンジを測定 → 日中のボラティリティ構造を捉える。</p>
+        <p style="font-size:0.85rem;margin-top:8px;">相関が0.08しかない理由: close-to-closeが安定していてもbar内では大きく動いている（ヒゲの長い小実体足）場合がある。逆にcloseが大きく変動していてもbar内レンジは小さい（ギャップアップ後の小レンジ足）場合がある。両者は<strong>価格変動の異なる次元</strong>を見ている。</p>
+        <p style="font-size:0.85rem;margin-top:8px;"><strong>なぜ5/5シンボルで機能するか:</strong> ATR(7)/ATR(56)比率は「直近7バー(28時間)のレンジが過去56バー(9.3日)と比べてどうか」を測定。暗号資産のレンジ圧縮→ブレイクアウトパターンは銘柄を問わず発生する市場構造の普遍的特徴であり、VolRegのようなDOGE特有のマイクロ構造には依存しない。</p>
+        <p style="font-size:0.85rem;margin-top:8px;"><strong>フォールド2失敗の構造的解釈:</strong> 2024Q4-2025Q2はBTCが一方向に強く動いた期間。レンジが持続的に拡大し、圧縮シグナルが発火しにくい＋発火しても即逆転。これはATR圧縮の<em>既知の弱点</em>: 強いトレンド相場では圧縮が稀になり、発火してもホイップソー。しかしフォールド1(4.11)とフォールド3(5.11)の強さから、平均的には十分なエッジがある。</p>
+      </div>
     </div>
 
     <!-- ===== ATR_Ratio_AVAX Survivor Card ===== -->
@@ -1225,6 +1240,13 @@ Leverage:    1x | Cost: MEXC ALT taker 0.04%</div>
         <li class="check-pass"><strong>ブートストラップ 95% CI:</strong> [0.195, 1.082] &mdash; ゼロを除外 <span class="badge badge-pass">合格</span></li>
         <li class="check-warn"><strong>DSR:</strong> 383,000+試行では不合格（想定内） <span class="badge badge-warn">注意</span></li>
       </ul>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin:12px 0;">
+        <h4 style="color:var(--accent-cyan);margin-bottom:8px;">AVAXが生き残った理由: 銘柄固有のボラティリティ・サイクル</h4>
+        <p style="font-size:0.85rem;">2,592 configsのDeep Validationで、ATR_Ratioが全パイプライン通過したのはAVAX(3 configs)のみ。BNBは29件perm-sigだがブートストラップ失敗、ADAは1件だがCI下限0.011とギリギリ。</p>
+        <p style="font-size:0.85rem;margin-top:8px;"><strong>AVAXの特性:</strong> AVAXはDeFiエコシステムのL1チェーンとして、サブネット上のDeFiプロトコルのTVL変動に連動したボラティリティサイクルを持つ。レンジ圧縮→ブレイクアウトが「TVL流入期待→実際のデプロイ→結果確認」のサイクルと合致する可能性がある。WF 4/4 (avg 2.167)は安定したエッジの証拠。</p>
+        <p style="font-size:0.85rem;margin-top:8px;"><strong>atr_long=42の支配性:</strong> ATR_AVAX, ATR_DOGE共にatr_long=42（4H×42=7日）が最良。これは週次サイクル（月曜オープン→金曜クローズの流動性パターン）と一致する可能性。暗号資産は24/7だが、伝統金融のトレーダーが週次でリバランスする影響が残っている。</p>
+      </div>
 
       <div class="warning-box" style="margin-top:16px;">
         <strong>リスク管理推奨:</strong> <code>sl_cooldown_bars=50, atr_sl_mult=2.0, atr_sl_period=14</code> を適用。ATR_Ratio + SLクールダウンでCalmar 4.86を達成（DOGEでの検証済み）。
@@ -2486,6 +2508,18 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
         </tbody>
       </table>
       <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">SampEnは全シグナルと低相関（0.015〜0.256）。VolReg_opt(1d)は全4H戦略とほぼゼロ相関。最も高い相関はVolReg_4h↔ATR_DOGE（0.447）— 同じDOGE 4Hのため。</p>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin:12px 0;">
+        <h4 style="color:var(--accent-purple);margin-bottom:8px;">相関マトリクスの構造的解釈</h4>
+        <p style="font-size:0.85rem;"><strong>3層の独立性構造</strong>が確認できる:</p>
+        <ul style="font-size:0.85rem;padding-left:20px;margin-top:8px;">
+          <li><strong>時間足層</strong>: VolReg_opt(日足) vs 全4H戦略 → 相関 |r| < 0.05。日足と4Hは異なるボラティリティ・サイクルを捉えるため、ほぼ独立。日足はマクロレジーム、4Hはミクロサイクル。</li>
+          <li><strong>メカニズム層</strong>: VolReg(close-to-close) vs ATR(bar内レンジ) → 0.45。同じDOGE 4Hで同時に圧縮を検出しうるが、異なる価格構造を見ているため相関は中程度に留まる。</li>
+          <li><strong>エッジ種類層</strong>: SampEn vs 全圧縮シグナル → |r| < 0.26。エントロピー（規則性）と圧縮（レベル）は根本的に異なる市場特性を測定。活性化タイミングが全く異なる。</li>
+        </ul>
+        <p style="font-size:0.85rem;margin-top:10px;"><strong>ポートフォリオへの示唆:</strong> VolReg_4h↔ATR_DOGEの0.447は「同時に損失を出しうる」リスクを示す。しかしATR_AVAXとの相関は0.241と低く、SampEnは0.015-0.256の範囲。<strong>推奨ポートフォリオ（VR_opt+VR_4h+ATR_A+SampEn）の最大ペア相関は0.256</strong> — 十分な分散。</p>
+        <p style="font-size:0.85rem;margin-top:8px;"><strong>Regime_V3の特異な位置:</strong> SampEnとの相関-0.128（負）は注目に値する。SampEnが低エントロピー（規則的）で買い、Regime_V3が異なる条件で売る傾向がある。ヘッジ効果は限定的だが、ポートフォリオの尾部リスク軽減に寄与する可能性。ただしRegime_V3のfull-period DD -70%は採用リスクが高い。</p>
+      </div>
     </div>
 
     <div class="card" style="margin-top:16px;">
@@ -2506,6 +2540,23 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
         </tbody>
       </table>
       <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">Calmar最良はVR_opt+VR_4h+ATR_A+SampEnの4戦略（DD僅か-3.8%）。全6戦略を含めるとSharpe 3.51だがDD増加(-5.5%)。Regime_V3のOOS成績は良好だがfull-period DD -70%の尾部リスクに注意。</p>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin:12px 0;">
+        <h4 style="color:var(--accent-green);margin-bottom:8px;">ポートフォリオ選択の構造的判断</h4>
+        <p style="font-size:0.85rem;"><strong>なぜ#1が最良か:</strong> VR_opt(1d)+VR_4h+ATR_A+SampEnの組合せは、3つの独立性層（時間足・メカニズム・エッジ種類）を全て活用しつつ、DOGE集中リスクを最小化（4戦略中1つがAVAX）。DD -3.8%は他のどの組合せよりも低い。</p>
+        <p style="font-size:0.85rem;margin-top:8px;"><strong>なぜ全6戦略が最良ではないか:</strong> 全6戦略(#3, Sh 3.51)はSharpe最高だが、ATR_DOGE + Regime_V3のfull-period DDリスクが-5.5%に拡大。OOS期間のみの成績で選択すると過学習リスクがある。<strong>DD最小化を最優先する理由:</strong> Half-Kelly 7.5x → 実運用3-5x のレバレッジ前提では、-3.8%×5x = -19%が実際のDD。-5.5%×5x = -27.5%は心理的・マージン的に危険。</p>
+        <p style="font-size:0.85rem;margin-top:8px;"><strong>実運用のレバレッジ計算:</strong></p>
+        <table class="data-table" style="width:100%;margin-top:4px;font-size:0.82rem;">
+          <thead><tr><th>レバレッジ</th><th>想定年率</th><th>想定DD</th><th>Calmar</th><th>リスク評価</th></tr></thead>
+          <tbody>
+            <tr><td>1x</td><td>+60.5%</td><td>-3.8%</td><td>15.94</td><td style="color:var(--accent-green);">極低リスク</td></tr>
+            <tr><td>3x</td><td>+181.5%</td><td>-11.4%</td><td>15.92</td><td style="color:var(--accent-green);">保守的</td></tr>
+            <tr style="background:rgba(63,185,80,0.05);"><td><strong>5x</strong></td><td><strong>+302.5%</strong></td><td><strong>-19.0%</strong></td><td><strong>15.92</strong></td><td style="color:var(--accent-orange);"><strong>推奨上限</strong></td></tr>
+            <tr><td>7.5x (Half-Kelly)</td><td>+453.8%</td><td>-28.5%</td><td>15.92</td><td style="color:var(--accent-red);">理論最適だが高リスク</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:6px;">※ 線形スケーリング近似。実際には高レバレッジでDD非線形拡大、ファンディングコスト増加、清算リスクが発生。5x推奨は「最悪期に-19%DDで耐えられる」前提。</p>
+      </div>
     </div>
 
     <div class="card" style="margin-top:16px;">
