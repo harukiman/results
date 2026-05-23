@@ -4,7 +4,7 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~475,338+ (前回467K + Hurst/Amihud 7,560)
+- パラメータ組合せ試行数: ~483,978+ (前回475K + Fractal/DPO/ROC 8,640)
 - **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
 - **6条件付き合格**:
@@ -1115,5 +1115,18 @@ TrendAgeは「EMAクロスオーバーから何バー経過したか」を測定
 
 **累計棄却ファミリー**: 52+ (TrendAge棄却、Hurst、Amihud追加)
 **累計試行**: 475,338+
+
+### 2026-05-23: Fractal/DPO/ROC スキャン (8,640 configs) → **全棄却**
+
+| 戦略 | Configs | Healthy | Perm-Sig | 判定 |
+|------|---------|---------|----------|------|
+| Fractal Dimension (Katz FD) | 1,728 | 14 (SUI/SOL) | 0 | ✗ 4H複雑度不安定 |
+| DPO (Detrended Price Osc) | 1,728 | 142 (SUI 75%) | 0 | ✗ SUIバイアス |
+| ROC Regime (低モメンタム) | 5,184 | 112 (DOGE 63%) | 0 | ✗ VolReg劣化版 |
+
+**ROC Regime考察**: 低ROC（低い絶対的価格変化率）はボラティリティ圧縮の間接指標。DOGE 70/112は圧縮系シグナルの典型パターン。しかしROCは「価格変化の大きさ」を測るだけで、VolRegの「短期/長期vol比率」ほど精密にレジームを捕捉できない。ROC低→VolReg圧縮検出と相関するが、逆は成立しない。VolRegの厳密な劣化版。
+
+**累計棄却ファミリー**: 55+ (Fractal FD, DPO, ROC Regime追加)
+**累計試行**: 483,978+
 
 ---
