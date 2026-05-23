@@ -3,7 +3,7 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 459618,
+    "total_trials": 467778,
     "total_strategies": 6
   },
   "strategies": [
@@ -800,6 +800,30 @@
       "symbol": "SUI only",
       "timeframe": "4h",
       "reason": "15,959 configs. 1,006 healthy, 6 perm-sig (ALL SUI, identical core signal with SL/TP variants). IS 0.54 → OOS 2.95, p=0.010. SUI-only = known OOS trend bias. max_hold inert across all 6 configs (same OOS metrics regardless of max_hold). Rejected as SUI-specific artifact."
+    },
+    {
+      "name": "Realized Skewness",
+      "symbol": "SUI/SOL",
+      "timeframe": "4h",
+      "reason": "720 configs (of 1,440 skew+kurt). 100 healthy (81 SUI, 19 SOL) but 0 perm-sig. Return distribution asymmetry does not predict direction at 4H. Skewness is a risk metric, not an alpha generator — it tells you HOW returns are distributed but not WHERE they're going."
+    },
+    {
+      "name": "Realized Kurtosis",
+      "symbol": "SUI dominant",
+      "timeframe": "4h",
+      "reason": "720 configs. 156 healthy (139 SUI, 7 DOGE, 6 SOL, 4 AVAX) but 0 perm-sig. Tail thickness doesn't predict direction. SUI dominance (89%) reflects known OOS trend bias. Same conclusion as skewness: distributional shape is descriptive, not predictive."
+    },
+    {
+      "name": "Order Flow Imbalance (OHLCV proxy)",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "4,320 configs. 0 healthy. Buy/sell pressure from candlestick structure (close-low vs high-close) has no predictive power at 4H. True order flow requires tick-level data; OHLCV proxies are too noisy. Volume-weighted version also failed."
+    },
+    {
+      "name": "Z-Score Mean Reversion / Momentum",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "2,400 configs. 0 healthy. Both reversal mode (fade extremes) and momentum mode (follow extremes with EMA confirmation) failed. Price z-score is essentially a band indicator (Bollinger) — well-known to not produce alpha after costs in crypto."
     },
     {
       "name": "Autocorrelation / OU Half-Life / Directional Accuracy / Price Acceleration",
