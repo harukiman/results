@@ -3,7 +3,7 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 618258,
+    "total_trials": 661026,
     "total_strategies": 6
   },
   "strategies": [
@@ -1201,6 +1201,39 @@
         "SOL": 0.474,
         "AVAX": 0.557
       }
+    },
+    {
+      "name": "Dispersion Entropy (DispEn)",
+      "family": "DispEn",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "42,768 configs中DispEn分の約14,000 configs, 0 healthy。SampEnとの相関 r=0.57-0.72（中〜高）— やや冗長。量子化ビニングによるパターン分散エントロピーはSampEnのテンプレートマッチングに劣る。複雑性尺度ファミリーでSampEnのみが有効。",
+      "date": "2026-05-23",
+      "configs_tested": "~14000",
+      "dispen_sampen_corr": {
+        "DOGE": 0.699,
+        "SUI": 0.716,
+        "SOL": 0.702,
+        "AVAX": 0.566
+      }
+    },
+    {
+      "name": "Regime Duration (Compression Persistence Meta)",
+      "family": "RegimeDuration",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "連続圧縮バー数をメタ特徴として使用。CompDurに類似だがEMAゲートが異なる。0 healthy。圧縮の「持続時間」は有効な追加次元ではない。",
+      "date": "2026-05-23",
+      "configs_tested": "~14000"
+    },
+    {
+      "name": "Multi-TF Momentum (Daily+4H)",
+      "family": "MultiTF Momentum",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h+1d",
+      "reason": "日足トレンド + 4H圧縮 + 4H EMAアライメントの3層フィルター。0 healthy。Cross-TF VolRegと同様に、異なる時間足の情報統合は4Hコスト構造下で機能しない。",
+      "date": "2026-05-23",
+      "configs_tested": "~14000"
     }
   ]
 }

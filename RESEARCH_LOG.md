@@ -4,7 +4,7 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~618,258+ (前回593K + Calendar/Autocorr/Donchian 24,840)
+- パラメータ組合せ試行数: ~661,026+ (前回618K + DispEn/RegDur/MultiTF 42,768)
 - **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
 - **6条件付き合格**:
@@ -1362,5 +1362,35 @@ Donchianは中程度の相関（r=0.47-0.58）— VolReg/ATRとは独立では�
 
 **累計棄却ファミリー**: 83+ (Calendar, Autocorrelation, Donchian追加)
 **累計試行**: 618,258+
+
+### 2026-05-23: DispEn/RegimeDuration/MultiTF スキャン (42,768 configs, 5h54m実行) → **全棄却 + SampEn唯一性確認**
+
+| 戦略 | Configs | Healthy | SampEn相関 | 判定 |
+|------|---------|---------|-----------|------|
+| Dispersion Entropy | ~14,000 | 0 | r=0.57-0.72 | ✗ SampEnとやや冗長、かつ劣る |
+| Regime Duration | ~14,000 | 0 | — | ✗ CompDur類似、持続時間は無効な次元 |
+| MultiTF Momentum | ~14,000 | 0 | — | ✗ Cross-TF統合は4Hで機能せず |
+
+**重要発見: DispEn vs SampEn相関**
+| 銘柄 | DispEn-SampEn r |
+|------|----------------|
+| DOGE | 0.699 |
+| SUI  | 0.716 |
+| SOL  | 0.702 |
+| AVAX | 0.566 |
+
+DispEnはSampEnと中〜高相関（r=0.57-0.72）。量子化ビニングによるパターン分散エントロピーは、SampEnのテンプレートマッチングアプローチに劣る。
+
+**結論**: 複雑性尺度ファミリー（SampEn, DispEn, Hurst, Fractal）の中でSampEnのみが予測力を持つ。SampEnの成功は:
+1. テンプレートマッチングが離散化ビニング（DispEn）より情報保存性が高い
+2. tolerance parameter (r_mult)が適応的な閾値を提供
+3. DOGE特有の「規則的→不規則的」遷移パターンに適合
+
+**Regime Duration**: 連続圧縮バー数は「時間」次元を追加するが、圧縮の「強度」ではなく「長さ」は予測に寄与しない。
+
+**MultiTF**: 日足+4Hの情報統合はCross-TF VolRegと同じ結論 — 異なるTFの情報は4Hエントリーを改善しない。
+
+**累計棄却ファミリー**: 86+ (DispEn, RegimeDuration, MultiTF追加)
+**累計試行**: 661,026+
 
 ---
