@@ -2564,3 +2564,45 @@ Politis-Romano stationary bootstrap (block_size=20) で時系列依存性を保�
 White RC 初回実装で `p_value = mean(bootstrap_max + f_bar.max() >= f_max)` という誤った比較式 (実質 P(bootstrap≥0)で約0.5になる) → 修正後 `mean(bootstrap_max >= f_max)` (centered bootstrap vs 観測値) で正常動作。<strong>Auditor reimpl と同じ「コード書く側の保守的でない仮定」が再発</strong>。
 
 **累計試行**: ~729,907 + 4 (strategies × 2 tests) = ~729,915 (バックテスト追加なし、統計検定のみ)
+
+### 2026-05-24 02:55 JST: Wave K3 — ライブ運用ペーパートレード scaffold
+
+**実運用準備**:
+- `paper_trade_80_10_10.py`: 80/10/10 戦略のリアルタイム実行 scaffold
+- 構成:
+  - 80% Combined (40% ATR × 8銘柄 + 40% FOPD × 6銘柄)
+  - 10% BONK_8H, 10% SHIB_8H
+- レバ: 3x (保守的、Kelly Quarter=10x の30%)
+- コスト: taker fee 0.04% + slippage 0.03% per side (taker前提)
+
+**動作**:
+1. 各実行で最新4Hバー取得
+2. 新規シグナル生成 (vol_z フィルター付き)
+3. オープンポジション管理 (SL/TP/MH 判定)
+4. PnL 累積 + エクイティ更新
+5. paper_trades.json に状態保存
+
+**daemon**:
+- `com.cryptolab.paper-trade.plist` → ~/Library/LaunchAgents/
+- launchctl で 4h周期実行 (UTC 0/4/8/12/16/20 + 10分後 → JST 9:10/13:10/...)
+- ログ: logs/paper_trade.log + .err
+- 既稼働の forward_test との並列実行
+
+**初期状態 (2026-05-24 08:55 JST)**:
+- 初期資本: $10,000
+- レバ 3x → 想定: 年率中央値 +76%/年 (MC Lev 3x median)
+- 現在エクイティ: $10,000.00
+- オープンポジション: 0
+- 現在ボラレジーム: 低 (vol_z=-1.59 続行)
+
+**3つの並列daemon (全て4h周期)**:
+1. com.cryptolab.forward-test (ATR単独監視, signals_log のみ)
+2. (休止/legacy: ct-forward, strategy-reports/explorer)
+3. **com.cryptolab.paper-trade (80/10/10 本番想定の完全ペーパートレード)** ← 本Wave追加
+
+**次フェーズ展望**:
+- 30日後: 30 snapshots を集計、forward-test と整合性確認
+- 90日後: backtest との PnL 偏差を分析 → §6 G3 改善
+- 6ヶ月後: 「真の OOS」 Sharpe を計算、本番ライブ運用 (実資金) 検討開始
+
+**累計試行**: ~729,915 (新 backtest なし、scaffold + daemon追加のみ)
