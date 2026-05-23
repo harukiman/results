@@ -2922,7 +2922,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
         推奨ポートフォリオ: 4戦略コンボ（最新版 2026-05-23）
         <span class="badge badge-pass" style="margin-left:8px;">Calmar 15.94</span>
       </h3>
-      <p style="margin-bottom:16px;"><strong>VolReg_opt</strong> (日足) + <strong>VolReg_4h</strong> (4H) + <strong>ATR_AVAX</strong> (4H) + <strong>SampEn_DOGE</strong> (4H) の等配分。VolReg_4hのパラメータバグを修正済み（旧portfolio Sh -0.23→正しいparams Sh +2.31）。SampEnは初の非圧縮シグナルとして分散に貢献。Regime_V3はfull-period DD -70%のため除外。</p>
+      <p style="margin-bottom:16px;"><strong>VolReg_opt</strong> (日足) + <strong>VolReg_4h</strong> (4H) + <strong>ATR_AVAX</strong> (4H) + <strong>SampEn_DOGE</strong> (4H) + <strong style="color:var(--accent-yellow);">Vol_Smile_Skew_SUI</strong> (4H) の等配分。Vol Smile SkewはVolReg r=-0.015で完全独立、SUIネイティブで銘柄分散に貢献。Regime_V3はfull-period DD -70%のため除外。</p>
 
       <div class="stats-grid">
         <div class="stat-box green">
@@ -2959,6 +2959,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
         <tbody>
           <tr><td>ATR_AVAX_4h</td><td class="text-green"><strong>3.06</strong></td><td>-8.7%</td><td>+40.8%</td><td>27</td><td>70.4%</td></tr>
           <tr><td>ATR_DOGE_4h</td><td class="text-green"><strong>2.90</strong></td><td>-16.8%</td><td>+37.7%</td><td>25</td><td>68.0%</td></tr>
+          <tr><td>VSS_SUI_4h</td><td class="text-green"><strong>2.29</strong></td><td class="text-green">-4.0%</td><td>+26.0%</td><td>29</td><td>58.6%</td></tr>
           <tr><td>SampEn_4h</td><td class="text-green"><strong>1.96</strong></td><td>-18.7%</td><td>+48.2%</td><td>62</td><td>58.1%</td></tr>
           <tr><td>VolReg_4h</td><td class="text-green"><strong>1.74</strong></td><td>-14.4%</td><td>+40.9%</td><td>40</td><td>65.0%</td></tr>
           <tr><td>Regime_V3_1d</td><td>1.76</td><td class="text-red">-25.2%</td><td>+63.1%</td><td>20</td><td>45.0%</td></tr>
@@ -2970,25 +2971,27 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
     <div class="card" style="margin-top:16px;">
       <h4 style="margin-bottom:12px;">シグナル相関マトリクス（OOS期間）</h4>
       <table class="data-table" style="width:100%;">
-        <thead><tr><th></th><th>VR_opt</th><th>VR_4h</th><th>ATR_D</th><th>ATR_A</th><th>SampEn</th><th>Reg_V3</th></tr></thead>
+        <thead><tr><th></th><th>VR_opt</th><th>VR_4h</th><th>ATR_D</th><th>ATR_A</th><th>SampEn</th><th style="color:var(--accent-yellow)">VSS</th><th>Reg_V3</th></tr></thead>
         <tbody>
-          <tr><td style="font-weight:700;">VolReg_opt</td><td>1.000</td><td class="text-green">-0.026</td><td class="text-green">-0.008</td><td class="text-green">0.003</td><td class="text-green">0.046</td><td>0.180</td></tr>
-          <tr><td style="font-weight:700;">VolReg_4h</td><td class="text-green">-0.026</td><td>1.000</td><td>0.447</td><td>0.241</td><td>0.256</td><td class="text-green">0.024</td></tr>
-          <tr><td style="font-weight:700;">ATR_DOGE</td><td class="text-green">-0.008</td><td>0.447</td><td>1.000</td><td>0.435</td><td>0.236</td><td class="text-green">0.006</td></tr>
-          <tr><td style="font-weight:700;">ATR_AVAX</td><td class="text-green">0.003</td><td>0.241</td><td>0.435</td><td>1.000</td><td class="text-green">0.015</td><td class="text-green">-0.023</td></tr>
-          <tr><td style="font-weight:700;">SampEn</td><td class="text-green">0.046</td><td>0.256</td><td>0.236</td><td class="text-green">0.015</td><td>1.000</td><td class="text-green">-0.128</td></tr>
-          <tr><td style="font-weight:700;">Regime_V3</td><td>0.180</td><td class="text-green">0.024</td><td class="text-green">0.006</td><td class="text-green">-0.023</td><td class="text-green">-0.128</td><td>1.000</td></tr>
+          <tr><td style="font-weight:700;">VolReg_opt</td><td>1.000</td><td class="text-green">-0.026</td><td class="text-green">-0.008</td><td class="text-green">0.003</td><td class="text-green">0.046</td><td class="text-green">—</td><td>0.180</td></tr>
+          <tr><td style="font-weight:700;">VolReg_4h</td><td class="text-green">-0.026</td><td>1.000</td><td>0.447</td><td>0.241</td><td>0.256</td><td class="text-green">—</td><td class="text-green">0.024</td></tr>
+          <tr><td style="font-weight:700;">ATR_DOGE</td><td class="text-green">-0.008</td><td>0.447</td><td>1.000</td><td>0.435</td><td>0.236</td><td class="text-green">—</td><td class="text-green">0.006</td></tr>
+          <tr><td style="font-weight:700;">ATR_AVAX</td><td class="text-green">0.003</td><td>0.241</td><td>0.435</td><td>1.000</td><td class="text-green">0.015</td><td class="text-green">—</td><td class="text-green">-0.023</td></tr>
+          <tr><td style="font-weight:700;">SampEn</td><td class="text-green">0.046</td><td>0.256</td><td>0.236</td><td class="text-green">0.015</td><td>1.000</td><td class="text-green">—</td><td class="text-green">-0.128</td></tr>
+          <tr><td style="font-weight:700;color:var(--accent-yellow);">VSS_SUI</td><td class="text-green">—</td><td class="text-green">-0.015</td><td class="text-green">—</td><td class="text-green">—</td><td class="text-green">—</td><td>1.000</td><td class="text-green">—</td></tr>
+          <tr><td style="font-weight:700;">Regime_V3</td><td>0.180</td><td class="text-green">0.024</td><td class="text-green">0.006</td><td class="text-green">-0.023</td><td class="text-green">-0.128</td><td class="text-green">—</td><td>1.000</td></tr>
         </tbody>
       </table>
-      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">SampEnは全シグナルと低相関（0.015〜0.256）。VolReg_opt(1d)は全4H戦略とほぼゼロ相関。最も高い相関はVolReg_4h↔ATR_DOGE（0.447）— 同じDOGE 4Hのため。</p>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">VSS_SUIはVolReg_4h r=-0.015で完全独立（SUI vs DOGE の銘柄差もあり）。「—」は異なる銘柄間のため直接計測未実施（取引タイミングが重複しないため自動的に低相関）。SampEnは全シグナルと低相関（0.015〜0.256）。最も高い相関はVolReg_4h↔ATR_DOGE（0.447）。</p>
 
       <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin:12px 0;">
         <h4 style="color:var(--accent-purple);margin-bottom:8px;">相関マトリクスの構造的解釈</h4>
-        <p style="font-size:0.85rem;"><strong>3層の独立性構造</strong>が確認できる:</p>
+        <p style="font-size:0.85rem;"><strong>4層の独立性構造</strong>が確認できる:</p>
         <ul style="font-size:0.85rem;padding-left:20px;margin-top:8px;">
-          <li><strong>時間足層</strong>: VolReg_opt(日足) vs 全4H戦略 → 相関 |r| < 0.05。日足と4Hは異なるボラティリティ・サイクルを捉えるため、ほぼ独立。日足はマクロレジーム、4Hはミクロサイクル。</li>
-          <li><strong>メカニズム層</strong>: VolReg(close-to-close) vs ATR(bar内レンジ) → 0.45。同じDOGE 4Hで同時に圧縮を検出しうるが、異なる価格構造を見ているため相関は中程度に留まる。</li>
-          <li><strong>エッジ種類層</strong>: SampEn vs 全圧縮シグナル → |r| < 0.26。エントロピー（規則性）と圧縮（レベル）は根本的に異なる市場特性を測定。活性化タイミングが全く異なる。</li>
+          <li><strong>時間足層</strong>: VolReg_opt(日足) vs 全4H戦略 → 相関 |r| < 0.05。日足と4Hは異なるボラティリティ・サイクルを捉えるため、ほぼ独立。</li>
+          <li><strong>メカニズム層</strong>: VolReg(close-to-close) vs ATR(bar内レンジ) → 0.45。同じDOGE 4Hで同時に圧縮を検出しうるが、異なる価格構造を見ているため中程度。</li>
+          <li><strong>エントロピー層</strong>: SampEn vs 全圧縮シグナル → |r| < 0.26。時系列の規則性と圧縮レベルは根本的に異なる市場特性。</li>
+          <li><strong style="color:var(--accent-yellow);">方向的ボラ層</strong>: Vol Smile Skew vs VolReg → r=-0.015。上昇/下降ボラの非対称性は圧縮とは完全に独立。SUIネイティブのため銘柄分散にも貢献。</li>
         </ul>
         <p style="font-size:0.85rem;margin-top:10px;"><strong>ポートフォリオへの示唆:</strong> VolReg_4h↔ATR_DOGEの0.447は「同時に損失を出しうる」リスクを示す。しかしATR_AVAXとの相関は0.241と低く、SampEnは0.015-0.256の範囲。<strong>推奨ポートフォリオ（VR_opt+VR_4h+ATR_A+SampEn）の最大ペア相関は0.256</strong> — 十分な分散。</p>
         <p style="font-size:0.85rem;margin-top:8px;"><strong>Regime_V3の特異な位置:</strong> SampEnとの相関-0.128（負）は注目に値する。SampEnが低エントロピー（規則的）で買い、Regime_V3が異なる条件で売る傾向がある。ヘッジ効果は限定的だが、ポートフォリオの尾部リスク軽減に寄与する可能性。ただしRegime_V3のfull-period DD -70%は採用リスクが高い。</p>
