@@ -3,7 +3,7 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 583914,
+    "total_trials": 593418,
     "total_strategies": 6
   },
   "strategies": [
@@ -1141,6 +1141,33 @@
       "reason": "2,268 configs, 0 healthy. (C-O)/(H-L)の方向的買い/売り圧力 + 連続蓄積。Body Ratio (r=0.16 vs ATR)の方向拡張版だが同じく予測力なし。",
       "date": "2026-05-23",
       "configs_tested": 2268
+    },
+    {
+      "name": "Rolling Cointegration (Pairs Trading)",
+      "family": "Cointegration",
+      "symbol": "DOGE+SUI+SOL+AVAX pairs",
+      "timeframe": "4h",
+      "reason": "3,888 configs (6 pairs × 648 params), 0 healthy. Rolling OLS beta + z-score spread. Pairs trading fails on highly correlated alt pairs — spread mean-reversion is too weak to overcome trading costs. These alts move together but not in a cointegrated way.",
+      "date": "2026-05-23",
+      "configs_tested": 3888
+    },
+    {
+      "name": "Transfer Entropy (BTC→ALT)",
+      "family": "Transfer Entropy",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "2,592 configs, 0 healthy. Discretized TE measures BTC→ALT information flow. Transfer entropy estimates are too noisy at 4H resolution with small bins. Even when BTC is 'predictive' of ALTs (high TE), the prediction is too weak for cost-after profitability.",
+      "date": "2026-05-23",
+      "configs_tested": 2592
+    },
+    {
+      "name": "Realized Momentum (Vol-Adjusted)",
+      "family": "Realized Momentum",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "3,024 configs, 0 healthy. Return/vol ratio (mini rolling Sharpe). Even with compression gate, vol-adjusted momentum alone cannot generate edge. This confirms that compression DETECTION is necessary but the DIRECTION component needs to be the simple EMA crossover — more sophisticated direction signals don't help.",
+      "date": "2026-05-23",
+      "configs_tested": 3024
     }
   ]
 }

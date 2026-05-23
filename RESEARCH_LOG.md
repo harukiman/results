@@ -4,7 +4,7 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~583,914+ (前回576K + CondVol/Markov/Intrabar 7,776)
+- パラメータ組合せ試行数: ~593,418+ (前回584K + Cointegration/TransferEnt/RealMom 9,504)
 - **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
 - **6条件付き合格**:
@@ -1318,5 +1318,24 @@ CondVol（非対称ボラティリティ、レバレッジ効果）はVolRegと�
 
 **累計棄却ファミリー**: 77+ (CondVol, Markov, Intrabar追加)
 **累計試行**: 583,914+
+
+### 2026-05-23: Cointegration/TransferEntropy/RealizedMomentum スキャン (9,504 configs) → **全棄却**
+
+| 戦略 | Configs | Healthy | 判定 |
+|------|---------|---------|------|
+| Rolling Cointegration | 3,888 | 0 | ✗ ペアのスプレッド平均回帰が弱すぎ |
+| Transfer Entropy (BTC→ALT) | 2,592 | 0 | ✗ TE推定がノイジー、予測力不足 |
+| Realized Momentum | 3,024 | 0 | ✗ Vol調整モメンタムも圧縮ゲート付きでも不十分 |
+
+**構造的洞察**:
+
+- **Cointegration**: 6ペア（DOGE/SUI/SOL/AVAX全組合せ）のrolling OLSベータ＋zスコアスプレッド。ALT間のペアトレードは「相関」はあるが「共和分」はない — スプレッドの平均回帰速度がコストを上回れない。
+- **Transfer Entropy**: BTC→ALT情報フローの離散化TEは4H解像度では推定精度が不足。BTCが「予測的」な局面でも、予測の強度がコスト後収益に変換されない。
+- **Realized Momentum**: returns/volatility比（ミニrolling Sharpe）は「モメンタムの質」を測定するが、direction component改善にはつながらず。圧縮ゲート付きでもEMAクロスオーバーの方向信号を改善できなかった。
+
+**クロスアセット信号の限界**: BTC→ALT予測（Transfer Entropy）もALT間ペア（Cointegration）も、4Hコスト構造下では機能しない。暗号資産のクロスアセット情報は価格に即座に織り込まれる。
+
+**累計棄却ファミリー**: 80+ (Cointegration, TransferEntropy, RealizedMomentum追加)
+**累計試行**: 593,418+
 
 ---
