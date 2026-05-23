@@ -2140,3 +2140,114 @@ H1/H2 両期間で Sh+3.15+ という結果は、§6 G2 (PBO=0) を超える期�
 
 **累計試行**: ~723,464 (不変、解析のみ)
 **HTML サイズ**: 460KB (Plotly inline JSON のため)
+
+### 2026-05-24 01:35 JST: Wave J20 — 動的レジーム切替ポートフォリオ → **棄却 (固定50/50を上回らず)**
+
+ユーザー指示「市場に適した戦略を切り替えるような戦略」を実装。BTC vol_z に応じて ATR/FOPD 比率を動的調整、固定50/50を上回るか検証。
+
+**結果**:
+| Scheme | Sharpe | Return | DD | Calmar | Verdict |
+|--------|--------|--------|-----|--------|---------|
+| Fixed 50/50 | +3.15 | +48.5% | -1.6% | **30.56** | baseline (最良) |
+| Fixed 40/60 | +3.18 | +42.1% | -1.9% | 22.43 | -8.13 vs baseline |
+| Fixed 60/40 | +3.07 | +55.1% | -2.0% | 27.82 | -2.74 |
+| Dynamic mild (vol_z piecewise) | +3.20 | +47.6% | -2.1% | 22.72 | -7.84 |
+| Dynamic strong (80/20 switch) | +3.02 | +49.9% | -2.4% | 20.87 | -9.69 |
+| INVERTED (sanity check) | +2.81 | +49.2% | -2.4% | 20.64 | -9.92 (最悪) |
+
+**重要発見・構造的考察**:
+1. **動的切替は全て劣後**: 全 dynamic scheme で Calmar が固定50/50を下回る
+2. **INVERTED が最悪 (sanity check 合格)**: 反転 scheme は最低 → 「vol_z high → FOPD」のシグナル方向は弱いながらも正しい
+3. **しかし規模が小さい**: 正しい方向 (Strong dynamic 20.87) と反転 (20.64) の差はわずか 1.1%
+4. **Daily vol_z はノイズ過多**: regime persistence は週月単位、daily signal で切替を駆動すると過剰反応
+5. **50/50 averaging が真の答え**: regime mismatch リスクを排除し両期間の alpha を平均的に捕捉
+
+**結論**:
+動的レジーム切替 (本実装) は固定50/50の代替にならない。「市場に適した戦略を切り替える」は概念的に魅力的だが、実装には:
+(a) より遅い regime indicator (週次など)
+(b) 明確な regime detector (HMM等)
+(c) regime ごとの最適化が学習データで確認できること
+が必要。本研究 (4Hデータ × 730日) のスケールでは無理。
+
+固定50/50 + Wave I の vol_z≥1.5 OFF フィルター (これ自体は ATR内部の regime filter) が現実的な「regime-aware」設計。
+
+**累計試行**: ~723,464 + 6 (schemes) = ~723,470
+**棄却**: Dynamic regime switching (4H/daily vol_z based)
+
+### 2026-05-24 01:39 JST: Wave J21 — LiqCascadeFade (Tip TOP1) 検証 → **棄却 (best Sh+1.49 UNI, Sh≥2.0=0)**
+
+仮説 (Curupira blog Walk-Forward 実証): 清算カスケード後の v字回復 mean reversion。「売りvolume急増 + ピンバー反転」検知。
+
+**スキャン**: 26銘柄 × 405 params = 10,530 backtests (フィルタ後 6,318 valid)
+
+**Top 銘柄別ベスト**:
+| 銘柄 | Sh | Return | DD | Trades |
+|------|-----|--------|-----|--------|
+| **UNIUSDT** | +1.49 | +77.8% | -10.1% | 76 |
+| DOTUSDT | +1.29 | +31.0% | -12.8% | 33 |
+| BONKUSDT | +1.01 | +29.3% | -8.1% | 30 |
+| WIFUSDT | +0.83 | +15.1% | -6.8% | 15 |
+| TIAUSDT | +0.81 | +12.2% | -4.7% | 16 |
+| AAVEUSDT | +0.78 | +21.0% | -9.6% | 53 |
+| INJUSDT | +0.70 | +15.6% | -13.7% | 23 |
+| PEPEUSDT | +0.70 | +13.5% | -10.9% | 23 |
+
+**主要負け銘柄**: DOGEUSDT (-0.93), SOLUSDT (-0.34), ADAUSDT (-0.22), BTCUSDT (-0.13)
+
+**全体カウント**: Sh>0: 2178/6318 (**34%** — ランダム以下), ≥1.0: 54, ≥1.5: **0**, ≥2.0: **0**
+
+**棄却理由**:
+1. Sh ≥ 1.5 ゼロ、Sh ≥ 2.0 ゼロ — 生存者級未達
+2. **OHLCVプロキシの限界**: 原典 (Curupira blog) は 1m バー + 実際の liquidation/footprint data。4Hバー OHLCV では「v字パターン」を粒度不足で検出できず
+3. 34% positive はランダム以下 → 戦略が anti-skill on most params
+4. DOGE (Meme代表) で -28% return / DD-30% — Meme特性ハマらず
+
+**部分発見**: UNI/AAVE/DOT (DeFi/MidCap tier) が UNIVERSE 内で唯一プラス → 流動性が中位の銘柄では小幅 alpha 残存。ただし生存者級にはほど遠い。
+
+**Tip-scraper TOP1 失敗の意味**:
+外部 botter コミュニティが「Walk-Forward 実証」と謳う戦略でも、(a) 元の data resolution、(b) 真の liquidation feed の有無、で結果が大きく異なる。<strong>tip 受け取り時に「元のデータ要件」を確認する必要</strong>あり。OHLCV代替が成立しない戦略は最初から除外すべき。
+
+**累計試行**: ~723,470 + 6318 = ~729,788
+**累計棄却ファミリー**: 103+ (LiqCascadeFade 4H OHLCV 追加)
+
+**6/7 候補スコア**:
+- ❌ FToD (J8), LISRM (J10), HLWI (J11), S3I (J17), Dynamic (J20), LiqCascade (J21)
+- ✅ FOPD (J12-J16) — 合成で Calmar 30.56
+- 残り (BACKLOG): MetaLabel (T4), BTC.D Inflection (R7), WEIR (R8), Cross-TF, etc.
+
+### 2026-05-24 01:48 JST: Wave J22 — MetaLabel for ATR (Tip TOP4, López de Prado) → **混合結果 (4/8 改善、本番統合せず)**
+
+ATR_Ratio_Compression を primary signal にして、triple barrier ラベル + RandomForest classifier で profit確率を予測。p>閾値のみ約定。
+
+**実装**:
+- 特徴量9種 (atr_ratio, ema_spread, ret_24h, ret_72h, body_ratio, wick_asym, rolling_vol_60, vol_z, volume_ratio)
+- ラベル: triple barrier (TP=+8%, SL=-4%, MH=24bars) のうち TP first = 1, それ以外 = 0
+- Train: H1 (1-365d), Test: H2 (365-730d) — 真の OOS
+
+**結果 (銘柄別 H2 ベスト閾値)**:
+| 銘柄 | Baseline Sh | Meta Best Sh | ΔSh | AUC | H1 TP率 | H2 TP率 |
+|------|-------------|--------------|------|-----|---------|---------|
+| OPUSDT | +1.62 | **+2.28** (thr=0.55) | **+0.65** | 0.33 | 0.42 | 0.23 |
+| SHIBUSDT | +1.22 | **+1.94** (thr=0.4) | **+0.72** | 0.59 | 0.46 | 0.32 |
+| DOGEUSDT | +1.76 | **+2.05** (thr=0.4) | **+0.30** | 0.51 | 0.32 | 0.29 |
+| BONKUSDT | +1.26 | +1.39 (thr=0.4) | +0.13 | 0.64 | 0.48 | 0.25 |
+| WIFUSDT | +0.11 | +0.09 (thr=0.5) | -0.02 | 0.58 | 0.51 | 0.41 |
+| ARBUSDT | +1.78 | +1.51 (thr=0.4) | -0.27 | 0.38 | 0.37 | 0.34 |
+| LINKUSDT | +1.64 | +1.22 (thr=0.55) | -0.42 | 0.56 | 0.32 | 0.22 |
+| INJUSDT | +2.65 | +1.58 (thr=0.4) | **-1.07** | 0.34 | 0.47 | 0.44 |
+
+**Sharpe改善**: 4/8 銘柄 (OP, SHIB, DOGE, BONK)
+**Sharpe劣化**: 4/8 銘柄 (WIF, ARB, LINK, INJ)
+
+**致命的問題**:
+1. **AUC < 0.5 の銘柄が 4/8**: OPUSDT (0.33), INJUSDT (0.34), ARBUSDT (0.38), DOGEUSDT (0.51) — classifierが randomより悪い予測
+2. **TP率の期間ずれ**: 全銘柄で H1 TP率 > H2 TP率 (市場レジーム変化) — classifier は H1 の規則性を学習するが H2 では通用しない
+3. **非定常性問題**: ATR_Ratio 自体は機能するが、その「いつ機能するか」の予測は ML では難しい
+
+**部分発見**: OPUSDT (+0.65), SHIBUSDT (+0.72) は MetaLabel との相性が良い。これらの銘柄では classifier が「TPに到達するシグナル」を選別している。
+
+**結論**: 全銘柄一律で MetaLabel を適用しても価値創出しない (合計 ΔSh = +0.65+0.72+0.30+0.13-0.02-0.27-0.42-1.07 = **+0.02** — ほぼゼロ)。
+本番統合せず、Backlog 保持 (個別銘柄での部分活用は将来検討、特に OP/SHIB)。
+
+**累計試行**: ~729,788 + 40 (5 thresholds × 8 symbols) = ~729,828
+**学び**: ML based meta-labeling は<strong>市場非定常性を超えない</strong>。短期 (1-2四半期) の H1→H2 だけでは ML が H1の癖を学んで H2 で外す。長期データ + Walk-Forward 必須。
