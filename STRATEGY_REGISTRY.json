@@ -3,7 +3,7 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 553530,
+    "total_trials": 566490,
     "total_strategies": 6
   },
   "strategies": [
@@ -21,7 +21,7 @@
         "ema_fast": 10,
         "ema_slow": 30,
         "stop_loss_pct": 0.02,
-        "take_profit_pct": 0.10,
+        "take_profit_pct": 0.1,
         "max_hold_bars": 7,
         "leverage": 1.0
       },
@@ -46,7 +46,10 @@
       "validation": {
         "walk_forward": "5/5 positive (Sharpe 1.97-2.51)",
         "permutation_p": 0.0416,
-        "bootstrap_ci_95": [0.43, 10.67],
+        "bootstrap_ci_95": [
+          0.43,
+          10.67
+        ],
         "bootstrap_p_positive": 0.0202,
         "dsr": 0.0002,
         "dsr_significant": false,
@@ -54,8 +57,16 @@
         "inverse_signal_verdict": "TRUE_EDGE",
         "monte_carlo_ruin_prob": 0.0,
         "multi_symbol": {
-          "positive": ["XRPUSDT", "ETHUSDT", "LINKUSDT"],
-          "negative": ["BTCUSDT", "SOLUSDT", "ADAUSDT"]
+          "positive": [
+            "XRPUSDT",
+            "ETHUSDT",
+            "LINKUSDT"
+          ],
+          "negative": [
+            "BTCUSDT",
+            "SOLUSDT",
+            "ADAUSDT"
+          ]
         }
       },
       "status": "CONDITIONAL_PASS",
@@ -70,7 +81,13 @@
         "median_oos_sharpe": 0.803,
         "best_params": "sv=10, lv=25, th=0.7, ef=14, es=40, SL=2%, TP=15%, MH=5",
         "best_oos_sharpe": 2.557,
-        "multi_symbol_5of10_positive": ["DOGEUSDT", "SOLUSDT", "SUIUSDT", "ADAUSDT", "ETHUSDT"],
+        "multi_symbol_5of10_positive": [
+          "DOGEUSDT",
+          "SOLUSDT",
+          "SUIUSDT",
+          "ADAUSDT",
+          "ETHUSDT"
+        ],
         "verdict": "MASSIVE parameter plateau. 95.1% positive across 69K combos = genuine edge, not parameter-specific."
       }
     },
@@ -87,7 +104,7 @@
         "ema_fast": 12,
         "ema_slow": 26,
         "stop_loss_pct": 0.03,
-        "take_profit_pct": 0.10,
+        "take_profit_pct": 0.1,
         "max_hold_bars": 10,
         "leverage": 1.0
       },
@@ -110,12 +127,27 @@
       },
       "validation": {
         "permutation_p": 0.015,
-        "bootstrap_ci_95": [1.37, 4.21],
+        "bootstrap_ci_95": [
+          1.37,
+          4.21
+        ],
         "bootstrap_ci_excludes_zero": true,
         "dsr_significant": false,
         "multi_symbol": {
-          "positive": ["DOGEUSDT", "SUIUSDT", "ADAUSDT", "XRPUSDT", "LINKUSDT", "SOLUSDT"],
-          "negative": ["BTCUSDT", "ETHUSDT", "PEPEUSDT", "AVAXUSDT"]
+          "positive": [
+            "DOGEUSDT",
+            "SUIUSDT",
+            "ADAUSDT",
+            "XRPUSDT",
+            "LINKUSDT",
+            "SOLUSDT"
+          ],
+          "negative": [
+            "BTCUSDT",
+            "ETHUSDT",
+            "PEPEUSDT",
+            "AVAXUSDT"
+          ]
         },
         "multi_symbol_ratio": "6/10",
         "signal_correlation_with_volreg": 0.37
@@ -127,11 +159,22 @@
       "auditor_notes": "Second strategy to pass permutation test. Stronger p-value and better multi-symbol generalization than VolReg_opt. Regime-based approach captures DOGE daily vol dynamics differently from simple vol compression ratio.",
       "portfolio_results": {
         "multi_symbol_portfolio": {
-          "symbols": ["DOGEUSDT", "SUIUSDT", "SOLUSDT", "LINKUSDT", "ADAUSDT", "XRPUSDT"],
+          "symbols": [
+            "DOGEUSDT",
+            "SUIUSDT",
+            "SOLUSDT",
+            "LINKUSDT",
+            "ADAUSDT",
+            "XRPUSDT"
+          ],
           "portfolio_sharpe": 1.136,
           "portfolio_daily_ret": 0.1811,
           "portfolio_max_dd": -35.97,
-          "top_symbols": ["DOGEUSDT (1.60)", "SOLUSDT (1.21)", "SUIUSDT (1.05)"]
+          "top_symbols": [
+            "DOGEUSDT (1.60)",
+            "SOLUSDT (1.21)",
+            "SUIUSDT (1.05)"
+          ]
         },
         "long_hold_optimization": {
           "best_config": "MH20-30, SL7%, TP25%",
@@ -167,7 +210,7 @@
           "ema_fast": 20,
           "ema_slow": 80,
           "stop_loss_pct": 0.05,
-          "take_profit_pct": 0.10,
+          "take_profit_pct": 0.1,
           "max_hold_bars": 42,
           "leverage": 1.0
         }
@@ -189,32 +232,52 @@
           "trades": 118,
           "win_rate_pct": 45.8,
           "profit_factor": 1.64,
-          "r_squared": 0.830
+          "r_squared": 0.83
         }
       },
       "validation": {
         "config1": {
           "walk_forward": "4/4 positive (4.43, 2.33, 1.12, 0.96) — declining trend",
-          "permutation_p": 0.000,
-          "bootstrap_ci_95": [0.297, 1.230],
+          "permutation_p": 0.0,
+          "bootstrap_ci_95": [
+            0.297,
+            1.23
+          ],
           "bootstrap_p_positive": 0.999,
           "inverse_signal_gap": 4.44,
           "inverse_signal_verdict": "TRUE_EDGE",
           "multi_symbol": {
-            "positive": ["SOLUSDT"],
-            "negative": ["SUIUSDT", "ADAUSDT", "ETHUSDT", "XRPUSDT"]
+            "positive": [
+              "SOLUSDT"
+            ],
+            "negative": [
+              "SUIUSDT",
+              "ADAUSDT",
+              "ETHUSDT",
+              "XRPUSDT"
+            ]
           },
           "verdict": "DOGE-specific edge"
         },
         "config2": {
           "walk_forward": "4/4 positive (0.97, 1.79, 2.90, 1.27)",
           "permutation_p": 0.022,
-          "bootstrap_ci_95": [-0.029, 0.991],
+          "bootstrap_ci_95": [
+            -0.029,
+            0.991
+          ],
           "bootstrap_p_positive": 0.967,
           "inverse_signal_gap": 2.63,
           "multi_symbol": {
-            "positive": ["SUIUSDT", "SOLUSDT", "ADAUSDT", "XRPUSDT"],
-            "negative": ["ETHUSDT"]
+            "positive": [
+              "SUIUSDT",
+              "SOLUSDT",
+              "ADAUSDT",
+              "XRPUSDT"
+            ],
+            "negative": [
+              "ETHUSDT"
+            ]
           },
           "verdict": "Generalizing edge — 4/5 symbols positive"
         },
@@ -278,13 +341,20 @@
           "verdict": "INDEPENDENT"
         },
         "walk_forward_4fold": {
-          "folds": [4.11, -3.662, 5.105],
+          "folds": [
+            4.11,
+            -3.662,
+            5.105
+          ],
           "avg_sharpe": 1.851,
           "all_positive": false,
           "verdict": "FAIL — fold 2 regime vulnerability"
         },
         "block_bootstrap": {
-          "ci_95": [0.251, 3.171],
+          "ci_95": [
+            0.251,
+            3.171
+          ],
           "pct_positive": 98.8,
           "verdict": "PASS"
         },
@@ -304,8 +374,8 @@
           "inverse_sharpe": -2.114,
           "verdict": "PASS"
         },
-        "permutation_p": 0.010,
-        "scan_permutation_p": 0.010
+        "permutation_p": 0.01,
+        "scan_permutation_p": 0.01
       },
       "status": "CONDITIONAL_PASS",
       "status_reason": "Independent from VolReg (Pearson 0.08). 3/4 §5 gates passed. Bootstrap CI excludes zero, 5/5 multi-symbol positive (best in project), inverse gap 3.88. WF fold 2 failure (-3.66) is regime-specific vulnerability. Permutation p=0.01.",
@@ -348,7 +418,10 @@
           "verdict": "PASS — strong directional edge"
         },
         "block_bootstrap": {
-          "ci_95": [0.195, 1.082],
+          "ci_95": [
+            0.195,
+            1.082
+          ],
           "p_positive": 0.011,
           "verdict": "PASS — excludes zero"
         }
@@ -373,7 +446,7 @@
         "ema_fast": 14,
         "ema_slow": 60,
         "sl_pct": 0.03,
-        "tp_pct": 0.10,
+        "tp_pct": 0.1,
         "max_hold_bars": 42,
         "leverage": 1.0
       },
@@ -383,7 +456,7 @@
           "trades": 160
         },
         "oos_sample": {
-          "sharpe": 2.260,
+          "sharpe": 2.26,
           "trades": 74
         }
       },
@@ -391,23 +464,46 @@
         "permutation_p": 0.012,
         "walk_forward_4fold": {
           "folds": [
-            {"fold": 1, "is_sharpe": 1.38, "oos_sharpe": 2.334, "oos_trades": 29},
-            {"fold": 2, "is_sharpe": 1.62, "oos_sharpe": 1.456, "oos_trades": 29},
-            {"fold": 3, "is_sharpe": 1.584, "oos_sharpe": 2.747, "oos_trades": 36},
-            {"fold": 4, "is_sharpe": 1.773, "oos_sharpe": 1.669, "oos_trades": 38}
+            {
+              "fold": 1,
+              "is_sharpe": 1.38,
+              "oos_sharpe": 2.334,
+              "oos_trades": 29
+            },
+            {
+              "fold": 2,
+              "is_sharpe": 1.62,
+              "oos_sharpe": 1.456,
+              "oos_trades": 29
+            },
+            {
+              "fold": 3,
+              "is_sharpe": 1.584,
+              "oos_sharpe": 2.747,
+              "oos_trades": 36
+            },
+            {
+              "fold": 4,
+              "is_sharpe": 1.773,
+              "oos_sharpe": 1.669,
+              "oos_trades": 38
+            }
           ],
           "avg_sharpe": 2.052,
           "folds_positive": "4/4",
           "verdict": "PASS"
         },
         "inverse_signal": {
-          "original_sharpe": 2.260,
+          "original_sharpe": 2.26,
           "inverse_sharpe": -2.872,
           "gap": 5.132,
           "verdict": "PASS"
         },
         "bootstrap": {
-          "ci_95": [-0.299, 4.611],
+          "ci_95": [
+            -0.299,
+            4.611
+          ],
           "pct_positive": 96.1,
           "median_sharpe": 2.264,
           "verdict": "MARGINAL — 96.1% positive, lower tail barely crosses zero"
@@ -421,15 +517,21 @@
           "verdict": "MARGINAL — DOGE-specific edge"
         },
         "independence": {
-          "vs_volreg": {"pearson": -0.031, "jaccard": 0.096},
-          "vs_atr_ratio": {"pearson": 0.041, "jaccard": 0.081},
+          "vs_volreg": {
+            "pearson": -0.031,
+            "jaccard": 0.096
+          },
+          "vs_atr_ratio": {
+            "pearson": 0.041,
+            "jaccard": 0.081
+          },
           "direction_agreement_when_overlap": "95-100%",
           "verdict": "PASS — genuinely independent signal (Pearson <0.05, Jaccard <0.1)"
         },
         "triple_ensemble": {
           "double_vr_atr_sharpe": 0.079,
           "triple_se_vr_atr_sharpe": 0.519,
-          "improvement": 0.440,
+          "improvement": 0.44,
           "verdict": "PASS — adds +0.44 Sharpe to existing ensemble"
         }
       },
@@ -950,6 +1052,33 @@
       "symbol": "XRP+ETH+ADA+LINK",
       "timeframe": "4h",
       "reason": "9,288 configs across 4 new symbols. 0 healthy on ANY symbol. CRITICAL: VolReg compression edge is DOGE/SOL/SUI/AVAX specific — does not generalize to more liquid/institutional coins. Edge is symbol-specific, not universal."
+    },
+    {
+      "name": "Wavelet Energy Ratio",
+      "family": "Wavelet Energy",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "4,320 configs (1,440×3 SLTP), 0 healthy. Simple DWT-inspired decomposition measures detail/approx energy ratio. Moderate correlation with VolReg (r=0.34-0.50) — somewhat independent but zero predictive power. Wavelet decomposition at 4H resolution cannot extract useful frequency information from OHLCV data.",
+      "date": "2026-05-23",
+      "configs_tested": 4320
+    },
+    {
+      "name": "Renko Regime",
+      "family": "Renko Regime",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "4,320 configs (1,440×3 SLTP), 0 healthy. Synthetic renko bricks with direction consistency measurement. Renko-based regime detection adds nothing beyond raw trend following — the brick construction loses information without gaining signal.",
+      "date": "2026-05-23",
+      "configs_tested": 4320
+    },
+    {
+      "name": "ZScore Momentum",
+      "family": "ZScore Momentum",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "4,320 configs (1,440×3 SLTP), 0 healthy. Self-normalizing z-score of N-bar returns. Pure momentum signal cannot overcome cost on 4H — yet another confirmation that trend-following alone is insufficient without a compression gate.",
+      "date": "2026-05-23",
+      "configs_tested": 4320
     }
   ]
 }

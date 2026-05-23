@@ -4,7 +4,7 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~553,530+ (前回538K + Pattern/Funding/Expansion 15,120)
+- パラメータ組合せ試行数: ~566,490+ (前回553K + Wavelet/Renko/ZScore 12,960)
 - **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
 - **6条件付き合格**:
@@ -1243,5 +1243,23 @@ GK volatility = sqrt(0.5×ln(H/L)² - (2ln2-1)×ln(C/O)²)。OHLC全4成分を�
 
 **累計棄却ファミリー**: 70+ (Pattern Regime, Funding Timing, VolReg XRP/ETH/ADA/LINK追加)
 **累計試行**: 553,530+
+
+### 2026-05-23: Wavelet/Renko/ZScore スキャン (12,960 configs) → **全棄却**
+
+| 戦略 | Configs | Healthy | Wavelet-VolReg相関 | 判定 |
+|------|---------|---------|-------------------|------|
+| Wavelet Energy | 4,320 | 0 | r=0.34-0.50 | ✗ 中程度独立だが予測力ゼロ |
+| Renko Regime | 4,320 | 0 | — | ✗ 情報損失のみ |
+| ZScore Momentum | 4,320 | 0 | — | ✗ モメンタムだけではコスト超過不可 |
+
+**構造的洞察**:
+
+- **Wavelet Energy**: DWT的分解でdetail/approxエネルギー比を計測。VolRegとの相関は中程度（r=0.34-0.50）で、完全冗長ではないが予測力に変換されず。4H解像度ではウェーブレット分解の周波数分解能が不十分。
+- **Renko Regime**: 合成レンガの方向一貫性は情報を量子化するが、ノイズを増幅する結果に。生OHLCの方が常に情報豊か。
+- **ZScore Momentum**: 純粋モメンタムでは4Hコストを超過できない — 圧縮ゲートなしのトレンドフォロー不十分の追加確認。
+- **独立性 vs 予測力**: Wavelet(r=0.34-0.50)はBody Ratio(r=0.16)より相関が高いが、どちらも0 healthy。必要条件(独立)≠十分条件(予測力)。
+
+**累計棄却ファミリー**: 73+ (Wavelet, Renko, ZScore追加)
+**累計試行**: 566,490+
 
 ---
