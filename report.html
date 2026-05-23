@@ -2981,23 +2981,46 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
     </div>
 
     <div class="card">
-      <h3>VolReg_opt エッジの根拠</h3>
-      <p style="margin-bottom:12px;">平易な言葉での仮説エッジ:</p>
-      <div class="code-block">DOGE (and meme coins generally) exhibit regime-switching behavior:
-  1. Low-volatility compression periods where retail interest wanes
-  2. Sudden volatility expansion driven by social/narrative catalysts
+      <h3>探索の全体像: 何を試し、何を学んだか</h3>
+      <p style="margin-bottom:12px;">467,778+回の試行から得られた構造的知見のまとめ:</p>
 
-VolReg_opt attempts to:
-  - Identify compression regimes (vol below threshold)
-  - Enter on the first sign of directional momentum (EMA cross)
-  - Capture the initial expansion move on daily timeframe
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin:12px 0;">
+        <h4 style="color:var(--accent-green);margin-bottom:10px;">機能するもの: 前兆検出 + 方向追従パラダイム</h4>
+        <table class="data-table" style="width:100%;font-size:0.85rem;">
+          <thead><tr><th>エッジ種類</th><th>測定対象</th><th>生存者</th><th>構造的理由</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--accent-green);">ボラティリティ圧縮</td><td>リターンstd比率 (close-to-close)</td><td>VolReg_opt, VolReg_4h, Regime_V3</td><td>レバレッジトレーダーのポジション蓄積期間を検出</td></tr>
+            <tr><td style="color:var(--accent-green);">レンジ圧縮</td><td>ATR比率 (bar内H-L)</td><td>ATR_Compression, ATR_AVAX</td><td>同上だが異なる価格構造次元を使用</td></tr>
+            <tr><td style="color:var(--accent-cyan);">エントロピー低下</td><td>SampEn (時系列規則性)</td><td>SampEn_DOGE</td><td>市場参加者の行動同期化（群集行動前兆）を検出</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:0.85rem;margin-top:10px;"><strong>共通パターン:</strong> 全生存者は「市場が静かになる → 方向を判定 → ブレイクアウトを捕捉」の構造を持つ。<strong>静寂期の検出方法</strong>（vol圧縮、レンジ圧縮、エントロピー低下）が異なるだけで、パラダイムは同一。</p>
+      </div>
 
-Why daily? Intraday noise on meme coins is extreme. Daily bars
-filter noise and capture the regime shift signal more reliably.
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin:12px 0;">
+        <h4 style="color:var(--accent-red);margin-bottom:10px;">機能しないもの: 49+棄却ファミリーのパターン分類</h4>
+        <table class="data-table" style="width:100%;font-size:0.82rem;">
+          <thead><tr><th>失敗カテゴリ</th><th>該当ファミリー</th><th>典型的IS→OOS</th><th>失敗の本質</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--accent-red);">IS→OOS逆転</td><td>自己相関, PriceAccel, KAMA, Ichimoku, GARCH等 (~25)</td><td>IS +1.5→OOS -0.8</td><td>4Hレジーム遷移速度がパラメータを無効化</td></tr>
+            <tr><td style="color:var(--accent-red);">効率的市場</td><td>出来高, 相関, Shannon, CrossMomentum, ZScore (~10)</td><td>IS +0.3→OOS -0.5</td><td>情報は既に価格に織り込み済み</td></tr>
+            <tr><td style="color:var(--accent-red);">コスト超過</td><td>1H圧縮, 5m/15m全戦略 (~5)</td><td>IS +2.0→OOS +0.5(net -)</td><td>α存在もtaker 0.04%+fundingが利益超過</td></tr>
+            <tr><td style="color:var(--accent-orange);">冗長</td><td>Parkinson(ATR), VolOfVol(VolReg) (~3)</td><td>IS +1.2→OOS +2.5</td><td>既存生存者と同一情報を別数式で再計測</td></tr>
+            <tr><td style="color:var(--accent-red);">記述的非予測</td><td>歪度, 尖度, Spectral, Wavelet (~5)</td><td>IS +0.5→OOS +0.1</td><td>分布/周波数の形状は方向を予測しない</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-Why DOGE specifically? DOGE has the most pronounced compression/
-expansion cycle among tested symbols, possibly due to its unique
-retail-driven market microstructure.</div>
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin:12px 0;">
+        <h4 style="color:var(--accent-purple);margin-bottom:10px;">今後の探索戦略</h4>
+        <p style="font-size:0.85rem;">467K+試行の結果から、<strong>新しい生存者を発見する確率は急速に低下</strong>している。今後の探索は以下の方向性に注力:</p>
+        <ul style="font-size:0.85rem;padding-left:20px;margin-top:8px;">
+          <li style="margin-bottom:6px;"><strong>TrendAge検証:</strong> IS→OOS改善パターンの解決（WF検証中）。通過すれば7番目の生存者で初のモメンタム系エッジ。</li>
+          <li style="margin-bottom:6px;"><strong>未探索の「静寂検出」手法:</strong> 圧縮/エントロピーと同じパラダイムだが異なる測定方法。Hurst指数、Fractal Dimension等。</li>
+          <li style="margin-bottom:6px;"><strong>新銘柄での既存エッジ拡張:</strong> ATR_Ratio がAVAXで通過したように、他のL1/DeFiトークンでの圧縮エッジ探索。</li>
+          <li style="margin-bottom:6px;"><strong>DD管理の深化:</strong> sl_cooldown_bars=50 が劇的に効いた。ポジションサイジング最適化でCalmar向上の余地。</li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -3005,8 +3028,8 @@ retail-driven market microstructure.</div>
 
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
-    <p>MEXC先物戦略リサーチレポート &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v2.0</p>
-    <p style="margin-top:4px;">更新: 2026-05-23 &nbsp;|&nbsp; 25+ファミリーで383,000+試行 &nbsp;|&nbsp; 手法: flearn.pdf &sect;5</p>
+    <p>MEXC先物戦略リサーチレポート &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v3.0</p>
+    <p style="margin-top:4px;">更新: 2026-05-23 &nbsp;|&nbsp; 49+ファミリーで467,778+試行 &nbsp;|&nbsp; 手法: flearn.pdf &sect;5</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。</p>
   </footer>
 
