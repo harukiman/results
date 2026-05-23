@@ -3,7 +3,7 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 483978,
+    "total_trials": 496506,
     "total_strategies": 6
   },
   "strategies": [
@@ -854,6 +854,24 @@
       "symbol": "multi",
       "timeframe": "4h",
       "reason": "5,184 configs. 112 healthy (70 DOGE, 22 SUI, 19 SOL, 1 AVAX). 0 perm-sig. Low absolute ROC as a consolidation filter is conceptually similar to compression but weaker — ROC measures price change magnitude, not volatility structure. Redundant with but inferior to VolReg."
+    },
+    {
+      "name": "Range Expansion Breakout",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "Part of 12,528 configs (Range+ADX+BB). 0 healthy. Detecting when bar range exceeds N-bar average doesn't predict continuation. Expansion is descriptive (what just happened) not predictive (what will happen)."
+    },
+    {
+      "name": "ADX Regime Filter",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "Part of 12,528 configs. 0 healthy. ADX > threshold as a trend filter produces no edge. ADX is a lagging indicator — by the time ADX confirms a strong trend, the easy gains are over."
+    },
+    {
+      "name": "Bollinger Bandwidth Squeeze",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "Part of 12,528 configs. 0 healthy. BB bandwidth squeeze corr with VolReg = 0.779 (DOGE), 0.729 (SOL), 0.675 (SUI). Essentially identical to VolReg compression measured differently. Bollinger uses rolling std of close prices which is the same input as VolReg. Even more redundant than Parkinson (r=0.87 with ATR)."
     },
     {
       "name": "Autocorrelation / OU Half-Life / Directional Accuracy / Price Acceleration",

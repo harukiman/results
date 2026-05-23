@@ -4,7 +4,7 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~483,978+ (前回475K + Fractal/DPO/ROC 8,640)
+- パラメータ組合せ試行数: ~496,506+ (前回483K + Range/ADX/BB 12,528)
 - **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
 - **6条件付き合格**:
@@ -1128,5 +1128,28 @@ TrendAgeは「EMAクロスオーバーから何バー経過したか」を測定
 
 **累計棄却ファミリー**: 55+ (Fractal FD, DPO, ROC Regime追加)
 **累計試行**: 483,978+
+
+### 2026-05-23: Range/ADX/BB スキャン (12,528 configs) → **全棄却 + BB冗長確認**
+
+| 戦略 | Configs | Healthy | 判定 |
+|------|---------|---------|------|
+| Range Expansion Breakout | ~4,176 | 0 | ✗ 記述的、非予測的 |
+| ADX Regime Filter | ~4,176 | 0 | ✗ 遅行指標 |
+| BB Bandwidth Squeeze | ~4,176 | 0 | ✗ VolReg冗長 r=0.78 |
+
+**BB Squeeze冗長性の定量分析**:
+BB bandwidth = (上バンド-下バンド)/SMA = 2×std(close,N)/SMA(close,N)。VolReg = std(returns,short)/std(returns,long)。共にclose価格のrolling stdを入力とするため、数学的に冗長。
+
+| 銘柄 | BB vs VolReg相関 | BB vs ATR相関 |
+|------|-----------------|---------------|
+| DOGE | **0.779** | 0.604 |
+| SOL | 0.729 | 0.578 |
+| SUI | 0.675 | 0.381 |
+| AVAX | 0.741 | 0.568 |
+
+Parkinson(ATR r=0.87)に続き、BB Squeeze(VolReg r=0.78)も冗長として確認。**「同じ入力(close std)を使うシグナルは、どんな数式変換を施しても同じ情報しか含まない」**。
+
+**累計棄却ファミリー**: 58+ (Range Expansion, ADX, BB Squeeze追加)
+**累計試行**: 496,506+
 
 ---
