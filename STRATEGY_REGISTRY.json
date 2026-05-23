@@ -1,0 +1,773 @@
+{
+  "meta": {
+    "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
+    "created": "2026-05-22",
+    "last_updated": "2026-05-23",
+    "total_trials": 390120,
+    "total_strategies": 6
+  },
+  "strategies": [
+    {
+      "id": "VOLREG_DOGE_1D_001",
+      "name": "VolReg_opt",
+      "family": "Volatility Regime",
+      "description": "Vol compression (short_vol < long_vol * 0.8) + EMA crossover direction. Daily TF.",
+      "symbol": "DOGEUSDT",
+      "timeframe": "1d",
+      "params": {
+        "short_vol_window": 10,
+        "long_vol_window": 30,
+        "vol_threshold": 0.8,
+        "ema_fast": 10,
+        "ema_slow": 30,
+        "stop_loss_pct": 0.02,
+        "take_profit_pct": 0.10,
+        "max_hold_bars": 7,
+        "leverage": 1.0
+      },
+      "performance": {
+        "full_sample": {
+          "daily_return_pct": 0.3435,
+          "sharpe": 2.124,
+          "max_dd_pct": -15.33,
+          "trades": 86,
+          "win_rate_pct": 32.6,
+          "profit_factor": 2.26,
+          "r_squared": 0.92
+        },
+        "oos": {
+          "daily_return_pct": 0.2485,
+          "sharpe": 2.304,
+          "max_dd_pct": -10.29,
+          "trades": 22,
+          "split": "70/30"
+        }
+      },
+      "validation": {
+        "walk_forward": "5/5 positive (Sharpe 1.97-2.51)",
+        "permutation_p": 0.0416,
+        "bootstrap_ci_95": [0.43, 10.67],
+        "bootstrap_p_positive": 0.0202,
+        "dsr": 0.0002,
+        "dsr_significant": false,
+        "inverse_signal_gap": 2.88,
+        "inverse_signal_verdict": "TRUE_EDGE",
+        "monte_carlo_ruin_prob": 0.0,
+        "multi_symbol": {
+          "positive": ["XRPUSDT", "ETHUSDT", "LINKUSDT"],
+          "negative": ["BTCUSDT", "SOLUSDT", "ADAUSDT"]
+        }
+      },
+      "status": "CONDITIONAL_PASS",
+      "status_reason": "Permutation p=0.0416 + bootstrap CI excludes zero + inverse test TRUE_EDGE. DSR fails at 7000 trials. Only 22 OOS trades - needs data accumulation.",
+      "recommendation": "Paper trade. Deploy real capital after 50+ OOS trades confirmed.",
+      "discovered": "2026-05-22",
+      "auditor_notes": "First strategy to pass permutation test among 9500+ trials. Genuine vol-compression edge on DOGE daily. Limited by sample size.",
+      "plateau_analysis": {
+        "total_combos": 69120,
+        "oos_positive_pct": 95.1,
+        "oos_sharpe_gt1_pct": 35.4,
+        "median_oos_sharpe": 0.803,
+        "best_params": "sv=10, lv=25, th=0.7, ef=14, es=40, SL=2%, TP=15%, MH=5",
+        "best_oos_sharpe": 2.557,
+        "multi_symbol_5of10_positive": ["DOGEUSDT", "SOLUSDT", "SUIUSDT", "ADAUSDT", "ETHUSDT"],
+        "verdict": "MASSIVE parameter plateau. 95.1% positive across 69K combos = genuine edge, not parameter-specific."
+      }
+    },
+    {
+      "id": "REGIME_V3_DOGE_1D_001",
+      "name": "Regime_V3",
+      "family": "Regime Detection",
+      "description": "20-day return + 20-day realized vol regime classification (bull/bear/high_vol/neutral) + EMA(12/26) crossover direction. RSI mean-reversion in high-vol regime. Daily TF.",
+      "symbol": "DOGEUSDT",
+      "timeframe": "1d",
+      "params": {
+        "ret_period": 20,
+        "vol_period": 20,
+        "ema_fast": 12,
+        "ema_slow": 26,
+        "stop_loss_pct": 0.03,
+        "take_profit_pct": 0.10,
+        "max_hold_bars": 10,
+        "leverage": 1.0
+      },
+      "performance": {
+        "full_sample": {
+          "daily_return_pct": 0.6136,
+          "sharpe": 2.657,
+          "max_dd_pct": -25.54,
+          "trades": 27,
+          "win_rate_pct": 55.6,
+          "profit_factor": 3.36
+        },
+        "oos": {
+          "daily_return_pct": 0.6136,
+          "sharpe": 2.657,
+          "max_dd_pct": -25.54,
+          "trades": 27,
+          "split": "70/30"
+        }
+      },
+      "validation": {
+        "permutation_p": 0.015,
+        "bootstrap_ci_95": [1.37, 4.21],
+        "bootstrap_ci_excludes_zero": true,
+        "dsr_significant": false,
+        "multi_symbol": {
+          "positive": ["DOGEUSDT", "SUIUSDT", "ADAUSDT", "XRPUSDT", "LINKUSDT", "SOLUSDT"],
+          "negative": ["BTCUSDT", "ETHUSDT", "PEPEUSDT", "AVAXUSDT"]
+        },
+        "multi_symbol_ratio": "6/10",
+        "signal_correlation_with_volreg": 0.37
+      },
+      "status": "CONDITIONAL_PASS",
+      "status_reason": "Permutation p=0.015 (best in project). Bootstrap CI [1.37, 4.21] excludes zero. 6/10 multi-symbol positive (best generalization). DSR fails at 11K trials. 27 OOS trades still limited.",
+      "recommendation": "Paper trade alongside VolReg_opt. Partially independent signal (corr 0.37). Combined with VolReg consensus could reduce variance.",
+      "discovered": "2026-05-22",
+      "auditor_notes": "Second strategy to pass permutation test. Stronger p-value and better multi-symbol generalization than VolReg_opt. Regime-based approach captures DOGE daily vol dynamics differently from simple vol compression ratio.",
+      "portfolio_results": {
+        "multi_symbol_portfolio": {
+          "symbols": ["DOGEUSDT", "SUIUSDT", "SOLUSDT", "LINKUSDT", "ADAUSDT", "XRPUSDT"],
+          "portfolio_sharpe": 1.136,
+          "portfolio_daily_ret": 0.1811,
+          "portfolio_max_dd": -35.97,
+          "top_symbols": ["DOGEUSDT (1.60)", "SOLUSDT (1.21)", "SUIUSDT (1.05)"]
+        },
+        "long_hold_optimization": {
+          "best_config": "MH20-30, SL7%, TP25%",
+          "sharpe": 1.94,
+          "daily_ret": 0.78,
+          "trades": 101
+        }
+      }
+    },
+    {
+      "id": "VOLREG_4H_DOGE_001",
+      "name": "VolReg_4h",
+      "family": "Volatility Regime",
+      "description": "Vol compression (short_vol < long_vol * threshold) + EMA crossover direction. 4H TF. Two configs: C1 DOGE-specific, C2 generalizing.",
+      "symbol": "DOGEUSDT",
+      "timeframe": "4h",
+      "params": {
+        "config1_doge_specific": {
+          "short_vol_window": 20,
+          "long_vol_window": 120,
+          "vol_threshold": 0.8,
+          "ema_fast": 20,
+          "ema_slow": 80,
+          "stop_loss_pct": 0.05,
+          "take_profit_pct": 0.06,
+          "max_hold_bars": 42,
+          "leverage": 1.0
+        },
+        "config2_generalizing": {
+          "short_vol_window": 60,
+          "long_vol_window": 80,
+          "vol_threshold": 0.9,
+          "ema_fast": 20,
+          "ema_slow": 80,
+          "stop_loss_pct": 0.05,
+          "take_profit_pct": 0.10,
+          "max_hold_bars": 42,
+          "leverage": 1.0
+        }
+      },
+      "performance": {
+        "config1_full_sample": {
+          "sharpe": 2.275,
+          "daily_return_pct": 0.6888,
+          "max_dd_pct": -26.72,
+          "trades": 204,
+          "win_rate_pct": 56.9,
+          "profit_factor": 1.69,
+          "r_squared": 0.958
+        },
+        "config2_full_sample": {
+          "sharpe": 1.476,
+          "daily_return_pct": 0.1824,
+          "max_dd_pct": -22.97,
+          "trades": 118,
+          "win_rate_pct": 45.8,
+          "profit_factor": 1.64,
+          "r_squared": 0.830
+        }
+      },
+      "validation": {
+        "config1": {
+          "walk_forward": "4/4 positive (4.43, 2.33, 1.12, 0.96) — declining trend",
+          "permutation_p": 0.000,
+          "bootstrap_ci_95": [0.297, 1.230],
+          "bootstrap_p_positive": 0.999,
+          "inverse_signal_gap": 4.44,
+          "inverse_signal_verdict": "TRUE_EDGE",
+          "multi_symbol": {
+            "positive": ["SOLUSDT"],
+            "negative": ["SUIUSDT", "ADAUSDT", "ETHUSDT", "XRPUSDT"]
+          },
+          "verdict": "DOGE-specific edge"
+        },
+        "config2": {
+          "walk_forward": "4/4 positive (0.97, 1.79, 2.90, 1.27)",
+          "permutation_p": 0.022,
+          "bootstrap_ci_95": [-0.029, 0.991],
+          "bootstrap_p_positive": 0.967,
+          "inverse_signal_gap": 2.63,
+          "multi_symbol": {
+            "positive": ["SUIUSDT", "SOLUSDT", "ADAUSDT", "XRPUSDT"],
+            "negative": ["ETHUSDT"]
+          },
+          "verdict": "Generalizing edge — 4/5 symbols positive"
+        },
+        "plateau_4h": {
+          "total_configs": 2808,
+          "oos_positive_pct": 82.3,
+          "oos_sharpe_gt1_pct": 47.4,
+          "median_oos_sharpe": 0.971
+        }
+      },
+      "status": "CONDITIONAL_PASS",
+      "status_reason": "Config1: perm p=0.000, WF 4/4, bootstrap CI excludes zero, inverse gap 4.44. Config2: perm p=0.022, WF 4/4, 4/5 multi-symbol positive. 4H plateau 82.3% OOS positive. Same vol-compression mechanism as daily VolReg at higher frequency.",
+      "recommendation": "Paper trade alongside daily strategies. Config2 for multi-symbol deployment, Config1 for DOGE-only.",
+      "discovered": "2026-05-22",
+      "auditor_notes": "Third strategy to pass. Extends daily VolReg edge to 4H. Config1 shows declining WF (4.43→0.96) suggesting alpha decay — monitor closely. Config2 more robust across symbols but weaker on DOGE."
+    },
+    {
+      "id": "ATR_COMP_4H_001",
+      "name": "ATR_Ratio_Compression",
+      "family": "Alt Vol Compression",
+      "description": "ATR-based volatility compression (ATR_short/ATR_long < threshold) with EMA crossover. INDEPENDENT from rolling-std VolReg (Pearson 0.08, Jaccard 0.054). Detects price-range compression vs VolReg's return-volatility compression.",
+      "timeframe": "4h",
+      "primary_symbol": "DOGEUSDT",
+      "signal_type": "long_short",
+      "parameters": {
+        "atr_short": 7,
+        "atr_long": 56,
+        "threshold": 0.6,
+        "ema_fast": 20,
+        "ema_slow": 80,
+        "leverage": 1.0
+      },
+      "performance": {
+        "full_sample": {
+          "sharpe": 1.763,
+          "total_return_pct": 93.52,
+          "max_dd_pct": -29.0,
+          "trades": 77,
+          "win_rate_pct": 61.0
+        },
+        "is_sample": {
+          "sharpe": 1.641,
+          "trades": 64,
+          "daily_return_pct": 0.0988,
+          "max_dd_pct": -10.66
+        },
+        "oos_sample": {
+          "sharpe": 3.344,
+          "trades": 27,
+          "daily_return_pct": 0.1874,
+          "max_dd_pct": -12.3,
+          "profit_factor": 3.42,
+          "win_rate_pct": 63.0
+        }
+      },
+      "validation": {
+        "signal_independence": {
+          "vs_volreg_pearson": 0.0797,
+          "vs_volreg_jaccard": 0.0545,
+          "unique_entries_pct": 77.7,
+          "verdict": "INDEPENDENT"
+        },
+        "walk_forward_4fold": {
+          "folds": [4.11, -3.662, 5.105],
+          "avg_sharpe": 1.851,
+          "all_positive": false,
+          "verdict": "FAIL — fold 2 regime vulnerability"
+        },
+        "block_bootstrap": {
+          "ci_95": [0.251, 3.171],
+          "pct_positive": 98.8,
+          "verdict": "PASS"
+        },
+        "multi_symbol": {
+          "DOGEUSDT": 1.763,
+          "LINKUSDT": 1.366,
+          "SOLUSDT": 0.916,
+          "SUIUSDT": 0.763,
+          "XRPUSDT": 0.332,
+          "symbols_positive": "5/5",
+          "symbols_sharpe_gt_05": "4/5",
+          "verdict": "PASS — best generalization in project"
+        },
+        "inverse_signal": {
+          "gap": 3.877,
+          "original_sharpe": 1.763,
+          "inverse_sharpe": -2.114,
+          "verdict": "PASS"
+        },
+        "permutation_p": 0.010,
+        "scan_permutation_p": 0.010
+      },
+      "status": "CONDITIONAL_PASS",
+      "status_reason": "Independent from VolReg (Pearson 0.08). 3/4 §5 gates passed. Bootstrap CI excludes zero, 5/5 multi-symbol positive (best in project), inverse gap 3.88. WF fold 2 failure (-3.66) is regime-specific vulnerability. Permutation p=0.01.",
+      "recommendation": "Paper trade on all 5 symbols. Monitor fold-2-type regimes. Consider combining with VolReg_4h for portfolio diversification (independent signals).",
+      "discovered": "2026-05-22",
+      "auditor_notes": "Fourth strategy to pass. First genuinely independent signal family (ATR range vs std ratio). Best multi-symbol result in project (5/5 positive, 4/5 > 0.5). WF fold 2 failure suggests a specific regime vulnerability — may benefit from regime filter. IS→OOS ratio 2.04x is borderline but acceptable given other evidence."
+    },
+    {
+      "id": "ATR_RATIO_AVAX_4H_001",
+      "name": "ATR_Ratio_AVAX",
+      "family": "ATR Ratio Compression",
+      "description": "ATR compression (atr_short/atr_long < 0.6) + EMA crossover direction. 4H TF on AVAX.",
+      "symbol": "AVAXUSDT",
+      "timeframe": "4h",
+      "params": {
+        "atr_short": 7,
+        "atr_long": 42,
+        "threshold": 0.6,
+        "ema_fast": 30,
+        "ema_slow": 40,
+        "leverage": 1.0
+      },
+      "performance": {
+        "oos_sample": {
+          "sharpe": 3.059,
+          "trades": 27,
+          "return_pct": 40.8,
+          "max_dd_pct": -8.7
+        }
+      },
+      "validation": {
+        "permutation_p": 0.012,
+        "walk_forward_4fold": {
+          "folds_positive": "4/4",
+          "avg_sharpe": 2.167,
+          "verdict": "PASS"
+        },
+        "inverse_signal": {
+          "inverse_sharpe": -2.355,
+          "verdict": "PASS — strong directional edge"
+        },
+        "block_bootstrap": {
+          "ci_95": [0.195, 1.082],
+          "p_positive": 0.011,
+          "verdict": "PASS — excludes zero"
+        }
+      },
+      "status": "CONDITIONAL_PASS",
+      "status_reason": "Full anti-overfit pipeline passed: perm p=0.012, WF 4/4 positive (mean 2.17), bootstrap CI [0.195, 1.082] excludes zero, inverse -2.355. Same ATR_Ratio mechanism proven on DOGE/LINK/SOL now validated on AVAX. Expands portfolio diversification.",
+      "recommendation": "Add to multi-symbol ATR_Ratio portfolio. Apply sl_cooldown_bars=50 + atr_sl_mult=2.0 for DD management.",
+      "discovered": "2026-05-23"
+    },
+    {
+      "id": "SAMPEN_DOGE_4H_001",
+      "name": "SampEn_DOGE_4H",
+      "family": "Sample Entropy",
+      "description": "Rolling sample entropy (m=2, r=0.2σ) over 50-bar window detects low-entropy (high-regularity) regimes. Low entropy = predictable microstructure forming. EMA(14/60) for direction. Fundamentally different from volatility compression — measures time-series regularity, not volatility level.",
+      "symbol": "DOGEUSDT",
+      "timeframe": "4h",
+      "params": {
+        "m": 2,
+        "r_mult": 0.2,
+        "apen_window": 50,
+        "apen_pct": 20,
+        "ema_fast": 14,
+        "ema_slow": 60,
+        "sl_pct": 0.03,
+        "tp_pct": 0.10,
+        "max_hold_bars": 42,
+        "leverage": 1.0
+      },
+      "performance": {
+        "is_sample": {
+          "sharpe": 1.584,
+          "trades": 160
+        },
+        "oos_sample": {
+          "sharpe": 2.260,
+          "trades": 74
+        }
+      },
+      "validation": {
+        "permutation_p": 0.012,
+        "walk_forward_4fold": {
+          "folds": [
+            {"fold": 1, "is_sharpe": 1.38, "oos_sharpe": 2.334, "oos_trades": 29},
+            {"fold": 2, "is_sharpe": 1.62, "oos_sharpe": 1.456, "oos_trades": 29},
+            {"fold": 3, "is_sharpe": 1.584, "oos_sharpe": 2.747, "oos_trades": 36},
+            {"fold": 4, "is_sharpe": 1.773, "oos_sharpe": 1.669, "oos_trades": 38}
+          ],
+          "avg_sharpe": 2.052,
+          "folds_positive": "4/4",
+          "verdict": "PASS"
+        },
+        "inverse_signal": {
+          "original_sharpe": 2.260,
+          "inverse_sharpe": -2.872,
+          "gap": 5.132,
+          "verdict": "PASS"
+        },
+        "bootstrap": {
+          "ci_95": [-0.299, 4.611],
+          "pct_positive": 96.1,
+          "median_sharpe": 2.264,
+          "verdict": "MARGINAL — 96.1% positive, lower tail barely crosses zero"
+        },
+        "multi_symbol": {
+          "LINKUSDT": 0.572,
+          "SUIUSDT": -0.165,
+          "SOLUSDT": -0.658,
+          "XRPUSDT": -0.511,
+          "positive_count": "1/4",
+          "verdict": "MARGINAL — DOGE-specific edge"
+        },
+        "independence": {
+          "vs_volreg": {"pearson": -0.031, "jaccard": 0.096},
+          "vs_atr_ratio": {"pearson": 0.041, "jaccard": 0.081},
+          "direction_agreement_when_overlap": "95-100%",
+          "verdict": "PASS — genuinely independent signal (Pearson <0.05, Jaccard <0.1)"
+        },
+        "triple_ensemble": {
+          "double_vr_atr_sharpe": 0.079,
+          "triple_se_vr_atr_sharpe": 0.519,
+          "improvement": 0.440,
+          "verdict": "PASS — adds +0.44 Sharpe to existing ensemble"
+        }
+      },
+      "status": "CONDITIONAL_PASS",
+      "status_reason": "6 validation gates: 4 PASS, 2 MARGINAL. WF 4/4 positive (avg 2.05). Inverse gap 5.13 — strongest directional edge in project. Independence confirmed: Pearson <0.05 vs both VolReg and ATR_Ratio. DOGE-specific (1/4 multi-symbol). Bootstrap 96.1% positive but CI lower bound -0.30.",
+      "recommendation": "Deploy on DOGE 4H only. Add to triple ensemble (SampEn∪VolReg∪ATR) for +0.44 improvement. Apply sl_cooldown overlay for DD management.",
+      "discovered": "2026-05-23",
+      "auditor_notes": "First non-compression signal to pass validation. Measures time-series regularity (entropy) rather than volatility level (compression). Genuinely orthogonal to all existing signals. DOGE-only concentration risk accepted — entropy microstructure may be token-specific. Strongest inverse gap in project (5.13) indicates robust directional content."
+    }
+  ],
+  "rejected": [
+    {
+      "name": "Dual ST Ribbon",
+      "symbol": "BTCUSDT",
+      "timeframe": "15m",
+      "reason": "DSR=0.000, perm p=0.33, bootstrap CI includes zero, 1x leverage OOS negative"
+    },
+    {
+      "name": "Relative Volume Breakout",
+      "symbol": "BTCUSDT",
+      "timeframe": "15m",
+      "reason": "WF 1/4, perm p=0.21, 0/4 ALTs negative, parameter sensitivity"
+    },
+    {
+      "name": "G7 ST Pullback Sniper",
+      "symbol": "BTCUSDT",
+      "timeframe": "15m",
+      "reason": "1x leverage OOS negative (-0.023%/d). PF=0.80 at zero cost. Leverage artifact."
+    },
+    {
+      "name": "ML flearn (LightGBM + CUSUM)",
+      "symbol": "BTCUSDT",
+      "timeframe": "15m",
+      "reason": "IS Sharpe 10.2 -> OOS Sharpe -5.36. Extreme overfit."
+    },
+    {
+      "name": "ADX_trail",
+      "symbol": "XRPUSDT",
+      "timeframe": "1d",
+      "reason": "Permutation p=0.082 (fails 5%), DSR=0.000, bootstrap CI includes negative"
+    },
+    {
+      "name": "SpreadZ (BTC-ETH Z-score)",
+      "symbol": "ETHUSDT",
+      "timeframe": "15m",
+      "reason": "WF 1/5 (avg Sharpe -0.29), perm p=0.239, bootstrap CI [-0.27, 0.34] includes zero, 0/4 multi-symbol"
+    },
+    {
+      "name": "Session_Europe_momentum",
+      "symbol": "BTCUSDT",
+      "timeframe": "15m",
+      "reason": "Perm p=0.089 (fails 5%), bootstrap CI [-0.10, 0.52] includes zero, 0/4 multi-session"
+    },
+    {
+      "name": "OI Price Divergence (Vol Divergence)",
+      "symbol": "BTCUSDT",
+      "timeframe": "15m",
+      "reason": "No actual OI used. 1x+taker Sharpe drops to 1.39 (from 5.58). Perm p=0.103. Maker fee + leverage artifact."
+    },
+    {
+      "name": "OBV Divergence",
+      "symbol": "DOGEUSDT",
+      "timeframe": "1d",
+      "reason": "Scan OOS Sh 2.42 non-reproducible. Independent validation: full Sh -1.08, 9 trades, perm p=1.0, WF 0/4, inverse Sh +0.74. Implementation-dependent artifact."
+    },
+    {
+      "name": "TD Sequential",
+      "symbol": "multi",
+      "timeframe": "1d",
+      "reason": "Best OOS Sh 1.25 (7 trades SUI), perm p=0.171. Insufficient signal density on daily."
+    },
+    {
+      "name": "Donchian + Vol Filter",
+      "symbol": "multi",
+      "timeframe": "1d",
+      "reason": "1/6 multi-symbol positive. No generalization."
+    },
+    {
+      "name": "Hurst Regime",
+      "symbol": "multi",
+      "timeframe": "1d",
+      "reason": "3-5 OOS trades on best symbols. Signal density too low for daily TF."
+    },
+    {
+      "name": "KAMA Crossover",
+      "symbol": "multi",
+      "timeframe": "1d",
+      "reason": "OOS Sh 2.96 (DOGE), perm p=0.006 (project best). BUT: IS Sharpe negative on 4/6 symbols. IS→OOS reversal across all trend-following strategies = OOS period regime effect, not genuine edge."
+    },
+    {
+      "name": "Ichimoku Cloud",
+      "symbol": "multi",
+      "timeframe": "1d",
+      "reason": "Same IS→OOS reversal pattern as KAMA. SUI IS -0.62 → OOS 1.89. Period-specific."
+    },
+    {
+      "name": "VWAP Momentum",
+      "symbol": "multi",
+      "timeframe": "1d",
+      "reason": "IS positive → OOS negative (opposite reversal). No edge in either period."
+    },
+    {
+      "name": "MACD + BB Squeeze",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "27 configs/symbol, 0 perm-sig. Median Sharpe 0.26-0.44 IS. No edge."
+    },
+    {
+      "name": "VolReg_4h (LINK/XRP/SOL)",
+      "symbol": "LINKUSDT/XRPUSDT/SOLUSDT",
+      "timeframe": "4h",
+      "reason": "LINK 87% IS→OOS reversals, XRP 100% reversals, SOL only 14 perm-sig. Period-specific OOS gains."
+    },
+    {
+      "name": "Regime_V3_4h (SOL/LINK/XRP)",
+      "symbol": "SOLUSDT/LINKUSDT/XRPUSDT",
+      "timeframe": "4h",
+      "reason": "SOL OOS negative (med OOS Sh -0.86), LINK OOS negative (med -0.89), XRP 0 IS>0.5 configs."
+    },
+    {
+      "name": "Regime Exit (VolReg variant)",
+      "symbol": "multi",
+      "timeframe": "1d",
+      "reason": "Exit on regime change underperformed baseline across all 5 symbols. Complexity without improvement."
+    },
+    {
+      "name": "Ensemble Tier3 Portfolio",
+      "symbol": "multi",
+      "timeframe": "1d",
+      "reason": "5-symbol EW portfolio OOS Sh 0.515, perm p=0.087 (fails 5%). Implementation inconsistency between agents."
+    },
+    {
+      "name": "Regime_V3_4h (SUI)",
+      "symbol": "SUIUSDT",
+      "timeframe": "4h",
+      "reason": "C1: IS -0.164→OOS 3.90 (pure reversal, FAIL). C2: IS 0.52→OOS 3.21 (6.19x ratio). Bootstrap CI includes zero. STRONG_TREND_BIAS in OOS period. 2/5 multi-symbol."
+    },
+    {
+      "name": "Cross-TF Daily→4H Entry",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "972 configs. 4H entry timing on daily VolReg signal. Best DOGE OOS 3.86 but IS→OOS ratio 2.6x. Not a new edge — execution optimization on existing signal. 29% IS→OOS reversals."
+    },
+    {
+      "name": "Volume Spike Reversal",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "2916 configs. No perm-significant edges. OOS positive but below Sharpe 1.0 threshold."
+    },
+    {
+      "name": "VWMA Momentum",
+      "symbol": "SUIUSDT",
+      "timeframe": "4h",
+      "reason": "IS 0.08→OOS 1.94 (25x ratio). Pure IS→OOS reversal. SUI OOS trend bias."
+    },
+    {
+      "name": "AD Score (OBV+CMF+MFI)",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "0/2916 configs had OOS Sharpe > 0.5. Complete failure."
+    },
+    {
+      "name": "Rel Vol Breakout 4H",
+      "symbol": "DOGEUSDT",
+      "timeframe": "4h",
+      "reason": "IS 1.06→OOS 1.91, p=0.01 (53 trades). BUT: DOGE-only (no cross-asset), IS→OOS gap 80%, DSR=0.000 at 9720 trials. Likely correlated with VolReg (same vol-change mechanism)."
+    },
+    {
+      "name": "Weekly Timeframe Strategies",
+      "symbol": "multi",
+      "timeframe": "1w",
+      "reason": "43,740 configs (9 strategies × 4,860 param combos). Best: IS -0.49→OOS 2.38 — pure IS→OOS reversal. Weekly bars have insufficient data points for reliable validation."
+    },
+    {
+      "name": "Funding Rate Mean-Reversion",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "10,692 configs. 791 perm-significant but IS -0.43→OOS 2.66 (156 trades) — IS→OOS reversal. Funding rate mean-reversion is cycle-dependent (works in bear, fails in bull). No IS/OOS consistency."
+    },
+    {
+      "name": "Mean-Rev + Vol Compression (RSI/BB/Stoch)",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "38,610 configs. 97.3% of OOS>1 were IS→OOS reversals. RSI: 0 clean. BB: 18 clean, 0 perm-sig. Stoch: 9 perm-sig (p=0.044) but all same LINK signal, 22 trades, fails Bonferroni. Mean-reversion during compression = no edge; trend-following is correct interpretation."
+    },
+    {
+      "name": "VolReg + ADX Momentum Filter",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "24,843 configs. 0 perm-significant. ADX filter removes too many signals, median OOS -0.49. Trend strength confirmation destroys the compression edge."
+    },
+    {
+      "name": "Adaptive Threshold VolReg",
+      "symbol": "DOGEUSDT/SUIUSDT",
+      "timeframe": "4h",
+      "reason": "29,160 configs. 26 genuine edges but all incremental over static VolReg (same mechanism, percentile vs fixed threshold). Best DOGE OOS 3.01, IS 1.24, p=0.013. Not independent edge."
+    },
+    {
+      "name": "Breakout Entry VolReg",
+      "symbol": "SUIUSDT",
+      "timeframe": "4h",
+      "reason": "27,960 configs. SUI best OOS 3.15, IS 1.30, p=0.008. But SUI OOS period has STRONG_TREND_BIAS (same issue as Regime_V3_4h SUI). No cross-asset consistency (0 on XRP/LINK/SOL)."
+    },
+    {
+      "name": "MomDDFilter (EMA + Drawdown Filter)",
+      "symbol": "SUIUSDT/DOGEUSDT",
+      "timeframe": "4h",
+      "reason": "3,800 configs. 4 perm-sig (p=0.02-0.04) on SUI+DOGE. Best SUI OOS 2.63, IS 1.14. Borderline p-values, fails multiple testing correction (278 candidates). SUI OOS trend bias."
+    },
+    {
+      "name": "TrendVolScale (EMA + Vol Flattening)",
+      "symbol": "SUIUSDT",
+      "timeframe": "4h",
+      "reason": "4 perm-sig (p=0.04-0.05) all SUI. Best OOS 2.37, IS 1.59. Borderline p-values, SUI-only, fails multiple testing correction."
+    },
+    {
+      "name": "DualMomentum (Antonacci)",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "360 configs. 0 perm-significant. Dual momentum lacks sufficient edge in 4H crypto."
+    },
+    {
+      "name": "BreakoutPullback",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "720 configs. Median OOS -1.08. 0 healthy configs. Complete failure."
+    },
+    {
+      "name": "DistShift (Skew/Kurt Regime)",
+      "symbol": "SUIUSDT",
+      "timeframe": "4h",
+      "reason": "640 configs. 13 perm-sig healthy (best IS 1.30→OOS 2.82, p=0.008, 129 trades). BUT: ALL on SUIUSDT only. SUI OOS trend bias. No cross-asset generalization. Same trap as Regime_V3_4h SUI."
+    },
+    {
+      "name": "CUSUM Regime Break",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "720 configs. 0 genuine edges. Mostly IS→OOS reversals. CUSUM threshold detections don't translate to tradeable signals."
+    },
+    {
+      "name": "Hurst Exponent Regime",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "960 configs. 0 genuine edges. IS→OOS reversals on SOL/XRP. Rolling Hurst too noisy for 4H regime detection."
+    },
+    {
+      "name": "Variance Ratio Regime",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "960 configs. Mean OOS -1.56 (worst performer). Lo-MacKinlay VR not actionable on 4H crypto."
+    },
+    {
+      "name": "VolReg 1H + ATR_Ratio 1H",
+      "symbol": "multi",
+      "timeframe": "1h",
+      "reason": "24,012 configs. Median OOS -1.47, 97% reversal rate, ~39% annual cost drag. Compression edge completely destroyed at 1H by noise and costs. 4H is the minimum viable timeframe."
+    },
+    {
+      "name": "8H Compression (VolReg + ATR + OR)",
+      "symbol": "multi",
+      "timeframe": "8h",
+      "reason": "12,084 configs (resampled 4H→8H). 11,019 valid, 82% reversal rate (vs 4H 30-50%), median OOS 0.040. 79 'genuine edges' but concentrated in SUI(48)+DOGE(31) only — XRP/LINK/SOL negative. 12.2% annual cost drag. 8H sits between 1H failure and 4H success, much closer to failure side."
+    },
+    {
+      "name": "Multi-TF Entry (Daily Regime + 4H Entry)",
+      "symbol": "multi",
+      "timeframe": "1d+4h",
+      "reason": "720 configs. 60% improved OOS vs baseline, but 65% trade reduction kills statistical power. Only 2/161 perm-sig: SUI p=0.042 (29 trades), DOGE p=1.0 (6 trades). Daily filter helps weak baselines (DOGE, LINK) by avoiding bad regimes, but not a standalone edge. Risk-reduction layer, not alpha generator."
+    },
+    {
+      "name": "Exit Optimization (ATR SL/TP, Trailing, BE, MaxHold)",
+      "symbol": "DOGEUSDT",
+      "timeframe": "4h",
+      "reason": "222 configs on 3 signals. ATR_Ratio: baseline OOS 2.655→2.890 with atr_sl=1.5/atr_tp=4.0/period=21 (+0.235 Sharpe, -1% DD). VolReg_4h and OR_Ensemble negative OOS without exits (-1.034, -0.565) — exits are part of their edge. Trailing stops destroy all signals (-0.81 to -1.37 mean impact). Max-hold inert. Not a new edge but confirms: ATR_Ratio is most robust (edge survives exit removal), trailing stops incompatible with compression."
+    },
+    {
+      "name": "Cross-Asset BTC Filter",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "400 configs. BTC_LOW_VOL is only useful filter (11/12 improvements). DOGE ATR 2.86→3.44 (+0.58), SOL VolReg 1.56→2.7 (+1.14). But only helps 2/8 already-strong combos. BTC_BULL counterproductive. BTC_HIGH_VOL = trade reduction noise. Not a universal cross-asset edge, modest filter on existing winners. Not worth added complexity."
+    },
+    {
+      "name": "Volume Signals (OBV, VolBreakout, VWAP, VolComp+Vol)",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "455 configs. 4 perm-sig (SOL/SUI only) but IS Sharpe 0.003-0.537 = weak IS. Best: SOL VolComp+Vol OOS 2.099, IS 0.164 — IS→OOS divergence suggests OOS regime luck. 455 trials × 0.05 = ~23 false positives expected; 4 survivors after IS filter ≈ random chance. OBV divergence: 0 sig. VWAP: 0 sig. Volume not an independent edge."
+    },
+    {
+      "name": "Correlation Regime (ALT-BTC, CorrBreakout, Cross-ALT)",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "456 configs. 12 perm-sig but ALL in narrow param cluster (corr_window=20, lookback=10) = fragile overfit. SUI dominant but baseline already strong (2.031→2.6, +0.5 only). LINK: IS-negative→OOS-positive = reversal red flag despite p=0.01. Cross-ALT (DOGE anchor): 0 results. 12/456=2.6% ≈ 5% FP rate. Not a robust independent edge."
+    },
+    {
+      "name": "Seasonality (DoW, Session, MonthEnd)",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "245 configs. 2 perm-sig (SOL exclude-Friday p=0.0075) but 0 Bonferroni-significant (threshold 0.0014 for 245 tests). Thursday worst day across all 5 symbols but not individually significant after correction. 24/7 crypto market lacks persistent temporal patterns. No seasonal filter improves compression signals."
+    },
+    {
+      "name": "DD Management Overlays (EqMA, DDThrottle, MDE, VolLev, SL-Cooldown)",
+      "symbol": "DOGEUSDT",
+      "timeframe": "4h",
+      "reason": "41 configs. SL-specific cooldown is the BEST overlay: sl_cooldown_bars=50, atr_sl_mult=2.0, atr_sl_period=14. ATR_Ratio: Sharpe 2.90→3.87, DD -16.8%→-10.1%, Calmar 4.86. OR Ensemble: flipped from -0.40→+0.35. Consistent across all signals. DDThrottle best raw DD cut (68%) but kills returns. VolLev inert at 1x. MDE causes whipsaw. NOT a new edge but a validated risk management layer.",
+      "note": "RISK_MANAGEMENT_FINDING — apply sl_cooldown_bars=50 + atr_sl_mult=2.0 to all deployed strategies"
+    },
+    {
+      "name": "New Symbol Deep Validation (BNB/AVAX/ADA ATR_Ratio)",
+      "symbol": "BNB/AVAX/ADA",
+      "timeframe": "4h+1d",
+      "reason": "2,592 configs. AVAX 4H: 3 configs pass full pipeline (best OOS 3.06, WF 4/4, p=0.012, bootstrap excludes zero) → NEW SURVIVOR. ADA 4H: 1 marginal (bootstrap CI barely clears zero at 0.011). BNB 4H: 29 perm-sig but bootstrap fails — 'almost deployable'. All daily TF: fail (0 perm-sig for BNB/ADA, WF fails for AVAX). atr_long=42 dominates all candidates.",
+      "note": "AVAX promoted to CONDITIONAL_PASS as 5th strategy"
+    },
+    {
+      "name": "Entropy & Complexity (Shannon, SampEn, Higuchi FD)",
+      "symbol": "multi",
+      "timeframe": "4h+1d",
+      "reason": "3,160 configs. Shannon 4H/1d: 0 perm-sig. Higuchi FD: 0 perm-sig (median OOS -0.84). Entropy+Compression combo: 0. Sample Entropy DOGE 4H: 8 perm-sig (OOS 2.01-2.88, IS 1.29-1.67, 69-91 trades) — IS consistent, single param cluster (m=2, r_mult=0.2, apen_window=50, ema_slow=60). Low corr with VolReg (Pearson 0.163, Jaccard 0.209). DOGE-only concentration risk. PENDING full validation (WF, bootstrap, inverse).",
+      "note": "SampEn DOGE 4H PROMOTED to 6th survivor (CONDITIONAL_PASS). Shannon/Higuchi remain rejected."
+    },
+    {
+      "name": "Spectral/Frequency-Domain (FFT DominantCycle, SpectralEntropy, WaveletEnergy)",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "1,656 configs (540+576+540). WaveletEnergy: 0 healthy configs (total wipeout). SpectralEntropy: 11 healthy but 0 perm-sig. DominantCycle: 25 healthy, 1 perm-sig but SUI-only (OOS trend bias) with IS DD -59%. All independent from ATR (r<0.17) but no tradeable alpha. Cyclical structure does not predict 4H crypto direction."
+    },
+    {
+      "name": "Microstructure Candlestick (BodyShadow, ClosePosition, RangeContraction)",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "4,176 configs. ClosePosition: 0 perm-sig (41 healthy). BodyShadow: 1 perm-sig (SOL only, p=0.042, borderline). RangeContraction: 22 perm-sig (14 DOGE, 8 SUI), BUT IS→OOS reversal pattern (IS 0.5-1.0 vs OOS 1.8-2.4), low trade counts (10-21 OOS), 0 on SOL. ATR独立 (r=0.10). Yellow flag: OOS>>IS ratio suggests period-specific rather than genuine edge.",
+      "note": "RangeContraction marginally interesting but IS→OOS reversal pattern + low trades = not promoted"
+    },
+    {
+      "name": "Autocorrelation / OU Half-Life / Directional Accuracy / Price Acceleration",
+      "symbol": "multi",
+      "timeframe": "4h",
+      "reason": "1,188 configs across 4 families. 0 perm-significant, 0 multi-symbol healthy. Autocorrelation: IS→OOS reversal (IS 0.31→OOS -1.06). OU Half-Life: SUI/SOL OOS bias, DOGE p=0.106. DirAccuracy: best p=0.144. PriceAccel: extreme IS overfit (IS 1.85→OOS -0.03). Serial dependence, mean-reversion speed, trend consistency, and momentum acceleration all fail on 4H crypto."
+    }
+  ]
+}

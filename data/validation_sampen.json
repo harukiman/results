@@ -1,0 +1,127 @@
+{
+  "scan_date": "2026-05-23 10:07:26",
+  "signal": "Sample Entropy (m=2, r_mult=0.2, apen_window=50, apen_pct=20, ema_fast=14, ema_slow=60)",
+  "risk_params": "SL=0.03, TP=0.1, max_hold=42",
+  "baseline": {
+    "is_sharpe": 1.584,
+    "oos_sharpe": 2.26,
+    "is_trades": 160,
+    "oos_trades": 74
+  },
+  "walk_forward": {
+    "folds": [
+      {
+        "name": "Fold1",
+        "is_sharpe": 1.38,
+        "oos_sharpe": 2.334,
+        "is_trades": 102,
+        "oos_trades": 29
+      },
+      {
+        "name": "Fold2",
+        "is_sharpe": 1.62,
+        "oos_sharpe": 1.456,
+        "is_trades": 131,
+        "oos_trades": 29
+      },
+      {
+        "name": "Fold3",
+        "is_sharpe": 1.584,
+        "oos_sharpe": 2.747,
+        "is_trades": 160,
+        "oos_trades": 36
+      },
+      {
+        "name": "Fold4",
+        "is_sharpe": 1.773,
+        "oos_sharpe": 1.669,
+        "is_trades": 195,
+        "oos_trades": 38
+      }
+    ],
+    "avg_sharpe": 2.052,
+    "positive_count": "4/4",
+    "all_positive": true,
+    "verdict": "PASS"
+  },
+  "inverse_signal": {
+    "original_sharpe": 2.26,
+    "inverted_sharpe": -2.872,
+    "gap": 5.132,
+    "verdict": "PASS"
+  },
+  "bootstrap": {
+    "ci_95": [
+      -0.299,
+      4.611
+    ],
+    "pct_positive": 96.1,
+    "median_sharpe": 2.264,
+    "verdict": "MARGINAL"
+  },
+  "multi_symbol": {
+    "SUIUSDT": {
+      "sharpe": -0.165,
+      "trades": 69,
+      "total_return_pct": -6.45
+    },
+    "LINKUSDT": {
+      "sharpe": 0.572,
+      "trades": 39,
+      "total_return_pct": 6.86
+    },
+    "SOLUSDT": {
+      "sharpe": -0.658,
+      "trades": 36,
+      "total_return_pct": -10.77
+    },
+    "XRPUSDT": {
+      "sharpe": -0.511,
+      "trades": 55,
+      "total_return_pct": -9.59
+    },
+    "positive_count": "1/4",
+    "verdict": "MARGINAL"
+  },
+  "independence": {
+    "vs_volreg": {
+      "pearson": -0.031,
+      "jaccard": 0.096,
+      "direction_agreement": 0.949
+    },
+    "vs_atr_ratio": {
+      "pearson": 0.041,
+      "jaccard": 0.081,
+      "direction_agreement": 1.0
+    },
+    "verdict": "PASS"
+  },
+  "triple_ensemble": {
+    "sampen_alone": {
+      "sharpe": 2.26,
+      "trades": 74
+    },
+    "double_ensemble": {
+      "sharpe": 0.079,
+      "trades": 73
+    },
+    "triple_ensemble": {
+      "sharpe": 0.519,
+      "trades": 116
+    },
+    "improvement": 0.44,
+    "vs_double": "better",
+    "verdict": "PASS"
+  },
+  "test_verdicts": {
+    "walk_forward": "PASS",
+    "inverse_signal": "PASS",
+    "bootstrap": "MARGINAL",
+    "multi_symbol": "MARGINAL",
+    "independence": "PASS",
+    "triple_ensemble": "PASS"
+  },
+  "overall_verdict": "PASS",
+  "conclusion": "Walk-forward stable across all folds. Strong directional edge (inverse is negative). Signal is INDEPENDENT from VolReg and ATR_Ratio. Triple ensemble improves over double by +0.440 Sharpe. Limited multi-symbol generalization (DOGE-specific edge).",
+  "elapsed_seconds": 174.9
+}

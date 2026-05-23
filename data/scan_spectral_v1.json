@@ -1,0 +1,80 @@
+{
+  "scan_date": "2026-05-23",
+  "total_configs": 1656,
+  "total_healthy": 36,
+  "total_perm_significant": 1,
+  "elapsed_seconds": 413.7,
+  "atr_correlations": {
+    "DOGEUSDT": {
+      "DominantCycle_power_vs_ATR": -0.0531,
+      "SpectralEntropy_vs_ATR": 0.1647,
+      "WaveletEnergy_vs_ATR": -0.0045
+    },
+    "SUIUSDT": {
+      "DominantCycle_power_vs_ATR": -0.0443,
+      "SpectralEntropy_vs_ATR": 0.1036,
+      "WaveletEnergy_vs_ATR": -0.0091
+    },
+    "SOLUSDT": {
+      "DominantCycle_power_vs_ATR": 0.0053,
+      "SpectralEntropy_vs_ATR": 0.0392,
+      "WaveletEnergy_vs_ATR": 0.0992
+    }
+  },
+  "avg_atr_correlation": {
+    "DominantCycle_power_vs_ATR": -0.0307,
+    "SpectralEntropy_vs_ATR": 0.1025,
+    "WaveletEnergy_vs_ATR": 0.0285
+  },
+  "redundancy_note": "",
+  "families": {
+    "DominantCycle": {
+      "configs_tested": 540,
+      "healthy_count": 25,
+      "perm_significant_count": 1,
+      "perm_significant": [
+        {
+          "symbol": "SUIUSDT",
+          "strategy": "DominantCycle",
+          "params": {
+            "fft_window": 60,
+            "power_threshold": 0.15,
+            "ema_fast": 20,
+            "ema_slow": 60
+          },
+          "is_sharpe": 1.017,
+          "oos_sharpe": 1.942,
+          "is_trades": 319,
+          "oos_trades": 103,
+          "is_return_daily_pct": 0.1639,
+          "oos_return_daily_pct": 0.2874,
+          "is_max_dd": -59.29,
+          "oos_max_dd": -30.43,
+          "is_win_rate": 42.0,
+          "oos_win_rate": 45.6,
+          "is_pf": 1.25,
+          "oos_pf": 1.61,
+          "perm_p_value": 0.044,
+          "perm_significant": "True"
+        }
+      ],
+      "verdict": "SUSPICIOUS: All significant configs are SUI-only (known OOS trend bias)"
+    },
+    "SpectralEntropy": {
+      "configs_tested": 576,
+      "healthy_count": 11,
+      "perm_significant_count": 0,
+      "perm_significant": [],
+      "verdict": "FAIL: No configs pass IS/OOS + permutation test"
+    },
+    "WaveletEnergy": {
+      "configs_tested": 540,
+      "healthy_count": 0,
+      "perm_significant_count": 0,
+      "perm_significant": [],
+      "verdict": "FAIL: No configs pass IS/OOS + permutation test"
+    }
+  },
+  "overall_verdict": "SUSPICIOUS: 1 configs pass permutation but ALL are SUI-only. Likely OOS trend bias, not genuine spectral edge.",
+  "conclusion": "DominantCycle: SUSPICIOUS: All significant configs are SUI-only (known OOS trend bias) | SpectralEntropy: FAIL: No configs pass IS/OOS + permutation test | WaveletEnergy: FAIL: No configs pass IS/OOS + permutation test"
+}

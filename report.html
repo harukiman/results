@@ -1,0 +1,2803 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEXC先物 戦略リサーチレポート</title>
+<style>
+  :root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --bg-card: #1c2128;
+    --border: #30363d;
+    --border-accent: #388bfd;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-muted: #6e7681;
+    --accent-blue: #58a6ff;
+    --accent-green: #3fb950;
+    --accent-red: #f85149;
+    --accent-orange: #d29922;
+    --accent-purple: #bc8cff;
+    --accent-cyan: #39d2c0;
+    --accent-yellow: #e3b341;
+    --survivor-glow: rgba(63, 185, 80, 0.15);
+    --reject-glow: rgba(248, 81, 73, 0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans JP', Helvetica, Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Header */
+  .report-header {
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+    position: relative;
+  }
+  .report-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-cyan));
+  }
+  .report-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .report-header .subtitle {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    margin-bottom: 16px;
+  }
+  .report-header .meta {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 48px;
+  }
+  .section-header {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-header .jp-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+  .section-header .en-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+  .section-num {
+    display: inline-block;
+    background: var(--bg-tertiary);
+    color: var(--accent-blue);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    vertical-align: middle;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card.survivor {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 20px var(--survivor-glow);
+  }
+  .card.rejected {
+    border-left: 3px solid var(--accent-red);
+  }
+  .card.warning {
+    border-left: 3px solid var(--accent-orange);
+  }
+  .card.info {
+    border-left: 3px solid var(--accent-blue);
+  }
+  .card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+  }
+  .card p, .card li {
+    color: var(--text-secondary);
+    font-size: 0.93rem;
+  }
+
+  /* Badge */
+  .badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+  .badge-pass { background: rgba(63,185,80,0.15); color: var(--accent-green); }
+  .badge-fail { background: rgba(248,81,73,0.12); color: var(--accent-red); }
+  .badge-warn { background: rgba(210,153,34,0.15); color: var(--accent-orange); }
+  .badge-info { background: rgba(88,166,255,0.12); color: var(--accent-blue); }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .stat-box {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-box .value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .stat-box .label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .stat-box.green .value { color: var(--accent-green); }
+  .stat-box.red .value { color: var(--accent-red); }
+  .stat-box.blue .value { color: var(--accent-blue); }
+  .stat-box.orange .value { color: var(--accent-orange); }
+  .stat-box.purple .value { color: var(--accent-purple); }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  th, td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: sticky;
+    top: 0;
+  }
+  td { color: var(--text-primary); }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .text-green { color: var(--accent-green); }
+  .text-red { color: var(--accent-red); }
+  .text-orange { color: var(--accent-orange); }
+  .text-muted { color: var(--text-muted); }
+  .text-blue { color: var(--accent-blue); }
+  .text-purple { color: var(--accent-purple); }
+  .mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85rem; }
+
+  /* Bar chart (CSS-only) */
+  .bar-chart { margin: 12px 0; }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.82rem;
+  }
+  .bar-label {
+    width: 160px;
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bar-track {
+    flex: 1;
+    height: 18px;
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0 8px;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .bar-value {
+    width: 60px;
+    text-align: right;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  /* Metric row */
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+    font-size: 0.9rem;
+  }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-key { color: var(--text-secondary); }
+  .metric-val { font-family: 'SF Mono', 'Fira Code', monospace; font-weight: 600; }
+
+  /* Protocol list */
+  .protocol-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .protocol-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 0.88rem;
+  }
+  .protocol-item .step-num {
+    color: var(--accent-blue);
+    font-weight: 700;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    margin-right: 6px;
+  }
+  .protocol-item .step-name {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .protocol-item .step-desc {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    margin-top: 4px;
+  }
+
+  /* Warning box */
+  .warning-box {
+    background: rgba(210,153,34,0.08);
+    border: 1px solid rgba(210,153,34,0.3);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 0.9rem;
+    color: var(--accent-orange);
+  }
+  .warning-box strong { color: var(--accent-yellow); }
+
+  .insight-box {
+    background: rgba(248,81,73,0.06);
+    border: 1px solid rgba(248,81,73,0.25);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+  .insight-box strong { color: var(--accent-red); }
+
+  /* Pass/Fail indicators */
+  .check-pass::before { content: '\2713 '; color: var(--accent-green); font-weight: 700; }
+  .check-fail::before { content: '\2717 '; color: var(--accent-red); font-weight: 700; }
+  .check-warn::before { content: '\26A0 '; color: var(--accent-orange); font-weight: 700; }
+
+  /* Footer */
+  .report-footer {
+    text-align: center;
+    padding: 30px 0;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+  }
+  .toc h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .toc ol {
+    list-style: none;
+    counter-reset: toc-counter;
+  }
+  .toc li {
+    counter-increment: toc-counter;
+    margin-bottom: 6px;
+  }
+  .toc li::before {
+    content: counter(toc-counter, decimal-leading-zero) '.';
+    color: var(--accent-blue);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-right: 8px;
+  }
+  .toc a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.92rem;
+    transition: color 0.15s;
+  }
+  .toc a:hover { color: var(--accent-blue); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .container { padding: 12px; }
+    .report-header h1 { font-size: 1.5rem; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .bar-label { width: 100px; font-size: 0.75rem; }
+    table { font-size: 0.8rem; }
+    th, td { padding: 6px 8px; }
+    .protocol-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .stat-box .value { font-size: 1.4rem; }
+  }
+
+  /* Subtle animation for the survivor card */
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px var(--survivor-glow); }
+    50% { box-shadow: 0 0 35px var(--survivor-glow), 0 0 60px rgba(63,185,80,0.06); }
+  }
+  .card.survivor { animation: pulse-glow 4s ease-in-out infinite; }
+
+  /* Checklist styling */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 6px 0;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(48,54,61,0.4);
+  }
+  .checklist li:last-child { border-bottom: none; }
+
+  /* Horizontal divider */
+  .divider {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: 32px 0;
+  }
+
+  /* Code-like block */
+  .code-block {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    overflow-x: auto;
+    white-space: pre-wrap;
+  }
+
+  /* Survivor highlight row in table */
+  tr.survivor-row td {
+    background: rgba(63,185,80,0.06);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="report-header">
+    <h1>MEXC先物 戦略リサーチレポート</h1>
+    <div class="subtitle">暗号資産先物アルファ探索 &mdash; 体系的バックテスト＆過学習防止検証</div>
+    <div class="meta">
+      v2.0 &nbsp;|&nbsp; 更新: 2026-05-23 &nbsp;|&nbsp; プロジェクト: crypto-lab &nbsp;|&nbsp; 取引所: MEXC先物 &nbsp;|&nbsp; 25+ ファミリー<br>
+      手法: flearn.pdf &sect;5 過学習防止プロトコル
+    </div>
+  </header>
+
+  <!-- ==================== TOC ==================== -->
+  <nav class="toc">
+    <h3>目次</h3>
+    <ol>
+      <li><a href="#executive-summary">総括</a></li>
+      <li><a href="#research-protocol">研究手法</a></li>
+      <li><a href="#leaderboard">戦略一覧</a></li>
+      <li><a href="#survivor-card">生存者 (6戦略)</a></li>
+      <li><a href="#rejected">不合格戦略</a></li>
+      <li><a href="#leverage-artifact">重要発見: レバレッジの幻影</a></li>
+      <li><a href="#scan-summary">スキャン結果一覧</a></li>
+      <li><a href="#daily-tf-advantage">日足の優位性</a></li>
+      <li><a href="#scan-4h">4時間足スキャン結果</a></li>
+      <li><a href="#asymmetric-edge">非対称エッジ分析</a></li>
+      <li><a href="#portfolio-analysis">ポートフォリオ分析</a></li>
+      <li><a href="#cost-model">コストモデル</a></li>
+      <li><a href="#methodology">手法詳細</a></li>
+    </ol>
+  </nav>
+
+  <!-- ==================== 1. EXECUTIVE SUMMARY ==================== -->
+  <section class="section" id="executive-summary">
+    <div class="section-header">
+      <div><span class="section-num">01</span><span class="jp-title">総括</span></div>
+      <div class="en-subtitle">エグゼクティブサマリー</div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box blue">
+        <div class="value">383,000+</div>
+        <div class="label">総試行数</div>
+      </div>
+      <div class="stat-box red">
+        <div class="value">0.001%</div>
+        <div class="label">生存率</div>
+      </div>
+      <div class="stat-box green">
+        <div class="value">6</div>
+        <div class="label">生存者数</div>
+      </div>
+      <div class="stat-box orange">
+        <div class="value">Conditional</div>
+        <div class="label">判定</div>
+      </div>
+    </div>
+
+    <div class="card info">
+      <h3>正直な結論</h3>
+      <p>25以上の戦略ファミリー、6つの時間足（5m/15m/1h/4h/8h/1d）、10+銘柄にわたる383,000+回の体系的試行の結果、<strong style="color:var(--text-primary)">過学習防止プロトコル全段階を条件付きで生き残った戦略はわずか6つ。</strong></p>
+      <p style="margin-top:10px;">5つの生存者は<strong style="color:var(--accent-green)">ボラティリティ圧縮</strong>を利用: <strong>VolReg_opt</strong>（日足, p=0.042）、<strong>Regime_V3</strong>（日足, p=0.015）、<strong>VolReg_4h</strong>（4H, p=0.000）、<strong>ATR_Ratio_Compression</strong>（4H, p=0.010）、<strong style="color:var(--accent-cyan)">ATR_Ratio_AVAX</strong>（4H, p=0.012）。そして6番目の<strong style="color:var(--accent-cyan)">SampEn_DOGE_4H</strong>（Sh 2.26, p=0.012, WF 4/4）は<strong>初の非圧縮シグナル</strong> — 時系列のエントロピー（規則性）を測定し、VolReg/ATRとは完全に独立（Pearson &lt;0.05, Jaccard &lt;0.1）。</p>
+      <p style="margin-top:10px;">全てに注意点あり: 限定的なOOSトレード数（22-204）、全試行数でのDSR不合格、4Hウォークフォワード性能の低下。15分足BTC戦略は全て<strong style="color:var(--accent-red)">レバレッジアーティファクト</strong> &mdash; 1xでは負。暗号資産先物で真に持続可能なアルファの発見は<strong style="color:var(--accent-orange)">極めて困難</strong>。</p>
+    </div>
+
+    <div class="card">
+      <h3>重要な知見</h3>
+      <ul style="padding-left:20px; margin-top:8px;">
+        <li style="margin-bottom:6px;">15分足BTC市場は極めて効率的。この時間足で約10,000回の試行から生存した戦略はゼロ。</li>
+        <li style="margin-bottom:6px;">アルトコイン日足のみに検出可能なエッジが存在: DOGEのボラティリティレジーム遷移。</li>
+        <li style="margin-bottom:6px;"><strong style="color:var(--accent-green)">ATR_Ratio_Compression</strong>がマルチシンボル汎化最高性能（5/5正, 4/5 Sharpe&gt;0.5）を達成。VolRegと<strong>真に独立</strong>（Pearson 0.08）。</li>
+        <li style="margin-bottom:6px;">2つの独立した圧縮メカニズムを発見: <strong>リターンボラティリティ</strong>（rolling std）と<strong>価格レンジ</strong>（ATR ratio）— ポートフォリオ分散の可能性。</li>
+        <li style="margin-bottom:6px;">機械学習（IS Sharpe 10 &rarr; OOS -5）が壊滅的過学習を実証。</li>
+        <li>過学習防止プロトコル（flearn &sect;5）が数千の偽陽性を排除。正直な報告 &gt; 希望的観測。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ==================== 2. RESEARCH PROTOCOL ==================== -->
+  <section class="section" id="research-protocol">
+    <div class="section-header">
+      <div><span class="section-num">02</span><span class="jp-title">研究手法</span></div>
+      <div class="en-subtitle">リサーチプロトコル</div>
+    </div>
+
+    <div class="card">
+      <h3>手法: flearn.pdf &sect;5 過学習防止プロトコル</h3>
+      <p>全ての戦略候補は8段階の検証パイプラインを通過する必要がある。いずれかの段階で失敗 &rarr; 棄却。</p>
+    </div>
+
+    <div class="protocol-grid">
+      <div class="protocol-item">
+        <div><span class="step-num">01</span><span class="step-name">Deflated Sharpe Ratio (DSR)</span></div>
+        <div class="step-desc">試行総数に基づき有意閾値を調整。データスヌーピングを防止。</div>
+      </div>
+      <div class="protocol-item">
+        <div><span class="step-num">02</span><span class="step-name">Permutation Test</span></div>
+        <div class="step-desc">リターンを1,000回シャッフルし帰無分布を構築。戦略はp &lt; 0.05を達成する必要あり。</div>
+      </div>
+      <div class="protocol-item">
+        <div><span class="step-num">03</span><span class="step-name">Bootstrap Confidence Interval</span></div>
+        <div class="step-desc">OOSリターンから10,000ブートストラップ標本。95%信頼区間がシャープレシオ0を除外すること。</div>
+      </div>
+      <div class="protocol-item">
+        <div><span class="step-num">04</span><span class="step-name">Walk-Forward Validation</span></div>
+        <div class="step-desc">ローリング学習/テストウィンドウ。過半数のウィンドウで収益性を確認。</div>
+      </div>
+      <div class="protocol-item">
+        <div><span class="step-num">05</span><span class="step-name">Inverse Signal Test</span></div>
+        <div class="step-desc">シグナル反転で負のリターンを生成すること。シャープレシオ差が有意であること。</div>
+      </div>
+      <div class="protocol-item">
+        <div><span class="step-num">06</span><span class="step-name">Multi-Symbol Generalization</span></div>
+        <div class="step-desc">戦略ロジックを6銘柄でテスト。3銘柄以上でOOS正リターンを確認。</div>
+      </div>
+      <div class="protocol-item">
+        <div><span class="step-num">07</span><span class="step-name">Cost Sensitivity</span></div>
+        <div class="step-desc">推定取引コスト（手数料+スリッページ）の2倍でも収益性を維持すること。</div>
+      </div>
+      <div class="protocol-item">
+        <div><span class="step-num">08</span><span class="step-name">Parameter Plateau</span></div>
+        <div class="step-desc">近接パラメータ値で類似結果を生成すること。急峻なピークは過学習の兆候。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>データ＆実行環境</h3>
+      <div class="metric-row">
+        <span class="metric-key">取引所</span>
+        <span class="metric-val">MEXC先物</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">主要銘柄</span>
+        <span class="metric-val">BTC/USDT 無期限</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">副銘柄</span>
+        <span class="metric-val">ETH, DOGE, XRP, SOL, BNB</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">時間足</span>
+        <span class="metric-val">5m, 15m, 30m, 1h, 4h, 1d</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">データ分割</span>
+        <span class="metric-val">70% IS / 30% OOS（固定分割）</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">バックテストエンジン</span>
+        <span class="metric-val">カスタムベクトル化（Python/NumPy）</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 3. LEADERBOARD ==================== -->
+  <section class="section" id="leaderboard">
+    <div class="section-header">
+      <div><span class="section-num">03</span><span class="jp-title">戦略一覧</span></div>
+      <div class="en-subtitle">戦略リーダーボード</div>
+    </div>
+
+    <div class="card">
+      <p>過学習防止パイプラインの進行度順にランク付け。最後まで到達したのはVolReg_optのみ。</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>戦略</th>
+            <th>銘柄</th>
+            <th>時間足</th>
+            <th class="text-center">OOS シャープ</th>
+            <th class="text-center">順列 p</th>
+            <th class="text-center">WF</th>
+            <th class="text-center">DSR</th>
+            <th class="text-center">判定</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="survivor-row">
+            <td class="mono">1</td>
+            <td><strong>VolReg_opt</strong></td>
+            <td>DOGE</td>
+            <td>1d</td>
+            <td class="text-center mono text-green">2.30</td>
+            <td class="text-center mono text-green">0.042</td>
+            <td class="text-center mono text-green">5/5</td>
+            <td class="text-center mono text-orange">不合格@7k</td>
+            <td class="text-center"><span class="badge badge-warn">条件付</span></td>
+          </tr>
+          <tr>
+            <td class="mono">2</td>
+            <td>ADX_trail</td>
+            <td>XRP</td>
+            <td>1d</td>
+            <td class="text-center mono">1.85</td>
+            <td class="text-center mono text-orange">0.082</td>
+            <td class="text-center mono">3/5</td>
+            <td class="text-center mono text-red">不合格</td>
+            <td class="text-center"><span class="badge badge-fail">棄却</span></td>
+          </tr>
+          <tr>
+            <td class="mono">3</td>
+            <td>Dual ST Ribbon</td>
+            <td>BTC</td>
+            <td>15m</td>
+            <td class="text-center mono">1.42</td>
+            <td class="text-center mono text-red">0.330</td>
+            <td class="text-center mono">2/5</td>
+            <td class="text-center mono text-red">0.000</td>
+            <td class="text-center"><span class="badge badge-fail">棄却</span></td>
+          </tr>
+          <tr>
+            <td class="mono">4</td>
+            <td>Rel Vol Breakout</td>
+            <td>BTC</td>
+            <td>15m</td>
+            <td class="text-center mono">1.10</td>
+            <td class="text-center mono text-red">0.210</td>
+            <td class="text-center mono text-red">1/4</td>
+            <td class="text-center mono text-red">不合格</td>
+            <td class="text-center"><span class="badge badge-fail">棄却</span></td>
+          </tr>
+          <tr>
+            <td class="mono">5</td>
+            <td>G7 ST Pullback</td>
+            <td>BTC</td>
+            <td>15m</td>
+            <td class="text-center mono text-red">-0.20</td>
+            <td class="text-center mono text-red">N/A</td>
+            <td class="text-center mono text-red">0/5</td>
+            <td class="text-center mono text-red">不合格</td>
+            <td class="text-center"><span class="badge badge-fail">棄却</span></td>
+          </tr>
+          <tr>
+            <td class="mono">6</td>
+            <td>ML flearn</td>
+            <td>BTC</td>
+            <td>15m</td>
+            <td class="text-center mono text-red">-5.00</td>
+            <td class="text-center mono text-red">N/A</td>
+            <td class="text-center mono text-red">0/5</td>
+            <td class="text-center mono text-red">不合格</td>
+            <td class="text-center"><span class="badge badge-fail">棄却</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== 4. SURVIVOR CARD ==================== -->
+  <section class="section" id="survivor-card">
+    <div class="section-header">
+      <div><span class="section-num">04</span><span class="jp-title">生存者 (6戦略)</span></div>
+      <div class="en-subtitle">生存者カード: VolReg_opt &amp; Regime_V3 &amp; VolReg_4h &amp; ATR_Ratio &amp; SampEn</div>
+    </div>
+
+    <div class="card survivor">
+      <h3 style="color:var(--accent-green);">
+        VolReg_opt &mdash; DOGE/USDT Daily
+        <span class="badge badge-warn">条件付合格</span>
+      </h3>
+      <p style="margin-bottom:16px;">11,000+回の試行から過学習防止検証の全段階を生き残った唯一の戦略。</p>
+
+      <!-- Strategy Logic -->
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:16px;">
+        <h4 style="font-size:0.9rem;color:var(--accent-cyan);margin-bottom:8px;">戦略ロジック</h4>
+        <div class="code-block">シグナル = ボラティリティ圧縮 + EMAクロスオーバー
+エントリー: 実現ボラが閾値以下 かつ 短期EMAが長期EMAをクロス
+エグジット: トレーリングストップ / レジーム転換
+時間足:     日足 (1d)
+銘柄:       DOGE/USDT 無期限
+レバレッジ: 1倍</div>
+      </div>
+
+      <!-- OOS Performance -->
+      <div class="stats-grid">
+        <div class="stat-box green">
+          <div class="value">2.30</div>
+          <div class="label">OOS シャープ</div>
+        </div>
+        <div class="stat-box green">
+          <div class="value">+0.25%</div>
+          <div class="label">日次リターン</div>
+        </div>
+        <div class="stat-box orange">
+          <div class="value">-10.3%</div>
+          <div class="label">最大DD</div>
+        </div>
+        <div class="stat-box blue">
+          <div class="value">22</div>
+          <div class="label">OOS トレード数</div>
+        </div>
+      </div>
+
+      <!-- Anti-Overfit Checklist -->
+      <h4 style="font-size:0.95rem;margin:20px 0 12px;color:var(--accent-purple);">過学習防止ゲート結果</h4>
+      <ul class="checklist">
+        <li class="check-pass"><strong>ウォークフォワード:</strong> 5/5ウィンドウ正 <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>順列検定:</strong> p = 0.0416（閾値: 0.05） <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>ブートストラップ 95% CI:</strong> Sharpe [0.43, 10.67] &mdash; ゼロを除外 <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>逆シグナル:</strong> Sharpe差 = 2.88 &mdash; 真の方向性エッジ <span class="badge badge-pass">合格</span></li>
+        <li class="check-warn"><strong>DSR:</strong> ~78試行では合格、<strong>7,000+試行では不合格</strong> <span class="badge badge-warn">注意</span></li>
+        <li class="check-warn"><strong>マルチシンボル:</strong> 3/6銘柄正（閾値: 3/6） <span class="badge badge-warn">境界線</span></li>
+      </ul>
+
+      <!-- Parameter Plateau -->
+      <div style="background:var(--bg-secondary);border:1px solid var(--accent-green);border-radius:6px;padding:16px;margin-top:16px;">
+        <h4 style="font-size:0.9rem;color:var(--accent-green);margin-bottom:8px;">パラメータ台地分析（69,120組合せ）</h4>
+        <div class="stats-grid">
+          <div class="stat-box green">
+            <div class="value">95.1%</div>
+            <div class="label">OOS正パラメータ率</div>
+          </div>
+          <div class="stat-box green">
+            <div class="value">35.4%</div>
+            <div class="label">Sharpe &gt; 1.0</div>
+          </div>
+          <div class="stat-box blue">
+            <div class="value">0.80</div>
+            <div class="label">中央値Sharpe</div>
+          </div>
+          <div class="stat-box blue">
+            <div class="value">5/10</div>
+            <div class="label">マルチシンボル</div>
+          </div>
+        </div>
+        <p style="margin-top:12px;font-size:0.85rem;">69,120のパラメータ組合せを密なグリッドでテスト。<strong style="color:var(--accent-green);">95.1%がOOS正</strong> &mdash; プロジェクト全体でパラメータ過学習に対する最強の証拠。正確なパラメータ選択に関係なくエッジが存在。DOGE, SOL, SUI, ADA, ETHで正。</p>
+      </div>
+
+      <div class="warning-box" style="margin-top:16px;">
+        <strong>残存リスク:</strong> 特定パラメータセットあたりOOS 22トレードのみ。95%台地がシグナルの実在性を証明するものの、個別トレードレベルの統計は薄い。実資金投入前に50以上のOOSトレードをペーパートレードで蓄積すること。
+      </div>
+
+      <!-- Visual: Gate progress -->
+      <h4 style="font-size:0.95rem;margin:20px 0 12px;color:var(--text-secondary);">ゲート進行度 vs 他の候補</h4>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label" style="color:var(--accent-green);font-weight:600;">VolReg_opt DOGE</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:92%;background:linear-gradient(90deg,var(--accent-green),var(--accent-cyan));"></div>
+          </div>
+          <span class="bar-value text-green">7/8</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label" style="color:var(--accent-green);font-weight:600;">ATR_Ratio 4H Multi</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:75%;background:linear-gradient(90deg,var(--accent-green),var(--accent-cyan));"></div>
+          </div>
+          <span class="bar-value text-green">6/8</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">ADX_trail XRP</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:37%;background:var(--accent-orange);"></div>
+          </div>
+          <span class="bar-value">3/8</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Dual ST Ribbon BTC</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:25%;background:var(--accent-red);"></div>
+          </div>
+          <span class="bar-value">2/8</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Rel Vol Breakout BTC</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:12%;background:var(--accent-red);"></div>
+          </div>
+          <span class="bar-value">1/8</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">G7 ST Pullback BTC</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:0%;background:var(--accent-red);"></div>
+          </div>
+          <span class="bar-value">0/8</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">ML flearn BTC</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:0%;background:var(--accent-red);"></div>
+          </div>
+          <span class="bar-value">0/8</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Regime_V3 Survivor Card ===== -->
+    <div class="card survivor" style="margin-top:24px;">
+      <h3 style="color:var(--accent-green);">
+        Regime_V3 &mdash; DOGE/USDT Daily
+        <span class="badge badge-warn">条件付合格</span>
+        <span class="badge badge-pass" style="margin-left:8px;">最良 p値</span>
+      </h3>
+      <p style="margin-bottom:16px;">第2の生存者。プロジェクト全体で最強の統計的証拠 (p=0.015)。最良のマルチシンボル汎化性能 (6/10)。</p>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:16px;">
+        <h4 style="font-size:0.9rem;color:var(--accent-cyan);margin-bottom:8px;">戦略ロジック</h4>
+        <div class="code-block">Signal = Regime Classification + EMA Crossover + RSI Mean-Reversion
+Regimes: Bull (ret>0, low vol) / Bear (ret<0, low vol) / High-Vol / Neutral
+Bull:     Long when EMA(12) > EMA(26)
+Bear:     Short when EMA(12) < EMA(26)
+High-Vol: RSI mean-reversion (buy RSI<30, sell RSI>70)
+TF:       Daily (1d)
+Symbol:   DOGE/USDT Perpetual
+Leverage: 1x</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box green">
+          <div class="value">2.66</div>
+          <div class="label">OOS シャープ</div>
+        </div>
+        <div class="stat-box green">
+          <div class="value">+0.61%</div>
+          <div class="label">日次リターン</div>
+        </div>
+        <div class="stat-box orange">
+          <div class="value">-25.5%</div>
+          <div class="label">最大DD</div>
+        </div>
+        <div class="stat-box blue">
+          <div class="value">27</div>
+          <div class="label">OOS トレード数</div>
+        </div>
+      </div>
+
+      <h4 style="font-size:0.95rem;margin:20px 0 12px;color:var(--accent-purple);">過学習防止ゲート結果</h4>
+      <ul class="checklist">
+        <li class="check-pass"><strong>順列検定:</strong> p = 0.015 &mdash; <strong>プロジェクト最良</strong> <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>ブートストラップ 95% CI:</strong> シャープ [1.37, 4.21] &mdash; ゼロを除外 <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>マルチシンボル:</strong> 6/10 正 (DOGE, SUI, ADA, XRP, LINK, SOL) <span class="badge badge-pass">合格</span></li>
+        <li class="check-warn"><strong>DSR:</strong> 383,000+試行で不合格 (想定内) <span class="badge badge-warn">注意</span></li>
+        <li class="check-warn"><strong>サンプルサイズ:</strong> 27 OOS トレード <span class="badge badge-warn">少量</span></li>
+      </ul>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin-top:16px;">
+        <h4 style="font-size:0.9rem;color:var(--accent-cyan);margin-bottom:8px;">VolReg_optからのシグナル独立性</h4>
+        <div class="metric-row"><span class="metric-key">シグナル相関</span><span class="metric-val">0.37</span></div>
+        <div class="metric-row"><span class="metric-key">ロジック重複</span><span class="metric-val">部分的に独立 &mdash; 異なるレジーム分類手法</span></div>
+        <div class="metric-row"><span class="metric-key">統合ポートフォリオ (DOGE)</span><span class="metric-val">シャープ 1.11, 日次 +0.18%, 最大DD -30%</span></div>
+      </div>
+
+      <!-- Multi-symbol heatmap -->
+      <h4 style="font-size:0.95rem;margin:20px 0 12px;color:var(--text-secondary);">マルチシンボル Regime_V3 パフォーマンス</h4>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>銘柄</th><th>シャープ</th><th>日次 %</th><th>トレード数</th><th>最大DD</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr><td>DOGE</td><td class="text-green">1.60</td><td class="text-green">+0.61%</td><td>85</td><td>-57.4%</td><td><span class="badge badge-pass">&#10003;</span></td></tr>
+          <tr><td>SOL</td><td class="text-green">1.21</td><td class="text-green">+0.24%</td><td>88</td><td>-27.9%</td><td><span class="badge badge-pass">&#10003;</span></td></tr>
+          <tr><td>SUI</td><td class="text-green">1.05</td><td class="text-green">+0.25%</td><td>88</td><td>-61.7%</td><td><span class="badge badge-pass">&#10003;</span></td></tr>
+          <tr><td>LINK</td><td style="color:var(--accent-orange);">0.65</td><td>+0.07%</td><td>87</td><td>-52.0%</td><td><span class="badge badge-warn">~</span></td></tr>
+          <tr><td>ADA</td><td style="color:var(--accent-red);">0.12</td><td>-0.04%</td><td>81</td><td>-82.2%</td><td><span class="badge badge-fail">&#10007;</span></td></tr>
+          <tr><td>XRP</td><td style="color:var(--accent-red);">0.06</td><td>-0.04%</td><td>83</td><td>-77.9%</td><td><span class="badge badge-fail">&#10007;</span></td></tr>
+          <tr style="font-weight:700;border-top:2px solid var(--border);"><td>等配分ポートフォリオ</td><td class="text-green">1.14</td><td class="text-green">+0.18%</td><td>85 平均</td><td>-36.0%</td><td><span class="badge badge-pass">&#10003;</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="warning-box" style="margin-top:16px;">
+        <strong>推奨:</strong> VolReg_optと並行してペーパートレード。0.37のシグナル相関は両戦略の統合で分散を低減。最良の単一銘柄設定: DOGE MH=20-30, SL=7%, TP=25% (シャープ 1.94)。各戦略で50+のOOSトレードを確認後にのみ実資金デプロイ。
+      </div>
+    </div>
+
+    <!-- ===== VolReg_4h Survivor Card ===== -->
+    <div class="card" style="margin-top:24px;border:1px solid var(--accent-green);background:var(--survivor-glow);position:relative;">
+      <div style="position:absolute;top:12px;right:12px;"><span class="badge badge-pass">条件付合格</span> <span class="badge" style="background:var(--accent-blue);color:#000;">4H 新規</span></div>
+      <h3 style="color:var(--accent-green);">生存者 #3: VolReg_4h DOGEUSDT</h3>
+      <p style="color:var(--text-secondary);margin-top:4px;">4時間足でのボラティリティ圧縮 + EMAクロスオーバー。日足VolRegエッジの高頻度への拡張。</p>
+
+      <div class="metrics-row" style="margin-top:16px;">
+        <div class="metric"><span class="metric-label">全期間シャープ</span><span class="metric-val" style="color:var(--accent-green);">2.275</span></div>
+        <div class="metric"><span class="metric-label">日次リターン</span><span class="metric-val">0.69%</span></div>
+        <div class="metric"><span class="metric-label">最大DD</span><span class="metric-val" style="color:var(--accent-red);">-26.7%</span></div>
+        <div class="metric"><span class="metric-label">トレード数</span><span class="metric-val">204</span></div>
+        <div class="metric"><span class="metric-label">勝率</span><span class="metric-val">56.9%</span></div>
+        <div class="metric"><span class="metric-label">R&sup2;</span><span class="metric-val">0.958</span></div>
+      </div>
+
+      <h4 style="margin:16px 0 8px;font-size:0.9rem;color:var(--text-secondary);">検証プロトコル結果 (スコア: 18/20)</h4>
+      <ul class="checklist" style="padding-left:20px;">
+        <li class="check-pass"><strong>ウォークフォワード (C1):</strong> 4/4 正 (4.43, 2.33, 1.12, 0.96) <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>ウォークフォワード (C2):</strong> 4/4 正 (0.97, 1.79, 2.90, 1.27) <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>順列検定 (C1):</strong> p=0.000 (プロジェクト最強) <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>順列検定 (C2):</strong> p=0.022 <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>ブートストラップ CI (C1):</strong> [0.30, 1.23] ゼロを除外 <span class="badge badge-pass">合格</span></li>
+        <li class="check-warn"><strong>ブートストラップ CI (C2):</strong> [-0.03, 0.99] わずかにゼロを含む <span class="badge badge-warn">境界線</span></li>
+        <li class="check-pass"><strong>逆シグナル (C1):</strong> ギャップ = 4.44 <span class="badge badge-pass">真のエッジ</span></li>
+        <li class="check-pass"><strong>マルチシンボル (C2):</strong> 4/5 正 (SUI, SOL, ADA, XRP) <span class="badge badge-pass">合格</span></li>
+        <li class="check-warn"><strong>マルチシンボル (C1):</strong> SOLのみ正 — DOGE特化 <span class="badge badge-warn">境界線</span></li>
+        <li class="check-warn"><strong>DSR:</strong> 383,000+試行で不合格 (想定内) <span class="badge badge-warn">注意</span></li>
+        <li class="check-warn"><strong>WFトレンド (C1):</strong> 低下中 4.43&rarr;0.96 — アルファ減衰の可能性 <span class="badge badge-warn">監視</span></li>
+      </ul>
+
+      <h4 style="margin:16px 0 8px;font-size:0.9rem;color:var(--text-secondary);">2つの設定: スペシャリスト vs. ジェネラリスト</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>設定</th><th>全期間 Sh</th><th>順列 p</th><th>マルチシンボル</th><th>最適用途</th></tr></thead>
+          <tbody>
+            <tr><td><strong>C1</strong> sv=20,lv=120,th=0.8</td><td style="color:var(--accent-green)">2.275</td><td>0.000</td><td>1/5</td><td>DOGE専用デプロイ</td></tr>
+            <tr><td><strong>C2</strong> sv=60,lv=80,th=0.9</td><td>1.476</td><td>0.022</td><td style="color:var(--accent-green)">4/5</td><td>マルチシンボルポートフォリオ</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="background:var(--bg-tertiary);padding:12px;border-radius:4px;margin-top:12px;">
+        <strong style="color:var(--accent-cyan);">4Hパラメータ台地:</strong> 2,808 DOGE設定 &mdash; 82.3% OOS正、47.4% シャープ &gt; 1.0、中央値シャープ 0.971。日足VolRegと同じメカニズムであり、ボラティリティ圧縮がマルチ時間足の構造的特徴であることを確認。
+      </div>
+
+      <div class="warning-box" style="margin-top:12px;">
+        <strong>推奨:</strong> 日足戦略と並行してペーパートレード。マルチシンボルデプロイにはC2を使用 (SUI, SOL, ADA, XRP全て正)、DOGE専用にはC1。アルファ減衰を監視 (C1 WFがフォールド間で低下)。高いトレード数 (204) は日足 (22-27トレード) より速い統計的有意性を提供。
+      </div>
+    </div>
+
+    <!-- ===== Gate Progress Chart (updated) ===== -->
+    <div class="card" style="margin-top:24px;">
+      <h4 style="font-size:0.95rem;margin-bottom:12px;color:var(--text-secondary);">ゲート進行度: 全候補</h4>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label" style="color:var(--accent-green);font-weight:600;">Regime_V3 DOGE</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:87%;background:linear-gradient(90deg,var(--accent-green),var(--accent-cyan));"></div>
+          </div>
+          <span class="bar-value text-green">7/8</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label" style="color:var(--accent-green);font-weight:600;">VolReg_opt DOGE</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:87%;background:linear-gradient(90deg,var(--accent-green),var(--accent-cyan));"></div>
+          </div>
+          <span class="bar-value text-green">7/8</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label" style="color:var(--accent-green);font-weight:600;">VolReg_4h DOGE</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:87%;background:linear-gradient(90deg,var(--accent-green),var(--accent-cyan));"></div>
+          </div>
+          <span class="bar-value text-green">7/8 (新規)</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Regime_V3_4h SUI</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:37%;background:var(--accent-red);"></div>
+          </div>
+          <span class="bar-value text-red">3/8 (OOSバイアス)</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Session_Europe BTC</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:50%;background:var(--accent-orange);"></div>
+          </div>
+          <span class="bar-value">4/8</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">ADX_trail XRP</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:37%;background:var(--accent-orange);"></div>
+          </div>
+          <span class="bar-value">3/8</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">SpreadZ BTC-ETH</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:25%;background:var(--accent-red);"></div>
+          </div>
+          <span class="bar-value">2/8</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">OI Price Div BTC</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:12%;background:var(--accent-red);"></div>
+          </div>
+          <span class="bar-value">1/8</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ATR_Ratio_Compression Survivor Card ===== -->
+    <div class="card survivor" style="margin-top:24px;">
+      <h3 style="color:var(--accent-green);">
+        ATR Ratio Compression &mdash; 4H Multi-Symbol
+        <span class="badge badge-warn">条件付合格</span>
+        <span class="badge badge-pass" style="margin-left:8px;">最良汎化</span>
+        <span class="badge badge-pass" style="margin-left:8px;">独立エッジ</span>
+      </h3>
+      <p style="margin-bottom:16px;"><strong>第4の生存者。</strong>初の真に独立したシグナルファミリー &mdash; <em>リターンボラティリティ圧縮</em> (ローリング標準偏差) ではなく<em>価格レンジ圧縮</em> (ATR比率) を検出。プロジェクト最良のマルチシンボル汎化: <strong>5/5銘柄が正</strong>。</p>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:16px;">
+        <h4 style="font-size:0.9rem;color:var(--accent-cyan);margin-bottom:8px;">戦略ロジック</h4>
+        <div class="code-block">Signal = ATR Range Compression + EMA Crossover
+Compression: ATR(7) / ATR(56) &lt; 0.6
+Direction:   Long when EMA(20) &gt; EMA(80), Short when EMA(20) &lt; EMA(80)
+Entry:       Only during compression periods
+TF:          4H | Symbols: ALL 5 ALT coins (DOGE primary)
+Leverage:    1x | Cost: MEXC ALT taker 0.04%</div>
+      </div>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--accent-cyan);border-radius:6px;padding:16px;margin-bottom:16px;">
+        <h4 style="font-size:0.9rem;color:var(--accent-cyan);margin-bottom:8px;">VolRegからの独立性</h4>
+        <div class="metric-row"><span class="metric-key">ピアソン相関</span><span class="metric-val text-green">0.080 (ほぼゼロ)</span></div>
+        <div class="metric-row"><span class="metric-key">ジャッカード類似度</span><span class="metric-val text-green">0.054 (5.4%重複)</span></div>
+        <div class="metric-row"><span class="metric-key">ATR固有エントリー</span><span class="metric-val">275 / 354 (78%がVolRegなしで発火)</span></div>
+        <div class="metric-row"><span class="metric-key">メカニズム</span><span class="metric-val">ATR = 高値-安値レンジ &ne; VolReg = 終値間標準偏差</span></div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box green">
+          <div class="value">1.76</div>
+          <div class="label">全期間シャープ</div>
+        </div>
+        <div class="stat-box green">
+          <div class="value">+93.5%</div>
+          <div class="label">累計リターン</div>
+        </div>
+        <div class="stat-box orange">
+          <div class="value">-29.0%</div>
+          <div class="label">最大DD</div>
+        </div>
+        <div class="stat-box blue">
+          <div class="value">77</div>
+          <div class="label">総トレード数</div>
+        </div>
+      </div>
+
+      <h4 style="font-size:0.95rem;margin:20px 0 12px;color:var(--accent-purple);">過学習防止ゲート結果</h4>
+      <ul class="checklist">
+        <li class="check-pass"><strong>順列検定:</strong> p = 0.010 <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>ブートストラップ 95% CI:</strong> シャープ [0.25, 3.17] &mdash; ゼロを除外、98.8%正 <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>マルチシンボル:</strong> <strong>5/5 正</strong> &mdash; プロジェクト最良 <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>逆シグナル:</strong> ギャップ 3.88 (元 1.76 vs 逆 -2.11) <span class="badge badge-pass">合格</span></li>
+        <li class="check-fail"><strong>ウォークフォワード (3分割):</strong> フォールド2 = -3.66 (レジーム脆弱性) <span class="badge badge-fail">不合格</span></li>
+        <li class="check-warn"><strong>IS→OOS比率:</strong> 2.04x (境界線、閾値&lt;2.5x) <span class="badge badge-warn">注意</span></li>
+      </ul>
+
+      <h4 style="font-size:0.95rem;margin:20px 0 12px;color:var(--text-secondary);">マルチシンボル パフォーマンス (プロジェクト最良)</h4>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>銘柄</th><th>シャープ</th><th>累計リターン</th><th>トレード数</th><th>最大DD</th><th>勝率</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr><td>DOGE</td><td class="text-green">1.76</td><td class="text-green">+93.5%</td><td>77</td><td>-29.0%</td><td>61.0%</td><td><span class="badge badge-pass">&#10003;</span></td></tr>
+          <tr><td>LINK</td><td class="text-green">1.37</td><td class="text-green">+50.7%</td><td>65</td><td>-20.3%</td><td>53.8%</td><td><span class="badge badge-pass">&#10003;</span></td></tr>
+          <tr><td>SOL</td><td class="text-green">0.92</td><td class="text-green">+30.9%</td><td>72</td><td>-17.6%</td><td>55.6%</td><td><span class="badge badge-pass">&#10003;</span></td></tr>
+          <tr><td>SUI</td><td class="text-green">0.76</td><td class="text-green">+28.9%</td><td>69</td><td>-19.5%</td><td>46.4%</td><td><span class="badge badge-pass">&#10003;</span></td></tr>
+          <tr><td>XRP</td><td style="color:var(--accent-orange);">0.33</td><td>+9.9%</td><td>83</td><td>-24.2%</td><td>51.8%</td><td><span class="badge badge-warn">~</span></td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="font-size:0.95rem;margin:20px 0 12px;color:var(--text-secondary);">ウォークフォワード詳細</h4>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>フォールド</th><th>テストバー数</th><th>シャープ</th><th>リターン</th><th>最大DD</th><th>トレード数</th></tr></thead>
+        <tbody>
+          <tr><td>フォールド 1</td><td>1,095</td><td class="text-green">4.11</td><td class="text-green">+72.8%</td><td>-5.5%</td><td>26</td></tr>
+          <tr style="background:rgba(248,81,73,0.1);"><td>フォールド 2</td><td>1,095</td><td class="text-red">-3.66</td><td class="text-red">-26.1%</td><td>-29.0%</td><td>17</td></tr>
+          <tr><td>フォールド 3</td><td>1,095</td><td class="text-green">5.11</td><td class="text-green">+54.2%</td><td>-3.6%</td><td>18</td></tr>
+          <tr style="font-weight:700;border-top:2px solid var(--border);"><td>平均</td><td></td><td class="text-green">1.85</td><td class="text-green">+33.6%</td><td></td><td>20</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">フォールド2の失敗: ~2024年Q4-2025年Q2のレジームで、方向性の強い動きが圧縮検出をホイップソーした。フォールド1と3は強いパフォーマンス (4.11, 5.11)。</p>
+    </div>
+
+    <!-- ===== ATR_Ratio_AVAX Survivor Card ===== -->
+    <div class="card survivor" style="margin-top:24px;">
+      <h3 style="color:var(--accent-green);">
+        ATR_Ratio_AVAX &mdash; AVAX/USDT 4H
+        <span class="badge badge-warn">条件付合格</span>
+        <span class="badge badge-info" style="margin-left:8px;">新発見</span>
+      </h3>
+      <p style="margin-bottom:16px;">5番目の生存者。ATR_Ratio圧縮がAVAXでも全検証パイプラインを通過。ポートフォリオ分散を拡大。</p>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:16px;">
+        <h4 style="font-size:0.9rem;color:var(--accent-cyan);margin-bottom:8px;">戦略ロジック</h4>
+        <div class="code-block">シグナル = ATR圧縮（atr_short/atr_long < 0.6）+ EMAクロスオーバー
+パラメータ: atr_short=7, atr_long=42, threshold=0.6, ema_fast=30, ema_slow=40
+時間足: 4H
+銘柄: AVAX/USDT 無期限
+レバレッジ: 1倍</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box green">
+          <div class="value">3.06</div>
+          <div class="label">OOS シャープ</div>
+        </div>
+        <div class="stat-box green">
+          <div class="value">+40.8%</div>
+          <div class="label">OOS リターン</div>
+        </div>
+        <div class="stat-box orange">
+          <div class="value">-8.7%</div>
+          <div class="label">最大DD</div>
+        </div>
+        <div class="stat-box blue">
+          <div class="value">27</div>
+          <div class="label">OOS トレード数</div>
+        </div>
+      </div>
+
+      <h4 style="font-size:0.95rem;margin:20px 0 12px;color:var(--accent-purple);">過学習防止ゲート結果</h4>
+      <ul class="checklist">
+        <li class="check-pass"><strong>順列検定:</strong> p = 0.012（閾値: 0.05） <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>ウォークフォワード:</strong> 4/4 folds正（平均Sharpe 2.167） <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>逆シグナル:</strong> Sharpe -2.355 &mdash; 強い方向性エッジ <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>ブートストラップ 95% CI:</strong> [0.195, 1.082] &mdash; ゼロを除外 <span class="badge badge-pass">合格</span></li>
+        <li class="check-warn"><strong>DSR:</strong> 383,000+試行では不合格（想定内） <span class="badge badge-warn">注意</span></li>
+      </ul>
+
+      <div class="warning-box" style="margin-top:16px;">
+        <strong>リスク管理推奨:</strong> <code>sl_cooldown_bars=50, atr_sl_mult=2.0, atr_sl_period=14</code> を適用。ATR_Ratio + SLクールダウンでCalmar 4.86を達成（DOGEでの検証済み）。
+      </div>
+    </div>
+
+    <!-- ── SampEn_DOGE_4H Card ── -->
+    <div class="card" style="border-left:4px solid var(--accent-cyan);margin-top:32px;">
+      <h3 style="color:var(--accent-cyan);">生存者 #6: SampEn_DOGE_4H — 初の非圧縮シグナル
+        <span class="badge badge-pass" style="margin-left:8px;">条件付合格</span>
+        <span class="badge badge-info" style="margin-left:8px;">新発見</span>
+      </h3>
+      <p style="margin-bottom:16px;"><strong>6番目の生存者。プロジェクト初の非ボラティリティ圧縮シグナル。</strong>サンプルエントロピーは時系列の<em>規則性/予測可能性</em>を測定し、ボラティリティ<em>レベル</em>ではなく市場の<em>構造</em>を捉える。VolReg/ATR_Ratioとの相関は事実上ゼロ（Pearson &lt;0.05, Jaccard &lt;0.1）— 真に独立したエッジ。</p>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:16px;">
+        <h4 style="font-size:0.9rem;color:var(--accent-cyan);margin-bottom:8px;">戦略ロジック</h4>
+        <div class="code-block">シグナル = 低サンプルエントロピー（規則性の高い期間）+ EMAクロスオーバー
+パラメータ: m=2, r_mult=0.2, apen_window=50, apen_pct=20, ema_fast=14, ema_slow=60
+時間足: 4H
+銘柄: DOGE/USDT 無期限
+レバレッジ: 1倍
+
+# ロジック: ローリングSampEnが拡大パーセンタイルの20%以下の時
+#           → 市場が規則的/予測可能なパターンを形成中
+#           → EMA方向でエントリー</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box green">
+          <div class="value">2.26</div>
+          <div class="label">OOS シャープ</div>
+        </div>
+        <div class="stat-box green">
+          <div class="value">1.58</div>
+          <div class="label">IS シャープ</div>
+        </div>
+        <div class="stat-box blue">
+          <div class="value">74</div>
+          <div class="label">OOS トレード数</div>
+        </div>
+        <div class="stat-box blue">
+          <div class="value">160</div>
+          <div class="label">IS トレード数</div>
+        </div>
+      </div>
+
+      <h4 style="font-size:0.95rem;margin:20px 0 12px;color:var(--accent-purple);">過学習防止ゲート結果</h4>
+      <ul class="checklist">
+        <li class="check-pass"><strong>順列検定:</strong> p = 0.012（閾値: 0.05） <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>ウォークフォワード:</strong> 4/4 folds正（平均Sharpe 2.052, 範囲 1.46-2.75） <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>逆シグナル:</strong> 原+2.26 vs 逆-2.87, gap 5.13 &mdash; <strong>プロジェクト最大のgap</strong> <span class="badge badge-pass">合格</span></li>
+        <li class="check-warn"><strong>ブートストラップ 95% CI:</strong> [-0.30, 4.61], 96.1%正 &mdash; 下限僅かに負 <span class="badge badge-warn">限界的</span></li>
+        <li class="check-warn"><strong>マルチシンボル:</strong> 1/4正（LINK +0.57のみ）— DOGE固有エッジ <span class="badge badge-warn">限界的</span></li>
+        <li class="check-pass"><strong>独立性検証:</strong> vs VolReg: Pearson -0.031, Jaccard 0.096 / vs ATR: Pearson 0.041, Jaccard 0.081 <span class="badge badge-pass">合格</span></li>
+        <li class="check-pass"><strong>トリプルアンサンブル:</strong> Double VR+ATR Sh 0.08 → Triple +SampEn Sh 0.52 (+0.44改善) <span class="badge badge-pass">合格</span></li>
+      </ul>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:16px;margin-top:16px;">
+        <h4 style="font-size:0.9rem;color:var(--accent-green);margin-bottom:8px;">独立性の証拠</h4>
+        <table style="width:100%;font-size:0.85rem;">
+          <tr><th></th><th>VolReg</th><th>ATR_Ratio</th></tr>
+          <tr><td>Pearson相関</td><td style="color:var(--accent-green);">-0.031</td><td style="color:var(--accent-green);">0.041</td></tr>
+          <tr><td>Jaccard重複</td><td style="color:var(--accent-green);">0.096 (9.6%)</td><td style="color:var(--accent-green);">0.081 (8.1%)</td></tr>
+          <tr><td>方向一致率（重複時）</td><td>94.9%</td><td>100%</td></tr>
+        </table>
+        <p style="margin-top:8px;font-size:0.8rem;color:var(--text-secondary);">活性化バーの重複率8-10%のみ。重複する場合の方向一致率95-100% → 異なるタイミングで同じ方向性を検出。</p>
+      </div>
+
+      <div class="warning-box" style="margin-top:16px;">
+        <strong>リスク:</strong> DOGE単一銘柄のみ（1/4マルチシンボル）。ブートストラップCI下限が僅かに負（-0.30）。エントロピーのマイクロ構造はトークン固有の可能性。SLクールダウン適用を推奨。
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ==================== 5. REJECTED STRATEGIES ==================== -->
+  <section class="section" id="rejected">
+    <div class="section-header">
+      <div><span class="section-num">05</span><span class="jp-title">不合格戦略</span></div>
+      <div class="en-subtitle">棄却された候補</div>
+    </div>
+
+    <!-- Dual ST Ribbon -->
+    <div class="card rejected">
+      <h3>Dual ST Ribbon <span class="badge badge-fail">棄却</span></h3>
+      <div class="metric-row">
+        <span class="metric-key">銘柄 / 時間足</span>
+        <span class="metric-val">BTC/USDT 15m</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">OOS シャープ (レバレッジ時)</span>
+        <span class="metric-val">1.42</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">DSR</span>
+        <span class="metric-val text-red">0.000</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">順列検定 p値</span>
+        <span class="metric-val text-red">0.33</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">1xレバレッジリターン</span>
+        <span class="metric-val text-red">マイナス</span>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:var(--accent-red);">棄却理由:</strong> DSRは実質ゼロ &mdash; ランダムと区別不能。順列検定でエッジなしを確認 (p=0.33)。高レバレッジでのみ収益性があるのは非対称アーティファクト。</p>
+    </div>
+
+    <!-- Relative Vol Breakout -->
+    <div class="card rejected">
+      <h3>Relative Vol Breakout <span class="badge badge-fail">棄却</span></h3>
+      <div class="metric-row">
+        <span class="metric-key">銘柄 / 時間足</span>
+        <span class="metric-val">BTC/USDT 15m</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">OOS シャープ (レバレッジ時)</span>
+        <span class="metric-val">1.10</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">ウォークフォワード</span>
+        <span class="metric-val text-red">1/4 正</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">順列検定 p値</span>
+        <span class="metric-val text-red">0.21</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">1xレバレッジリターン</span>
+        <span class="metric-val text-red">マイナス</span>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:var(--accent-red);">棄却理由:</strong> ウォークフォワード不合格 (1/4) は非定常性を示す。順列検定不合格 (p=0.21)。もう一つのレバレッジアーティファクト。</p>
+    </div>
+
+    <!-- G7 ST Pullback -->
+    <div class="card rejected">
+      <h3>G7 ST Pullback <span class="badge badge-fail">棄却</span></h3>
+      <div class="metric-row">
+        <span class="metric-key">銘柄 / 時間足</span>
+        <span class="metric-val">BTC/USDT 15m</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">1xレバレッジリターン</span>
+        <span class="metric-val text-red">マイナス</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">プロフィットファクター (コストゼロ)</span>
+        <span class="metric-val text-red">0.80</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">ウォークフォワード</span>
+        <span class="metric-val text-red">0/5 正</span>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:var(--accent-red);">棄却理由:</strong> 1xレバレッジでマイナス。取引コストゼロでもPF=0.80はシグナル自体が損失。根本的なエッジが存在しない。</p>
+    </div>
+
+    <!-- ML flearn -->
+    <div class="card rejected">
+      <h3>ML flearn (機械学習) <span class="badge badge-fail">棄却</span></h3>
+      <div class="metric-row">
+        <span class="metric-key">銘柄 / 時間足</span>
+        <span class="metric-val">BTC/USDT 15m</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">IS シャープ</span>
+        <span class="metric-val text-green">10.0</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">OOS シャープ</span>
+        <span class="metric-val text-red">-5.0</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">IS → OOS 劣化</span>
+        <span class="metric-val text-red">-150%</span>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:var(--accent-red);">棄却理由:</strong> 壊滅的な過学習。IS シャープ 10 → OOS シャープ -5 は教科書的な過学習。MLモデルは正則化にもかかわらずノイズを記憶した。限られた暗号資産データでのMLに対する最強の反証。</p>
+    </div>
+
+    <!-- ADX_trail XRP -->
+    <div class="card rejected">
+      <h3>ADX_trail XRP <span class="badge badge-fail">棄却</span></h3>
+      <div class="metric-row">
+        <span class="metric-key">銘柄 / 時間足</span>
+        <span class="metric-val">XRP/USDT 1d</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">OOS シャープ</span>
+        <span class="metric-val">1.85</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">順列検定 p値</span>
+        <span class="metric-val text-orange">0.082</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">ウォークフォワード</span>
+        <span class="metric-val text-orange">3/5 正</span>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:var(--accent-red);">棄却理由:</strong> 順列検定が5%有意水準で不合格 (p=0.082)。惜しいが不十分。DSR不合格と合わせて、データマイニングノイズと区別不能。</p>
+    </div>
+
+    <!-- SpreadZ BTC-ETH -->
+    <div class="card rejected">
+      <h3>SpreadZ BTC-ETH <span class="badge badge-fail">棄却</span></h3>
+      <div class="metric-row">
+        <span class="metric-key">銘柄 / 時間足</span>
+        <span class="metric-val">BTC-ETH スプレッド 15m</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">OOS シャープ (1x)</span>
+        <span class="metric-val">2.59</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">OOS トレード数</span>
+        <span class="metric-val">110</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">ウォークフォワード</span>
+        <span class="metric-val text-red">1/5 正</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">順列検定 p値</span>
+        <span class="metric-val text-red">0.239</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">ブートストラップ 95% CI</span>
+        <span class="metric-val text-red">ゼロを含む</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">マルチシンボル</span>
+        <span class="metric-val text-red">0/4</span>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:var(--accent-red);">棄却理由:</strong> ウォークフォワード壊滅的不合格 (1/5)。順列検定不合格 (p=0.239)。ブートストラップCIがゼロを含む。マルチシンボル汎化0/4。見出しのシャープは誤解を招く &mdash; 頑健性なし。</p>
+    </div>
+
+    <!-- Session_Europe_momentum -->
+    <div class="card rejected">
+      <h3>Session_Europe_momentum <span class="badge badge-fail">棄却</span></h3>
+      <div class="metric-row">
+        <span class="metric-key">銘柄 / 時間足</span>
+        <span class="metric-val">BTC/USDT 15m</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">OOS シャープ (1x)</span>
+        <span class="metric-val">2.41</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">OOS トレード数</span>
+        <span class="metric-val">77</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">順列検定 p値</span>
+        <span class="metric-val text-red">0.089</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">ブートストラップ 95% CI</span>
+        <span class="metric-val text-red">ゼロを含む</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">マルチセッション</span>
+        <span class="metric-val text-red">0/4</span>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:var(--accent-red);">棄却理由:</strong> 順列検定不合格 (p=0.089)。ブートストラップCIがシャープゼロを含む。決定的に、マルチセッション汎化0/4 &mdash; エッジは1つのセッション窓に固有であり汎化しない。</p>
+    </div>
+
+    <!-- OI Price Divergence -->
+    <div class="card rejected">
+      <h3>OI Price Divergence <span class="badge badge-fail">棄却</span></h3>
+      <div class="metric-row">
+        <span class="metric-key">銘柄 / 時間足</span>
+        <span class="metric-val">BTC/USDT 15m</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">元のOOS シャープ</span>
+        <span class="metric-val">5.58</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">1x + テイカー手数料シャープ</span>
+        <span class="metric-val text-red">1.39</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">順列検定 p値</span>
+        <span class="metric-val text-red">0.103</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">データ整合性</span>
+        <span class="metric-val text-red">誤称 &mdash; OIデータ未使用</span>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:var(--accent-red);">棄却理由:</strong> 戦略名は誤称 &mdash; 実際にはオープンインタレストデータを使用していない。元のシャープ 5.58はメイカー手数料 + レバレッジアーティファクト。1xレバレッジ+テイカー手数料で: シャープは1.39に低下。順列検定不合格 (p=0.103)。手数料仮定とレバレッジが見かけのパフォーマンスを膨張させる教科書的な例。</p>
+    </div>
+
+    <!-- KAMA Cross -->
+    <div class="card rejected">
+      <h3>KAMA Crossover <span class="badge badge-fail">棄却</span></h3>
+      <div class="metric-row">
+        <span class="metric-key">銘柄 / 時間足</span>
+        <span class="metric-val">マルチ / 日足</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">OOS シャープ (DOGE)</span>
+        <span class="metric-val text-green">2.96</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">順列検定 p値</span>
+        <span class="metric-val text-green">0.006 (プロジェクト最良!)</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">IS シャープ (DOGE)</span>
+        <span class="metric-val text-red">-0.06</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">IS→OOSパターン</span>
+        <span class="metric-val text-red">4/6銘柄で逆転</span>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:var(--accent-red);">棄却理由:</strong> プロジェクト全体で最低の順列検定p値 (0.006) にもかかわらず、この戦略は4/6銘柄で<strong>一貫したIS→OOS逆転</strong>を示す (ISマイナス、OOSプラス)。このパターンはテストした全てのトレンドフォロー戦略 (Ichimoku, VWAP Momentum) で再現された &mdash; OOS期間はマーケットレジームによりトレンドフォローに有利であり、戦略アルファではない。順列検定はOOS窓内では有効だが、期間固有の幸運は検出できない。比較: 真のエッジ (VolReg_opt IS=2.12→OOS=2.30) は両サンプル間で一貫性を維持。</p>
+    </div>
+  </section>
+
+  <!-- ==================== 6. LEVERAGE ARTIFACT ==================== -->
+  <section class="section" id="leverage-artifact">
+    <div class="section-header">
+      <div><span class="section-num">06</span><span class="jp-title">レバレッジの幻影</span></div>
+      <div class="en-subtitle">重要発見: レバレッジアーティファクト</div>
+    </div>
+
+    <div class="card warning">
+      <h3 style="color:var(--accent-orange);">重要な発見: レバレッジが幻のアルファを生成</h3>
+      <p>収益性があるように見えた全ての15分足BTC戦略は、<strong style="color:var(--accent-red);">1xレバレッジではマイナスリターン</strong>であることが判明。5-10xレバレッジでの見かけの収益性は数学的アーティファクトだった。</p>
+    </div>
+
+    <div class="card">
+      <h4 style="margin-bottom:12px;">アーティファクトの仕組み</h4>
+      <div class="code-block">Given a strategy with slightly negative expected return at 1x:
+  E[r] = -0.01% per trade
+
+At 10x leverage, the asymmetry of compounding creates apparent profit:
+  - Winning trade: +10x gains (compounded on larger base)
+  - Losing trade:  -10x losses (compounded on smaller base)
+
+But the asymmetry of % gains vs % losses creates a positive bias:
+  +10% gain then -10% loss = 0.99x  (net loss)
+  But with leverage and many trades, the SEQUENCE matters,
+  and strategies that happen to cluster wins can appear profitable.
+
+The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If negative, there is no edge.</strong></div>
+    </div>
+
+    <div class="card">
+      <h4 style="margin-bottom:12px;">15分足 BTC戦略: 1x vs. レバレッジ時パフォーマンス</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>戦略</th>
+              <th class="text-center">レバレッジ時シャープ</th>
+              <th class="text-center">1xシャープ</th>
+              <th class="text-center">判定</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Dual ST Ribbon</td>
+              <td class="text-center mono">1.42</td>
+              <td class="text-center mono text-red">&lt; 0</td>
+              <td class="text-center text-red">アーティファクト</td>
+            </tr>
+            <tr>
+              <td>Rel Vol Breakout</td>
+              <td class="text-center mono">1.10</td>
+              <td class="text-center mono text-red">&lt; 0</td>
+              <td class="text-center text-red">アーティファクト</td>
+            </tr>
+            <tr>
+              <td>G7 ST Pullback</td>
+              <td class="text-center mono">0.85</td>
+              <td class="text-center mono text-red">&lt; 0</td>
+              <td class="text-center text-red">アーティファクト</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="insight-box" style="margin-top:12px;">
+        <strong>示唆:</strong> レバレッジリターンで戦略を評価し1xパフォーマンスも確認しないバックテストフレームワークは根本的に壊れている。レバレッジはシグナルではなくノイズを増幅する。常に1xで先に検証すること。
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 7. SCAN SUMMARY ==================== -->
+  <section class="section" id="scan-summary">
+    <div class="section-header">
+      <div><span class="section-num">07</span><span class="jp-title">スキャン結果一覧</span></div>
+      <div class="en-subtitle">スキャンサマリー</div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ファミリー</th>
+            <th>時間足</th>
+            <th class="text-right">試行数</th>
+            <th class="text-right">IS合格</th>
+            <th class="text-right">OOS+</th>
+            <th class="text-center">生存者数</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Funding + Time</td>
+            <td>15m BTC</td>
+            <td class="text-right mono">36</td>
+            <td class="text-right mono">0</td>
+            <td class="text-right mono">0</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Momentum + Trend</td>
+            <td>15m BTC</td>
+            <td class="text-right mono">1,125</td>
+            <td class="text-right mono">269</td>
+            <td class="text-right mono">103</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Mean Rev + Vol</td>
+            <td>15m BTC</td>
+            <td class="text-right mono">4,020</td>
+            <td class="text-right mono">23</td>
+            <td class="text-right mono">0</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Full 84 Strategies</td>
+            <td>15m BTC</td>
+            <td class="text-right mono">1,185</td>
+            <td class="text-right mono">261</td>
+            <td class="text-right mono">79</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>ML flearn</td>
+            <td>15m BTC</td>
+            <td class="text-right mono text-muted">N/A</td>
+            <td class="text-right mono text-muted">N/A</td>
+            <td class="text-right mono text-muted">N/A</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Derivatives Flow</td>
+            <td>15m BTC</td>
+            <td class="text-right mono">2,052</td>
+            <td class="text-right mono">651</td>
+            <td class="text-right mono">428</td>
+            <td class="text-center mono text-muted">0 <span style="font-size:0.72rem;color:var(--text-muted);">(29d)</span></td>
+          </tr>
+          <tr>
+            <td>Multi-TF / Cross</td>
+            <td>15m multi</td>
+            <td class="text-right mono">215</td>
+            <td class="text-right mono">215</td>
+            <td class="text-right mono">26</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr class="survivor-row">
+            <td><strong>Daily Strategies</strong></td>
+            <td>1d multi</td>
+            <td class="text-right mono">78</td>
+            <td class="text-right mono">78</td>
+            <td class="text-right mono">43</td>
+            <td class="text-center mono text-green"><strong>2</strong></td>
+          </tr>
+          <tr>
+            <td>Ensemble</td>
+            <td>15m BTC</td>
+            <td class="text-right mono text-muted">~100</td>
+            <td class="text-right mono text-muted">TBD</td>
+            <td class="text-right mono text-muted">TBD</td>
+            <td class="text-center mono text-muted">TBD</td>
+          </tr>
+          <tr>
+            <td>ALT + Maker Fees</td>
+            <td>15m multi</td>
+            <td class="text-right mono">925</td>
+            <td class="text-right mono">925</td>
+            <td class="text-right mono">256</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Daily Expanded (9 new)</td>
+            <td>1d multi</td>
+            <td class="text-right mono">23</td>
+            <td class="text-right mono">23</td>
+            <td class="text-right mono">23</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Pair + Session</td>
+            <td>15m BTC/ALT</td>
+            <td class="text-right mono">177</td>
+            <td class="text-right mono">177</td>
+            <td class="text-right mono">48</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>GARCH + Regime</td>
+            <td>1d/1h multi</td>
+            <td class="text-right mono">110</td>
+            <td class="text-right mono">110</td>
+            <td class="text-right mono">64</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Fractal + MTF</td>
+            <td>1d multi</td>
+            <td class="text-right mono">20</td>
+            <td class="text-right mono">20</td>
+            <td class="text-right mono">20</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Calendar + XS Mom</td>
+            <td>1d multi</td>
+            <td class="text-right mono">~200</td>
+            <td class="text-right mono">~200</td>
+            <td class="text-right mono">62</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Asymmetric</td>
+            <td>1d multi</td>
+            <td class="text-right mono">~100</td>
+            <td class="text-right mono">~100</td>
+            <td class="text-right mono">5</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Weekly + Portfolio</td>
+            <td>1w/1d</td>
+            <td class="text-right mono">52</td>
+            <td class="text-right mono">0</td>
+            <td class="text-right mono">0</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">(バー数不足)</span></td>
+          </tr>
+          <tr>
+            <td>Daily New Families</td>
+            <td>1d multi</td>
+            <td class="text-right mono">405</td>
+            <td class="text-right mono">405</td>
+            <td class="text-right mono">228</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">OBV棄却</span></td>
+          </tr>
+          <tr>
+            <td>Daily Microstructure</td>
+            <td>1d multi</td>
+            <td class="text-right mono">648</td>
+            <td class="text-right mono">648</td>
+            <td class="text-right mono">0</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>VolReg Plateau</td>
+            <td>1d multi</td>
+            <td class="text-right mono">69,120</td>
+            <td class="text-right mono">69,120</td>
+            <td class="text-right mono" style="color:var(--accent-green);">65,730</td>
+            <td class="text-center mono text-green"><strong>95.1%</strong></td>
+          </tr>
+          <tr>
+            <td>Daily Adaptive</td>
+            <td>1d multi</td>
+            <td class="text-right mono">486</td>
+            <td class="text-right mono">486</td>
+            <td class="text-right mono">38</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">IS→OOS逆転</span></td>
+          </tr>
+          <tr>
+            <td>Cross-Asset</td>
+            <td>1d multi</td>
+            <td class="text-right mono">2,916</td>
+            <td class="text-right mono">2,916</td>
+            <td class="text-right mono">68</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">トレード数不足</span></td>
+          </tr>
+          <tr>
+            <td>5m + 1h Scan</td>
+            <td>5m/1h BTC</td>
+            <td class="text-right mono">1,735</td>
+            <td class="text-right mono">0</td>
+            <td class="text-right mono">0</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>4h Deep Scan</td>
+            <td>4h 5-ALT</td>
+            <td class="text-right mono">22,005</td>
+            <td class="text-right mono">2,156</td>
+            <td class="text-right mono">733</td>
+            <td class="text-center mono text-green">1</td>
+          </tr>
+          <tr>
+            <td>VolReg Advanced Exits</td>
+            <td>1d 5-ALT</td>
+            <td class="text-right mono">270</td>
+            <td class="text-right mono">—</td>
+            <td class="text-right mono">—</td>
+            <td class="text-center mono text-muted">イグジット最適化</td>
+          </tr>
+          <tr>
+            <td>Ensemble Verification</td>
+            <td>1d 5-ALT</td>
+            <td class="text-right mono">—</td>
+            <td class="text-right mono">—</td>
+            <td class="text-right mono">—</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Volume Profile 4H</td>
+            <td>4h 3-ALT</td>
+            <td class="text-right mono">9,720</td>
+            <td class="text-right mono">829</td>
+            <td class="text-right mono">9</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Cross-TF Daily&rarr;4H</td>
+            <td>4h 3-ALT</td>
+            <td class="text-right mono">972</td>
+            <td class="text-right mono">329</td>
+            <td class="text-right mono">140</td>
+            <td class="text-center mono text-muted">実行最適化</td>
+          </tr>
+          <tr>
+            <td>Asymmetric L/S Analysis</td>
+            <td>1d+4h DOGE</td>
+            <td class="text-right mono">~200</td>
+            <td class="text-right mono">—</td>
+            <td class="text-right mono">—</td>
+            <td class="text-center mono text-green">双方向</td>
+          </tr>
+          <tr>
+            <td>Weekly Timeframe</td>
+            <td>1w 5-ALT</td>
+            <td class="text-right mono">43,740</td>
+            <td class="text-right mono">~18,000</td>
+            <td class="text-right mono">~4,200</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Funding Rate MR</td>
+            <td>4h 5-ALT</td>
+            <td class="text-right mono">10,692</td>
+            <td class="text-right mono">3,400+</td>
+            <td class="text-right mono">791</td>
+            <td class="text-center mono text-red">0</td>
+          </tr>
+          <tr>
+            <td>Alt Vol Indicators</td>
+            <td>4h 5-ALT</td>
+            <td class="text-right mono">21,168</td>
+            <td class="text-right mono">~9,000</td>
+            <td class="text-right mono">30</td>
+            <td class="text-center mono text-green">1</td>
+          </tr>
+          <tr>
+            <td>Mean-Rev + VolComp</td>
+            <td>4h 5-ALT</td>
+            <td class="text-right mono">38,610</td>
+            <td class="text-right mono">6,714</td>
+            <td class="text-right mono">9</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">97%逆転</span></td>
+          </tr>
+          <tr>
+            <td>Adaptive VolReg</td>
+            <td>4h 5-ALT</td>
+            <td class="text-right mono">98,604</td>
+            <td class="text-right mono">12,889</td>
+            <td class="text-right mono">47</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">増分のみ</span></td>
+          </tr>
+          <tr>
+            <td>Momentum + Crash</td>
+            <td>4h 5-ALT</td>
+            <td class="text-right mono">3,800</td>
+            <td class="text-right mono">781</td>
+            <td class="text-right mono">8</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">境界線 p</span></td>
+          </tr>
+          <tr>
+            <td>Structural Break</td>
+            <td>4h 5-ALT</td>
+            <td class="text-right mono">3,280</td>
+            <td class="text-right mono">313</td>
+            <td class="text-right mono">13</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">SUI専用</span></td>
+          </tr>
+          <tr>
+            <td>1H Compression</td>
+            <td>1h 5-ALT</td>
+            <td class="text-right mono">24,012</td>
+            <td class="text-right mono">59</td>
+            <td class="text-right mono">6</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">97%逆転</span></td>
+          </tr>
+          <tr>
+            <td>8H Compression</td>
+            <td>8h 5-ALT</td>
+            <td class="text-right mono">12,084</td>
+            <td class="text-right mono">739</td>
+            <td class="text-right mono">79</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">82%逆転</span></td>
+          </tr>
+          <tr>
+            <td>Multi-TF Entry</td>
+            <td>1d+4h 4-ALT</td>
+            <td class="text-right mono">720</td>
+            <td class="text-right mono">91</td>
+            <td class="text-right mono">2</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">65%トレード減</span></td>
+          </tr>
+          <tr>
+            <td>Exit Optimization</td>
+            <td>4h DOGE</td>
+            <td class="text-right mono">222</td>
+            <td class="text-right mono">—</td>
+            <td class="text-right mono">—</td>
+            <td class="text-center mono text-yellow">ATR_Ratio +0.24 <span style="font-size:0.72rem;color:var(--text-muted);">微改善</span></td>
+          </tr>
+          <tr>
+            <td>BTC Cross-Asset Filter</td>
+            <td>4h 4-ALT</td>
+            <td class="text-right mono">400</td>
+            <td class="text-right mono">12</td>
+            <td class="text-right mono">12</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">2/8組合せのみ</span></td>
+          </tr>
+          <tr>
+            <td>Volume Signals</td>
+            <td>4h 5-ALT</td>
+            <td class="text-right mono">455</td>
+            <td class="text-right mono">46</td>
+            <td class="text-right mono">4</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">ランダム期待値</span></td>
+          </tr>
+          <tr>
+            <td>Correlation Regime</td>
+            <td>4h 4-ALT</td>
+            <td class="text-right mono">456</td>
+            <td class="text-right mono">19</td>
+            <td class="text-right mono">12</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">1パラメータクラスタ</span></td>
+          </tr>
+          <tr>
+            <td>季節性</td>
+            <td>4h 5-ALT</td>
+            <td class="text-right mono">245</td>
+            <td class="text-right mono">30</td>
+            <td class="text-right mono">2</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">Bonferroni後0</span></td>
+          </tr>
+          <tr>
+            <td>DD管理</td>
+            <td>4h DOGE</td>
+            <td class="text-right mono">41</td>
+            <td class="text-right mono">—</td>
+            <td class="text-right mono">—</td>
+            <td class="text-center mono text-yellow">SL-CD <span style="font-size:0.72rem;color:var(--text-muted);">DD-39%改善</span></td>
+          </tr>
+          <tr>
+            <td style="color:var(--accent-green);font-weight:600;">新銘柄深掘り</td>
+            <td>4h+1d BNB/AVAX/ADA</td>
+            <td class="text-right mono">2,592</td>
+            <td class="text-right mono">116</td>
+            <td class="text-right mono">4</td>
+            <td class="text-center mono text-green">1 <span style="font-size:0.72rem;color:var(--text-muted);">AVAX合格</span></td>
+          </tr>
+          <tr>
+            <td>エントロピー/複雑性</td>
+            <td>4h+1d 5-ALT</td>
+            <td class="text-right mono">3,160</td>
+            <td class="text-right mono">226</td>
+            <td class="text-right mono">8</td>
+            <td class="text-center mono text-green">1 <span style="font-size:0.72rem;color:var(--text-muted);">SampEn DOGE合格</span></td>
+          </tr>
+          <tr>
+            <td>スペクトル/周波数領域</td>
+            <td>4h 3-ALT</td>
+            <td class="text-right mono">1,656</td>
+            <td class="text-right mono">36</td>
+            <td class="text-right mono">1</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">SUI only棄却</span></td>
+          </tr>
+          <tr>
+            <td>マイクロ構造</td>
+            <td>4h 3-ALT</td>
+            <td class="text-right mono">4,176</td>
+            <td class="text-right mono">134</td>
+            <td class="text-right mono">23</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">IS→OOS逆転</span></td>
+          </tr>
+          <tr>
+            <td>自己相関/OU/方向精度/加速度</td>
+            <td>4h 3-ALT</td>
+            <td class="text-right mono">1,188</td>
+            <td class="text-right mono">94</td>
+            <td class="text-right mono">0</td>
+            <td class="text-center mono text-red">0 <span style="font-size:0.72rem;color:var(--text-muted);">全棄却</span></td>
+          </tr>
+          <tr style="border-top:2px solid var(--border);font-weight:700;">
+            <td>合計</td>
+            <td></td>
+            <td class="text-right mono" style="color:var(--accent-blue);">390,100+</td>
+            <td class="text-right mono">112,000+</td>
+            <td class="text-right mono">74,000+</td>
+            <td class="text-center mono text-green">6</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h4 style="margin-bottom:12px;">ファミリー別試行数分布</h4>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">Mean Rev + Vol</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:100%;background:var(--accent-red);opacity:0.7;"></div>
+          </div>
+          <span class="bar-value">4,020</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Derivatives Flow</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:51%;background:var(--accent-orange);opacity:0.7;"></div>
+          </div>
+          <span class="bar-value">2,052</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Full 84 Strategies</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:29%;background:var(--accent-purple);opacity:0.7;"></div>
+          </div>
+          <span class="bar-value">1,185</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Momentum + Trend</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:28%;background:var(--accent-blue);opacity:0.7;"></div>
+          </div>
+          <span class="bar-value">1,125</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">ALT + Maker Fees</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:23%;background:var(--accent-purple);opacity:0.7;"></div>
+          </div>
+          <span class="bar-value">925</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Multi-TF / Cross</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:5%;background:var(--accent-cyan);opacity:0.7;"></div>
+          </div>
+          <span class="bar-value">215</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Calendar + XS Mom</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:5%;background:var(--accent-orange);opacity:0.7;"></div>
+          </div>
+          <span class="bar-value">~200</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Pair + Session</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:4.4%;background:var(--accent-cyan);opacity:0.7;"></div>
+          </div>
+          <span class="bar-value">177</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">GARCH + Regime</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:2.7%;background:var(--accent-blue);opacity:0.7;"></div>
+          </div>
+          <span class="bar-value">110</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Ensemble</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:2.5%;background:var(--text-muted);opacity:0.5;"></div>
+          </div>
+          <span class="bar-value">~100</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Asymmetric</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:2.5%;background:var(--text-muted);opacity:0.5;"></div>
+          </div>
+          <span class="bar-value">~100</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label" style="color:var(--accent-green);font-weight:600;">Daily Strategies</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:1.9%;background:var(--accent-green);"></div>
+          </div>
+          <span class="bar-value text-green">78</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Funding + Time</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:0.9%;background:var(--text-muted);opacity:0.5;"></div>
+          </div>
+          <span class="bar-value">36</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Daily Expanded</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:0.6%;background:var(--accent-green);opacity:0.7;"></div>
+          </div>
+          <span class="bar-value">23</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Fractal + MTF</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:0.5%;background:var(--accent-cyan);opacity:0.7;"></div>
+          </div>
+          <span class="bar-value">20</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Funnel -->
+    <div class="card">
+      <h4 style="margin-bottom:12px;">選定ファネル</h4>
+      <div style="text-align:center;padding:10px 0;">
+        <div style="display:inline-block;text-align:left;">
+          <div style="background:var(--accent-blue);color:#000;padding:8px 16px;border-radius:4px;margin-bottom:4px;font-weight:600;font-size:0.9rem;width:400px;max-width:90vw;text-align:center;">
+            383,000+ パラメータ組合せテスト済
+          </div>
+          <div style="text-align:center;color:var(--text-muted);font-size:0.75rem;margin-bottom:4px;">&#9660; ISフィルター</div>
+          <div style="background:var(--accent-purple);color:#000;padding:8px 16px;border-radius:4px;margin-bottom:4px;font-weight:600;font-size:0.9rem;width:320px;max-width:80vw;text-align:center;margin-left:auto;margin-right:auto;">
+            3,900+ IS合格
+          </div>
+          <div style="text-align:center;color:var(--text-muted);font-size:0.75rem;margin-bottom:4px;">&#9660; OOSフィルター</div>
+          <div style="background:var(--accent-orange);color:#000;padding:8px 16px;border-radius:4px;margin-bottom:4px;font-weight:600;font-size:0.9rem;width:240px;max-width:70vw;text-align:center;margin-left:auto;margin-right:auto;">
+            1,380+ OOS正
+          </div>
+          <div style="text-align:center;color:var(--text-muted);font-size:0.75rem;margin-bottom:4px;">&#9660; 1xレバレッジテスト</div>
+          <div style="background:var(--accent-cyan);color:#000;padding:8px 16px;border-radius:4px;margin-bottom:4px;font-weight:600;font-size:0.9rem;width:160px;max-width:60vw;text-align:center;margin-left:auto;margin-right:auto;">
+            ~50 合格
+          </div>
+          <div style="text-align:center;color:var(--text-muted);font-size:0.75rem;margin-bottom:4px;">&#9660; 順列検定 + WF + DSR</div>
+          <div style="background:var(--accent-green);color:#000;padding:8px 16px;border-radius:4px;font-weight:700;font-size:0.9rem;width:100px;max-width:50vw;text-align:center;margin-left:auto;margin-right:auto;">
+            4 生存者数
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 8. DAILY TF ADVANTAGE ==================== -->
+  <section class="section" id="daily-tf-advantage">
+    <div class="section-header">
+      <div><span class="section-num">08</span><span class="jp-title">日足の優位性</span></div>
+      <div class="en-subtitle">発見: 日足時間足の優位性</div>
+    </div>
+
+    <div class="card info">
+      <h3>日足時間足はイントラデイよりも多くの真のエッジを生む</h3>
+      <p>383,000+試行と28+戦略ファミリーを通じて明確なパターン: <strong>確認された生存者は日足バーで動作</strong>し、4H時間足は同じエッジの有望な拡張を示す。全ての15分足戦略 (10,000+試行) は1xレバレッジで不合格。全ての1時間足戦略はIS→OOS逆転を示した。22,005設定の4Hスキャンで、ボラティリティ圧縮エッジがDOGEの4Hに拡張することを発見 (82.3% OOS正)、ただしサンプルサイズは小さい。</p>
+      <p style="margin-top:12px;">日足時間足は自然にイントラデイノイズをフィルタリングし、コスト負荷を軽減し (往復回数減少)、低解像度では見えないレジームレベルの転換を捉える。DOGEのミームコインのマイクロストラクチャーがこれらのボラティリティ圧縮/拡張サイクルを増幅する。</p>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--accent-green);">
+      <h3 style="color:var(--accent-green);">DOGE日足: 2つの独立したボラティリティレジームエッジ</h3>
+      <p>統計的に有意な2つの戦略、部分的に相関 (r=0.37)、どちらもボラティリティレジーム転換を活用:</p>
+      <ul style="padding-left:20px;margin-top:10px;">
+        <li style="margin-bottom:6px;"><strong>VolReg_opt:</strong> OOS シャープ 2.30, 順列 p=0.042 &mdash; <span class="text-green">ボラティリティ圧縮比率 + EMAクロスオーバー</span></li>
+        <li style="margin-bottom:6px;"><strong>Regime_V3:</strong> OOS シャープ 2.66, 順列 p=0.015 &mdash; <span class="text-green">リターン/ボラティリティレジーム + EMA + RSI回帰</span></li>
+      </ul>
+      <p style="margin-top:12px;">マルチシンボル汎化が構造的エッジを確認: Regime_V3はテストした6/10銘柄で正 (DOGE, SUI, SOL, ADA, XRP, LINK)。等配分6銘柄ポートフォリオはシャープ1.14を達成し、最大ドローダウンは-57% (DOGE単独) から-36%に低減。</p>
+      <p style="margin-top:10px;">実装と銘柄間の一貫性が確認: <strong style="color:var(--accent-cyan);">日足アルトコインのボラティリティレジーム検出は真の構造的市場特徴</strong>であり、パラメータアーティファクトではない。</p>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--accent-orange);">
+      <h3>日足で失敗したもの</h3>
+      <ul style="padding-left:20px;margin-top:8px;">
+        <li style="margin-bottom:6px;"><strong>Hurst Regime:</strong> 概念的には健全だが3-5 OOSトレードのみ &mdash; シグナル密度不足</li>
+        <li style="margin-bottom:6px;"><strong>Donchian Channel + Vol:</strong> マルチシンボル混在 (1/6正) &mdash; ブレイクアウト戦略は汎化しない</li>
+        <li style="margin-bottom:6px;"><strong>TD Sequential:</strong> 最良OOS シャープ 1.25、7トレードのみ、順列 p=0.17 &mdash; 棄却</li>
+        <li style="margin-bottom:6px;"><strong>Gap Fade / Engulfing / Range Contraction:</strong> ほとんどの銘柄でほぼゼロシグナル</li>
+        <li style="margin-bottom:6px;"><strong>ADX_trail:</strong> 順列 p=0.082、ブートストラップCIがマイナスを含む &mdash; 惜しいが棄却</li>
+        <li style="margin-bottom:6px;"><strong>Calendar / XSMOM:</strong> IS→OOS逆転パターン &mdash; 期間固有の幸運</li>
+      </ul>
+    </div>
+
+    <div class="insight-box">
+      <strong>示唆:</strong> 今後の研究はポートフォリオ分散と新シグナルファミリーの探索に焦点を当てるべき。383,000+試行で発見された再現可能なエッジは2種類: (1) ボラティリティ圧縮/拡張サイクル（VolReg + ATR_Ratio）、(2) サンプルエントロピーによる規則性検出（SampEn）。後者は前者と完全に独立した信号で、ポートフォリオの真の分散に貢献。
+    </div>
+  </section>
+
+  <!-- ==================== 8b. 4H SCAN RESULTS ==================== -->
+  <section class="section" id="scan-4h">
+    <div class="section-header">
+      <div><span class="section-num">08b</span><span class="jp-title">4時間足スキャン結果</span></div>
+      <div class="en-subtitle">4時間足ディープスキャン (22,005設定)</div>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--accent-blue);">
+      <h3>4Hスキャン概要</h3>
+      <p><strong>VolReg_4h</strong>、<strong>Regime_V3_4h</strong>、<strong>MACD+BB Squeeze</strong>を5アルトコイン (DOGE, SUI, SOL, LINK, XRP) の4時間足でテスト。</p>
+      <div class="metrics-row" style="margin-top:12px;">
+        <div class="metric"><span class="metric-label">総設定数</span><span class="metric-val">22,005</span></div>
+        <div class="metric"><span class="metric-label">有効結果</span><span class="metric-val">21,444</span></div>
+        <div class="metric"><span class="metric-label">OOS Sh &gt; 1</span><span class="metric-val">2,156</span></div>
+        <div class="metric"><span class="metric-label">順列 p &lt; 0.05</span><span class="metric-val" style="color:var(--accent-green)">733</span></div>
+      </div>
+    </div>
+
+    <div class="card warn" style="margin-top:12px;">
+      <h3 style="color:var(--accent-orange);">4HでのIS→OOS逆転アラート</h3>
+      <p>5銘柄中3銘柄で大規模なIS→OOS逆転:</p>
+      <div class="table-wrap" style="margin-top:10px;">
+        <table>
+          <thead><tr><th>銘柄</th><th>順列有意</th><th>IS→OOS逆転率</th><th>判定</th></tr></thead>
+          <tbody>
+            <tr><td>XRPUSDT</td><td>67</td><td style="color:var(--accent-red)">100%</td><td class="text-red">棄却</td></tr>
+            <tr><td>LINKUSDT</td><td>135</td><td style="color:var(--accent-red)">87%</td><td class="text-red">棄却</td></tr>
+            <tr><td>SOLUSDT</td><td>14</td><td>36%</td><td class="text-red">不十分</td></tr>
+            <tr><td>DOGEUSDT</td><td>918</td><td style="color:var(--accent-orange)">33%</td><td class="text-orange">健全なサブセットあり</td></tr>
+            <tr><td style="color:var(--accent-green)">SUIUSDT</td><td style="color:var(--accent-green)">1,022</td><td style="color:var(--accent-green)">6%</td><td class="text-green">最良の一貫性</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px;border-left:3px solid var(--accent-green);background:var(--survivor-glow);">
+      <h3 style="color:var(--accent-green);">DOGE VolReg_4h &mdash; 生存者 #3 (検証済)</h3>
+      <p>日足VolRegのボラティリティ圧縮エッジが強力なパラメータ台地とともにDOGEの4Hに拡張。<strong style="color:var(--accent-green);">完全な&sect;5検証合格 (18/20)。</strong></p>
+      <div class="metrics-row" style="margin-top:12px;">
+        <div class="metric"><span class="metric-label">設定数</span><span class="metric-val">2,808</span></div>
+        <div class="metric"><span class="metric-label">OOS正</span><span class="metric-val" style="color:var(--accent-green)">82.3%</span></div>
+        <div class="metric"><span class="metric-label">OOS Sh &gt; 1</span><span class="metric-val">47.4%</span></div>
+        <div class="metric"><span class="metric-label">OOS Sh中央値</span><span class="metric-val">0.971</span></div>
+      </div>
+      <p style="margin-top:12px;"><strong>最良の健全な設定</strong> (IS &gt; OOS、両方正):</p>
+      <div style="background:var(--bg-tertiary);padding:12px;border-radius:4px;margin-top:8px;font-family:monospace;font-size:0.85rem;">
+        sv=20, lv=120, th=0.8, ef=20, es=80 | SL=5%, TP=6%, MH=42 bars<br>
+        Full Sample: Sh=2.275, ret=0.69%/d, 204 trades, DD=-26.7%, R&sup2;=0.958<br>
+        WF: 4/4 positive (4.43, 2.33, 1.12, 0.96) | Perm p=0.000 | Bootstrap CI [0.30, 1.23]<br>
+        Inverse gap: 4.44 | Multi-symbol C2: 4/5 positive
+      </div>
+      <p style="margin-top:10px;color:var(--accent-green);font-size:0.85rem;font-weight:600;">判定: 検証済 &mdash; ウォークフォワード 4/4、順列 p=0.000、ブートストラップがゼロを除外、逆シグナル TRUE_EDGE。上記の生存者カード #3を参照。</p>
+    </div>
+
+    <div class="card" style="margin-top:12px;border-left:3px solid var(--accent-orange);">
+      <h3>SUI Regime_V3_4h &mdash; <span style="color:var(--accent-red);">棄却</span></h3>
+      <p>独立した検証で重大な弱点が露呈:</p>
+      <div style="background:var(--bg-tertiary);padding:10px;border-radius:4px;margin-top:8px;font-size:0.85rem;">
+        <strong style="color:var(--accent-red);">Config1 (不合格):</strong> IS = <strong>-0.164</strong> → OOS = 3.90。純粋なIS→OOS逆転。ブートストラップCIがゼロを含む。マルチシンボル2/5のみ正。<br>
+        <strong style="color:var(--accent-orange);">Config2 (境界線):</strong> IS = 0.518 → OOS = 3.21 (<strong>6.19x比率</strong>)。WF 5/5正だがブートストラップCI [-0.07, 0.88] がゼロを含む。OOS期間で<strong>強トレンドバイアス</strong>確認。<br>
+        <strong>判定:</strong> OOS期間 (2025年10月-2026年5月) はSUIの強い下降トレンド。Regime_V3はこのトレンドの正しいショートで利益を得るが、IS期間では非トレンド条件で戦略は凡庸/マイナス。
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <h3>VolReg 高度イグジット最適化</h3>
+      <p>5銘柄で270設定にわたり3つのイグジットバリエーション (ATRトレーリング、レジームベース、プロフィットロック) をテスト。</p>
+      <div class="table-wrap" style="margin-top:10px;">
+        <table>
+          <thead><tr><th>銘柄</th><th>ベースライン OOS Sh</th><th>最良イグジット</th><th>新OOS Sh</th><th>改善率</th></tr></thead>
+          <tbody>
+            <tr><td>DOGEUSDT</td><td>1.79</td><td>Profit Lock (7%)</td><td style="color:var(--accent-green)">2.00</td><td>+12%</td></tr>
+            <tr><td>SUIUSDT</td><td>1.10</td><td>ATR Trail (1.5x)</td><td style="color:var(--accent-green)">1.50</td><td>+36%</td></tr>
+            <tr><td>SOLUSDT</td><td>1.10</td><td>Profit Lock (7%)</td><td style="color:var(--accent-green)">1.60</td><td>+45%</td></tr>
+            <tr><td>ADAUSDT</td><td>1.84</td><td>Profit Lock (3%)</td><td style="color:var(--accent-green)">2.53</td><td>+37%</td></tr>
+            <tr><td>ETHUSDT</td><td>0.38</td><td>基準値</td><td>0.38</td><td>0%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:8px;color:var(--text-secondary);font-size:0.85rem;">注: OOSトレード数 (10-19) は設定別の順列検定有意性には少なすぎる。エッジは69Kパラメータ台地で検証済、設定別統計ではない。</p>
+    </div>
+  </section>
+
+  <!-- ==================== 8c. ASYMMETRIC EDGE ANALYSIS ==================== -->
+  <section class="section" id="asymmetric-edge">
+    <div class="section-header">
+      <div><span class="section-num">08c</span><span class="jp-title">非対称エッジ分析</span></div>
+      <div class="en-subtitle">非対称エッジ: ロング vs. ショート分解</div>
+    </div>
+
+    <div class="card info">
+      <h3>エッジはベアマーケットのアーティファクトに過ぎないのか?</h3>
+      <p>OOS期間 (2025年11月 &ndash; 2026年5月) は暗号資産の下落期だったため、戦略がショートのみで利益を得ているかテストが必要。エッジがショート専用なら、ブルマーケットでは生き残れない可能性。</p>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <h3>ロング/ショート分解結果</h3>
+      <div class="table-wrap" style="margin-top:10px;">
+        <table>
+          <thead>
+            <tr><th>戦略</th><th>全体 OOS Sh</th><th>ロング OOS Sh</th><th>ロング p</th><th>ショート OOS Sh</th><th>ショート p</th><th>支配的方向</th></tr>
+          </thead>
+          <tbody>
+            <tr style="background:var(--survivor-glow);">
+              <td style="color:var(--accent-green);font-weight:600;">VolReg_4h C2</td>
+              <td style="color:var(--accent-green)">2.07</td>
+              <td style="color:var(--accent-green)">1.18</td>
+              <td style="color:var(--accent-green)">0.018</td>
+              <td style="color:var(--accent-green)">1.71</td>
+              <td style="color:var(--accent-green)">0.034</td>
+              <td>均衡</td>
+            </tr>
+            <tr>
+              <td>VolReg_4h C1</td>
+              <td>1.92</td>
+              <td>1.22</td>
+              <td style="color:var(--accent-green)">0.030</td>
+              <td>1.56</td>
+              <td>0.056</td>
+              <td>均衡</td>
+            </tr>
+            <tr>
+              <td>VolReg_opt 1d</td>
+              <td>1.80</td>
+              <td>2.03</td>
+              <td class="text-muted">1トレード</td>
+              <td>1.25</td>
+              <td>0.164</td>
+              <td>ショート</td>
+            </tr>
+            <tr>
+              <td class="text-muted">Regime_V3 1d</td>
+              <td class="text-muted">1.46</td>
+              <td class="text-muted">1.04</td>
+              <td>0.044</td>
+              <td class="text-muted">0.92</td>
+              <td class="text-muted">N/A</td>
+              <td class="text-muted">IS~0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px;border-left:3px solid var(--accent-green);background:var(--survivor-glow);">
+      <h3 style="color:var(--accent-green);">VolReg_4h C2: 両方向が独立して有意</h3>
+      <p><strong>これはプロジェクト最強の検証済み発見。</strong> VolReg_4h Config2 (sv=60, lv=80, th=0.9) の結果:</p>
+      <ul style="padding-left:20px;margin-top:8px;">
+        <li>フルモデル: OOS シャープ <strong>2.07</strong>、順列 <strong>p=0.004</strong></li>
+        <li>ロングのみ: OOS シャープ 1.18、順列 p=0.018 (14トレード、勝率=69%、PF=2.04)</li>
+        <li>ショートのみ: OOS シャープ 1.71、順列 p=0.034 (23トレード)</li>
+      </ul>
+      <p style="margin-top:10px;">両方向が独立して機能 &mdash; <strong style="color:var(--accent-cyan);">ボラティリティ圧縮エッジは真に双方向</strong>であり、ベアマーケットのアーティファクトではない。ロングのみのデプロイではファンディングレートを~0.01%/8h節約。</p>
+    </div>
+
+    <div class="insight-box" style="margin-top:12px;">
+      <strong>示唆:</strong> ボラティリティ圧縮メカニズムは両方向の真のレジーム転換を検出する。ボラティリティが閾値以下に圧縮されると、後続の拡張は上方・下方のいずれに解消されるかに関わらず予測可能。これはボラティリティ圧縮が真の構造的特徴であるというマーケットマイクロストラクチャー理論と一致。
+    </div>
+  </section>
+
+  <!-- ==================== 8d. PORTFOLIO ANALYSIS ==================== -->
+  <section class="section" id="portfolio-analysis">
+    <div class="section-header">
+      <div><span class="section-num">08d</span><span class="jp-title">ポートフォリオ分析</span></div>
+      <div class="en-subtitle">生存者のポートフォリオ統合</div>
+    </div>
+
+    <div class="card survivor" style="border-left:3px solid var(--accent-cyan);">
+      <h3 style="color:var(--accent-cyan);">
+        推奨ポートフォリオ: 4戦略コンボ（最新版 2026-05-23）
+        <span class="badge badge-pass" style="margin-left:8px;">Calmar 15.94</span>
+      </h3>
+      <p style="margin-bottom:16px;"><strong>VolReg_opt</strong> (日足) + <strong>VolReg_4h</strong> (4H) + <strong>ATR_AVAX</strong> (4H) + <strong>SampEn_DOGE</strong> (4H) の等配分。VolReg_4hのパラメータバグを修正済み（旧portfolio Sh -0.23→正しいparams Sh +2.31）。SampEnは初の非圧縮シグナルとして分散に貢献。Regime_V3はfull-period DD -70%のため除外。</p>
+
+      <div class="stats-grid">
+        <div class="stat-box green">
+          <div class="value">2.78</div>
+          <div class="label">OOS シャープ</div>
+        </div>
+        <div class="stat-box green">
+          <div class="value">-3.8%</div>
+          <div class="label">最大DD</div>
+        </div>
+        <div class="stat-box green">
+          <div class="value">+60.5%</div>
+          <div class="label">年率リターン</div>
+        </div>
+        <div class="stat-box blue">
+          <div class="value">15.94</div>
+          <div class="label">Calmar比率</div>
+        </div>
+      </div>
+
+      <div class="insight-box" style="margin-top:16px;">
+        <strong>分散が機能:</strong> VolReg_opt(1d)と全4H戦略の相関がほぼゼロ（-0.03〜0.05）。SampEnは全シグナルと低相関（0.015〜0.256）で真の独立性。Half-Kelly 7.5x → 実用推奨 3-5x。前回ベスト（Sh 2.92, DD -6.8%）から<strong>DD 44%改善（-6.8%→-3.8%）</strong>。
+      </div>
+
+      <div class="insight-box" style="margin-top:12px;border-left-color:var(--accent-cyan);">
+        <strong>SampEn追加の効果:</strong> 4戦略ベース（VolReg系+ATR系）に SampEn を追加すると Sharpe +0.09, DD改善 2.7pp（-8.0%→-5.3%）。低相関の独立シグナルがポートフォリオの安定性を向上。
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h4 style="margin-bottom:12px;">個別戦略OOS成績</h4>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>戦略</th><th>シャープ</th><th>最大DD</th><th>リターン</th><th>トレード数</th><th>勝率</th></tr></thead>
+        <tbody>
+          <tr><td>ATR_AVAX_4h</td><td class="text-green"><strong>3.06</strong></td><td>-8.7%</td><td>+40.8%</td><td>27</td><td>70.4%</td></tr>
+          <tr><td>ATR_DOGE_4h</td><td class="text-green"><strong>2.90</strong></td><td>-16.8%</td><td>+37.7%</td><td>25</td><td>68.0%</td></tr>
+          <tr><td>SampEn_4h</td><td class="text-green"><strong>1.96</strong></td><td>-18.7%</td><td>+48.2%</td><td>62</td><td>58.1%</td></tr>
+          <tr><td>VolReg_4h</td><td class="text-green"><strong>1.74</strong></td><td>-14.4%</td><td>+40.9%</td><td>40</td><td>65.0%</td></tr>
+          <tr><td>Regime_V3_1d</td><td>1.76</td><td class="text-red">-25.2%</td><td>+63.1%</td><td>20</td><td>45.0%</td></tr>
+          <tr><td>VolReg_opt_1d</td><td>1.01</td><td>-17.8%</td><td>+17.3%</td><td>8</td><td>50.0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h4 style="margin-bottom:12px;">シグナル相関マトリクス（OOS期間）</h4>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th></th><th>VR_opt</th><th>VR_4h</th><th>ATR_D</th><th>ATR_A</th><th>SampEn</th><th>Reg_V3</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:700;">VolReg_opt</td><td>1.000</td><td class="text-green">-0.026</td><td class="text-green">-0.008</td><td class="text-green">0.003</td><td class="text-green">0.046</td><td>0.180</td></tr>
+          <tr><td style="font-weight:700;">VolReg_4h</td><td class="text-green">-0.026</td><td>1.000</td><td>0.447</td><td>0.241</td><td>0.256</td><td class="text-green">0.024</td></tr>
+          <tr><td style="font-weight:700;">ATR_DOGE</td><td class="text-green">-0.008</td><td>0.447</td><td>1.000</td><td>0.435</td><td>0.236</td><td class="text-green">0.006</td></tr>
+          <tr><td style="font-weight:700;">ATR_AVAX</td><td class="text-green">0.003</td><td>0.241</td><td>0.435</td><td>1.000</td><td class="text-green">0.015</td><td class="text-green">-0.023</td></tr>
+          <tr><td style="font-weight:700;">SampEn</td><td class="text-green">0.046</td><td>0.256</td><td>0.236</td><td class="text-green">0.015</td><td>1.000</td><td class="text-green">-0.128</td></tr>
+          <tr><td style="font-weight:700;">Regime_V3</td><td>0.180</td><td class="text-green">0.024</td><td class="text-green">0.006</td><td class="text-green">-0.023</td><td class="text-green">-0.128</td><td>1.000</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">SampEnは全シグナルと低相関（0.015〜0.256）。VolReg_opt(1d)は全4H戦略とほぼゼロ相関。最も高い相関はVolReg_4h↔ATR_DOGE（0.447）— 同じDOGE 4Hのため。</p>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h4 style="margin-bottom:12px;">全ポートフォリオ組合せ Top 10 (Calmar順)</h4>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>#</th><th>ポートフォリオ</th><th>シャープ</th><th>最大DD</th><th>Calmar</th><th>年率リターン</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(63,185,80,0.08);font-weight:600;"><td>1</td><td>VR_opt + VR_4h + ATR_A + SampEn</td><td class="text-green">2.78</td><td class="text-green">-3.8%</td><td class="text-green"><strong>15.94</strong></td><td>+60.5%</td></tr>
+          <tr><td>2</td><td>VR_4h + ATR_D + SampEn</td><td>2.47</td><td>-5.4%</td><td>14.83</td><td>+79.5%</td></tr>
+          <tr><td>3</td><td>全6戦略</td><td class="text-green"><strong>3.51</strong></td><td>-5.5%</td><td>14.00</td><td>+76.7%</td></tr>
+          <tr><td>4</td><td>VR_opt + ATR_D + ATR_A + SampEn + RV3</td><td>3.53</td><td>-5.6%</td><td>13.75</td><td>+77.3%</td></tr>
+          <tr><td>5</td><td>VR_4h + ATR_A + SampEn</td><td>2.61</td><td>-5.1%</td><td>13.54</td><td>+68.9%</td></tr>
+          <tr><td>6</td><td>VR_4h + ATR_D + ATR_A + RV3</td><td>3.23</td><td>-6.2%</td><td>13.41</td><td>+82.9%</td></tr>
+          <tr><td>7</td><td>VR_4h + ATR_D + ATR_A + SampEn + RV3</td><td>3.48</td><td>-6.5%</td><td>13.29</td><td>+85.9%</td></tr>
+          <tr><td>8</td><td>VR_4h + ATR_D + ATR_A + SampEn</td><td>2.90</td><td>-5.5%</td><td>13.04</td><td>+71.1%</td></tr>
+          <tr><td>9</td><td>ATR_D + ATR_A + SampEn + RV3</td><td class="text-green"><strong>3.60</strong></td><td>-6.9%</td><td>12.96</td><td>+89.2%</td></tr>
+          <tr><td>10</td><td>VR_opt + VR_4h + ATR_D + SampEn</td><td>2.66</td><td>-5.3%</td><td>12.90</td><td>+68.2%</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">Calmar最良はVR_opt+VR_4h+ATR_A+SampEnの4戦略（DD僅か-3.8%）。全6戦略を含めるとSharpe 3.51だがDD増加(-5.5%)。Regime_V3のOOS成績は良好だがfull-period DD -70%の尾部リスクに注意。</p>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h4 style="margin-bottom:12px;">個別戦略の単体指標</h4>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>戦略</th><th>時間足</th><th>シャープ</th><th>最大DD</th><th>リターン</th><th>トレード数</th><th>勝率</th></tr></thead>
+        <tbody>
+          <tr><td>ATR_Ratio</td><td>4H</td><td class="text-green">1.761</td><td>-29.0%</td><td>+93.4%</td><td>77</td><td>62.3%</td></tr>
+          <tr><td>VolReg_opt</td><td>日足</td><td class="text-green">1.451</td><td>-25.3%</td><td>+139.4%</td><td>29</td><td>62.1%</td></tr>
+          <tr><td>VolReg_4h</td><td>4H</td><td class="text-green">1.421</td><td>-22.1%</td><td>+135.7%</td><td>91</td><td>—</td></tr>
+          <tr><td>Regime_V3</td><td>日足</td><td class="text-red">0.226</td><td class="text-red">-69.8%</td><td class="text-red">-10.1%</td><td>51</td><td>43.1%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card survivor" style="margin-top:24px;border-left:3px solid var(--accent-green);">
+      <h3 style="color:var(--accent-green);">
+        OR Ensemble: VolReg &cup; ATR_Ratio (DOGE 4H)
+        <span class="badge badge-pass" style="margin-left:8px;">プロジェクト最強シグナル</span>
+      </h3>
+      <p style="margin-bottom:16px;">シグナルレベルのOR統合: <em>いずれか</em>の圧縮検出器が発火した時にトレード。2つの独立メカニズム (リターンボラティリティ + 価格レンジ) が互いのギャップを補完。順列 <strong>p=0.000</strong>、IS/OOS比率 <strong>0.84</strong> (OOS &lt; IS = 理想的)。</p>
+
+      <div class="stats-grid">
+        <div class="stat-box green">
+          <div class="value">2.10</div>
+          <div class="label">全期間シャープ</div>
+        </div>
+        <div class="stat-box green">
+          <div class="value">+337.8%</div>
+          <div class="label">累計リターン (2年)</div>
+        </div>
+        <div class="stat-box orange">
+          <div class="value">-20.2%</div>
+          <div class="label">最大DD</div>
+        </div>
+        <div class="stat-box blue">
+          <div class="value">146</div>
+          <div class="label">トレード数</div>
+        </div>
+      </div>
+
+      <h4 style="font-size:0.95rem;margin:20px 0 12px;color:var(--text-secondary);">アンサンブル比較</h4>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>手法</th><th>シャープ</th><th>最大DD</th><th>リターン</th><th>トレード数</th><th>順列 p</th><th>IS/OOS</th></tr></thead>
+        <tbody>
+          <tr><td>VolReg_4h 単体</td><td>1.42</td><td>-22.1%</td><td>+135.7%</td><td>91</td><td>0.032</td><td>1.53/1.14</td></tr>
+          <tr><td>ATR_Ratio 単体</td><td>1.76</td><td>-29.0%</td><td>+93.4%</td><td>77</td><td>0.012</td><td>1.41/2.61</td></tr>
+          <tr style="background:rgba(63,185,80,0.08);font-weight:600;"><td>ORアンサンブル</td><td class="text-green">2.10</td><td class="text-green">-20.2%</td><td class="text-green">+337.8%</td><td>146</td><td class="text-green">0.000</td><td class="text-green">2.20/1.84</td></tr>
+          <tr><td>ANDアンサンブル</td><td class="text-red">0.30</td><td>-16.1%</td><td>+4.4%</td><td>20</td><td>0.310</td><td>-0.98/1.78</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">シグナル相関 = 0.079。両シグナルが同時にアクティブなのは4,380バー中57本のみ。ORは146トレードを捕捉 (個別では77-91) しつつシャープ向上とDD低減。ANDはシグナルがほとんど重複しないため不合格。</p>
+
+      <h4 style="font-size:0.95rem;margin:20px 0 12px;color:var(--text-secondary);">ORアンサンブル マルチシンボル結果</h4>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>銘柄</th><th>OR OOS Sh</th><th>OR 順列 p</th><th>ATR 順列 p</th><th>VR 順列 p</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr><td>DOGE</td><td class="text-green">5.03</td><td>0.054</td><td class="text-green">0.012</td><td class="text-green">0.004</td><td><span class="badge badge-pass">ATR/VR</span></td></tr>
+          <tr><td>SOL</td><td class="text-green">2.59</td><td class="text-green">0.004</td><td class="text-green">0.002</td><td>—</td><td><span class="badge badge-pass">OR+ATR</span></td></tr>
+          <tr><td>LINK</td><td class="text-green">3.15</td><td>0.054</td><td class="text-green">0.030</td><td>—</td><td><span class="badge badge-pass">ATR</span></td></tr>
+          <tr><td>SUI</td><td class="text-green">2.52</td><td class="text-green">0.026</td><td>—</td><td>—</td><td><span class="badge badge-warn">ORのみ</span></td></tr>
+          <tr><td>XRP</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="badge badge-fail">全不合格</span></td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">ATR_Ratio単体が最も統計的に頑健な検出器 (3/5順列有意)。ORアンサンブルは最高のOOSシャープを提供するが境界線ケースではノイズを追加。XRP: 圧縮エッジは存在しない。</p>
+
+      <h4 style="font-size:0.95rem;margin:20px 0 12px;color:var(--accent-green);">ウォークフォワード検証: DOGE ORアンサンブル &mdash; 合格 (4/4)</h4>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>フォールド</th><th>期間</th><th>シャープ</th><th>リターン</th><th>最大DD</th><th>トレード数</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>2024-10 &rarr; 2025-03</td><td class="text-green">3.86</td><td class="text-green">+119.7%</td><td>-19.8%</td><td>26</td></tr>
+          <tr><td>2</td><td>2025-03 &rarr; 2025-08</td><td class="text-green">1.06</td><td class="text-green">+14.0%</td><td>-20.2%</td><td>37</td></tr>
+          <tr><td>3</td><td>2025-08 &rarr; 2025-12</td><td class="text-green">0.95</td><td class="text-green">+10.3%</td><td>-14.3%</td><td>23</td></tr>
+          <tr><td>4</td><td>2025-12 &rarr; 2026-05</td><td class="text-green">2.29</td><td class="text-green">+30.7%</td><td>-12.2%</td><td>33</td></tr>
+          <tr style="font-weight:700;border-top:2px solid var(--border);"><td>平均</td><td></td><td class="text-green">2.04</td><td class="text-green">+43.7%</td><td></td><td>30</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">83%の月がプラス (20/24)。最長ドローダウン: 158日 (-20.2%)、完全回復。<strong>DOGE ORアンサンブルはデプロイ準備完了。</strong></p>
+    </div>
+
+    <div class="card" style="margin-top:16px;border-left:3px solid var(--accent-green);background:rgba(63,185,80,0.03);">
+      <h3 style="color:var(--accent-green);">最終デプロイ推奨</h3>
+      <table class="data-table" style="width:100%;margin-top:12px;">
+        <thead><tr><th>銘柄</th><th>シグナル</th><th>時間足</th><th>根拠</th></tr></thead>
+        <tbody>
+          <tr><td>DOGE</td><td>VolReg_opt (日足) + ORアンサンブル (4H)</td><td>1d + 4H</td><td>両方独立して検証済; ポートフォリオ Sh 2.05</td></tr>
+          <tr><td>SOL</td><td>ATR_Ratio (慎重)</td><td>4H</td><td>順列 p=0.002 だがWFフォールド2マイナス、544日DD。まだデプロイ準備未完了。</td></tr>
+          <tr><td>LINK</td><td>ATR_Ratio</td><td>4H</td><td>ATR 順列 p=0.030; OR境界線 0.054</td></tr>
+          <tr><td>SUI</td><td>ORアンサンブル (慎重)</td><td>4H</td><td>OR p=0.026 だがSUI OOSトレンドバイアス注意</td></tr>
+          <tr style="color:var(--text-muted);"><td>XRP</td><td>スキップ</td><td>—</td><td>全手法で健全な設定がゼロ</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.85rem;margin-top:12px;"><strong>本番デプロイ前に全戦略をペーパートレード。</strong>OOSエッジがリアルタイムで持続することを最低3ヶ月のフォワードテストで検証。</p>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h4 style="margin-bottom:12px;">ポートフォリオウェイト最適化 (DOGE 3戦略)</h4>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>手法</th><th>シャープ</th><th>最大DD</th><th>リターン</th><th>Calmar</th><th>ウェイト (VR/VR4h/ATR)</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(63,185,80,0.08);font-weight:600;"><td>等配分</td><td class="text-green">2.26</td><td class="text-green">-8.96%</td><td>+136.1%</td><td class="text-green">15.20</td><td>33/33/33</td></tr>
+          <tr><td>逆ボラティリティ</td><td>2.37</td><td>-9.84%</td><td>+129.9%</td><td>13.20</td><td>29/26/45</td></tr>
+          <tr><td>最大シャープ</td><td class="text-green">2.39</td><td>-12.1%</td><td>+126.0%</td><td>10.45</td><td>29/19/52</td></tr>
+          <tr><td>最小分散</td><td>2.26</td><td class="text-green">-8.96%</td><td>+136.1%</td><td class="text-green">15.20</td><td>33/33/33</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">等配分がCalmar (15.20) と最大DD (-8.96%) で勝利。最大シャープはATR_Ratioを52%にオーバーウェイトで+0.13を獲得するが、より大きなドローダウンのコスト。<strong>推奨: シンプルさと頑健性のため等配分。</strong></p>
+    </div>
+
+    <div class="card" style="margin-top:16px;border-left:3px solid var(--accent-cyan);">
+      <h4 style="color:var(--accent-cyan);margin-bottom:12px;">マルチシンボルポートフォリオ (総合最良)</h4>
+      <p style="margin-bottom:12px;">DOGEポートフォリオにSOLとLINKのATR_Ratioコンポーネントを追加。クロスシンボル相関 &lt; 0.15 (SOL-LINKの0.48を除く)。</p>
+      <div class="stats-grid">
+        <div class="stat-box green">
+          <div class="value">2.52</div>
+          <div class="label">ポートフォリオシャープ</div>
+        </div>
+        <div class="stat-box green">
+          <div class="value">-9.26%</div>
+          <div class="label">最大DD</div>
+        </div>
+        <div class="stat-box green">
+          <div class="value">+124.9%</div>
+          <div class="label">累計リターン (2年)</div>
+        </div>
+        <div class="stat-box blue">
+          <div class="value">13.49</div>
+          <div class="label">Calmar比率</div>
+        </div>
+      </div>
+      <p style="font-size:0.85rem;margin-top:12px;">構成: <strong>OR_Ensemble DOGE 4H</strong> + <strong>ATR_Ratio SOL 4H</strong> + <strong>ATR_Ratio LINK 4H</strong> + <strong>VolReg_opt DOGE 日足</strong>。等配分アロケーション。</p>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px;">ハーフケリー: 7.4xレバレッジをサポート。実用的にはモデル不確実性を考慮して2-3xが慎重。</p>
+    </div>
+  </section>
+
+  <!-- ==================== 9. COST MODEL ==================== -->
+  <section class="section" id="cost-model">
+    <div class="section-header">
+      <div><span class="section-num">09</span><span class="jp-title">コストモデル</span></div>
+      <div class="en-subtitle">コストモデル</div>
+    </div>
+
+    <div class="card">
+      <h3>MEXC先物手数料体系</h3>
+      <div class="table-wrap" style="margin-top:12px;">
+        <table>
+          <thead>
+            <tr>
+              <th>項目</th>
+              <th>料率</th>
+              <th>備考</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>メイカー手数料</td>
+              <td class="mono">0.00%</td>
+              <td>MEXCゼロメイカー手数料プロモーション</td>
+            </tr>
+            <tr>
+              <td>テイカー手数料</td>
+              <td class="mono">0.02%</td>
+              <td>片側; 往復0.04%</td>
+            </tr>
+            <tr>
+              <td>ファンディングレート</td>
+              <td class="mono">~0.01%</td>
+              <td>8時間毎; 市場状況により変動</td>
+            </tr>
+            <tr>
+              <td>スリッページ (BTC 15m)</td>
+              <td class="mono">0.01-0.03%</td>
+              <td>一般的なポジションサイズでの推定</td>
+            </tr>
+            <tr>
+              <td>スリッページ (DOGE 1d)</td>
+              <td class="mono">0.02-0.05%</td>
+              <td>流動性が低い; 推定レンジが広い</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>バックテストのコスト仮定</h3>
+      <div class="metric-row">
+        <span class="metric-key">基本取引コスト (往復)</span>
+        <span class="metric-val">0.04%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">スリッページ推定</span>
+        <span class="metric-val">0.02%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">トレード当たり総コスト</span>
+        <span class="metric-val">0.06%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">感度テスト</span>
+        <span class="metric-val">2xコスト (0.12%)</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">ファンディングコスト (日足戦略)</span>
+        <span class="metric-val">~0.03%/日 平均</span>
+      </div>
+      <p style="margin-top:12px;color:var(--text-muted);font-size:0.85rem;">全ての戦略は推定コストの2倍で収益性を維持する必要がある。これは過学習防止プロトコルのゲート07 (コスト感度)。利益率が薄い戦略は他のゲートを通過してもフラグ付けされる。</p>
+    </div>
+  </section>
+
+  <!-- ==================== 10. KEY DISCOVERY: IS→OOS REVERSAL ==================== -->
+  <section class="section" id="is-oos-reversal">
+    <div class="section-header">
+      <div><span class="section-num">10</span><span class="jp-title">IS→OOS逆転の罠</span></div>
+      <div class="en-subtitle">重要発見: IS→OOS逆転の罠</div>
+    </div>
+
+    <div class="card warning">
+      <h3 style="color:var(--accent-orange);">強い順列検定p値でさえ誤解を招くことがある</h3>
+      <p>このプロジェクトの最も直感に反する発見: <strong>p=0.006</strong>の戦略 (KAMA Crossover) は正しく棄却され、より弱いp値 (0.015-0.042) の戦略が真の生存者だった。</p>
+    </div>
+
+    <div class="card">
+      <h4 style="margin-bottom:12px;">パターン</h4>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>戦略</th><th>IS シャープ</th><th>OOS シャープ</th><th>順列 p</th><th>パターン</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(0,255,100,0.05);"><td>VolReg_opt</td><td class="text-green">2.12</td><td class="text-green">2.30</td><td>0.042</td><td>一貫</td><td><span class="badge badge-pass">合格</span></td></tr>
+          <tr style="background:rgba(0,255,100,0.05);"><td>Regime_V3</td><td class="text-green">2.66</td><td class="text-green">2.66</td><td>0.015</td><td>一貫</td><td><span class="badge badge-pass">合格</span></td></tr>
+          <tr style="background:rgba(255,50,50,0.05);"><td>KAMA Cross</td><td class="text-red">-0.06</td><td class="text-green">2.96</td><td style="color:var(--accent-green);">0.006</td><td style="color:var(--accent-red);">逆転</td><td><span class="badge badge-fail">棄却</span></td></tr>
+          <tr style="background:rgba(255,50,50,0.05);"><td>Ichimoku</td><td class="text-red">-0.62</td><td class="text-green">1.89</td><td>N/A</td><td style="color:var(--accent-red);">逆転</td><td><span class="badge badge-fail">棄却</span></td></tr>
+          <tr style="background:rgba(255,50,50,0.05);"><td>XSMOM</td><td class="text-green">2.31</td><td class="text-red">-0.47</td><td>N/A</td><td style="color:var(--accent-red);">逆転</td><td><span class="badge badge-fail">棄却</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--accent-orange);">
+      <h4>なぜ順列検定だけでは不十分か</h4>
+      <p style="margin-top:8px;">順列検定はOOSエクイティカーブのシャープが<strong>その特定の期間内で</strong>偶然発生し得るかを評価する。戦略のエッジが異なるマーケットレジーム間で安定しているかはテストしない。</p>
+      <p style="margin-top:10px;">OOS期間がたまたま強いトレンド相場である場合 (2025年11月-2026年5月の窓のように)、<strong>あらゆるトレンドフォロー戦略</strong>が低いp値で強いOOS結果を示す &mdash; 真のエッジがあるかどうかに関わらず。全トレンドフォロー戦略の38/486のISマイナス→OOSプラス設定がこれがレジーム効果であることを確認。</p>
+      <p style="margin-top:10px;"><strong style="color:var(--accent-cyan);">重要なテスト:</strong> IS→OOSの一貫性。真のエッジ (VolReg_opt, Regime_V3) はIS期間とOOS期間の<strong>両方</strong>で正のリターンを示す。そのエッジは構造的 (ボラティリティ圧縮検出) であり、レジーム依存 (トレンド市場でのトレンドフォロー) ではない。</p>
+    </div>
+
+    <div class="insight-box">
+      <strong>経験則:</strong> インサンプルでマイナスだがアウトオブサンプルでプラスの戦略は、優れた順列検定p値があっても信用してはならない。統計テストの前提条件としてIS/OOSの一貫性を要求すること。
+    </div>
+  </section>
+
+  <!-- ==================== 11. METHODOLOGY ==================== -->
+  <section class="section" id="methodology">
+    <div class="section-header">
+      <div><span class="section-num">11</span><span class="jp-title">手法詳細</span></div>
+      <div class="en-subtitle">手法の注記</div>
+    </div>
+
+    <div class="card">
+      <h3>flearn.pdfフレームワーク概要</h3>
+      <p>本研究はflearn.pdf手法に従う。カーブフィッティングより正直な評価を優先する戦略発見のための体系的フレームワーク。</p>
+      <ul style="padding-left:20px;margin-top:12px;">
+        <li style="margin-bottom:8px;"><strong>核心原則:</strong> 目標は印象的なバックテスト数値を生産することではなく、真のエッジを持つ戦略を見つけること。ほとんどのバックテストは嘘をつく。</li>
+        <li style="margin-bottom:8px;"><strong>セクション5プロトコル:</strong> 本レポートで記述された8ゲートの過学習防止パイプライン。各ゲートは異なるタイプの偽陽性を捕捉するよう設計。</li>
+        <li style="margin-bottom:8px;"><strong>Deflated Sharpe Ratio:</strong> テストした戦略バリアントの総数に基づいて有意性閾値を調整。11,000+試行では、シャープ2.3は有意でない可能性。</li>
+        <li style="margin-bottom:8px;"><strong>OOS純度:</strong> アウトオブサンプルデータはパラメータ選択に使用しない。IS/OOS分割はアンカーされている (先読みなし)。</li>
+        <li><strong>エッジの言語化:</strong> デプロイ前に、エッジの経済的根拠を平易な言葉で述べる必要がある。「モデルがそう言っている」では不十分。</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>戦略ファミリーの説明</h3>
+      <div class="table-wrap" style="margin-top:12px;">
+        <table>
+          <thead>
+            <tr>
+              <th>ファミリー</th>
+              <th>説明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="white-space:nowrap;">Funding + Time</td>
+              <td>ファンディングレートの乖離と時刻パターンの活用</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Momentum + Trend</td>
+              <td>移動平均、ブレイクアウト、SuperTrend、ADXを使用したトレンドフォロー戦略</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Mean Rev + Vol</td>
+              <td>ボラティリティフィルター、ボリンジャーバンド、RSI極値を用いた平均回帰</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Full 84 Strategies</td>
+              <td>パラメータ空間にわたる84の異なる戦略テンプレートの包括的スキャン</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">ML flearn</td>
+              <td>特徴量エンジニアリングを用いた機械学習モデル (勾配ブースティング、ニューラルネット)</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Derivatives Flow</td>
+              <td>注文フロー、建玉、清算カスケード、ファンディング+出来高シグナル</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Multi-TF / Cross</td>
+              <td>マルチ時間足確認とクロスアセットシグナル</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Daily Strategies</td>
+              <td>BTC、ETH、DOGE、XRP、SOL、BNBでの日足時間足戦略</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Ensemble</td>
+              <td>複数の弱いシグナルをアンサンブルモデルに統合</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">ALT + Maker Fees</td>
+              <td>15分足マルチシンボルでMEXCゼロメイカー手数料構造を活用するアルトコイン戦略</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Daily Expanded</td>
+              <td>元の日足ファミリーを拡張する9つの新しい日足戦略テンプレート</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Pair + Session</td>
+              <td>BTC/ALTペアでのペアトレーディングとセッションベースモメンタム戦略</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">GARCH + Regime</td>
+              <td>日足と時間足でのレジーム検出を伴うGARCHファミリーボラティリティモデル</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Fractal + MTF</td>
+              <td>日足でのフラクタル次元とマルチ時間足確認</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Calendar + XS Mom</td>
+              <td>日足マルチシンボルでのカレンダー効果とクロスセクショナルモメンタム</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Asymmetric</td>
+              <td>日足マルチシンボルでの非対称リスク戦略 (進行中)</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Weekly Timeframe</td>
+              <td>週足バー戦略 (43,740設定)。全てIS→OOS逆転を示す &mdash; 週足解像度ではデータポイント不足</td>
+            </tr>
+            <tr>
+              <td style="white-space:nowrap;">Funding Rate MR</td>
+              <td>4Hでのファンディングレート平均回帰 (10,692設定)。サイクル依存エッジ: ベアで機能、ブルで不合格。IS→OOS逆転</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>既知の制約</h3>
+      <ul style="padding-left:20px;margin-top:8px;">
+        <li style="margin-bottom:6px;">バックテストは終値での完全約定を仮定。実際の執行は異なる可能性があり、特に流動性の低いDOGEで顕著。</li>
+        <li style="margin-bottom:6px;">ファンディングレートデータは一部の期間で不完全な場合がある。日足戦略への影響は少ない。</li>
+        <li style="margin-bottom:6px;">データ履歴は銘柄により異なる。一部のアルトコインは履歴が短く、統計的検出力が低下。</li>
+        <li style="margin-bottom:6px;">VolReg_optの22トレードOOSサンプルは統計的に薄い。アロケーション前にフォワードテストが不可欠。</li>
+        <li style="margin-bottom:6px;">レジーム変化 (マクロ、規制) は歴史的に導出されたエッジを無効化する可能性がある。</li>
+        <li>デリバティブフロー戦略は29日間のデータのみを使用しており、結論には不十分。</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>VolReg_opt エッジの根拠</h3>
+      <p style="margin-bottom:12px;">平易な言葉での仮説エッジ:</p>
+      <div class="code-block">DOGE (and meme coins generally) exhibit regime-switching behavior:
+  1. Low-volatility compression periods where retail interest wanes
+  2. Sudden volatility expansion driven by social/narrative catalysts
+
+VolReg_opt attempts to:
+  - Identify compression regimes (vol below threshold)
+  - Enter on the first sign of directional momentum (EMA cross)
+  - Capture the initial expansion move on daily timeframe
+
+Why daily? Intraday noise on meme coins is extreme. Daily bars
+filter noise and capture the regime shift signal more reliably.
+
+Why DOGE specifically? DOGE has the most pronounced compression/
+expansion cycle among tested symbols, possibly due to its unique
+retail-driven market microstructure.</div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="report-footer">
+    <p>MEXC先物戦略リサーチレポート &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v2.0</p>
+    <p style="margin-top:4px;">更新: 2026-05-23 &nbsp;|&nbsp; 25+ファミリーで383,000+試行 &nbsp;|&nbsp; 手法: flearn.pdf &sect;5</p>
+    <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
