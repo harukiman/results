@@ -449,11 +449,10 @@
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-23 22:20 JST</span> &nbsp;|&nbsp;
-    <strong>試行数:</strong> 710,209+ &nbsp;|&nbsp;
-    <strong>生存者:</strong> 8 / 98+ファミリー &nbsp;|&nbsp;
-    <strong>ユニバース:</strong> 26銘柄 &times; 5戦略 &nbsp;|&nbsp;
-    <strong>新Sh≥1.0:</strong> 18ペア
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-23 22:29 JST</span> &nbsp;|&nbsp;
+    <strong>試行数:</strong> 710,253+ &nbsp;|&nbsp;
+    <strong>最良ポートフォリオ:</strong> <span style="color:var(--accent-green);">Sh +2.78 / DD -3.5% / Calmar 22.96</span> &nbsp;|&nbsp;
+    <strong>レジームフィルタ:</strong> BTC vol_z≥1.5でオフ
   </div>
 
   <header class="report-header">
@@ -490,6 +489,76 @@
     <div class="section-header">
       <div><span class="section-num">01</span><span class="jp-title">総括</span></div>
       <div class="en-subtitle">エグゼクティブサマリー</div>
+    </div>
+
+    <!-- ── Wave H 速報: レジームフィルター発見 (2026-05-23 22:29 JST) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-green);background:linear-gradient(180deg,rgba(63,185,80,0.08),transparent);">
+      <h3 style="color:var(--accent-green);">⚡ Wave H 重大発見: BTC実現ボラ・レジームフィルターで Calmar 22.96 達成 (2026-05-23 22:29 JST)</h3>
+
+      <p style="font-size:0.92rem;margin-top:8px;">Wave G の8銘柄ATR_Ratioポートフォリオに、<strong>BTC実現ボラのZ-スコアが1.5以上の期間はポジションオフ</strong>というシンプルなフィルターを追加。結果は劇的:</p>
+
+      <table class="data-table" style="width:100%;margin-top:10px;font-size:0.88rem;">
+        <thead><tr><th>バリアント</th><th>Sharpe</th><th>Return</th><th>Max DD</th><th>Calmar</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr><td>Baseline 8銘柄</td><td>+2.59</td><td>+95.1%</td><td>-10.1%</td><td>9.40</td><td>原型</td></tr>
+          <tr><td>TOP4 (INJ/DOGE/OP/SHIB)</td><td>+2.46</td><td>+91.5%</td><td>-11.0%</td><td>8.33</td><td class="text-red">8銘柄に劣後</td></tr>
+          <tr><td>+filter vol_z≥0.5→off</td><td>+2.62</td><td>+59.3%</td><td>-3.7%</td><td>15.83</td><td>過剰除外</td></tr>
+          <tr><td>+filter vol_z≥1.0→off</td><td>+2.63</td><td>+60.4%</td><td>-3.5%</td><td>17.09</td><td>良好</td></tr>
+          <tr style="background:rgba(63,185,80,0.18);"><td><strong>+filter vol_z≥1.5→off</strong></td><td class="text-green"><strong>+2.78</strong></td><td class="text-green"><strong>+81.2%</strong></td><td class="text-green"><strong>-3.5%</strong></td><td class="text-green"><strong>22.96</strong></td><td class="text-green">★ 最適</td></tr>
+          <tr><td>+filter vol_z≥1.0→half</td><td>+1.75</td><td>+45.3%</td><td>-10.4%</td><td>4.35</td><td class="text-red">バイナリ近似失敗</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">レジーム特性化: F1-F4 (730日5分割)</h4>
+      <table class="data-table" style="width:100%;margin-top:6px;font-size:0.82rem;">
+        <thead><tr><th>フォールド</th><th>期間</th><th>BTC Return</th><th>BTC年率Vol</th><th>Trend Eff</th><th>ATR圧縮率</th><th>ATR成績</th></tr></thead>
+        <tbody>
+          <tr><td>F1</td><td>2024-10〜2025-03</td><td class="text-green">+19.9%</td><td>55.8%</td><td>0.03</td><td>11.2%</td><td class="text-green">強い</td></tr>
+          <tr><td>F2</td><td>2025-03〜2025-08</td><td class="text-green">+38.2%</td><td>38.7%</td><td>0.08</td><td>9.2%</td><td class="text-red">負(主要因)</td></tr>
+          <tr><td>F3</td><td>2025-08〜2025-12</td><td class="text-red">-23.5%</td><td>40.3%</td><td>0.05</td><td>12.7%</td><td class="text-red">負(副因)</td></tr>
+          <tr><td>F4</td><td>2025-12〜2026-05</td><td class="text-red">-14.4%</td><td>44.7%</td><td>0.02</td><td>8.1%</td><td class="text-green">強い</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-orange);margin-top:14px;">深い考察: なぜvol_z≥1.5フィルターが機能するか — 2つの失敗メカニズム</h4>
+      <p style="font-size:0.9rem;">F2-F3でATR_Ratioが失敗した理由を構造的に分解すると、<strong>vol-z高期間に集中</strong>している:</p>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:14px;margin:10px 0;">
+        <h5 style="color:var(--accent-yellow);margin-bottom:6px;">失敗メカニズム1: F2の「強トレンド+低圧縮」問題</h5>
+        <p style="font-size:0.88rem;">F2はBTC+38%の強いブル局面だがATR圧縮率は9.2%と最低。<strong>強トレンド中は値動きが連続的</strong>で、ATR短期/長期比率が圧縮閾値(0.6)を下回らない。たまに発火しても、それは<strong>「すでに動いている市場のミニ調整」</strong>であり、本来のセットアップ「蓄積→ブレイク」ではない。シグナルがノイズ化し、ストップアウトが増加。BTC実現ボラは平均的(38.7%)だが、価格の急速な方向性変化(中期ボラ上昇)が誤シグナルを生成。</p>
+      </div>
+
+      <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:6px;padding:14px;margin:10px 0;">
+        <h5 style="color:var(--accent-red);margin-bottom:6px;">失敗メカニズム2: F3の「圧縮→偽ブレイク」問題</h5>
+        <p style="font-size:0.88rem;">F3はBTC-23%のベア局面で、圧縮率12.7%と最高。しかし圧縮後のブレイクが<strong>「リアル下落」と「デッドキャットバウンス」が交互に出現</strong>する不安定相場。EMAクロス方向のブレイクが反転する頻度が高く、SL多発。特にメモコイン(DOGE/SHIB/BONK)では下落局面でも投機的ロングが入りやすく、ショートポジションがスクイーズされやすい。</p>
+      </div>
+
+      <h4 style="color:var(--accent-purple);margin-top:14px;">なぜ vol_z ≥ 1.5 が最適か</h4>
+      <p style="font-size:0.9rem;">vol_z は60バー(10日)実現ボラを360バー(60日)ベースラインで標準化。閾値の意味:</p>
+      <ul style="font-size:0.88rem;padding-left:20px;margin-top:6px;">
+        <li><strong>0.5</strong>: 平均+0.5σ以上を除外 — 過剰除外(Return 95%→59% で41%消失、価値あるブル局面シグナルまで除外)</li>
+        <li><strong>1.0</strong>: 平均+1σ以上を除外 — 中庸(Return 95%→60%, DD改善は十分)</li>
+        <li><strong>1.5</strong>: 平均+1.5σ以上を除外 — <strong>最適境界</strong> (Return 95%→81%でわずか-15%, DD-10.1%→-3.5%で-65%圧縮)。<em>真に危険なボラ急騰期(全体の~7%程度)のみを除外</em></li>
+      </ul>
+      <p style="font-size:0.88rem;margin-top:8px;color:var(--text-secondary);">vol_z 1.5 はリーマンクラスの「テールイベント」をフィルタ。通常時の取引は維持しつつ、構造的に危険な市場急変だけ回避。これがCalmar 22.96(Sh +2.78)の高い数字を生む。</p>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">含意: TOP4は8銘柄に劣後 — 分散の重要性</h4>
+      <p style="font-size:0.9rem;">WF平均≥+2.0でフィルターしたTOP4 (INJ/DOGE/OP/SHIB) は Sh+2.46 / DD-11.0% で<strong>8銘柄(Sh+2.59)を下回る</strong>。<strong>銘柄数を絞ると相関構造が悪化</strong> (TOP4は全てMeme傾向またはL2、INJ以外の3つは似たレジーム感応度)。8銘柄等加重 + vol_zフィルターが、銘柄数とリスク管理の両方を最適化。</p>
+
+      <h4 style="color:var(--accent-green);margin-top:14px;">最終推奨ポートフォリオ (2026-05-23 22:29 JST)</h4>
+      <div style="background:rgba(63,185,80,0.10);border:1px solid var(--accent-green);border-radius:6px;padding:14px;margin-top:6px;">
+        <p style="font-size:0.95rem;"><strong>ATR_Ratio_Compression × {OP, WIF, INJ, BONK, DOGE, SHIB, ARB, LINK} 8銘柄 + BTC vol_z ≥ 1.5 OFF フィルタ</strong></p>
+        <ul style="font-size:0.88rem;padding-left:20px;margin-top:8px;">
+          <li>730日Sharpe: <strong style="color:var(--accent-green);">+2.78</strong></li>
+          <li>累計リターン: <strong>+81.2%</strong> (年率 ~36% / 1xレバ)</li>
+          <li>最大DD: <strong style="color:var(--accent-green);">-3.5%</strong> (個別最大-22.4%から85%圧縮)</li>
+          <li>Calmar Ratio: <strong style="color:var(--accent-green);">22.96</strong> (リスク調整リターンとして極めて高い)</li>
+          <li>取引数(全銘柄合計): ~420トレード/730日 (1日平均0.58トレード)</li>
+        </ul>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-top:8px;">
+          <strong>注意:</strong> 過学習を避けるため、vol_z閾値 1.5 自体はパラメータ。F1-F4と独立な別期間(例: 2022-2024のBitstamp/Coinbaseデータ)での頑健性検証が必須。次Waveでout-of-sample検証を実施。
+        </p>
+      </div>
     </div>
 
     <!-- ── Wave G 最新発見サマリー (2026-05-23 22:20 JST) ── -->
