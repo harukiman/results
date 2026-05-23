@@ -3,7 +3,7 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 593418,
+    "total_trials": 618258,
     "total_strategies": 6
   },
   "strategies": [
@@ -1168,6 +1168,39 @@
       "reason": "3,024 configs, 0 healthy. Return/vol ratio (mini rolling Sharpe). Even with compression gate, vol-adjusted momentum alone cannot generate edge. This confirms that compression DETECTION is necessary but the DIRECTION component needs to be the simple EMA crossover — more sophisticated direction signals don't help.",
       "date": "2026-05-23",
       "configs_tested": 3024
+    },
+    {
+      "name": "Calendar Time (Day-of-Week/Hour)",
+      "family": "Calendar",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "カレンダー効果（曜日・時間帯フィルター）は暗号資産24/7市場では一貫したエッジなし。",
+      "date": "2026-05-23",
+      "configs_tested": "est ~8000"
+    },
+    {
+      "name": "Autocorrelation Persistence",
+      "family": "Autocorrelation",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "Rolling自己相関レジーム（高/低持続性）は計算コストが非常に高い（5h40m実行）にもかかわらず0 healthy。4Hバーの自己相関推定はサンプルサイズ不足でノイジーすぎる。",
+      "date": "2026-05-23",
+      "configs_tested": "est ~8000"
+    },
+    {
+      "name": "Donchian Compression",
+      "family": "Donchian",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "Donchian Channel幅の圧縮検出。VolReg r=0.47-0.58, ATR r=0.47-0.57 — 中程度の相関。圧縮ファミリーの別実装だが、VolReg/ATRより低い感度で劣る。",
+      "date": "2026-05-23",
+      "configs_tested": "est ~8000",
+      "donchian_volreg_corr": {
+        "DOGE": 0.582,
+        "SUI": 0.584,
+        "SOL": 0.474,
+        "AVAX": 0.557
+      }
     }
   ]
 }

@@ -4,7 +4,7 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~593,418+ (前回584K + Cointegration/TransferEnt/RealMom 9,504)
+- パラメータ組合せ試行数: ~618,258+ (前回593K + Calendar/Autocorr/Donchian 24,840)
 - **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
 - **6条件付き合格**:
@@ -1337,5 +1337,30 @@ CondVol（非対称ボラティリティ、レバレッジ効果）はVolRegと�
 
 **累計棄却ファミリー**: 80+ (Cointegration, TransferEntropy, RealizedMomentum追加)
 **累計試行**: 593,418+
+
+### 2026-05-23: Calendar/Autocorr/Donchian スキャン (24,840 configs, 5h40m実行) → **全棄却**
+
+| 戦略 | Configs | Healthy | VolReg相関 | 判定 |
+|------|---------|---------|-----------|------|
+| Calendar Time | ~8,000 | 0 | — | ✗ 24/7市場で曜日/時間帯効果なし |
+| Autocorrelation | ~8,000 | 0 | — | ✗ 4H自己相関推定ノイジーすぎ |
+| Donchian Compression | ~8,000 | 0 | r=0.47-0.58 | ✗ 圧縮ファミリー劣化版 |
+
+**Donchian vs VolReg/ATR相関**:
+| 銘柄 | Donchian-VolReg r | Donchian-ATR r |
+|------|------------------|----------------|
+| DOGE | 0.582 | 0.573 |
+| SUI  | 0.584 | 0.549 |
+| SOL  | 0.474 | 0.475 |
+| AVAX | 0.557 | 0.535 |
+
+Donchianは中程度の相関（r=0.47-0.58）— VolReg/ATRとは独立ではないが完全冗長でもない。しかしVolReg(r=0.80+)/ATR(r=0.85+)ほどの検出感度がなく、エッジを捕捉できない。
+
+**Autocorrelation**: 最も計算コストの高いスキャン（5h40m、24,840 configs）。Rolling自己相関の推定には数百本のバーが必要だが、4H解像度では各窓のサンプルサイズが不足。日足でも試す価値はあるかもしれないが、コストパフォーマンスが悪い。
+
+**Calendar**: 暗号資産は24/7/365取引。伝統的金融の曜日効果・時間帯効果は適用されない。
+
+**累計棄却ファミリー**: 83+ (Calendar, Autocorrelation, Donchian追加)
+**累計試行**: 618,258+
 
 ---
