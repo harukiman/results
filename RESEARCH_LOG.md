@@ -4,7 +4,7 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~496,506+ (前回483K + Range/ADX/BB 12,528)
+- パラメータ組合せ試行数: ~503,850+ (前回496K + VolPrice/RSI/Body 7,344)
 - **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
 - **6条件付き合格**:
@@ -1151,5 +1151,20 @@ Parkinson(ATR r=0.87)に続き、BB Squeeze(VolReg r=0.78)も冗長として確�
 
 **累計棄却ファミリー**: 58+ (Range Expansion, ADX, BB Squeeze追加)
 **累計試行**: 496,506+
+
+### 2026-05-23: VolPrice/RSI/Body スキャン (7,344 configs) → **全棄却**
+
+| 戦略 | Configs | Healthy | 判定 |
+|------|---------|---------|------|
+| Volume-Price Divergence | ~2,448 | 0 | ✗ ボリュームと価格の乖離は予測力なし |
+| RSI Regime | ~2,448 | 0 | ✗ オシレータ系はOOS崩壊 |
+| Candle Body Ratio | ~2,448 | 0 | ✗ 独立だが(ATR r=0.16)エッジなし |
+
+**Body Ratio独立性の発見**: Body Ratio（ローソク足実体/全体比率）はATR_Ratioとの相関がわずか0.163。これは「価格のバー内構造」を測定しており、VolReg（close std）やATR（H-L range）とは異なる情報を含む。しかし独立であっても、その情報に予測力がないことが判明。**独立性≠有用性** — 真のエッジには「独立性」と「予測力」の両方が必要。
+
+SampEnが成功しBody Ratioが失敗する理由の仮説: SampEnは時系列全体のパターン「複雑さ」を測定し、市場参加者の合意形成プロセス（高規則性=合意収束→ブレイクアウト）を反映する。Body Ratioは個別バーの形状に過ぎず、市場構造の変化を捉えられない。
+
+**累計棄却ファミリー**: 61+ (Vol-Price Divergence, RSI Regime, Body Ratio追加)
+**累計試行**: 503,850+
 
 ---
