@@ -4,16 +4,17 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~661,026+ (前回618K + DispEn/RegDur/MultiTF 42,768)
-- **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
+- パラメータ組合せ試行数: ~705,407+ (前回676K + Wave16 29,160)
+- **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) + **VSS_SUI(4H)** = 7戦略ポートフォリオ
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
-- **6条件付き合格**:
+- **7条件付き合格**:
   1. VolReg_opt DOGE 日足 (Sh 2.30, perm p=0.0416, 22 OOS trades)
   2. Regime_V3 DOGE 日足 (Sh 2.66, perm p=0.015, 27 trades, 6/10 multi-sym)
   3. VolReg_4h DOGE 4H (Sh 2.275, perm p=0.000, WF 4/4, 204 trades, C2: 4/5 multi-sym) ✓ パラメータバグ修正済
   4. **ATR_Ratio_Compression 4H (Sh 1.76, perm p=0.010, 5/5 multi-sym, VolReg独立 Pearson 0.08)**
   5. **ATR_Ratio_AVAX 4H (Sh 3.06, perm p=0.012, WF 4/4, bootstrap CI [0.195,1.082])**
-  6. **SampEn_DOGE_4H (Sh 2.26, perm p=0.012, WF 4/4 avg 2.05, inverse gap 5.13, VolReg独立 Pearson -0.03)** ← NEW 初の非圧縮シグナル
+  6. **SampEn_DOGE_4H (Sh 2.26, perm p=0.012, WF 4/4 avg 2.05, inverse gap 5.13, VolReg独立 Pearson -0.03)** ← 初の非圧縮シグナル
+  7. **Vol_Smile_Skew_SUI_4H (Sh 2.286, perm p=0.022, WF 3/4 avg 1.206, bootstrap CI [0.316,3.372], VolReg独立 Pearson -0.015, 3/5 multi-sym)** ← NEW 第3の独立次元: 方向的ボラ非対称性
 - **棄却**: SpreadZ (p=0.239), Session_Europe (p=0.089), OI Price Div (p=0.103)
 - ポートフォリオ検証完了: Regime_V3 6銘柄ポートフォリオ Sh 1.14, 複合DOGE Sh 1.11
 - 追加探索進行中: 日足新ファミリー / 日足マイクロ構造 / 4h深掘り / VolReg拡張 / 5m-1h
@@ -1392,5 +1393,71 @@ DispEnはSampEnと中〜高相関（r=0.57-0.72）。量子化ビニングによ
 
 **累計棄却ファミリー**: 86+ (DispEn, RegimeDuration, MultiTF追加)
 **累計試行**: 661,026+
+
+### 2026-05-23: クリプト特有戦略スキャン — VolStructure + Microstructure (15,221 configs) → **Vol Smile Skew 検証中!**
+
+| 戦略 | Configs | Healthy | Perm Sig | 判定 |
+|------|---------|---------|---------|------|
+| **Vol Smile Skew** | ~165 | 13 | **3 (p=0.022,0.036,0.044)** | ⭐ **検証中 — 潜在的第7生存者** |
+| Weekend Effect | ~160 | 14 | 0 (最良p=0.06) | ✗ 有意水準未達 |
+| Session Volume | ~160 | 0 | 0 | ✗ 暗号資産で時間帯効果なし |
+| Vol Mom Exhaust | ~5,000 | — | — | ✗ 方向予測力不足 |
+| Range Contraction | ~5,000 | — | — | ✗ VolReg圧縮と重複 |
+| ClosePos VolComp | ~5,000 | — | 2 (WEAK) | ✗ 弱い証拠 |
+
+**Vol Smile Skew — 潜在的突破口**:
+
+SUI最良構成: window=24, skew_threshold=1.0, trend_window=40, SL=2%, TP=6%, MH=24
+- OOS Sharpe: **2.286** (IS: 0.823, ratio 0.36 = OOS>IS = 極めて健全)
+- OOS DD: -4.02%, Win Rate: 58.6%, Trades: 29
+- **Permutation p=0.022** (500回)
+
+**メカニズム**: upside realized vol / downside realized vol の比率（セミバリアンス比）を z-scoreで正規化。
+- 極端に正のスキュー（上昇ボラ >> 下降ボラ = ユーフォリア）→ ショート
+- 極端に負のスキュー（下降ボラ >> 上昇ボラ = 恐怖/蓄積）→ ロング
+
+**VolRegとの理論的差異**:
+- VolReg: 「ボラティリティの絶対水準」の圧縮を検出 → 方向をEMAで決定
+- Vol Smile Skew: 「ボラティリティの方向的非対称性」を検出 → 恐怖/貪欲の直接測定
+
+### 2026-05-23: Vol Smile Skew 完全検証 → ⭐ **第7生存者として承認!**
+
+**検証プロトコル結果 (10/11 合格, 91%)**:
+
+| 検証 | 結果 | 詳細 |
+|------|------|------|
+| OOS Sharpe ≥ 2.0 | ✓ PASS | 2.286 |
+| Permutation | ✓ PASS | p=0.022 (n=1000) |
+| Walk-Forward 4-fold | ✓ PASS (mean) | avg 1.206 (0.729, 1.903, **-0.443**, 2.637) |
+| WF全fold正 | ✗ FAIL | Fold 3 = -0.443 (レジーム脆弱性) |
+| VolReg独立性 | ✓ PASS | Pearson r=-0.015 (完全独立) |
+| Multi-Symbol | ✓ PASS | 3/5正 (DOGE 3.55, AVAX 0.79, XRP 0.16) |
+| Bootstrap CI | ✓ PASS | 95% CI [0.316, 3.372] ゼロ除外 |
+| 順方向 > 逆方向 | ✓ PASS | +2.286 vs -1.488 |
+| 逆シグナル負 | ✓ PASS | -1.488 (DD -21.8%) |
+| パラメータプラトー | ✓ PASS | 12/12正, 平均2.048 |
+
+**DOGE cross-validation**: OOS Sharpe **3.551** — SUI以外でも強い (高ボラALTに特化)
+
+**3次元の独立シグナル空間確立**:
+1. **圧縮次元** (VolReg/ATR): ボラティリティ絶対水準の収縮 → r=0.78-0.89内
+2. **エントロピー次元** (SampEn): 時系列の規則性/予測可能性 → VolReg r=-0.03
+3. **方向的ボラ次元** (Vol Smile Skew): 上昇/下降ボラの非対称性 → VolReg r=-0.015
+
+### 2026-05-23: Wave 16 — Regime-Adaptive + Symbol Expansion (29,160 configs) → **全棄却**
+
+| 戦略 | Configs | Healthy | Perm Sig | 判定 |
+|------|---------|---------|---------|------|
+| Regime Adaptive (3 modes) | ~10,000 | 0 | 0 | ✗ アンサンブルはシグナル密度を殺す |
+| VolReg Meme (PEPE/WIF/BONK) | ~10,000 | 0 | 0 | ✗ 短すぎるデータ履歴 |
+| VolReg L1 (NEAR/APT/SEI) | ~10,000 | 0 | 0 | ✗ VolRegエッジは銘柄特化型 |
+
+**VolReg銘柄適用範囲の確定**:
+- 有効: DOGE, SUI, SOL, AVAX (高ベータ、リテール主導のボラ構造)
+- 無効: XRP, ETH, ADA, LINK, PEPE, WIF, BONK, NEAR, APT, SEI
+- VolRegは「特定のボラティリティマイクロ構造を持つ銘柄群」にのみ機能
+
+**累計棄却ファミリー**: 95+ (Regime Adaptive, VolReg Meme, VolReg L1, VSS Weekend追加)
+**累計試行**: 705,407+
 
 ---

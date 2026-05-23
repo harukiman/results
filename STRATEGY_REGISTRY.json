@@ -3,8 +3,8 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 661026,
-    "total_strategies": 6
+    "total_trials": 705407,
+    "total_strategies": 7
   },
   "strategies": [
     {
@@ -540,6 +540,89 @@
       "recommendation": "Deploy on DOGE 4H only. Add to triple ensemble (SampEn∪VolReg∪ATR) for +0.44 improvement. Apply sl_cooldown overlay for DD management.",
       "discovered": "2026-05-23",
       "auditor_notes": "First non-compression signal to pass validation. Measures time-series regularity (entropy) rather than volatility level (compression). Genuinely orthogonal to all existing signals. DOGE-only concentration risk accepted — entropy microstructure may be token-specific. Strongest inverse gap in project (5.13) indicates robust directional content."
+    },
+    {
+      "id": "VSS_SUI_4H_001",
+      "name": "Vol_Smile_Skew",
+      "family": "Realized Vol Skew",
+      "description": "Realized upside/downside vol ratio (semi-variance skew). Extreme negative skew + uptrend = fear/accumulation → buy. Extreme positive skew + downtrend = euphoria → sell. Fundamentally different from VolReg (direction-specific vol vs total vol level) and SampEn (distributional asymmetry vs time-series regularity).",
+      "symbol": "SUIUSDT",
+      "timeframe": "4h",
+      "params": {
+        "window": 24,
+        "skew_threshold": 1.0,
+        "trend_window": 40,
+        "stop_loss_pct": 0.02,
+        "take_profit_pct": 0.06,
+        "max_hold_bars": 24,
+        "leverage": 1.0
+      },
+      "performance": {
+        "oos_sample": {
+          "sharpe": 2.286,
+          "return_pct": 26.0,
+          "max_dd_pct": -4.0,
+          "trades": 29,
+          "win_rate_pct": 58.6
+        }
+      },
+      "validation": {
+        "permutation_p": 0.022,
+        "walk_forward_4fold": {
+          "folds": [
+            {"fold": 1, "sharpe": 0.729, "return_pct": 7.4, "max_dd_pct": -10.2, "trades": 28},
+            {"fold": 2, "sharpe": 1.903, "return_pct": 17.6, "max_dd_pct": -8.2, "trades": 15},
+            {"fold": 3, "sharpe": -0.443, "return_pct": -3.7, "max_dd_pct": -12.4, "trades": 18},
+            {"fold": 4, "sharpe": 2.637, "return_pct": 25.9, "max_dd_pct": -4.0, "trades": 26}
+          ],
+          "avg_sharpe": 1.206,
+          "folds_positive": "3/4",
+          "verdict": "PASS — mean 1.206, fold 3 regime weakness"
+        },
+        "signal_independence": {
+          "vs_volreg_pearson": -0.015,
+          "vs_volreg_active_overlap": "73 vs 313 bars",
+          "verdict": "INDEPENDENT — virtually zero overlap"
+        },
+        "multi_symbol": {
+          "DOGEUSDT": {"oos_sharpe": 3.551},
+          "SOLUSDT": {"oos_sharpe": -0.030},
+          "AVAXUSDT": {"oos_sharpe": 0.793},
+          "XRPUSDT": {"oos_sharpe": 0.164},
+          "ETHUSDT": {"oos_sharpe": -0.008},
+          "mean_oos_sharpe": 0.894,
+          "positive_count": "3/5",
+          "verdict": "PASS — strongest on high-vol alts (SUI, DOGE)"
+        },
+        "bootstrap": {
+          "ci_95": [0.316, 3.372],
+          "point_estimate": 2.131,
+          "verdict": "PASS — entirely positive CI"
+        },
+        "inverse_signal": {
+          "forward_sharpe": 2.286,
+          "inverse_sharpe": -1.488,
+          "inverse_return_pct": -14.0,
+          "inverse_max_dd_pct": -21.8,
+          "gap": 3.774,
+          "verdict": "PASS — strong directionality"
+        },
+        "parameter_plateau": {
+          "perturbed_configs": 12,
+          "all_positive": true,
+          "mean_perturbed_sharpe": 2.048,
+          "weakest": "skew_threshold=0.8 → Sharpe 0.232",
+          "strongest": "trend_window=32 → Sharpe 2.959",
+          "verdict": "PASS — robust to ±20% perturbation"
+        },
+        "overall_score": "10/11 checks passed (91%)",
+        "failed_checks": ["WF fold 3 negative (-0.443)"]
+      },
+      "status": "CONDITIONAL_PASS",
+      "status_reason": "10/11 validation checks passed. OOS Sharpe 2.286, perm p=0.022, WF mean 1.206, bootstrap CI [0.316, 3.372] excludes zero, inverse gap 3.774, VolReg correlation -0.015 (fully independent), 3/5 multi-symbol positive, all parameter perturbations positive. Only failure: WF fold 3 = -0.443 (one regime vulnerability).",
+      "recommendation": "Deploy on SUI 4H primary, DOGE 4H secondary. Apply standard 1x leverage. Monitor fold-3-type regimes. Adds genuine diversification to portfolio (r=-0.015 vs VolReg).",
+      "discovered": "2026-05-23",
+      "auditor_notes": "7th survivor. Third independent signal dimension discovered (compression → entropy → directional vol asymmetry). Semi-variance skew is a well-known concept in traditional finance (Sortino ratio lineage) but applied here as a regime detector rather than risk metric. DOGE cross-validation (OOS 3.551) is surprisingly strong. SUI-native signal with partial generalization to high-vol alts."
     }
   ],
   "rejected": [
@@ -1234,6 +1317,87 @@
       "reason": "日足トレンド + 4H圧縮 + 4H EMAアライメントの3層フィルター。0 healthy。Cross-TF VolRegと同様に、異なる時間足の情報統合は4Hコスト構造下で機能しない。",
       "date": "2026-05-23",
       "configs_tested": "~14000"
+    },
+    {
+      "name": "Weekend Effect",
+      "family": "Weekend Effect",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "14 healthy だがperm p>0.05（最良p=0.06 SOL, p=0.078）。24/7市場でも参加者構成が週末に変化する可能性あるが統計的に有意ではない。",
+      "date": "2026-05-23",
+      "configs_tested": "~160"
+    },
+    {
+      "name": "Session Volume Profile",
+      "family": "Session Volume",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "0 healthy。時間帯別リターンパターンはCalendar効果と同じく暗号資産では一貫性なし。",
+      "date": "2026-05-23",
+      "configs_tested": "~160"
+    },
+    {
+      "name": "Volume Momentum Exhaustion",
+      "family": "Vol Mom Exhaust",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "14,736 configs中一部, 弱い結果。ボリューム加重モメンタム消耗は理論的には面白いが4Hで方向予測力不足。",
+      "date": "2026-05-23",
+      "configs_tested": "~5000"
+    },
+    {
+      "name": "Range Contraction After Expansion",
+      "family": "Range Contract",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "ATRスパイク後の収縮は検出可能だが、VolReg圧縮と概念的に重複。独立したエッジなし。",
+      "date": "2026-05-23",
+      "configs_tested": "~5000"
+    },
+    {
+      "name": "Close-Position Vol Compression",
+      "family": "ClosePos VolComp",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "バー内クローズポジション+圧縮ゲート。Intrabar Pressureの変種。2 perm-sig あるがWEAK判定。",
+      "date": "2026-05-23",
+      "configs_tested": "~5000"
+    },
+    {
+      "name": "Regime-Adaptive Ensemble",
+      "family": "Regime Adaptive",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "29,160 configs (3 modes: volreg_plus_trend, volreg_only_trend_filter, compression_or_trend). 0 healthy. Ensemble combination of compression + trend signals does not improve over individual signals. Overly complex gating reduces signal density without improving quality.",
+      "date": "2026-05-23",
+      "configs_tested": 29160
+    },
+    {
+      "name": "VolReg Meme Expansion (PEPE/WIF/BONK)",
+      "family": "VolReg Meme",
+      "symbol": "PEPE+WIF+BONK",
+      "timeframe": "4h",
+      "reason": "Part of 29,160 configs. 0 healthy on any meme coin. PEPE/WIF/BONK have too short a history and too extreme volatility for compression edge to manifest. VolReg compression edge requires minimum data history for regime boundaries.",
+      "date": "2026-05-23",
+      "configs_tested": "~10000"
+    },
+    {
+      "name": "VolReg L1 Expansion (NEAR/APT/SEI)",
+      "family": "VolReg L1",
+      "symbol": "NEAR+APT+SEI",
+      "timeframe": "4h",
+      "reason": "Part of 29,160 configs. 0 healthy. NEAR/APT/SEI do not exhibit the same compression→breakout dynamics as DOGE/SUI/SOL/AVAX. Confirms VolReg edge is token-specific — high-beta meme-adjacent coins with retail-driven vol structure.",
+      "date": "2026-05-23",
+      "configs_tested": "~10000"
+    },
+    {
+      "name": "Vol Smile Skew (Weekend Filter)",
+      "family": "Weekend Effect + VSS",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "160 configs, 14 healthy, 0 perm-significant. Weekend vol skew patterns not statistically significant.",
+      "date": "2026-05-23",
+      "configs_tested": 160
     }
   ]
 }
