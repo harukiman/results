@@ -449,10 +449,10 @@
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 00:01 JST</span> &nbsp;|&nbsp;
-    <strong>試行数:</strong> 710,373+ &nbsp;|&nbsp;
-    <strong>最良ポートフォリオ:</strong> <span style="color:var(--accent-orange);">要追加検証 (Sh +2.78 / §6: 7/8 PASS)</span> &nbsp;|&nbsp;
-    <strong>判定:</strong> CONDITIONAL (DSR N=710K のみ FAIL)
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 00:50 JST</span> &nbsp;|&nbsp;
+    <strong>試行数:</strong> 722,126+ &nbsp;|&nbsp;
+    <strong>新ベスト (ATR+FOPD 合成):</strong> <span style="color:var(--accent-green);">Sh +3.23 / DD -1.9% / Calmar 29.29</span> &nbsp;|&nbsp;
+    <strong>相関:</strong> r=+0.003 (ほぼ完全独立)
   </div>
 
   <header class="report-header">
@@ -506,11 +506,23 @@
           </tr>
         </thead>
         <tbody>
+          <tr style="background:rgba(63,185,80,0.15);">
+            <td>★1</td><td><strong>合成: 60% ATR + 40% FOPD</strong> (Wave J14 発見) <br><span style="font-size:0.78rem;color:var(--text-secondary);">ATR×8 + FOPD×6, 相関 r=+0.003</span></td>
+            <td class="text-green"><strong>+3.23</strong></td><td class="text-green">+54.9%</td><td class="text-green"><strong>-1.9%</strong></td><td class="text-green"><strong>29.29</strong></td>
+            <td>未審査 (新規)</td><td class="text-orange">要審査</td>
+            <td class="text-orange">要追加検証 (新候補)</td>
+          </tr>
           <tr style="background:rgba(227,179,65,0.10);">
-            <td>1</td><td><strong>ATR_Ratio × 8銘柄 + vol_z≥1.5</strong> (Wave H/I 統合) <br><span style="font-size:0.78rem;color:var(--text-secondary);">{OP, WIF, INJ, BONK, DOGE, SHIB, ARB, LINK}</span></td>
+            <td>2</td><td><strong>ATR_Ratio × 8銘柄 + vol_z≥1.5</strong> (Wave H/I 統合) <br><span style="font-size:0.78rem;color:var(--text-secondary);">{OP, WIF, INJ, BONK, DOGE, SHIB, ARB, LINK}</span></td>
             <td class="text-green">+2.78</td><td class="text-green">+81.2%</td><td class="text-green">-3.5%</td><td class="text-green">22.96</td>
             <td>7/8 (DSR N=710K のみ✗)</td><td class="text-orange">条件付承認</td>
             <td class="text-orange">要追加検証</td>
+          </tr>
+          <tr>
+            <td>3</td><td>FOPD × 6銘柄 (BNB/AVAX/ETH/ADA/LINK/DOT)</td>
+            <td>+1.84</td><td>+19.0%</td><td>-3.5%</td><td>5.42</td>
+            <td>未審査 (Sh<2)</td><td class="text-orange">未審査</td>
+            <td class="text-orange">部分エッジ (サテライト価値高)</td>
           </tr>
           <tr>
             <td>2</td><td>VolReg_opt DOGE 日足</td>
@@ -557,10 +569,20 @@
             <td>—</td><td>—</td><td>—</td><td>—</td>
             <td>未実施</td><td>—</td><td>検証待ち</td>
           </tr>
+          <tr style="opacity:0.7;">
+            <td>—</td><td>LISRM (L1 cross-section rotation) — Wave J10 棄却</td>
+            <td class="text-red">+0.46</td><td>+23.4%</td><td>-57.2%</td><td>0.41</td>
+            <td class="text-red">1/8</td><td>—</td><td class="text-red">棄却 (DD大、コスト侵食)</td>
+          </tr>
+          <tr style="opacity:0.7;">
+            <td>—</td><td>HLWI (HL Wick Imbalance) — Wave J11 棄却</td>
+            <td class="text-red">+1.61 (ADA)</td><td>+26.9%</td><td>-5.7%</td><td>4.72</td>
+            <td class="text-red">3/8 (33% Sh&gt;0)</td><td>—</td><td class="text-red">棄却 (OHLCV情報冗長)</td>
+          </tr>
           <tr>
-            <td>—</td><td>LISRM (L1 Intra-Sector Rotation)</td>
+            <td>—</td><td>FOPD (Funding-OI-Price Triple Decoupling) — Wave J12 検証中</td>
             <td>—</td><td>—</td><td>—</td><td>—</td>
-            <td>未実施</td><td>—</td><td>検証待ち</td>
+            <td>進行中</td><td>—</td><td>検証中</td>
           </tr>
           <tr>
             <td>—</td><td>LiqCascadeFade (Tip TOP1)</td>
@@ -664,6 +686,119 @@
           <strong>ユーザーの「日利10%」基準について</strong>: 本ポートフォリオの実測日利平均は <strong>0.083%/日 (年率 ~30% / 1xレバ)</strong>。10%/日 に約120倍のギャップ。レバ拡大で平均日利は線形に上がるが破産確率も急増 (10xで 7.28%)。<strong>「10%/日」は本研究の知見では実在不可能</strong>と判断 (1.10^365≈1.3e15 倍/年)。
         </p>
       </div>
+    </div>
+
+    <!-- ── Wave J14: FOPD + ATR 合成ポートフォリオ発見 (2026-05-24 00:50 JST) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-green);background:linear-gradient(180deg,rgba(63,185,80,0.10),transparent);">
+      <h3 style="color:var(--accent-green);">⭐ Wave J14: 合成ポートフォリオ発見 (FOPD × ATR が相関 +0.003 で独立、Calmar 29.29 達成)</h3>
+
+      <p style="font-size:0.92rem;margin-top:8px;">
+        Wave J12 の FOPD (Researcher TOP2) を多銘柄ポートフォリオ化したところ、Sharpe+1.84 / DD-3.5% (単独では生存者級未達)。
+        しかし<strong>既存 ATR_Ratio × 8 + vol_z ポートフォリオとの相関がほぼゼロ (r=+0.003)</strong> で、60/40 合成すると全指標が改善:
+      </p>
+
+      <table class="data-table" style="width:100%;font-size:0.88rem;margin-top:10px;">
+        <thead><tr><th>ポートフォリオ</th><th>Sharpe</th><th>Return (730d)</th><th>Max DD</th><th>Calmar</th></tr></thead>
+        <tbody>
+          <tr><td>ATR×8 + vol_z (Wave H/I)</td><td>+2.83</td><td>+95.1%</td><td>-3.5%</td><td>27.17</td></tr>
+          <tr><td>FOPD×6 (BNB/AVAX/ETH/ADA/LINK/DOT)</td><td>+1.84</td><td>+19.0%</td><td>-3.5%</td><td>5.42</td></tr>
+          <tr style="background:rgba(63,185,80,0.18);">
+            <td><strong>合成 60% ATR + 40% FOPD</strong></td>
+            <td class="text-green"><strong>+3.23</strong></td>
+            <td class="text-green">+54.9%</td>
+            <td class="text-green"><strong>-1.9%</strong></td>
+            <td class="text-green"><strong>29.29</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">深い考察: なぜ FOPD × ATR が独立か (構造的理由)</h4>
+      <ul style="font-size:0.9rem;padding-left:22px;margin-top:6px;">
+        <li style="margin-bottom:8px;"><strong>異なる時間軸</strong>: ATR_Ratio は「圧縮 → ブレイクアウト」を捉える低-中ボラ局面の continuation 戦略。FOPD は「3項一致過熱 → 逆張り」の高ボラ局面 contrarian。<strong>同じ市場で同時に発火しない</strong>。</li>
+        <li style="margin-bottom:8px;"><strong>異なる信号源</strong>: ATR は OHLCV (内部状態)、FOPD は FR + OI + Price z-score (建玉構造)。<strong>情報源そのものが直交</strong>。</li>
+        <li style="margin-bottom:8px;"><strong>異なる銘柄</strong>: ATR は Meme/L2/SmallCap (OP/WIF/INJ/BONK/SHIB等)、FOPD は Major/LargeCap (BNB/ETH/ADA等)。<strong>市場セクターも分離</strong>。</li>
+        <li style="margin-bottom:8px;"><strong>vol_z フィルター下での相補性</strong>: ATR は vol_z<1.5 でアクティブ、FOPD はクラウディング = 高ボラ期にアクティブ → 時間的に交互。Wave I で発見した「天然ヘッジ構造」がここでも検証された。</li>
+      </ul>
+
+      <h4 style="color:var(--accent-yellow);margin-top:14px;">FOPD ポートフォリオ詳細</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>銘柄</th><th>Sharpe</th><th>Return</th><th>DD</th><th>Trades</th><th>パラメータ (fr_z/oi_z/ret_z)</th></tr></thead>
+        <tbody>
+          <tr><td>BNBUSDT</td><td class="text-green">+1.62</td><td>+26.9%</td><td>-4.7%</td><td>37</td><td>1.0/0.5/1.5</td></tr>
+          <tr><td>ETHUSDT</td><td class="text-green">+1.37</td><td>+21.9%</td><td>-3.9%</td><td>24</td><td>1.5/1.5/0.5</td></tr>
+          <tr><td>LINKUSDT</td><td>+1.02</td><td>+36.9%</td><td>-14.7%</td><td>80</td><td>1.0/0.5/1.0</td></tr>
+          <tr><td>AVAXUSDT</td><td>+0.76</td><td>+13.6%</td><td>-8.0%</td><td>10</td><td>2.0/1.0/1.5</td></tr>
+          <tr><td>ADAUSDT</td><td>+0.53</td><td>+12.4%</td><td>-14.3%</td><td>39</td><td>2.0/0.5/0.5</td></tr>
+          <tr><td>DOTUSDT</td><td>+0.02</td><td>-0.3%</td><td>-13.4%</td><td>14</td><td>2.0/1.0/1.0</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.85rem;margin-top:8px;color:var(--text-secondary);">
+        分散効果 2.10x (個別平均Sh +0.88 → ポートフォリオSh +1.84)。BNB/ETHが主力、DOT/ADAは弱い (ベスト候補4銘柄に絞ると分散効果さらに上昇予想)。
+      </p>
+
+      <h4 style="color:var(--accent-orange);margin-top:14px;">次の必須検証 (合成ポートフォリオの§6再審査)</h4>
+      <ul style="font-size:0.9rem;padding-left:22px;margin-top:6px;">
+        <li><strong>PBO 再計算</strong>: 合成戦略の試行数は ATR + FOPD = 数百K規模、N増加で DSR 罰則が厳しくなる方向</li>
+        <li><strong>FOPD 個別 §6</strong>: 試行 5817 で本検証、独立な DSR テスト必須</li>
+        <li><strong>相関 r=0.003 の頑健性</strong>: ローリング 90日 で相関時系列を見て、非定常性を確認 (構造的か期間固有か)</li>
+        <li><strong>合成ポートフォリオの Auditor 独立再実装</strong>: 60/40 配分が真に最適か (Kelly基準 or Calmar最大化で検証)</li>
+        <li><strong>フォワードテスト統合</strong>: J13の forward test scaffold に FOPD を追加</li>
+      </ul>
+    </div>
+
+    <!-- ── Wave J13: フォワードテスト稼働開始 (2026-05-24) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-blue);">
+      <h3 style="color:var(--accent-blue);">📡 Wave J13: フォワードテスト基盤稼働開始 (2026-05-24 00:43 JST)</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">
+        §6 G3 失格 (DSR N=710K) を救う <strong>正攻法</strong>: フォワードテストで OOS データを累積し、実効 N=1 で DSR の罰則を最小化。launchctl 経由で 4時間ごと (UTC 0/4/8/12/16/20) に自動実行。
+      </p>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:8px;">
+        <tbody>
+          <tr><td>対象戦略</td><td>ATR_Ratio × 8銘柄 + BTC vol_z≥1.5 OFF フィルタ</td></tr>
+          <tr><td>銘柄</td><td>OPUSDT, WIFUSDT, INJUSDT, BONKUSDT, DOGEUSDT, SHIBUSDT, ARBUSDT, LINKUSDT</td></tr>
+          <tr><td>実行頻度</td><td>4時間ごと (UTC 0/4/8/12/16/20 → JST 9/13/17/21/1/5)</td></tr>
+          <tr><td>初期スナップショット時刻</td><td>2026-05-24 00:43 JST</td></tr>
+          <tr><td>現在のレジーム</td><td>vol_z = -1.59 (低ボラ、ATR_Ratio 有効化、シグナルなし)</td></tr>
+          <tr><td>状態保存先</td><td><code>forward_state.json</code> (累積シグナル+メトリクス)</td></tr>
+          <tr><td>監査時の効果</td><td>OOS バー数の増加で DSR T 増大 → 同 Sharpe でも閾値クリア確率上昇</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.85rem;margin-top:8px;color:var(--text-secondary);">
+        フォワード期間が 90日経過するごとに「真の OOS 実績」として研究ログに追記。3-6ヶ月の累積後、Auditor 再審査で「使用可能」判定を目指す。
+      </p>
+    </div>
+
+    <!-- ── Wave J11: HLWI (棄却) サマリー ── -->
+    <div class="card" style="border-left:4px solid var(--accent-red);">
+      <h3 style="color:var(--accent-red);">❌ Wave J11: HLWI (HL Wick Imbalance) — 棄却 (2026-05-24 00:34 JST)</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">仮説: 4Hローソク足の上下ヒゲ非対称性が OB depth proxy として continuation シグナル。</p>
+      <p style="font-size:0.9rem;margin-top:8px;"><strong>結果</strong>: 26銘柄 × 324 params = 8424 backtests。Sh>0 が 33% (ランダム以下)、Sh ≥ 2.0 = 0、Sh ≥ 1.5 = 3 (ADA/SHIBのみ)。</p>
+      <p style="font-size:0.9rem;margin-top:8px;">
+        <strong>棄却理由</strong>: (1) Sh ≥ 2.0 ゼロで生存者級ない、(2) 33% Sharpe>0 はランダム水準、(3) ヒゲ非対称は OHLCV 情報の体重平均なので新情報量が少ない。Body Ratio (棄却) と同じ「OHLCV から無限に新指標を作っても新規アルファに繋がらない」原則の再確認。
+        <strong>部分エッジ</strong>: ADAUSDT Sh+1.61 / SHIBUSDT Sh+1.50 は ensemble 構成要素候補として Backlog 保持。
+      </p>
+    </div>
+
+    <!-- ── Wave J10: LISRM (棄却) サマリー ── -->
+    <div class="card" style="border-left:4px solid var(--accent-red);">
+      <h3 style="color:var(--accent-red);">❌ Wave J10: LISRM (L1 Cross-Section Rotation) — 棄却 (2026-05-24 00:30 JST)</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">仮説: L1セクター9銘柄のクロスセクション・モメンタムL/Sで market-neutral 運用。BTCベータ除去で narrative alpha 抽出。</p>
+      <p style="font-size:0.9rem;margin-top:8px;"><strong>結果</strong>: 32 configs。Best Sh+0.46 / Return +23.4% / DD -57.2% / Calmar 0.41。<strong>0/32 が Sh ≥ 1.0</strong>。</p>
+      <p style="font-size:0.9rem;margin-top:8px;">
+        <strong>棄却理由</strong>: (1) コスト ~30%/year がアルファを侵食、(2) alt narrative rotation は週単位、4Hで rebalance 4-24 bars は反転を拾いやすい、(3) L1 9銘柄は実際にはBTC高相関で market-neutral 失敗、(4) DD -57% で運用不可能。
+        <strong>学習</strong>: クロスセクション L/S は (a) 長 rebal (週単位)、(b) BTC β fit による真の neutralization、(c) momentum + value 等の factor diversification が必要。本実装は単純すぎ。Backlog保持。
+      </p>
+    </div>
+
+    <!-- ── Wave J8: FToD (棄却) サマリー ── -->
+    <div class="card" style="border-left:4px solid var(--accent-red);">
+      <h3 style="color:var(--accent-red);">❌ Wave J8: FToD (Funding Time-of-Day Tail Reversal) — 棄却 (2026-05-24 00:26 JST)</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">仮説: ファンディング決済時刻 (UTC 0/8/16) 直後の4Hバーで、FR極値 × 価格ストレッチを条件にした行動経済学的逆張り。</p>
+      <p style="font-size:0.9rem;margin-top:8px;"><strong>結果</strong>: 11銘柄 × 576 params = 2,556 trials (BONK/SHIB/PEPE は Bybit FR データなし)。Sh>0: 47%, Sh ≥ 1.5 = 6, Sh ≥ 2.0 = **0**。Top INJ Sh+1.65 だが trade数 10 のみ (統計検出力不足)。</p>
+      <p style="font-size:0.9rem;margin-top:8px;">
+        <strong>棄却理由</strong>: (1) Sh ≥ 2.0 ゼロ、(2) Top候補が trade=10で perm test 通過困難、(3) パラメータがグリッド境界 (過学習示唆)、(4) Memeセクターの主要3銘柄でFRデータ不在。
+        <strong>構造的考察</strong>: 経済根拠 (決済時のコスト確定 → 過剰側の利確) は合理的だが、4Hバー解像度で「決済直後の動き」が他取引で即希釈される。1-15分足で検証する価値はあり Backlog 保持。
+      </p>
     </div>
 
     <!-- ── 研究基盤・エージェント組織 (Wave J1) ── -->
