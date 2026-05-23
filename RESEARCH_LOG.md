@@ -4,7 +4,7 @@
 
 ## 累計試行カウンタ
 - 戦略系統スキャン数: 28+ (15m BTC x5系統 / ML / マルチTF / デリバティブ / 日足5戦略 / アンサンブル / ALT+maker / 5m-1h(1735) / 日足拡張9戦略 / ペア+セッション / GARCH+Regime / フラクタル+MTF / カレンダー+モメンタム / ポートフォリオ / 日足新ファミリー(405) / 日足マイクロ構造(648) / VolReg拡張(69K) / 日足適応型(486) / クロスアセット(2916) / 4h深掘り(22005) / VolReg先進Exit(270) / アンサンブル)
-- パラメータ組合せ試行数: ~576,138+ (前回566K + VolCone/Gap/CompDur 9,648)
+- パラメータ組合せ試行数: ~583,914+ (前回576K + CondVol/Markov/Intrabar 7,776)
 - **推奨ポートフォリオ (2026-05-23更新)**: VolReg_opt(1d) + VolReg_4h(4H) + ATR_AVAX(4h) + SampEn_DOGE(4h) = **Sh 2.78, DD -3.8%, Calmar 15.94, 年率+60.5%**
 - 深掘り検証: Dual ST Ribbon → 棄却, Rel Vol Breakout → 棄却, G7 ST Pullback → 棄却, ML → 棄却, ADX_trail → 棄却
 - **6条件付き合格**:
@@ -1286,5 +1286,37 @@ GK volatility = sqrt(0.5×ln(H/L)² - (2ln2-1)×ln(C/O)²)。OHLC全4成分を�
 
 **累計棄却ファミリー**: 74+ (Gap追加, VolCone/CompDur再検証待ち)
 **累計試行**: 576,138+
+
+### 2026-05-23: CondVol/Markov/Intrabar スキャン (7,776 configs) → **全棄却 + 独立性≠有用性の決定的証拠**
+
+| 戦略 | Configs | Healthy | VolReg相関 | 判定 |
+|------|---------|---------|-----------|------|
+| Conditional Volatility | 2,592 | 0 | **r=0.01-0.09** | ✗ 真に独立だが予測力ゼロ |
+| Markov Regime | 2,916 | 0 | — | ✗ 遷移確率で圧縮検出は不十分 |
+| Intrabar Pressure | 2,268 | 0 | — | ✗ Body Ratioの方向拡張も失敗 |
+
+**決定的発見: 独立性は有用性の十分条件ではない**
+
+CondVolのVolRegとの相関:
+| 銘柄 | CondVol vs VolReg r |
+|------|---------------------|
+| DOGE | 0.060 |
+| SUI  | 0.012 |
+| SOL  | 0.087 |
+| AVAX | 0.060 |
+
+CondVol（非対称ボラティリティ、レバレッジ効果）はVolRegと事実上**完全に無相関**。しかしhealthy=0。これまでの独立性テスト結果:
+- Body Ratio: ATR r=0.16 → 0 healthy
+- Wavelet: VolReg r=0.34-0.50 → 0 healthy  
+- CondVol: VolReg r=0.01-0.09 → 0 healthy ← **最も独立だが最も予測力なし**
+
+**結論**: 新シグナルが既存生存者と独立していること（必要条件）に加え、そのシグナル自体が方向予測力を持つこと（十分条件）が必要。SampEn(r=-0.03)のみがこの両条件を満たす。
+
+**Markov**: P(calm→calm)の持続確率は概念的には面白いが、4Hバーでの遷移確率推定は統計的にノイジーすぎる。
+
+**Intrabar**: (C-O)/(H-L)は方向的な買い/売り圧力を測定するが、4Hバーの集約レベルではミクロ構造情報が失われすぎ。
+
+**累計棄却ファミリー**: 77+ (CondVol, Markov, Intrabar追加)
+**累計試行**: 583,914+
 
 ---

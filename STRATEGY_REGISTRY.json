@@ -3,7 +3,7 @@
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
     "last_updated": "2026-05-23",
-    "total_trials": 576138,
+    "total_trials": 583914,
     "total_strategies": 6
   },
   "strategies": [
@@ -1108,6 +1108,39 @@
       "date": "2026-05-23",
       "configs_tested": 5184,
       "status": "PENDING_REVALIDATION"
+    },
+    {
+      "name": "Conditional Volatility (Asymmetric Vol)",
+      "family": "CondVol",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "2,592 configs, 0 healthy. GARCH-like asymmetric vol (neg_vol/pos_vol ratio). VolRegとの相関 r=0.01-0.09 — 真に独立だが予測力ゼロ。レバレッジ効果は暗号資産4Hでは方向予測に変換されない。独立性≠有用性の最強証拠。",
+      "date": "2026-05-23",
+      "configs_tested": 2592,
+      "condvol_volreg_corr": {
+        "DOGE": 0.06,
+        "SUI": 0.012,
+        "SOL": 0.087,
+        "AVAX": 0.06
+      }
+    },
+    {
+      "name": "Markov Regime (Transition Probability)",
+      "family": "Markov Regime",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "2,916 configs, 0 healthy. Rolling calm→calm transition probability. 2-state Markov-like regime detection cannot capture exploitable structure. P(calm→calm)は圧縮の持続性を測定するが、VolReg/CompDurとは異なるアプローチでも結果は同じ。",
+      "date": "2026-05-23",
+      "configs_tested": 2916
+    },
+    {
+      "name": "Intrabar Pressure (Buying/Selling)",
+      "family": "Intrabar Pressure",
+      "symbol": "DOGE+SUI+SOL+AVAX",
+      "timeframe": "4h",
+      "reason": "2,268 configs, 0 healthy. (C-O)/(H-L)の方向的買い/売り圧力 + 連続蓄積。Body Ratio (r=0.16 vs ATR)の方向拡張版だが同じく予測力なし。",
+      "date": "2026-05-23",
+      "configs_tested": 2268
     }
   ]
 }
