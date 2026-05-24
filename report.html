@@ -362,57 +362,59 @@ window.__renderWhenReady = function(fn, label) {
     font-size: 0.8rem;
   }
 
-  /* TOC — sticky floating left rail */
+  /* TOC — sticky floating left rail (compact) */
   .toc {
     position: fixed;
-    top: 70px;
-    left: 16px;
-    width: 240px;
-    max-height: calc(100vh - 90px);
+    top: 60px;
+    left: 8px;
+    width: 175px;
+    max-height: calc(100vh - 80px);
     overflow-y: auto;
     background: rgba(22,27,34,0.96);
     backdrop-filter: blur(6px);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 18px;
+    border-radius: 6px;
+    padding: 8px 10px;
     z-index: 100;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    font-size: 0.85rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    font-size: 0.72rem;
   }
   .toc h3 {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     color: var(--text-muted);
-    margin-bottom: 10px;
-    padding-bottom: 8px;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
     border-bottom: 1px solid var(--border);
   }
   .toc ol {
     list-style: none;
     counter-reset: toc-counter;
     padding-left: 0;
+    margin: 0;
   }
   .toc li {
     counter-increment: toc-counter;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+    line-height: 1.25;
   }
   .toc li::before {
-    content: counter(toc-counter, decimal-leading-zero) '.';
+    content: counter(toc-counter) '.';
     color: var(--accent-blue);
     font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     font-weight: 600;
-    margin-right: 6px;
+    margin-right: 4px;
   }
   .toc a {
     color: var(--text-secondary);
     text-decoration: none;
-    font-size: 0.82rem;
+    font-size: 0.72rem;
     transition: color 0.15s, background 0.15s;
     display: inline-block;
-    padding: 2px 4px;
-    border-radius: 3px;
+    padding: 1px 3px;
+    border-radius: 2px;
   }
   .toc a:hover { color: var(--accent-blue); background: rgba(88,166,255,0.08); }
   .toc a.active {
@@ -423,23 +425,23 @@ window.__renderWhenReady = function(fn, label) {
   .toc-toggle {
     display: none;
     position: fixed;
-    top: 16px;
-    left: 16px;
+    top: 12px;
+    left: 12px;
     z-index: 101;
     background: var(--accent-green);
     color: #000;
     border: none;
     border-radius: 6px;
-    padding: 8px 14px;
+    padding: 6px 10px;
     font-weight: 700;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
   /* Add left margin to main content so TOC doesn't overlap on desktop */
   body { margin-left: 0; }
-  .container { max-width: 1100px; margin: 0 auto; padding-left: 280px; padding-right: 16px; }
+  .container { max-width: 1200px; margin: 0 auto; padding-left: 200px; padding-right: 16px; }
   /* On smaller screens, hide TOC and show toggle */
-  @media (max-width: 1100px) {
+  @media (max-width: 1000px) {
     .toc { display: none; }
     .toc.toc-open { display: block; }
     .toc-toggle { display: block; }
@@ -505,73 +507,147 @@ window.__renderWhenReady = function(fn, label) {
     font-weight: 600;
   }
 
-  /* ===== MOBILE RESPONSIVE — applied at <=768px viewport ===== */
+  /* ===== MOBILE RESPONSIVE — Comprehensive ALL charts/tables ===== */
+
+  /* Universal table behavior */
+  table { max-width: 100%; }
+
   @media (max-width: 768px) {
-    /* General typography */
+    /* ===== Typography ===== */
     body { font-size: 0.92rem; }
     h1 { font-size: 1.4rem !important; }
     h2 { font-size: 1.15rem !important; }
     h3 { font-size: 1.0rem !important; }
     h4 { font-size: 0.95rem !important; }
+    p, li { font-size: 0.85rem !important; }
 
-    /* Header banner: stack on mobile */
+    /* ===== Header ===== */
     .report-header { padding: 12px 8px !important; }
     .report-header h1 { letter-spacing: 0 !important; }
+    .report-header .subtitle, .report-header .meta { font-size: 0.78rem !important; }
 
-    /* Plotly chart containers — shrink heights ~40% */
-    #comparison-chart-div, #k109-eq-chart, #fw-eq-chart, #sim-equity-chart { height: 320px !important; }
-    #fw-dd-chart, #fw-rs-chart, #sim-dist-chart, #sim-dd-chart, #k109-bar-chart { height: 200px !important; }
+    /* ===== ALL Plotly chart containers (catch-all) ===== */
+    /* Generic: any div whose id ends with -chart or -chart-div or contains chart */
+    div[id$="-chart"], div[id$="-chart-div"], div[id*="-chart-"],
+    div[id$="-eq"], div[id$="-dd"], div[id$="-rs"], div[id$="-hm"], div[id$="-bar"],
+    div[id^="sc-"], div[id^="fw-"], div[id^="k109-"], div[id^="sim-"], div[id^="lbl-"],
+    div[id="comparison-chart-div"] {
+      max-height: 320px !important;
+    }
+    /* Specific known charts — shrink heights ~35-40% */
+    #comparison-chart-div, #k109-eq-chart, #fw-eq-chart, #sim-equity-chart,
+    #sc-combined-eq, #sc-atr-eq, #sc-fopd-eq { height: 300px !important; }
+    #fw-dd-chart, #fw-rs-chart, #sim-dist-chart, #sim-dd-chart,
+    #k109-bar-chart, #sc-combined-dd, #sc-combined-rs, #sc-atr-dd, #sc-atr-rs,
+    #sc-fopd-dd, #sc-fopd-rs { height: 200px !important; }
     #k109-hm-chart { height: 260px !important; }
     #lbl-chart { height: 240px !important; }
+    /* Override any inline height >= 400px */
+    div[style*="height:480px"], div[style*="height: 480px"],
+    div[style*="height:520px"], div[style*="height: 520px"],
+    div[style*="height:600px"], div[style*="height: 600px"] {
+      height: 300px !important;
+    }
+    div[style*="height:380px"], div[style*="height: 380px"] {
+      height: 240px !important;
+    }
+    div[style*="height:340px"], div[style*="height: 340px"] {
+      height: 240px !important;
+    }
 
-    /* Generic chart divs (catch-all) — anything with height: NNNpx in inline style */
-    [id$="-chart"], [id$="-chart-div"] { max-height: 320px; }
+    /* ===== ALL Tables ===== */
+    .data-table, table.data-table, table { font-size: 0.72rem !important; }
+    table th, table td, .data-table th, .data-table td { padding: 4px 6px !important; }
+    /* Wrap tables in horizontal scroll */
+    .card table, .card .data-table {
+      display: block; overflow-x: auto; -webkit-overflow-scrolling: touch;
+      max-width: 100%;
+    }
+    /* explicit overflow-x wrappers stay */
+    div[style*="overflow-x"] { -webkit-overflow-scrolling: touch; max-width: 100%; }
+    /* Tables inside details/summary smaller */
+    details table, details .data-table { font-size: 0.68rem !important; }
 
-    /* Tables — smaller font, allow horizontal scroll */
-    table.data-table, .data-table { font-size: 0.72rem !important; }
-    table.data-table th, table.data-table td { padding: 4px 6px !important; }
-    /* Wrap wide tables in horizontal scroll containers if not already */
-    section.section .card > table.data-table { display: block; overflow-x: auto; }
-
-    /* TOC: hide by default, button toggle */
+    /* ===== TOC float-button on mobile ===== */
     .toc { display: none !important; }
-    .toc.toc-open { display: block !important; max-height: 60vh; overflow-y: auto; }
-    .toc-toggle { display: block !important; position: fixed; bottom: 12px; right: 12px; z-index: 1000;
-                  background: var(--accent-blue); color: white; padding: 10px 14px; border-radius: 6px;
-                  border: 0; font-size: 0.9rem; cursor: pointer; }
+    .toc.toc-open {
+      display: block !important; position: fixed; top: 50px; left: 8px; right: 8px;
+      max-height: 70vh; overflow-y: auto; z-index: 999;
+      background: var(--bg-card); padding: 12px; border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .toc-toggle {
+      display: block !important; position: fixed; bottom: 12px; right: 12px; z-index: 1000;
+      background: var(--accent-blue); color: white; padding: 10px 14px; border-radius: 6px;
+      border: 0; font-size: 0.9rem; cursor: pointer; min-height: 40px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
 
-    /* Cards: tighter padding */
+    /* ===== Cards / sections ===== */
     .card { padding: 10px !important; }
     section.section { padding: 8px !important; }
 
-    /* Grid that auto-fits KPI tiles — make tiles smaller min-width */
-    div[style*="grid-template-columns"][style*="minmax(180px"] {
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+    /* ===== Grid auto-fit downsizing ===== */
+    div[style*="grid-template-columns"][style*="minmax(180px"],
+    div[style*="grid-template-columns"][style*="minmax(140px"],
+    div[style*="grid-template-columns"][style*="minmax(160px"] {
+      grid-template-columns: repeat(auto-fit, minmax(115px, 1fr)) !important;
     }
-    div[style*="grid-template-columns"][style*="minmax(260px"] {
+    div[style*="grid-template-columns"][style*="minmax(260px"],
+    div[style*="grid-template-columns"][style*="minmax(280px"],
+    div[style*="grid-template-columns"][style*="minmax(300px"],
+    div[style*="grid-template-columns"][style*="minmax(320px"] {
       grid-template-columns: 1fr !important;
     }
 
-    /* Form controls: touch-friendly sizing */
+    /* ===== Form controls ===== */
     input, select, button, textarea {
       font-size: 0.95rem !important; min-height: 38px;
     }
     button { padding: 8px 14px !important; }
+    textarea { width: 100% !important; box-sizing: border-box; }
+    select[multiple] { min-height: 100px !important; }
 
-    /* External findings pagination */
-    #findings-pager { flex-wrap: wrap; }
-    #findings-pager button { min-height: 34px; }
+    /* ===== Specific UI areas ===== */
+    #findings-pager { flex-wrap: wrap; gap: 6px; }
+    #findings-pager button, .ef-pn { min-height: 32px; }
+    #lbl-input { gap: 6px !important; }
 
-    /* Update timestamp banner */
-    div[style*="bg-tertiary"][style*="border-bottom"] { font-size: 0.72rem !important; padding: 6px 8px !important; }
+    /* ===== Top status banner ===== */
+    div[style*="bg-tertiary"][style*="border-bottom"] {
+      font-size: 0.72rem !important; padding: 6px 8px !important;
+      line-height: 1.6 !important;
+    }
+
+    /* ===== Footer ===== */
+    .report-footer { padding: 16px 8px !important; font-size: 0.78rem !important; }
+    .report-footer p { font-size: 0.72rem !important; }
+
+    /* ===== HR ===== */
+    hr.divider { margin: 14px 0 !important; }
   }
 
-  /* Extra-narrow screens (<480px) */
+  /* ===== Extra-narrow (<=480px) — phone portrait ===== */
   @media (max-width: 480px) {
     h1 { font-size: 1.2rem !important; }
     h2 { font-size: 1.0rem !important; }
-    #comparison-chart-div, #k109-eq-chart, #fw-eq-chart { height: 280px !important; }
-    table.data-table, .data-table { font-size: 0.68rem !important; }
+    h3 { font-size: 0.95rem !important; }
+    /* All chart heights even smaller */
+    div[id$="-chart"], div[id$="-chart-div"], div[id*="-chart-"],
+    div[id$="-eq"], div[id$="-dd"], div[id$="-rs"], div[id$="-hm"], div[id$="-bar"],
+    div[id^="sc-"], div[id^="fw-"], div[id^="k109-"], div[id^="sim-"], div[id^="lbl-"],
+    div[id="comparison-chart-div"] {
+      max-height: 260px !important;
+    }
+    #comparison-chart-div, #k109-eq-chart, #fw-eq-chart, #sim-equity-chart,
+    #sc-combined-eq, #sc-atr-eq, #sc-fopd-eq { height: 250px !important; }
+    .data-table, table.data-table, table { font-size: 0.68rem !important; }
+    .data-table th, .data-table td, table th, table td { padding: 3px 5px !important; }
+    .card { padding: 8px !important; }
+    /* Most multi-col grids -> single column */
+    div[style*="grid-template-columns"]:not([style*="minmax(110"]) {
+      grid-template-columns: 1fr !important;
+    }
   }
 </style>
 </head>
@@ -581,17 +657,17 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 20:58 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 21:08 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
-    <strong>🏆 採用候補 (5):</strong> <span style="color:var(--accent-green);">v4.1 +4.08 / K109 V1 +2.93 / K114 ALCP +2.25 (onchain) / K116 vol_only +1.59 (xs) / K121 Weekend Mom +1.25 (calendar)</span> &nbsp;|&nbsp;
-    <strong>累計 5 ACCEPT / 7 REJECT / 1 CONDITIONAL</strong>
+    <strong>🏆 ENSEMBLE:</strong> <span style="color:var(--accent-green);font-weight:700;">K124 5戦略合成 OOS Sh +4.25 / MaxDD -1.16% / Calmar 14.0</span> &nbsp;|&nbsp; <span style="color:var(--text-secondary);font-size:0.85em;">構成: v4.1 + K109 V1 + K114 ALCP + K116 vol_only + K121 Weekend, |ρ| max 0.34</span> &nbsp;|&nbsp;
+    <strong>5 base ACCEPT + 1 ensemble / 9 REJECT / 1 CONDITIONAL</strong>
   </div>
 
   <header class="report-header">
     <h1 style="font-family:Georgia,serif;letter-spacing:-0.01em;">Systematic Alpha Discovery in MEXC Perpetual Futures</h1>
     <div class="subtitle" style="font-style:italic;font-family:Georgia,serif;">A Bias-Controlled Empirical Study of Multi-Axis Portfolio Construction with §6 Audit Validation</div>
     <div class="meta">
-      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 20:58 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
+      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 21:08 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
       Methodology: §6 strict-gate audit (Bailey-LdP CPCV, Hansen SPA, White RC, Bootstrap CI, Block Permutation)
     </div>
   </header>
@@ -6473,7 +6549,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       </div>
       <div id="external-findings-body" style="margin-top:10px;font-size:0.88rem;">
         <div class="findings-page" data-page="1" data-title="Round 1: tip-scraper 初回 (20候補)">
-        <h3 style="color:var(--accent-green);">📅 2026-05-24 20:58 JST — 初回スクレイプ完了 (20候補 / TOP5抽出)</h3>
+        <h3 style="color:var(--accent-green);">📅 2026-05-24 21:08 JST — 初回スクレイプ完了 (20候補 / TOP5抽出)</h3>
         <p>tip-scraper サブエージェントが arxiv/MDPI/ScienceDirect/Bookmap/Glassnode/Amberdata/Coinmonks/Zenn/note 等を巡回。既存17戦略との重複を除外し、20件の新規候補を抽出。</p>
 
         <h4 style="color:var(--accent-cyan);margin-top:14px;">TOP 5 (優先検証)</h4>
@@ -6931,7 +7007,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       <p style="font-size:0.85rem;color:var(--text-secondary);">解析過程で発見した tips・知見・将来役立ちそうなアイデアを時系列で蓄積。</p>
       <div id="tips-log-body" style="margin-top:10px;font-size:0.88rem;">
         <details open>
-          <summary><strong>💡 2026-05-24 20:58 JST — 信号振幅 vs コスト 事前評価原則 (K122 から)</strong></summary>
+          <summary><strong>💡 2026-05-24 21:08 JST — 信号振幅 vs コスト 事前評価原則 (K122 から)</strong></summary>
           <ul>
             <li><strong>K122 Premium-Index MR の失敗から導出された原則</strong></li>
             <li><strong>事象</strong>: arxiv 2310.11771 の theoretically sound な premium-MR 仮説、4H scale で REJECT</li>
@@ -6958,7 +7034,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
-          <summary><strong>🌟 2026-05-24 20:58 JST — K121 Weekend Momentum ACCEPT 6/7 (5番目候補)</strong></summary>
+          <summary><strong>🌟 2026-05-24 21:08 JST — K121 Weekend Momentum ACCEPT 6/7 (5番目候補)</strong></summary>
           <ul>
             <li><strong>5番目の独立 alpha 軸</strong>: calendar effect (時間帯エッジ) — 既存4軸 (mix/regime/onchain/cross-section) と直交</li>
             <li><strong>53/56 銘柄</strong> で weekend > weekday daily SR (breadth 94.6%)</li>
@@ -7015,7 +7091,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details>
-          <summary><strong>📋 2026-05-24 20:58 JST — HTML 監査記録 #1 (定期監査初回)</strong></summary>
+          <summary><strong>📋 2026-05-24 21:08 JST — HTML 監査記録 #1 (定期監査初回)</strong></summary>
           <ul>
             <li><strong>監査範囲</strong>: TOC vs section ID 対応、累積 Sharpe 数値の重複、最新候補の整合性、Plotly 不具合</li>
             <li><strong>是正</strong>: (a) 上部 banner が古い v1 (Sh+3.61) 表示 → 採用候補4軸 (v4.1+4.08, K109+2.93, K114+2.25, K112 OOS+1.71) に更新</li>
@@ -7038,7 +7114,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
-          <summary><strong>2026-05-24 20:58 JST</strong> — インボックス機構稼働 + 外部リサーチ初回 + Wave K109 着手</summary>
+          <summary><strong>2026-05-24 21:08 JST</strong> — インボックス機構稼働 + 外部リサーチ初回 + Wave K109 着手</summary>
           <ul>
             <li>サイト経由の指示インボックス実装完了 (pw=2026, ntfy.sh backend, 3-fails-24h-lock)</li>
             <li>launchd `com.cryptolab.inbox-poll` 登録、StartInterval=1800s (30分)。独立稼働するので Claude セッション断でも受信継続</li>
@@ -7067,7 +7143,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
     <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v4.1</p>
-    <p style="margin-top:4px;">更新: 2026-05-24 20:58 JST &nbsp;|&nbsp; 100+ファミリーで738,388+試行 &nbsp;|&nbsp; ユニバース: 55銘柄 (4H/730日) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
+    <p style="margin-top:4px;">更新: 2026-05-24 21:08 JST &nbsp;|&nbsp; 100+ファミリーで738,388+試行 &nbsp;|&nbsp; ユニバース: 55銘柄 (4H/730日) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 
