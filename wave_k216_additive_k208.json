@@ -1,0 +1,471 @@
+{
+  "wave": "K216",
+  "task": "Additive K208-filtered V_rev_carry as 11th component (v6.6 candidate)",
+  "as_of": "2026-05-24T22:03:50.436822+00:00",
+  "runtime_s": 3.5,
+  "config": {
+    "n_strategies": 11,
+    "strategies": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry",
+      "V_rev_carry_filtered"
+    ],
+    "k198_10_components": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ],
+    "new_11th_component": "V_rev_carry_filtered",
+    "ml_train_days": 90,
+    "ml_test_days": 30,
+    "oos_frac": 0.3,
+    "caps": {
+      "K121": 0.3,
+      "V_fwd_carry": 0.05,
+      "V_rev_carry": 0.05,
+      "V_rev_carry_filtered": 0.05,
+      "carry_sleeve_total": 0.15
+    },
+    "date_range": [
+      "2024-07-26",
+      "2026-05-14"
+    ],
+    "n_days_total": 658,
+    "n_days_ml": 448,
+    "n_wf_steps": 15,
+    "ridge_alpha": 1.0
+  },
+  "k208_filter_metadata": {
+    "dar_diag": {
+      "SOL": {
+        "oos_r2": 0.15981,
+        "direction_acc": 0.6846,
+        "n_oos": 1884
+      },
+      "XRP": {
+        "oos_r2": -0.01813,
+        "direction_acc": 0.6591,
+        "n_oos": 1887
+      },
+      "SUI": {
+        "oos_r2": 0.0727,
+        "direction_acc": 0.6667,
+        "n_oos": 1887
+      },
+      "OP": {
+        "oos_r2": 0.1561,
+        "direction_acc": 0.6892,
+        "n_oos": 1886
+      },
+      "APT": {
+        "oos_r2": 0.22419,
+        "direction_acc": 0.6583,
+        "n_oos": 1883
+      },
+      "JTO": {
+        "oos_r2": -0.04804,
+        "direction_acc": 0.7005,
+        "n_oos": 1886
+      },
+      "IMX": {
+        "oos_r2": -1.54316,
+        "direction_acc": 0.7018,
+        "n_oos": 1887
+      },
+      "SAND": {
+        "oos_r2": 0.15436,
+        "direction_acc": 0.718,
+        "n_oos": 1306
+      },
+      "ADA": {
+        "oos_r2": 0.02587,
+        "direction_acc": 0.6881,
+        "n_oos": 1883
+      },
+      "AXS": {
+        "note": "always-on",
+        "direction_acc": NaN
+      }
+    },
+    "filter_stats": {
+      "SOL": {
+        "n_total_events": 2186,
+        "n_active_filtered": 589,
+        "pct_in_market": 26.9,
+        "filter_rate_pct": 73.1
+      },
+      "XRP": {
+        "n_total_events": 2189,
+        "n_active_filtered": 563,
+        "pct_in_market": 25.7,
+        "filter_rate_pct": 74.3
+      },
+      "SUI": {
+        "n_total_events": 2189,
+        "n_active_filtered": 746,
+        "pct_in_market": 34.1,
+        "filter_rate_pct": 65.9
+      },
+      "OP": {
+        "n_total_events": 2188,
+        "n_active_filtered": 892,
+        "pct_in_market": 40.8,
+        "filter_rate_pct": 59.2
+      },
+      "APT": {
+        "n_total_events": 2185,
+        "n_active_filtered": 722,
+        "pct_in_market": 33.0,
+        "filter_rate_pct": 67.0
+      },
+      "JTO": {
+        "n_total_events": 2188,
+        "n_active_filtered": 705,
+        "pct_in_market": 32.2,
+        "filter_rate_pct": 67.8
+      },
+      "IMX": {
+        "n_total_events": 2189,
+        "n_active_filtered": 801,
+        "pct_in_market": 36.6,
+        "filter_rate_pct": 63.4
+      },
+      "SAND": {
+        "n_total_events": 1608,
+        "n_active_filtered": 600,
+        "pct_in_market": 37.3,
+        "filter_rate_pct": 62.7
+      },
+      "ADA": {
+        "n_total_events": 2185,
+        "n_active_filtered": 821,
+        "pct_in_market": 37.6,
+        "filter_rate_pct": 62.4
+      },
+      "AXS": {
+        "pct_in_market": 100.0,
+        "filter_rate_pct": 0.0
+      }
+    },
+    "avg_filter_pct": 59.6,
+    "avg_in_market_pct": 40.4,
+    "n_symbols": 10,
+    "date_range": [
+      "2024-05-23",
+      "2026-05-24"
+    ],
+    "n_days": 732
+  },
+  "correlation_analysis": {
+    "V_rev_carry_vs_V_rev_carry_filtered": 0.9687,
+    "V_rev_carry_std": 0.004013,
+    "V_rev_carry_filtered_std": 0.000536,
+    "std_ratio_filt_over_unfilt": 0.1336,
+    "note": "Correlation < 1.0 because filtered series is zero during ~60% of events. Lower std of filtered component means Ridge may upweight it proportionally."
+  },
+  "comparison_table": {
+    "K198_v6.5_baseline": {
+      "description": "K198 v6.5 Ridge ML, 10 components",
+      "oos_sharpe": 10.28,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.91,
+      "wf_min": 6.57
+    },
+    "K210b_rejected": {
+      "description": "K210b V_rev_carry replacement (rejected)",
+      "oos_sharpe": 8.34,
+      "oos_maxdd": -0.005,
+      "wf_mean": 7.59,
+      "wf_min": 7.04
+    },
+    "K214_rejected": {
+      "description": "K214 hybrid V_rev_carry (rejected)",
+      "oos_sharpe": 8.03,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.47,
+      "wf_min": 6.92
+    },
+    "K216_additive_11th": {
+      "description": "K216 additive 11th component (this wave)",
+      "oos_sharpe": 9.4342,
+      "oos_maxdd": -0.0064,
+      "oos_sortino": 25.7227,
+      "oos_calmar": 117.5993,
+      "oos_ann_ret": 0.7576,
+      "oos_ann_vol": 0.06,
+      "oos_n_days": 135,
+      "wf_mean": 7.8779,
+      "wf_min": 6.955,
+      "wf_max": 8.7161,
+      "wf_std": 0.6434,
+      "wf_fold_sharpes": [
+        6.955,
+        7.6992,
+        8.1414,
+        8.7161
+      ],
+      "lift_vs_k198_oos": -0.8458,
+      "lift_vs_k198_wf_min": 0.385
+    }
+  },
+  "weight_evolution": {
+    "v4.1": {
+      "k216_mean": 0.1123,
+      "k216_min": 0.0,
+      "k216_max": 0.4006,
+      "k216_nonzero_pct": 59.8,
+      "k198_mean": 0.1022,
+      "k198_max": 0.3071,
+      "delta_mean": 0.0101
+    },
+    "V1": {
+      "k216_mean": 0.1204,
+      "k216_min": 0.0,
+      "k216_max": 0.3115,
+      "k216_nonzero_pct": 80.4,
+      "k198_mean": 0.127,
+      "k198_max": 0.3845,
+      "delta_mean": -0.0066
+    },
+    "K114": {
+      "k216_mean": 0.1047,
+      "k216_min": 0.0,
+      "k216_max": 0.3509,
+      "k216_nonzero_pct": 79.9,
+      "k198_mean": 0.1045,
+      "k198_max": 0.3244,
+      "delta_mean": 0.0001
+    },
+    "K116": {
+      "k216_mean": 0.1085,
+      "k216_min": 0.0,
+      "k216_max": 0.3883,
+      "k216_nonzero_pct": 60.3,
+      "k198_mean": 0.0879,
+      "k198_max": 0.3275,
+      "delta_mean": 0.0207
+    },
+    "K121": {
+      "k216_mean": 0.0939,
+      "k216_min": 0.0,
+      "k216_max": 0.4906,
+      "k216_nonzero_pct": 66.5,
+      "k198_mean": 0.0913,
+      "k198_max": 0.3669,
+      "delta_mean": 0.0026
+    },
+    "K133": {
+      "k216_mean": 0.0929,
+      "k216_min": 0.0,
+      "k216_max": 0.2644,
+      "k216_nonzero_pct": 59.8,
+      "k198_mean": 0.0984,
+      "k198_max": 0.2842,
+      "delta_mean": -0.0055
+    },
+    "K147": {
+      "k216_mean": 0.1373,
+      "k216_min": 0.0,
+      "k216_max": 0.4637,
+      "k216_nonzero_pct": 67.0,
+      "k198_mean": 0.112,
+      "k198_max": 0.3699,
+      "delta_mean": 0.0254
+    },
+    "K175_DAR": {
+      "k216_mean": 0.0999,
+      "k216_min": 0.0,
+      "k216_max": 0.4794,
+      "k216_nonzero_pct": 66.5,
+      "k198_mean": 0.0914,
+      "k198_max": 0.3703,
+      "delta_mean": 0.0085
+    },
+    "V_fwd_carry": {
+      "k216_mean": 0.0635,
+      "k216_min": 0.0,
+      "k216_max": 0.0896,
+      "k216_nonzero_pct": 93.3,
+      "k198_mean": 0.1255,
+      "k198_max": 0.2591,
+      "delta_mean": -0.062
+    },
+    "V_rev_carry": {
+      "k216_mean": 0.0354,
+      "k216_min": 0.0,
+      "k216_max": 0.1011,
+      "k216_nonzero_pct": 59.8,
+      "k198_mean": 0.0598,
+      "k198_max": 0.1,
+      "delta_mean": -0.0245
+    },
+    "V_rev_carry_filtered": {
+      "k216_mean": 0.0313,
+      "k216_min": 0.0,
+      "k216_max": 0.05,
+      "k216_nonzero_pct": 86.6,
+      "k198_mean": null,
+      "k198_max": null,
+      "delta_mean": null
+    }
+  },
+  "nonzero_weight_check": {
+    "all_k198_10_nonzero": true,
+    "per_component": {
+      "v4.1": true,
+      "V1": true,
+      "K114": true,
+      "K116": true,
+      "K121": true,
+      "K133": true,
+      "K147": true,
+      "K175_DAR": true,
+      "V_fwd_carry": true,
+      "V_rev_carry": true
+    },
+    "v_rev_carry_filtered_nonzero": true
+  },
+  "lift_attribution": {
+    "oos_sh_k216": 9.4342,
+    "oos_sh_without_filt": 9.3049,
+    "lift_from_filt": 0.1293,
+    "lift_pct": 1.39
+  },
+  "ml_diagnostics": {
+    "overall_mean_r2": 0.9446,
+    "overall_mean_dir_acc": 0.7455,
+    "r2_by_strategy": {
+      "v4.1": {
+        "mean": 0.93,
+        "n_steps": 15
+      },
+      "V1": {
+        "mean": 0.9318,
+        "n_steps": 15
+      },
+      "K114": {
+        "mean": 0.8948,
+        "n_steps": 15
+      },
+      "K116": {
+        "mean": 0.9477,
+        "n_steps": 15
+      },
+      "K121": {
+        "mean": 0.949,
+        "n_steps": 15
+      },
+      "K133": {
+        "mean": 0.9382,
+        "n_steps": 15
+      },
+      "K147": {
+        "mean": 0.9217,
+        "n_steps": 15
+      },
+      "K175_DAR": {
+        "mean": 0.9278,
+        "n_steps": 15
+      },
+      "V_fwd_carry": {
+        "mean": 0.974,
+        "n_steps": 15
+      },
+      "V_rev_carry": {
+        "mean": 0.9901,
+        "n_steps": 15
+      },
+      "V_rev_carry_filtered": {
+        "mean": 0.9856,
+        "n_steps": 15
+      }
+    },
+    "dir_acc_by_strategy": {
+      "v4.1": {
+        "mean_dir_acc": 0.5333,
+        "n_steps": 15
+      },
+      "V1": {
+        "mean_dir_acc": 0.8667,
+        "n_steps": 15
+      },
+      "K114": {
+        "mean_dir_acc": 0.7333,
+        "n_steps": 15
+      },
+      "K116": {
+        "mean_dir_acc": 0.6,
+        "n_steps": 15
+      },
+      "K121": {
+        "mean_dir_acc": 0.6,
+        "n_steps": 15
+      },
+      "K133": {
+        "mean_dir_acc": 0.6667,
+        "n_steps": 15
+      },
+      "K147": {
+        "mean_dir_acc": 0.6667,
+        "n_steps": 15
+      },
+      "K175_DAR": {
+        "mean_dir_acc": 0.8,
+        "n_steps": 15
+      },
+      "V_fwd_carry": {
+        "mean_dir_acc": 0.9333,
+        "n_steps": 15
+      },
+      "V_rev_carry": {
+        "mean_dir_acc": 0.9333,
+        "n_steps": 15
+      },
+      "V_rev_carry_filtered": {
+        "mean_dir_acc": 0.8667,
+        "n_steps": 15
+      }
+    },
+    "n_wf_steps": 15
+  },
+  "acceptance_criteria": {
+    "AC1_oos_sh_pass": false,
+    "AC1_k198_oos_sh": 10.28,
+    "AC1_k216_oos_sh": 9.4342,
+    "AC1_required": 10.33,
+    "AC1_lift": -0.8458,
+    "AC2_maxdd_pass": false,
+    "AC2_k198_maxdd": -0.0053,
+    "AC2_k216_maxdd": -0.0064,
+    "AC3_wf_min_pass": true,
+    "AC3_required": 6.57,
+    "AC3_k216_wf_min": 6.955,
+    "AC4_k198_intact_pass": true,
+    "AC5_filt_nonzero_pass": true,
+    "n_criteria_passed": 3,
+    "all_pass": false
+  },
+  "verdict": "REJECT: K216 fails 2/5 criteria. OOS Sh=9.43, WF min=6.96, MaxDD=-0.0064. K198 v6.5 remains production.",
+  "deploy_action": "reject_keep_k198",
+  "risk_analysis": {
+    "correlated_components": "V_rev_carry and V_rev_carry_filtered correlation = 0.969. Ridge regularization penalizes collinear features \u2014 may allocate weight to one or the other, not both equally. Cap structure (5% each, 15% sleeve) bounds worst-case concentration.",
+    "scale_asymmetry": "Filtered series std (0.000536) << unfiltered (0.004013). Ridge on standardized features equalizes this. Both components contribute equally to feature matrix but Ridge coefs may differ in magnitude.",
+    "additive_vs_replacement": "K210/K214 failed because replacing V_rev_carry disrupted Ridge's learned weights. K216 preserves V_rev_carry (unfiltered) unchanged, adding filtered as new slot. Ridge re-learns from scratch with 11-component feature matrix.",
+    "cap_saturation": "Individual caps: V_fwd=5%, V_rev=5%, V_rev_filt=5%. Sleeve cap=15%. If both rev carry components hit 5% cap simultaneously: total carry = 5+5+5=15%, which equals sleeve cap. No distortion from interaction."
+  }
+}
