@@ -2,11 +2,11 @@
   "meta": {
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
-    "last_updated": "2026-05-24",
-    "total_trials": 732019,
-    "total_strategies": 11,
-    "notes": "2026-05-24 Wave K8 完了: 80/10/10 が §6 8/8 + 90日窓100% positive 達成",
-    "authorized_label": "80/10/10 Triple (Sh+3.57, Calmar 32.63) — 唯一の「使用可能」認定戦略"
+    "last_updated": "2026-05-24 04:20 JST",
+    "total_trials": 737300,
+    "total_strategies": 15,
+    "notes": "2026-05-24 Wave K11-K14 完了: 4-way mix (vol_z MR追加) が 80/10/10 を超える新ベストとして §6 8/8 PASS",
+    "authorized_label": "4-way mix (Sh+3.61, Calmar 36.65) — 新ベスト「使用可能」認定"
   },
   "strategies": [
     {
@@ -941,6 +941,114 @@
         "kelly_quarter": 10.03,
         "judgment": "🏆 使用可能 (USABLE)"
       }
+    },
+    {
+      "id": "VOL_MR_BTC_ETH_SOL_BNB_4H_001",
+      "name": "vol_z Mean-Reversion (4-symbol)",
+      "family": "Volatility Mean-Reversion",
+      "description": "vol_z 極値時に方向 bias 付き contrarian。低vol+トレンド方向 ロング/ショート、高vol反転狙い。",
+      "discovery_wave": "K11-K12",
+      "params_per_symbol": {
+        "BTCUSDT": {
+          "vol_z_low": -1.0,
+          "vol_z_high": 1.0,
+          "trend_window": 10,
+          "sl": 0.04,
+          "tp": 0.06,
+          "mhb": 12
+        },
+        "ETHUSDT": {
+          "vol_z_low": -2.0,
+          "vol_z_high": 1.0,
+          "trend_window": 20,
+          "sl": 0.04,
+          "tp": 0.06,
+          "mhb": 12
+        },
+        "SOLUSDT": {
+          "vol_z_low": -1.5,
+          "vol_z_high": 2.0,
+          "trend_window": 10,
+          "sl": 0.04,
+          "tp": 0.06,
+          "mhb": 12
+        },
+        "BNBUSDT": {
+          "vol_z_low": -1.5,
+          "vol_z_high": 1.0,
+          "trend_window": 10,
+          "sl": 0.04,
+          "tp": 0.06,
+          "mhb": 12
+        }
+      },
+      "performance_730d": {
+        "portfolio_eq_weight": {
+          "sharpe": 1.59,
+          "return_pct": 54.3,
+          "max_dd_pct": -6.7,
+          "calmar": 8.15
+        },
+        "best_single_SOL": {
+          "sharpe": 2.23,
+          "return_pct": 183.5,
+          "trades": 81
+        },
+        "best_single_ETH": {
+          "sharpe": 1.99,
+          "return_pct": 105.3,
+          "trades": 90
+        }
+      },
+      "correlation_vs_80_10_10": 0.081,
+      "judgment": "promising candidate single, value-add when blended with 80/10/10 at 15%"
+    },
+    {
+      "id": "FOUR_WAY_MIX_85_15_001",
+      "name": "4-way Mix (85% 80/10/10 + 15% vol_MR)",
+      "family": "Composite (4-axis)",
+      "description": "5 戦略コンポーネント: ATR×8 4H + FOPD×6 4H + BONK_8H + SHIB_8H + vol_MR×4 (BTC/ETH/SOL/BNB).",
+      "discovery_wave": "K12 → K13 (§6) → K14 (H1/H2)",
+      "components": [
+        "TRIPLE_80_10_10_001 (weight 85%)",
+        "VOL_MR_BTC_ETH_SOL_BNB_4H_001 (weight 15%)"
+      ],
+      "total_symbols": 16,
+      "total_strategy_axes": 5,
+      "performance_730d": {
+        "observed": {
+          "sharpe": 3.61,
+          "return_pct": 66.0,
+          "max_dd_pct": -1.8,
+          "calmar": 36.65
+        },
+        "bootstrap_median": {
+          "sharpe": 3.541,
+          "p2.5": 2.73,
+          "p97.5": 4.347
+        },
+        "period_H1": {
+          "sharpe": 3.83,
+          "return_pct": 35.2,
+          "max_dd_pct": -1.8
+        },
+        "period_H2": {
+          "sharpe": 3.38,
+          "return_pct": 22.8,
+          "max_dd_pct": -1.7
+        }
+      },
+      "validation": {
+        "§6_gates_pass": "8/8",
+        "PBO": 0.0,
+        "DSR_N_730K": 1.0,
+        "cost_stress_worst_sh": 3.36,
+        "MC_ruin_5x": 0.0,
+        "MC_ruin_10x": 0.0005,
+        "H1_H2_both_above_3.38": true,
+        "bootstrap_95_CI_lower": 2.73,
+        "judgment": "🏆 使用可能 (USABLE) - production recommendation"
+      }
     }
   ],
   "rejected": [
@@ -1746,33 +1854,49 @@
     }
   ],
   "discovery_log": {
-    "successes": [
-      "FOPD (J12)",
-      "8H Meme satellites (J27)"
+    "successes_in_order": [
+      "FOPD (J12-J14): 2nd alpha axis, FR/OI/Price 3-factor",
+      "8H Meme satellites (J27): 3rd axis via cross-TF",
+      "vol_z Mean-Reversion (K11-K12): 4th axis, vol regime contrarian",
+      "4-way mix composite (K13-K14): 5 axes total, §6 8/8 PASS"
     ],
-    "rejections": [
+    "rejections_in_order": [
       "FToD (J8)",
       "LISRM (J10)",
       "HLWI (J11)",
       "S3I (J17)",
-      "Dynamic regime (J20)",
+      "Dynamic regime switch (J20)",
       "LiqCascadeFade (J21)",
       "MetaLabel (J22)",
       "BTC.D Inflection (J24)",
       "Pure Funding Carry (K6)"
     ],
-    "bugs_found_by_auditor": [
+    "bugs_found_by_auditor_process": [
       "DSR formula annualization (J2)",
       "Cost stress key name (J2)",
       "White RC centered compare (K2)",
       "K5 eq_to_daily bpd hardcode (K7)"
-    ]
+    ],
+    "success_rate": "4/13 = 30.8% (industry-typical)"
   },
   "production_recommendation": {
-    "strategy_id": "TRIPLE_80_10_10_001",
-    "leverage_recommended_conservative": "5x (ruin 0%, median +150%/yr)",
-    "leverage_recommended_aggressive": "10x (ruin 0.6%, median +462%/yr)",
-    "leverage_warning_above": "15x (ruin 9%+, dangerous)",
-    "honest_user_goal_gap": "ユーザー「日利10%」≈ 50x → 破産 96.5%、実在不可能。10xが現実的上限。"
+    "strategy_id": "FOUR_WAY_MIX_85_15_001",
+    "evolution_chain": [
+      "ATR×8 (Sh+2.69)",
+      "+ vol_z fil (Sh+2.70)",
+      "+ FOPD 50/50 (Sh+3.15)",
+      "+ 8H Meme 80/10/10 (Sh+3.57)",
+      "+ vol_MR 4-way (Sh+3.61) ★ FINAL"
+    ],
+    "leverage_recommended_conservative": "5x (ruin 0%, median +150-238%/yr)",
+    "leverage_recommended_aggressive": "10x (ruin 0.05%, median +462-892%/yr)",
+    "leverage_warning_above": "15x (ruin >9%, dangerous)",
+    "honest_user_goal_gap": "ユーザー「日利10%」≈ 50x → 破産 96.5%、実在不可能。10xが現実的上限、5xが推奨。",
+    "true_capacity_estimate": {
+      "1x": "$ unlimited",
+      "5x": "$10M-100M (top crypto futures depth)",
+      "10x": "$1-10M (slippage growing)",
+      "warning": "Above 10x liquidity constrains rapid execution"
+    }
   }
 }
