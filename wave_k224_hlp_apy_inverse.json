@@ -1,0 +1,252 @@
+{
+  "wave": "K224",
+  "task": "HLP APY Inverse Signal as Orthogonal Alpha for K218",
+  "as_of": "2026-05-24T22:34:18.440695+00:00",
+  "runtime_s": 0.27,
+  "data_summary": {
+    "hlp_days": 1111,
+    "hlp_range": [
+      "2023-05-10",
+      "2026-05-24"
+    ],
+    "k218_days": 448,
+    "k218_range": [
+      "2025-01-22",
+      "2026-04-14"
+    ],
+    "apy_z_std": 1.1773,
+    "apy_z_range": [
+      -2.071,
+      3.424
+    ]
+  },
+  "correlation_analysis": {
+    "lags": {
+      "0": {
+        "r": -0.0216,
+        "p": 0.6487,
+        "n": 447,
+        "significant": false
+      },
+      "1": {
+        "r": -0.0216,
+        "p": 0.6487,
+        "n": 447,
+        "significant": false
+      },
+      "3": {
+        "r": -0.024,
+        "p": 0.6139,
+        "n": 445,
+        "significant": false
+      },
+      "7": {
+        "r": -0.0174,
+        "p": 0.7158,
+        "n": 441,
+        "significant": false
+      }
+    },
+    "max_abs_r": 0.024,
+    "gate_passed": false
+  },
+  "granger_causality": {
+    "results": {
+      "1": {
+        "p_ftest": 0.6334,
+        "p_chi2": 0.632,
+        "significant": false
+      },
+      "3": {
+        "p_ftest": 0.3569,
+        "p_chi2": 0.3484,
+        "significant": false
+      },
+      "5": {
+        "p_ftest": 0.4316,
+        "p_chi2": 0.4149,
+        "significant": false
+      },
+      "7": {
+        "p_ftest": 0.553,
+        "p_chi2": 0.5279,
+        "significant": false
+      }
+    },
+    "min_p": 0.3569,
+    "gate_passed": false
+  },
+  "orthogonality": {
+    "K198": {
+      "r": -0.0228,
+      "p": 0.6299,
+      "orthogonal": true
+    },
+    "K204": {
+      "r": -0.0267,
+      "p": 0.5733,
+      "orthogonal": true
+    },
+    "K208": {
+      "r": 0.1384,
+      "p": 0.0034,
+      "orthogonal": true
+    }
+  },
+  "k218e_baseline_oos": {
+    "sharpe": 10.914,
+    "maxdd": -0.0036,
+    "ann_ret": 0.4227,
+    "ann_vol": 0.0387,
+    "n_days": 135
+  },
+  "variants": {
+    "K224a": {
+      "oos_sharpe": 11.115,
+      "oos_maxdd": -0.0033,
+      "oos_ann_ret": 0.4244,
+      "oos_ann_vol": 0.0382,
+      "wf_sharpes": [
+        7.3447,
+        6.6072,
+        8.3031,
+        10.8078
+      ],
+      "wf_min": 6.6072,
+      "wf_mean": 8.265699999999999,
+      "description": "Threshold discrete: z>1\u2192\u00d71.2, z<-1\u2192\u00d70.8",
+      "params": {
+        "thresh": 1.0,
+        "boost": 1.2,
+        "reduce": 0.8
+      }
+    },
+    "K224b": {
+      "oos_sharpe": 11.1675,
+      "oos_maxdd": -0.0033,
+      "oos_ann_ret": 0.4187,
+      "oos_ann_vol": 0.0375,
+      "wf_sharpes": [
+        7.2281,
+        6.7247,
+        8.5508,
+        10.831
+      ],
+      "wf_min": 6.7247,
+      "wf_mean": 8.333649999999999,
+      "description": "Continuous linear: scale=1+0.2\u00d7clip(z,-2,2)/2",
+      "params": {
+        "alpha": 0.2
+      }
+    },
+    "K224c": {
+      "oos_sharpe": 11.1658,
+      "oos_maxdd": -0.0036,
+      "oos_ann_ret": 0.3838,
+      "oos_ann_vol": 0.0344,
+      "wf_sharpes": [
+        6.7818,
+        6.5512,
+        8.597,
+        10.8815
+      ],
+      "wf_min": 6.5512,
+      "wf_mean": 8.202875,
+      "description": "Aggressive threshold: z>0.5\u2192\u00d71.3, z<-0.5\u2192\u00d70.7",
+      "params": {
+        "thresh": 0.5,
+        "boost": 1.3,
+        "reduce": 0.7
+      }
+    }
+  },
+  "best_variant": "K224b",
+  "best_variant_metrics": {
+    "oos_sharpe": 11.1675,
+    "oos_maxdd": -0.0033,
+    "oos_ann_ret": 0.4187,
+    "oos_ann_vol": 0.0375,
+    "wf_sharpes": [
+      7.2281,
+      6.7247,
+      8.5508,
+      10.831
+    ],
+    "wf_min": 6.7247,
+    "wf_mean": 8.333649999999999,
+    "description": "Continuous linear: scale=1+0.2\u00d7clip(z,-2,2)/2",
+    "params": {
+      "alpha": 0.2
+    }
+  },
+  "threshold_sweep": {
+    "top_5": [
+      {
+        "thresh": 0.3,
+        "boost": 1.3,
+        "reduce": 0.7,
+        "oos_sharpe": 11.4608,
+        "oos_maxdd": -0.0037
+      },
+      {
+        "thresh": 0.3,
+        "boost": 1.2,
+        "reduce": 0.8,
+        "oos_sharpe": 11.3815,
+        "oos_maxdd": -0.0034
+      },
+      {
+        "thresh": 1.5,
+        "boost": 1.5,
+        "reduce": 0.5,
+        "oos_sharpe": 11.2904,
+        "oos_maxdd": -0.0041
+      },
+      {
+        "thresh": 0.3,
+        "boost": 1.1,
+        "reduce": 0.9,
+        "oos_sharpe": 11.1861,
+        "oos_maxdd": -0.0033
+      },
+      {
+        "thresh": 1.5,
+        "boost": 1.3,
+        "reduce": 0.7,
+        "oos_sharpe": 11.1836,
+        "oos_maxdd": -0.0036
+      }
+    ],
+    "best": {
+      "thresh": 0.3,
+      "boost": 1.3,
+      "reduce": 0.7,
+      "oos_sharpe": 11.4608,
+      "oos_maxdd": -0.0037
+    }
+  },
+  "acceptance_gates": {
+    "thresholds": {
+      "oos_sharpe": 11.03,
+      "wf_min": 6.93,
+      "granger_p": 0.1,
+      "corr_abs_r": 0.15,
+      "orth_max_r": 0.3
+    },
+    "results": {
+      "gate_corr": false,
+      "gate_granger": false,
+      "gate_oos_sh": true,
+      "gate_wf_min": false,
+      "gate_orth": true
+    },
+    "all_passed": false,
+    "accepted": false
+  },
+  "verdict": {
+    "accepted": false,
+    "best_variant": "K224b",
+    "oos_improvement": 0.1375,
+    "k225_integration": "K224 NOT accepted. HLP APY signal insufficient for K218 overlay. Consider: (1) higher-frequency HLP data, (2) different smoothing windows, (3) use as tertiary filter only."
+  }
+}
