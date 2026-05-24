@@ -3711,3 +3711,36 @@ K39/K41 の wash trade 仮説を実装版で検証:
 - Total Return (730d): +49.3% (vs v2 +68.0% — OI capit が短い期間で計算したため)
 - Max DD: -1.2%
 - 60d positive: 99.0%
+
+## Wave K56-K60: 拡張戦略探索バッチ #2 (2026-05-23)
+
+### K56: Alt meme Donchian breakout
+- PEPE/FLOKI/POPCAT/WIF/BOME × Donchian + volume conf × 3 windows × 3 holds = 45 configs
+- 全棄却 (0/45 Sh>=1.0、Top POPCAT Sh+0.86)
+
+### K57: 1H ATR_Ratio_Compression
+- ETH/BTC/SOL/DOGE/BONK/SHIB/INJ/WIF × 2 param sets = 16 configs
+- 棄却 (2/16 Sh>=1.0、trades 数少なすぎ)
+
+### K58: BTC dominance regime — 重要構造発見
+- BTC.D 5d-chg > +2%: 全 alt Sharpe -3.6 ~ -6.6
+- BTC.D 5d-chg < -2%: 全 alt Sharpe +5.1 ~ +7.3
+- **ΔSh +8.7 ~ +13.0** (alt vs BTC season は consistent な構造)
+- Naive long-alts-when-BTCD-falling: Sh+1.15、Return +104%、**DD -33.4%** (使用不可)
+- 可能性: v3 mix の conditioning variable として活用
+
+### K59: Long/Short ratio extreme
+- top_ls_ratio, top_ls_position_ratio, ls_ratio × 3 windows × 3 z_thresh = 189 configs
+- DOGE Sh+1.61 (sparse 1 件のみ)
+- 棄却
+
+### K60: Taker buy/sell ratio
+- 7 銘柄 × 3 modes × 3 windows × 3 z = 126 configs
+- Top: DOGE contrarian Sh+1.27 (3/126 Sh>=1)
+- contra mode dominant (high taker buy → 反転) — pattern 存在するが alpha 不足
+- 棄却
+
+### 累計 (Wave J + K)
+- 31 候補テスト、4 採用 (FOPD, 8H Meme, vol_z MR, OI capit)
+- 成功率 13%
+- 残り未開拓領域: ML feature engineering, RL, microstructure depth
