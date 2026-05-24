@@ -1,0 +1,1336 @@
+{
+  "wave": "K238",
+  "task": "5-Way Meta-Ensemble: K198 x K204 x K208 x K226 x K235 (Hawkes Liquidation)",
+  "as_of": "2026-05-24T23:46:26.750064+00:00",
+  "runtime_s": 0.49,
+  "data_info": {
+    "n_days": 448,
+    "date_start": "2025-01-22",
+    "date_end": "2026-04-14",
+    "n_returns": 447,
+    "k208_missing_days": 0,
+    "k226_missing_days": 0,
+    "k235_missing_days": 0,
+    "k235_active_days_ml": 18,
+    "k235_active_pct_ml": 4.02,
+    "k235_strategy": "Hawkes liquidation cascade predictor (long after cascade-down)"
+  },
+  "k235_ml_window_validation": {
+    "description": "K235 standalone on K229 ML window (448d) \u2014 Gate 0 check",
+    "k235_original_wf_folds": [
+      1.4541,
+      0.9148,
+      0.1755,
+      1.251
+    ],
+    "k235_original_wf_min": 0.1755,
+    "k235_original_window": "700d (2024-06-22 -> 2026-05-22)",
+    "ml_window_applied": "2025-01-22 -> 2026-04-14 (447 returns)",
+    "k235_ml_oos_sharpe": 1.4241,
+    "k235_ml_oos_maxdd": -0.070001,
+    "k235_ml_oos_ann_ret": 0.3463,
+    "k235_ml_wf_folds": [
+      2.2582,
+      0.7237,
+      1.3219,
+      0.9205
+    ],
+    "k235_ml_wf_min": 0.7237,
+    "k235_ml_wf_mean": 1.3061,
+    "k235_ml_all_positive": true,
+    "k235_ml_fold_details": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "start_date": "2025-01-23",
+        "end_date": "2025-05-13",
+        "n_days": 111,
+        "sharpe": 2.2582
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "start_date": "2025-05-14",
+        "end_date": "2025-09-01",
+        "n_days": 111,
+        "sharpe": 0.7237
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "start_date": "2025-09-02",
+        "end_date": "2025-12-21",
+        "n_days": 111,
+        "sharpe": 1.3219
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "start_date": "2025-12-22",
+        "end_date": "2026-04-14",
+        "n_days": 114,
+        "sharpe": 0.9205
+      }
+    ],
+    "gate0_pass": true,
+    "gate0_verdict": "PASS",
+    "note_fold3": "Fold 3 Sh=1.3219 (was 0.18 on 700d cuts)"
+  },
+  "correlation_matrix": {
+    "labels": [
+      "K198",
+      "K204",
+      "K208",
+      "K226",
+      "K235"
+    ],
+    "matrix": [
+      [
+        1.0,
+        0.7977,
+        0.0619,
+        0.0519,
+        0.1196
+      ],
+      [
+        0.7977,
+        1.0,
+        0.0237,
+        0.0568,
+        0.0642
+      ],
+      [
+        0.0619,
+        0.0237,
+        1.0,
+        0.0001,
+        0.0455
+      ],
+      [
+        0.0519,
+        0.0568,
+        0.0001,
+        1.0,
+        -0.2288
+      ],
+      [
+        0.1196,
+        0.0642,
+        0.0455,
+        -0.2288,
+        1.0
+      ]
+    ],
+    "pairwise": {
+      "rho_K198_K204": 0.7977,
+      "rho_K198_K208": 0.0619,
+      "rho_K198_K226": 0.0519,
+      "rho_K198_K235": 0.1196,
+      "rho_K204_K208": 0.0237,
+      "rho_K204_K226": 0.0568,
+      "rho_K204_K235": 0.0642,
+      "rho_K208_K226": 0.0001,
+      "rho_K208_K235": 0.0455,
+      "rho_K226_K235": -0.2288
+    },
+    "interpretation": {
+      "rho_K198_K204": "Moderate",
+      "rho_K198_K208": "Low",
+      "rho_K198_K226": "Low",
+      "rho_K198_K235": "Low",
+      "rho_K204_K208": "Low",
+      "rho_K204_K226": "Low",
+      "rho_K204_K235": "Low",
+      "rho_K208_K226": "Low",
+      "rho_K208_K235": "Low",
+      "rho_K226_K235": "Low"
+    },
+    "k235_max_abs_rho_with_k229": 0.2288
+  },
+  "acceptance_gates": {
+    "gate0_description": "K235 ML window WF all folds > 0",
+    "gate0_result": "PASS",
+    "gate1_oos_threshold": 12.709999999999999,
+    "gate2_wf_min": 7.4435,
+    "gate3_maxdd": -0.001201,
+    "gate4_min_weight": 0.01,
+    "reference": "K229d v6.8"
+  },
+  "active_days_analysis": {
+    "k235_active_days_ml_window": 18,
+    "k235_active_pct_ml_window": 4.02,
+    "k235_active_days_original_700d": 28,
+    "k235_active_pct_original": 4.0,
+    "note": "K235 is extremely selective (4% active). On ML window it may differ."
+  },
+  "baselines": {
+    "K198": {
+      "oos_sharpe": 10.2796,
+      "oos_maxdd": -0.005266,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.577,
+      "oos_ann_vol": 0.0561,
+      "fold_sharpes": [
+        6.5911,
+        7.3739,
+        7.9652,
+        9.731
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "n_days": 111,
+          "sharpe": 6.5911
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "n_days": 111,
+          "sharpe": 7.3739
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "n_days": 111,
+          "sharpe": 7.9652
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "n_days": 114,
+          "sharpe": 9.731
+        }
+      ],
+      "wf_mean": 7.9153,
+      "wf_min": 6.5911,
+      "wf_max": 9.731,
+      "wf_std": 1.3349,
+      "all_positive": true
+    },
+    "K204": {
+      "oos_sharpe": 10.3627,
+      "oos_maxdd": -0.00532,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.5798,
+      "oos_ann_vol": 0.0559,
+      "fold_sharpes": [
+        5.92,
+        6.2598,
+        8.183,
+        9.6915
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "n_days": 111,
+          "sharpe": 5.92
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "n_days": 111,
+          "sharpe": 6.2598
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "n_days": 111,
+          "sharpe": 8.183
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "n_days": 114,
+          "sharpe": 9.6915
+        }
+      ],
+      "wf_mean": 7.5136,
+      "wf_min": 5.92,
+      "wf_max": 9.6915,
+      "wf_std": 1.761,
+      "all_positive": true
+    },
+    "K208": {
+      "oos_sharpe": 13.5396,
+      "oos_maxdd": -8e-05,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.085,
+      "oos_ann_vol": 0.0063,
+      "fold_sharpes": [
+        17.2988,
+        5.7585,
+        17.3212,
+        13.3618
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "n_days": 111,
+          "sharpe": 17.2988
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "n_days": 111,
+          "sharpe": 5.7585
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "n_days": 111,
+          "sharpe": 17.3212
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "n_days": 114,
+          "sharpe": 13.3618
+        }
+      ],
+      "wf_mean": 13.4351,
+      "wf_min": 5.7585,
+      "wf_max": 17.3212,
+      "wf_std": 5.4457,
+      "all_positive": true
+    },
+    "K226": {
+      "oos_sharpe": 2.4097,
+      "oos_maxdd": -0.152979,
+      "oos_n_days": 135,
+      "oos_ann_ret": 1.4538,
+      "oos_ann_vol": 0.6033,
+      "fold_sharpes": [
+        3.2959,
+        0.38,
+        2.8378,
+        2.6243
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "n_days": 111,
+          "sharpe": 3.2959
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "n_days": 111,
+          "sharpe": 0.38
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "n_days": 111,
+          "sharpe": 2.8378
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "n_days": 114,
+          "sharpe": 2.6243
+        }
+      ],
+      "wf_mean": 2.2845,
+      "wf_min": 0.38,
+      "wf_max": 3.2959,
+      "wf_std": 1.3002,
+      "all_positive": true
+    },
+    "K235": {
+      "oos_sharpe": 1.4241,
+      "oos_maxdd": -0.070001,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.3463,
+      "oos_ann_vol": 0.2431,
+      "fold_sharpes": [
+        2.2582,
+        0.7237,
+        1.3219,
+        0.9205
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "n_days": 111,
+          "sharpe": 2.2582
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "n_days": 111,
+          "sharpe": 0.7237
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "n_days": 111,
+          "sharpe": 1.3219
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "n_days": 114,
+          "sharpe": 0.9205
+        }
+      ],
+      "wf_mean": 1.3061,
+      "wf_min": 0.7237,
+      "wf_max": 2.2582,
+      "wf_std": 0.6818,
+      "all_positive": true
+    }
+  },
+  "variants": {
+    "K238a": {
+      "oos_sharpe": 4.7456,
+      "oos_maxdd": -0.043876,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.6084,
+      "oos_ann_vol": 0.1282,
+      "fold_sharpes": [
+        5.4805,
+        2.2564,
+        5.5391,
+        4.4933
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "n_days": 111,
+          "sharpe": 5.4805
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "n_days": 111,
+          "sharpe": 2.2564
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "n_days": 111,
+          "sharpe": 5.5391
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "n_days": 114,
+          "sharpe": 4.4933
+        }
+      ],
+      "wf_mean": 4.4423,
+      "wf_min": 2.2564,
+      "wf_max": 5.5391,
+      "wf_std": 1.5342,
+      "all_positive": true,
+      "description": "Equal weight 20/20/20/20/20",
+      "avg_weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "diversification_ratio": 1.5008
+    },
+    "K238b": {
+      "oos_sharpe": 9.1633,
+      "oos_maxdd": -0.002596,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.0988,
+      "oos_ann_vol": 0.0108,
+      "fold_sharpes": [
+        10.2054,
+        2.1633,
+        10.2316,
+        8.628
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "n_days": 111,
+          "sharpe": 10.2054
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "n_days": 111,
+          "sharpe": 2.1633
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "n_days": 111,
+          "sharpe": 10.2316
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "n_days": 114,
+          "sharpe": 8.628
+        }
+      ],
+      "wf_mean": 7.8071,
+      "wf_min": 2.1633,
+      "wf_max": 10.2316,
+      "wf_std": 3.8365,
+      "all_positive": true,
+      "description": "Inverse-vol weighted uncapped (30d rolling)",
+      "avg_weights": [
+        0.0308,
+        0.0273,
+        0.4682,
+        0.0134,
+        0.4602
+      ],
+      "diversification_ratio": 1.191
+    },
+    "K238c": {
+      "oos_sharpe": 9.1633,
+      "oos_maxdd": -0.002596,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.0988,
+      "oos_ann_vol": 0.0108,
+      "fold_sharpes": [
+        10.2054,
+        2.1633,
+        10.2316,
+        8.628
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "n_days": 111,
+          "sharpe": 10.2054
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "n_days": 111,
+          "sharpe": 2.1633
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "n_days": 111,
+          "sharpe": 10.2316
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "n_days": 114,
+          "sharpe": 8.628
+        }
+      ],
+      "wf_mean": 7.8071,
+      "wf_min": 2.1633,
+      "wf_max": 10.2316,
+      "wf_std": 3.8365,
+      "all_positive": true,
+      "description": "Inv-vol (30d rolling) + K226 cap 20%",
+      "avg_weights": [
+        0.0308,
+        0.0273,
+        0.4682,
+        0.0081,
+        0.4656
+      ],
+      "diversification_ratio": 1.1413
+    },
+    "K238d": {
+      "oos_sharpe": 11.3857,
+      "oos_maxdd": -0.002416,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.1242,
+      "oos_ann_vol": 0.0109,
+      "fold_sharpes": [
+        12.76,
+        7.296,
+        12.853,
+        11.0994
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "n_days": 111,
+          "sharpe": 12.76
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "n_days": 111,
+          "sharpe": 7.296
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "n_days": 111,
+          "sharpe": 12.853
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "n_days": 114,
+          "sharpe": 11.0994
+        }
+      ],
+      "wf_mean": 11.0021,
+      "wf_min": 7.296,
+      "wf_max": 12.853,
+      "wf_std": 2.5988,
+      "all_positive": true,
+      "description": "Inv-vol (30d rolling) + K226 cap 20% + K235 cap 5%",
+      "avg_weights": [
+        0.0422,
+        0.0354,
+        0.8627,
+        0.0251,
+        0.0346
+      ],
+      "diversification_ratio": 1.796
+    },
+    "K238e": {
+      "oos_sharpe": 11.162,
+      "oos_maxdd": -0.002596,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.1221,
+      "oos_ann_vol": 0.0109,
+      "fold_sharpes": [
+        12.5977,
+        7.3062,
+        12.9716,
+        10.855
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "n_days": 111,
+          "sharpe": 12.5977
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "n_days": 111,
+          "sharpe": 7.3062
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "n_days": 111,
+          "sharpe": 12.9716
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "n_days": 114,
+          "sharpe": 10.855
+        }
+      ],
+      "wf_mean": 10.9327,
+      "wf_min": 7.3062,
+      "wf_max": 12.9716,
+      "wf_std": 2.5876,
+      "all_positive": true,
+      "description": "Inv-vol (30d rolling) + K226 cap 20% + K235 cap 10%",
+      "avg_weights": [
+        0.0413,
+        0.0347,
+        0.8386,
+        0.024,
+        0.0614
+      ],
+      "diversification_ratio": 1.9162
+    },
+    "K238f": {
+      "oos_sharpe": 11.0884,
+      "oos_maxdd": -0.002596,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.1208,
+      "oos_ann_vol": 0.0109,
+      "fold_sharpes": [
+        12.4375,
+        7.3165,
+        13.0872,
+        10.767
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "n_days": 111,
+          "sharpe": 12.4375
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "n_days": 111,
+          "sharpe": 7.3165
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "n_days": 111,
+          "sharpe": 13.0872
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "n_days": 114,
+          "sharpe": 10.767
+        }
+      ],
+      "wf_mean": 10.902,
+      "wf_min": 7.3165,
+      "wf_max": 13.0872,
+      "wf_std": 2.5824,
+      "all_positive": true,
+      "description": "Inv-vol (30d rolling) + K226 cap 20% + K235 cap 15%",
+      "avg_weights": [
+        0.0406,
+        0.0342,
+        0.8175,
+        0.0229,
+        0.0847
+      ],
+      "diversification_ratio": 1.912
+    },
+    "K238g": {
+      "oos_sharpe": 15.3195,
+      "oos_maxdd": -9.1e-05,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.0973,
+      "oos_ann_vol": 0.0063,
+      "fold_sharpes": [
+        5.9313,
+        1.6978,
+        3.7474,
+        14.626
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "n_days": 111,
+          "sharpe": 5.9313
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "n_days": 111,
+          "sharpe": 1.6978
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "n_days": 111,
+          "sharpe": 3.7474
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "n_days": 114,
+          "sharpe": 14.626
+        }
+      ],
+      "wf_mean": 6.5006,
+      "wf_min": 1.6978,
+      "wf_max": 14.626,
+      "wf_std": 5.686,
+      "all_positive": true,
+      "description": "Minimum Variance Portfolio (rolling 60d covariance, long-only)",
+      "avg_weights": [
+        0.0451,
+        0.0538,
+        0.8102,
+        0.0433,
+        0.0475
+      ],
+      "diversification_ratio": 1.6437
+    }
+  },
+  "fold_breakdown": {
+    "K238a": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "start_date": "2025-01-23",
+        "end_date": "2025-05-13",
+        "n_days": 111,
+        "sharpe": 5.4805
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "start_date": "2025-05-14",
+        "end_date": "2025-09-01",
+        "n_days": 111,
+        "sharpe": 2.2564
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "start_date": "2025-09-02",
+        "end_date": "2025-12-21",
+        "n_days": 111,
+        "sharpe": 5.5391
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "start_date": "2025-12-22",
+        "end_date": "2026-04-14",
+        "n_days": 114,
+        "sharpe": 4.4933
+      }
+    ],
+    "K238b": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "start_date": "2025-01-23",
+        "end_date": "2025-05-13",
+        "n_days": 111,
+        "sharpe": 10.2054
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "start_date": "2025-05-14",
+        "end_date": "2025-09-01",
+        "n_days": 111,
+        "sharpe": 2.1633
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "start_date": "2025-09-02",
+        "end_date": "2025-12-21",
+        "n_days": 111,
+        "sharpe": 10.2316
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "start_date": "2025-12-22",
+        "end_date": "2026-04-14",
+        "n_days": 114,
+        "sharpe": 8.628
+      }
+    ],
+    "K238c": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "start_date": "2025-01-23",
+        "end_date": "2025-05-13",
+        "n_days": 111,
+        "sharpe": 10.2054
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "start_date": "2025-05-14",
+        "end_date": "2025-09-01",
+        "n_days": 111,
+        "sharpe": 2.1633
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "start_date": "2025-09-02",
+        "end_date": "2025-12-21",
+        "n_days": 111,
+        "sharpe": 10.2316
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "start_date": "2025-12-22",
+        "end_date": "2026-04-14",
+        "n_days": 114,
+        "sharpe": 8.628
+      }
+    ],
+    "K238d": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "start_date": "2025-01-23",
+        "end_date": "2025-05-13",
+        "n_days": 111,
+        "sharpe": 12.76
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "start_date": "2025-05-14",
+        "end_date": "2025-09-01",
+        "n_days": 111,
+        "sharpe": 7.296
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "start_date": "2025-09-02",
+        "end_date": "2025-12-21",
+        "n_days": 111,
+        "sharpe": 12.853
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "start_date": "2025-12-22",
+        "end_date": "2026-04-14",
+        "n_days": 114,
+        "sharpe": 11.0994
+      }
+    ],
+    "K238e": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "start_date": "2025-01-23",
+        "end_date": "2025-05-13",
+        "n_days": 111,
+        "sharpe": 12.5977
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "start_date": "2025-05-14",
+        "end_date": "2025-09-01",
+        "n_days": 111,
+        "sharpe": 7.3062
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "start_date": "2025-09-02",
+        "end_date": "2025-12-21",
+        "n_days": 111,
+        "sharpe": 12.9716
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "start_date": "2025-12-22",
+        "end_date": "2026-04-14",
+        "n_days": 114,
+        "sharpe": 10.855
+      }
+    ],
+    "K238f": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "start_date": "2025-01-23",
+        "end_date": "2025-05-13",
+        "n_days": 111,
+        "sharpe": 12.4375
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "start_date": "2025-05-14",
+        "end_date": "2025-09-01",
+        "n_days": 111,
+        "sharpe": 7.3165
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "start_date": "2025-09-02",
+        "end_date": "2025-12-21",
+        "n_days": 111,
+        "sharpe": 13.0872
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "start_date": "2025-12-22",
+        "end_date": "2026-04-14",
+        "n_days": 114,
+        "sharpe": 10.767
+      }
+    ],
+    "K238g": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "start_date": "2025-01-23",
+        "end_date": "2025-05-13",
+        "n_days": 111,
+        "sharpe": 5.9313
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "start_date": "2025-05-14",
+        "end_date": "2025-09-01",
+        "n_days": 111,
+        "sharpe": 1.6978
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "start_date": "2025-09-02",
+        "end_date": "2025-12-21",
+        "n_days": 111,
+        "sharpe": 3.7474
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "start_date": "2025-12-22",
+        "end_date": "2026-04-14",
+        "n_days": 114,
+        "sharpe": 14.626
+      }
+    ]
+  },
+  "synergy": {
+    "individual_oos_sharpes": {
+      "K198": 10.2796,
+      "K204": 10.3627,
+      "K208": 13.5396,
+      "K226": 2.4097,
+      "K235": 1.4241
+    },
+    "avg_individual_oos_sh": 7.6031,
+    "avg_4way_oos_sh": 9.1479,
+    "best_ensemble_name": "K238g",
+    "best_ensemble_oos_sh": 15.3195,
+    "synergy_delta_vs_avg": 7.7164,
+    "synergy_delta_vs_k229": 2.7095,
+    "synergy_detected": true,
+    "avg_individual_wf_min": 3.8747,
+    "best_ensemble_wf_min": 1.6978,
+    "wf_min_synergy": -2.1769
+  },
+  "historical": {
+    "K198_v6.5": {
+      "oos_sharpe": 10.28,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.91,
+      "wf_min": 6.57,
+      "components": 1
+    },
+    "K217_v6.6": {
+      "oos_sharpe": 10.43,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 8.01,
+      "wf_min": 6.91,
+      "components": 2
+    },
+    "K218e_v6.7": {
+      "oos_sharpe": 11.03,
+      "oos_maxdd": -0.0036,
+      "wf_mean": 8.316,
+      "wf_min": 6.928,
+      "components": 3
+    },
+    "K229d_v6.8": {
+      "oos_sharpe": 12.61,
+      "oos_maxdd": -0.001201,
+      "wf_mean": null,
+      "wf_min": 7.4435,
+      "components": 4
+    },
+    "K238_a": {
+      "oos_sharpe": 4.7456,
+      "oos_maxdd": -0.043876,
+      "wf_mean": 4.4423,
+      "wf_min": 2.2564,
+      "dr": 1.5008,
+      "components": 5,
+      "avg_weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "K238_b": {
+      "oos_sharpe": 9.1633,
+      "oos_maxdd": -0.002596,
+      "wf_mean": 7.8071,
+      "wf_min": 2.1633,
+      "dr": 1.191,
+      "components": 5,
+      "avg_weights": [
+        0.0308,
+        0.0273,
+        0.4682,
+        0.0134,
+        0.4602
+      ]
+    },
+    "K238_c": {
+      "oos_sharpe": 9.1633,
+      "oos_maxdd": -0.002596,
+      "wf_mean": 7.8071,
+      "wf_min": 2.1633,
+      "dr": 1.1413,
+      "components": 5,
+      "avg_weights": [
+        0.0308,
+        0.0273,
+        0.4682,
+        0.0081,
+        0.4656
+      ]
+    },
+    "K238_d": {
+      "oos_sharpe": 11.3857,
+      "oos_maxdd": -0.002416,
+      "wf_mean": 11.0021,
+      "wf_min": 7.296,
+      "dr": 1.796,
+      "components": 5,
+      "avg_weights": [
+        0.0422,
+        0.0354,
+        0.8627,
+        0.0251,
+        0.0346
+      ]
+    },
+    "K238_e": {
+      "oos_sharpe": 11.162,
+      "oos_maxdd": -0.002596,
+      "wf_mean": 10.9327,
+      "wf_min": 7.3062,
+      "dr": 1.9162,
+      "components": 5,
+      "avg_weights": [
+        0.0413,
+        0.0347,
+        0.8386,
+        0.024,
+        0.0614
+      ]
+    },
+    "K238_f": {
+      "oos_sharpe": 11.0884,
+      "oos_maxdd": -0.002596,
+      "wf_mean": 10.902,
+      "wf_min": 7.3165,
+      "dr": 1.912,
+      "components": 5,
+      "avg_weights": [
+        0.0406,
+        0.0342,
+        0.8175,
+        0.0229,
+        0.0847
+      ]
+    },
+    "K238_g": {
+      "oos_sharpe": 15.3195,
+      "oos_maxdd": -9.1e-05,
+      "wf_mean": 6.5006,
+      "wf_min": 1.6978,
+      "dr": 1.6437,
+      "components": 5,
+      "avg_weights": [
+        0.0451,
+        0.0538,
+        0.8102,
+        0.0433,
+        0.0475
+      ]
+    }
+  },
+  "verdict": "REJECT \u2014 no variant passes all acceptance gates vs K229 v6.8 (OOS threshold=12.71, WF min threshold=7.4435)",
+  "accepted": false,
+  "gate0_pass": true,
+  "best_variant": null,
+  "best_variant_metrics": null
+}
