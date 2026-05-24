@@ -1,0 +1,443 @@
+{
+  "wave": "K212",
+  "task": "Isolated prescription tests: A=135d+pen, B=180d+no-pen, C=150d+pen",
+  "as_of": "2026-05-24T21:48:20.869763+00:00",
+  "runtime_s": 3.9,
+  "config": {
+    "n_strategies": 10,
+    "strategies": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ],
+    "n_features": 103,
+    "test_days": 30,
+    "ridge_alpha": 1.0,
+    "oos_frac": 0.3
+  },
+  "baselines": {
+    "K198_prod": {
+      "oos_sharpe": 10.28,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.91,
+      "wf_min": 6.57,
+      "wf_folds": [
+        6.5722,
+        7.91,
+        8.9,
+        8.26
+      ],
+      "config": {
+        "train_days": 90,
+        "dd_penalty_coef": 0.0,
+        "n_features": 51
+      },
+      "status": "PRODUCTION"
+    },
+    "K204": {
+      "oos_sharpe": 10.36,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.5451,
+      "wf_min": 6.02,
+      "wf_folds": [
+        6.023,
+        6.2648,
+        8.1003,
+        9.7924
+      ],
+      "config": {
+        "train_days": 90,
+        "dd_penalty_coef": 0.0,
+        "n_features": 113
+      },
+      "status": "REJECTED",
+      "reject_reason": "WF min 6.02 < 6.57"
+    },
+    "K205": {
+      "oos_sharpe": 9.22,
+      "oos_maxdd": -0.0039,
+      "wf_mean": 8.52,
+      "wf_min": 6.46,
+      "wf_folds": [
+        7.8797,
+        6.4565,
+        9.7828,
+        9.9519
+      ],
+      "config": {
+        "train_days": 180,
+        "dd_penalty_coef": 2.0,
+        "n_features": 103
+      },
+      "status": "REJECTED",
+      "reject_reason": "OOS Sh 9.22 < K198 10.28"
+    },
+    "K209": {
+      "oos_sharpe": 8.86,
+      "oos_maxdd": -0.027,
+      "wf_mean": 6.59,
+      "wf_min": 3.46,
+      "wf_folds": [
+        8.2406,
+        5.511,
+        3.4614,
+        9.1606
+      ],
+      "config": {
+        "train_days": 135,
+        "dd_penalty_coef": 0.0,
+        "n_features": 103
+      },
+      "status": "REJECTED",
+      "reject_reason": "Fold3 collapse Sh 3.46, MaxDD -0.027"
+    }
+  },
+  "k212_variants": {
+    "K212A": {
+      "config": {
+        "train_days": 135,
+        "dd_penalty_coef": 2.0,
+        "label": "135d+pen=2"
+      },
+      "oos_metrics": {
+        "sharpe": 8.8512,
+        "sortino": 11.2117,
+        "calmar": 29.7252,
+        "max_dd": -0.0271,
+        "ann_ret": 0.8053,
+        "ann_vol": 0.067,
+        "n_days": 121
+      },
+      "wf_stats": {
+        "fold_sharpes": [
+          8.2657,
+          5.4659,
+          3.4934,
+          9.1612
+        ],
+        "mean": 6.5966,
+        "min": 3.4934,
+        "max": 9.1612,
+        "std": 2.2512
+      },
+      "n_pnl_days": 403,
+      "pnl_date_range": [
+        "2025-03-08",
+        "2026-04-14"
+      ],
+      "diagnostics_count": 14,
+      "acceptance": {
+        "AC1_oos_sh": {
+          "pass": false,
+          "actual": 8.8512,
+          "required": 10.28
+        },
+        "AC2_maxdd": {
+          "pass": false,
+          "actual": -0.0271,
+          "required": -0.0053
+        },
+        "AC3_wf_min": {
+          "pass": false,
+          "actual": 3.4934,
+          "required": 6.57
+        },
+        "all_pass": false
+      },
+      "fold_breakdown": [
+        {
+          "fold": 1,
+          "K212A_sharpe": 8.2657,
+          "K198_ref": 6.5722,
+          "K205_ref": 7.8797,
+          "K209_ref": 8.2406,
+          "K212A_vs_K198": 1.6935,
+          "K212A_vs_K205": 0.386,
+          "K212A_vs_K209": 0.0251,
+          "vs_K198_wf_min": 1.6957
+        },
+        {
+          "fold": 2,
+          "K212A_sharpe": 5.4659,
+          "K198_ref": 7.91,
+          "K205_ref": 6.4565,
+          "K209_ref": 5.511,
+          "K212A_vs_K198": -2.4441,
+          "K212A_vs_K205": -0.9906,
+          "K212A_vs_K209": -0.0451,
+          "vs_K198_wf_min": -1.1041
+        },
+        {
+          "fold": 3,
+          "K212A_sharpe": 3.4934,
+          "K198_ref": 8.9,
+          "K205_ref": 9.7828,
+          "K209_ref": 3.4614,
+          "K212A_vs_K198": -5.4066,
+          "K212A_vs_K205": -6.2894,
+          "K212A_vs_K209": 0.032,
+          "vs_K198_wf_min": -3.0766
+        },
+        {
+          "fold": 4,
+          "K212A_sharpe": 9.1612,
+          "K198_ref": 8.26,
+          "K205_ref": 9.9519,
+          "K209_ref": 9.1606,
+          "K212A_vs_K198": 0.9012,
+          "K212A_vs_K205": -0.7907,
+          "K212A_vs_K209": 0.0006,
+          "vs_K198_wf_min": 2.5912
+        }
+      ]
+    },
+    "K212B": {
+      "config": {
+        "train_days": 180,
+        "dd_penalty_coef": 0.0,
+        "label": "180d+pen=0"
+      },
+      "oos_metrics": {
+        "sharpe": 9.2457,
+        "sortino": 38.5238,
+        "calmar": 197.4462,
+        "max_dd": -0.0039,
+        "ann_ret": 0.7761,
+        "ann_vol": 0.0624,
+        "n_days": 108
+      },
+      "wf_stats": {
+        "fold_sharpes": [
+          7.172,
+          6.4664,
+          9.8047,
+          9.9869
+        ],
+        "mean": 8.3575,
+        "min": 6.4664,
+        "max": 9.9869,
+        "std": 1.5597
+      },
+      "n_pnl_days": 358,
+      "pnl_date_range": [
+        "2025-04-22",
+        "2026-04-14"
+      ],
+      "diagnostics_count": 12,
+      "acceptance": {
+        "AC1_oos_sh": {
+          "pass": false,
+          "actual": 9.2457,
+          "required": 10.28
+        },
+        "AC2_maxdd": {
+          "pass": true,
+          "actual": -0.0039,
+          "required": -0.0053
+        },
+        "AC3_wf_min": {
+          "pass": false,
+          "actual": 6.4664,
+          "required": 6.57
+        },
+        "all_pass": false
+      },
+      "fold_breakdown": [
+        {
+          "fold": 1,
+          "K212B_sharpe": 7.172,
+          "K198_ref": 6.5722,
+          "K205_ref": 7.8797,
+          "K209_ref": 8.2406,
+          "K212B_vs_K198": 0.5998,
+          "K212B_vs_K205": -0.7077,
+          "K212B_vs_K209": -1.0686,
+          "vs_K198_wf_min": 0.602
+        },
+        {
+          "fold": 2,
+          "K212B_sharpe": 6.4664,
+          "K198_ref": 7.91,
+          "K205_ref": 6.4565,
+          "K209_ref": 5.511,
+          "K212B_vs_K198": -1.4436,
+          "K212B_vs_K205": 0.0099,
+          "K212B_vs_K209": 0.9554,
+          "vs_K198_wf_min": -0.1036
+        },
+        {
+          "fold": 3,
+          "K212B_sharpe": 9.8047,
+          "K198_ref": 8.9,
+          "K205_ref": 9.7828,
+          "K209_ref": 3.4614,
+          "K212B_vs_K198": 0.9047,
+          "K212B_vs_K205": 0.0219,
+          "K212B_vs_K209": 6.3433,
+          "vs_K198_wf_min": 3.2347
+        },
+        {
+          "fold": 4,
+          "K212B_sharpe": 9.9869,
+          "K198_ref": 8.26,
+          "K205_ref": 9.9519,
+          "K209_ref": 9.1606,
+          "K212B_vs_K198": 1.7269,
+          "K212B_vs_K205": 0.035,
+          "K212B_vs_K209": 0.8263,
+          "vs_K198_wf_min": 3.4169
+        }
+      ]
+    },
+    "K212C": {
+      "config": {
+        "train_days": 150,
+        "dd_penalty_coef": 2.0,
+        "label": "150d+pen=2"
+      },
+      "oos_metrics": {
+        "sharpe": 8.0613,
+        "sortino": 16.526,
+        "calmar": 37.0054,
+        "max_dd": -0.019,
+        "ann_ret": 0.7027,
+        "ann_vol": 0.0663,
+        "n_days": 117
+      },
+      "wf_stats": {
+        "fold_sharpes": [
+          8.3817,
+          7.9439,
+          7.255,
+          9.7384
+        ],
+        "mean": 8.3298,
+        "min": 7.255,
+        "max": 9.7384,
+        "std": 0.9071
+      },
+      "n_pnl_days": 388,
+      "pnl_date_range": [
+        "2025-03-23",
+        "2026-04-14"
+      ],
+      "diagnostics_count": 13,
+      "acceptance": {
+        "AC1_oos_sh": {
+          "pass": false,
+          "actual": 8.0613,
+          "required": 10.28
+        },
+        "AC2_maxdd": {
+          "pass": false,
+          "actual": -0.019,
+          "required": -0.0053
+        },
+        "AC3_wf_min": {
+          "pass": true,
+          "actual": 7.255,
+          "required": 6.57
+        },
+        "all_pass": false
+      },
+      "fold_breakdown": [
+        {
+          "fold": 1,
+          "K212C_sharpe": 8.3817,
+          "K198_ref": 6.5722,
+          "K205_ref": 7.8797,
+          "K209_ref": 8.2406,
+          "K212C_vs_K198": 1.8095,
+          "K212C_vs_K205": 0.502,
+          "K212C_vs_K209": 0.1411,
+          "vs_K198_wf_min": 1.8117
+        },
+        {
+          "fold": 2,
+          "K212C_sharpe": 7.9439,
+          "K198_ref": 7.91,
+          "K205_ref": 6.4565,
+          "K209_ref": 5.511,
+          "K212C_vs_K198": 0.0339,
+          "K212C_vs_K205": 1.4874,
+          "K212C_vs_K209": 2.4329,
+          "vs_K198_wf_min": 1.3739
+        },
+        {
+          "fold": 3,
+          "K212C_sharpe": 7.255,
+          "K198_ref": 8.9,
+          "K205_ref": 9.7828,
+          "K209_ref": 3.4614,
+          "K212C_vs_K198": -1.645,
+          "K212C_vs_K205": -2.5278,
+          "K212C_vs_K209": 3.7936,
+          "vs_K198_wf_min": 0.685
+        },
+        {
+          "fold": 4,
+          "K212C_sharpe": 9.7384,
+          "K198_ref": 8.26,
+          "K205_ref": 9.9519,
+          "K209_ref": 9.1606,
+          "K212C_vs_K198": 1.4784,
+          "K212C_vs_K205": -0.2135,
+          "K212C_vs_K209": 0.5778,
+          "vs_K198_wf_min": 3.1684
+        }
+      ]
+    }
+  },
+  "win_loss_attribution": {
+    "penalty_isolation_K212B_vs_K205": {
+      "description": "Both 180d, K212B=no penalty, K205=penalty=2. Isolates penalty effect alone.",
+      "oos_sh_delta": 0.0257,
+      "max_dd_delta": 0.0,
+      "wf_min_delta": 0.0064,
+      "interpretation": "POSITIVE delta => penalty was DRAGGING OOS Sh in K205. NEGATIVE delta => removing penalty hurts."
+    },
+    "window_135_isolation_K212A_vs_K205": {
+      "description": "Both pen=2, K212A=135d, K205=180d. Isolates window shrink 180->135.",
+      "oos_sh_delta": -0.3688,
+      "max_dd_delta": -0.0232,
+      "wf_min_delta": -2.9666,
+      "interpretation": "POSITIVE delta => 135d window recovers OOS vs 180d (K205 over-smoothed). NEGATIVE delta => shorter window hurts (more noise)."
+    },
+    "window_150_isolation_K212C_vs_K205": {
+      "description": "Both pen=2, K212C=150d, K205=180d. Isolates window shrink 180->150.",
+      "oos_sh_delta": -1.1587,
+      "max_dd_delta": -0.0151,
+      "wf_min_delta": 0.795,
+      "interpretation": "Conservative window step-down. Positive => 150d better than 180d (K205). Check if WF min improves vs K205."
+    },
+    "combined_K209_vs_K212A_penalty_within_135d": {
+      "description": "Both 135d, K209=no penalty, K212A=penalty=2. Penalty effect at 135d.",
+      "oos_sh_delta": -0.0088,
+      "max_dd_delta": -0.0001,
+      "wf_min_delta": 0.0334,
+      "interpretation": "CRITICAL: K209 had Fold3 collapse (Sh 3.46). If K212A WF min >> K209's 3.46 => DD penalty was the key stabilizer. If K212A Fold3 still collapses => 135d window is the root cause, not penalty."
+    }
+  },
+  "acceptance_summary": {
+    "K212A": false,
+    "K212B": false,
+    "K212C": false
+  },
+  "best_variant_by_oos_sh": "K212B",
+  "best_variant_oos_sh": 9.2457,
+  "verdict": "DD penalty has NEUTRAL effect on OOS Sh (+0.03). Window size is the primary lever. | Window shrink 180->135 HURTS OOS Sh by -0.37 (K212A vs K205). 180d window is better for OOS stability. | K212A WF min lift vs K209: +0.03. Check fold breakdown to determine if 135d window is stable with penalty. | NO K212 variant clears all acceptance criteria. Best OOS Sh=9.25 from K212B. K198 v6.5 remains production. K213 next: try 120d window or threshold-based penalty (only dd30 < -0.15).",
+  "k213_next_steps": [
+    "No K212 variant passes all criteria \u2014 K198 v6.5 remains production.",
+    "K213A: try 120d+pen=2 (closer to K198's 90d baseline, milder from K198)",
+    "K213B: threshold-based penalty \u2014 only penalize when dd30 < -0.15 (avoid over-firing)",
+    "K213C: 180d window + partial penalty coef=1.0 (softer DD multiplier than K205's 2.0)",
+    "Use K212 prescription analysis to guide: if penalty_isolation > 0, go K213A (120d no-pen)."
+  ]
+}
