@@ -1397,6 +1397,70 @@ Plotly.newPlot('sc-fopd-rs', [{
       </p>
     </div>
 
+    <!-- ── Wave K61-K69: 拡張 9 戦略テスト (1 ML含む)、全棄却 + v3 forward MC 更新 (2026-05-23) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-orange);">
+      <h3 style="color:var(--accent-orange);">🔬 Wave K61-K69: 拡張 9 戦略 + ML テスト — 全棄却、v3 が真の上限</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">v3 確立後、さらに 9 候補で alpha 増強の可能性を探索:</p>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:10px;">
+        <thead><tr><th>Wave</th><th>戦略</th><th>Best</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr><td>K61</td><td>BTC.D conditioning of v3</td><td>ΔSh +0.006</td><td class="text-yellow">影響なし</td></tr>
+          <tr><td>K62</td><td>FR skew cross-symbol (10銘柄)</td><td>Sh+0.25 (DD-47%)</td><td class="text-red">棄却 (turnover)</td></tr>
+          <tr><td>K63</td><td>Liquidation cascade</td><td>Sh+1.60 (n=2)</td><td class="text-red">棄却 (sparse)</td></tr>
+          <tr><td>K64</td><td>Auto-correlation regime</td><td>Sh+0.77</td><td class="text-red">棄却</td></tr>
+          <tr><td>K65</td><td>Hourly seasonality</td><td>Raw signal あり、コスト負け</td><td class="text-red">棄却 (cost)</td></tr>
+          <tr style="background:rgba(248,81,73,0.10);"><td><strong>K66</strong></td><td>dow×hour combined</td><td>IS Sh+5〜+12, <strong>OOS Sh-17</strong></td><td class="text-red"><strong>完全 OOS 反転 — 教訓</strong></td></tr>
+          <tr><td>K67</td><td>ETH/BTC vol ratio MR</td><td>Sh+0.95</td><td class="text-red">棄却</td></tr>
+          <tr><td>K68</td><td>Random Forest ML (8 features)</td><td>OOF Sh -0.75〜+0.61</td><td class="text-red">棄却 (acc~50%)</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-yellow);margin-top:14px;">K66 OOS 反転事件 — 重要な教訓</h4>
+      <p style="font-size:0.88rem;margin-top:6px;">
+        Thursday hour 19/21 UTC で in-sample に強い signal (|t|=3.0-3.5, 4-5 銘柄一致, IS Sharpe +5〜+12!) を発見。<br>
+        <strong>OOS validation (60/40 split) で完全反転</strong>: 全銘柄 OOS Sh -10〜-27, mean -17。<br>
+        原因: 168 (dow × hour) cells × 5 銘柄 = 840 仮説検定の multiple comparison artifact。
+        IS で |t|>2.5 となる cells は chance で 8-9 件発生する想定 → そのうち過大評価された cells を選択していた。
+      </p>
+      <p style="font-size:0.88rem;margin-top:6px;color:var(--accent-red);">
+        <strong>規範</strong>: 単一の in-sample stat (たとえ Sh+12) では信頼不能。必ず OOS / cross-validation 必須。
+      </p>
+
+      <h4 style="color:var(--accent-green);margin-top:14px;">v3 Forward MC 更新 (3x leverage) — K69</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>Horizon</th><th>Loss prob</th><th>Median</th><th>p5</th><th>p95</th></tr></thead>
+        <tbody>
+          <tr><td>30d</td><td class="text-yellow">14.6%</td><td>+4.63%</td><td>-2.28%</td><td>+14.3%</td></tr>
+          <tr><td>60d</td><td>6.5%</td><td>+9.76%</td><td>-0.69%</td><td>+24.0%</td></tr>
+          <tr><td>90d</td><td>2.9%</td><td>+15.29%</td><td>+1.69%</td><td>+32.8%</td></tr>
+          <tr><td>180d</td><td>0.4%</td><td>+33.42%</td><td>+11.37%</td><td>+62.9%</td></tr>
+          <tr style="background:rgba(63,185,80,0.15);"><td><strong>365d</strong></td><td class="text-green"><strong>0.0%</strong></td><td class="text-green"><strong>+79.6%</strong></td><td>+37.9%</td><td>+138.6%</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-purple);margin-top:14px;">Leverage scaling (365日)</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>Lev</th><th>Loss prob</th><th>Ruin (-50%)</th><th>Median Return</th></tr></thead>
+        <tbody>
+          <tr><td>1x</td><td>0%</td><td>0%</td><td>+22.1%</td></tr>
+          <tr><td>3x</td><td>0%</td><td>0%</td><td>+79.6%</td></tr>
+          <tr><td>5x</td><td>0%</td><td>0%</td><td>+161.2%</td></tr>
+          <tr><td>7x</td><td>0%</td><td>0%</td><td>+275.8%</td></tr>
+          <tr><td>10x</td><td>0%</td><td>0%</td><td>+543.1%</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.82rem;margin-top:6px;color:var(--text-secondary);">
+        注: MC は iid 仮定。実取引では serial correlation/regime change で予測値より下振れする可能性大。
+      </p>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">累計研究実績</h4>
+      <ul style="font-size:0.88rem;padding-left:22px;margin-top:6px;">
+        <li>Wave J + K = <strong>37 戦略候補テスト</strong>, <strong>4 採用</strong> (FOPD, 8H Meme, vol_z MR, OI capit) = 成功率 11%</li>
+        <li>探索済領域: ATR breakout, MR variations, sentiment, OI, FR, vol-targeted, cross-sectional, seasonality, ML</li>
+        <li>未開拓: order book depth, news/social NLP, cross-exchange basis, on-chain (UTXO age, exchange flows)</li>
+      </ul>
+    </div>
+
     <!-- ── Wave K45-K53: 大バッチ 新戦略探索 → v3 mix 確立 (2026-05-23) ── -->
     <div class="card" style="border:3px solid var(--accent-green);background:linear-gradient(135deg,rgba(63,185,80,0.15),rgba(63,185,80,0.05));padding:20px;">
       <h3 style="color:var(--accent-green);">🚀 Wave K45-K53: v3 Mix 確立 — OI Capitulation 軸が真の独立 alpha 源として採用</h3>
