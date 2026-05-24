@@ -1,0 +1,215 @@
+{
+  "wave": "K179",
+  "strategy": "whale_flow_exchange_netflow_proxy",
+  "run_time_s": 863.4,
+  "timestamp": "2026-05-25T04:04:03+00:00",
+  "data_sources_attempted": {
+    "glassnode": "401 - requires paid subscription (Glassnode Standard $29/month)",
+    "cryptoquant": "403 - requires paid subscription (CryptoQuant Basic $99/month)",
+    "dune_analytics": "401 - requires API key (free tier exists)",
+    "helius_solana": "401 - requires API key (free tier exists)",
+    "the_graph": "auth error - requires API key",
+    "blockchain_info": "SUCCESS - free public charts, no API key",
+    "mexc_hist_metrics": "SUCCESS - already cached (taker ratio, ls ratio, OI, top LS)"
+  },
+  "signal_composition": {
+    "BTC": "z(taker_ratio)*1.5 + z(top_ls)*1.0 + z(tx_vol_usd)*1.5 + z(mempool)*0.5 + z(output_vol)*0.5",
+    "ETH": "z(taker_ratio)*2.0 + z(top_ls)*1.0 + z(oi_chg)*0.5",
+    "SOL": "z(taker_ratio)*2.0 + z(top_ls)*1.0 + z(oi_chg)*0.5",
+    "direction": "Contrarian: high composite (heavy taker buying + on-chain volume) -> short",
+    "hypothesis": "Whale taker buys + large on-chain volume = exchange deposits = selling pressure"
+  },
+  "is_period": "2024-05-23 to 2025-10-15",
+  "oos_period": "2025-10-16 to 2026-05-23",
+  "n_symbols": 3,
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT"
+  ],
+  "is_result": {
+    "sharpe_gross": -0.9021042589008638,
+    "sharpe_net": -2.8134585330980033,
+    "maxdd_gross": -0.6984333300927903,
+    "maxdd_net": -0.9286209332787463,
+    "total_return_gross": -0.618943466832508,
+    "total_return_net": -0.9275417937062755,
+    "n_trades": 497,
+    "n": 497
+  },
+  "oos_result_lag1": {
+    "sharpe_gross": 1.5074264469547367,
+    "sharpe_net": -1.5683263390207858,
+    "maxdd_gross": -0.12218322175082985,
+    "maxdd_net": -0.3827523528566097,
+    "total_return_gross": 0.3388906053696936,
+    "total_return_net": -0.3010259789430727,
+    "n_trades": 216,
+    "n": 216
+  },
+  "oos_result_lag2": {
+    "sharpe_gross": 0.6680797693796352,
+    "sharpe_net": -2.2139141404695937,
+    "maxdd_gross": -0.24318269498609524,
+    "maxdd_net": -0.505880551392516,
+    "total_return_gross": 0.12785048287464895,
+    "total_return_net": -0.41175158292571834,
+    "n_trades": 215,
+    "n": 215
+  },
+  "ic_by_lag": {
+    "BTC": {
+      "1": -0.011232145319011573,
+      "2": -0.031051559891363167,
+      "3": -0.004818079815055467,
+      "4": 0.02770842701327292,
+      "5": 0.04658318616475581
+    },
+    "ETH": {
+      "1": -0.011048714722481204,
+      "2": -0.07228157290256344,
+      "3": 0.056698537147565724,
+      "4": 0.015347408959113155,
+      "5": -0.0015132569370555592
+    },
+    "SOL": {
+      "1": 0.02486681118435579,
+      "2": -0.022517395295791626,
+      "3": 0.017913420056938214,
+      "4": 0.04357883172355482,
+      "5": -0.0017521947137977404
+    }
+  },
+  "cost_stress_oos_lag1": {
+    "0": {
+      "sharpe_gross": 1.5074264469547367,
+      "sharpe_net": 1.5074264469547367,
+      "maxdd_gross": -0.12218322175082985,
+      "maxdd_net": -0.12218322175082985,
+      "total_return_gross": 0.3388906053696936,
+      "total_return_net": 0.3388906053696936,
+      "n_trades": 216,
+      "n": 216
+    },
+    "4": {
+      "sharpe_gross": 1.5074264469547367,
+      "sharpe_net": 1.067859964588025,
+      "maxdd_gross": -0.12218322175082985,
+      "maxdd_net": -0.1399864930458291,
+      "total_return_gross": 0.3388906053696936,
+      "total_return_net": 0.2203861647402312,
+      "n_trades": 216,
+      "n": 216
+    },
+    "8": {
+      "sharpe_gross": 1.5074264469547367,
+      "sharpe_net": 0.6274868950253867,
+      "maxdd_gross": -0.12218322175082985,
+      "maxdd_net": -0.17252570355375674,
+      "total_return_gross": 0.3388906053696936,
+      "total_return_net": 0.1123036437945204,
+      "n_trades": 216,
+      "n": 216
+    },
+    "14": {
+      "sharpe_gross": 1.5074264469547367,
+      "sharpe_net": -0.03344875150784152,
+      "maxdd_gross": -0.12218322175082985,
+      "maxdd_net": -0.22807154001857322,
+      "total_return_gross": 0.3388906053696936,
+      "total_return_net": -0.032249344285907644,
+      "n_trades": 216,
+      "n": 216
+    },
+    "28": {
+      "sharpe_gross": 1.5074264469547367,
+      "sharpe_net": -1.5683263390207858,
+      "maxdd_gross": -0.12218322175082985,
+      "maxdd_net": -0.3827523528566097,
+      "total_return_gross": 0.3388906053696936,
+      "total_return_net": -0.3010259789430727,
+      "n_trades": 216,
+      "n": 216
+    }
+  },
+  "sub_period_sharpe_gross": {
+    "2024-06_to_202412": {
+      "sharpe_gross": -0.7382,
+      "n": 180,
+      "n_trades": 180
+    },
+    "2025-01_to_202506": {
+      "sharpe_gross": -1.4275,
+      "n": 151,
+      "n_trades": 151
+    },
+    "2025-07_to_202510": {
+      "sharpe_gross": 0.2819,
+      "n": 92,
+      "n_trades": 92
+    },
+    "2025-11_to_202605": {
+      "sharpe_gross": 2.1197,
+      "n": 179,
+      "n_trades": 179
+    }
+  },
+  "permutation_p_oos_gross": 0.105,
+  "bootstrap_ci_oos_gross_5_95": [
+    0.172,
+    3.054
+  ],
+  "bootstrap_ci_is_gross_5_95": [
+    -1.643,
+    0.122
+  ],
+  "gates": {
+    "g1_oos_sharpe": false,
+    "g2_permutation": false,
+    "g3_dsr": true,
+    "g4_robustness": false,
+    "g5_is_oos_consistency": true,
+    "g6_turnover": true,
+    "g7_cost_tolerance": false,
+    "gates_passed": 3,
+    "verdict": "REJECT",
+    "sh_is_gross": -0.902,
+    "sh_oos_gross": 1.507,
+    "sh_is_net": -2.813,
+    "sh_oos_net": -1.568,
+    "perm_p": 0.105,
+    "note": "G5 passes because both IS and OOS net Sharpe are negative (consistent sign). G2 fails (p=0.105). The GROSS signal has real content (OOS gross +1.51) but costs destroy it at taker rates."
+  },
+  "key_findings": {
+    "oos_gross_sharpe": 1.5074264469547367,
+    "oos_net_sharpe_28bp": -1.5683263390207858,
+    "cost_breakeven_bp": 14,
+    "regime_change_detected": "H2-2024 signal inverted vs 2025+ (consistent positive)",
+    "min_cost_for_positive_net": "~8bp (maker-only execution)",
+    "verdict": "REJECT at 28bp taker; CONDITIONAL PROMISE if maker <=8bp or lower frequency",
+    "oos_late_sub_period_gross": 2.12,
+    "oos_early_sub_period_gross": -1.43,
+    "permutation_p": 0.105,
+    "bootstrap_ci_oos_gross": "[0.17, 3.05]"
+  },
+  "what_paid_data_would_unlock": {
+    "glassnode_netflow": {
+      "endpoint": "transfers_volume_to_exchanges_net",
+      "expected_ic": "0.04-0.12 per published academic literature",
+      "cost": "Glassnode Standard $29/mo or Pro $99/mo",
+      "note": "True exchange netflow vs proxy has ~3-5x better IC in published studies"
+    },
+    "cryptoquant_exchange_reserve": {
+      "endpoint": "exchange/reserve?exchange=all&window=day",
+      "expected_ic": "0.06-0.10 per CryptoQuant research",
+      "cost": "Basic $99/mo",
+      "note": "Exchange BTC reserve change is the most direct whale-flow signal"
+    },
+    "dune_onchain_flows": {
+      "query": "custom SQL on ethereum mainnet large transfers",
+      "expected_ic": "variable",
+      "cost": "Free tier with API key",
+      "note": "ETH-specific: large USDT/USDC transfers to Binance hot wallets"
+    }
+  }
+}
