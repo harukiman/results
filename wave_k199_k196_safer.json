@@ -1,0 +1,879 @@
+{
+  "wave": "K199",
+  "task": "K196 safer variant: reverse carry cap 5% + T1/T2/T3 deactivation triggers",
+  "as_of": "2026-05-24T20:50:36.321072+00:00Z",
+  "runtime_s": 0.3,
+  "config": {
+    "fwd_carry_cap": 0.1,
+    "rev_carry_cap_k199": 0.05,
+    "rev_carry_cap_k196": 0.1,
+    "k121_cap": 0.3,
+    "t1_window": 30,
+    "t1_threshold": -2.0,
+    "t2_window": 30,
+    "t2_threshold": 0.0,
+    "t3_dd_threshold": -0.02,
+    "n_folds": 4,
+    "oos_frac": 0.3,
+    "n_total": 658,
+    "oos_start_idx": 460,
+    "date_range": [
+      "2024-07-26",
+      "2026-05-14"
+    ]
+  },
+  "trigger_stats_k194_partial": {
+    "fire_full_pct": 16.7,
+    "fire_oos_pct": 30.8
+  },
+  "trigger_stats_t1_t2_t3": {
+    "T1_per_symbol": {
+      "SOL": {
+        "fire_count": 64,
+        "fire_pct": 9.7
+      },
+      "XRP": {
+        "fire_count": 72,
+        "fire_pct": 10.9
+      },
+      "SUI": {
+        "fire_count": 72,
+        "fire_pct": 10.9
+      },
+      "OP": {
+        "fire_count": 6,
+        "fire_pct": 0.9
+      },
+      "APT": {
+        "fire_count": 26,
+        "fire_pct": 4.0
+      },
+      "AXS": {
+        "fire_count": 8,
+        "fire_pct": 1.2
+      },
+      "JTO": {
+        "fire_count": 31,
+        "fire_pct": 4.7
+      },
+      "IMX": {
+        "fire_count": 0,
+        "fire_pct": 0.0
+      },
+      "SAND": {
+        "fire_count": 0,
+        "fire_pct": 0.0
+      },
+      "ADA": {
+        "fire_count": 10,
+        "fire_pct": 1.5
+      }
+    },
+    "T2_panel": {
+      "fire_count_total": 223,
+      "fire_pct_total": 33.9,
+      "fire_count_oos": 0,
+      "fire_pct_oos": 0.0
+    },
+    "T3_dd": {
+      "fire_count_total": 184,
+      "fire_pct_total": 28.0,
+      "fire_count_oos": 41,
+      "fire_pct_oos": 20.7,
+      "max_dd_pre_trigger": -0.0292
+    },
+    "combined_halt_days": {
+      "total": 407,
+      "pct": 61.9
+    }
+  },
+  "k199a_portfolio": {
+    "metrics_full": {
+      "P1_equal": {
+        "sharpe": 4.2007,
+        "sortino": 7.3192,
+        "calmar": 7.294,
+        "max_dd": -0.0317,
+        "ann_ret": 0.2312,
+        "ann_vol": 0.0498,
+        "n_days": 658
+      },
+      "P2_inv_vol": {
+        "sharpe": 4.8125,
+        "sortino": 8.6885,
+        "calmar": 12.7417,
+        "max_dd": -0.011,
+        "ann_ret": 0.1408,
+        "ann_vol": 0.0274,
+        "n_days": 658
+      },
+      "P3_risk_parity": {
+        "sharpe": 4.7467,
+        "sortino": 8.4256,
+        "calmar": 12.4913,
+        "max_dd": -0.0112,
+        "ann_ret": 0.1404,
+        "ann_vol": 0.0278,
+        "n_days": 658
+      },
+      "P4_sharpe_wt": {
+        "sharpe": 4.7263,
+        "sortino": 8.347,
+        "calmar": 10.6938,
+        "max_dd": -0.0281,
+        "ann_ret": 0.3,
+        "ann_vol": 0.0559,
+        "n_days": 658
+      }
+    },
+    "metrics_oos": {
+      "P1_equal": {
+        "sharpe": 6.6407,
+        "sortino": 13.3448,
+        "calmar": 20.8897,
+        "max_dd": -0.0142,
+        "ann_ret": 0.2961,
+        "ann_vol": 0.0392,
+        "n_days": 198
+      },
+      "P2_inv_vol": {
+        "sharpe": 7.8264,
+        "sortino": 20.5844,
+        "calmar": 49.4451,
+        "max_dd": -0.004,
+        "ann_ret": 0.1965,
+        "ann_vol": 0.023,
+        "n_days": 198
+      },
+      "P3_risk_parity": {
+        "sharpe": 7.8468,
+        "sortino": 20.1839,
+        "calmar": 50.0365,
+        "max_dd": -0.004,
+        "ann_ret": 0.2024,
+        "ann_vol": 0.0235,
+        "n_days": 198
+      },
+      "P4_sharpe_wt": {
+        "sharpe": 6.567,
+        "sortino": 14.0249,
+        "calmar": 22.8694,
+        "max_dd": -0.0142,
+        "ann_ret": 0.3238,
+        "ann_vol": 0.0429,
+        "n_days": 198
+      }
+    },
+    "weights_P3": [
+      0.0805,
+      0.0772,
+      0.0562,
+      0.0298,
+      0.3374,
+      0.1052,
+      0.0805,
+      0.0749,
+      0.1082,
+      0.05
+    ],
+    "cols": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ]
+  },
+  "k199b_portfolio": {
+    "metrics_full": {
+      "P1_equal": {
+        "sharpe": 4.2212,
+        "sortino": 7.3613,
+        "calmar": 7.377,
+        "max_dd": -0.0315,
+        "ann_ret": 0.2324,
+        "ann_vol": 0.0498,
+        "n_days": 658
+      },
+      "P2_inv_vol": {
+        "sharpe": 4.8494,
+        "sortino": 8.7715,
+        "calmar": 13.0776,
+        "max_dd": -0.0108,
+        "ann_ret": 0.1419,
+        "ann_vol": 0.0274,
+        "n_days": 658
+      },
+      "P3_risk_parity": {
+        "sharpe": 4.7829,
+        "sortino": 8.5063,
+        "calmar": 12.8316,
+        "max_dd": -0.011,
+        "ann_ret": 0.1416,
+        "ann_vol": 0.0278,
+        "n_days": 658
+      },
+      "P4_sharpe_wt": {
+        "sharpe": 4.7484,
+        "sortino": 8.397,
+        "calmar": 10.8123,
+        "max_dd": -0.0278,
+        "ann_ret": 0.3007,
+        "ann_vol": 0.0557,
+        "n_days": 658
+      }
+    },
+    "metrics_oos": {
+      "P1_equal": {
+        "sharpe": 6.63,
+        "sortino": 13.3256,
+        "calmar": 20.8551,
+        "max_dd": -0.0142,
+        "ann_ret": 0.2956,
+        "ann_vol": 0.0392,
+        "n_days": 198
+      },
+      "P2_inv_vol": {
+        "sharpe": 7.8075,
+        "sortino": 20.5469,
+        "calmar": 49.3515,
+        "max_dd": -0.004,
+        "ann_ret": 0.196,
+        "ann_vol": 0.023,
+        "n_days": 198
+      },
+      "P3_risk_parity": {
+        "sharpe": 7.8274,
+        "sortino": 20.1382,
+        "calmar": 49.9545,
+        "max_dd": -0.004,
+        "ann_ret": 0.202,
+        "ann_vol": 0.0235,
+        "n_days": 198
+      },
+      "P4_sharpe_wt": {
+        "sharpe": 6.5624,
+        "sortino": 14.0215,
+        "calmar": 22.8487,
+        "max_dd": -0.0141,
+        "ann_ret": 0.3227,
+        "ann_vol": 0.0428,
+        "n_days": 198
+      }
+    },
+    "weights_P3": [
+      0.0804,
+      0.0772,
+      0.0563,
+      0.0298,
+      0.3374,
+      0.1053,
+      0.0806,
+      0.0751,
+      0.108,
+      0.05
+    ],
+    "cols": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ]
+  },
+  "walk_forward_k199a": {
+    "label": "K199a",
+    "folds": [
+      {
+        "fold": 0,
+        "train_n": 114,
+        "test_n": 50,
+        "date_start": "2024-07-26",
+        "date_end": "2025-01-05",
+        "oos_sharpe_P1_equal": 5.2661,
+        "weights_P1_equal": [
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.05
+        ],
+        "oos_sharpe_P2_inv_vol": 9.478,
+        "weights_P2_inv_vol": [
+          0.0536,
+          0.068,
+          0.0262,
+          0.0225,
+          0.3052,
+          0.0544,
+          0.0509,
+          0.0601,
+          0.3091,
+          0.05
+        ],
+        "oos_sharpe_P3_risk_parity": 7.2116,
+        "weights_P3_risk_parity": [
+          0.0,
+          0.1015,
+          0.0378,
+          0.0332,
+          0.5044,
+          0.0969,
+          0.0605,
+          0.0656,
+          0.1,
+          0.0
+        ],
+        "oos_sharpe_P4_sharpe_wt": 5.1358,
+        "weights_P4_sharpe_wt": [
+          0.0,
+          0.3189,
+          0.0789,
+          0.0,
+          0.0,
+          0.0189,
+          0.1986,
+          0.2847,
+          0.1,
+          0.0
+        ]
+      },
+      {
+        "fold": 1,
+        "train_n": 114,
+        "test_n": 50,
+        "date_start": "2025-01-06",
+        "date_end": "2025-06-18",
+        "oos_sharpe_P1_equal": 4.0945,
+        "weights_P1_equal": [
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.05
+        ],
+        "oos_sharpe_P2_inv_vol": 5.9903,
+        "weights_P2_inv_vol": [
+          0.0596,
+          0.0777,
+          0.0418,
+          0.0212,
+          0.2417,
+          0.1235,
+          0.0733,
+          0.0571,
+          0.2541,
+          0.05
+        ],
+        "oos_sharpe_P3_risk_parity": 5.1823,
+        "weights_P3_risk_parity": [
+          0.0876,
+          0.0887,
+          0.0616,
+          0.0273,
+          0.3143,
+          0.1729,
+          0.1152,
+          0.0822,
+          0.0,
+          0.05
+        ],
+        "oos_sharpe_P4_sharpe_wt": 4.711,
+        "weights_P4_sharpe_wt": [
+          0.1042,
+          0.1871,
+          0.126,
+          0.1173,
+          0.0,
+          0.0,
+          0.2391,
+          0.0327,
+          0.1436,
+          0.05
+        ]
+      },
+      {
+        "fold": 2,
+        "train_n": 114,
+        "test_n": 50,
+        "date_start": "2025-06-19",
+        "date_end": "2025-11-29",
+        "oos_sharpe_P1_equal": 3.7329,
+        "weights_P1_equal": [
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.05
+        ],
+        "oos_sharpe_P2_inv_vol": 4.6809,
+        "weights_P2_inv_vol": [
+          0.0663,
+          0.0955,
+          0.0449,
+          0.0252,
+          0.2078,
+          0.071,
+          0.0539,
+          0.092,
+          0.2933,
+          0.05
+        ],
+        "oos_sharpe_P3_risk_parity": 3.5033,
+        "weights_P3_risk_parity": [
+          0.1309,
+          0.0919,
+          0.0572,
+          0.0321,
+          0.3416,
+          0.1005,
+          0.0875,
+          0.1083,
+          0.0,
+          0.05
+        ],
+        "oos_sharpe_P4_sharpe_wt": 3.545,
+        "weights_P4_sharpe_wt": [
+          0.0548,
+          0.2181,
+          0.0774,
+          0.2131,
+          0.0427,
+          0.0319,
+          0.0465,
+          0.2156,
+          0.1,
+          0.0
+        ]
+      },
+      {
+        "fold": 3,
+        "train_n": 116,
+        "test_n": 50,
+        "date_start": "2025-11-30",
+        "date_end": "2026-05-14",
+        "oos_sharpe_P1_equal": 4.6674,
+        "weights_P1_equal": [
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.05
+        ],
+        "oos_sharpe_P2_inv_vol": 4.6198,
+        "weights_P2_inv_vol": [
+          0.0605,
+          0.1048,
+          0.0409,
+          0.0317,
+          0.3633,
+          0.0908,
+          0.0643,
+          0.0936,
+          0.1001,
+          0.05
+        ],
+        "oos_sharpe_P3_risk_parity": 4.0534,
+        "weights_P3_risk_parity": [
+          0.0,
+          0.169,
+          0.077,
+          0.0552,
+          0.3098,
+          0.1699,
+          0.0,
+          0.1689,
+          0.0001,
+          0.05
+        ],
+        "oos_sharpe_P4_sharpe_wt": -1.1507,
+        "weights_P4_sharpe_wt": [
+          0.0057,
+          0.1464,
+          0.1913,
+          0.0776,
+          0.159,
+          0.062,
+          0.1566,
+          0.0,
+          0.1513,
+          0.05
+        ]
+      }
+    ],
+    "mean_P1_equal": 4.4402,
+    "min_P1_equal": 3.7329,
+    "std_P1_equal": 0.5817,
+    "mean_P2_inv_vol": 6.1922,
+    "min_P2_inv_vol": 4.6198,
+    "std_P2_inv_vol": 1.9744,
+    "mean_P3_risk_parity": 4.9876,
+    "min_P3_risk_parity": 3.5033,
+    "std_P3_risk_parity": 1.4195,
+    "mean_P4_sharpe_wt": 3.0603,
+    "min_P4_sharpe_wt": -1.1507,
+    "std_P4_sharpe_wt": 2.5
+  },
+  "walk_forward_k199b": {
+    "label": "K199b",
+    "folds": [
+      {
+        "fold": 0,
+        "train_n": 114,
+        "test_n": 50,
+        "date_start": "2024-07-26",
+        "date_end": "2025-01-05",
+        "oos_sharpe_P1_equal": 5.3349,
+        "weights_P1_equal": [
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.05
+        ],
+        "oos_sharpe_P2_inv_vol": 17.8122,
+        "weights_P2_inv_vol": [
+          0.026,
+          0.033,
+          0.0127,
+          0.0109,
+          0.1482,
+          0.0264,
+          0.0247,
+          0.0292,
+          0.6388,
+          0.05
+        ],
+        "oos_sharpe_P3_risk_parity": 17.7554,
+        "weights_P3_risk_parity": [
+          0.0233,
+          0.0361,
+          0.0,
+          0.0138,
+          0.1984,
+          0.0319,
+          0.0235,
+          0.0258,
+          0.5971,
+          0.05
+        ],
+        "oos_sharpe_P4_sharpe_wt": 5.1358,
+        "weights_P4_sharpe_wt": [
+          0.0,
+          0.3189,
+          0.0789,
+          0.0,
+          0.0,
+          0.0189,
+          0.1986,
+          0.2847,
+          0.1,
+          0.0
+        ]
+      },
+      {
+        "fold": 1,
+        "train_n": 114,
+        "test_n": 50,
+        "date_start": "2025-01-06",
+        "date_end": "2025-06-18",
+        "oos_sharpe_P1_equal": 4.1296,
+        "weights_P1_equal": [
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.05
+        ],
+        "oos_sharpe_P2_inv_vol": 6.1451,
+        "weights_P2_inv_vol": [
+          0.0583,
+          0.076,
+          0.0409,
+          0.0208,
+          0.2364,
+          0.1208,
+          0.0717,
+          0.0558,
+          0.2694,
+          0.05
+        ],
+        "oos_sharpe_P3_risk_parity": 6.2077,
+        "weights_P3_risk_parity": [
+          0.0527,
+          0.0608,
+          0.0389,
+          0.0192,
+          0.2184,
+          0.1459,
+          0.0717,
+          0.0491,
+          0.2932,
+          0.05
+        ],
+        "oos_sharpe_P4_sharpe_wt": 4.7414,
+        "weights_P4_sharpe_wt": [
+          0.1038,
+          0.1864,
+          0.1256,
+          0.1169,
+          0.0,
+          0.0,
+          0.2382,
+          0.0326,
+          0.1464,
+          0.05
+        ]
+      },
+      {
+        "fold": 2,
+        "train_n": 114,
+        "test_n": 50,
+        "date_start": "2025-06-19",
+        "date_end": "2025-11-29",
+        "oos_sharpe_P1_equal": 3.7034,
+        "weights_P1_equal": [
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.05
+        ],
+        "oos_sharpe_P2_inv_vol": NaN,
+        "weights_P2_inv_vol": [
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+          NaN,
+          NaN
+        ],
+        "oos_sharpe_P3_risk_parity": 4.8705,
+        "weights_P3_risk_parity": [
+          0.0691,
+          0.0591,
+          0.0365,
+          0.0199,
+          0.1861,
+          0.0627,
+          0.0506,
+          0.0676,
+          0.3985,
+          0.05
+        ],
+        "oos_sharpe_P4_sharpe_wt": 3.545,
+        "weights_P4_sharpe_wt": [
+          0.0548,
+          0.2181,
+          0.0774,
+          0.2131,
+          0.0427,
+          0.0319,
+          0.0465,
+          0.2156,
+          0.1,
+          0.0
+        ]
+      },
+      {
+        "fold": 3,
+        "train_n": 116,
+        "test_n": 50,
+        "date_start": "2025-11-30",
+        "date_end": "2026-05-14",
+        "oos_sharpe_P1_equal": 4.6674,
+        "weights_P1_equal": [
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.1056,
+          0.05
+        ],
+        "oos_sharpe_P2_inv_vol": 4.6196,
+        "weights_P2_inv_vol": [
+          0.0605,
+          0.1048,
+          0.0409,
+          0.0317,
+          0.3633,
+          0.0908,
+          0.0643,
+          0.0936,
+          0.1001,
+          0.05
+        ],
+        "oos_sharpe_P3_risk_parity": 4.8615,
+        "weights_P3_risk_parity": [
+          0.0597,
+          0.108,
+          0.0,
+          0.0418,
+          0.3735,
+          0.0946,
+          0.0709,
+          0.1049,
+          0.1,
+          0.0466
+        ],
+        "oos_sharpe_P4_sharpe_wt": -1.1517,
+        "weights_P4_sharpe_wt": [
+          0.0057,
+          0.1464,
+          0.1913,
+          0.0776,
+          0.159,
+          0.062,
+          0.1566,
+          0.0,
+          0.1513,
+          0.05
+        ]
+      }
+    ],
+    "mean_P1_equal": 4.4588,
+    "min_P1_equal": 3.7034,
+    "std_P1_equal": 0.6103,
+    "mean_P2_inv_vol": NaN,
+    "min_P2_inv_vol": NaN,
+    "std_P2_inv_vol": NaN,
+    "mean_P3_risk_parity": 8.4238,
+    "min_P3_risk_parity": 4.8615,
+    "std_P3_risk_parity": 5.4154,
+    "mean_P4_sharpe_wt": 3.0676,
+    "min_P4_sharpe_wt": -1.1517,
+    "std_P4_sharpe_wt": 2.5055
+  },
+  "four_way_comparison": {
+    "K195": {
+      "oos_sharpe_P3": 5.7678,
+      "oos_maxdd_P3": -0.0043,
+      "wf_mean_P3": 5.5328,
+      "wf_min_P3": 3.8321,
+      "hl_net_pct": -100.0,
+      "caveat": "Forward carry only, safest baseline"
+    },
+    "K196_raw": {
+      "oos_sharpe_P3": 9.2012,
+      "oos_maxdd_P3": -0.0038,
+      "wf_mean_P3": 5.3712,
+      "wf_min_P3": 3.5399,
+      "hl_net_pct": -5.13,
+      "caveat": "Regime fragile; OOS dominated by post-2025 spread flip"
+    },
+    "K199a": {
+      "oos_sharpe_P3": 7.8468,
+      "oos_maxdd_P3": -0.004,
+      "wf_mean_P3": 4.9876,
+      "wf_min_P3": 3.5033,
+      "hl_net_pct": -50.0,
+      "caveat": "Cap 5% reverse, no deactivation triggers"
+    },
+    "K199b": {
+      "oos_sharpe_P3": 7.8274,
+      "oos_maxdd_P3": -0.004,
+      "wf_mean_P3": 8.4238,
+      "wf_min_P3": 4.8615,
+      "hl_net_pct": -50.0,
+      "caveat": "Cap 5% reverse + T1/T2/T3 deactivation triggers"
+    }
+  },
+  "acceptance_criteria_k199b": {
+    "c1_oos_sh_needed": 5.8678,
+    "c1_oos_sh_actual": 7.8274,
+    "c1_pass": true,
+    "c2_wf_min_needed": 3.8321,
+    "c2_wf_min_actual": 4.8615,
+    "c2_pass": true,
+    "c3_maxdd_k195": -0.0043,
+    "c3_maxdd_k199b": -0.004,
+    "c3_pass": true,
+    "c4_hl_net": -50.0,
+    "c4_pass": true,
+    "all_pass": true
+  },
+  "capital_efficiency": {
+    "K195": {
+      "n_positions": 20,
+      "hl_net_pct": -100.0,
+      "margin_pct_aum": 3.0,
+      "oos_sharpe": 5.7675,
+      "description": "Forward carry only, 10 symbols \u00d72 exchanges"
+    },
+    "K196_raw": {
+      "n_positions": 40,
+      "hl_net_pct": -5.13,
+      "margin_pct_aum": 6.1,
+      "oos_sharpe": 9.2012,
+      "description": "Fwd + Rev carry, cap 10/10, no triggers"
+    },
+    "K199a": {
+      "n_positions": 40,
+      "hl_net_pct": -50.0,
+      "margin_pct_aum": 4.6,
+      "oos_sharpe": 7.8468,
+      "description": "Fwd + Rev carry, cap 10/5, no triggers"
+    },
+    "K199b": {
+      "n_positions": 40,
+      "hl_net_pct": -50.0,
+      "margin_pct_aum": 4.6,
+      "oos_sharpe": 7.8274,
+      "description": "Fwd + Rev carry, cap 10/5, with T1/T2/T3 triggers"
+    }
+  },
+  "verdict": "ACCEPT: K199b \u2192 v6.5. OOS Sh=7.8274 (vs K195=5.7678), WF min=4.8615 (vs K195=3.8321). All criteria pass."
+}
