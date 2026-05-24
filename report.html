@@ -759,17 +759,17 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 05:30 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 04:30 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 PRODUCTION v6 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K188 9戦略 ensemble OOS Sh +5.48 / MaxDD -0.45% (Safer Carry, cap 7%)</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐ K188 = K176 + V_carry_panel (ETH35/DOGE30/AVAX25/BTC10, K186 decay-aware)</span> &nbsp;|&nbsp;
-    <strong>12 ACCEPT base + 5 ensembles (K124/K136/K149/K176/K188) / 46 REJECT / 3 CONDITIONAL / 2 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#e88;font-weight:700;">⚠ K186 monitoring: BTC carry DECAYING, AVAX STRENGTHENING (4.3x)</span>
+    <strong>12 ACCEPT base + 5 ensembles (K124/K136/K149/K176/K188) / 47 REJECT / 3 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#fa6;font-weight:700;">⛓ K179 On-Chain Whale Flow REJECT: OOS gross Sh +1.51 / needs maker &le;8bp or Glassnode paid</span>
   </div>
 
   <header class="report-header">
     <h1 style="font-family:Georgia,serif;letter-spacing:-0.01em;">Systematic Alpha Discovery in MEXC Perpetual Futures</h1>
     <div class="subtitle" style="font-style:italic;font-family:Georgia,serif;">A Bias-Controlled Empirical Study of Multi-Axis Portfolio Construction with §6 Audit Validation</div>
     <div class="meta">
-      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-25 01:35 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
+      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-25 05:30 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
       Methodology: §6 strict-gate audit (Bailey-LdP CPCV, Hansen SPA, White RC, Bootstrap CI, Block Permutation)
     </div>
   </header>
@@ -3263,7 +3263,7 @@ Plotly.newPlot('sc-fopd-rs', [{
   <!-- ==================== 4. SURVIVOR CARD ==================== -->
   <section class="section" id="survivor-card">
     <div class="section-header">
-      <div><span class="section-num">04</span><span class="jp-title">生存者 (7戦略)</span></div>
+      <div><span class="section-num">04</span><span class="jp-title">生存者 (6戦略)</span></div>
       <div class="en-subtitle">生存者カード: VolReg_opt &amp; Regime_V3 &amp; VolReg_4h &amp; ATR_Ratio &amp; SampEn &amp; Vol_Smile_Skew</div>
     </div>
 
@@ -7608,6 +7608,25 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
             </li>
             <li>DOGE pure carry mechanism 発見: HL pays Bybit より平均 -0.54 bps/event = <strong>~590 bps/year gross delta-neutral</strong> (別 strategy 候補 → K182)</li>
             <li>NEXT WAVES: K181 (intra-period execution で DOGE 救出), K182 (DOGE pure carry), K183 (BNB/ETH/SOL に K175 lag structure expand)</li>
+          </ul>
+        </details>
+        <details>
+          <summary><strong>⛓ 2026-05-25 04:30 JST — K179 On-Chain Whale-Wallet Exchange Netflow Alpha — REJECT (FRAMEWORK READY)</strong></summary>
+          <ul>
+            <li><strong>Hypothesis</strong>: Whale deposits to CEX (heavy taker buying + on-chain tx volume) → selling pressure → contrarian short 1-2 days out</li>
+            <li><strong>Data acquired</strong>: blockchain.info free public API (730d daily BTC on-chain) + MEXC hist_metrics (taker_buy_sell_ratio, top_ls_ratio, OI at 4h)</li>
+            <li><strong>APIs 401/403 (paid required)</strong>: Glassnode ($29-99/mo), CryptoQuant ($99/mo), Dune (free tier requires signup), Helius Solana, The Graph</li>
+            <li><strong>Key result</strong>: OOS Sh_gross = <strong>+1.51</strong> (real signal) / OOS Sh_net@28bp = <strong>-1.57</strong> (cost-killed)</li>
+            <li><strong>Cost stress (OOS lag=1)</strong>: 0bp=+1.51 / 4bp=+1.07 / 8bp=+0.62 / 14bp=-0.03 / 28bp=-1.57 → breakeven ~14bp</li>
+            <li><strong>Regime change detected</strong>: 2024 signal inverted (-0.90 gross IS) → 2025-Q3+ signal activates (+0.43 IS late, +2.12 OOS recent)</li>
+            <li><strong>§6 Gates: 3/7 (G3, G5, G6 PASS; G1/G2/G4/G7 FAIL)</strong> → REJECT</li>
+            <li><strong>G1 FAIL</strong>: OOS net -1.57 at 28bp taker (gross +1.51 would PASS)</li>
+            <li><strong>G2 FAIL</strong>: perm p=0.105 (OOS only 220 days, insufficient block-permutation power)</li>
+            <li><strong>G3 PASS</strong>: OOS gross bootstrap CI [+0.17, +3.05] — 5th percentile &gt; 0</li>
+            <li><strong>G7 FAIL</strong>: dies at 14bp; needs ≤8bp (maker-only) for Sh_net &gt; 0</li>
+            <li><strong>FRAMEWORK READY verdict</strong>: Signal has real content. Needs either (a) Glassnode true netflow (3-5x better IC), or (b) maker ≤8bp execution, or (c) weekly rebalancing frequency</li>
+            <li><strong>Priority data sources for unlock</strong>: Glassnode <code>transfers_volume_to_exchanges_net</code> ($29/mo), CryptoQuant exchange reserve, Dune ETH large-transfer queries (free)</li>
+            <li><strong>Bug fixed during development</strong>: pos.get(s+"_sig") double-suffix caused 0 trades in initial run → fixed to pos.get(s)</li>
           </ul>
         </details>
         <details>
