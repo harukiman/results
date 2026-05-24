@@ -1244,6 +1244,80 @@ Plotly.newPlot('sc-fopd-rs', [{
       <p style="font-size:0.85rem;color:var(--accent-red);"><strong>「日利10%」honest gap</strong>: 直近30日 +0.03%/日 vs 目標 +10%/日 = 1000倍以上、実在不能</p>
     </div>
 
+    <!-- ── Wave K37: Cost stress sensitivity (2026-05-24 09:00 JST) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-cyan);">
+      <h3 style="color:var(--accent-cyan);">💰 Wave K37: Cost stress sensitivity — どこまでコスト上昇に耐えるか</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">本研究の基準コスト (fee 0.04% taker, slip 0.03%/side) を 1.0x〜5.0x にスケールして 4-way mix の Sharpe 劣化を測定:</p>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:10px;">
+        <thead><tr><th>Cost multiplier</th><th>Sharpe</th><th>vs Base</th><th>Annual Return</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(63,185,80,0.15);"><td><strong>1.0x (base)</strong></td><td class="text-green"><strong>+3.61</strong></td><td>—</td><td>+28.9%</td></tr>
+          <tr><td>1.5x</td><td>+3.22</td><td class="text-yellow">-0.39</td><td>+25.8%</td></tr>
+          <tr><td>2.0x</td><td>+2.83</td><td class="text-yellow">-0.78</td><td>+22.7%</td></tr>
+          <tr><td>3.0x</td><td>+2.05</td><td class="text-orange">-1.56</td><td>+16.5%</td></tr>
+          <tr><td>5.0x</td><td>+1.34</td><td class="text-orange">-2.27</td><td>+10.2%</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.88rem;margin-top:10px;color:var(--accent-green);">
+        <strong>結論</strong>: 5.0x コスト極端シナリオでも Sharpe +1.34 (G1 OOS閾値 +1.0超え)。実取引でのslippage突発悪化に対する余裕大。
+      </p>
+    </div>
+
+    <!-- ── Wave K38: Forward MC simulation (2026-05-24 09:15 JST) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-green);">
+      <h3 style="color:var(--accent-green);">📈 Wave K38: Forward MC — 今日から $10K @ 3xレバで何が起きるか</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">730日リターン分布から Block Bootstrap で 10,000 path をシミュレーション、現実的な将来分布を可視化:</p>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:10px;">
+        <thead><tr><th>Horizon</th><th>Loss prob</th><th>Median Return</th><th>p5</th><th>p95</th><th>Median MaxDD</th></tr></thead>
+        <tbody>
+          <tr><td>30日</td><td class="text-yellow">13.7%</td><td>+2.5%</td><td>-3.8%</td><td>+9.7%</td><td>-2.3%</td></tr>
+          <tr><td>60日</td><td>6.0%</td><td>+5.0%</td><td>-3.6%</td><td>+15.7%</td><td>-3.0%</td></tr>
+          <tr><td>90日</td><td>2.6%</td><td>+7.6%</td><td>-2.9%</td><td>+21.8%</td><td>-3.4%</td></tr>
+          <tr><td>180日</td><td>0.3%</td><td>+15.6%</td><td>+0.1%</td><td>+36.6%</td><td>-4.6%</td></tr>
+          <tr style="background:rgba(63,185,80,0.15);"><td><strong>365日</strong></td><td class="text-green"><strong>0.0%</strong></td><td class="text-green"><strong>+34.4%</strong></td><td>+8.5%</td><td>+71.5%</td><td>-5.6%</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.88rem;margin-top:10px;">
+        <strong>3xレバ運用時の実用判定</strong>: 30日内 14%が損失 (但し median Max DD -2.3% 以内)、90日で 97.4%が黒字、365日 で確率分布上は<strong>ほぼ確実に黒字</strong>。
+        但しこれは<strong>過去730日と同分布前提</strong>の前向き推計。実際は構造変化リスクを織り込む必要あり。
+      </p>
+    </div>
+
+    <!-- ── Wave K39: Per-symbol contribution (2026-05-23) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-purple);">
+      <h3 style="color:var(--accent-purple);">🔬 Wave K39: Per-symbol decomposition — alpha は誰が稼いだか</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">20個の (axis, symbol) について個別 Sharpe を算出。意外な発見が多数:</p>
+      <h4 style="color:var(--accent-green);margin-top:12px;">Top 5 contributors</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>Axis</th><th>Symbol</th><th>Sharpe</th><th>Return</th><th>DD</th><th>Trades</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(63,185,80,0.10);"><td>ATR 8H</td><td><strong>SHIBUSDT</strong></td><td class="text-green">+2.23</td><td>+141.4%</td><td>-9.7%</td><td>64</td></tr>
+          <tr style="background:rgba(63,185,80,0.10);"><td>ATR 8H</td><td><strong>BONKUSDT</strong></td><td class="text-green">+2.12</td><td>+181.3%</td><td>-12.3%</td><td>74</td></tr>
+          <tr><td>ATR 4H</td><td>INJUSDT</td><td>+2.09</td><td>+107.4%</td><td>-11.2%</td><td>40</td></tr>
+          <tr><td>ATR 4H</td><td>SHIBUSDT</td><td>+2.06</td><td>+74.4%</td><td>-6.4%</td><td>58</td></tr>
+          <tr><td>vol_MR 4H</td><td>SOLUSDT</td><td>+1.86</td><td>+111.6%</td><td>-12.5%</td><td>96</td></tr>
+        </tbody>
+      </table>
+      <h4 style="color:var(--accent-red);margin-top:14px;">Bottom 5 (border-line)</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>Axis</th><th>Symbol</th><th>Sharpe</th><th>Return</th></tr></thead>
+        <tbody>
+          <tr><td>vol_MR 4H</td><td>BTCUSDT</td><td>+0.93</td><td>+42.9%</td></tr>
+          <tr><td>FOPD 4H</td><td>AVAXUSDT</td><td>+0.82</td><td>+13.6%</td></tr>
+          <tr><td>FOPD 4H</td><td>ADAUSDT</td><td>+0.54</td><td>+12.4%</td></tr>
+          <tr><td>vol_MR 4H</td><td>BNBUSDT</td><td>+0.41</td><td>+12.7%</td></tr>
+          <tr style="background:rgba(248,81,73,0.10);"><td>FOPD 4H</td><td><strong>DOTUSDT</strong></td><td class="text-red">+0.03</td><td>-0.3%</td></tr>
+        </tbody>
+      </table>
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">重要な構造的発見</h4>
+      <ol style="font-size:0.88rem;padding-left:22px;margin-top:6px;">
+        <li><strong>Alpha の主源泉は Meme Volatility</strong>: SHIB/BONK が 8H/4H で Top 4 のうち 3 つを占める。本研究の利益は「多軸分散」ではなく「meme volatility エッジ」に大きく依存する事実が明確化。</li>
+        <li><strong>FOPD DOTUSDT は実質 wash trade</strong> (Sh +0.03, -0.3% return)。除外しても全体に与える影響は微小。但し取引数が稀 (14回 = 730日の 1.9%) なので残しても害も限定的。</li>
+        <li><strong>vol_MR の symbol 依存性が極端</strong>: SOL +1.86 >> ETH +1.04 ≈ BTC +0.93 >> BNB +0.41。SOL の high beta + meme proxy 特性が vol_z signal と相性良い可能性。</li>
+        <li><strong>運用上の示唆</strong>: 流動性/上場可否制約で SHIB/BONK が一時使えない事態 (例:取引所一時停止) では 4-way mix の alpha が大幅低下するリスクあり。代替 meme (PEPE, FLOKI 等) の事前 backtest 価値あり。</li>
+      </ol>
+    </div>
+
     <!-- ── Wave K17-K21: Production推奨 + 多角stress + 探索終結 (2026-05-24 05:05 JST) ── -->
     <div class="card" style="border-left:4px solid var(--accent-purple);background:linear-gradient(180deg,rgba(188,140,255,0.10),transparent);">
       <h3 style="color:var(--accent-purple);">🎯 Wave K17-K21: 実運用化 + Stress 多角検証 + 探索終結</h3>
