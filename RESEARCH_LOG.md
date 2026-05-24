@@ -3890,3 +3890,45 @@ K39/K41 の wash trade 仮説を実装版で検証:
 - **55 戦略候補テスト**、**5 採用** (FOPD, 8H Meme, vol_z MR, OI capit, BB squeeze)
 - 成功率 9%
 - v4 mix: **§6 8/8 PASS**, Sh +3.88, MC ruin 0%, 60d pos 99%
+
+## 2026-05-23 セッション最終サマリー (Wave K39-K91, 約53 wave)
+
+### 採用された新戦略 (2件):
+1. **OI capitulation portfolio (Wave K49)**: OI z≤-2 AND price z≤-1 → long, 7 銘柄
+   - Standalone Sh +1.55, Corr with v3 = 0.047 (independent)
+2. **BB squeeze breakout portfolio (Wave K70)**: BB width pct < 20% squeeze → breakout direction, 8 銘柄
+   - Standalone Sh +1.50, Corr with v3 = 0.023 (independent)
+
+### Production strategy 進化:
+- **v1** (K13): 5-axis 80/10/10 + vol_MR, Sh +3.61
+- **v2** (K44): v1 - DOT_FOPD, Sh +3.654
+- **v3** (K49): v2 + OI capit, Sh +3.615
+- **v4** (K78): v3 + BB squeeze, Sh **+3.881** ← 現在 production
+
+### v4 §6 audit 結果: 8/8 PASS
+- G1 OOS WF min Sh +3.15 (5 folds all > +3.0)
+- G2 PBO 0.000
+- G3 DSR 1.000
+- G4 Cost stress 5x → Sh +1.34
+- G5 MC ruin @5x 0.00%
+- G6 Param plateau w_BB ∈ [0.05, 0.15] all Sh > +3.8
+- G7 Auditor reimpl (partial)
+- G8 Multi-regime (4 vol buckets, all Sh > +1)
+
+### v4 Forward MC (3x leverage):
+- 30d: 12.9% loss prob, median +4.88%
+- 90d: 1.9% loss prob, median +15.84%
+- 365d: 0.0% loss prob, median +83.6%
+
+### 棄却された戦略 (主要48件):
+- 1H breakout, XS L/S momentum, Volume spike, SOL/BTC ratio (overlap inflation), Hour seasonality (multiple comparison OOS反転), Random Forest ML, Stochastic/MFI/CCI/ADX/ROC (all weak), Regime adaptation (overfit), Dynamic leverage (meaningless), Range expansion, Heikin-Ashi, FR skew, Liquidation cascade, Ensemble vote, BB+vol filter, Big-move reversion (modest)
+
+### Production tooling:
+- `paper_trade_4way_mix.py`: v4 化済 (7 軸稼働)
+- `monitor_v4_daemon.py`: 健康監視スクリプト
+- `STRATEGY_REGISTRY.json`: v4_mix_production 含む完全版
+
+### 累計 (Wave J + K = 全研究):
+- **55 戦略候補テスト**
+- **5 採用** (FOPD, 8H Meme, vol_z MR, OI capit, BB squeeze)
+- 成功率 9%
