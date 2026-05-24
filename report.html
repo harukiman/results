@@ -494,7 +494,7 @@
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 05:05 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 19:23 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 4-way mix (85/15):</strong> <span style="color:var(--accent-green);">Sh +3.61 / Calmar 36.65 / 60日窓100%+ / Bootstrap [+2.73, +4.35]</span> &nbsp;|&nbsp;
     <strong>17/4 success</strong>
@@ -504,7 +504,7 @@
     <h1 style="font-family:Georgia,serif;letter-spacing:-0.01em;">Systematic Alpha Discovery in MEXC Perpetual Futures</h1>
     <div class="subtitle" style="font-style:italic;font-family:Georgia,serif;">A Bias-Controlled Empirical Study of Multi-Axis Portfolio Construction with §6 Audit Validation</div>
     <div class="meta">
-      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-23 &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
+      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 19:23 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
       Methodology: §6 strict-gate audit (Bailey-LdP CPCV, Hansen SPA, White RC, Bootstrap CI, Block Permutation)
     </div>
   </header>
@@ -532,6 +532,9 @@
       <li><a href="#portfolio-analysis">ポートフォリオ分析</a></li>
       <li><a href="#cost-model">コストモデル</a></li>
       <li><a href="#methodology">手法詳細</a></li>
+      <li><a href="#user-inbox">📝 指示インボックス</a></li>
+      <li><a href="#external-findings">🔎 外部リサーチ</a></li>
+      <li><a href="#tips-log">💡 Tips & Findings ログ</a></li>
     </ol>
   </nav>
   <script>
@@ -6112,10 +6115,183 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 
   <hr class="divider">
 
+  <!-- ==================== USER INSTRUCTION INBOX (password-protected) ==================== -->
+  <section class="section" id="user-inbox">
+    <div class="card" style="border:2px solid var(--accent-blue);padding:18px;">
+      <h2 style="color:var(--accent-blue);">📝 ユーザー指示インボックス</h2>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-top:4px;">
+        パスワード認証後、メッセージ送信。Claude Code が定期的に (≈30分間隔) 受信して指示として処理。<br>
+        パスワードを 3 回間違えると 24 時間ロックされます。送信内容は ntfy.sh の秘匿トピックに保存され、約 12 時間で自動消去されます (Claude Code 側に永続コピーが残ります)。
+      </p>
+
+      <div id="inbox-locked-msg" style="display:none;background:rgba(248,81,73,0.15);border:1px solid var(--accent-red);padding:12px;border-radius:6px;margin-top:12px;color:var(--accent-red);font-weight:600;"></div>
+
+      <div id="inbox-auth" style="margin-top:12px;">
+        <input type="password" id="inbox-pw" placeholder="パスワード" style="padding:8px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-primary);border-radius:4px;width:200px;font-size:0.9rem;">
+        <button id="inbox-unlock" style="padding:8px 16px;background:var(--accent-blue);color:white;border:0;border-radius:4px;cursor:pointer;font-size:0.9rem;">解錠</button>
+        <span id="inbox-auth-msg" style="margin-left:10px;font-size:0.85rem;"></span>
+      </div>
+
+      <div id="inbox-form" style="display:none;margin-top:14px;">
+        <textarea id="inbox-msg" rows="6" placeholder="指示・メモを入力 (Claude Code が次のポーリングで受信)" style="width:100%;padding:10px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-primary);border-radius:4px;font-family:inherit;font-size:0.9rem;resize:vertical;"></textarea>
+        <input type="text" id="inbox-title" placeholder="(任意) タイトル/分類タグ" style="margin-top:8px;padding:8px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-primary);border-radius:4px;width:300px;font-size:0.9rem;">
+        <div style="margin-top:10px;">
+          <button id="inbox-send" style="padding:8px 18px;background:var(--accent-green);color:white;border:0;border-radius:4px;cursor:pointer;font-weight:600;font-size:0.9rem;">送信</button>
+          <button id="inbox-logout" style="padding:8px 14px;background:var(--bg-tertiary);color:var(--text-primary);border:1px solid var(--border);border-radius:4px;cursor:pointer;margin-left:8px;font-size:0.85rem;">ログアウト</button>
+          <span id="inbox-send-msg" style="margin-left:12px;font-size:0.85rem;"></span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    (function() {
+      // SHA-256 hash of "2026" — verification only happens client-side
+      const PW_HASH = '158a323a7ba44870f23d96f1516dd70aa48e9a72db4ebb026b0a89e212a208ab';
+      const NTFY_TOPIC = 'cryptolab-instr-80ecd5703cc34a0f346abdc972d9ab27';
+      const LS_FAILS = 'cl_inbox_fails';
+      const LS_LOCKED_UNTIL = 'cl_inbox_locked_until';
+      const LS_AUTHED = 'cl_inbox_authed';
+      const MAX_FAILS = 3;
+      const LOCK_MS = 24 * 60 * 60 * 1000;
+
+      async function sha256(str) {
+        const buf = new TextEncoder().encode(str);
+        const hash = await crypto.subtle.digest('SHA-256', buf);
+        return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+      }
+
+      function checkLock() {
+        const lockedUntil = parseInt(localStorage.getItem(LS_LOCKED_UNTIL) || '0', 10);
+        const now = Date.now();
+        if (lockedUntil > now) {
+          const remainHr = ((lockedUntil - now) / 3600000).toFixed(1);
+          document.getElementById('inbox-locked-msg').style.display = 'block';
+          document.getElementById('inbox-locked-msg').textContent = '🔒 ロック中 — 残り ' + remainHr + ' 時間 (失敗3回)';
+          document.getElementById('inbox-auth').style.display = 'none';
+          document.getElementById('inbox-form').style.display = 'none';
+          return true;
+        }
+        return false;
+      }
+
+      function showForm() {
+        document.getElementById('inbox-auth').style.display = 'none';
+        document.getElementById('inbox-form').style.display = 'block';
+        document.getElementById('inbox-locked-msg').style.display = 'none';
+      }
+
+      // auto-restore session
+      if (localStorage.getItem(LS_AUTHED) === '1' && !checkLock()) {
+        showForm();
+      } else {
+        checkLock();
+      }
+
+      document.getElementById('inbox-unlock').addEventListener('click', async function() {
+        if (checkLock()) return;
+        const pw = document.getElementById('inbox-pw').value;
+        const h = await sha256(pw);
+        const msgEl = document.getElementById('inbox-auth-msg');
+        if (h === PW_HASH) {
+          localStorage.setItem(LS_AUTHED, '1');
+          localStorage.removeItem(LS_FAILS);
+          msgEl.style.color = 'var(--accent-green)';
+          msgEl.textContent = '✓ 認証成功';
+          showForm();
+        } else {
+          let fails = parseInt(localStorage.getItem(LS_FAILS) || '0', 10) + 1;
+          localStorage.setItem(LS_FAILS, String(fails));
+          if (fails >= MAX_FAILS) {
+            localStorage.setItem(LS_LOCKED_UNTIL, String(Date.now() + LOCK_MS));
+            localStorage.removeItem(LS_FAILS);
+            checkLock();
+          } else {
+            msgEl.style.color = 'var(--accent-red)';
+            msgEl.textContent = '✗ 不正 (残り ' + (MAX_FAILS - fails) + ' 回でロック)';
+          }
+        }
+        document.getElementById('inbox-pw').value = '';
+      });
+
+      document.getElementById('inbox-logout')?.addEventListener('click', function() {
+        localStorage.removeItem(LS_AUTHED);
+        document.getElementById('inbox-form').style.display = 'none';
+        document.getElementById('inbox-auth').style.display = 'block';
+        document.getElementById('inbox-auth-msg').textContent = '';
+      });
+
+      document.getElementById('inbox-send')?.addEventListener('click', async function() {
+        const msg = document.getElementById('inbox-msg').value.trim();
+        const title = document.getElementById('inbox-title').value.trim() || 'user-instruction';
+        const sendMsg = document.getElementById('inbox-send-msg');
+        if (!msg) { sendMsg.style.color = 'var(--accent-red)'; sendMsg.textContent = '本文が空'; return; }
+        sendMsg.style.color = 'var(--text-secondary)';
+        sendMsg.textContent = '送信中...';
+        try {
+          const res = await fetch('https://ntfy.sh/' + NTFY_TOPIC, {
+            method: 'POST',
+            headers: {'Title': title, 'Tags': 'user-instruction', 'Priority': 'default'},
+            body: msg
+          });
+          if (res.ok) {
+            sendMsg.style.color = 'var(--accent-green)';
+            sendMsg.textContent = '✓ 送信完了 — Claude が次のポーリング (~30分以内) で受信';
+            document.getElementById('inbox-msg').value = '';
+            document.getElementById('inbox-title').value = '';
+          } else {
+            sendMsg.style.color = 'var(--accent-red)';
+            sendMsg.textContent = '✗ 送信失敗 (HTTP ' + res.status + ')';
+          }
+        } catch (e) {
+          sendMsg.style.color = 'var(--accent-red)';
+          sendMsg.textContent = '✗ ネットワークエラー: ' + e.message;
+        }
+      });
+    })();
+    </script>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ==================== EXTERNAL FINDINGS (tip-scraper output) ==================== -->
+  <section class="section" id="external-findings">
+    <div class="card" style="border:1px solid var(--accent-cyan);padding:18px;">
+      <h2 style="color:var(--accent-cyan);">🔎 外部リサーチ知見 (botter/Qiita/note/論文)</h2>
+      <p style="font-size:0.85rem;color:var(--text-secondary);">tip-scraper サブエージェントの定期巡回結果。strong-evidence / partial-edge / crypto-native / risky / hype 等でタグ付け。採用候補は次 Wave で検証。</p>
+      <div id="external-findings-body" style="margin-top:10px;font-size:0.88rem;">
+        <p><em>初回スクレイプ実行中... 結果が揃い次第ここに表へ追記されます。</em></p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ==================== TIPS & FINDINGS LOG (累積) ==================== -->
+  <section class="section" id="tips-log">
+    <div class="card" style="border:1px solid var(--accent-yellow);padding:18px;">
+      <h2 style="color:var(--accent-yellow);">💡 Tips & Findings ログ (累積・上書き禁止)</h2>
+      <p style="font-size:0.85rem;color:var(--text-secondary);">解析過程で発見した tips・知見・将来役立ちそうなアイデアを時系列で蓄積。</p>
+      <div id="tips-log-body" style="margin-top:10px;font-size:0.88rem;">
+        <details open>
+          <summary><strong>2026-05-24 19:23 JST</strong> — インボックス機構稼働開始</summary>
+          <ul>
+            <li>サイト経由の指示インボックス実装 (pw=2026, ntfy.sh backend, 3-fails-24h-lock)</li>
+            <li>Claude Code 側 30分ポーリング (loop skill) で受信 → 即対応</li>
+            <li>tip-scraper の定期巡回をプロセスに組込み (External Findings セクション)</li>
+            <li>恒久指示 4 件メモリ追加: HTML逐次tips記録 / explore=exploit同等 / 指示インボックス / 外部リサーチ</li>
+            <li>運用方針: 案1 (条件付きSharpe合成) + 案2 (チャート暗黙知ラベラ MVP) を並行検討</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
     <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v4.1</p>
-    <p style="margin-top:4px;">更新: 2026-05-24 &nbsp;|&nbsp; 98+ファミリーで710,373+試行 &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
+    <p style="margin-top:4px;">更新: 2026-05-24 19:23 JST &nbsp;|&nbsp; 98+ファミリーで710,373+試行 &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 
