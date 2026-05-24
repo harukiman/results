@@ -1,0 +1,627 @@
+"""
+Wave K131 — Funding-Momentum CONTINUATION at LONGER HOLD (K129 follow-up)
+
+Hypothesis (from K129 agent):
+  K129 tested 24h continuation, best V_3d_z20_top3 hit OOS Sharpe +1.02 but
+  perm p=0.23 (not significant). Recommendation: lengthen hold to 3-7 days
+  (more momentum-style), broaden universe.
+
+  This wave tests CONTINUATION at long holds:
+        z(funding) > +1.5  → LONG  (price keeps going up)
+        z(funding) < -1.5  → SHORT (price keeps going down)
+  with 3d / 5d / 7d holds — the longer holds should let any genuine
+  momentum effect compound while reducing churn cost.
+
+Universe (15 requested, 14 available; SHIB missing FR cache):
+  BTC, ETH, SOL, BNB, DOGE, AVAX, LINK, ADA, XRP, INJ, OP, WIF, BONK, ARB
+  (BONK uses 1000BONK FR aligned with BONK 4h price — returns are scale-free.)
+
+Variants (3, pre-registered, lean):
+  V_hold3d_z15_top3 : 3-day mean FR (9 events), z±1.5, top-3/bot-3, hold 3d (9 events)
+  V_hold5d_z15_top3 : 5-day mean FR (15 events), z±1.5, top-3/bot-3, hold 5d (15 events)
+  V_hold7d_z15_top3 : 7-day mean FR (21 events), z±1.5, top-3/bot-3, hold 7d (21 events)  <-- PRIMARY
+
+Stats:
+  * 730d, IS 70% / OOS 30%
+  * Walk-forward 4-fold
+  * One-sided permutation (cross-sectional shuffle) n=300
+  * Block bootstrap CI on OOS Sharpe n=300
+  * DSR with N_trials=3
+  * Cost stress ±50%
+  * P&L decomposition price vs funding vs cost (continuation thesis check)
+
+§6 mini gates: OOS_SR ≥ 0.5, p_perm < 0.05, MaxDD > -0.40, cost-stress
+robust, DSR > 0, decomp shows PRICE PNL dominant.
+"""
+
+import json
+import time
+import warnings
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
+warnings.filterwarnings("ignore")
+
+ROOT = Path("/Users/nekonaomichi/crypto-lab")
+CACHE = ROOT / "cache"
+
+# 15 requested; SHIB has no bybit FR cache → 14 effective.
+# BONK: use 1000BONK FR with BONK 4h prices (returns are scale-invariant).
+SYMBOLS = [
+    "BTC", "ETH", "SOL", "BNB", "DOGE", "AVAX", "LINK", "ADA",
+    "XRP", "INJ", "OP", "WIF", "BONK", "ARB",
+]
+
+COST_BPS = 7.0
+IS_FRAC = 0.70
+SEED = 20260524
+
+ANN_FACTOR_3D = np.sqrt(365 / 3)
+ANN_FACTOR_5D = np.sqrt(365 / 5)
+ANN_FACTOR_7D = np.sqrt(365 / 7)
+
+VOL_TARGET = 0.10
+VOL_CAP = 1.5
+VOL_LOOKBACK = 30
+
+
+# ------------------------------------------------------------- data load
+FR_FILE_OVERRIDES = {
+    "BONK": "bybit_fr_1000BONKUSDT_730d.parquet",
+}
+PX_FILE_OVERRIDES = {
+    "BONK": "BONKUSDT_4h_730d.parquet",
+}
+
+
+def load_fr(sym):
+    fname = FR_FILE_OVERRIDES.get(sym, f"bybit_fr_{sym}USDT_730d.parquet")
+    p = CACHE / fname
+    if not p.exists():
+        return None
+    df = pd.read_parquet(p)
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df = df.set_index("timestamp").sort_index()
+    df = df[~df.index.duplicated(keep="last")]
+    return df["funding_rate"].astype(float).rename(sym)
+
+
+def load_px(sym):
+    fname = PX_FILE_OVERRIDES.get(sym, f"{sym}USDT_4h_730d.parquet")
+    p = CACHE / fname
+    if not p.exists():
+        return None
+    df = pd.read_parquet(p)
+    df["open_time"] = pd.to_datetime(df["open_time"])
+    df = df.set_index("open_time").sort_index()
+    df = df[~df.index.duplicated(keep="last")]
+    return df["close"].astype(float).rename(sym)
+
+
+def build_panels():
+    fr_dict, px_dict = {}, {}
+    for s in SYMBOLS:
+        fr = load_fr(s)
+        px = load_px(s)
+        if fr is None or px is None:
+            print(f"  skip {s} (missing data: fr={fr is not None}, px={px is not None})")
+            continue
+        fr_dict[s] = fr
+        px_dict[s] = px
+    fr_panel = pd.concat(fr_dict.values(), axis=1).sort_index()
+    px_panel = pd.concat(px_dict.values(), axis=1).sort_index()
+    fr_panel = fr_panel.dropna(thresh=int(fr_panel.shape[1] * 0.8))
+    px_at_fr = px_panel.reindex(fr_panel.index, method="ffill")
+    return fr_panel, px_at_fr
+
+
+# ------------------------------------------------------------- signals
+def signal_window(fr_panel, n_events):
+    """trailing mean over n_events 8h funding events, shift 1 (no look-ahead)."""
+    return fr_panel.rolling(n_events, min_periods=n_events).mean().shift(1)
+
+
+def zscore_xs(panel):
+    mu = panel.mean(axis=1)
+    sd = panel.std(axis=1)
+    return panel.sub(mu, axis=0).div(sd.replace(0, np.nan), axis=0)
+
+
+# ------------------------------------------------------------- backtest core
+def backtest_continuation(
+    fr_panel,
+    px_at_fr,
+    signal_panel,
+    z_thresh=1.5,
+    n_long=3,
+    n_short=3,
+    hold_n=21,
+    cost_bps=COST_BPS,
+    vol_target=VOL_TARGET,
+    vol_cap=VOL_CAP,
+    vol_lookback=VOL_LOOKBACK,
+    rebal_on_change=True,
+):
+    """Continuation backtest, equal-weight inside leg, vol-targeted per symbol."""
+    sig = zscore_xs(signal_panel)
+
+    sig_arr = sig.values
+    fr_arr = fr_panel.values
+    px_arr = px_at_fr.values
+    T_full = sig_arr.shape[0]
+    N = sig_arr.shape[1]
+    cols = list(fr_panel.columns)
+    rebal_pos = np.arange(0, T_full, hold_n)
+    idx_vals = sig.index.values
+
+    px_at_rebal = px_arr[rebal_pos]
+    with np.errstate(invalid="ignore", divide="ignore"):
+        period_ret = px_at_rebal[1:] / px_at_rebal[:-1] - 1.0
+    period_ret = np.where(np.isfinite(period_ret), period_ret, 0.0)
+    periods_per_year = (365 * 24) / (hold_n * 8)
+    sqrt_ppy = np.sqrt(periods_per_year)
+
+    sym_vol_panel = np.full_like(period_ret, np.nan, dtype=float)
+    for i in range(period_ret.shape[0]):
+        lo = max(0, i + 1 - vol_lookback)
+        hi = i + 1
+        if hi - lo >= 5:
+            sym_vol_panel[i] = np.nanstd(period_ret[lo:hi], axis=0, ddof=1)
+
+    rets, price_pnl_arr, fund_pnl_arr, cost_arr = [], [], [], []
+    rets_idx = []
+    turnover_arr = []
+    long_count = np.zeros(N, dtype=int)
+    short_count = np.zeros(N, dtype=int)
+    gross_notional_arr = []
+
+    prev_w = np.zeros(N)
+    n_rebal_events = 0
+
+    for ti in range(len(rebal_pos) - 1):
+        t = rebal_pos[ti]
+        t_next = rebal_pos[ti + 1]
+        s_row = sig_arr[t]
+        valid = ~np.isnan(s_row)
+        if valid.sum() < n_long + n_short + 1:
+            w = np.zeros(N)
+        else:
+            filled_lo = np.where(valid, s_row, +np.inf)
+            order_asc = np.argsort(filled_lo)
+            filled_hi = np.where(valid, s_row, -np.inf)
+            order_desc = np.argsort(-filled_hi)
+
+            cand_long = []
+            for i in order_desc:
+                if valid[i] and s_row[i] > z_thresh:
+                    cand_long.append(i)
+                    if len(cand_long) == n_long:
+                        break
+            cand_short = []
+            for i in order_asc:
+                if valid[i] and s_row[i] < -z_thresh:
+                    cand_short.append(i)
+                    if len(cand_short) == n_short:
+                        break
+
+            w = np.zeros(N)
+            vol_idx = ti - 1
+            if vol_idx >= 0:
+                sym_vol_annual = sym_vol_panel[vol_idx] * sqrt_ppy
+            else:
+                sym_vol_annual = np.full(N, np.nan)
+
+            for i in cand_long:
+                sv = sym_vol_annual[i]
+                if not np.isfinite(sv) or sv <= 0:
+                    leg_w = 1.0 / max(len(cand_long), 1)
+                else:
+                    leg_w = min(vol_target / sv, vol_cap)
+                w[i] = leg_w / max(len(cand_long), 1)
+            for i in cand_short:
+                sv = sym_vol_annual[i]
+                if not np.isfinite(sv) or sv <= 0:
+                    leg_w = 1.0 / max(len(cand_short), 1)
+                else:
+                    leg_w = min(vol_target / sv, vol_cap)
+                w[i] = -leg_w / max(len(cand_short), 1)
+
+        if rebal_on_change:
+            cur_set_long = tuple(np.where(w > 0)[0])
+            cur_set_short = tuple(np.where(w < 0)[0])
+            prev_set_long = tuple(np.where(prev_w > 0)[0])
+            prev_set_short = tuple(np.where(prev_w < 0)[0])
+            same_set = (cur_set_long == prev_set_long) and (cur_set_short == prev_set_short)
+            if same_set:
+                w = prev_w.copy()
+                turn = 0.0
+            else:
+                turn = float(np.abs(w - prev_w).sum())
+                n_rebal_events += 1
+        else:
+            turn = float(np.abs(w - prev_w).sum())
+            if turn > 0:
+                n_rebal_events += 1
+
+        cost = turn * (cost_bps / 1e4)
+        gross_notional = float(np.abs(w).sum())
+
+        px_now = px_arr[t]
+        px_next = px_arr[t_next]
+        with np.errstate(invalid="ignore", divide="ignore"):
+            pr = px_next / px_now - 1.0
+        pr = np.where(np.isfinite(pr), pr, 0.0)
+
+        fr_window = fr_arr[t:t_next]
+        fr_sum = np.nansum(fr_window, axis=0)
+        # Long pays positive funding → -w*fr
+        funding_ret = -(w * fr_sum)
+
+        price_pnl = float((w * pr).sum())
+        fund_pnl = float(funding_ret.sum())
+        net = price_pnl + fund_pnl - cost
+
+        rets.append(net)
+        price_pnl_arr.append(price_pnl)
+        fund_pnl_arr.append(fund_pnl)
+        cost_arr.append(cost)
+        turnover_arr.append(turn)
+        gross_notional_arr.append(gross_notional)
+        rets_idx.append(idx_vals[t])
+
+        long_count[w > 0] += 1
+        short_count[w < 0] += 1
+
+        prev_w = w
+
+    return {
+        "rets": pd.Series(rets, index=rets_idx),
+        "price_pnl": pd.Series(price_pnl_arr, index=rets_idx),
+        "fund_pnl": pd.Series(fund_pnl_arr, index=rets_idx),
+        "cost": pd.Series(cost_arr, index=rets_idx),
+        "turnover": pd.Series(turnover_arr, index=rets_idx),
+        "gross_notional": pd.Series(gross_notional_arr, index=rets_idx),
+        "long_count": pd.Series(long_count, index=cols),
+        "short_count": pd.Series(short_count, index=cols),
+        "n_rebal_events": n_rebal_events,
+        "n_periods": len(rets),
+    }
+
+
+# ---------------------------------------------------------------- stats
+def perf_stats(rets, ann_factor):
+    rets = pd.Series(rets).dropna()
+    if rets.std() == 0 or len(rets) < 5:
+        return dict(sharpe=0.0, sortino=0.0, calmar=0.0, max_dd=0.0,
+                    win_rate=0.0, ann_ret=0.0, ann_vol=0.0, n=int(len(rets)))
+    mu = rets.mean()
+    sd = rets.std()
+    sharpe = mu / sd * ann_factor
+    downside = rets[rets < 0].std()
+    sortino = mu / downside * ann_factor if downside and downside > 0 else 0.0
+    equity = (1 + rets).cumprod()
+    peak = equity.cummax()
+    dd = (equity / peak - 1).min()
+    ann_ret = (1 + mu) ** (ann_factor ** 2) - 1
+    calmar = ann_ret / abs(dd) if dd < 0 else 0.0
+    win_rate = float((rets > 0).mean())
+    return dict(
+        sharpe=float(sharpe), sortino=float(sortino), calmar=float(calmar),
+        max_dd=float(dd), win_rate=win_rate,
+        ann_ret=float(ann_ret), ann_vol=float(sd * ann_factor),
+        n=int(len(rets)),
+    )
+
+
+def gross_sharpe(res, ann_factor):
+    gross = res["price_pnl"] + res["fund_pnl"]
+    return perf_stats(gross, ann_factor)["sharpe"]
+
+
+def deflated_sharpe(sr, n_obs, n_trials, skew=0.0, kurt=3.0):
+    if n_obs < 20 or n_trials < 1:
+        return 0.0
+    emc = 0.5772
+    e_max = np.sqrt(2 * np.log(n_trials)) * (1 - emc) + \
+            (1 - emc) / np.sqrt(2 * np.log(max(n_trials, 2)))
+    var = (1 - skew * sr + (kurt - 1) / 4.0 * sr ** 2) / (n_obs - 1)
+    if var <= 0:
+        return 0.0
+    z = (sr - e_max) / np.sqrt(var)
+    from math import erf, sqrt
+    return 0.5 * (1 + erf(z / sqrt(2)))
+
+
+def block_bootstrap_ci(rets, ann_factor, n_iter=300, block=3, seed=SEED):
+    rets = np.asarray(rets)
+    n = len(rets)
+    if n < block * 3:
+        return {"sr_lo": 0.0, "sr_hi": 0.0, "sr_mean": 0.0}
+    rng = np.random.default_rng(seed)
+    n_blocks = max(1, n // block)
+    sr_samples = []
+    for _ in range(n_iter):
+        starts = rng.integers(0, n - block + 1, size=n_blocks)
+        sample = np.concatenate([rets[s:s + block] for s in starts])
+        s = sample.std()
+        if s > 0:
+            sr_samples.append(sample.mean() / s * ann_factor)
+    if not sr_samples:
+        return {"sr_lo": 0.0, "sr_hi": 0.0, "sr_mean": 0.0}
+    arr = np.array(sr_samples)
+    return {
+        "sr_lo": float(np.quantile(arr, 0.025)),
+        "sr_hi": float(np.quantile(arr, 0.975)),
+        "sr_mean": float(arr.mean()),
+    }
+
+
+def permutation_test(fr_panel, px_at_fr, signal_panel_fn, cfg, n_iter=300, seed=SEED):
+    rng = np.random.default_rng(seed)
+    hold_n = cfg["hold"]
+    ann = cfg["ann"]
+
+    actual_panel = signal_panel_fn(fr_panel)
+    actual = backtest_continuation(
+        fr_panel, px_at_fr, actual_panel,
+        z_thresh=cfg["z"], n_long=cfg["n_long"],
+        n_short=cfg["n_short"], hold_n=hold_n,
+    )
+    actual_sr = perf_stats(actual["rets"], ann)["sharpe"]
+    actual_sr_gross = gross_sharpe(actual, ann)
+
+    base_signal = actual_panel.values
+    null_sr = np.zeros(n_iter)
+    null_sr_gross = np.zeros(n_iter)
+    for i in range(n_iter):
+        permuted = base_signal.copy()
+        for r in range(permuted.shape[0]):
+            row = permuted[r]
+            mask = ~np.isnan(row)
+            idxs = np.where(mask)[0]
+            if len(idxs) > 1:
+                permuted[r, idxs] = rng.permutation(row[idxs])
+        sp = pd.DataFrame(permuted, index=fr_panel.index, columns=fr_panel.columns)
+        res = backtest_continuation(
+            fr_panel, px_at_fr, sp,
+            z_thresh=cfg["z"], n_long=cfg["n_long"],
+            n_short=cfg["n_short"], hold_n=hold_n,
+        )
+        null_sr[i] = perf_stats(res["rets"], ann)["sharpe"]
+        null_sr_gross[i] = gross_sharpe(res, ann)
+
+    return {
+        "actual_sharpe_net": float(actual_sr),
+        "actual_sharpe_gross": float(actual_sr_gross),
+        "null_mean_net": float(null_sr.mean()),
+        "null_std_net": float(null_sr.std()),
+        "null_p95_net": float(np.quantile(null_sr, 0.95)),
+        "p_value_net": float((null_sr >= actual_sr).mean()),
+        "null_mean_gross": float(null_sr_gross.mean()),
+        "p_value_gross": float((null_sr_gross >= actual_sr_gross).mean()),
+        "n_iter": n_iter,
+    }
+
+
+def walk_forward(fr_panel, px_at_fr, signal_panel_fn, cfg, n_folds=4):
+    sig = signal_panel_fn(fr_panel)
+    T = len(fr_panel)
+    fold_size = T // n_folds
+    out = []
+    hold_n = cfg["hold"]
+    ann = cfg["ann"]
+    for f in range(n_folds):
+        s = f * fold_size
+        e = (f + 1) * fold_size if f < n_folds - 1 else T
+        sub_fr = fr_panel.iloc[s:e]
+        sub_px = px_at_fr.iloc[s:e]
+        sub_sig = sig.iloc[s:e]
+        try:
+            r = backtest_continuation(
+                sub_fr, sub_px, sub_sig,
+                z_thresh=cfg["z"], n_long=cfg["n_long"],
+                n_short=cfg["n_short"], hold_n=hold_n,
+            )["rets"]
+        except Exception:
+            r = pd.Series(dtype=float)
+        out.append({"fold": f, **perf_stats(r, ann)})
+    return out
+
+
+# ---------------------------------------------------------------- variants
+# hold expressed in 8h events: 3d=9, 5d=15, 7d=21
+VARIANTS = {
+    "V_hold3d_z15_top3": dict(z=1.5, n_long=3, n_short=3, hold=9,  win=9,  ann=ANN_FACTOR_3D),
+    "V_hold5d_z15_top3": dict(z=1.5, n_long=3, n_short=3, hold=15, win=15, ann=ANN_FACTOR_5D),
+    "V_hold7d_z15_top3": dict(z=1.5, n_long=3, n_short=3, hold=21, win=21, ann=ANN_FACTOR_7D),
+}
+
+
+def run_variant(name, cfg, fr_panel, px_at_fr, n_perm=300, n_boot=300):
+    print(f"  >> {name}: z={cfg['z']} top={cfg['n_long']}/{cfg['n_short']} "
+          f"hold={cfg['hold']} events  ({cfg['hold']*8/24:.1f}d)")
+    sig_fn = lambda fp: signal_window(fp, cfg["win"])
+    signal_panel = sig_fn(fr_panel)
+    hold_n = cfg["hold"]
+    ann = cfg["ann"]
+
+    res = backtest_continuation(
+        fr_panel, px_at_fr, signal_panel,
+        z_thresh=cfg["z"], n_long=cfg["n_long"],
+        n_short=cfg["n_short"], hold_n=hold_n,
+    )
+    rets = res["rets"]
+    n_total = len(rets)
+    n_is = int(n_total * IS_FRAC)
+
+    full_stats = perf_stats(rets, ann)
+    is_stats = perf_stats(rets.iloc[:n_is], ann)
+    oos_stats = perf_stats(rets.iloc[n_is:], ann)
+    gross_sr = gross_sharpe(res, ann)
+
+    fund_total = float(res["fund_pnl"].sum())
+    price_total = float(res["price_pnl"].sum())
+    cost_total = float(res["cost"].sum())
+    net_total = float(res["rets"].sum())
+    turnover_total = float(res["turnover"].sum())
+    turnover_per_event = float(res["turnover"].mean())
+    avg_gross_notional = float(res["gross_notional"].mean())
+
+    wf = walk_forward(fr_panel, px_at_fr, sig_fn, cfg, n_folds=4)
+
+    res_lo = backtest_continuation(
+        fr_panel, px_at_fr, signal_panel,
+        z_thresh=cfg["z"], n_long=cfg["n_long"],
+        n_short=cfg["n_short"], hold_n=hold_n,
+        cost_bps=COST_BPS * 0.5,
+    )
+    res_hi = backtest_continuation(
+        fr_panel, px_at_fr, signal_panel,
+        z_thresh=cfg["z"], n_long=cfg["n_long"],
+        n_short=cfg["n_short"], hold_n=hold_n,
+        cost_bps=COST_BPS * 1.5,
+    )
+    cost_stress = {
+        "low_50pct":   perf_stats(res_lo["rets"], ann)["sharpe"],
+        "base_100pct": full_stats["sharpe"],
+        "high_150pct": perf_stats(res_hi["rets"], ann)["sharpe"],
+    }
+
+    boot = block_bootstrap_ci(rets.iloc[n_is:].values, ann,
+                               n_iter=n_boot, block=3, seed=SEED + 11)
+
+    perm = permutation_test(fr_panel, px_at_fr, sig_fn, cfg, n_iter=n_perm)
+
+    dsr_full = deflated_sharpe(full_stats["sharpe"], full_stats["n"], n_trials=3)
+    dsr_oos = deflated_sharpe(oos_stats["sharpe"], oos_stats["n"], n_trials=3)
+
+    long_count = res["long_count"].sort_values(ascending=False).to_dict()
+    short_count = res["short_count"].sort_values(ascending=False).to_dict()
+
+    abs_sum = abs(price_total) + abs(fund_total) + 1e-9
+    decomp = {
+        "price_pnl": price_total,
+        "fund_pnl": fund_total,
+        "cost": cost_total,
+        "net": net_total,
+        "price_pct_of_gross_abs": float(abs(price_total) / abs_sum),
+        "fund_pct_of_gross_abs": float(abs(fund_total) / abs_sum),
+        "price_dominant": bool(abs(price_total) > abs(fund_total) * 2),
+        "price_same_sign_as_net": bool(np.sign(price_total) == np.sign(net_total) and net_total != 0),
+    }
+
+    # §6 mini-gate evaluation
+    gates = {
+        "oos_sr_ge_0_5":   bool(oos_stats["sharpe"] >= 0.5),
+        "p_perm_lt_0_05":  bool(perm["p_value_net"] < 0.05),
+        "max_dd_gt_neg40": bool(full_stats["max_dd"] > -0.40),
+        "cost_stress_robust": bool(cost_stress["high_150pct"] >= 0.5 * cost_stress["base_100pct"]
+                                   if cost_stress["base_100pct"] > 0 else False),
+        "dsr_oos_pos":     bool(dsr_oos > 0.5),
+        "price_dominant":  bool(decomp["price_dominant"]),
+    }
+    gates["pass_count"] = int(sum(1 for v in gates.values() if v is True))
+    gates["all_pass"] = bool(all(v for k, v in gates.items() if k not in ("pass_count", "all_pass")))
+
+    return {
+        "config": {k: v for k, v in cfg.items() if k != "ann"},
+        "ann_factor": float(ann),
+        "n_periods": n_total,
+        "n_rebal_events": int(res["n_rebal_events"]),
+        "full": full_stats,
+        "is": is_stats,
+        "oos": oos_stats,
+        "gross_sharpe": float(gross_sr),
+        "decomposition": decomp,
+        "turnover": {
+            "total": turnover_total,
+            "per_event_avg": turnover_per_event,
+            "avg_gross_notional": avg_gross_notional,
+        },
+        "walk_forward": wf,
+        "cost_stress": cost_stress,
+        "bootstrap_oos_sharpe_95ci": boot,
+        "permutation": perm,
+        "dsr_full": dsr_full,
+        "dsr_oos": dsr_oos,
+        "long_count": long_count,
+        "short_count": short_count,
+        "gates": gates,
+        "equity_curve": (1 + rets).cumprod().tolist(),
+        "equity_idx": [str(x) for x in rets.index],
+    }
+
+
+# ---------------------------------------------------------------- main
+def main():
+    t0 = time.time()
+    print("Loading panels ...")
+    fr_panel, px_at_fr = build_panels()
+    print(f"  FR panel: {fr_panel.shape}, range {fr_panel.index.min()} .. {fr_panel.index.max()}")
+    print(f"  Symbols ({fr_panel.shape[1]}): {list(fr_panel.columns)}")
+
+    n_perm = 300
+    n_boot = 300
+
+    results = {}
+    for name, cfg in VARIANTS.items():
+        results[name] = run_variant(name, cfg, fr_panel, px_at_fr,
+                                     n_perm=n_perm, n_boot=n_boot)
+        elapsed = time.time() - t0
+        print(f"     [elapsed {elapsed:.1f}s]")
+
+    # Save outputs
+    out_path = ROOT / "wave_k131_funding_cont_7d.json"
+    curves_path = ROOT / "wave_k131_curves.json"
+
+    summary = {k: {kk: vv for kk, vv in v.items() if kk not in ("equity_curve", "equity_idx")}
+               for k, v in results.items()}
+    summary["_meta"] = {
+        "wall_seconds": time.time() - t0,
+        "n_symbols": int(fr_panel.shape[1]),
+        "symbols": list(fr_panel.columns),
+        "n_events": int(fr_panel.shape[0]),
+        "n_perm": n_perm,
+        "n_boot": n_boot,
+        "is_frac": IS_FRAC,
+        "cost_bps_per_leg": COST_BPS,
+        "vol_target": VOL_TARGET,
+        "vol_cap": VOL_CAP,
+        "vol_lookback": VOL_LOOKBACK,
+        "wave": "K131",
+        "parent_wave": "K129",
+        "k129_best_oos_sharpe": 1.02,
+        "k129_best_pperm": 0.23,
+    }
+    curves = {k: {"equity_curve": v["equity_curve"], "equity_idx": v["equity_idx"]}
+              for k, v in results.items()}
+
+    with open(out_path, "w") as f:
+        json.dump(summary, f, indent=2, default=str)
+    with open(curves_path, "w") as f:
+        json.dump(curves, f, indent=2, default=str)
+
+    elapsed = time.time() - t0
+    print(f"\nDone in {elapsed:.1f}s")
+    print(f"  -> {out_path}")
+    print(f"  -> {curves_path}")
+
+    # Console summary
+    print("\n=== Summary ===")
+    for name, r in results.items():
+        full, oos = r["full"], r["oos"]
+        perm = r["permutation"]
+        dec = r["decomposition"]
+        g = r["gates"]
+        print(f"{name:22s} netSR={full['sharpe']:+.2f} OOS={oos['sharpe']:+.2f} "
+              f"grossSR={r['gross_sharpe']:+.2f} MaxDD={full['max_dd']:.2%} "
+              f"p_net={perm['p_value_net']:.3f} "
+              f"price={dec['price_pnl']:+.3f} fund={dec['fund_pnl']:+.3f} "
+              f"cost={dec['cost']:.3f} rebals={r['n_rebal_events']} "
+              f"DSR_oos={r['dsr_oos']:.3f} gates={g['pass_count']}/6")
+
+
+if __name__ == "__main__":
+    main()
