@@ -3744,3 +3744,51 @@ K39/K41 の wash trade 仮説を実装版で検証:
 - 31 候補テスト、4 採用 (FOPD, 8H Meme, vol_z MR, OI capit)
 - 成功率 13%
 - 残り未開拓領域: ML feature engineering, RL, microstructure depth
+
+## Wave K61-K68: 拡張探索バッチ #3 — 全棄却 (2026-05-23)
+
+### K61: BTC.D conditioning of v3
+- 36 configs テスト, 最良 ΔSh +0.006
+- v3 が既に BTC.D 影響を受けてない (好都合だが追加 alpha なし)
+
+### K62: FR skew cross-symbol (10 銘柄)
+- 全 6 configs Sh < 0.3
+- Turnover cost (0.1%/rebal) が alpha 食う
+- 棄却
+
+### K63: Liquidation cascade (price + OI sharp drop)
+- 35/189 Sh>=1.0、しかし trades 1-20 と sparse
+- AVAX で Sh +1.60 (n=2)
+- 棄却 (rare event)
+
+### K64: Auto-correlation regime
+- 96 configs, max Sh +0.77 (BNB)
+- 全 Sh<1.0
+- 棄却
+
+### K65: Hourly seasonality (1H bar)
+- Raw 強構造: Hour 21/22 UTC 全銘柄 +4-8bps、Hour 23 全銘柄 -4-7bps (|t|>2)
+- ただし戦略化: 1H 取引コスト (140bps) が alpha (4-8bps) 食う
+- Sh -10〜-26 (完全敗北)
+- Information value はあるが trading viable でない
+
+### K66: Day-of-week × hour combined
+- In-sample: Thu hour 21 UTC +21.6bps (|t|=3.5, 4銘柄), Thu hour 19 UTC -23.7bps
+- 全銘柄 in-sample Sh +3.8〜+12.3 (魅力的!)
+- **OOS validation (60/40 split)**: **全銘柄反転、mean Sh -17** (完全 noise だった)
+- **教訓**: 168 cells × 5 銘柄 = 840 仮説テストの multiple comparison artifact
+- 棄却 — 重要な反面教師
+
+### K67: ETH/BTC vol ratio MR
+- 27 configs, max Sh +0.95
+- 棄却
+
+### K68: Random Forest ML (8 features)
+- OOF Sharpe: BTC -0.75, ETH +0.61, SOL -0.03, DOGE +0.09, BNB -0.52
+- Accuracy 50-53% (近 random)
+- 棄却 — ML feature engineering の限界
+
+### 累計 (Wave J + K)
+- **37 候補テスト、4 採用** (FOPD, 8H Meme, vol_z MR, OI capit)
+- 成功率 ~11%
+- 残り未開拓: order book depth proxy, sentiment NLP, cross-exchange basis, on-chain metrics
