@@ -759,10 +759,10 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 17:30 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 06:25 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 PRODUCTION v6.5 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K198 Ridge ML allocator OOS Sh +10.28 / WF min 6.57 / MaxDD -0.0053</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐ K201 ML+trig combine REJECT (synergy -0.32 conflict), K199b は capital-constrained alternative</span> &nbsp;|&nbsp;
-    <strong>12 ACCEPT base + 11 ensembles + K198 v6.5 / 49 REJECT / 5 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#f88;font-weight:700;">K200 HLP/ADL monitor 検証中, R7 162件累積</span>
+    <strong>12 ACCEPT base + 11 ensembles + K198 v6.5 / 49 REJECT / 5 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K200 HLP/ADL monitor COMPLETE — $372M NORMAL, deploy GREEN LIGHT, R7 162件累積</span>
   </div>
 
   <header class="report-header">
@@ -7592,6 +7592,56 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
             <li><strong>K192 v6.1 remains production standard</strong>: OOS Sh 5.65, MaxDD −0.47%</li>
             <li><strong>Next wave options</strong>: K194 = partial trigger (K121+K133 only, not full ensemble) | K195 = expand K175_DAR to DOGE/AVAX symbols</li>
             <li><strong>Monitoring update</strong>: FR_mean &lt; −0.009735 does NOT trigger halt for K192 — it's a positive-alpha regime. Check K175_DAR OOS rolling Sh during these periods instead.</li>
+          </ul>
+        </details>
+        <details open>
+          <summary><strong>🛡 2026-05-25 21:03 JST — K200 HLP/ADL Monitor COMPLETE: K199b/K198 v6.5 deploy GREEN LIGHT</strong></summary>
+          <ul>
+            <li><strong>K200 = HLP (Hyperliquid Liquidity Pool) balance監視 → K196/K199b/K198 v6.5 ADLリスク管理システム</strong></li>
+            <li>Runtime: <strong>3.0秒</strong> (API fetch含む) / ファイル生成: wave_k200_hlp_adl_monitor.json/py/md + wave_k200_curves.json + cache/hlp_balance_daily.parquet</li>
+            <li><strong>現在の HLP状態:</strong>
+              <ul>
+                <li>残高: <strong>$372.5M</strong> (7d: -4.5%, 30d: -7.6%)</li>
+                <li>アラートステータス: <strong>NORMAL</strong> → K199b/K198 v6.5 フル配分でデプロイ可</li>
+              </ul>
+            </li>
+            <li><strong>JELLY攻撃 2025-03 確認 (Critical Calibration Event):</strong>
+              <ul>
+                <li>HLP残高 $509M → $195M: <strong>-57.7%</strong> in 3週間</li>
+                <li>T2アラート (7d &lt; -40%) 確認: 7日間発火 (2025-03-26 〜 2025-04-01)</li>
+                <li>T1アラート (7d &lt; -20%) 発火: 35日間 (2025-03-12〜2025-04-15)</li>
+                <li>→ T2発火時にreverse carry weight = 0 へ自動移行する仕様が正当化された</li>
+              </ul>
+            </li>
+            <li><strong>FARTCOIN攻撃 2026-04 確認:</strong>
+              <ul>
+                <li>HLP残高 $448M → $358M: <strong>-20.1%</strong> in 2週間</li>
+                <li>T1アラート ON, T2はOFF (適切な比例対応)</li>
+                <li>OOSバックテスト期間 (2025-10-29〜2026-05-14) では7d pct_7d worst = -15.9% → T1閾値未達 (監視は沈黙 = 正常動作)</li>
+              </ul>
+            </li>
+            <li><strong>OI/MarketCap フィルター:</strong> 全10銘柄 (SOL/XRP/SUI/OP/APT/AXS/JTO/IMX/SAND/ADA) &lt;5% → 現在除外ゼロ
+              <br>注目: OP 1.43%, IMX 1.10%, JTO 0.98% が相対的に高め → 週次再チェック推奨</li>
+            <li><strong>K199b バックテスト比較 (P3_risk_parity):</strong>
+              <ul>
+                <li>OOS Sh: <strong>7.8275 (baseline = monitored)</strong> → OOS期間にT1/T2発火なし = 正常</li>
+                <li>Full-period delta Sh: <strong>-0.0032</strong> (JELLYハルト7日間の小さなコスト)</li>
+                <li>JELLYストレスウィンドウ (61日): baseline 1.67% vs monitored 1.65% — 微差で保護効果あり</li>
+              </ul>
+            </li>
+            <li><strong>Verdict: PASS</strong> — K199b OOS Sh=7.8275 > 7.0547 (=7.8274*0.90 threshold)</li>
+            <li><strong>本番デプロイ仕様 (K200 推奨):</strong>
+              <ul>
+                <li>Tier 1 (日次): HLP `month` endpoint fetch → 7d pct変化を計算</li>
+                <li>T1 (-20%): reverse carryウェイト×0.5 (5% → 2.5%)</li>
+                <li>T2 (-40%): reverse carry完全停止 (weight=0)</li>
+                <li>回復 (-10%超): 通常ウェイト復帰</li>
+                <li>OI/MCap &gt;5%: 当該銘柄をパネルから除外 (週次スクリーン)</li>
+              </ul>
+            </li>
+            <li>launchctl plist: <code>com.cryptolab.hlp-monitor.plist</code> → 毎朝8:00 JST自動フェッチ</li>
+            <li>Phased rollout: 初回30日はreverse carryを50%配分 → T1/T2発火なければ100%へ</li>
+            <li>HLP全期間 (2023-05〜2026-05): 20件のドローダウンイベント (10%超)、過去ピーク $603.9M (2025-09)</li>
           </ul>
         </details>
         <details open>
