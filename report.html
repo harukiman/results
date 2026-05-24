@@ -6976,6 +6976,57 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 
         <p style="margin-top:10px;font-size:0.82rem;color:var(--text-secondary);">Round 5 主要出典: arxiv 2506.08573/2604.01431/2605.06405/2602.23762/2603.29751/2506.22055/2109.12142, MDPI 14/2/346, Springer APFM 10690-026-09589-z, SSRN 3913263/5036933, CMU CarryTrade, Presto Research, Coinbase Institutional, BitMEX Q1 2026, Fed FRBSF 103072, Bitwise, ESMA, PMC PMC10015199。</p>
         </div><!-- /page 6 -->
+
+        <div class="findings-page" data-page="7" data-title="Round 6: Hyperliquid/CoinGlass/AEA/1Token (18候補, 累計124)" style="display:none;">
+        <h3 style="color:var(--accent-green);margin-top:18px;">📅 2026-05-25 01:00 JST — Round 6 完了 (18新候補 / TOP3, 累計 124)</h3>
+        <p>arxiv 2506.08573, MDPI, AEA 2026, CoinGlass, CoinGecko, Lambda Finance, XT Exchange, Coinbase Institutional, Bybit, 1Token, Spotedcrypto, CFB, Hyperliquid docs, Nansen API docs, GitHub Funding-Arb-Screener, CheckOnChain。R1-R5 + onchain と完全重複排除。</p>
+
+        <h4 style="color:var(--accent-cyan);margin-top:14px;">TOP 3 (既存 infra 即実装可能)</h4>
+        <ol style="line-height:1.6;">
+          <li><strong>R6-2 Designed Funding-Rate Drift</strong> [strong-evidence / crypto-native] — arxiv 2506.08573: realized FR を design target (interest floor + premium-index) と比較、z>2 で fade。<strong>FR + premium-index 両 cache 活用 (K140 で 29 sym 拡張済)</strong>。<strong>Wave K153 として実装中</strong>。</li>
+          <li><strong>R6-13 Hyperliquid Smart-Money Mirror</strong> [crypto-native] — Hyperliquid leaderboard 公開 API free、top-20 ROI wallets の net perp position を directional overlay。R1-R5 で未使用 data source。</li>
+          <li><strong>R6-16 FYpGE Cross-Section (Bybit/1Token)</strong> [strong-evidence / crypto-native] — Funding Yield per Gross Exposure ranking で long top-decile / short bot-decile。institutional metric (Bybit + 1Token, 11 teams $4B+)。FR cache + 4H volume で実装可能。</li>
+        </ol>
+
+        <h4 style="color:var(--accent-cyan);margin-top:14px;">注目副候補 (High 評価)</h4>
+        <ul style="font-size:0.85rem;line-height:1.55;">
+          <li><strong>R6-7 Negative FR + Extreme Fear contrarian long</strong> - FR<-0.01% AND F&G<20 で 4H 後 long, DOGE で squeeze example documented</li>
+          <li><strong>R6-10 Top-Trader Position Ratio Extreme Contrarian</strong> - Binance 内部 data 模倣、CoinGlass scrape</li>
+          <li><strong>R6-12 Stablecoin Velocity Trigger</strong> - Visa/a16z: velocity 2.6x→6x doubled、altcoin "Great Rotation" signal</li>
+          <li><strong>R6-14 Liquidation-Cluster Magnet</strong> - CoinGlass heatmap、価格 2%以内 cluster へ吸引、sweep-and-reverse</li>
+          <li><strong>R6-15 Cross-Exchange FR Spread</strong> - MEXC vs Binance 乖離 &gt;2-3% annualized で directional bias</li>
+          <li><strong>R6-18 Hyperliquid Inter-Hour Funding Skew</strong> - HL hourly vs CEX 8H、reset 前 stack で 8H direction 予測</li>
+        </ul>
+
+        <h4 style="color:var(--accent-cyan);margin-top:14px;">全 18 候補テーブル (Round 6)</h4>
+        <div style="overflow-x:auto;">
+        <table class="data-table" style="font-size:0.78rem;width:100%;">
+          <thead><tr><th>#</th><th>名称</th><th>カテゴリ</th><th>核アイデア</th><th>エッジ</th><th>優先度</th></tr></thead>
+          <tbody>
+            <tr><td>R6-1</td><td>Two-Tier CEX vs DEX FR</td><td>X-venue</td><td>CEX leads DEX 61% integration, lag &gt;Xσ で short</td><td>partial</td><td>High</td></tr>
+            <tr><td>R6-2</td><td><strong>Designed FR Drift</strong></td><td>FR theoretical</td><td>realized vs design (interest+premium) z-score fade</td><td>strong</td><td><strong>TOP1</strong></td></tr>
+            <tr><td>R6-3</td><td>AEA Perp-vs-Quarterly Basis</td><td>Basis risk</td><td>perp 3% vs quarterly 8-10% in stress, sell quarterly</td><td>strong</td><td>Med</td></tr>
+            <tr><td>R6-4</td><td>OI-Weighted FR Composite</td><td>Composite</td><td>OI rising+FR+ = breakout precursor (XT framework)</td><td>partial</td><td>Med-High</td></tr>
+            <tr><td>R6-5</td><td>OI-Weighted FR (CoinGlass)</td><td>X-weighted</td><td>低 OI noise を OI weight で除去</td><td>partial</td><td>Med</td></tr>
+            <tr><td>R6-6</td><td>Lambda FR×OI×Mom monthly</td><td>Multi-factor</td><td>FR_z × OI_growth × price-mom rank screen</td><td>partial</td><td>Med</td></tr>
+            <tr><td>R6-7</td><td>Neg FR + Extreme Fear contrarian</td><td>Sentiment</td><td>FR&lt;-0.01% AND F&amp;G&lt;20 で 4H 後 long</td><td>partial</td><td>High</td></tr>
+            <tr><td>R6-8</td><td>Kimchi Premium Inversion + Fear</td><td>X-region</td><td>Kimchi&lt;-1.5% + F&amp;G&lt;25 → 6M BTC +40%</td><td>partial</td><td>Med</td></tr>
+            <tr><td>R6-9</td><td>CFB Bitcoin Basis × Sentiment</td><td>Basis</td><td>basis annualized × momentum × sentiment composite</td><td>partial</td><td>Med</td></tr>
+            <tr><td>R6-10</td><td>Top-Trader Position Ratio Extreme</td><td>Smart-money</td><td>top trader position ratio &gt;0.7 で contrarian fade</td><td>partial</td><td>High</td></tr>
+            <tr><td>R6-11</td><td>Equity Perp Spillover (SPCX)</td><td>X-asset</td><td>new equity perps spread vs crypto FR で risk-on/off</td><td>unverifiable</td><td>Low</td></tr>
+            <tr><td>R6-12</td><td>Stablecoin Velocity Trigger</td><td>Macro</td><td>velocity spike + exchange inflow = altcoin Great Rotation</td><td>partial</td><td>High</td></tr>
+            <tr><td>R6-13</td><td><strong>Hyperliquid Smart-Money Mirror</strong></td><td>On-chain perp</td><td>top-20 ROI wallets net position directional overlay</td><td>crypto-native</td><td><strong>TOP2</strong></td></tr>
+            <tr><td>R6-14</td><td>Liquidation Cluster Magnet</td><td>Liq dynamics</td><td>price→cluster within 2%, sweep-reverse, &gt;70% hit</td><td>partial</td><td>High</td></tr>
+            <tr><td>R6-15</td><td>Cross-Exchange FR Spread Arb</td><td>FR arb</td><td>MEXC vs Binance 乖離 &gt;2-3% annualized で directional</td><td>crypto-native</td><td>High</td></tr>
+            <tr><td>R6-16</td><td><strong>Bybit/1Token FYpGE XS</strong></td><td>Carry</td><td>Funding Yield per Gross Exposure 上位 long / 下位 short</td><td>strong</td><td><strong>TOP3</strong></td></tr>
+            <tr><td>R6-17</td><td>CheckOnChain Derivatives Leverage</td><td>Derivatives</td><td>perp leverage &gt; spot flow X% で fade rally</td><td>unverifiable</td><td>Low</td></tr>
+            <tr><td>R6-18</td><td>Hyperliquid Inter-Hour FR Skew</td><td>FR freq arb</td><td>HL hourly vs 8H CEX、reset 前 stack で 8H direction</td><td>crypto-native</td><td>High</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <p style="margin-top:10px;font-size:0.82rem;color:var(--text-secondary);">Round 6 主要出典: arxiv 2506.08573, MDPI 14/2/346, AEA 2026, CoinGlass pro/funding, CoinGecko 2026, Lambda Finance, XT Exchange Medium, Visa Economic Empowerment, Coinbase Institutional, Bybit/1Token Jan 2026, Spotedcrypto, CFB, Hyperliquid Gitbook, Nansen API docs, GitHub kir1l/Funding-Arb-Screener, CheckOnChain newsletter, Reg Tomorrow MiCA, PRNewswire SPCX。</p>
+        </div><!-- /page 7 -->
       </div>
 
       <script>
