@@ -759,10 +759,10 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 06:15 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 14:00 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
-    <strong>🏆 PRODUCTION v6.1 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K192 9戦略 ensemble OOS Sh +5.65 / MaxDD -0.47% / WF std 1.31</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐⭐ K192 = K188 + DAR(2,1) K175 filter, OSh +0.17 lift, WF fold min 2.376→2.984</span> &nbsp;|&nbsp;
-    <strong>12 ACCEPT base + 6 ensembles (K124/K136/K149/K176/K188/K192) / 47 REJECT / 3 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#fa6;font-weight:700;">⛓ K179 onchain REJECT OOS gross +1.51 / K190 DAR filter ACCEPT 6/7</span>
+    <strong>🏆 PRODUCTION v6.1:</strong> <span style="color:var(--accent-green);font-weight:700;">K192 9戦略 ensemble OOS Sh +5.65 / MaxDD -0.47% / WF std 1.31</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐⭐ K192 = K188 + DAR(2,1) K175 filter, OOS Sh +0.17 lift</span> &nbsp;|&nbsp;
+    <strong>12 ACCEPT base + 6 ensembles (K124/K136/K149/K176/K188/K192) / 47 REJECT / 3 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#fa6;font-weight:700;">⛓ K179 onchain REJECT / K190 DAR ACCEPT</span> &nbsp;|&nbsp; <span style="color:#f66;font-weight:700;">K193 REJECT: FR trigger redundant w/ DAR (OOS Sh 5.65→4.30, trigger fires on positive-return days)</span>
   </div>
 
   <header class="report-header">
@@ -7513,6 +7513,21 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
             <li><strong>K161 lesson</strong>: Net SR の sign != Gross SR の sign (cost asymmetry で negative net が positive edge に見える錯覚) — sign-mirror 評価には gross 直接計算必須</li>
             <li><strong>K135/K162/K164 stablecoin family</strong>: secular non-stationarity (2.6x→6x growth) で thresholdsis broken、365d detrend でも 2.5x cross-year drift</li>
             <li><strong>K156/K165 FRAMEWORK READY</strong>: Hyperliquid leaderboard + Binance top-trader = live data accumulation 必要、historical 不可</li>
+          </ul>
+        </details>
+        <details open>
+          <summary><strong>⛔ 2026-05-25 14:00 JST — K193 REJECTED: v6.2 Combine (K192 + K191 FR trigger) — trigger redundant with DAR</strong></summary>
+          <ul>
+            <li><strong>K193 objective</strong>: Combine K192 (v6.1, DAR K175 filter) + K191 (FR-mean defensive trigger) → v6.2 candidate</li>
+            <li><strong>Hypothesis</strong>: K192 (component-level) and K191 (ensemble-level regime hedge) were designed as orthogonal improvements</li>
+            <li><strong>Result: REJECTED</strong> — OOS Sh <strong>5.65 → 4.30 (−1.35)</strong> at primary threshold −0.009735. All thresholds tested reduce OOS performance.</li>
+            <li><strong>Root cause (critical finding)</strong>: The K192 DAR(2,1) filter makes K175 exploit the same negative-FR regime K191 was designed to avoid. In the K192 OOS period: Sharpe on trigger days = <strong>6.64</strong> vs non-trigger days = <strong>5.22</strong>. Halting on trigger days destroys alpha. The improvements are NOT orthogonal — they conflict.</li>
+            <li><strong>Threshold sweep</strong>: thr=−0.005 (OOS Sh 4.04, Δ=−1.61) | thr=−0.009735 (4.30, Δ=−1.35) | thr=−0.015 (4.54, Δ=−1.11) | thr=−0.020 (4.51, Δ=−1.14) | thr=−0.025 (4.46, Δ=−1.19). No threshold helps.</li>
+            <li><strong>WF walk-forward</strong>: Mean Sh K192→K193: 4.55→5.13 (+0.58) but min: 2.66→3.93 (+1.27). WF improves structurally but OOS period punished. Fold 3 (2026-03-26→05-14): K192 Sh 4.37 → K193 Sh 3.93 (−0.44), 26% trigger rate on positive days.</li>
+            <li><strong>Rolling adaptive threshold (90d quantile)</strong>: Best at q=0.15 → OOS Sh 4.56 (Δ=−1.09). Still worse than K192 baseline.</li>
+            <li><strong>K192 v6.1 remains production standard</strong>: OOS Sh 5.65, MaxDD −0.47%</li>
+            <li><strong>Next wave options</strong>: K194 = partial trigger (K121+K133 only, not full ensemble) | K195 = expand K175_DAR to DOGE/AVAX symbols</li>
+            <li><strong>Monitoring update</strong>: FR_mean &lt; −0.009735 does NOT trigger halt for K192 — it's a positive-alpha regime. Check K175_DAR OOS rolling Sh during these periods instead.</li>
           </ul>
         </details>
         <details open>
