@@ -3416,3 +3416,9 @@ momentum overshoots は典型的に継続、reverse しない。
 - 「日利10%」 = 50x レバ相当 ≒ 破産確率 96.5% (実在不可能)
 
 **累計試行**: ~745,581
+
+### 2026-05-24 06:35 JST: Wave K35 — FR slope shock → 棄却 (Sh≥2.0=6 全 ADA、portfolio level弱)
+
+ADA Sh+2.23 (26 trades) は K25 FR shock の ADA Sh+2.71 と似た edge — 同じ ADA 期間特異性。
+
+**26 候補 4 success = 15.4%** (継続低下)
