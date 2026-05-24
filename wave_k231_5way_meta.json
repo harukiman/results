@@ -1,0 +1,1021 @@
+{
+  "wave": "K231",
+  "task": "5-Way Meta-Ensemble: K198 x K204 x K208 x K226 x K228 (Stablecoin Mint/Burn)",
+  "as_of": "2026-05-24T23:07:12.287370+00:00",
+  "runtime_s": 0.5,
+  "data_info": {
+    "n_days": 448,
+    "date_start": "2025-01-22",
+    "date_end": "2026-04-14",
+    "n_returns": 447,
+    "k208_missing_days": 0,
+    "k226_missing_days": 0,
+    "k228_missing_days": 0,
+    "k228_nonzero_days": 76,
+    "k228_sparsity_pct": 17.0
+  },
+  "k228_ml_window_validation": {
+    "description": "K228 standalone on K229 ML window (448d) \u2014 Gate 0 critical check",
+    "k228_original_oos_sh": 2.77,
+    "k228_original_window": "730d (2024-05-23 to 2026-05-22)",
+    "k228_ml_window_oos_sh": 2.1641,
+    "k228_ml_window_oos_maxdd": -0.029885,
+    "k228_ml_window_oos_n_days": 135,
+    "k228_ml_window_oos_ann_ret": 0.3732,
+    "k228_ml_window_oos_ann_vol": 0.1725,
+    "k228_ml_window_wf_folds": [
+      1.2305,
+      -2.1503,
+      3.0347,
+      2.4857
+    ],
+    "k228_ml_window_wf_min": -2.1503,
+    "k228_ml_window_wf_mean": 1.1501,
+    "gate_sh_pass": true,
+    "gate_wf_all_positive": false,
+    "k225_reference": "K225 dropped 2.11->1.16 on ML window (fatal, caused K227 REJECT)",
+    "k226_reference": "K226 retained >1.0 on ML window -> K229 ACCEPTED",
+    "k228_verdict": "PASS",
+    "gate0_pass": true
+  },
+  "correlation_matrix": {
+    "labels": [
+      "K198",
+      "K204",
+      "K208",
+      "K226",
+      "K228"
+    ],
+    "matrix": [
+      [
+        1.0,
+        0.7977,
+        0.0619,
+        0.0519,
+        0.1238
+      ],
+      [
+        0.7977,
+        1.0,
+        0.0237,
+        0.0568,
+        0.1116
+      ],
+      [
+        0.0619,
+        0.0237,
+        1.0,
+        0.0001,
+        0.0439
+      ],
+      [
+        0.0519,
+        0.0568,
+        0.0001,
+        1.0,
+        0.3115
+      ],
+      [
+        0.1238,
+        0.1116,
+        0.0439,
+        0.3115,
+        1.0
+      ]
+    ],
+    "pairwise": {
+      "rho_198_204": 0.7977,
+      "rho_198_208": 0.0619,
+      "rho_198_226": 0.0519,
+      "rho_198_228": 0.1238,
+      "rho_204_208": 0.0237,
+      "rho_204_226": 0.0568,
+      "rho_204_228": 0.1116,
+      "rho_208_226": 0.0001,
+      "rho_208_228": 0.0439,
+      "rho_226_228": 0.3115
+    },
+    "interpretation": {
+      "rho_198_204": "Moderate",
+      "rho_198_208": "Low",
+      "rho_198_226": "Low",
+      "rho_198_228": "Low",
+      "rho_204_208": "Low",
+      "rho_204_226": "Low",
+      "rho_204_228": "Low",
+      "rho_208_226": "Low",
+      "rho_208_228": "Low",
+      "rho_226_228": "Low-Moderate"
+    },
+    "k228_prior_reported": {
+      "k228_vs_k198": 0.12,
+      "k228_vs_k204": 0.11,
+      "k228_vs_k208": -0.002,
+      "k228_vs_k226": 0.3
+    }
+  },
+  "acceptance_gates": {
+    "gate0_k228_ml_sh_threshold": 1.0,
+    "gate1_oos_sharpe_threshold": 12.709999999999999,
+    "gate2_wf_min_threshold": 7.4435,
+    "gate3_maxdd_threshold": -0.001201,
+    "gate4_min_weight": 0.01,
+    "reference": "K229d v6.8",
+    "gate0_result": "PASS"
+  },
+  "baselines": {
+    "K198": {
+      "oos_sharpe": 10.2796,
+      "oos_maxdd": -0.005266,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.577,
+      "oos_ann_vol": 0.0561,
+      "fold_sharpes": [
+        6.5911,
+        7.3739,
+        7.9652,
+        9.731
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "n_days": 111,
+          "sharpe": 6.5911
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "n_days": 111,
+          "sharpe": 7.3739
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "n_days": 111,
+          "sharpe": 7.9652
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "n_days": 114,
+          "sharpe": 9.731
+        }
+      ],
+      "wf_mean": 7.9153,
+      "wf_min": 6.5911,
+      "wf_max": 9.731,
+      "wf_std": 1.3349
+    },
+    "K204": {
+      "oos_sharpe": 10.3627,
+      "oos_maxdd": -0.00532,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.5798,
+      "oos_ann_vol": 0.0559,
+      "fold_sharpes": [
+        5.92,
+        6.2598,
+        8.183,
+        9.6915
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "n_days": 111,
+          "sharpe": 5.92
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "n_days": 111,
+          "sharpe": 6.2598
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "n_days": 111,
+          "sharpe": 8.183
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "n_days": 114,
+          "sharpe": 9.6915
+        }
+      ],
+      "wf_mean": 7.5136,
+      "wf_min": 5.92,
+      "wf_max": 9.6915,
+      "wf_std": 1.761
+    },
+    "K208": {
+      "oos_sharpe": 13.5396,
+      "oos_maxdd": -8e-05,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.085,
+      "oos_ann_vol": 0.0063,
+      "fold_sharpes": [
+        17.2988,
+        5.7585,
+        17.3212,
+        13.3618
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "n_days": 111,
+          "sharpe": 17.2988
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "n_days": 111,
+          "sharpe": 5.7585
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "n_days": 111,
+          "sharpe": 17.3212
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "n_days": 114,
+          "sharpe": 13.3618
+        }
+      ],
+      "wf_mean": 13.4351,
+      "wf_min": 5.7585,
+      "wf_max": 17.3212,
+      "wf_std": 5.4457
+    },
+    "K226": {
+      "oos_sharpe": 2.4097,
+      "oos_maxdd": -0.152979,
+      "oos_n_days": 135,
+      "oos_ann_ret": 1.4538,
+      "oos_ann_vol": 0.6033,
+      "fold_sharpes": [
+        3.2959,
+        0.38,
+        2.8378,
+        2.6243
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "n_days": 111,
+          "sharpe": 3.2959
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "n_days": 111,
+          "sharpe": 0.38
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "n_days": 111,
+          "sharpe": 2.8378
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "n_days": 114,
+          "sharpe": 2.6243
+        }
+      ],
+      "wf_mean": 2.2845,
+      "wf_min": 0.38,
+      "wf_max": 3.2959,
+      "wf_std": 1.3002
+    },
+    "K228": {
+      "oos_sharpe": 2.1641,
+      "oos_maxdd": -0.029885,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.3732,
+      "oos_ann_vol": 0.1725,
+      "fold_sharpes": [
+        1.2305,
+        -2.1503,
+        3.0347,
+        2.4857
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "n_days": 111,
+          "sharpe": 1.2305
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "n_days": 111,
+          "sharpe": -2.1503
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "n_days": 111,
+          "sharpe": 3.0347
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "n_days": 114,
+          "sharpe": 2.4857
+        }
+      ],
+      "wf_mean": 1.1501,
+      "wf_min": -2.1503,
+      "wf_max": 3.0347,
+      "wf_std": 2.3263
+    }
+  },
+  "variants": {
+    "K231a": {
+      "oos_sharpe": 4.1287,
+      "oos_maxdd": -0.032174,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.6138,
+      "oos_ann_vol": 0.1487,
+      "fold_sharpes": [
+        4.6013,
+        1.8447,
+        5.0533,
+        4.1364
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "n_days": 111,
+          "sharpe": 4.6013
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "n_days": 111,
+          "sharpe": 1.8447
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "n_days": 111,
+          "sharpe": 5.0533
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "n_days": 114,
+          "sharpe": 4.1364
+        }
+      ],
+      "wf_mean": 3.9089,
+      "wf_min": 1.8447,
+      "wf_max": 5.0533,
+      "wf_std": 1.4262,
+      "description": "Equal weight 20/20/20/20/20",
+      "avg_weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "diversification_ratio": 1.3002
+    },
+    "K231b": {
+      "oos_sharpe": 11.8382,
+      "oos_maxdd": -0.000715,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.1177,
+      "oos_ann_vol": 0.0099,
+      "fold_sharpes": [
+        4.8553,
+        4.0018,
+        11.6096,
+        11.6156
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "n_days": 111,
+          "sharpe": 4.8553
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "n_days": 111,
+          "sharpe": 4.0018
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "n_days": 111,
+          "sharpe": 11.6096
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "n_days": 114,
+          "sharpe": 11.6156
+        }
+      ],
+      "wf_mean": 8.0206,
+      "wf_min": 4.0018,
+      "wf_max": 11.6156,
+      "wf_std": 4.1623,
+      "description": "Inverse-vol weighted uncapped (30d rolling)",
+      "avg_weights": [
+        0.0302,
+        0.0245,
+        0.6207,
+        0.025,
+        0.2996
+      ],
+      "diversification_ratio": 1.2826
+    },
+    "K231c": {
+      "oos_sharpe": 11.8382,
+      "oos_maxdd": -0.000715,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.1177,
+      "oos_ann_vol": 0.0099,
+      "fold_sharpes": [
+        4.8553,
+        4.0018,
+        11.7225,
+        11.6156
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "n_days": 111,
+          "sharpe": 4.8553
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "n_days": 111,
+          "sharpe": 4.0018
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "n_days": 111,
+          "sharpe": 11.7225
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "n_days": 114,
+          "sharpe": 11.6156
+        }
+      ],
+      "wf_mean": 8.0488,
+      "wf_min": 4.0018,
+      "wf_max": 11.7225,
+      "wf_std": 4.1951,
+      "description": "Inv-vol + K226 cap 20% (30d rolling)",
+      "avg_weights": [
+        0.0303,
+        0.0247,
+        0.6343,
+        0.0106,
+        0.3001
+      ],
+      "diversification_ratio": 1.2165
+    },
+    "K231d": {
+      "oos_sharpe": 12.3335,
+      "oos_maxdd": -0.000961,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.1241,
+      "oos_ann_vol": 0.0101,
+      "fold_sharpes": [
+        10.5448,
+        5.8326,
+        11.7225,
+        12.1898
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "n_days": 111,
+          "sharpe": 10.5448
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "n_days": 111,
+          "sharpe": 5.8326
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "n_days": 111,
+          "sharpe": 11.7225
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "n_days": 114,
+          "sharpe": 12.1898
+        }
+      ],
+      "wf_mean": 10.0724,
+      "wf_min": 5.8326,
+      "wf_max": 12.1898,
+      "wf_std": 2.91,
+      "description": "Inv-vol + K226 cap 20% + K228 cap 20% (30d rolling)",
+      "avg_weights": [
+        0.039,
+        0.0323,
+        0.8332,
+        0.0115,
+        0.084
+      ],
+      "diversification_ratio": 1.5864
+    },
+    "K231e": {
+      "oos_sharpe": 7.9636,
+      "oos_maxdd": -0.006949,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.4204,
+      "oos_ann_vol": 0.0528,
+      "fold_sharpes": [
+        8.4421,
+        5.1259,
+        7.8365,
+        7.3862
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "n_days": 111,
+          "sharpe": 8.4421
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "n_days": 111,
+          "sharpe": 5.1259
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "n_days": 111,
+          "sharpe": 7.8365
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "n_days": 114,
+          "sharpe": 7.3862
+        }
+      ],
+      "wf_mean": 7.1977,
+      "wf_min": 5.1259,
+      "wf_max": 8.4421,
+      "wf_std": 1.4474,
+      "description": "Inv-vol + K208/K226/K228 all cap 25% (30d rolling)",
+      "avg_weights": [
+        0.2286,
+        0.1935,
+        0.3426,
+        0.0439,
+        0.1914
+      ],
+      "diversification_ratio": 1.5586
+    },
+    "K231f": {
+      "oos_sharpe": 14.7421,
+      "oos_maxdd": -7.5e-05,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.0918,
+      "oos_ann_vol": 0.0062,
+      "fold_sharpes": [
+        6.1724,
+        4.2714,
+        17.7613,
+        13.979
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "start_idx": 0,
+          "end_idx": 111,
+          "n_days": 111,
+          "sharpe": 6.1724
+        },
+        {
+          "fold": 2,
+          "start_idx": 111,
+          "end_idx": 222,
+          "n_days": 111,
+          "sharpe": 4.2714
+        },
+        {
+          "fold": 3,
+          "start_idx": 222,
+          "end_idx": 333,
+          "n_days": 111,
+          "sharpe": 17.7613
+        },
+        {
+          "fold": 4,
+          "start_idx": 333,
+          "end_idx": 447,
+          "n_days": 114,
+          "sharpe": 13.979
+        }
+      ],
+      "wf_mean": 10.546,
+      "wf_min": 4.2714,
+      "wf_max": 17.7613,
+      "wf_std": 6.386,
+      "description": "Minimum Variance Portfolio (rolling 60d covariance, long-only)",
+      "avg_weights": [
+        0.0053,
+        0.014,
+        0.8542,
+        0.0036,
+        0.1229
+      ],
+      "diversification_ratio": 1.305
+    }
+  },
+  "fold_breakdown": {
+    "K231a": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "n_days": 111,
+        "sharpe": 4.6013
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "n_days": 111,
+        "sharpe": 1.8447
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "n_days": 111,
+        "sharpe": 5.0533
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "n_days": 114,
+        "sharpe": 4.1364
+      }
+    ],
+    "K231b": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "n_days": 111,
+        "sharpe": 4.8553
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "n_days": 111,
+        "sharpe": 4.0018
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "n_days": 111,
+        "sharpe": 11.6096
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "n_days": 114,
+        "sharpe": 11.6156
+      }
+    ],
+    "K231c": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "n_days": 111,
+        "sharpe": 4.8553
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "n_days": 111,
+        "sharpe": 4.0018
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "n_days": 111,
+        "sharpe": 11.7225
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "n_days": 114,
+        "sharpe": 11.6156
+      }
+    ],
+    "K231d": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "n_days": 111,
+        "sharpe": 10.5448
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "n_days": 111,
+        "sharpe": 5.8326
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "n_days": 111,
+        "sharpe": 11.7225
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "n_days": 114,
+        "sharpe": 12.1898
+      }
+    ],
+    "K231e": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "n_days": 111,
+        "sharpe": 8.4421
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "n_days": 111,
+        "sharpe": 5.1259
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "n_days": 111,
+        "sharpe": 7.8365
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "n_days": 114,
+        "sharpe": 7.3862
+      }
+    ],
+    "K231f": [
+      {
+        "fold": 1,
+        "start_idx": 0,
+        "end_idx": 111,
+        "n_days": 111,
+        "sharpe": 6.1724
+      },
+      {
+        "fold": 2,
+        "start_idx": 111,
+        "end_idx": 222,
+        "n_days": 111,
+        "sharpe": 4.2714
+      },
+      {
+        "fold": 3,
+        "start_idx": 222,
+        "end_idx": 333,
+        "n_days": 111,
+        "sharpe": 17.7613
+      },
+      {
+        "fold": 4,
+        "start_idx": 333,
+        "end_idx": 447,
+        "n_days": 114,
+        "sharpe": 13.979
+      }
+    ]
+  },
+  "synergy": {
+    "individual_oos_sharpes": {
+      "K198": 10.2796,
+      "K204": 10.3627,
+      "K208": 13.5396,
+      "K226": 2.4097,
+      "K228": 2.1641
+    },
+    "avg_individual_oos_sh": 7.7511,
+    "best_ensemble_name": "K231f",
+    "best_ensemble_oos_sh": 14.7421,
+    "synergy_delta_vs_avg": 6.991,
+    "synergy_delta_vs_k229": 2.1321,
+    "synergy_detected": true,
+    "k228_additive_delta_vs_4way": 2.1321,
+    "avg_individual_wf_min": 3.2999,
+    "best_ensemble_wf_min": 4.2714
+  },
+  "historical": {
+    "K198_v6.5": {
+      "oos_sharpe": 10.28,
+      "oos_maxdd": -0.0053,
+      "wf_min": 6.57,
+      "components": 1
+    },
+    "K217_v6.6": {
+      "oos_sharpe": 10.43,
+      "oos_maxdd": -0.0053,
+      "wf_min": 6.91,
+      "components": 2
+    },
+    "K218e_v6.7": {
+      "oos_sharpe": 11.031,
+      "oos_maxdd": -0.00364,
+      "wf_min": 6.9282,
+      "components": 3
+    },
+    "K229d_v6.8": {
+      "oos_sharpe": 12.61,
+      "oos_maxdd": -0.001201,
+      "wf_min": 7.4435,
+      "components": 4
+    },
+    "K231_a": {
+      "oos_sharpe": 4.1287,
+      "oos_maxdd": -0.032174,
+      "wf_mean": 3.9089,
+      "wf_min": 1.8447,
+      "dr": 1.3002,
+      "components": 5,
+      "avg_weights": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "K231_b": {
+      "oos_sharpe": 11.8382,
+      "oos_maxdd": -0.000715,
+      "wf_mean": 8.0206,
+      "wf_min": 4.0018,
+      "dr": 1.2826,
+      "components": 5,
+      "avg_weights": [
+        0.0302,
+        0.0245,
+        0.6207,
+        0.025,
+        0.2996
+      ]
+    },
+    "K231_c": {
+      "oos_sharpe": 11.8382,
+      "oos_maxdd": -0.000715,
+      "wf_mean": 8.0488,
+      "wf_min": 4.0018,
+      "dr": 1.2165,
+      "components": 5,
+      "avg_weights": [
+        0.0303,
+        0.0247,
+        0.6343,
+        0.0106,
+        0.3001
+      ]
+    },
+    "K231_d": {
+      "oos_sharpe": 12.3335,
+      "oos_maxdd": -0.000961,
+      "wf_mean": 10.0724,
+      "wf_min": 5.8326,
+      "dr": 1.5864,
+      "components": 5,
+      "avg_weights": [
+        0.039,
+        0.0323,
+        0.8332,
+        0.0115,
+        0.084
+      ]
+    },
+    "K231_e": {
+      "oos_sharpe": 7.9636,
+      "oos_maxdd": -0.006949,
+      "wf_mean": 7.1977,
+      "wf_min": 5.1259,
+      "dr": 1.5586,
+      "components": 5,
+      "avg_weights": [
+        0.2286,
+        0.1935,
+        0.3426,
+        0.0439,
+        0.1914
+      ]
+    },
+    "K231_f": {
+      "oos_sharpe": 14.7421,
+      "oos_maxdd": -7.5e-05,
+      "wf_mean": 10.546,
+      "wf_min": 4.2714,
+      "dr": 1.305,
+      "components": 5,
+      "avg_weights": [
+        0.0053,
+        0.014,
+        0.8542,
+        0.0036,
+        0.1229
+      ]
+    }
+  },
+  "verdict": "REJECT \u2014 no variant passes all acceptance gates vs K229 v6.8",
+  "accepted": false,
+  "best_variant": null,
+  "best_variant_metrics": null
+}
