@@ -3214,3 +3214,47 @@ HTML サイズ: 524KB
 - 19候補テスト → 4 成功 (21.1%)
 - production 推奨: <strong>4-way mix (FOUR_WAY_MIX_85_15_001)</strong>
 - フォワード OOS 累積中 (com.cryptolab.paper-trade-4way)
+
+### 2026-05-24 05:40 JST: Wave K25 — FR shock contrarian → **個別ADA+2.71 だが portfolio で棄却**
+
+**個別銘柄結果**:
+| 銘柄 | Best Sh | Return | DD | Trades |
+|------|---------|--------|-----|--------|
+| **ADAUSDT** | **+2.71** | +112.3% | -7.1% | 42 |
+| DOTUSDT | +1.76 | +84.2% | -9.7% | 42 |
+| AVAXUSDT | +1.39 | +42.5% | -11.4% | 26 |
+| BNBUSDT | +1.31 | +16.7% | -4.0% | 16 |
+| ETHUSDT | +0.17 | +1.9% | -8.2% | 22 |
+
+**集計**: 24 instances Sh ≥ 2.0 (全て ADA), 54% Sh>0
+
+**Portfolio (ADA+DOT+AVAX+BNB equal-weight)**: Sh=**+0.18** — 個別Sharpe強でも portfolio で大幅希釈
+
+**4-way mix との相関**: r = +0.082 (高独立)
+**しかし portfolio 集約後 Sharpe 弱**:
+
+| 構成 | Sharpe | Return | DD | Calmar |
+|------|--------|--------|-----|--------|
+| 100% 4-way (baseline) | +3.61 | +66.0% | -1.8% | 36.65 |
+| 95% 4-way + 5% FR shock | +3.59 | +62.1% | -1.8% | 33.89 |
+| 90% + 10% | +3.56 | +58.4% | -1.9% | 31.26 |
+| 80% + 20% | +3.42 | +51.0% | -1.9% | 26.39 |
+
+**全合成バリアントが baseline を下回る** → 統合不要
+
+**学び**: <strong>「相関低い + 個別Sharpe高い」だけでは portfolio 改善しない</strong>。
+- ADA Sh+2.71 は ADA-specific な FR pattern (42 trades = 期間特異性)
+- Portfolio Sharpe (+0.18) が低すぎ → 合成で alpha 希釈
+- vol_MR (Wave K11-K13) は portfolio Sharpe +1.59 で 4-way mix を改善 — 重要な比較
+
+**Wave J+K の継続失敗 (20候補 4 success = 20%)**:
+| Wave | 候補 | Success |
+|------|------|---------|
+| K22 | VWAP MR | ❌ |
+| K23 | Dynamic weights | ❌ |
+| K25 | FR shock contrarian | ❌ (個別 ADA は記録) |
+
+**累計試行**: ~742,661 + 2916 (K25) + 4 (corr) = ~745,581
+**累計棄却ファミリー**: 110+ (VWAP, Dynamic, FR shock)
+
+**最終確定**: 4-way mix (85/15) 以外の新規組合せはこれ以上の改善を生まない。production はこのまま固定。
