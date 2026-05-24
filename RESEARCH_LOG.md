@@ -3103,3 +3103,25 @@ K21 で発見した「Wed up / Thu down が 5銘柄全て」を実トレード�
 - 成功率: **4/17 = 23.5%**
 
 **残る価値ある作業**: 真OOSフォワード累積、HTMLのpolish、ユーザー指示があれば追加実装
+
+### 2026-05-24 05:15 JST: Wave K22 + HTML 4-way 詳細解析カード追加
+
+**Wave K22 (VWAP deviation MR)**: 棄却
+- 10銘柄 × 432 configs = 4266 valid backtests
+- best BTC Sh+1.27 (377 trades) だが DD-26.6%
+- 12% Sh>0 (ランダム以下)
+- 0 Sh≥1.5
+- → 18候補目の失敗、4 success rate 22.2%
+
+**HTML 4-way mix 詳細解析カード追加**:
+- 全主要メトリクス表 (Sharpe/Calmar/Bootstrap CI/H1H2/Stress/MC ruin)
+- Plotly エクイティ推移 (729日, 初期1.0→1.660)
+- Plotly ドローダウン (-1.80% 上限)
+- Plotly Rolling 90日 Sharpe (min +0.98 / mean +3.60 / max +6.03 — 常に+)
+- 月次リターン表 (25ヶ月)
+
+データソース: `four_way_curve.json` (1.6MB equity curve data)
+HTML サイズ: 524KB
+
+**累計試行**: ~738,393 + 4266 (K22) = ~742,659
+**累計棄却ファミリー**: 109+ (VWAP)
