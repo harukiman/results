@@ -3533,3 +3533,27 @@ K39で「meme vol が alpha 主源」が判明後、SHIB/BONK 以外でも効く
 - 「mix の alpha は分散効果ではなく特定銘柄エッジ依存」を再確認
 
 **示唆**: BONK/SHIB 上場廃止リスクや流動性枯渇は 4-way mix 全体の主要リスクファクター。
+
+## Wave K41 — Degraded mix scenario analysis (2026-05-23)
+
+K40 で警告したリスクを実測。Each component を利用不能化し、残る軸で weights 再配分:
+
+| シナリオ | Sharpe | Return | ΔSh |
+|---------|--------|--------|-----|
+| Baseline | +3.61 | +66.0% | — |
+| BONK 単独不可 | +3.50 | +57.3% | -0.10 |
+| SHIB 単独不可 | +3.45 | +59.8% | -0.15 |
+| **SHIB+BONK 同時不可** | +3.27 | +50.0% | -0.33 |
+| + ATR 4H meme 除外 | +3.13 | +49.2% | -0.48 |
+| **FOPD DOT 除外 (wash trade)** | **+3.65** | +68.0% | **+0.05** |
+| FOPD 全銘柄不可 | +3.31 | +95.8% | -0.30 |
+
+### 重要発見
+1. **K40 の警告は誇張**: 最悪 meme シナリオでも Sharpe +3.27、G1 OOS 閾値 +1.0 を大幅超過
+2. **DOT 除外で微益**: K39 wash trade 仮説完全に裏付け。次回 production 改訂候補
+3. **FOPD 全停止でも問題なし**: weights 再配分により Sharpe +3.31 維持
+4. **4-way mix は予想以上にロバスト**: 真の分散効果あり、SHIB/BONK 一極依存ではない
+
+### 運用判断への影響
+- **production 修正提案 1**: FOPD DOTUSDT を除外、weight を他5銘柄に再配分
+- **monitoring 提案 2**: SHIB/BONK 一時不可検知 → 自動 weight rebalance 仕組み追加 (ΔSh -0.33 で済むので緊急停止不要)

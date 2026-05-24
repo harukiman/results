@@ -1338,7 +1338,32 @@ Plotly.newPlot('sc-fopd-rs', [{
       <ul style="font-size:0.88rem;padding-left:22px;margin-top:8px;">
         <li>「全 meme が同じパターン」という単純化は誤り。SHIB/BONK は特定の microstructure (流動性、ホルダー分布、上場連動) で他とは異なる挙動</li>
         <li>FLOKI 4H Sh+1.20 はあえて入れるなら 5番目軸候補だが、主流アルファ寄与は限定的</li>
-        <li><strong>運用上のリスク再評価</strong>: BONK/SHIB が一時利用不能になる事象 (delisting/maintenance) → mix の Sharpe -1.0以上ドロップ予想</li>
+        <li><strong>運用上のリスク再評価</strong>: BONK/SHIB が一時利用不能になる事象 (delisting/maintenance) → mix の Sharpe ドロップを K41 で実測 (ΔSh-0.33で済む)</li>
+      </ul>
+    </div>
+
+    <!-- ── Wave K41: Degraded mix scenario analysis (2026-05-23) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-green);">
+      <h3 style="color:var(--accent-green);">🛡️ Wave K41: Degraded mix scenarios — 障害時の Sharpe 劣化定量化</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">K40 のリスク警告を定量化: 各 component が利用不能になった場合、weights を残る軸で再配分して Sharpe がどこまで落ちるか実測:</p>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:10px;">
+        <thead><tr><th>シナリオ</th><th>Sharpe</th><th>Return</th><th>DD</th><th>ΔSh</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(63,185,80,0.15);"><td><strong>★ Baseline (全軸有効)</strong></td><td class="text-green"><strong>+3.61</strong></td><td>+66.0%</td><td>-1.8%</td><td>—</td></tr>
+          <tr><td>BONK 単独不可</td><td>+3.50</td><td>+57.3%</td><td>-1.6%</td><td>-0.10</td></tr>
+          <tr><td>SHIB 単独不可</td><td>+3.45</td><td>+59.8%</td><td>-2.3%</td><td>-0.15</td></tr>
+          <tr style="background:rgba(227,179,65,0.10);"><td><strong>⚠ SHIB+BONK 同時不可 (meme 最悪)</strong></td><td class="text-yellow">+3.27</td><td>+50.0%</td><td>-2.1%</td><td>-0.33</td></tr>
+          <tr><td>+ ATR 4H 側 SHIB/BONK も除外</td><td>+3.13</td><td>+49.2%</td><td>-1.9%</td><td>-0.48</td></tr>
+          <tr style="background:rgba(63,185,80,0.10);"><td><strong>FOPD DOT 除外 (wash trade)</strong></td><td class="text-green">+3.65</td><td>+68.0%</td><td>-1.7%</td><td class="text-green">+0.05</td></tr>
+          <tr><td>FOPD 全銘柄不可 (FR API down)</td><td>+3.31</td><td>+95.8%</td><td>-2.6%</td><td>-0.30</td></tr>
+        </tbody>
+      </table>
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">構造的発見 — K40 の懸念は誇張だった</h4>
+      <ul style="font-size:0.88rem;padding-left:22px;margin-top:6px;">
+        <li><strong>4-way mix は想定以上にロバスト</strong>: 最悪 meme シナリオでも Sharpe +3.27、G1 OOS 閾値 +1.0 を大幅超過</li>
+        <li><strong>DOT 除外は微益</strong> (ΔSh +0.05): K39 で「wash trade」と判定した DOT を実際抜くと <strong>Sharpe 微増</strong>。次回 production 改訂で除外候補</li>
+        <li><strong>FOPD 全停止でも +3.31</strong>: Bybit FR API down 事象 (data outage) でも weights 再配分により mix は維持できる。むしろリターンは増加 (vol_MR/meme weight 上昇のため)</li>
+        <li><strong>運用判断の確信度UP</strong>: 「分散効果はあった」事実が K41 で確認。SHIB/BONK は最重要だが mix 全体の安定性が想定より高い</li>
       </ul>
     </div>
 
