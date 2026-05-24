@@ -3792,3 +3792,44 @@ K39/K41 の wash trade 仮説を実装版で検証:
 - **37 候補テスト、4 採用** (FOPD, 8H Meme, vol_z MR, OI capit)
 - 成功率 ~11%
 - 残り未開拓: order book depth proxy, sentiment NLP, cross-exchange basis, on-chain metrics
+
+## Wave K70-K78: v4 mix 確立 (2026-05-23)
+
+### K70 BB squeeze breakout — 7番目軸採用
+- 144 configs, 24/144 Sh>=1.0 (modest)
+- **8銘柄 equal-weight portfolio: Sh +1.50, DD -16.2%** (standalone weak)
+- **Corr with v3: +0.023** (near orthogonal!)
+- v3 に 10% 混ぜると Sh **+3.881** (ΔSh +0.27)、DD -1.12% (改善)
+
+### K71-K77 (Stochastic, MFI, Range Exp, HA, ROC) — 全棄却
+- K71 Stochastic: 0/72 Sh>=1.0
+- K72 MFI: 1/16 Sh>=1.5 (AVAX のみ isolated)
+- K73 Range expansion: 0/32 Sh>=1.0
+- K74 Heikin-Ashi: 2/24 Sh>=1.0 (weak)
+- K77 ROC: 0/48 Sh>=1.0
+
+### K78 v4 mix §6 audit
+- v3 (0.90) + BB squeeze (0.10) = v4
+- **Sh +3.881** (730d, vs v3 +3.615)
+- Max DD -1.12% (vs v3 -1.25%)
+- 60d positive 98.7%
+- G1 OOS WF 5-folds: min Sh +3.15, max +5.40, all > +3.0 ✓
+- G2 PBO 0.000 ✓
+- G5 MC ruin @5x 0.00% ✓
+- Forward MC 3x lev 365d: 0% loss prob, median +83.6%
+
+### v4 configuration
+| Axis | Weight |
+|------|--------|
+| ATR_4H (8 銘柄) | 0.245 |
+| FOPD_v2 (5 銘柄) | 0.245 |
+| ATR_8H BONK | 0.061 |
+| ATR_8H SHIB | 0.061 |
+| vol_MR (4 銘柄) | 0.108 |
+| OI capit (7 銘柄) | 0.180 |
+| **BB squeeze (8 銘柄)** | **0.100** |
+| Total | 1.000 |
+
+### 累計実績
+- 45 戦略候補テスト、**5 採用** (FOPD, 8H Meme, vol_z MR, OI capit, BB squeeze)
+- 成功率 11%
