@@ -1,0 +1,556 @@
+{
+  "wave": "K203",
+  "parent_waves": [
+    "K175",
+    "K190"
+  ],
+  "objective": "OU+Jump FR predictor as K190 DAR(2,1) upgrade candidate",
+  "runtime_seconds": 189.6,
+  "references": [
+    "arxiv 2605.06405: HL OU+Jump model, half-life 2-6h",
+    "SSRN 5290137: Jump detection confirms OU+Jump >> pure OU/AR"
+  ],
+  "data": {
+    "symbols": [
+      "XRP",
+      "SUI"
+    ],
+    "events_per_year": 1095,
+    "event_counts": {
+      "XRP": 2190,
+      "SUI": 2190
+    }
+  },
+  "cost_model": {
+    "execution": "maker-only",
+    "slippage_bps_per_side": 2.0,
+    "maker_fee_bps_per_side": 0.0,
+    "roundtrip_bps": 4.0
+  },
+  "model_config": {
+    "ou_window": 300,
+    "ou_refit": 50,
+    "jump_k_primary": 2.5,
+    "hawkes_decay": 0.5,
+    "hawkes_g": 0.3,
+    "wf_train_events": 270,
+    "wf_test_events": 90
+  },
+  "ou_full_analysis": {
+    "XRP": {
+      "ols": {
+        "theta": 1.321494,
+        "mu": 4.952e-05,
+        "sigma_ou": 0.00015222,
+        "half_life_hours": 4.2
+      },
+      "mle": {
+        "theta": 1.321494,
+        "mu": 4.952e-05,
+        "sigma_ou": 0.00025677,
+        "half_life_hours": 4.2
+      }
+    },
+    "SUI": {
+      "ols": {
+        "theta": 1.002306,
+        "mu": 6.03e-05,
+        "sigma_ou": 0.0001447,
+        "half_life_hours": 5.53
+      },
+      "mle": {
+        "theta": 1.002306,
+        "mu": 6.03e-05,
+        "sigma_ou": 0.00022025,
+        "half_life_hours": 5.53
+      }
+    }
+  },
+  "jump_log": {
+    "XRP": {
+      "count": 27,
+      "rate": 0.0123,
+      "mean_magnitude_sigma": 4.745,
+      "max_magnitude_sigma": 38.428,
+      "p95_magnitude_sigma": 6.9,
+      "mean_abs_fr": 0.00072226,
+      "k_threshold": 2.5
+    },
+    "SUI": {
+      "count": 49,
+      "rate": 0.0224,
+      "mean_magnitude_sigma": 4.21,
+      "max_magnitude_sigma": 35.875,
+      "p95_magnitude_sigma": 5.429,
+      "mean_abs_fr": 0.00060913,
+      "k_threshold": 2.5
+    }
+  },
+  "ou_jump_diagnostics_primary": {
+    "XRP": {
+      "oos_r2": 0.03133,
+      "direction_acc": 0.6458,
+      "n_oos": 1800,
+      "half_life_mean_hours": 9.57,
+      "half_life_median_hours": 8.35,
+      "half_life_std_hours": 6.88,
+      "half_life_in_2_6h_range": false,
+      "jump_count_oos": 100,
+      "jump_rate_oos": 0.0556,
+      "n_segments": 20
+    },
+    "SUI": {
+      "oos_r2": 0.10147,
+      "direction_acc": 0.6516,
+      "n_oos": 1800,
+      "half_life_mean_hours": 12.17,
+      "half_life_median_hours": 10.11,
+      "half_life_std_hours": 9.34,
+      "half_life_in_2_6h_range": false,
+      "jump_count_oos": 138,
+      "jump_rate_oos": 0.0767,
+      "n_segments": 20
+    }
+  },
+  "ou_jump_diagnostics_no_hawkes": {
+    "XRP": {
+      "oos_r2": 0.03909,
+      "direction_acc": 0.6405,
+      "n_oos": 1800,
+      "half_life_mean_hours": 9.57,
+      "half_life_median_hours": 8.35,
+      "half_life_std_hours": 6.88,
+      "half_life_in_2_6h_range": false,
+      "jump_count_oos": 100,
+      "jump_rate_oos": 0.0556,
+      "n_segments": 20
+    },
+    "SUI": {
+      "oos_r2": 0.09814,
+      "direction_acc": 0.6524,
+      "n_oos": 1800,
+      "half_life_mean_hours": 12.17,
+      "half_life_median_hours": 10.11,
+      "half_life_std_hours": 9.34,
+      "half_life_in_2_6h_range": false,
+      "jump_count_oos": 138,
+      "jump_rate_oos": 0.0767,
+      "n_segments": 20
+    }
+  },
+  "jump_k_sweep": [
+    {
+      "variant": "OU+Jump_k2.0",
+      "sharpe_net": 1.1129,
+      "sharpe_gross": 1.2128,
+      "cagr_net": 0.1244,
+      "cagr_gross": 0.1364,
+      "max_dd_net": -0.0985,
+      "is_sharpe_net": 0.9137,
+      "oos_sharpe_net": 1.6129,
+      "is_sharpe_gross": 0.9999,
+      "oos_sharpe_gross": 1.7472,
+      "wf_mean_sharpe_net": 1.1078,
+      "wf_folds_net": [
+        1.295,
+        0.9846,
+        1.0439
+      ],
+      "wf_mean_sharpe_gross": 1.2114,
+      "wf_folds_gross": [
+        1.3574,
+        1.1044,
+        1.1723
+      ],
+      "perm_pvalue_net": 0.0,
+      "perm_pvalue_gross": 0.0,
+      "bootstrap_ci_5_95_net": [
+        -0.0058,
+        2.0314
+      ],
+      "bootstrap_ci_5_95_gross": [
+        0.1027,
+        2.1269
+      ],
+      "dsr_net": 0.0,
+      "dsr_gross": 0.0,
+      "n_trades": 127,
+      "trades_per_year": 63.5,
+      "n_events": 2190,
+      "per_symbol_sharpe_net": {
+        "XRP": 1.4219,
+        "SUI": 0.4501
+      },
+      "per_symbol_sharpe_gross": {
+        "XRP": 1.5079,
+        "SUI": 0.515
+      },
+      "jump_k": 2.0,
+      "ou_diagnostics": {
+        "XRP": {
+          "direction_acc": 0.6465,
+          "half_life_median_hours": 8.35,
+          "jump_count_oos": 160
+        },
+        "SUI": {
+          "direction_acc": 0.654,
+          "half_life_median_hours": 10.11,
+          "jump_count_oos": 195
+        }
+      }
+    },
+    {
+      "variant": "OU+Jump_k2.5",
+      "sharpe_net": 1.0301,
+      "sharpe_gross": 1.1307,
+      "cagr_net": 0.1151,
+      "cagr_gross": 0.1271,
+      "max_dd_net": -0.0985,
+      "is_sharpe_net": 0.7991,
+      "oos_sharpe_net": 1.6129,
+      "is_sharpe_gross": 0.8863,
+      "oos_sharpe_gross": 1.7472,
+      "wf_mean_sharpe_net": 1.0351,
+      "wf_folds_net": [
+        1.0767,
+        0.9846,
+        1.0439
+      ],
+      "wf_mean_sharpe_gross": 1.1394,
+      "wf_folds_gross": [
+        1.1414,
+        1.1044,
+        1.1723
+      ],
+      "perm_pvalue_net": 0.0,
+      "perm_pvalue_gross": 0.0,
+      "bootstrap_ci_5_95_net": [
+        -0.0671,
+        2.021
+      ],
+      "bootstrap_ci_5_95_gross": [
+        0.0397,
+        2.1072
+      ],
+      "dsr_net": 0.0,
+      "dsr_gross": 0.0,
+      "n_trades": 128,
+      "trades_per_year": 64.0,
+      "n_events": 2190,
+      "per_symbol_sharpe_net": {
+        "XRP": 1.2349,
+        "SUI": 0.4616
+      },
+      "per_symbol_sharpe_gross": {
+        "XRP": 1.3204,
+        "SUI": 0.5276
+      },
+      "jump_k": 2.5,
+      "ou_diagnostics": {
+        "XRP": {
+          "direction_acc": 0.6458,
+          "half_life_median_hours": 8.35,
+          "jump_count_oos": 100
+        },
+        "SUI": {
+          "direction_acc": 0.6516,
+          "half_life_median_hours": 10.11,
+          "jump_count_oos": 138
+        }
+      }
+    },
+    {
+      "variant": "OU+Jump_k3.0",
+      "sharpe_net": 0.9973,
+      "sharpe_gross": 1.0976,
+      "cagr_net": 0.1128,
+      "cagr_gross": 0.1249,
+      "max_dd_net": -0.0985,
+      "is_sharpe_net": 0.758,
+      "oos_sharpe_net": 1.6129,
+      "is_sharpe_gross": 0.8451,
+      "oos_sharpe_gross": 1.7472,
+      "wf_mean_sharpe_net": 1.0395,
+      "wf_folds_net": [
+        0.7207,
+        1.354,
+        1.0439
+      ],
+      "wf_mean_sharpe_gross": 1.1433,
+      "wf_folds_gross": [
+        0.7829,
+        1.4749,
+        1.1723
+      ],
+      "perm_pvalue_net": 0.0,
+      "perm_pvalue_gross": 0.0,
+      "bootstrap_ci_5_95_net": [
+        -0.1228,
+        1.9138
+      ],
+      "bootstrap_ci_5_95_gross": [
+        -0.0315,
+        2.0118
+      ],
+      "dsr_net": 0.0,
+      "dsr_gross": 0.0,
+      "n_trades": 127,
+      "trades_per_year": 63.5,
+      "n_events": 2190,
+      "per_symbol_sharpe_net": {
+        "XRP": 0.9843,
+        "SUI": 0.578
+      },
+      "per_symbol_sharpe_gross": {
+        "XRP": 1.0696,
+        "SUI": 0.6442
+      },
+      "jump_k": 3.0,
+      "ou_diagnostics": {
+        "XRP": {
+          "direction_acc": 0.6397,
+          "half_life_median_hours": 8.35,
+          "jump_count_oos": 73
+        },
+        "SUI": {
+          "direction_acc": 0.6532,
+          "half_life_median_hours": 10.11,
+          "jump_count_oos": 106
+        }
+      }
+    }
+  ],
+  "k175_baseline": {
+    "variant": "K175_baseline",
+    "sharpe_net": 1.3326,
+    "sharpe_gross": 1.4228,
+    "cagr_net": 0.3383,
+    "cagr_gross": 0.3651,
+    "max_dd_net": -0.1132,
+    "is_sharpe_net": 1.1589,
+    "oos_sharpe_net": 1.9303,
+    "is_sharpe_gross": 1.2455,
+    "oos_sharpe_gross": 2.0356,
+    "wf_mean_sharpe_net": 1.2748,
+    "wf_folds_net": [
+      1.9774,
+      0.3157,
+      1.5313
+    ],
+    "wf_mean_sharpe_gross": 1.3695,
+    "wf_folds_gross": [
+      2.0571,
+      0.4112,
+      1.6402
+    ],
+    "perm_pvalue_net": 0.0,
+    "perm_pvalue_gross": 0.0,
+    "bootstrap_ci_5_95_net": [
+      0.0743,
+      2.2669
+    ],
+    "bootstrap_ci_5_95_gross": [
+      0.1804,
+      2.3526
+    ],
+    "dsr_net": 0.0,
+    "dsr_gross": 0.0,
+    "n_trades": 284,
+    "trades_per_year": 142.0,
+    "n_events": 2190,
+    "per_symbol_sharpe_net": {
+      "XRP": 1.3632,
+      "SUI": 0.8465
+    },
+    "per_symbol_sharpe_gross": {
+      "XRP": 1.4569,
+      "SUI": 0.9028
+    }
+  },
+  "k203_primary": {
+    "variant": "K203_OU+Jump_k2.5_Hawkes",
+    "sharpe_net": 1.0301,
+    "sharpe_gross": 1.1307,
+    "cagr_net": 0.1151,
+    "cagr_gross": 0.1271,
+    "max_dd_net": -0.0985,
+    "is_sharpe_net": 0.7991,
+    "oos_sharpe_net": 1.6129,
+    "is_sharpe_gross": 0.8863,
+    "oos_sharpe_gross": 1.7472,
+    "wf_mean_sharpe_net": 1.0351,
+    "wf_folds_net": [
+      1.0767,
+      0.9846,
+      1.0439
+    ],
+    "wf_mean_sharpe_gross": 1.1394,
+    "wf_folds_gross": [
+      1.1414,
+      1.1044,
+      1.1723
+    ],
+    "perm_pvalue_net": 0.0,
+    "perm_pvalue_gross": 0.0,
+    "bootstrap_ci_5_95_net": [
+      -0.0671,
+      2.021
+    ],
+    "bootstrap_ci_5_95_gross": [
+      0.0397,
+      2.1072
+    ],
+    "dsr_net": 0.0,
+    "dsr_gross": 0.0,
+    "n_trades": 128,
+    "trades_per_year": 64.0,
+    "n_events": 2190,
+    "per_symbol_sharpe_net": {
+      "XRP": 1.2349,
+      "SUI": 0.4616
+    },
+    "per_symbol_sharpe_gross": {
+      "XRP": 1.3204,
+      "SUI": 0.5276
+    }
+  },
+  "k203_no_hawkes": {
+    "variant": "K203_OU+Jump_k2.5_noHawkes",
+    "sharpe_net": 1.0781,
+    "sharpe_gross": 1.1792,
+    "cagr_net": 0.1226,
+    "cagr_gross": 0.1349,
+    "max_dd_net": -0.0985,
+    "is_sharpe_net": 0.8286,
+    "oos_sharpe_net": 1.7245,
+    "is_sharpe_gross": 0.9179,
+    "oos_sharpe_gross": 1.8556,
+    "wf_mean_sharpe_net": 1.1143,
+    "wf_folds_net": [
+      0.8551,
+      1.354,
+      1.1337
+    ],
+    "wf_mean_sharpe_gross": 1.2187,
+    "wf_folds_gross": [
+      0.9217,
+      1.4749,
+      1.2596
+    ],
+    "perm_pvalue_net": 0.0,
+    "perm_pvalue_gross": 0.0,
+    "bootstrap_ci_5_95_net": [
+      -0.0365,
+      2.0455
+    ],
+    "bootstrap_ci_5_95_gross": [
+      0.0538,
+      2.1466
+    ],
+    "dsr_net": 0.0,
+    "dsr_gross": 0.0,
+    "n_trades": 128,
+    "trades_per_year": 64.0,
+    "n_events": 2190,
+    "per_symbol_sharpe_net": {
+      "XRP": 1.1185,
+      "SUI": 0.5894
+    },
+    "per_symbol_sharpe_gross": {
+      "XRP": 1.203,
+      "SUI": 0.6567
+    }
+  },
+  "best_k203": {
+    "variant": "K203_OU+Jump_k2.5_noHawkes",
+    "sharpe_net": 1.0781,
+    "sharpe_gross": 1.1792,
+    "cagr_net": 0.1226,
+    "cagr_gross": 0.1349,
+    "max_dd_net": -0.0985,
+    "is_sharpe_net": 0.8286,
+    "oos_sharpe_net": 1.7245,
+    "is_sharpe_gross": 0.9179,
+    "oos_sharpe_gross": 1.8556,
+    "wf_mean_sharpe_net": 1.1143,
+    "wf_folds_net": [
+      0.8551,
+      1.354,
+      1.1337
+    ],
+    "wf_mean_sharpe_gross": 1.2187,
+    "wf_folds_gross": [
+      0.9217,
+      1.4749,
+      1.2596
+    ],
+    "perm_pvalue_net": 0.0,
+    "perm_pvalue_gross": 0.0,
+    "bootstrap_ci_5_95_net": [
+      -0.0365,
+      2.0455
+    ],
+    "bootstrap_ci_5_95_gross": [
+      0.0538,
+      2.1466
+    ],
+    "dsr_net": 0.0,
+    "dsr_gross": 0.0,
+    "n_trades": 128,
+    "trades_per_year": 64.0,
+    "n_events": 2190,
+    "per_symbol_sharpe_net": {
+      "XRP": 1.1185,
+      "SUI": 0.5894
+    },
+    "per_symbol_sharpe_gross": {
+      "XRP": 1.203,
+      "SUI": 0.6567
+    }
+  },
+  "s6_gates_primary": {
+    "gates": {
+      "g1_sharpe_net_ge_1": true,
+      "g2_oos_sharpe_net_ge_0p5": true,
+      "g3_oos_is_ratio_ge_0p5": true,
+      "g4_wf_folds_all_positive": true,
+      "g5_perm_p_le_0p05": true,
+      "g6_dsr_ge_0p95": false,
+      "g7_trades_per_year_ge_20": true
+    },
+    "passed": 6,
+    "verdict": "PASS"
+  },
+  "acceptance_evaluation": {
+    "gate_dir_acc_plus3pp": false,
+    "k190_mean_dir_acc": 0.663,
+    "k203_mean_dir_acc": 0.6487,
+    "dir_acc_delta": -0.0143,
+    "gate_oos_sh_lift_0p05": false,
+    "k190_oos_gross": 2.1229,
+    "k203_oos_gross": 1.7472,
+    "oos_sh_delta": -0.3757,
+    "gate_half_life_2_6h": false,
+    "overall_accepted": false
+  },
+  "comparison_table": {
+    "K175_baseline": {
+      "oos_sharpe_gross": 2.0356,
+      "oos_sharpe_net": 1.9303,
+      "sharpe_net": 1.3326
+    },
+    "K190_DAR(2,1)": {
+      "oos_sharpe_gross": 2.1229,
+      "oos_sharpe_net": 2.024,
+      "sharpe_net": 1.4188,
+      "direction_acc_mean": 0.663
+    },
+    "K203_OU+Jump": {
+      "oos_sharpe_gross": 1.7472,
+      "oos_sharpe_net": 1.6129,
+      "sharpe_net": 1.0301,
+      "direction_acc_mean": 0.6487
+    }
+  },
+  "verdict_and_k204_plan": "K203 REJECTED. Gaps: Dir acc gap: K203=0.649 needs \u22650.693; OOS Sh gap: K203=1.747 needs \u22652.173; Half-life not in 2-6h range for any symbol. K204 path: Investigate longer estimation windows (500+ events), multi-scale OU (short + long mean reversion), or regime-conditional OU parameters. Alternatively explore K198 direct integration with OU residual as signal feature rather than as a standalone direction filter."
+}
