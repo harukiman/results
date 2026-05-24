@@ -759,10 +759,10 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 15:00 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 15:30 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
-    <strong>🏆 PRODUCTION v6.3 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K195 9戦略 ensemble OOS Sh +5.77 / MaxDD -0.43% / WF min 3.83 (10-sym carry panel)</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐ K195 = K194 + 10-sym carry expansion (ETH/DOGE/AVAX/LDO/AAVE/UNI/CRV/PEPE/BONK/NEAR, cap 10%)</span> &nbsp;|&nbsp;
-    <strong>12 ACCEPT base + 8 ensembles (K124/K136/K149/K176/K188/K192/K194/K195) / 48 REJECT / 4 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#f88;font-weight:700;">⚠ HL counterparty concentration 10 sym, mean carry ρ=0.42</span>
+    <strong>🏆 PRODUCTION v6.4 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K196 9戦略 + reverse carry OOS Sh +9.20 / MaxDD -0.38% / HL net -5.1%</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐⭐⭐ K196 = K195 + reverse carry (10 opposite-spread sym), counterparty risk 48.8% 削減</span> &nbsp;|&nbsp;
+    <strong>12 ACCEPT base + 9 ensembles (K124/K136/K149/K176/K188/K192/K194/K195/K196) / 48 REJECT / 4 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#f88;font-weight:700;">⚠ K196 caveat: alpha は recent regime (post-2025 sign flip), 6mo effective history, quarterly spread sign monitor 必須</span>
   </div>
 
   <header class="report-header">
@@ -7531,7 +7531,37 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
-          <summary><strong>★★★★★★★★ 2026-05-25 15:00 JST — K195 NEW PRODUCTION v6.3 (10-sym carry expansion)</strong></summary>
+          <summary><strong>★★★★★★★★★ 2026-05-25 15:30 JST — K196 NEW PRODUCTION v6.4 (reverse carry, OOS Sh 9.20, HL net -5.1%)</strong></summary>
+          <ul>
+            <li><strong>K196 = K195 + V_reverse_carry_panel (LONG HL + SHORT Bybit on K189 opposite-spread 10 sym)</strong></li>
+            <li>Reverse panel: SOL/XRP/SUI/OP/APT/AXS/JTO/IMX/SAND/ADA</li>
+            <li>OOS Sh: K195 5.77 → <strong>K196 9.20</strong> (+3.43, 巨大 margin)</li>
+            <li>MaxDD: -0.43% → <strong>-0.38%</strong> (改善)</li>
+            <li>HL net exposure: -100% → <strong>-5.1%</strong> (counterparty risk 48.8% 削減)</li>
+            <li>Forward vs reverse carry correlation: -0.14 (near-orthogonal, 異質 alpha 提供)</li>
+            <li><strong>CRITICAL CAVEATS</strong>:
+              <ul>
+                <li>Reverse carry alpha は essentially recent regime (post-2025 sign flip), 6 months effective production-relevant history</li>
+                <li>Folds 0/1 (pre-flip era) zero incremental lift, Folds 2/3 巨大 gain → OOS Sh 9.20 は recent regime での値</li>
+                <li>WF min 3.54 (threshold 3.5 ぎりぎり)</li>
+                <li>AXS HL データ 128 days のみ (outer join handled)</li>
+                <li>JTO/AXS extreme 8000-9000 bps/yr → maker fill quality 検証必須</li>
+              </ul>
+            </li>
+            <li><strong>MONITORING TRIGGERS (v6.4 仕様)</strong>:
+              <ul>
+                <li>Quarterly spread sign check (flip back → reverse panel deactivate)</li>
+                <li>Per-symbol JTO/AXS fill quality monitoring</li>
+                <li>WF stability watch (3.54 threshold ぎり)</li>
+                <li>First 3 months post-deployment strict monitor</li>
+              </ul>
+            </li>
+            <li><strong>HL counterparty improvement (key benefit)</strong>: K195 forward + K196 reverse の long/short legs が partial offset → single-exchange concentration 大幅軽減</li>
+            <li><strong>ENSEMBLE 進化 (current)</strong>: v4.1単独 → K124 → K136 → K149 → K176 → K188 → K192 → K194 → K195 → <strong>K196 (9.20) v6.4</strong></li>
+          </ul>
+        </details>
+        <details>
+          <summary><strong>★★★★★★★★ 2026-05-25 15:00 JST — K195 PRODUCTION v6.3 (K196 で更新)</strong></summary>
           <ul>
             <li><strong>K195 = K194 + 10-symbol carry panel</strong> (cap 10% sleeve, K189 hunt 由来)</li>
             <li>Panel: ETH/DOGE/AVAX/LDO/AAVE/UNI/CRV/PEPE/BONK/NEAR (BTC excluded K186 DECAY, MKR Bybit delisted 2025-08 → NEAR substitute)</li>
