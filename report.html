@@ -449,10 +449,10 @@
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 03:15 JST</span> &nbsp;|&nbsp;
-    <strong>試行数:</strong> 729,915+ &nbsp;|&nbsp;
-    <strong>🚨 Bootstrap CI再評価:</strong> <span style="color:var(--accent-orange);">50/50 (median Sh+3.06) > 80/10/10 (+2.78)</span> &nbsp;|&nbsp;
-    <strong>共に「使用可能」</strong>
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 03:35 JST</span> &nbsp;|&nbsp;
+    <strong>試行数:</strong> 730,009+ &nbsp;|&nbsp;
+    <strong>🏆 80/10/10 訂正版:</strong> <span style="color:var(--accent-green);">Boot median Sh +3.29 / Calmar 34.37</span> &nbsp;|&nbsp;
+    <strong>K5バグ修正済</strong>
   </div>
 
   <header class="report-header">
@@ -937,6 +937,66 @@ Plotly.newPlot('sc-fopd-rs', [{
           <strong>ユーザーの「日利10%」基準について</strong>: 本ポートフォリオの実測日利平均は <strong>0.083%/日 (年率 ~30% / 1xレバ)</strong>。10%/日 に約120倍のギャップ。レバ拡大で平均日利は線形に上がるが破産確率も急増 (10xで 7.28%)。<strong>「10%/日」は本研究の知見では実在不可能</strong>と判断 (1.10^365≈1.3e15 倍/年)。
         </p>
       </div>
+    </div>
+
+    <!-- ── Wave K7: K5バグ修正 + Bootstrap配分再最適化 (2026-05-24 03:35 JST) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-orange);background:linear-gradient(180deg,rgba(227,179,65,0.10),transparent);">
+      <h3 style="color:var(--accent-orange);">🔧 Wave K7: K5バグ修正 + Bootstrap 配分最適化 — 80/10/10 が真に最良 (訂正版)</h3>
+
+      <p style="font-size:0.92rem;margin-top:8px;">
+        Wave K5 で報告した「50/50 が bootstrap median で 80/10/10 を上回る」結論は<strong>K5 自体のバグ</strong> による誤り。本Wave K7 (Auditor 独立再実装) で発見:
+        K5 の `eq_to_daily()` 関数が <code>bpd=6</code> ハードコード — 4H用 (bpd=6) を 8H 系列 (本来 bpd=3) にも適用、daily集約が誤った間隔で実行されていた。
+      </p>
+
+      <h4 style="color:var(--accent-cyan);margin-top:12px;">K7 訂正版: Bootstrap 配分グリッド (正しい bpd で再計算)</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>w_4H Combined</th><th>w_BONK_8H</th><th>w_SHIB_8H</th><th>Obs Sh</th><th>Boot Median Sh</th><th>Calmar</th></tr></thead>
+        <tbody>
+          <tr><td>60%</td><td>20%</td><td>20%</td><td>+3.24</td><td>+3.14</td><td>32.56</td></tr>
+          <tr><td>70%</td><td>15%</td><td>15%</td><td>+3.33</td><td>+3.24</td><td>33.20</td></tr>
+          <tr style="background:rgba(63,185,80,0.18);"><td><strong>80%</strong></td><td><strong>10%</strong></td><td><strong>10%</strong></td><td class="text-green"><strong>+3.37</strong></td><td class="text-green"><strong>+3.29</strong></td><td class="text-green"><strong>34.37</strong></td></tr>
+          <tr style="background:rgba(63,185,80,0.10);"><td>85%</td><td>7.5%</td><td>7.5%</td><td>+3.34</td><td>+3.28</td><td class="text-green"><strong>34.91 (Calmar最大)</strong></td></tr>
+          <tr><td>90%</td><td>5%</td><td>5%</td><td>+3.27</td><td>+3.23</td><td>33.64</td></tr>
+          <tr><td>100% (=50/50 Combined単独)</td><td>0%</td><td>0%</td><td>+2.97</td><td>+2.96</td><td>28.63</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-green);margin-top:14px;">✓ 80/10/10 が真に最良 (訂正版)</h4>
+      <ul style="font-size:0.9rem;padding-left:22px;margin-top:6px;">
+        <li><strong>Bootstrap median Sh: 80/10/10 = +3.29 > 50/50 = +2.96</strong> — K5 結論は逆転</li>
+        <li><strong>Calmar: 80/10/10 = 34.37 (Boot) vs 50/50 = 28.63</strong> — 80/10/10 圧勝</li>
+        <li><strong>85/7.5/7.5 が Calmar 最大 (34.91)</strong> も近い候補</li>
+        <li><strong>Observed Sh +3.37 と Boot median +3.29 の差は 0.08</strong> — sample-specific でない</li>
+      </ul>
+
+      <h4 style="color:var(--accent-yellow);margin-top:14px;">クオンツ計算の典型的失敗パターン (累積バグ4件)</h4>
+      <ol style="font-size:0.88rem;padding-left:22px;margin-top:6px;">
+        <li><strong>DSR formula annualization</strong> (Wave J2): per-period vs annualized scale 混在 → 修正</li>
+        <li><strong>Cost stress key名仮定</strong> (Wave J2): "taker_fee" vs "fee_rate" → 修正</li>
+        <li><strong>White RC centered comparison</strong> (Wave K2): bootstrap_max + f_bar.max() vs f_max → 修正</li>
+        <li><strong>K5 eq_to_daily bpd ハードコード</strong> (本Wave K7 で発見): 8H 系列に 4H stride → 修正</li>
+      </ol>
+      <p style="font-size:0.85rem;margin-top:8px;color:var(--text-secondary);">
+        Auditor 独立再実装プロセスで4バグ発見。<strong>「監査の実効性」を証明する累積記録</strong>。
+        K5 のような bootstrap 分析でも、計算実装ミスがあれば結論が反転する。教訓:
+        <strong>「自分の計算を信じすぎない」「複数実装で照合する」</strong>が不可欠。
+      </p>
+
+      <h4 style="color:var(--accent-green);margin-top:14px;">最終 (訂正版) リーダーボード</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>順位</th><th>戦略</th><th>Observed</th><th>Bootstrap Median (実運用期待値)</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(63,185,80,0.20);">
+            <td>🏆1</td><td><strong>80/10/10 Triple</strong></td><td>Sh+3.57 / Cal 32.63</td><td class="text-green"><strong>Sh+3.29 / Cal 34.37</strong></td><td class="text-green">使用可能 (§6 8/8 + Boot)</td>
+          </tr>
+          <tr>
+            <td>🥈2</td><td>85/7.5/7.5</td><td>Sh+3.34 / Cal 34.91</td><td>Sh+3.28 / Cal 34.91</td><td>Calmar最大、80/10/10 と僅差</td>
+          </tr>
+          <tr>
+            <td>🥉3</td><td>50/50 Combined</td><td>Sh+3.15 / Cal 30.56</td><td>Sh+2.96 / Cal 28.63</td><td>バックアップ</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- ── Wave K5: Bootstrap CI 真の優劣 (2026-05-24 03:10 JST) ── -->
