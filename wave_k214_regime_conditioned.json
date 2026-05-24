@@ -1,0 +1,493 @@
+{
+  "wave": "K214",
+  "parent_waves": [
+    "K198",
+    "K208",
+    "K210"
+  ],
+  "objective": "Regime-conditioned V_rev_carry: K208 filter ON in bear/neutral, OFF in bull",
+  "as_of": "2026-05-24T21:53:45.015013+00:00",
+  "runtime_s": 8.5,
+  "config": {
+    "thresholds_tested": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "best_threshold": 1.0,
+    "zscore_window": 30,
+    "regime_logic": {
+      "bull": "spread_z > threshold -> use K196 unfiltered V_rev_carry",
+      "bear": "spread_z <= threshold -> use K208 DAR-filtered V_rev_carry",
+      "lag": "z-score lagged 1 day (no look-ahead)"
+    },
+    "ml_train_days": 90,
+    "ml_test_days": 30,
+    "k121_cap": 0.3,
+    "carry_fwd_cap": 0.1,
+    "carry_rev_cap": 0.1,
+    "fr_threshold": -0.009735,
+    "dar_config": {
+      "p": 2,
+      "q": 1,
+      "win": 300,
+      "refit": 50
+    },
+    "symbols_dar_filtered": [
+      "SOL",
+      "XRP",
+      "SUI",
+      "OP",
+      "APT",
+      "JTO",
+      "IMX",
+      "SAND",
+      "ADA"
+    ],
+    "symbols_always_on": [
+      "AXS"
+    ],
+    "n_symbols_loaded": 10,
+    "symbols_skipped": []
+  },
+  "regime_classifier_log": {
+    "z_0.0": {
+      "threshold": 0.0,
+      "pct_bull": 52.0,
+      "pct_bear": 48.0,
+      "n_bull_days": 365,
+      "n_bear_days": 337
+    },
+    "z_0.5": {
+      "threshold": 0.5,
+      "pct_bull": 31.8,
+      "pct_bear": 68.2,
+      "n_bull_days": 223,
+      "n_bear_days": 479
+    },
+    "z_1.0": {
+      "threshold": 1.0,
+      "pct_bull": 14.2,
+      "pct_bear": 85.8,
+      "n_bull_days": 100,
+      "n_bear_days": 602
+    }
+  },
+  "threshold_sweep": {
+    "z_0.0": {
+      "threshold": 0.0,
+      "oos_sharpe": 8.0237,
+      "oos_maxdd": -0.0054,
+      "oos_sortino": 22.5094,
+      "oos_calmar": 105.4753,
+      "wf_mean": 7.2806,
+      "wf_min": 6.3826,
+      "wf_fold_sharpes": [
+        6.3826,
+        7.5196,
+        8.1969,
+        7.0234
+      ],
+      "fold_regime_stats": [
+        {
+          "fold": 1,
+          "start": "2025-01-22",
+          "end": "2025-05-13",
+          "sharpe": 6.3826,
+          "n_bull_days": 67,
+          "n_bear_days": 45,
+          "pct_bull": 59.8
+        },
+        {
+          "fold": 2,
+          "start": "2025-05-14",
+          "end": "2025-09-02",
+          "sharpe": 7.5196,
+          "n_bull_days": 66,
+          "n_bear_days": 46,
+          "pct_bull": 58.9
+        },
+        {
+          "fold": 3,
+          "start": "2025-09-03",
+          "end": "2025-12-23",
+          "sharpe": 8.1969,
+          "n_bull_days": 62,
+          "n_bear_days": 50,
+          "pct_bull": 55.4
+        },
+        {
+          "fold": 4,
+          "start": "2025-12-24",
+          "end": "2026-04-14",
+          "sharpe": 7.0234,
+          "n_bull_days": 44,
+          "n_bear_days": 68,
+          "pct_bull": 39.3
+        }
+      ],
+      "regime_stats": {
+        "threshold": 0.0,
+        "n_bull_days": 365,
+        "n_bear_days": 337,
+        "n_total_days": 702,
+        "pct_bull": 52.0,
+        "pct_bear": 48.0,
+        "label": "z > 0.0 -> K196 unfiltered | z <= 0.0 -> K208 filtered"
+      }
+    },
+    "z_0.5": {
+      "threshold": 0.5,
+      "oos_sharpe": 8.0173,
+      "oos_maxdd": -0.0057,
+      "oos_sortino": 21.8536,
+      "oos_calmar": 100.2722,
+      "wf_mean": 7.391,
+      "wf_min": 7.0291,
+      "wf_fold_sharpes": [
+        7.04,
+        7.462,
+        8.0331,
+        7.0291
+      ],
+      "fold_regime_stats": [
+        {
+          "fold": 1,
+          "start": "2025-01-22",
+          "end": "2025-05-13",
+          "sharpe": 7.04,
+          "n_bull_days": 45,
+          "n_bear_days": 67,
+          "pct_bull": 40.2
+        },
+        {
+          "fold": 2,
+          "start": "2025-05-14",
+          "end": "2025-09-02",
+          "sharpe": 7.462,
+          "n_bull_days": 40,
+          "n_bear_days": 72,
+          "pct_bull": 35.7
+        },
+        {
+          "fold": 3,
+          "start": "2025-09-03",
+          "end": "2025-12-23",
+          "sharpe": 8.0331,
+          "n_bull_days": 30,
+          "n_bear_days": 82,
+          "pct_bull": 26.8
+        },
+        {
+          "fold": 4,
+          "start": "2025-12-24",
+          "end": "2026-04-14",
+          "sharpe": 7.0291,
+          "n_bull_days": 28,
+          "n_bear_days": 84,
+          "pct_bull": 25.0
+        }
+      ],
+      "regime_stats": {
+        "threshold": 0.5,
+        "n_bull_days": 223,
+        "n_bear_days": 479,
+        "n_total_days": 702,
+        "pct_bull": 31.8,
+        "pct_bear": 68.2,
+        "label": "z > 0.5 -> K196 unfiltered | z <= 0.5 -> K208 filtered"
+      }
+    },
+    "z_1.0": {
+      "threshold": 1.0,
+      "oos_sharpe": 8.0341,
+      "oos_maxdd": -0.0053,
+      "oos_sortino": 22.4129,
+      "oos_calmar": 104.1075,
+      "wf_mean": 7.4706,
+      "wf_min": 6.9211,
+      "wf_fold_sharpes": [
+        6.9211,
+        7.7008,
+        8.2596,
+        7.0007
+      ],
+      "fold_regime_stats": [
+        {
+          "fold": 1,
+          "start": "2025-01-22",
+          "end": "2025-05-13",
+          "sharpe": 6.9211,
+          "n_bull_days": 21,
+          "n_bear_days": 91,
+          "pct_bull": 18.8
+        },
+        {
+          "fold": 2,
+          "start": "2025-05-14",
+          "end": "2025-09-02",
+          "sharpe": 7.7008,
+          "n_bull_days": 10,
+          "n_bear_days": 102,
+          "pct_bull": 8.9
+        },
+        {
+          "fold": 3,
+          "start": "2025-09-03",
+          "end": "2025-12-23",
+          "sharpe": 8.2596,
+          "n_bull_days": 10,
+          "n_bear_days": 102,
+          "pct_bull": 8.9
+        },
+        {
+          "fold": 4,
+          "start": "2025-12-24",
+          "end": "2026-04-14",
+          "sharpe": 7.0007,
+          "n_bull_days": 19,
+          "n_bear_days": 93,
+          "pct_bull": 17.0
+        }
+      ],
+      "regime_stats": {
+        "threshold": 1.0,
+        "n_bull_days": 100,
+        "n_bear_days": 602,
+        "n_total_days": 702,
+        "pct_bull": 14.2,
+        "pct_bear": 85.8,
+        "label": "z > 1.0 -> K196 unfiltered | z <= 1.0 -> K208 filtered"
+      }
+    }
+  },
+  "best_variant": {
+    "threshold": 1.0,
+    "oos_sharpe": 8.0341,
+    "oos_maxdd": -0.0053,
+    "oos_sortino": 22.4129,
+    "oos_calmar": 104.1075,
+    "oos_ann_ret": 0.5567,
+    "oos_ann_vol": 0.0553,
+    "oos_n_days": 135,
+    "wf_mean": 7.4706,
+    "wf_min": 6.9211,
+    "wf_max": 8.2596,
+    "wf_std": 0.5473,
+    "wf_fold_sharpes": [
+      6.9211,
+      7.7008,
+      8.2596,
+      7.0007
+    ],
+    "wf_fold_dates": [
+      {
+        "fold": 1,
+        "start": "2025-01-22",
+        "end": "2025-05-13",
+        "n_days": 112
+      },
+      {
+        "fold": 2,
+        "start": "2025-05-14",
+        "end": "2025-09-02",
+        "n_days": 112
+      },
+      {
+        "fold": 3,
+        "start": "2025-09-03",
+        "end": "2025-12-23",
+        "n_days": 112
+      },
+      {
+        "fold": 4,
+        "start": "2025-12-24",
+        "end": "2026-04-14",
+        "n_days": 112
+      }
+    ],
+    "lift_vs_k198_oos_sh": -2.2459,
+    "lift_vs_k198_wf_min": 0.3511,
+    "lift_vs_k210b_wf_min": -0.1189
+  },
+  "four_way_comparison": {
+    "K198_v6_5_baseline": {
+      "description": "K198 v6.5 Ridge ML (current production)",
+      "oos_sharpe": 10.2796,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.912,
+      "wf_min": 6.5722,
+      "wf_fold_sharpes": [
+        6.5722,
+        7.3823,
+        7.9409,
+        9.7527
+      ],
+      "reference": true
+    },
+    "K210b_rejected": {
+      "description": "K210b (K208 always-on, cap=15%) - REJECTED",
+      "oos_sharpe": 8.34,
+      "oos_maxdd": -0.005,
+      "wf_mean": 7.59,
+      "wf_min": 7.04,
+      "source": "wave_k210 results"
+    },
+    "K214_best": {
+      "description": "K214 hybrid (z > 1.0 -> K196, else K208)",
+      "oos_sharpe": 8.0341,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.4706,
+      "wf_min": 6.9211,
+      "wf_fold_sharpes": [
+        6.9211,
+        7.7008,
+        8.2596,
+        7.0007
+      ]
+    }
+  },
+  "s6_gates": {
+    "gates": {
+      "G1_oos_sh_ge_k198": false,
+      "G2_oos_sh_gt_10": false,
+      "G3_maxdd_le_k198": true,
+      "G4_wf_min_ge_k210b": false,
+      "G5_wf_mean_ge_7": true,
+      "G6_sortino_gt_15": true,
+      "G7_calmar_gt_1800": false
+    },
+    "n_pass": 3,
+    "verdict": "MARGINAL"
+  },
+  "acceptance_criteria": {
+    "AC1_oos_sh_ge_k198": false,
+    "AC2_maxdd_le_k198": true,
+    "AC3_wf_min_ge_k210b": false,
+    "AC4_regime_non_degenerate": true,
+    "n_criteria_passed": 2,
+    "all_pass": false
+  },
+  "verdict": "REJECT \u2192 K214 hybrid does not meet acceptance criteria (2/4 pass). OOS Sh=8.0341 vs K198=10.28, MaxDD=-0.0053, WF min=6.9211. Regime conditioning does not preserve K198 fold 4 strength sufficiently.",
+  "ml_diagnostics": {
+    "n_wf_steps": 15,
+    "mean_dir_acc": 0.7467,
+    "mean_r2": 0.9372
+  },
+  "carry_filter_metadata": {
+    "dar_diag": {
+      "SOL": {
+        "oos_r2": 0.15981,
+        "direction_acc": 0.6846,
+        "n_oos": 1884
+      },
+      "XRP": {
+        "oos_r2": -0.01813,
+        "direction_acc": 0.6591,
+        "n_oos": 1887
+      },
+      "SUI": {
+        "oos_r2": 0.0727,
+        "direction_acc": 0.6667,
+        "n_oos": 1887
+      },
+      "OP": {
+        "oos_r2": 0.1561,
+        "direction_acc": 0.6892,
+        "n_oos": 1886
+      },
+      "APT": {
+        "oos_r2": 0.22419,
+        "direction_acc": 0.6583,
+        "n_oos": 1883
+      },
+      "JTO": {
+        "oos_r2": -0.04804,
+        "direction_acc": 0.7005,
+        "n_oos": 1886
+      },
+      "IMX": {
+        "oos_r2": -1.54316,
+        "direction_acc": 0.7018,
+        "n_oos": 1887
+      },
+      "SAND": {
+        "oos_r2": 0.15436,
+        "direction_acc": 0.718,
+        "n_oos": 1306
+      },
+      "ADA": {
+        "oos_r2": 0.02587,
+        "direction_acc": 0.6881,
+        "n_oos": 1883
+      },
+      "AXS": {
+        "note": "always-on",
+        "direction_acc": NaN
+      }
+    },
+    "filter_stats": {
+      "SOL": {
+        "n_total_events": 2186,
+        "n_active_filtered": 589,
+        "pct_in_market": 26.9,
+        "filter_rate_pct": 73.1
+      },
+      "XRP": {
+        "n_total_events": 2189,
+        "n_active_filtered": 563,
+        "pct_in_market": 25.7,
+        "filter_rate_pct": 74.3
+      },
+      "SUI": {
+        "n_total_events": 2189,
+        "n_active_filtered": 746,
+        "pct_in_market": 34.1,
+        "filter_rate_pct": 65.9
+      },
+      "OP": {
+        "n_total_events": 2188,
+        "n_active_filtered": 892,
+        "pct_in_market": 40.8,
+        "filter_rate_pct": 59.2
+      },
+      "APT": {
+        "n_total_events": 2185,
+        "n_active_filtered": 722,
+        "pct_in_market": 33.0,
+        "filter_rate_pct": 67.0
+      },
+      "JTO": {
+        "n_total_events": 2188,
+        "n_active_filtered": 705,
+        "pct_in_market": 32.2,
+        "filter_rate_pct": 67.8
+      },
+      "IMX": {
+        "n_total_events": 2189,
+        "n_active_filtered": 801,
+        "pct_in_market": 36.6,
+        "filter_rate_pct": 63.4
+      },
+      "SAND": {
+        "n_total_events": 1608,
+        "n_active_filtered": 600,
+        "pct_in_market": 37.3,
+        "filter_rate_pct": 62.7
+      },
+      "ADA": {
+        "n_total_events": 2185,
+        "n_active_filtered": 821,
+        "pct_in_market": 37.6,
+        "filter_rate_pct": 62.4
+      },
+      "AXS": {
+        "pct_in_market": 100.0,
+        "filter_rate_pct": 0.0
+      }
+    },
+    "avg_filter_pct": 59.58,
+    "avg_in_market_pct": 40.4,
+    "n_symbols": 10
+  }
+}
