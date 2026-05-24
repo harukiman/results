@@ -2,9 +2,11 @@
   "meta": {
     "description": "全戦略の定義・パラメータ・成績・判定を管理するレジストリ",
     "created": "2026-05-22",
-    "last_updated": "2026-05-23",
-    "total_trials": 710079,
-    "total_strategies": 8
+    "last_updated": "2026-05-24",
+    "total_trials": 732019,
+    "total_strategies": 11,
+    "notes": "2026-05-24 Wave K8 完了: 80/10/10 が §6 8/8 + 90日窓100% positive 達成",
+    "authorized_label": "80/10/10 Triple (Sh+3.57, Calmar 32.63) — 唯一の「使用可能」認定戦略"
   },
   "strategies": [
     {
@@ -570,10 +572,34 @@
         "permutation_p": 0.022,
         "walk_forward_4fold": {
           "folds": [
-            {"fold": 1, "sharpe": 0.729, "return_pct": 7.4, "max_dd_pct": -10.2, "trades": 28},
-            {"fold": 2, "sharpe": 1.903, "return_pct": 17.6, "max_dd_pct": -8.2, "trades": 15},
-            {"fold": 3, "sharpe": -0.443, "return_pct": -3.7, "max_dd_pct": -12.4, "trades": 18},
-            {"fold": 4, "sharpe": 2.637, "return_pct": 25.9, "max_dd_pct": -4.0, "trades": 26}
+            {
+              "fold": 1,
+              "sharpe": 0.729,
+              "return_pct": 7.4,
+              "max_dd_pct": -10.2,
+              "trades": 28
+            },
+            {
+              "fold": 2,
+              "sharpe": 1.903,
+              "return_pct": 17.6,
+              "max_dd_pct": -8.2,
+              "trades": 15
+            },
+            {
+              "fold": 3,
+              "sharpe": -0.443,
+              "return_pct": -3.7,
+              "max_dd_pct": -12.4,
+              "trades": 18
+            },
+            {
+              "fold": 4,
+              "sharpe": 2.637,
+              "return_pct": 25.9,
+              "max_dd_pct": -4.0,
+              "trades": 26
+            }
           ],
           "avg_sharpe": 1.206,
           "folds_positive": "3/4",
@@ -585,17 +611,30 @@
           "verdict": "INDEPENDENT — virtually zero overlap"
         },
         "multi_symbol": {
-          "DOGEUSDT": {"oos_sharpe": 3.551},
-          "SOLUSDT": {"oos_sharpe": -0.030},
-          "AVAXUSDT": {"oos_sharpe": 0.793},
-          "XRPUSDT": {"oos_sharpe": 0.164},
-          "ETHUSDT": {"oos_sharpe": -0.008},
+          "DOGEUSDT": {
+            "oos_sharpe": 3.551
+          },
+          "SOLUSDT": {
+            "oos_sharpe": -0.03
+          },
+          "AVAXUSDT": {
+            "oos_sharpe": 0.793
+          },
+          "XRPUSDT": {
+            "oos_sharpe": 0.164
+          },
+          "ETHUSDT": {
+            "oos_sharpe": -0.008
+          },
           "mean_oos_sharpe": 0.894,
           "positive_count": "3/5",
           "verdict": "PASS — strongest on high-vol alts (SUI, DOGE)"
         },
         "bootstrap": {
-          "ci_95": [0.316, 3.372],
+          "ci_95": [
+            0.316,
+            3.372
+          ],
           "point_estimate": 2.131,
           "verdict": "PASS — entirely positive CI"
         },
@@ -616,7 +655,9 @@
           "verdict": "PASS — robust to ±20% perturbation"
         },
         "overall_score": "10/11 checks passed (91%)",
-        "failed_checks": ["WF fold 3 negative (-0.443)"]
+        "failed_checks": [
+          "WF fold 3 negative (-0.443)"
+        ]
       },
       "status": "CONDITIONAL_PASS",
       "status_reason": "10/11 validation checks passed. OOS Sharpe 2.286, perm p=0.022, WF mean 1.206, bootstrap CI [0.316, 3.372] excludes zero, inverse gap 3.774, VolReg correlation -0.015 (fully independent), 3/5 multi-symbol positive, all parameter perturbations positive. Only failure: WF fold 3 = -0.443 (one regime vulnerability).",
@@ -665,11 +706,16 @@
         }
       },
       "validation": {
-        "walk_forward_4fold": [2.772, 2.533, 1.576, 1.484],
+        "walk_forward_4fold": [
+          2.772,
+          2.533,
+          1.576,
+          1.484
+        ],
         "walk_forward_mean": 2.091,
         "bootstrap_ci_5pct": 0.057,
         "bootstrap_ci_95pct": 3.989,
-        "inverse_signal_sharpe": -1.020,
+        "inverse_signal_sharpe": -1.02,
         "multi_symbol": {
           "WIFUSDT": 0.775,
           "BONKUSDT": 1.636,
@@ -680,7 +726,7 @@
         "correlation_with_survivors": {
           "VolReg_opt_1d": 0.054,
           "VolReg_4h": 0.129,
-          "ATR_Ratio_Compression_4h": 0.030,
+          "ATR_Ratio_Compression_4h": 0.03,
           "SampEn_DOGE_4H": 0.148,
           "Vol_Smile_Skew_SUI_4h": 0.103
         },
@@ -692,6 +738,209 @@
       "recommendation": "Deploy on BONK 4H primary. Cross-deploy to WIF (Sh 0.775) and DOGE (Sh 0.777) for diversification. Apply 1x leverage. Monitor meme coin listing/delisting risk.",
       "discovered": "2026-05-23",
       "auditor_notes": "8th survivor. Fourth independent signal dimension: meme coin volume accumulation. Conceptually distinct from volatility compression (VolReg/ATR), entropy (SampEn), and directional vol asymmetry (VSS). Max survivor correlation 0.148 (vs SampEn) confirms independence. Uses crypto-specific data (meme coin volume patterns). Risk: BONK is a newer, less liquid coin — structural changes and delisting risk are higher than DOGE/SUI."
+    },
+    {
+      "id": "FOPD_6SYMBOLS_4H_001",
+      "name": "FOPD (Funding-OI-Price Triple Decoupling)",
+      "family": "Crowding Contrarian",
+      "description": "FR・OI・Price の 3項 z-score 一致条件で過熱検出 → 逆張り。 BNB/AVAX/ETH/ADA/LINK/DOT 6銘柄ポートフォリオ。",
+      "discovery_wave": "J12-J14",
+      "params_per_symbol": {
+        "BNBUSDT": {
+          "fr_z": 1.0,
+          "oi_z": 0.5,
+          "ret_z": 1.5,
+          "sl": 0.04,
+          "tp": 0.06,
+          "mhb": 6
+        },
+        "AVAXUSDT": {
+          "fr_z": 2.0,
+          "oi_z": 1.0,
+          "ret_z": 1.5,
+          "sl": 0.04,
+          "tp": 0.06,
+          "mhb": 6
+        },
+        "ETHUSDT": {
+          "fr_z": 1.5,
+          "oi_z": 1.5,
+          "ret_z": 0.5,
+          "sl": 0.04,
+          "tp": 0.06,
+          "mhb": 6
+        },
+        "ADAUSDT": {
+          "fr_z": 2.0,
+          "oi_z": 0.5,
+          "ret_z": 0.5,
+          "sl": 0.04,
+          "tp": 0.06,
+          "mhb": 6
+        },
+        "LINKUSDT": {
+          "fr_z": 1.0,
+          "oi_z": 0.5,
+          "ret_z": 1.0,
+          "sl": 0.04,
+          "tp": 0.06,
+          "mhb": 6
+        },
+        "DOTUSDT": {
+          "fr_z": 2.0,
+          "oi_z": 1.0,
+          "ret_z": 1.0,
+          "sl": 0.04,
+          "tp": 0.06,
+          "mhb": 6
+        }
+      },
+      "performance": {
+        "portfolio_730d": {
+          "sharpe": 1.84,
+          "return_pct": 19.0,
+          "max_dd_pct": -3.5,
+          "calmar": 5.42,
+          "trades": 222
+        },
+        "best_single_BNB": {
+          "sharpe": 1.8,
+          "return_pct": 31.9,
+          "trades": 36
+        }
+      },
+      "validation": {
+        "observed_only": true,
+        "no_individual_audit": "as_combined_only"
+      },
+      "judgment": "部分エッジ — 単独では Sh<2 だが ATR と相関 -0.005 で合成価値大",
+      "use_in_combined": "50/50 ATR+FOPD = Sh+3.15, 80/10/10 = Sh+3.57"
+    },
+    {
+      "id": "ATR_8H_MEME_BONK_001",
+      "name": "ATR_Ratio 8H BONK",
+      "family": "Range Compression - Higher TF",
+      "description": "ATR_Ratio compression on 8H bars (4H aggregated). vol_z≥1.5 OFF filter同じ。BONKUSDT 銘柄.",
+      "discovery_wave": "J26-J27",
+      "params": {
+        "atr_short": 4,
+        "atr_long": 28,
+        "threshold": 0.6,
+        "ema_fast": 10,
+        "ema_slow": 40,
+        "vol_z": 1.5,
+        "sl": 0.04,
+        "tp": 0.08,
+        "mhb": 12
+      },
+      "performance_730d": {
+        "sharpe": 2.15,
+        "trades": 74
+      },
+      "correlation_vs_combined_4H": 0.307
+    },
+    {
+      "id": "ATR_8H_MEME_SHIB_001",
+      "name": "ATR_Ratio 8H SHIB",
+      "family": "Range Compression - Higher TF",
+      "description": "Same as BONK but SHIBUSDT",
+      "discovery_wave": "J26-J27",
+      "params": {
+        "atr_short": 4,
+        "atr_long": 28,
+        "threshold": 0.6,
+        "ema_fast": 10,
+        "ema_slow": 40,
+        "vol_z": 1.5,
+        "sl": 0.04,
+        "tp": 0.08,
+        "mhb": 12
+      },
+      "performance_730d": {
+        "sharpe": 2.23,
+        "trades": 64
+      },
+      "correlation_vs_combined_4H": 0.264
+    },
+    {
+      "id": "COMBINED_50_50_001",
+      "name": "50/50 ATR + FOPD Combined",
+      "family": "Composite (multi-strategy mix)",
+      "description": "50% ATR×8 4H (vol_z≥1.5 OFF) + 50% FOPD×6 4H. 相関 r=-0.005 で完全独立。",
+      "discovery_wave": "J14-J16",
+      "components": [
+        "ATR_RATIO_8SYM_4H",
+        "FOPD_6SYMBOLS_4H_001"
+      ],
+      "weights": [
+        0.5,
+        0.5
+      ],
+      "performance_730d": {
+        "observed": {
+          "sharpe": 3.15,
+          "return_pct": 48.5,
+          "max_dd_pct": -1.6,
+          "calmar": 30.56
+        },
+        "bootstrap_median": {
+          "sharpe": 3.06,
+          "calmar": 28.63
+        }
+      },
+      "validation": {
+        "§6": "7/8 PASS (G3 N=716K naive のみ FAIL)",
+        "judgment": "条件付承認"
+      }
+    },
+    {
+      "id": "TRIPLE_80_10_10_001",
+      "name": "80/10/10 Triple Portfolio (Production)",
+      "family": "Composite (three-layer)",
+      "description": "80% Combined + 10% BONK_8H + 10% SHIB_8H. crypto-lab 史上初の「使用可能」認定。",
+      "discovery_wave": "J27 → J28 (§6) → K8 (Stress)",
+      "components": [
+        "COMBINED_50_50_001",
+        "ATR_8H_MEME_BONK_001",
+        "ATR_8H_MEME_SHIB_001"
+      ],
+      "weights": [
+        0.8,
+        0.1,
+        0.1
+      ],
+      "performance_730d": {
+        "observed": {
+          "sharpe": 3.57,
+          "return_pct": 67.8,
+          "max_dd_pct": -2.1,
+          "calmar": 32.63
+        },
+        "bootstrap_median": {
+          "sharpe": 3.29,
+          "calmar": 34.37
+        },
+        "stress": {
+          "rolling_30d_positive_pct": 90.1,
+          "rolling_60d_positive_pct": 99.1,
+          "rolling_90d_positive_pct": 100.0,
+          "worst_60d_during_BTC_minus25": "+1.85%",
+          "worst_90d_during_BTC_minus22": "+3.06%"
+        }
+      },
+      "validation": {
+        "§6": "8/8 PASS (含む DSR N=730K)",
+        "hansen_SPA_p": 0.0,
+        "white_RC_p": 0.001,
+        "auditor_reimpl_agreement": "ΔSh=0.16, ΔRet=4.87%, ΔDD=0%",
+        "H1_H2_period_independent": {
+          "H1": 3.82,
+          "H2": 3.32
+        },
+        "kelly_full": 40.14,
+        "kelly_quarter": 10.03,
+        "judgment": "🏆 使用可能 (USABLE)"
+      }
     }
   ],
   "rejected": [
@@ -1495,5 +1744,35 @@
       "date": "2026-05-23",
       "configs_tested": 160
     }
-  ]
+  ],
+  "discovery_log": {
+    "successes": [
+      "FOPD (J12)",
+      "8H Meme satellites (J27)"
+    ],
+    "rejections": [
+      "FToD (J8)",
+      "LISRM (J10)",
+      "HLWI (J11)",
+      "S3I (J17)",
+      "Dynamic regime (J20)",
+      "LiqCascadeFade (J21)",
+      "MetaLabel (J22)",
+      "BTC.D Inflection (J24)",
+      "Pure Funding Carry (K6)"
+    ],
+    "bugs_found_by_auditor": [
+      "DSR formula annualization (J2)",
+      "Cost stress key name (J2)",
+      "White RC centered compare (K2)",
+      "K5 eq_to_daily bpd hardcode (K7)"
+    ]
+  },
+  "production_recommendation": {
+    "strategy_id": "TRIPLE_80_10_10_001",
+    "leverage_recommended_conservative": "5x (ruin 0%, median +150%/yr)",
+    "leverage_recommended_aggressive": "10x (ruin 0.6%, median +462%/yr)",
+    "leverage_warning_above": "15x (ruin 9%+, dangerous)",
+    "honest_user_goal_gap": "ユーザー「日利10%」≈ 50x → 破産 96.5%、実在不可能。10xが現実的上限。"
+  }
 }
