@@ -1,0 +1,181 @@
+{
+  "wave": "K235",
+  "task": "Hawkes Liquidation Cascade Predictor",
+  "as_of": "2026-05-24T23:38:39Z",
+  "runtime_s": 0.8,
+  "data_info": {
+    "source": "Binance daily OHLC (BTCUSDT+ETHUSDT, 730 days)",
+    "liquidation_proxy": "POT on max(|BTC_ret|,|ETH_ret|), 80th pct threshold",
+    "hawkes_window": 30,
+    "pot_percentile": 80,
+    "global_threshold": 0.04144,
+    "n_shock_events": 146,
+    "date_range": "2024-05-23 -> 2026-05-22",
+    "n_total_days": 730,
+    "n_valid_days": 700,
+    "real_liq_api": "Coinglass /api/futures/liquidation/v2/aggregated-history (requires paid key; POT proxy used instead)"
+  },
+  "hawkes_em_parameters": {
+    "description": "EM estimates from rolling windows (sampled every 5 days)",
+    "n_windows": 140,
+    "mu_mean": 0.1649,
+    "mu_std": 0.0808,
+    "alpha_mean": 0.2771,
+    "alpha_std": 0.2689,
+    "beta_mean": 0.6205,
+    "beta_std": 0.2553,
+    "n_em_mean": 1.0411,
+    "n_em_std": 2.2872,
+    "n_proxy_corr_with_em": -0.269,
+    "note": "EM branching ratio is noisy on 30d windows (std=2.29 >> mean=1.04, ~6 events/window). EM is used for parameter reporting only. Trading signal uses count-based n_proxy (rolling shock density / expected rate) which is more stable on daily data."
+  },
+  "hawkes_proxy": {
+    "description": "n_hat = shock_count_30d / 6.0 (branching ratio proxy)",
+    "n_hat_mean": 1.039,
+    "n_hat_std": 0.4144,
+    "n_hat_gt_threshold": 232,
+    "threshold_used": 1.2
+  },
+  "strategy_params": {
+    "signal": "long BTC+ETH after cascade-down (cascade exhaustion bounce)",
+    "n_threshold": 1.2,
+    "direction_threshold_pct": 1.0,
+    "position_long": 1.0,
+    "position_cash": 0.0,
+    "cost_bps_per_side": 7.0,
+    "execution_lag_days": 1,
+    "underlying": "50% BTC + 50% ETH",
+    "active_long_days": 28,
+    "cash_days": 702,
+    "theoretical_basis": "Filimonov & Sornette 2012: when branching ratio n is elevated, price moves are endogenous/reflexive. After a cascade-down, selling is exhausted \u2192 mean reversion. Contrast: when n is low (external information shock), direction is less predictable."
+  },
+  "performance": {
+    "full_sharpe": 1.0511,
+    "is_sharpe": 1.0614,
+    "oos_sharpe": 1.0419,
+    "oos_maxdd": -0.070001,
+    "oos_ann_ret": 0.206,
+    "oos_ann_vol": 0.1974,
+    "n_is_days": 489,
+    "n_oos_days": 211,
+    "oos_split_date": "2025-10-24"
+  },
+  "walkforward": {
+    "n_folds": 4,
+    "fold_sharpes": [
+      1.4541,
+      0.9148,
+      0.1755,
+      1.251
+    ],
+    "fold_details": [
+      {
+        "fold": 1,
+        "n_days": 175,
+        "sharpe": 1.4541,
+        "start_date": "2024-06-22",
+        "end_date": "2024-12-13"
+      },
+      {
+        "fold": 2,
+        "n_days": 175,
+        "sharpe": 0.9148,
+        "start_date": "2024-12-14",
+        "end_date": "2025-06-06"
+      },
+      {
+        "fold": 3,
+        "n_days": 175,
+        "sharpe": 0.1755,
+        "start_date": "2025-06-07",
+        "end_date": "2025-11-28"
+      },
+      {
+        "fold": 4,
+        "n_days": 175,
+        "sharpe": 1.251,
+        "start_date": "2025-11-29",
+        "end_date": "2026-05-22"
+      }
+    ],
+    "wf_mean": 0.9488,
+    "wf_min": 0.1755,
+    "all_positive": true
+  },
+  "correlation_matrix_6x6": {
+    "K198": {
+      "K198": 1.0,
+      "K204": 0.8622,
+      "K208": 0.0903,
+      "K226": 0.0779,
+      "K233": -0.0425,
+      "K235": 0.1297
+    },
+    "K204": {
+      "K198": 0.8622,
+      "K204": 1.0,
+      "K208": 0.0527,
+      "K226": 0.0858,
+      "K233": -0.0586,
+      "K235": 0.0748
+    },
+    "K208": {
+      "K198": 0.0903,
+      "K204": 0.0527,
+      "K208": 1.0,
+      "K226": 0.0002,
+      "K233": 0.0794,
+      "K235": 0.0443
+    },
+    "K226": {
+      "K198": 0.0779,
+      "K204": 0.0858,
+      "K208": 0.0002,
+      "K226": 1.0,
+      "K233": 0.1213,
+      "K235": -0.2284
+    },
+    "K233": {
+      "K198": -0.0425,
+      "K204": -0.0586,
+      "K208": 0.0794,
+      "K226": 0.1213,
+      "K233": 1.0,
+      "K235": -0.0605
+    },
+    "K235": {
+      "K198": 0.1297,
+      "K204": 0.0748,
+      "K208": 0.0443,
+      "K226": -0.2284,
+      "K233": -0.0605,
+      "K235": 1.0
+    }
+  },
+  "acceptance_gates": {
+    "gate_oos_sh_gt_1": {
+      "threshold": 1.0,
+      "value": 1.0419,
+      "pass": true
+    },
+    "gate_wf_all_positive": {
+      "fold_sharpes": [
+        1.4541,
+        0.9148,
+        0.1755,
+        1.251
+      ],
+      "all_positive": true,
+      "pass": true
+    },
+    "gate_corr_lt_0_5": {
+      "max_abs_rho_k229": 0.2284,
+      "abs_rho_k233": 0.0605,
+      "max_overall": 0.2284,
+      "pass": true
+    },
+    "overall": "ACCEPT"
+  },
+  "accepted": true,
+  "verdict": "ACCEPT"
+}
