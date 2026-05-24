@@ -1,0 +1,227 @@
+{
+  "wave": "K150",
+  "ts": "2026-05-25 00:35:58",
+  "hypothesis": "Bitwise 2026 BTC/ETH trend rotation: 50/50 long when both above EMA, else flat. Outperforms passive BH on Sharpe + MDD.",
+  "data_range": {
+    "start": "2024-05-02 16:00:00",
+    "end": "2026-05-24 08:00:00",
+    "n_bars": 4511
+  },
+  "config": {
+    "symbols": [
+      "BTC",
+      "ETH"
+    ],
+    "cost_per_side": 0.0007,
+    "is_frac": 0.7,
+    "variants": [
+      {
+        "name": "V_ema200",
+        "ema": 200,
+        "mode": "both_up"
+      },
+      {
+        "name": "V_ema100",
+        "ema": 100,
+        "mode": "both_up"
+      },
+      {
+        "name": "V_ema200_long_only",
+        "ema": 200,
+        "mode": "all_up_strict"
+      }
+    ],
+    "primary_variant": "V_ema200",
+    "n_perm": 200,
+    "n_boot": 200,
+    "boot_block": 20,
+    "wf_folds": 3,
+    "n_trials_dsr": 3
+  },
+  "variant_results": {
+    "V_ema200": {
+      "is_sharpe": 1.0705751915506239,
+      "oos_sharpe": -0.9062596226464861,
+      "full_sharpe": 0.6126386586386252,
+      "is_ann_return": 0.3678578262089227,
+      "oos_ann_return": -0.16675106117948812,
+      "full_ann_return": 0.17877505871777433,
+      "is_mdd": -0.19569328986297296,
+      "oos_mdd": -0.17758914181455387,
+      "full_mdd": -0.202059645287061,
+      "is_win_rate": 0.5077041602465331,
+      "oos_win_rate": 0.4581151832460733,
+      "full_win_rate": 0.49642857142857144,
+      "is_calmar": 1.8797671931751039,
+      "oos_calmar": -0.9389710399840586,
+      "full_calmar": 0.8847637956792073,
+      "config": {
+        "ema": 200,
+        "mode": "both_up"
+      },
+      "n_rebalances": 124,
+      "frac_time_invested": 0.3586787851917535,
+      "total_cost": 0.0868
+    },
+    "V_ema100": {
+      "is_sharpe": 1.595868773032062,
+      "oos_sharpe": -1.0733156551308547,
+      "full_sharpe": 0.8820122194592507,
+      "is_ann_return": 0.6161027269025798,
+      "oos_ann_return": -0.2393056884032384,
+      "full_ann_return": 0.28897680109335844,
+      "is_mdd": -0.2588494828869372,
+      "oos_mdd": -0.2155169889069526,
+      "full_mdd": -0.27614524409006247,
+      "is_win_rate": 0.5011152416356878,
+      "oos_win_rate": 0.46511627906976744,
+      "full_win_rate": 0.49174917491749176,
+      "is_calmar": 2.380158229528653,
+      "oos_calmar": -1.1103796949694595,
+      "full_calmar": 1.0464666956172928,
+      "config": {
+        "ema": 100,
+        "mode": "both_up"
+      },
+      "n_rebalances": 188,
+      "frac_time_invested": 0.3821769009088894,
+      "total_cost": 0.1316
+    },
+    "V_ema200_long_only": {
+      "is_sharpe": 1.0705751915506239,
+      "oos_sharpe": -0.9062596226464861,
+      "full_sharpe": 0.6126386586386252,
+      "is_ann_return": 0.3678578262089227,
+      "oos_ann_return": -0.16675106117948812,
+      "full_ann_return": 0.17877505871777433,
+      "is_mdd": -0.19569328986297296,
+      "oos_mdd": -0.17758914181455387,
+      "full_mdd": -0.202059645287061,
+      "is_win_rate": 0.5077041602465331,
+      "oos_win_rate": 0.4581151832460733,
+      "full_win_rate": 0.49642857142857144,
+      "is_calmar": 1.8797671931751039,
+      "oos_calmar": -0.9389710399840586,
+      "full_calmar": 0.8847637956792073,
+      "config": {
+        "ema": 200,
+        "mode": "all_up_strict"
+      },
+      "n_rebalances": 124,
+      "frac_time_invested": 0.3586787851917535,
+      "total_cost": 0.0868
+    }
+  },
+  "baselines": {
+    "BH_BTC": {
+      "is_sharpe": 1.0093549497870216,
+      "oos_sharpe": -1.48348469679173,
+      "full_sharpe": 0.27279154356606644,
+      "is_ann_return": 0.5990792182480089,
+      "oos_ann_return": -0.49074992221476166,
+      "full_ann_return": 0.13433964963677925,
+      "is_mdd": -0.30628675251542425,
+      "oos_mdd": -0.45662382092170983,
+      "full_mdd": -0.49823853974414534,
+      "is_win_rate": 0.5129911280101395,
+      "oos_win_rate": 0.5110782865583456,
+      "full_win_rate": 0.5124168514412417,
+      "is_calmar": 1.955942310034581,
+      "oos_calmar": -1.0747357008755416,
+      "full_calmar": 0.26962918144743503
+    },
+    "BH_ETH": {
+      "is_sharpe": 0.29032682386472075,
+      "oos_sharpe": -1.5890523534896395,
+      "full_sharpe": -0.2499132872975641,
+      "is_ann_return": 0.22055065056944234,
+      "oos_ann_return": -0.641873373897089,
+      "full_ann_return": -0.1551475730525148,
+      "is_mdd": -0.6510646248552598,
+      "oos_mdd": -0.5705700408096062,
+      "full_mdd": -0.6510646248552598,
+      "is_win_rate": 0.5047528517110266,
+      "oos_win_rate": 0.5088757396449705,
+      "full_win_rate": 0.5059893522626442,
+      "is_calmar": 0.3387538535340845,
+      "oos_calmar": -1.1249685892836354,
+      "full_calmar": -0.23829826891148653
+    },
+    "BH_50_50": {
+      "is_sharpe": 0.6141521823835702,
+      "oos_sharpe": -1.586226285060126,
+      "full_sharpe": -0.03924319512465037,
+      "is_ann_return": 0.3970530341202809,
+      "oos_ann_return": -0.5729449541336944,
+      "full_ann_return": -0.021046678345492786,
+      "is_mdd": -0.5035395560894615,
+      "oos_mdd": -0.5167004467303699,
+      "full_mdd": -0.5592992932108414,
+      "is_win_rate": 0.5183776932826363,
+      "oos_win_rate": 0.5103397341211225,
+      "full_win_rate": 0.5159645232815965,
+      "is_calmar": 0.7885240182595274,
+      "oos_calmar": -1.1088532200024874,
+      "full_calmar": -0.03763043973230757
+    }
+  },
+  "audit_primary": {
+    "walk_forward": [
+      {
+        "fold": 0,
+        "n": 1503,
+        "sharpe": 1.021622970642694,
+        "ann_return": 0.33076497831708274,
+        "mdd": -0.12074343958715161
+      },
+      {
+        "fold": 1,
+        "n": 1503,
+        "sharpe": 1.2588423052682878,
+        "ann_return": 0.4746997043828549,
+        "mdd": -0.1581137113057407
+      },
+      {
+        "fold": 2,
+        "n": 1503,
+        "sharpe": -0.8699228506242439,
+        "ann_return": -0.16501612762656226,
+        "mdd": -0.19144737605234552
+      }
+    ],
+    "wf_positive_folds": 2,
+    "block_bootstrap": {
+      "mean": 0.561521617404004,
+      "ci_lo": -0.7708839215617865,
+      "ci_hi": 2.016957957667756,
+      "n_boot": 200,
+      "block": 20
+    },
+    "permutation": {
+      "n_perm": 200,
+      "p_value": 0.13,
+      "null_mean": -0.2729911764252872,
+      "null_std": 0.7700371745519963,
+      "null_q95": 0.8958854113857716,
+      "observed": 0.6126386586386252
+    },
+    "dsr": 1.0,
+    "n_trials": 3,
+    "sample_size": 4511
+  },
+  "primary_variant": "V_ema200",
+  "edge_vs_bh50_50": 0.67996666241364,
+  "gates": {
+    "g1_oos_sharpe_gt_1": false,
+    "g2_n_rebalances_gte_5": true,
+    "g3_perm_p_lt_005": false,
+    "g4_bootstrap_lo_gt_0": false,
+    "g5_dsr_gt_095": true,
+    "g6_wf_2of3_positive": true,
+    "g7_oos_mdd_gt_neg25": true,
+    "g8_edge_vs_bh5050_gt_03": true
+  },
+  "n_gates_passed": 5,
+  "verdict": "REJECT",
+  "bitwise_2026_replicated": true
+}

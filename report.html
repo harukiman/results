@@ -761,8 +761,8 @@ window.__renderWhenReady = function(fn, label) {
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
     <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 00:40 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
-    <strong>🏆 PRODUCTION:</strong> <span style="color:var(--accent-green);font-weight:700;">K136 6戦略 ensemble (確定) OOS Sh +4.02 / MaxDD -0.66% / DR 3.03</span> &nbsp;|&nbsp; <span style="color:var(--text-secondary);font-size:0.85em;">K146 bake-off で K136 全勝 vs K142-swap</span> &nbsp;|&nbsp;
-    <strong>7 ACCEPT base + 2 ensembles (K124/K136) / 22 REJECT / 3 CONDITIONAL</strong> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);">🆕 K147 hidden RSI div 4H Sh+1.72 OOS, 6/6 gates (workhorse, K149 で integration検証)</span>
+    <strong>🏆 PRODUCTION v4 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K149 7戦略 ensemble OOS Sh +4.49 / MaxDD -0.66% / DR 3.30</span> &nbsp;|&nbsp; <span style="color:var(--text-secondary);font-size:0.85em;">+K147 で K136 (Sh+3.98) から +0.51 lift, 16/16 cells improved</span> &nbsp;|&nbsp;
+    <strong>7 ACCEPT base + 3 ensembles (K124/K136/K149) / 23 REJECT / 3 CONDITIONAL</strong>
   </div>
 
   <header class="report-header">
@@ -7372,6 +7372,40 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
+          <summary><strong>⭐⭐ 2026-05-25 0:45 JST — K149 NEW PRODUCTION (7戦略 ensemble v4)</strong></summary>
+          <ul>
+            <li><strong>K149 = K136 + K147 (hidden RSI div 4H)</strong> = 7戦略 multi-axis</li>
+            <li>P3 risk-parity cap30: Full Sh <strong>3.89</strong>, OOS Sh <strong>4.49</strong>, Full MaxDD -1.81%</li>
+            <li>vs K136: OOS +0.51 lift, Full +0.79 lift, 全 16/16 portfolio cells 改善</li>
+            <li>K147 correlation max |ρ| = 0.10 = <strong>過去 cleanest add ever</strong></li>
+            <li>DR P3 RP: 3.05 → <strong>3.30 (新最高)</strong></li>
+            <li>Recommended weights: v4.1=13.9%, V1=11.5%, K114=8.7%, K116=5.4%, K121=30%, K133=17.1%, K147=13.4%</li>
+            <li>K147 standalone Sh 2.31 (2nd best after V1 3.16)</li>
+            <li><strong>Ensemble 進化チェーン</strong>: 単一→K124 (5戦略)→K136 (+K133, DD圧縮)→K149 (+K147, さらに improve)</li>
+          </ul>
+        </details>
+        <details>
+          <summary><strong>🎯 2026-05-25 0:42 JST — K147 hidden RSI div 7番目 ACCEPT (6/6 gates)</strong></summary>
+          <ul>
+            <li>V_long_short_h12 workhorse: OOS Sh +1.72, Full +2.52, MDD -4.7%, perm p=0.000</li>
+            <li>V_bearish_h6 OOS Sh +4.37 (但し portfolio diversification artifact, per-sym ~1.7)</li>
+            <li>Coinbase Mar 2026 hidden bearish div 仮説完全 replicate</li>
+            <li>NEAR/LINK/AVAX 上位 (mid-cap alts), BTC/ETH/TAO 弱 (retail flow consistent)</li>
+            <li>Mean-reversion horizon insight: 4H hidden div は 12-24h impulse 捕捉 (multi-day reversal でない)</li>
+            <li>K149 で ensemble integration 確定</li>
+          </ul>
+        </details>
+        <details>
+          <summary><strong>🔬 2026-05-25 0:45 JST — K148/K150 REJECT + 知見</strong></summary>
+          <ul>
+            <li><strong>K148 vol periodicity REJECT 1/7</strong>: rolling-best-hour adapter は regime drift で破壊</li>
+            <li>但し descriptive pattern 強発見: 00 UTC +73%, 20 UTC +82%, 08/12 UTC -83%, US-session skew</li>
+            <li>→ K151 で STATIC pre-registered hour bucket 再試行 (K131 reframing pattern)</li>
+            <li><strong>K150 Bitwise rotation REJECT 5/8</strong>: drawdown protection 実証 (MDD -17.8% vs BH50/50 -55.9%) だが Sharpe-wise marginal (perm p=0.13)</li>
+            <li>Bitwise の真 edge は risk-adjusted DD, not Sharpe (asymmetric value: 時 in market 36% で BH 比 DD半減)</li>
+          </ul>
+        </details>
+        <details>
           <summary><strong>📋 2026-05-25 0:30 JST — HTML 監査 #3 (K129以降 18 wave 経過)</strong></summary>
           <ul>
             <li><strong>累計 ACCEPT 6 + 2 ensembles / 22 REJECT / 3 CONDITIONAL</strong></li>
