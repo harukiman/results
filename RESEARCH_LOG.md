@@ -3356,3 +3356,31 @@ momentum overshoots は典型的に継続、reverse しない。
 **24候補スコア**: 4/24 = 16.7% (継続低下)
 
 **最終確定**: これ以上の strategy hunting は明確に非効率。4-way mix が production 最終形。
+
+### 2026-05-24 06:20 JST: Wave K32 — Live signal check (4-way mix 現在状態)
+
+**現在のレジーム** (2026-05-24 10:07 JST 取得):
+- BTC vol_z (4h): **-1.25** (非常に低ボラ)
+- BTC vol_z (8h): -0.54
+
+**結果**: **20 個の possible signals 全て flat** (シグナル発火なし)
+- Axis 1 ATR×8: 全 flat (vol_z 低 = フィルター ON だが圧縮+EMA cross 条件不満)
+- Axis 2 FOPD×6: 全 flat (3項一致 条件不満)
+- Axis 3 8H Meme: BONK/SHIB 共 flat
+- Axis 4 vol_MR×4: 全 flat (vol_z -1.25 だが trend filter 不満)
+
+**解釈**: 現在のクリプト市場は<strong>低ボラ・横ばい局面</strong>。
+- ATR は「圧縮」を待っているが、価格 movement 鈍く condition 満たさず
+- FOPD は過熱検出だが、市場が冷えていて FR shock も発生せず
+- vol_MR の低 vol_z レジームで bullish/bearish trend が弱く long/short どちらも fire しない
+
+**実運用での示唆**: シグナル発火頻度は規則的でなく、市場状況依存。
+過去730日 daily pos rate ~22% は「78%の日は flat or signal なし」を意味する。
+これは normal — 戦略の selectivity の現れ。
+
+**累計試行**: ~745,581 (live check は新試行なし)
+
+**今後の自然進行**:
+- 並列稼働 daemon (com.cryptolab.paper-trade-4way) は4h周期で signal check 自動実行
+- いずれ vol_z 高 → FOPD/vol_MR 発火、価格動意で ATR 発火
+- リアル運用準備が整っている
