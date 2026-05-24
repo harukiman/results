@@ -3125,3 +3125,49 @@ HTML サイズ: 524KB
 
 **累計試行**: ~738,393 + 4266 (K22) = ~742,659
 **累計棄却ファミリー**: 109+ (VWAP)
+
+### 2026-05-24 05:20 JST: Wave K23 — 動的加重 (rolling Sharpe based) → **棄却 (静的劣化)**
+
+仮説: 各axis を 60日 trailing Sharpe で動的配分、レジーム変化を捕捉
+
+**結果**:
+| Variant | Sharpe | Return | DD | Calmar |
+|---------|--------|--------|-----|--------|
+| Static 4-way mix (baseline) | +3.61 | +66.0% | -1.8% | 36.65 |
+| Dynamic (rolling 60d Sh) | +2.61 | +68.8% | -3.1% | 22.27 |
+
+**ΔSharpe = -1.00, ΔCalmar = -14.38** — 大幅劣化
+
+**原因 (Wave J20 と同じパターン)**:
+- 「動的」が「最近の悪化を chase」する behavior に
+- 静的 weight は diversification の本来の効果を享受
+- 動的調整は<strong>過去の Sharpe = 未来の Sharpe の予測力なし</strong>を前提とすると有効、現実は予測力低い
+
+**学び確定**: 動的加重 (rolling Sharpe based) は 4-way mix で機能しない。<strong>固定 85/15 が本研究の最終形</strong>。
+
+**Wave J+K 総候補スコア更新**:
+| Wave | 候補 | Success |
+|------|------|---------|
+| J8 | FToD | ❌ |
+| J10 | LISRM | ❌ |
+| J11 | HLWI | ❌ |
+| J12 | FOPD | ✅ |
+| J17 | S3I signal | ❌ |
+| J20 | Dynamic regime switch | ❌ |
+| J21 | LiqCascadeFade | ❌ |
+| J22 | MetaLabel | ❌ |
+| J24 | BTC.D Inflection | ❌ |
+| J27 | 8H Meme satellites | ✅ |
+| K6 | Pure Funding Carry | ❌ |
+| K11 | vol_z MR | ✅ |
+| K13 | 4-way mix composite | ✅ |
+| K16 | BTC/ETH ratio MR | ❌ |
+| K18 | S3I meta-filter | ❌ |
+| K19 | Meme corr breakdown | ❌ |
+| K21 | Day-of-week | ❌ |
+| K22 | VWAP MR | ❌ |
+| K23 | Dynamic weights | ❌ |
+
+**成功率: 4/19 = 21.1%** (業界平均水準維持)
+
+**累計試行**: ~742,659 + 2 (K23 variants) = ~742,661
