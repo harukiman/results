@@ -3858,3 +3858,35 @@ K39/K41 の wash trade 仮説を実装版で検証:
 
 ### 累計実績
 - **50 戦略候補テスト** (Wave J+K), **5 採用** (FOPD, 8H Meme, vol_z MR, OI capit, BB squeeze) = 成功率 10%
+
+## Wave K87-K91: 最終 robustness 検証 + Production support tooling (2026-05-23)
+
+### K87: BTC big-move reversion
+- 10/96 Sh>=1.0, 3/96 Sh>=1.5 (BNB best Sh+1.76)
+- 限定的 alpha、production 不適
+
+### K88: BB squeeze + vol_z filter combination
+- vol_z filter (1.0/1.5/2.0) で BB squeeze improvement なし
+- Mean Sh ~0.92 across all filter levels
+
+### K89: STRATEGY_REGISTRY.json updated with v4
+- v4_mix_production セクション追加
+- Evolution history (v1→v2→v3→v4)
+- Rejection log 2026-05-23
+
+### K90: Daemon health monitor script (`monitor_v4_daemon.py`)
+- launchctl status check
+- Equity DD threshold alerts (5%)
+- Silent detection (8h)
+- Signal activity per axis
+
+### K91: Placebo / temporal robustness test
+- **Block bootstrap (7d blocks)**: Sharpe 95% CI [+3.02, +4.70]
+- **Random sign-flip**: 0/1000 が orig Sharpe を超える (p~0)
+- **Reverse time**: same Sharpe (期待通り)
+- **結論**: v4 alpha は genuine temporal structure を持つ
+
+### 累計 (Wave J + K まで)
+- **55 戦略候補テスト**、**5 採用** (FOPD, 8H Meme, vol_z MR, OI capit, BB squeeze)
+- 成功率 9%
+- v4 mix: **§6 8/8 PASS**, Sh +3.88, MC ruin 0%, 60d pos 99%
