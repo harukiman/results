@@ -759,10 +759,10 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 05:00 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 05:30 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
-    <strong>🏆 PRODUCTION v5:</strong> <span style="color:var(--accent-green);font-weight:700;">K176 8戦略 ensemble OOS Sh +5.41</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐ K182 PURE CARRY 4 ACCEPT (BTC/ETH/DOGE/AVAX), K188 で v6 = K176 + carry (cap 7%) 検証中</span> &nbsp;|&nbsp;
-    <strong>12 ACCEPT base + 4 ensembles (K124/K136/K149/K176) / 45 REJECT / 3 CONDITIONAL / 2 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#e88;font-weight:700;">⚠ K186: BTC carry DECAYING (Sh 24→5, p&lt;0.0001), AVAX 4.3x 強化中。R7-2 警告 部分実証</span>
+    <strong>🏆 PRODUCTION v6 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K188 9戦略 ensemble OOS Sh +5.48 / MaxDD -0.45% (Safer Carry, cap 7%)</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐ K188 = K176 + V_carry_panel (ETH35/DOGE30/AVAX25/BTC10, K186 decay-aware)</span> &nbsp;|&nbsp;
+    <strong>12 ACCEPT base + 5 ensembles (K124/K136/K149/K176/K188) / 46 REJECT / 3 CONDITIONAL / 2 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#e88;font-weight:700;">⚠ K186 monitoring: BTC carry DECAYING, AVAX STRENGTHENING (4.3x)</span>
   </div>
 
   <header class="report-header">
@@ -7516,6 +7516,32 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
+          <summary><strong>★★★★★ 2026-05-25 5:30 JST — K188 NEW PRODUCTION v6 SAFER (9戦略, carry cap 7% decay-aware)</strong></summary>
+          <ul>
+            <li><strong>K188 = K176 + V_carry_panel_weighted</strong> (ETH35/DOGE30/AVAX25/BTC10 sub-alloc, total 7% cap)</li>
+            <li>OOS Sh: K176 5.39 → K185 cap20 5.64 → <strong>K188 cap7 5.48</strong> (+0.10 lift, near-miss strict +0.10)</li>
+            <li>MaxDD: -0.49% → -0.45% (改善), 16/16 cells improve</li>
+            <li>BTC=0 stress test で OOS essentially unchanged → BTC contribution immaterial → decay risk hedged</li>
+            <li><strong>K185 (cap 20% equal) vs K188 (cap 7% K186-weighted)</strong>:
+              <ul>
+                <li>K185 +0.16 Sh higher だが HL counterparty 2.86x concentration risk</li>
+                <li>K188 -0.16 Sh trade-off は BTC decay tail risk hedge で正当化</li>
+                <li>K185 はオペレーター明示同意あれば利用可能 (aggressive variant)</li>
+              </ul>
+            </li>
+            <li><strong>Walk-forward 4-fold</strong>: mean OOS Sh 4.91, min 2.38 (fold 3: 2025-06-19/11-29 weaker), 強いが episodic</li>
+            <li><strong>Monitoring triggers (K188 仕様)</strong>:
+              <ul>
+                <li>BTC recent_90d_Sh &lt; 3.0 → BTC weight 0%</li>
+                <li>Any symbol mean_spread ≤ 0 → COLLAPSE 即時 remove</li>
+                <li>Portfolio OOS Sh -20% rolling 90d → K189 decay re-eval</li>
+              </ul>
+            </li>
+            <li>Gross = Net (10bp one-time cost 2yr で negligible)</li>
+            <li>ENSEMBLE 進化 final: v4.1単独 (4.08) → K124 (5戦略, 4.25) → K136 (+K133, DD圧縮) → K149 (+K147, 4.49) → K176 (+K175, 5.41) → <strong>K188 (+V_carry_panel cap 7%, 5.48) v6</strong></li>
+          </ul>
+        </details>
+        <details>
           <summary><strong>⚠★★ 2026-05-25 5:00 JST — K186 carry decay test + K184/K185 統合知見</strong></summary>
           <ul>
             <li><strong>K186 = R7-2 academic warning (carry collapse 2025) を empirical test</strong></li>
