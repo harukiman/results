@@ -761,8 +761,8 @@ window.__renderWhenReady = function(fn, label) {
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
     <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 23:33 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
-    <strong>🏆 ENSEMBLE:</strong> <span style="color:var(--accent-green);font-weight:700;">K124 5戦略合成 OOS Sh +4.25 / MaxDD -1.16% / Calmar 14.0</span> &nbsp;|&nbsp; <span style="color:var(--text-secondary);font-size:0.85em;">構成: v4.1 + K109 V1 + K114 ALCP + K116 vol_only + K121 Weekend, |ρ| max 0.34</span> &nbsp;|&nbsp;
-    <strong>5 base ACCEPT + 1 ensemble / 9 REJECT / 1 CONDITIONAL</strong>
+    <strong>🏆 ENSEMBLE:</strong> <span style="color:var(--accent-green);font-weight:700;">K124 5戦略 OOS Sh +4.25 / MaxDD -1.16% / Calmar 14.0</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);">🆕 K133 funding-reversal 5d Sh +0.83 OOS, p=0.003 (6番目候補, K135 で integration 検証)</span> &nbsp;|&nbsp;
+    <strong>6 ACCEPT / 1 ensemble / 16 REJECT / 1 CONDITIONAL</strong>
   </div>
 
   <header class="report-header">
@@ -7372,6 +7372,19 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
+          <summary><strong>🎯 2026-05-24 23:37 JST — K133 ACCEPT (6番目候補) — funding REVERSAL at 5d</strong></summary>
+          <ul>
+            <li><strong>K127 → K128 → K129 → K131 → K133 の反復精製で発見</strong>: 24h continuation 微弱、5-7d REVERSAL 強</li>
+            <li><strong>V_rev_3d_z15</strong>: OOS Sh <strong>+0.83</strong>, perm p <strong>0.003</strong>, MaxDD -10.8%</li>
+            <li><strong>5/6 §6 gates PASS</strong> (DSR_oos のみ sample size 不足、DSR_full=0.88 で本来は significant)</li>
+            <li><strong>K131 implied prediction 完全 replicate</strong>: continuation perm p=0.92-0.98 → reversal symmetric p=0.013-0.043 完全一致</li>
+            <li><strong>P&amp;L 分解</strong>: price 98%, funding 3-4%, cost ~20% of net → 純 mean reversion edge (carry play でない)</li>
+            <li><strong>Universe</strong>: 長 sleeve = AVAX/BNB/SOL/INJ (chronic negative funding), 短 = WIF/OP/INJ overpricing fade</li>
+            <li><strong>次</strong>: K135 で K124 ensemble 統合検証、K129 との correlation 確認 (同一 window/hold)</li>
+            <li><strong>Lesson</strong>: 失敗 wave 単独棄却せず、symmetric implication を必ず展開 (K131 の null mean explicit 化が次仮説源)</li>
+          </ul>
+        </details>
+        <details>
           <summary><strong>⚠️ 2026-05-24 23:33 JST — Methodology 重要発見: Sign-mirror 計算の落とし穴 (K129 から)</strong></summary>
           <ul>
             <li><strong>事象</strong>: K128 が「sign-mirrored V_3d_z15 で Sh +0.57」と報告 → K129 で再現試みると実は <strong>+0.06 のみ</strong></li>
