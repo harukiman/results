@@ -1,0 +1,198 @@
+{
+  "wave": "K217",
+  "task": "Meta-Ensemble: K198 \u00d7 K204 portfolio combination",
+  "as_of": "2026-05-24T22:02:11.704738+00:00",
+  "runtime_s": 0.07,
+  "correlation": {
+    "k198_k204_daily_rho": 0.7977,
+    "high_correlation_flag": false,
+    "interpretation": "Meaningful diversification possible"
+  },
+  "acceptance_gates": {
+    "oos_sharpe_threshold": 10.33,
+    "wf_min_threshold": 6.57,
+    "maxdd_threshold": -0.0053
+  },
+  "baselines": {
+    "K198": {
+      "oos_sharpe": 10.2796,
+      "oos_maxdd": -0.005266,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.577,
+      "oos_ann_vol": 0.0561,
+      "fold_sharpes": [
+        6.5911,
+        7.3739,
+        7.9652,
+        9.731
+      ],
+      "wf_mean": 7.9153,
+      "wf_min": 6.5911,
+      "wf_max": 9.731,
+      "wf_std": 1.3349
+    },
+    "K204": {
+      "oos_sharpe": 10.3627,
+      "oos_maxdd": -0.00532,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.5798,
+      "oos_ann_vol": 0.0559,
+      "fold_sharpes": [
+        5.92,
+        6.2598,
+        8.183,
+        9.6915
+      ],
+      "wf_mean": 7.5136,
+      "wf_min": 5.92,
+      "wf_max": 9.6915,
+      "wf_std": 1.761
+    }
+  },
+  "variants": {
+    "K217a": {
+      "oos_sharpe": 10.43,
+      "oos_maxdd": -0.005293,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.5784,
+      "oos_ann_vol": 0.0555,
+      "fold_sharpes": [
+        6.9565,
+        6.8323,
+        8.1303,
+        9.8314
+      ],
+      "wf_mean": 7.9376,
+      "wf_min": 6.8323,
+      "wf_max": 9.8314,
+      "wf_std": 1.3914,
+      "description": "Fixed 50/50 blend"
+    },
+    "K217b": {
+      "oos_sharpe": 10.4284,
+      "oos_maxdd": -0.005293,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.5781,
+      "oos_ann_vol": 0.0554,
+      "fold_sharpes": [
+        7.1616,
+        6.9094,
+        8.1296,
+        9.8303
+      ],
+      "wf_mean": 8.0077,
+      "wf_min": 6.9094,
+      "wf_max": 9.8303,
+      "wf_std": 1.324,
+      "description": "Inverse-vol weighted (30d rolling)"
+    },
+    "K217c": {
+      "oos_sharpe": 10.4312,
+      "oos_maxdd": -0.005293,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.5783,
+      "oos_ann_vol": 0.0554,
+      "fold_sharpes": [
+        6.5615,
+        6.8863,
+        8.1306,
+        9.8326
+      ],
+      "wf_mean": 7.8527,
+      "wf_min": 6.5615,
+      "wf_max": 9.8326,
+      "wf_std": 1.483,
+      "description": "Rolling 90d Sharpe-weighted"
+    },
+    "K217d": {
+      "oos_sharpe": 10.4211,
+      "oos_maxdd": -0.005288,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.5796,
+      "oos_ann_vol": 0.0556,
+      "fold_sharpes": [
+        6.9579,
+        6.8435,
+        8.1133,
+        9.8354
+      ],
+      "wf_mean": 7.9375,
+      "wf_min": 6.8435,
+      "wf_max": 9.8354,
+      "wf_std": 1.3892,
+      "description": "Recency-biased toward K198 (60d half-life, K198 weight 0.50\u21920.90)",
+      "k198_weight_range": [
+        0.5,
+        0.9
+      ]
+    }
+  },
+  "synergy": {
+    "avg_individual_oos_sh": 10.3211,
+    "best_ensemble_oos_sh": 10.4284,
+    "synergy_delta_oos_sh": 0.1073,
+    "synergy_detected": true,
+    "avg_individual_wf_min": 6.2555,
+    "best_ensemble_wf_min": 6.9094,
+    "wf_min_delta": 0.6539
+  },
+  "verdict": "ACCEPT as K217 v6.6 \u2014 best variant: K217b",
+  "accepted": true,
+  "best_variant": "K217b",
+  "best_variant_metrics": {
+    "oos_sharpe": 10.4284,
+    "oos_maxdd": -0.005293,
+    "oos_n_days": 135,
+    "oos_ann_ret": 0.5781,
+    "oos_ann_vol": 0.0554,
+    "fold_sharpes": [
+      7.1616,
+      6.9094,
+      8.1296,
+      9.8303
+    ],
+    "wf_mean": 8.0077,
+    "wf_min": 6.9094,
+    "wf_max": 9.8303,
+    "wf_std": 1.324,
+    "description": "Inverse-vol weighted (30d rolling)"
+  },
+  "five_way_comparison": {
+    "K198_v6.5": {
+      "oos_sharpe": 10.28,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.91,
+      "wf_min": 6.57
+    },
+    "K204_rejected": {
+      "oos_sharpe": 10.36,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.55,
+      "wf_min": 6.02
+    },
+    "K217a_50_50": {
+      "oos_sharpe": 10.43,
+      "oos_maxdd": -0.005293,
+      "wf_mean": 7.9376,
+      "wf_min": 6.8323
+    },
+    "K217b_inv_vol": {
+      "oos_sharpe": 10.4284,
+      "oos_maxdd": -0.005293,
+      "wf_mean": 8.0077,
+      "wf_min": 6.9094
+    },
+    "K217c_sharpe_wt": {
+      "oos_sharpe": 10.4312,
+      "oos_maxdd": -0.005293,
+      "wf_mean": 7.8527,
+      "wf_min": 6.5615
+    },
+    "K217d_recency": {
+      "oos_sharpe": 10.4211,
+      "oos_maxdd": -0.005288,
+      "wf_mean": 7.9375,
+      "wf_min": 6.8435
+    }
+  }
+}
