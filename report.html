@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MEXC先物 戦略リサーチレポート</title>
+<title>Systematic Alpha Discovery in MEXC Perpetual Futures — A Bias-Controlled Empirical Study</title>
 <style>
   :root {
     --bg-primary: #0d1117;
@@ -456,11 +456,11 @@
   </div>
 
   <header class="report-header">
-    <h1>MEXC先物 戦略リサーチレポート</h1>
-    <div class="subtitle">暗号資産先物アルファ探索 &mdash; 体系的バックテスト＆過学習防止検証</div>
+    <h1 style="font-family:Georgia,serif;letter-spacing:-0.01em;">Systematic Alpha Discovery in MEXC Perpetual Futures</h1>
+    <div class="subtitle" style="font-style:italic;font-family:Georgia,serif;">A Bias-Controlled Empirical Study of Multi-Axis Portfolio Construction with §6 Audit Validation</div>
     <div class="meta">
-      v2.0 &nbsp;|&nbsp; 更新: 2026-05-23 &nbsp;|&nbsp; プロジェクト: crypto-lab &nbsp;|&nbsp; 取引所: MEXC先物 &nbsp;|&nbsp; 98+ ファミリー<br>
-      手法: flearn.pdf &sect;5 過学習防止プロトコル
+      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-23 &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
+      Methodology: §6 strict-gate audit (Bailey-LdP CPCV, Hansen SPA, White RC, Bootstrap CI, Block Permutation)
     </div>
   </header>
 
@@ -1317,6 +1317,46 @@ Plotly.newPlot('sc-fopd-rs', [{
       <p style="font-size:0.85rem;margin-top:8px;color:var(--accent-cyan);">
         Plateau: w_bb ∈ [0.10, 0.20] all Sh > +3.99. 推奨: w_bb=0.15 (DD最小)。
       </p>
+    </div>
+
+    <!-- ── Wave K96-K105: 追加バッチ (2026-05-23) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-cyan);margin-top:18px;">
+      <h3 style="color:var(--accent-cyan);">📊 Wave K96-K105: 追加 10 戦略テスト — 1 改善発見</h3>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>Wave</th><th>戦略</th><th>結果</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr><td>K96</td><td>Multi-TF EMA cross (4h+1d+1w)</td><td>0/32 Sh>=1.0</td><td class="text-red">棄却</td></tr>
+          <tr style="background:rgba(63,185,80,0.15);"><td><strong>K97</strong></td><td><strong>BB squeeze + RSI extreme avoid</strong></td><td class="text-green"><strong>Portfolio Sh +1.79, v4.1 mix Sh +4.08</strong></td><td class="text-green"><strong>★ v4.1 採用</strong></td></tr>
+          <tr><td>K98</td><td>Vol-of-Vol regime</td><td>0/72 Sh>=1.0</td><td class="text-red">棄却</td></tr>
+          <tr><td>K99</td><td>HL range pattern (microstructure)</td><td>4/72 Sh>=1.0, max +1.48</td><td class="text-red">棄却 (weak)</td></tr>
+          <tr><td>K100</td><td>SOL as meme proxy (8H ATR)</td><td>SOL Sh -0.83</td><td class="text-red">棄却</td></tr>
+          <tr><td>K101</td><td>Donchian breakout 4H</td><td>2/216 Sh>=1.0 (DOGE only)</td><td class="text-red">棄却</td></tr>
+          <tr><td>K102</td><td>Long-only momentum + trend</td><td>0/144 Sh>=1.0</td><td class="text-red">棄却</td></tr>
+          <tr><td>K103</td><td>BB v3 (RSI + ADX)</td><td>Sh+4.016 (vs v4.1 +4.08)</td><td class="text-yellow">劣る</td></tr>
+          <tr><td>K104</td><td>OI capit + RSI filter</td><td>RSI filter で OI capit 悪化</td><td class="text-red">棄却</td></tr>
+          <tr><td>K105</td><td>BB squeeze on 18銘柄 universe</td><td>Sh +4.055 (vs 8-sym +4.08)</td><td class="text-yellow">8-sym optimal</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── 将来検討アイデア (Future Ideas) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-purple);margin-top:18px;">
+      <h3 style="color:var(--accent-purple);">💡 Future Ideas — 検討中・実装前のアイデア</h3>
+      <ol style="font-size:0.9rem;padding-left:22px;margin-top:8px;">
+        <li><strong>"Implicit Trader Knowledge" learning system</strong> (2026-05-23 user proposal):
+          <br><span style="color:var(--text-secondary);font-size:0.85rem;">
+          ランダムに特定期間のチャートを切り取り、その先の動きを予想 → 正解と照合 → 特徴学習。<br>
+          人間プロトレーダーの暗黙知・経験を言語化しトレード戦略に活用するメタ学習。<br>
+          Sub-agent 並列で具体化検討中 (chart sampling protocol / feature extraction / verification loop / strategy translation)
+          </span>
+        </li>
+        <li><strong>Order book depth proxy</strong>: bid/ask volume imbalance を MEXC depth API から (未実装)</li>
+        <li><strong>News/social NLP sentiment</strong>: Twitter/Reddit volume + sentiment z-score (要 API 接続)</li>
+        <li><strong>Cross-exchange basis arbitrage</strong>: MEXC vs Bybit perp price diff (要 multi-exchange data)</li>
+        <li><strong>On-chain metrics</strong>: UTXO age, exchange flows, whale movements (未実装)</li>
+        <li><strong>Liquidation cascade real-time</strong>: K63 は sparse signal だが real-time liq feed があれば実用化可能</li>
+        <li><strong>BTC.D regime conditioning</strong>: K58 で発見した構造 (alt vs BTC season) を smart position sizing に活用</li>
+      </ol>
     </div>
 
     <!-- ── 過去発見の折りたたみ (K39-K78) ── -->
@@ -5952,7 +5992,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
-    <p>MEXC先物戦略リサーチレポート &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v4.0</p>
+    <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v4.1</p>
     <p style="margin-top:4px;">更新: 2026-05-24 &nbsp;|&nbsp; 98+ファミリーで710,373+試行 &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
