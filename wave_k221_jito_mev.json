@@ -1,0 +1,114 @@
+{
+  "wave": "K221",
+  "task": "Jito MEV Signal as Alpha Source for SOL Vol/Direction",
+  "as_of": "2026-05-24T22:26:07.062976+00:00",
+  "runtime_s": 108.24,
+  "data_source": {
+    "mev": "Jito kobe.mainnet.jito.network/api/v1/validator_rewards (per-epoch sum)",
+    "sol": "cache/SOLUSDT_1d_730d.parquet (Binance 1d OHLCV)",
+    "k196": "wave_k196_curves.json (rev_carry_SOL panel daily PnL)",
+    "k218": "wave_k218_curves.json (K218e equity curve, 448 days)"
+  },
+  "mev_stats": {
+    "epochs_fetched": 293,
+    "date_range": [
+      "2024-05-25",
+      "2026-05-25"
+    ],
+    "mev_daily_mean_sol": 7942.16,
+    "mev_daily_max_sol": 72541.6,
+    "mev_daily_min_sol": 669.0,
+    "spike_pos_days": 52,
+    "spike_neg_days": 4,
+    "spike_any_days": 56
+  },
+  "predictive_correlation_table": [
+    {
+      "target": "SOL_rvol_1d_fwd1",
+      "lag_days": 1,
+      "pearson_r": -0.0289,
+      "granger_pval": 0.0829,
+      "significant": false
+    },
+    {
+      "target": "SOL_rvol_7d_fwd1",
+      "lag_days": 1,
+      "pearson_r": -0.0923,
+      "granger_pval": 0.0029,
+      "significant": false
+    },
+    {
+      "target": "SOL_rvol_7d_fwd7",
+      "lag_days": 7,
+      "pearson_r": -0.108,
+      "granger_pval": 0.0,
+      "significant": false
+    },
+    {
+      "target": "SOL_ret_fwd1",
+      "lag_days": 1,
+      "pearson_r": 0.0333,
+      "granger_pval": 0.3461,
+      "significant": false
+    },
+    {
+      "target": "SOL_ret_fwd7",
+      "lag_days": 7,
+      "pearson_r": 0.0536,
+      "granger_pval": 0.5935,
+      "significant": false
+    },
+    {
+      "target": "K196_sol_ret_fwd1",
+      "lag_days": 1,
+      "pearson_r": -0.0402,
+      "granger_pval": 0.5488,
+      "significant": false
+    },
+    {
+      "target": "K196_sol_ret_fwd7",
+      "lag_days": 7,
+      "pearson_r": -0.0323,
+      "granger_pval": 0.4354,
+      "significant": false
+    }
+  ],
+  "k218_integration": {
+    "baseline_K218e": {
+      "oos_sharpe": 11.0768,
+      "oos_maxdd": -0.00364,
+      "wf_min": 6.9459,
+      "wf_mean": 8.3239,
+      "wf_folds": [
+        7.5372,
+        6.9459,
+        8.371,
+        10.4415
+      ]
+    },
+    "K218e_jito_filter": {
+      "oos_sharpe": 11.0666,
+      "oos_maxdd": -0.00364,
+      "wf_min": 6.9353,
+      "wf_mean": 8.3125,
+      "wf_folds": [
+        7.5313,
+        6.9353,
+        8.342,
+        10.4416
+      ]
+    },
+    "delta_oos_sharpe": -0.0102,
+    "spike_days": 30,
+    "spike_fraction": 0.0671,
+    "sol_fraction_removed": 0.0385
+  },
+  "acceptance": {
+    "gate_corr_015": false,
+    "gate_granger_010": true,
+    "gate_integration": true,
+    "k222_verdict": "REJECTED",
+    "best_corr": 0.108,
+    "best_granger_pval": 0.0
+  }
+}
