@@ -344,44 +344,89 @@
     font-size: 0.8rem;
   }
 
-  /* TOC */
+  /* TOC — sticky floating left rail */
   .toc {
-    background: var(--bg-secondary);
+    position: fixed;
+    top: 70px;
+    left: 16px;
+    width: 240px;
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+    background: rgba(22,27,34,0.96);
+    backdrop-filter: blur(6px);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 20px 24px;
-    margin-bottom: 40px;
+    padding: 14px 18px;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    font-size: 0.85rem;
   }
   .toc h3 {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-muted);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
   }
   .toc ol {
     list-style: none;
     counter-reset: toc-counter;
+    padding-left: 0;
   }
   .toc li {
     counter-increment: toc-counter;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
   .toc li::before {
     content: counter(toc-counter, decimal-leading-zero) '.';
     color: var(--accent-blue);
     font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    margin-right: 8px;
+    margin-right: 6px;
   }
   .toc a {
     color: var(--text-secondary);
     text-decoration: none;
-    font-size: 0.92rem;
-    transition: color 0.15s;
+    font-size: 0.82rem;
+    transition: color 0.15s, background 0.15s;
+    display: inline-block;
+    padding: 2px 4px;
+    border-radius: 3px;
   }
-  .toc a:hover { color: var(--accent-blue); }
+  .toc a:hover { color: var(--accent-blue); background: rgba(88,166,255,0.08); }
+  .toc a.active {
+    color: var(--accent-green);
+    font-weight: 700;
+    background: rgba(63,185,80,0.12);
+  }
+  .toc-toggle {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 101;
+    background: var(--accent-green);
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  /* Add left margin to main content so TOC doesn't overlap on desktop */
+  body { margin-left: 0; }
+  .container { max-width: 1100px; margin: 0 auto; padding-left: 280px; padding-right: 16px; }
+  /* On smaller screens, hide TOC and show toggle */
+  @media (max-width: 1100px) {
+    .toc { display: none; }
+    .toc.toc-open { display: block; }
+    .toc-toggle { display: block; }
+    .container { padding-left: 16px; }
+  }
 
   /* Responsive */
   @media (max-width: 768px) {
@@ -464,25 +509,51 @@
     </div>
   </header>
 
-  <!-- ==================== TOC ==================== -->
-  <nav class="toc">
-    <h3>目次</h3>
+  <!-- ==================== Floating sticky TOC ==================== -->
+  <button class="toc-toggle" onclick="document.querySelector('.toc').classList.toggle('toc-open')">📑 目次</button>
+  <nav class="toc" id="toc">
+    <h3>目次 (TOC)</h3>
     <ol>
-      <li><a href="#executive-summary">総括</a></li>
+      <li><a href="#tldr">TL;DR (v4.1)</a></li>
+      <li><a href="#strategy-leaderboard">戦略 Leaderboard</a></li>
+      <li><a href="#comparison-chart">vs HODL 視覚化</a></li>
+      <li><a href="#four-way-detail">4-way 詳細</a></li>
+      <li><a href="#strategy-details">戦略詳細</a></li>
+      <li><a href="#executive-summary">総括 (全Wave履歴)</a></li>
       <li><a href="#research-protocol">研究手法</a></li>
       <li><a href="#leaderboard">戦略一覧</a></li>
-      <li><a href="#survivor-card">生存者 (8戦略)</a></li>
+      <li><a href="#survivor-card">生存者カード</a></li>
       <li><a href="#rejected">不合格戦略</a></li>
-      <li><a href="#leverage-artifact">重要発見: レバレッジの幻影</a></li>
-      <li><a href="#scan-summary">スキャン結果一覧</a></li>
+      <li><a href="#leverage-artifact">レバレッジの幻影</a></li>
+      <li><a href="#scan-summary">スキャン結果</a></li>
       <li><a href="#daily-tf-advantage">日足の優位性</a></li>
-      <li><a href="#scan-4h">4時間足スキャン結果</a></li>
-      <li><a href="#asymmetric-edge">非対称エッジ分析</a></li>
+      <li><a href="#scan-4h">4H スキャン</a></li>
+      <li><a href="#asymmetric-edge">非対称エッジ</a></li>
       <li><a href="#portfolio-analysis">ポートフォリオ分析</a></li>
       <li><a href="#cost-model">コストモデル</a></li>
       <li><a href="#methodology">手法詳細</a></li>
     </ol>
   </nav>
+  <script>
+    // Scrollspy: highlight active TOC entry on scroll
+    document.addEventListener('DOMContentLoaded', function() {
+      const tocLinks = document.querySelectorAll('.toc a');
+      const sections = Array.from(document.querySelectorAll('.section[id]'));
+      function onScroll() {
+        const y = window.scrollY + 120;
+        let current = sections[0]?.id;
+        for (const sec of sections) {
+          if (sec.offsetTop <= y) current = sec.id;
+        }
+        tocLinks.forEach(a => {
+          if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+          else a.classList.remove('active');
+        });
+      }
+      window.addEventListener('scroll', onScroll, {passive: true});
+      onScroll();
+    });
+  </script>
 
   <!-- ==================== TL;DR EXECUTIVE SUMMARY ==================== -->
   <section class="section" id="tldr">
@@ -1296,6 +1367,57 @@ Plotly.newPlot('sc-fopd-rs', [{
       </div>
     </details>
     <!-- ============= 古い Wave 履歴 終了 ============= -->
+
+    <!-- ============= LATEST: K108 RCSPL Breakthrough ============= -->
+    <div class="card" style="border:3px solid var(--accent-purple);background:linear-gradient(135deg,rgba(188,140,255,0.20),rgba(188,140,255,0.05));padding:20px;margin-top:18px;">
+      <h3 style="color:var(--accent-purple);font-size:1.3rem;">🧠 最新発見 (Wave K108): RCSPL Baseline 強signal — OOS AUC 0.747, Pseudo-Sharpe +5.17</h3>
+      <p style="font-size:0.95rem;margin-top:10px;">
+        ユーザー提案の「ランダムチャート切片予測学習」を Week-1 baseline で実装・検証。<br>
+        Hand-crafted features (37 dims) + LightGBM (200 rounds), 15 銘柄 730 日, 8,884 snippets, time-based 60/10/30 split:
+      </p>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:10px;">
+        <thead><tr><th>Metric</th><th>Value</th><th>Comments</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(63,185,80,0.15);"><td><strong>OOS AUC</strong></td><td class="text-green"><strong>0.7468</strong></td><td>vs threshold 0.53、大幅クリア</td></tr>
+          <tr><td>OOS Accuracy</td><td>68.0%</td><td>baseline (y_te.mean) 51.4%</td></tr>
+          <tr><td>OOS Log Loss</td><td>0.5933</td><td>—</td></tr>
+          <tr><td>Pseudo-Sharpe (p>0.55 long / p<0.45 short)</td><td class="text-green"><strong>+5.17</strong></td><td>cost 0.14% RT 込み</td></tr>
+          <tr><td>Win rate</td><td>70.28%</td><td>2281 trades (85.6% of bars active)</td></tr>
+          <tr><td>Total OOS return</td><td>+6306%</td><td>(2位先送り — overfit疑い検証必要)</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">Top features (gain importance)</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>Rank</th><th>Feature</th><th>Gain</th><th>解釈</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>btc_concurrent_ret</strong></td><td>7634</td><td>BTC concurrent return 圧倒的予測力</td></tr>
+          <tr><td>2</td><td>ar1 (returns autocorrelation)</td><td>2603</td><td>past N-bar autocorr</td></tr>
+          <tr><td>3</td><td>max_hl_ratio</td><td>2335</td><td>window 内最大 (H-L)/C</td></tr>
+          <tr><td>4</td><td>std_log_vol</td><td>2090</td><td>volume variability</td></tr>
+          <tr><td>5</td><td>hurst_proxy</td><td>1778</td><td>trend/MR regime indicator</td></tr>
+          <tr><td>6</td><td>ret_12</td><td>1764</td><td>last 12-bar return</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-orange);margin-top:14px;">Per-symbol OOS AUC</h4>
+      <p style="font-size:0.85rem;color:var(--text-secondary);">LTC 0.808, SOL 0.798, XRP 0.790, UNI 0.776, TRX 0.575 — TRX が最弱だが残り全銘柄で十分な予測力</p>
+
+      <h4 style="color:var(--accent-yellow);margin-top:14px;">⚠️ 検証必要事項 (overfit/leakage 疑い)</h4>
+      <ul style="font-size:0.88rem;padding-left:22px;margin-top:6px;color:var(--text-secondary);">
+        <li>Pseudo-Sharpe +5.17 / win rate 70% は前例なく高い — 数値が良すぎる</li>
+        <li>btc_concurrent_ret の dominance: feature が future-aligned でないか厳密確認</li>
+        <li>Flat-band masking で easy cases 除外、残り cases が予測しやすい構造かも</li>
+        <li>Active 85.6% (= ほぼ常に建玉) で turnover cost が累積、実際は予想より悪化可能性</li>
+        <li>Week-2: PBO/DSR test、permutation null check、v4.1 への adding 効果計測</li>
+      </ul>
+
+      <h4 style="color:var(--accent-purple);margin-top:14px;">実装詳細</h4>
+      <p style="font-size:0.88rem;">
+        <code>rcspl/snippets.py</code> (data builder), <code>rcspl/features.py</code> (37 features), <code>rcspl/train_baseline.py</code> (LightGBM training).<br>
+        Window: M=64 bars (~10日 4H), Forward: N=12 bars (2日), Stride: 4. Symbols: 15. Total samples: 8,884.
+      </p>
+    </div>
 
     <!-- ============= LATEST FINDING — v4.1 (K97) ============= -->
     <div class="card" style="border:3px solid var(--accent-green);background:linear-gradient(135deg,rgba(63,185,80,0.20),rgba(63,185,80,0.05));padding:20px;margin-top:18px;">
