@@ -3171,3 +3171,46 @@ HTML サイズ: 524KB
 **成功率: 4/19 = 21.1%** (業界平均水準維持)
 
 **累計試行**: ~742,659 + 2 (K23 variants) = ~742,661
+
+### 2026-05-24 05:30 JST: Wave K24 — 🏆 4-way mix Auditor 独立再実装 (G7) → **PASS, §6 完全認定**
+
+監査対象: 4-way mix (85% × 80/10/10 + 15% × vol_MR)
+方法: numpy 直接実装で全 strategy axis 独立再計算 → PRIMARY (pandas) との agreement check
+
+**結果**:
+| Metric | PRIMARY (pandas) | AUDITOR (numpy) | Δ | Threshold | Pass |
+|--------|------------------|-----------------|----|-----------|------|
+| Sharpe | +3.607 | +3.485 | 0.122 | <0.3 | ✓ |
+| Return | +66.02% | +62.18% | 3.84% | <10% | ✓ |
+| Max DD | -1.80% | -1.80% | 0% | <5% | ✓ |
+
+**AGREEMENT: PASS — G7 OK!**
+
+**4-way mix の §6 監査完全認定 (8/8 全クリア)**:
+- G1: OOS Sharpe +3.61 ✓
+- G2: PBO 0.00 ✓
+- G3a-d: DSR N=100→100K 全PASS ✓
+- G3e: DSR N=730K = 1.0 ✓
+- G4: Cost stress worst +3.36 ✓
+- G5: MC ruin 3x=0%, 5x=0%, 10x=0.05% ✓
+- G6: Param plateau (Wave K7) ✓
+- **G7: Auditor numpy reimpl ΔSh=0.122 ✓**
+- G8: H1/H2 両 Sh≥+3.38 (Wave K14) ✓
+- 追加: 60日窓 100% positive (Wave K15) ✓
+- 追加: Hansen SPA p=0.0 + White RC p=0.001 (Wave K2) ✓
+- 追加: Bootstrap 95% CI [+2.73, +4.35] (Wave K7) ✓
+
+**最終的「使用可能」認定**:
+4-way mix は本研究で<strong>最も厳密に validated された戦略</strong>:
+- 国際クオンツ標準 (Bailey-LdP, Hansen, White) 全クリア
+- 独立実装 (numpy) で数値整合性確認
+- 期間 (H1/H2) ・stress test 全クリア
+- 真OOSフォワード稼働中 (paper_trade_4way daemon)
+
+**累計試行**: ~742,661 + reimpl (no new backtests) = ~742,661
+**§6 全合格認定戦略**: 2 (80/10/10 と 4-way mix、両方 G7 PASS)
+
+**Wave J+K 研究フェーズ最終確定 (53 sub-waves)**:
+- 19候補テスト → 4 成功 (21.1%)
+- production 推奨: <strong>4-way mix (FOUR_WAY_MIX_85_15_001)</strong>
+- フォワード OOS 累積中 (com.cryptolab.paper-trade-4way)
