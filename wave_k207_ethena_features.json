@@ -1,0 +1,1307 @@
+{
+  "wave": "K207",
+  "task": "Ethena TVL features added to K198 ML feature matrix (v6.6 candidate)",
+  "as_of": "2026-05-24T21:31:12.154966+00:00",
+  "runtime_s": 3.0,
+  "config": {
+    "strategies": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ],
+    "n_strategies": 10,
+    "n_base_features": 51,
+    "n_ethena_features": 4,
+    "n_total_features": 55,
+    "ethena_features": [
+      "eth_tvl_change_7d",
+      "eth_tvl_change_30d",
+      "eth_tvl_drawdown",
+      "eth_tvl_acceleration"
+    ],
+    "ethena_lag_days": 7,
+    "ml_train_days": 90,
+    "ml_test_days": 30,
+    "oos_frac": 0.3,
+    "k121_cap": 0.3,
+    "carry_fwd_cap": 0.05,
+    "carry_rev_cap": 0.05,
+    "fr_threshold": -0.009735,
+    "feature_win_short": 30,
+    "feature_win_long": 90,
+    "target_horizon_days": 30,
+    "ridge_alpha": 1.0,
+    "date_range": [
+      "2024-07-26",
+      "2026-05-14"
+    ],
+    "n_days_total": 658,
+    "n_days_ml_window": 448,
+    "n_wf_steps": 15
+  },
+  "comparison_table": {
+    "K198_v6.5_baseline": {
+      "description": "K198 Ridge ML, 51 features, production v6.5",
+      "oos_sharpe": 10.28,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.91,
+      "wf_min": 6.57
+    },
+    "K204_rejected": {
+      "description": "K204 (previously rejected)",
+      "oos_sharpe": 10.36,
+      "wf_min": 6.02
+    },
+    "K207_ethena_55feat": {
+      "description": "K207 Ridge ML, 55 features (51 + 4 Ethena TVL)",
+      "oos_sharpe": 8.8748,
+      "oos_maxdd": -0.0063,
+      "oos_sortino": 23.9119,
+      "oos_calmar": 118.4655,
+      "oos_ann_ret": 0.7429,
+      "oos_ann_vol": 0.0629,
+      "oos_n_days": 135,
+      "wf_mean": 7.5252,
+      "wf_min": 6.576,
+      "wf_max": 8.0693,
+      "wf_std": 0.6022,
+      "wf_fold_sharpes": [
+        6.576,
+        7.4347,
+        8.0207,
+        8.0693
+      ],
+      "lift_vs_k198_oos": -1.4052,
+      "lift_vs_k204_oos": -1.4852,
+      "lift_vs_k198_wf_min": 0.006
+    },
+    "WF_static_P3_same_windows": {
+      "description": "Static P3 on same WF windows (apples-to-apples)",
+      "oos_sharpe": 8.7702,
+      "oos_maxdd": -0.0042,
+      "wf_mean": 5.2077,
+      "wf_min": 0.9441,
+      "wf_fold_sharpes": [
+        4.7926,
+        6.0306,
+        0.9441,
+        9.0636
+      ]
+    }
+  },
+  "feature_importance_ranked": {
+    "K116__sh90": 2.147091,
+    "V_rev_carry__sh90": 2.038511,
+    "V_rev_carry__mdd30": 1.87581,
+    "K114__vol30": 1.521921,
+    "K116__vol30": 1.459829,
+    "eth_tvl_change_30d": 1.206562,
+    "V_rev_carry__vol30": 1.185583,
+    "eth_tvl_drawdown": 1.181703,
+    "K175_DAR__sh90": 1.17442,
+    "V_fwd_carry__vol30": 1.130528,
+    "V_rev_carry__sh30": 1.109257,
+    "V1__vol30": 1.102312,
+    "K147__sh90": 1.062121,
+    "K121__sh90": 1.021466,
+    "K114__mdd30": 1.018175,
+    "K116__mdd30": 0.990369,
+    "K147__mdd30": 0.966599,
+    "K116__sh30": 0.938831,
+    "V1__xcorr": 0.934516,
+    "V1__sh90": 0.889986,
+    "K133__sh90": 0.878131,
+    "K114__sh30": 0.853684,
+    "V_fwd_carry__sh30": 0.847495,
+    "V_fwd_carry__mdd30": 0.83617,
+    "V_fwd_carry__sh90": 0.830145,
+    "K121__mdd30": 0.741694,
+    "K175_DAR__sh30": 0.721561,
+    "K133__mdd30": 0.691815,
+    "V1__sh30": 0.682146,
+    "v4.1__vol30": 0.670504,
+    "V_fwd_carry__xcorr": 0.665869,
+    "K147__vol30": 0.632723,
+    "K175_DAR__mdd30": 0.63226,
+    "K147__sh30": 0.57858,
+    "K175_DAR__vol30": 0.564613,
+    "K121__sh30": 0.563318,
+    "K116__xcorr": 0.552985,
+    "K114__xcorr": 0.539722,
+    "K133__vol30": 0.532963,
+    "K133__xcorr": 0.51978,
+    "K147__xcorr": 0.513841,
+    "K121__vol30": 0.505974,
+    "v4.1__mdd30": 0.495841,
+    "v4.1__sh90": 0.49443,
+    "eth_tvl_change_7d": 0.487034,
+    "K133__sh30": 0.483835,
+    "V_rev_carry__xcorr": 0.404601,
+    "K114__sh90": 0.398093,
+    "v4.1__xcorr": 0.397834,
+    "v4.1__sh30": 0.367732,
+    "V1__mdd30": 0.365428,
+    "K121__xcorr": 0.344331,
+    "K175_DAR__xcorr": 0.278514,
+    "fr_mean_ann": 0.259122,
+    "eth_tvl_acceleration": 0.044728
+  },
+  "ethena_feature_rankings": {
+    "eth_tvl_change_7d": {
+      "rank": 45,
+      "importance": 0.487034,
+      "total_features": 55
+    },
+    "eth_tvl_change_30d": {
+      "rank": 6,
+      "importance": 1.206562,
+      "total_features": 55
+    },
+    "eth_tvl_drawdown": {
+      "rank": 8,
+      "importance": 1.181703,
+      "total_features": 55
+    },
+    "eth_tvl_acceleration": {
+      "rank": 55,
+      "importance": 0.044728,
+      "total_features": 55
+    }
+  },
+  "ethena_feature_nonzero": true,
+  "ethena_coefficient_analysis": {
+    "v4.1": {
+      "eth_tvl_change_7d": {
+        "mean_coef": -0.249563,
+        "abs_mean": 0.312586,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.8667
+      },
+      "eth_tvl_change_30d": {
+        "mean_coef": -0.088671,
+        "abs_mean": 0.314801,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.4667
+      },
+      "eth_tvl_drawdown": {
+        "mean_coef": 0.014803,
+        "abs_mean": 0.35687,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.4667
+      },
+      "eth_tvl_acceleration": {
+        "mean_coef": 0.015684,
+        "abs_mean": 0.048774,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.7333
+      }
+    },
+    "V1": {
+      "eth_tvl_change_7d": {
+        "mean_coef": 0.275432,
+        "abs_mean": 0.33371,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.8
+      },
+      "eth_tvl_change_30d": {
+        "mean_coef": 0.016234,
+        "abs_mean": 0.414026,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.6
+      },
+      "eth_tvl_drawdown": {
+        "mean_coef": -0.072706,
+        "abs_mean": 0.247151,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.7333
+      },
+      "eth_tvl_acceleration": {
+        "mean_coef": 0.000831,
+        "abs_mean": 0.0408,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.4667
+      }
+    },
+    "K114": {
+      "eth_tvl_change_7d": {
+        "mean_coef": 0.422152,
+        "abs_mean": 0.435529,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.8667
+      },
+      "eth_tvl_change_30d": {
+        "mean_coef": 0.197992,
+        "abs_mean": 0.280128,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.7333
+      },
+      "eth_tvl_drawdown": {
+        "mean_coef": -0.321258,
+        "abs_mean": 0.477812,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.6667
+      },
+      "eth_tvl_acceleration": {
+        "mean_coef": -0.01473,
+        "abs_mean": 0.032111,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.4667
+      }
+    },
+    "K116": {
+      "eth_tvl_change_7d": {
+        "mean_coef": 0.242925,
+        "abs_mean": 0.317091,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.7333
+      },
+      "eth_tvl_change_30d": {
+        "mean_coef": -0.119051,
+        "abs_mean": 0.325223,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.6
+      },
+      "eth_tvl_drawdown": {
+        "mean_coef": -0.060089,
+        "abs_mean": 0.444842,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.5333
+      },
+      "eth_tvl_acceleration": {
+        "mean_coef": -0.040218,
+        "abs_mean": 0.061861,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.6
+      }
+    },
+    "K121": {
+      "eth_tvl_change_7d": {
+        "mean_coef": -0.180177,
+        "abs_mean": 0.301801,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.5333
+      },
+      "eth_tvl_change_30d": {
+        "mean_coef": 0.016172,
+        "abs_mean": 0.355124,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.5333
+      },
+      "eth_tvl_drawdown": {
+        "mean_coef": 0.051657,
+        "abs_mean": 0.305047,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.4
+      },
+      "eth_tvl_acceleration": {
+        "mean_coef": 0.053635,
+        "abs_mean": 0.074575,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.7333
+      }
+    },
+    "K133": {
+      "eth_tvl_change_7d": {
+        "mean_coef": 0.33438,
+        "abs_mean": 0.4268,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.8667
+      },
+      "eth_tvl_change_30d": {
+        "mean_coef": 0.356454,
+        "abs_mean": 0.724028,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.7333
+      },
+      "eth_tvl_drawdown": {
+        "mean_coef": -0.04357,
+        "abs_mean": 0.434868,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.6
+      },
+      "eth_tvl_acceleration": {
+        "mean_coef": -0.004252,
+        "abs_mean": 0.074691,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.6
+      }
+    },
+    "K147": {
+      "eth_tvl_change_7d": {
+        "mean_coef": 0.043103,
+        "abs_mean": 0.205255,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.5333
+      },
+      "eth_tvl_change_30d": {
+        "mean_coef": 0.017944,
+        "abs_mean": 0.556165,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.4
+      },
+      "eth_tvl_drawdown": {
+        "mean_coef": -0.104749,
+        "abs_mean": 0.242389,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.6
+      },
+      "eth_tvl_acceleration": {
+        "mean_coef": -0.011958,
+        "abs_mean": 0.091091,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.4
+      }
+    },
+    "K175_DAR": {
+      "eth_tvl_change_7d": {
+        "mean_coef": -0.08326,
+        "abs_mean": 0.25968,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.6
+      },
+      "eth_tvl_change_30d": {
+        "mean_coef": 0.132275,
+        "abs_mean": 0.307452,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.6667
+      },
+      "eth_tvl_drawdown": {
+        "mean_coef": 0.149643,
+        "abs_mean": 0.336477,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.7333
+      },
+      "eth_tvl_acceleration": {
+        "mean_coef": 0.049299,
+        "abs_mean": 0.056484,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.7333
+      }
+    },
+    "V_fwd_carry": {
+      "eth_tvl_change_7d": {
+        "mean_coef": -0.153293,
+        "abs_mean": 0.800409,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.5333
+      },
+      "eth_tvl_change_30d": {
+        "mean_coef": -0.024788,
+        "abs_mean": 0.786457,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.5333
+      },
+      "eth_tvl_drawdown": {
+        "mean_coef": -0.597237,
+        "abs_mean": 1.369491,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.6667
+      },
+      "eth_tvl_acceleration": {
+        "mean_coef": 0.073116,
+        "abs_mean": 0.108471,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.8
+      }
+    },
+    "V_rev_carry": {
+      "eth_tvl_change_7d": {
+        "mean_coef": 0.490751,
+        "abs_mean": 0.959886,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.8
+      },
+      "eth_tvl_change_30d": {
+        "mean_coef": -0.329114,
+        "abs_mean": 1.061294,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.4667
+      },
+      "eth_tvl_drawdown": {
+        "mean_coef": 0.372035,
+        "abs_mean": 0.598335,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.5333
+      },
+      "eth_tvl_acceleration": {
+        "mean_coef": -0.074872,
+        "abs_mean": 0.088784,
+        "pct_nonzero": 1.0,
+        "sign_consistency": 0.8
+      }
+    }
+  },
+  "v_rev_carry_ethena_modulation": {
+    "eth_tvl_change_7d_mean_coef": 0.490751,
+    "active": true,
+    "analysis": "V_rev_carry eth_tvl_change_7d coefficient is active \u2014 Ridge has learned the TVL\u2192carry mechanism from K206."
+  },
+  "weight_changes_vs_k198": {
+    "v4.1": {
+      "k198_mean": 0.1022,
+      "k207_mean": 0.1131,
+      "delta": 0.0108
+    },
+    "V1": {
+      "k198_mean": 0.127,
+      "k207_mean": 0.1342,
+      "delta": 0.0071
+    },
+    "K114": {
+      "k198_mean": 0.1045,
+      "k207_mean": 0.1145,
+      "delta": 0.01
+    },
+    "K116": {
+      "k198_mean": 0.0879,
+      "k207_mean": 0.0958,
+      "delta": 0.0079
+    },
+    "K121": {
+      "k198_mean": 0.0913,
+      "k207_mean": 0.0926,
+      "delta": 0.0013
+    },
+    "K133": {
+      "k198_mean": 0.0984,
+      "k207_mean": 0.1096,
+      "delta": 0.0112
+    },
+    "K147": {
+      "k198_mean": 0.112,
+      "k207_mean": 0.12,
+      "delta": 0.0081
+    },
+    "K175_DAR": {
+      "k198_mean": 0.0914,
+      "k207_mean": 0.1159,
+      "delta": 0.0245
+    },
+    "V_fwd_carry": {
+      "k198_mean": 0.1255,
+      "k207_mean": 0.0744,
+      "delta": -0.051
+    },
+    "V_rev_carry": {
+      "k198_mean": 0.0598,
+      "k207_mean": 0.0299,
+      "delta": -0.0299
+    }
+  },
+  "ml_predictor_diagnostics": {
+    "overall_mean_r2": 0.9422,
+    "overall_mean_dir_acc": 0.7133,
+    "r2_by_strategy": {
+      "v4.1": {
+        "mean": 0.9284,
+        "median": 0.9644,
+        "n_steps": 15
+      },
+      "V1": {
+        "mean": 0.9283,
+        "median": 0.9394,
+        "n_steps": 15
+      },
+      "K114": {
+        "mean": 0.9031,
+        "median": 0.9162,
+        "n_steps": 15
+      },
+      "K116": {
+        "mean": 0.9483,
+        "median": 0.9549,
+        "n_steps": 15
+      },
+      "K121": {
+        "mean": 0.9505,
+        "median": 0.9521,
+        "n_steps": 15
+      },
+      "K133": {
+        "mean": 0.9414,
+        "median": 0.941,
+        "n_steps": 15
+      },
+      "K147": {
+        "mean": 0.9248,
+        "median": 0.9267,
+        "n_steps": 15
+      },
+      "K175_DAR": {
+        "mean": 0.9328,
+        "median": 0.9344,
+        "n_steps": 15
+      },
+      "V_fwd_carry": {
+        "mean": 0.9742,
+        "median": 0.9814,
+        "n_steps": 15
+      },
+      "V_rev_carry": {
+        "mean": 0.9907,
+        "median": 0.9917,
+        "n_steps": 15
+      }
+    },
+    "dir_acc_by_strategy": {
+      "v4.1": {
+        "mean_dir_acc": 0.4667,
+        "n_steps": 15,
+        "above_55pct": false
+      },
+      "V1": {
+        "mean_dir_acc": 0.9333,
+        "n_steps": 15,
+        "above_55pct": true
+      },
+      "K114": {
+        "mean_dir_acc": 0.6,
+        "n_steps": 15,
+        "above_55pct": true
+      },
+      "K116": {
+        "mean_dir_acc": 0.5333,
+        "n_steps": 15,
+        "above_55pct": false
+      },
+      "K121": {
+        "mean_dir_acc": 0.6,
+        "n_steps": 15,
+        "above_55pct": true
+      },
+      "K133": {
+        "mean_dir_acc": 0.7333,
+        "n_steps": 15,
+        "above_55pct": true
+      },
+      "K147": {
+        "mean_dir_acc": 0.6667,
+        "n_steps": 15,
+        "above_55pct": true
+      },
+      "K175_DAR": {
+        "mean_dir_acc": 0.7333,
+        "n_steps": 15,
+        "above_55pct": true
+      },
+      "V_fwd_carry": {
+        "mean_dir_acc": 0.9333,
+        "n_steps": 15,
+        "above_55pct": true
+      },
+      "V_rev_carry": {
+        "mean_dir_acc": 0.9333,
+        "n_steps": 15,
+        "above_55pct": true
+      }
+    },
+    "n_wf_steps": 15,
+    "per_step_summary": [
+      {
+        "step": 0,
+        "train_start": "2024-10-24",
+        "train_end": "2025-01-21",
+        "test_start": "2025-01-22",
+        "test_end": "2025-02-20",
+        "preds": {
+          "v4.1": 0.9695,
+          "V1": -0.6216,
+          "K114": 3.5637,
+          "K116": 0.1695,
+          "K121": 3.8621,
+          "K133": 0.4073,
+          "K147": -3.2301,
+          "K175_DAR": 0.3934,
+          "V_fwd_carry": 23.8019,
+          "V_rev_carry": 1.5466
+        },
+        "weights": {
+          "v4.1": 0.0927,
+          "V1": 0.0,
+          "K114": 0.3406,
+          "K116": 0.0162,
+          "K121": 0.3691,
+          "K133": 0.0389,
+          "K147": 0.0,
+          "K175_DAR": 0.0376,
+          "V_fwd_carry": 0.0549,
+          "V_rev_carry": 0.05
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": false,
+          "K114": false,
+          "K116": true,
+          "K121": false,
+          "K133": true,
+          "K147": false,
+          "K175_DAR": false,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9533,
+        "mean_dir_acc": 0.4
+      },
+      {
+        "step": 1,
+        "train_start": "2024-11-23",
+        "train_end": "2025-02-20",
+        "test_start": "2025-02-21",
+        "test_end": "2025-03-22",
+        "preds": {
+          "v4.1": -1.5067,
+          "V1": 2.9211,
+          "K114": 1.1403,
+          "K116": 3.4037,
+          "K121": -5.157,
+          "K133": 3.9812,
+          "K147": 4.9229,
+          "K175_DAR": -0.6427,
+          "V_fwd_carry": 3.2677,
+          "V_rev_carry": 31.6483
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.1469,
+          "K114": 0.0573,
+          "K116": 0.1711,
+          "K121": 0.0,
+          "K133": 0.2002,
+          "K147": 0.2475,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.1271,
+          "V_rev_carry": 0.05
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": false,
+          "K147": true,
+          "K175_DAR": false,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9423,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 2,
+        "train_start": "2024-12-23",
+        "train_end": "2025-03-22",
+        "test_start": "2025-03-23",
+        "test_end": "2025-04-21",
+        "preds": {
+          "v4.1": 4.3878,
+          "V1": 3.8379,
+          "K114": 3.8694,
+          "K116": -0.8103,
+          "K121": -5.0221,
+          "K133": -1.7099,
+          "K147": 4.3711,
+          "K175_DAR": 0.2691,
+          "V_fwd_carry": -2.077,
+          "V_rev_carry": 17.8677
+        },
+        "weights": {
+          "v4.1": 0.2491,
+          "V1": 0.2179,
+          "K114": 0.2197,
+          "K116": 0.0,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.2481,
+          "K175_DAR": 0.0153,
+          "V_fwd_carry": 0.0,
+          "V_rev_carry": 0.05
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": false,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": false,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9307,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 3,
+        "train_start": "2025-01-22",
+        "train_end": "2025-04-21",
+        "test_start": "2025-04-22",
+        "test_end": "2025-05-21",
+        "preds": {
+          "v4.1": 4.3967,
+          "V1": 4.5737,
+          "K114": 5.2902,
+          "K116": -4.5545,
+          "K121": 3.0105,
+          "K133": 2.5044,
+          "K147": 4.2313,
+          "K175_DAR": 0.6401,
+          "V_fwd_carry": 19.5078,
+          "V_rev_carry": -0.5411
+        },
+        "weights": {
+          "v4.1": 0.1695,
+          "V1": 0.1763,
+          "K114": 0.2039,
+          "K116": 0.0,
+          "K121": 0.116,
+          "K133": 0.0965,
+          "K147": 0.1631,
+          "K175_DAR": 0.0247,
+          "V_fwd_carry": 0.05,
+          "V_rev_carry": 0.0
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": false,
+          "K121": false,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9404,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 4,
+        "train_start": "2025-02-21",
+        "train_end": "2025-05-21",
+        "test_start": "2025-05-22",
+        "test_end": "2025-06-20",
+        "preds": {
+          "v4.1": -9.5218,
+          "V1": 1.1999,
+          "K114": -0.6347,
+          "K116": 4.841,
+          "K121": -6.741,
+          "K133": -3.8654,
+          "K147": 6.1627,
+          "K175_DAR": 4.5101,
+          "V_fwd_carry": 16.6992,
+          "V_rev_carry": -16.1524
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.0682,
+          "K114": 0.0,
+          "K116": 0.2752,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.3503,
+          "K175_DAR": 0.2564,
+          "V_fwd_carry": 0.05,
+          "V_rev_carry": 0.0
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": false,
+          "K133": false,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9437,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 5,
+        "train_start": "2025-03-23",
+        "train_end": "2025-06-20",
+        "test_start": "2025-06-21",
+        "test_end": "2025-07-20",
+        "preds": {
+          "v4.1": 4.6537,
+          "V1": 2.5266,
+          "K114": 0.7636,
+          "K116": -0.0319,
+          "K121": 3.0875,
+          "K133": 6.6741,
+          "K147": 0.2286,
+          "K175_DAR": 2.9924,
+          "V_fwd_carry": 17.7522,
+          "V_rev_carry": -6.9756
+        },
+        "weights": {
+          "v4.1": 0.2113,
+          "V1": 0.1147,
+          "K114": 0.0347,
+          "K116": 0.0,
+          "K121": 0.1402,
+          "K133": 0.303,
+          "K147": 0.0104,
+          "K175_DAR": 0.1358,
+          "V_fwd_carry": 0.05,
+          "V_rev_carry": 0.0
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": false,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9521,
+        "mean_dir_acc": 0.9
+      },
+      {
+        "step": 6,
+        "train_start": "2025-04-22",
+        "train_end": "2025-07-20",
+        "test_start": "2025-07-21",
+        "test_end": "2025-08-19",
+        "preds": {
+          "v4.1": -3.2161,
+          "V1": 7.6631,
+          "K114": 3.1849,
+          "K116": 6.0889,
+          "K121": 1.6673,
+          "K133": 2.3059,
+          "K147": 0.0204,
+          "K175_DAR": 2.4583,
+          "V_fwd_carry": 15.4694,
+          "V_rev_carry": -14.5788
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.3113,
+          "K114": 0.1294,
+          "K116": 0.2473,
+          "K121": 0.0677,
+          "K133": 0.0937,
+          "K147": 0.0008,
+          "K175_DAR": 0.0999,
+          "V_fwd_carry": 0.05,
+          "V_rev_carry": 0.0
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": false,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9355,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 7,
+        "train_start": "2025-05-22",
+        "train_end": "2025-08-19",
+        "test_start": "2025-08-20",
+        "test_end": "2025-09-18",
+        "preds": {
+          "v4.1": 4.9881,
+          "V1": 0.6497,
+          "K114": -3.3536,
+          "K116": -0.2199,
+          "K121": 4.2124,
+          "K133": 5.1083,
+          "K147": 5.907,
+          "K175_DAR": 2.7369,
+          "V_fwd_carry": 35.8774,
+          "V_rev_carry": -37.2293
+        },
+        "weights": {
+          "v4.1": 0.2008,
+          "V1": 0.0262,
+          "K114": 0.0,
+          "K116": 0.0,
+          "K121": 0.1695,
+          "K133": 0.2056,
+          "K147": 0.2378,
+          "K175_DAR": 0.1102,
+          "V_fwd_carry": 0.05,
+          "V_rev_carry": 0.0
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": false,
+          "K116": false,
+          "K121": false,
+          "K133": false,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9376,
+        "mean_dir_acc": 0.5
+      },
+      {
+        "step": 8,
+        "train_start": "2025-06-21",
+        "train_end": "2025-09-18",
+        "test_start": "2025-09-19",
+        "test_end": "2025-10-18",
+        "preds": {
+          "v4.1": 0.3866,
+          "V1": 4.615,
+          "K114": 4.0611,
+          "K116": 2.0507,
+          "K121": -2.9859,
+          "K133": -4.7365,
+          "K147": -1.56,
+          "K175_DAR": -2.0578,
+          "V_fwd_carry": 5.8604,
+          "V_rev_carry": -7.0355
+        },
+        "weights": {
+          "v4.1": 0.033,
+          "V1": 0.3945,
+          "K114": 0.3472,
+          "K116": 0.1753,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.0,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.05,
+          "V_rev_carry": 0.0
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": false,
+          "K175_DAR": false,
+          "V_fwd_carry": true,
+          "V_rev_carry": false
+        },
+        "mean_r2": 0.9425,
+        "mean_dir_acc": 0.6
+      },
+      {
+        "step": 9,
+        "train_start": "2025-07-21",
+        "train_end": "2025-10-18",
+        "test_start": "2025-10-19",
+        "test_end": "2025-11-17",
+        "preds": {
+          "v4.1": -1.6041,
+          "V1": 2.0275,
+          "K114": 2.084,
+          "K116": -2.8343,
+          "K121": -0.5746,
+          "K133": -3.3283,
+          "K147": -0.033,
+          "K175_DAR": 7.879,
+          "V_fwd_carry": 9.6635,
+          "V_rev_carry": 26.7542
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.1373,
+          "K114": 0.1411,
+          "K116": 0.0,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.0,
+          "K175_DAR": 0.5335,
+          "V_fwd_carry": 0.1381,
+          "V_rev_carry": 0.05
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": false,
+          "K121": true,
+          "K133": true,
+          "K147": false,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9381,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 10,
+        "train_start": "2025-08-20",
+        "train_end": "2025-11-17",
+        "test_start": "2025-11-18",
+        "test_end": "2025-12-17",
+        "preds": {
+          "v4.1": 1.6556,
+          "V1": 4.0231,
+          "K114": 0.1827,
+          "K116": 11.4178,
+          "K121": 2.2834,
+          "K133": -6.1432,
+          "K147": 3.4115,
+          "K175_DAR": 1.8767,
+          "V_fwd_carry": 27.4695,
+          "V_rev_carry": 31.2266
+        },
+        "weights": {
+          "v4.1": 0.0566,
+          "V1": 0.1375,
+          "K114": 0.0062,
+          "K116": 0.3901,
+          "K121": 0.078,
+          "K133": 0.0,
+          "K147": 0.1166,
+          "K175_DAR": 0.0641,
+          "V_fwd_carry": 0.1009,
+          "V_rev_carry": 0.05
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": false,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": false,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9172,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 11,
+        "train_start": "2025-09-19",
+        "train_end": "2025-12-17",
+        "test_start": "2025-12-18",
+        "test_end": "2026-01-16",
+        "preds": {
+          "v4.1": 3.0261,
+          "V1": 0.3047,
+          "K114": -1.1939,
+          "K116": -0.531,
+          "K121": 1.6048,
+          "K133": 4.2879,
+          "K147": 5.2415,
+          "K175_DAR": -2.1496,
+          "V_fwd_carry": 37.2259,
+          "V_rev_carry": 15.2788
+        },
+        "weights": {
+          "v4.1": 0.1793,
+          "V1": 0.0181,
+          "K114": 0.0,
+          "K116": 0.0,
+          "K121": 0.0951,
+          "K133": 0.2541,
+          "K147": 0.3106,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.0928,
+          "V_rev_carry": 0.05
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": false,
+          "K116": false,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9405,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 12,
+        "train_start": "2025-10-19",
+        "train_end": "2026-01-16",
+        "test_start": "2026-01-17",
+        "test_end": "2026-02-15",
+        "preds": {
+          "v4.1": -1.4795,
+          "V1": 3.8403,
+          "K114": 5.9204,
+          "K116": 1.6457,
+          "K121": 6.9489,
+          "K133": 7.3343,
+          "K147": -0.1398,
+          "K175_DAR": -6.174,
+          "V_fwd_carry": 2.3909,
+          "V_rev_carry": 21.93
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.1299,
+          "K114": 0.2003,
+          "K116": 0.0557,
+          "K121": 0.2351,
+          "K133": 0.2481,
+          "K147": 0.0,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.0809,
+          "V_rev_carry": 0.05
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": false,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9614,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 13,
+        "train_start": "2025-11-18",
+        "train_end": "2026-02-15",
+        "test_start": "2026-02-16",
+        "test_end": "2026-03-17",
+        "preds": {
+          "v4.1": 3.8105,
+          "V1": 3.4108,
+          "K114": 0.3638,
+          "K116": 2.6988,
+          "K121": 2.7106,
+          "K133": 2.4559,
+          "K147": 2.8862,
+          "K175_DAR": 5.5067,
+          "V_fwd_carry": 9.4445,
+          "V_rev_carry": 14.9119
+        },
+        "weights": {
+          "v4.1": 0.1399,
+          "V1": 0.1252,
+          "K114": 0.0134,
+          "K116": 0.0991,
+          "K121": 0.0995,
+          "K133": 0.0901,
+          "K147": 0.1059,
+          "K175_DAR": 0.2021,
+          "V_fwd_carry": 0.0749,
+          "V_rev_carry": 0.05
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": false,
+          "K116": false,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9589,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 14,
+        "train_start": "2025-12-18",
+        "train_end": "2026-03-17",
+        "test_start": "2026-03-18",
+        "test_end": "2026-04-14",
+        "preds": {
+          "v4.1": 5.0467,
+          "V1": -6.4148,
+          "K114": 0.2339,
+          "K116": -2.0787,
+          "K121": 0.176,
+          "K133": 1.5109,
+          "K147": 0.0227,
+          "K175_DAR": 3.5542,
+          "V_fwd_carry": 22.1791,
+          "V_rev_carry": 27.7043
+        },
+        "weights": {
+          "v4.1": 0.3818,
+          "V1": 0.0,
+          "K114": 0.0177,
+          "K116": 0.0,
+          "K121": 0.0133,
+          "K133": 0.1143,
+          "K147": 0.0017,
+          "K175_DAR": 0.2689,
+          "V_fwd_carry": 0.1523,
+          "V_rev_carry": 0.05
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": false,
+          "K116": false,
+          "K121": false,
+          "K133": true,
+          "K147": false,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9395,
+        "mean_dir_acc": 0.6
+      }
+    ]
+  },
+  "acceptance_criteria": {
+    "AC1_oos_sh_ge_k198": false,
+    "AC1_k198_oos_sh": 10.28,
+    "AC1_k207_oos_sh": 8.8748,
+    "AC1_lift": -1.4052,
+    "AC2_maxdd_not_worsened": false,
+    "AC2_k198_maxdd": -0.0053,
+    "AC2_k207_maxdd": -0.0063,
+    "AC3_wf_min_ge_k198": true,
+    "AC3_k198_wf_min": 6.57,
+    "AC3_k207_wf_min": 6.576,
+    "AC4_ethena_nonzero": true,
+    "n_criteria_passed": 2,
+    "all_pass": false
+  },
+  "verdict": "REJECT: K207 Ethena features do not improve K198 sufficiently (criteria pass: 2/4). OOS Sh 8.8748 vs K198 10.28. K198 v6.5 remains production. Consider K208: combine K207 insights with K205 DD features.",
+  "k208_recommendation": "K208: Combine K207 (Ethena features) with K205 (DD features, 180d window) if both ACCEPT independently. If K207 REJECTS but Ethena features show non-zero Ridge coefficients, still include in K208 as a secondary feature set \u2014 the global TVL signal may improve when combined with per-strategy DD features.",
+  "risk_assessment": {
+    "panel_wide_signal": "Ethena features are GLOBAL (same value for all strategies on a given day). This means they affect the bias term and interact with cross-strategy features. Ridge regularization prevents overfitting to this narrow signal. Risk: if TVL goes outside historical range, extrapolation degrades.",
+    "ethena_regime_coverage": "TVL cache covers 692 days. Ethena launched in early 2024, so coverage of pre-launch period is absent. Features default to 0 for dates before TVL data begins.",
+    "look_ahead_bias": "Features use 7d lag \u2014 feature at day t reflects TVL through day t-7. No forward-looking data.",
+    "noise_injection": "TVL features apply to all strategies, not just V_rev_carry. For unrelated strategies (v4.1, V1, K114), TVL signal may be noise. Ridge shrinkage should suppress noisy coefficients to near-zero."
+  }
+}
