@@ -1,0 +1,1321 @@
+{
+  "wave": "K204",
+  "task": "ML allocator with embedded DD/recovery features (v6.6 candidate)",
+  "as_of": "2026-05-24T21:17:29.298127+00:00",
+  "runtime_s": 4.8,
+  "config": {
+    "strategies": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ],
+    "n_strategies": 10,
+    "ml_train_days": 90,
+    "ml_test_days": 30,
+    "oos_frac": 0.3,
+    "k121_cap": 0.3,
+    "carry_fwd_cap": 0.1,
+    "carry_rev_cap": 0.1,
+    "fr_threshold": -0.009735,
+    "feature_win_short": 30,
+    "feature_win_long": 90,
+    "target_horizon_days": 30,
+    "ridge_alpha": 1.0,
+    "n_baseline_features": 51,
+    "n_new_dd_features": 62,
+    "n_total_features": 113,
+    "date_range": [
+      "2024-07-26",
+      "2026-05-14"
+    ],
+    "n_days_total": 658,
+    "n_days_ml_window": 448
+  },
+  "version_comparison": {
+    "K198_v6.5_baseline": {
+      "oos_sharpe": 10.28,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.91,
+      "wf_min": 6.57,
+      "n_features": 51
+    },
+    "K201_rejected": {
+      "oos_sharpe": 8.59,
+      "oos_maxdd": -0.0057,
+      "wf_mean": 7.38,
+      "wf_min": 6.39,
+      "reject_reason": "ML\u2192trigger override granularity mismatch"
+    },
+    "K202_rejected": {
+      "oos_sharpe": 7.84,
+      "oos_maxdd": -0.0071,
+      "wf_mean": 7.16,
+      "wf_min": 6.29,
+      "reject_reason": "Trigger\u2192ML filter granularity mismatch"
+    },
+    "K204_dd_embedded": {
+      "oos_sharpe": 10.3627,
+      "oos_maxdd": -0.0053,
+      "oos_sortino": 29.0674,
+      "oos_calmar": 146.9917,
+      "oos_ann_ret": 0.7821,
+      "oos_ann_vol": 0.0559,
+      "wf_mean": 7.5451,
+      "wf_min": 6.023,
+      "wf_max": 9.7924,
+      "wf_std": 1.526,
+      "wf_fold_sharpes": [
+        6.023,
+        6.2648,
+        8.1003,
+        9.7924
+      ],
+      "n_features": 113,
+      "sh_lift_vs_k198": 0.0827,
+      "dd_improvement_vs_k198": 0.0,
+      "wf_min_lift_vs_k198": -0.547
+    }
+  },
+  "feature_importance": {
+    "top_30_all_features": {
+      "K116__dd90": 2.001266,
+      "V_rev_carry__dd90": 1.750146,
+      "K114__sh_neg30": 1.631182,
+      "V1__dd90": 1.501978,
+      "K121__dd30": 1.274336,
+      "V1__dd30": 1.26738,
+      "K116__vol30": 1.241284,
+      "K147__sh_neg30": 1.182664,
+      "V_rev_carry__sh90": 1.146964,
+      "v4.1__dd90": 1.116238,
+      "K121__sh30": 1.086698,
+      "K175_DAR__sh90": 1.07059,
+      "V_rev_carry__dd30": 1.062146,
+      "K175_DAR__dd90": 1.058152,
+      "V_rev_carry__vol30": 1.056514,
+      "K116__dd30": 1.009993,
+      "K147__sh90": 0.99836,
+      "K175_DAR__dd30": 0.96395,
+      "V_fwd_carry__sh90": 0.942688,
+      "V_rev_carry__sh30": 0.926101,
+      "K133__dd90": 0.904776,
+      "V_rev_carry__sh_neg30": 0.884402,
+      "K121__sh90": 0.876942,
+      "K116__sh90": 0.835173,
+      "K175_DAR__sh30": 0.827531,
+      "K121__dd90": 0.825763,
+      "K116__sh30": 0.809315,
+      "V_fwd_carry__sh_neg30": 0.780124,
+      "v4.1__dd30": 0.762774,
+      "K133__dd30": 0.752831
+    },
+    "new_dd_features_only": {
+      "K116__dd90": 2.001266,
+      "V_rev_carry__dd90": 1.750146,
+      "K114__sh_neg30": 1.631182,
+      "V1__dd90": 1.501978,
+      "K121__dd30": 1.274336,
+      "V1__dd30": 1.26738,
+      "K147__sh_neg30": 1.182664,
+      "v4.1__dd90": 1.116238,
+      "V_rev_carry__dd30": 1.062146,
+      "K175_DAR__dd90": 1.058152,
+      "K116__dd30": 1.009993,
+      "K175_DAR__dd30": 0.96395,
+      "K133__dd90": 0.904776,
+      "V_rev_carry__sh_neg30": 0.884402,
+      "K121__dd90": 0.825763,
+      "V_fwd_carry__sh_neg30": 0.780124,
+      "v4.1__dd30": 0.762774,
+      "K133__dd30": 0.752831,
+      "V1__sh_neg30": 0.6611,
+      "V_rev_carry__dd_max30": 0.647648,
+      "K147__dd90": 0.615208,
+      "K114__dd90": 0.59287,
+      "K175_DAR__sh_neg30": 0.588286,
+      "K114__dd30": 0.553198,
+      "K121__sh_neg30": 0.550564,
+      "K121__dd_max30": 0.503412,
+      "v4.1__sh_neg30": 0.490678,
+      "K114__dd_max30": 0.485065,
+      "V_fwd_carry__dd90": 0.480833,
+      "K133__sh_neg30": 0.471519,
+      "K116__dd_max30": 0.464298,
+      "K116__sh_neg30": 0.426913,
+      "v4.1__calmar30": 0.413711,
+      "V_fwd_carry__dd_max30": 0.406937,
+      "K121__calmar30": 0.389921,
+      "panel_dd30": 0.373596,
+      "K147__dd_max30": 0.371161,
+      "K147__dd30": 0.369,
+      "V_fwd_carry__dd30": 0.361819,
+      "V_rev_carry__calmar30": 0.299344,
+      "K114__calmar30": 0.266546,
+      "K175_DAR__calmar30": 0.256037,
+      "K175_DAR__dd_max30": 0.251712,
+      "K116__calmar30": 0.218343,
+      "K147__calmar30": 0.214375,
+      "K133__dd_max30": 0.206387,
+      "K133__recovery": 0.183309,
+      "V1__calmar30": 0.125601,
+      "V_rev_carry__recovery": 0.120003,
+      "v4.1__dd_max30": 0.119142,
+      "V_fwd_carry__calmar30": 0.110226,
+      "K121__recovery": 0.109097,
+      "v4.1__recovery": 0.105924,
+      "K114__recovery": 0.102205,
+      "K133__calmar30": 0.100942,
+      "V1__recovery": 0.080776,
+      "V1__dd_max30": 0.07293,
+      "K147__recovery": 0.069937,
+      "K116__recovery": 0.066735,
+      "K175_DAR__recovery": 0.062001,
+      "panel_recovery": 0.049239,
+      "V_fwd_carry__recovery": 0.0
+    },
+    "dd_features_nonzero_count": 61,
+    "dd_features_total_count": 62,
+    "dd_features_all_nonzero": true,
+    "k198_vs_k204_comparison": {
+      "k198_top_features": [
+        "K116__sh90",
+        "V_rev_carry__sh90",
+        "V_rev_carry__mdd30",
+        "V_rev_carry__sh30",
+        "K114__vol30",
+        "K116__vol30"
+      ],
+      "k204_new_entrants": [
+        "K116__dd90",
+        "V_rev_carry__dd90",
+        "K114__sh_neg30",
+        "V1__dd90",
+        "K121__dd30",
+        "V1__dd30",
+        "K147__sh_neg30",
+        "v4.1__dd90",
+        "V_rev_carry__dd30",
+        "K175_DAR__dd90"
+      ]
+    }
+  },
+  "per_fold_breakdown": [
+    {
+      "fold": 1,
+      "sharpe": 6.023,
+      "vs_k198_wf_fold": -0.547
+    },
+    {
+      "fold": 2,
+      "sharpe": 6.2648,
+      "vs_k198_wf_fold": -1.6452
+    },
+    {
+      "fold": 3,
+      "sharpe": 8.1003,
+      "vs_k198_wf_fold": 0.1903
+    },
+    {
+      "fold": 4,
+      "sharpe": 9.7924,
+      "vs_k198_wf_fold": 1.8824
+    }
+  ],
+  "ml_predictor_diagnostics": {
+    "overall_mean_r2": 0.9754,
+    "overall_mean_dir_acc": 0.7333,
+    "r2_by_strategy": {
+      "v4.1": {
+        "mean": 0.9683,
+        "median": 0.9856
+      },
+      "V1": {
+        "mean": 0.9732,
+        "median": 0.9746
+      },
+      "K114": {
+        "mean": 0.9587,
+        "median": 0.9607
+      },
+      "K116": {
+        "mean": 0.9779,
+        "median": 0.9785
+      },
+      "K121": {
+        "mean": 0.9773,
+        "median": 0.9804
+      },
+      "K133": {
+        "mean": 0.9732,
+        "median": 0.9764
+      },
+      "K147": {
+        "mean": 0.9658,
+        "median": 0.9713
+      },
+      "K175_DAR": {
+        "mean": 0.9744,
+        "median": 0.9729
+      },
+      "V_fwd_carry": {
+        "mean": 0.988,
+        "median": 0.9934
+      },
+      "V_rev_carry": {
+        "mean": 0.9967,
+        "median": 0.998
+      }
+    },
+    "dir_acc_by_strategy": {
+      "v4.1": {
+        "mean_dir_acc": 0.5333,
+        "above_55pct": false
+      },
+      "V1": {
+        "mean_dir_acc": 0.8667,
+        "above_55pct": true
+      },
+      "K114": {
+        "mean_dir_acc": 0.6667,
+        "above_55pct": true
+      },
+      "K116": {
+        "mean_dir_acc": 0.6667,
+        "above_55pct": true
+      },
+      "K121": {
+        "mean_dir_acc": 0.6667,
+        "above_55pct": true
+      },
+      "K133": {
+        "mean_dir_acc": 0.6667,
+        "above_55pct": true
+      },
+      "K147": {
+        "mean_dir_acc": 0.8,
+        "above_55pct": true
+      },
+      "K175_DAR": {
+        "mean_dir_acc": 0.8,
+        "above_55pct": true
+      },
+      "V_fwd_carry": {
+        "mean_dir_acc": 0.8667,
+        "above_55pct": true
+      },
+      "V_rev_carry": {
+        "mean_dir_acc": 0.8,
+        "above_55pct": true
+      }
+    },
+    "n_wf_steps": 15,
+    "per_step_summary": [
+      {
+        "step": 0,
+        "train_start": "2024-10-24",
+        "train_end": "2025-01-21",
+        "test_start": "2025-01-22",
+        "test_end": "2025-02-20",
+        "preds": {
+          "v4.1": 0.3869,
+          "V1": 3.2634,
+          "K114": 0.0223,
+          "K116": 6.2733,
+          "K121": 2.7945,
+          "K133": -0.8725,
+          "K147": 3.6986,
+          "K175_DAR": -0.535,
+          "V_fwd_carry": 30.2155,
+          "V_rev_carry": -3.8683
+        },
+        "weights": {
+          "v4.1": 0.0212,
+          "V1": 0.1787,
+          "K114": 0.0012,
+          "K116": 0.3434,
+          "K121": 0.153,
+          "K133": 0.0,
+          "K147": 0.2025,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9856,
+          "V1": 0.988,
+          "K114": 0.9112,
+          "K116": 0.9643,
+          "K121": 0.997,
+          "K133": 0.9881,
+          "K147": 0.9899,
+          "K175_DAR": 0.9773,
+          "V_fwd_carry": 0.9954,
+          "V_rev_carry": 0.9969
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": false,
+          "K116": true,
+          "K121": false,
+          "K133": false,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": false
+        },
+        "mean_r2": 0.9794,
+        "mean_dir_acc": 0.5
+      },
+      {
+        "step": 1,
+        "train_start": "2024-11-23",
+        "train_end": "2025-02-20",
+        "test_start": "2025-02-21",
+        "test_end": "2025-03-22",
+        "preds": {
+          "v4.1": -1.2414,
+          "V1": 2.3578,
+          "K114": 0.7,
+          "K116": 3.9155,
+          "K121": -5.2267,
+          "K133": 5.4735,
+          "K147": 3.7605,
+          "K175_DAR": 0.7091,
+          "V_fwd_carry": 2.8686,
+          "V_rev_carry": 36.8829
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.1073,
+          "K114": 0.0318,
+          "K116": 0.1781,
+          "K121": 0.0,
+          "K133": 0.249,
+          "K147": 0.1711,
+          "K175_DAR": 0.0323,
+          "V_fwd_carry": 0.1305,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9867,
+          "V1": 0.9902,
+          "K114": 0.93,
+          "K116": 0.966,
+          "K121": 0.995,
+          "K133": 0.992,
+          "K147": 0.9728,
+          "K175_DAR": 0.9544,
+          "V_fwd_carry": 0.9935,
+          "V_rev_carry": 0.9988
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": false,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9779,
+        "mean_dir_acc": 0.9
+      },
+      {
+        "step": 2,
+        "train_start": "2024-12-23",
+        "train_end": "2025-03-22",
+        "test_start": "2025-03-23",
+        "test_end": "2025-04-21",
+        "preds": {
+          "v4.1": 5.3351,
+          "V1": 5.6345,
+          "K114": 3.6981,
+          "K116": -0.0687,
+          "K121": -4.4913,
+          "K133": -1.642,
+          "K147": 3.8539,
+          "K175_DAR": -0.8272,
+          "V_fwd_carry": -1.2512,
+          "V_rev_carry": 15.7644
+        },
+        "weights": {
+          "v4.1": 0.2592,
+          "V1": 0.2738,
+          "K114": 0.1797,
+          "K116": 0.0,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.1873,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.0,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.988,
+          "V1": 0.9803,
+          "K114": 0.8983,
+          "K116": 0.982,
+          "K121": 0.9819,
+          "K133": 0.9864,
+          "K147": 0.9594,
+          "K175_DAR": 0.9636,
+          "V_fwd_carry": 0.9968,
+          "V_rev_carry": 0.9991
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": false,
+          "K147": true,
+          "K175_DAR": false,
+          "V_fwd_carry": false,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9736,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 3,
+        "train_start": "2025-01-22",
+        "train_end": "2025-04-21",
+        "test_start": "2025-04-22",
+        "test_end": "2025-05-21",
+        "preds": {
+          "v4.1": 4.6608,
+          "V1": 3.9056,
+          "K114": 4.5288,
+          "K116": -5.3839,
+          "K121": 2.4215,
+          "K133": 3.5945,
+          "K147": 4.3324,
+          "K175_DAR": 1.7963,
+          "V_fwd_carry": 21.0396,
+          "V_rev_carry": 0.2726
+        },
+        "weights": {
+          "v4.1": 0.1644,
+          "V1": 0.1378,
+          "K114": 0.1598,
+          "K116": 0.0,
+          "K121": 0.0854,
+          "K133": 0.1268,
+          "K147": 0.1528,
+          "K175_DAR": 0.0634,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0096
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9899,
+          "V1": 0.9362,
+          "K114": 0.9861,
+          "K116": 0.991,
+          "K121": 0.9884,
+          "K133": 0.9725,
+          "K147": 0.9633,
+          "K175_DAR": 0.9565,
+          "V_fwd_carry": 0.9961,
+          "V_rev_carry": 0.9969
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": false,
+          "K121": false,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": false
+        },
+        "mean_r2": 0.9777,
+        "mean_dir_acc": 0.6
+      },
+      {
+        "step": 4,
+        "train_start": "2025-02-21",
+        "train_end": "2025-05-21",
+        "test_start": "2025-05-22",
+        "test_end": "2025-06-20",
+        "preds": {
+          "v4.1": -10.0399,
+          "V1": 1.7536,
+          "K114": 0.0725,
+          "K116": 6.0296,
+          "K121": -5.1843,
+          "K133": -2.2973,
+          "K147": 4.9853,
+          "K175_DAR": 1.8302,
+          "V_fwd_carry": 15.823,
+          "V_rev_carry": -13.8113
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.1076,
+          "K114": 0.0044,
+          "K116": 0.3699,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.3058,
+          "K175_DAR": 0.1123,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "r2_per_strat": {
+          "v4.1": 0.995,
+          "V1": 0.9734,
+          "K114": 0.9816,
+          "K116": 0.9914,
+          "K121": 0.9889,
+          "K133": 0.9792,
+          "K147": 0.9679,
+          "K175_DAR": 0.9458,
+          "V_fwd_carry": 0.9983,
+          "V_rev_carry": 0.9991
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": false,
+          "K116": true,
+          "K121": false,
+          "K133": false,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9821,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 5,
+        "train_start": "2025-03-23",
+        "train_end": "2025-06-20",
+        "test_start": "2025-06-21",
+        "test_end": "2025-07-20",
+        "preds": {
+          "v4.1": 4.5337,
+          "V1": 2.2276,
+          "K114": 0.3437,
+          "K116": 1.6561,
+          "K121": 0.996,
+          "K133": 5.3762,
+          "K147": 3.3875,
+          "K175_DAR": 2.3677,
+          "V_fwd_carry": 18.554,
+          "V_rev_carry": -5.6152
+        },
+        "weights": {
+          "v4.1": 0.1953,
+          "V1": 0.096,
+          "K114": 0.0148,
+          "K116": 0.0714,
+          "K121": 0.0429,
+          "K133": 0.2316,
+          "K147": 0.146,
+          "K175_DAR": 0.102,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9938,
+          "V1": 0.9805,
+          "K114": 0.993,
+          "K116": 0.9928,
+          "K121": 0.9772,
+          "K133": 0.9612,
+          "K147": 0.9713,
+          "K175_DAR": 0.9531,
+          "V_fwd_carry": 0.9926,
+          "V_rev_carry": 0.999
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9815,
+        "mean_dir_acc": 1.0
+      },
+      {
+        "step": 6,
+        "train_start": "2025-04-22",
+        "train_end": "2025-07-20",
+        "test_start": "2025-07-21",
+        "test_end": "2025-08-19",
+        "preds": {
+          "v4.1": -3.6662,
+          "V1": 6.6939,
+          "K114": 3.122,
+          "K116": 5.7531,
+          "K121": 1.0591,
+          "K133": 1.7559,
+          "K147": -0.6721,
+          "K175_DAR": 4.1247,
+          "V_fwd_carry": 12.2491,
+          "V_rev_carry": -15.1582
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.2677,
+          "K114": 0.1248,
+          "K116": 0.23,
+          "K121": 0.0423,
+          "K133": 0.0702,
+          "K147": 0.0,
+          "K175_DAR": 0.1649,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "r2_per_strat": {
+          "v4.1": 0.988,
+          "V1": 0.9838,
+          "K114": 0.9546,
+          "K116": 0.9785,
+          "K121": 0.9751,
+          "K133": 0.9764,
+          "K147": 0.9723,
+          "K175_DAR": 0.95,
+          "V_fwd_carry": 0.9526,
+          "V_rev_carry": 0.9954
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": false,
+          "K133": true,
+          "K147": false,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9727,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 7,
+        "train_start": "2025-05-22",
+        "train_end": "2025-08-19",
+        "test_start": "2025-08-20",
+        "test_end": "2025-09-18",
+        "preds": {
+          "v4.1": 4.1002,
+          "V1": -3.2324,
+          "K114": -5.0026,
+          "K116": -2.5995,
+          "K121": 0.5984,
+          "K133": 5.377,
+          "K147": 3.3665,
+          "K175_DAR": 1.5401,
+          "V_fwd_carry": 34.1661,
+          "V_rev_carry": -25.115
+        },
+        "weights": {
+          "v4.1": 0.2463,
+          "V1": 0.0,
+          "K114": 0.0,
+          "K116": 0.0,
+          "K121": 0.0359,
+          "K133": 0.323,
+          "K147": 0.2022,
+          "K175_DAR": 0.0925,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9862,
+          "V1": 0.9811,
+          "K114": 0.9566,
+          "K116": 0.9671,
+          "K121": 0.9656,
+          "K133": 0.9612,
+          "K147": 0.9524,
+          "K175_DAR": 0.9729,
+          "V_fwd_carry": 0.9748,
+          "V_rev_carry": 0.993
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": false,
+          "K114": false,
+          "K116": false,
+          "K121": false,
+          "K133": false,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9711,
+        "mean_dir_acc": 0.4
+      },
+      {
+        "step": 8,
+        "train_start": "2025-06-21",
+        "train_end": "2025-09-18",
+        "test_start": "2025-09-19",
+        "test_end": "2025-10-18",
+        "preds": {
+          "v4.1": 0.797,
+          "V1": 4.1559,
+          "K114": 3.7905,
+          "K116": 1.7061,
+          "K121": -2.7591,
+          "K133": -5.5837,
+          "K147": -1.3614,
+          "K175_DAR": -2.0775,
+          "V_fwd_carry": 8.0958,
+          "V_rev_carry": -5.9114
+        },
+        "weights": {
+          "v4.1": 0.0686,
+          "V1": 0.3579,
+          "K114": 0.3265,
+          "K116": 0.1469,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.0,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9607,
+          "V1": 0.979,
+          "K114": 0.953,
+          "K116": 0.9643,
+          "K121": 0.9844,
+          "K133": 0.9851,
+          "K147": 0.9524,
+          "K175_DAR": 0.9719,
+          "V_fwd_carry": 0.9718,
+          "V_rev_carry": 0.986
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": false,
+          "K175_DAR": false,
+          "V_fwd_carry": true,
+          "V_rev_carry": false
+        },
+        "mean_r2": 0.9709,
+        "mean_dir_acc": 0.6
+      },
+      {
+        "step": 9,
+        "train_start": "2025-07-21",
+        "train_end": "2025-10-18",
+        "test_start": "2025-10-19",
+        "test_end": "2025-11-17",
+        "preds": {
+          "v4.1": -2.5829,
+          "V1": 3.9534,
+          "K114": 2.5449,
+          "K116": 1.6151,
+          "K121": -2.0697,
+          "K133": -2.0562,
+          "K147": -1.3017,
+          "K175_DAR": 6.7327,
+          "V_fwd_carry": 6.2295,
+          "V_rev_carry": 29.6853
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.1798,
+          "K114": 0.1157,
+          "K116": 0.0734,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.0,
+          "K175_DAR": 0.3061,
+          "V_fwd_carry": 0.225,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9566,
+          "V1": 0.973,
+          "K114": 0.9607,
+          "K116": 0.9532,
+          "K121": 0.9599,
+          "K133": 0.9824,
+          "K147": 0.9426,
+          "K175_DAR": 0.9943,
+          "V_fwd_carry": 0.9841,
+          "V_rev_carry": 0.9967
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": false,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9704,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 10,
+        "train_start": "2025-08-20",
+        "train_end": "2025-11-17",
+        "test_start": "2025-11-18",
+        "test_end": "2025-12-17",
+        "preds": {
+          "v4.1": 0.7112,
+          "V1": 4.6474,
+          "K114": -1.1595,
+          "K116": 11.5755,
+          "K121": 1.0328,
+          "K133": -5.4613,
+          "K147": 3.1156,
+          "K175_DAR": 3.6113,
+          "V_fwd_carry": 27.8404,
+          "V_rev_carry": 27.5952
+        },
+        "weights": {
+          "v4.1": 0.021,
+          "V1": 0.1371,
+          "K114": 0.0,
+          "K116": 0.3415,
+          "K121": 0.0305,
+          "K133": 0.0,
+          "K147": 0.0919,
+          "K175_DAR": 0.1066,
+          "V_fwd_carry": 0.1714,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.867,
+          "V1": 0.972,
+          "K114": 0.9214,
+          "K116": 0.9761,
+          "K121": 0.9689,
+          "K133": 0.9841,
+          "K147": 0.9101,
+          "K175_DAR": 0.997,
+          "V_fwd_carry": 0.9872,
+          "V_rev_carry": 0.9981
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": false,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9582,
+        "mean_dir_acc": 0.9
+      },
+      {
+        "step": 11,
+        "train_start": "2025-09-19",
+        "train_end": "2025-12-17",
+        "test_start": "2025-12-18",
+        "test_end": "2026-01-16",
+        "preds": {
+          "v4.1": -1.789,
+          "V1": -0.4282,
+          "K114": -2.0946,
+          "K116": -1.7281,
+          "K121": 1.567,
+          "K133": 1.1866,
+          "K147": 4.421,
+          "K175_DAR": -0.0406,
+          "V_fwd_carry": 44.4058,
+          "V_rev_carry": 13.809
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.0,
+          "K114": 0.0,
+          "K116": 0.0,
+          "K121": 0.1484,
+          "K133": 0.1123,
+          "K147": 0.4186,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.2207,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9255,
+          "V1": 0.962,
+          "K114": 0.9656,
+          "K116": 0.9925,
+          "K121": 0.9682,
+          "K133": 0.9607,
+          "K147": 0.9754,
+          "K175_DAR": 0.9963,
+          "V_fwd_carry": 0.9973,
+          "V_rev_carry": 0.9986
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": false,
+          "K114": false,
+          "K116": false,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9742,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 12,
+        "train_start": "2025-10-19",
+        "train_end": "2026-01-16",
+        "test_start": "2026-01-17",
+        "test_end": "2026-02-15",
+        "preds": {
+          "v4.1": -1.8566,
+          "V1": 3.6246,
+          "K114": 4.4597,
+          "K116": 4.4319,
+          "K121": 5.9081,
+          "K133": 5.4085,
+          "K147": 1.4713,
+          "K175_DAR": -5.6056,
+          "V_fwd_carry": -0.2997,
+          "V_rev_carry": 23.0173
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.1289,
+          "K114": 0.1586,
+          "K116": 0.1576,
+          "K121": 0.2101,
+          "K133": 0.1924,
+          "K147": 0.0523,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.0,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9581,
+          "V1": 0.9741,
+          "K114": 0.9823,
+          "K116": 0.9891,
+          "K121": 0.9859,
+          "K133": 0.9648,
+          "K147": 0.9843,
+          "K175_DAR": 0.9962,
+          "V_fwd_carry": 0.9934,
+          "V_rev_carry": 0.998
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": false,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9826,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 13,
+        "train_start": "2025-11-18",
+        "train_end": "2026-02-15",
+        "test_start": "2026-02-16",
+        "test_end": "2026-03-17",
+        "preds": {
+          "v4.1": 3.1961,
+          "V1": 2.236,
+          "K114": 0.536,
+          "K116": 3.5041,
+          "K121": 2.0703,
+          "K133": 2.4925,
+          "K147": 2.592,
+          "K175_DAR": 5.6868,
+          "V_fwd_carry": 11.3674,
+          "V_rev_carry": 14.1625
+        },
+        "weights": {
+          "v4.1": 0.1091,
+          "V1": 0.0763,
+          "K114": 0.0183,
+          "K116": 0.1196,
+          "K121": 0.0707,
+          "K133": 0.0851,
+          "K147": 0.0885,
+          "K175_DAR": 0.1941,
+          "V_fwd_carry": 0.1383,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9606,
+          "V1": 0.9746,
+          "K114": 0.9936,
+          "K116": 0.9891,
+          "K121": 0.9804,
+          "K133": 0.9618,
+          "K147": 0.9876,
+          "K175_DAR": 0.9906,
+          "V_fwd_carry": 0.9936,
+          "V_rev_carry": 0.9973
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": false,
+          "K116": false,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9829,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 14,
+        "train_start": "2025-12-18",
+        "train_end": "2026-03-17",
+        "test_start": "2026-03-18",
+        "test_end": "2026-04-14",
+        "preds": {
+          "v4.1": 4.2709,
+          "V1": -9.6189,
+          "K114": -0.4105,
+          "K116": -2.5633,
+          "K121": -3.8228,
+          "K133": 1.5738,
+          "K147": -0.5184,
+          "K175_DAR": 3.3284,
+          "V_fwd_carry": 21.1161,
+          "V_rev_carry": 30.7741
+        },
+        "weights": {
+          "v4.1": 0.2824,
+          "V1": 0.0,
+          "K114": 0.0,
+          "K116": 0.0,
+          "K121": 0.0,
+          "K133": 0.1041,
+          "K147": 0.0,
+          "K175_DAR": 0.2201,
+          "V_fwd_carry": 0.2935,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9824,
+          "V1": 0.9494,
+          "K114": 0.9927,
+          "K116": 0.9712,
+          "K121": 0.9429,
+          "K133": 0.9414,
+          "K147": 0.9857,
+          "K175_DAR": 0.9959,
+          "V_fwd_carry": 0.993,
+          "V_rev_carry": 0.9981
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": false,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9753,
+        "mean_dir_acc": 0.9
+      }
+    ]
+  },
+  "dd_aware_weight_analysis": {
+    "n_high_dd_days": 8,
+    "n_low_dd_days": 274,
+    "per_strategy": {
+      "v4.1": {
+        "weight_high_dd": 0.0172,
+        "weight_low_dd": 0.0883,
+        "dd_sensitivity": 0.0712
+      },
+      "V1": {
+        "weight_high_dd": 0.1297,
+        "weight_low_dd": 0.1371,
+        "dd_sensitivity": 0.0074
+      },
+      "K114": {
+        "weight_high_dd": 0.0936,
+        "weight_low_dd": 0.0732,
+        "dd_sensitivity": -0.0203
+      },
+      "K116": {
+        "weight_high_dd": 0.1035,
+        "weight_low_dd": 0.1417,
+        "dd_sensitivity": 0.0381
+      },
+      "K121": {
+        "weight_high_dd": 0.0556,
+        "weight_low_dd": 0.0644,
+        "dd_sensitivity": 0.0087
+      },
+      "K133": {
+        "weight_high_dd": 0.1355,
+        "weight_low_dd": 0.0999,
+        "dd_sensitivity": -0.0356
+      },
+      "K147": {
+        "weight_high_dd": 0.2211,
+        "weight_low_dd": 0.129,
+        "dd_sensitivity": -0.0921
+      },
+      "K175_DAR": {
+        "weight_high_dd": 0.0121,
+        "weight_low_dd": 0.0915,
+        "dd_sensitivity": 0.0794
+      },
+      "V_fwd_carry": {
+        "weight_high_dd": 0.1567,
+        "weight_low_dd": 0.1169,
+        "dd_sensitivity": -0.0398
+      },
+      "V_rev_carry": {
+        "weight_high_dd": 0.075,
+        "weight_low_dd": 0.0581,
+        "dd_sensitivity": -0.0169
+      }
+    },
+    "interpretation": "dd_sensitivity > 0 means strategy gets MORE weight when DD is low (healthy). dd_sensitivity < 0 means strategy gets LESS weight when DD is low (unusual). The ML model learns this pattern from embedded DD features."
+  },
+  "multicollinearity_check": {
+    "max_pairwise_corr_dd_features": 1.0,
+    "ridge_handles_multicollinearity": true,
+    "concern_threshold": 0.95,
+    "flagged": true,
+    "top_correlations": [
+      {
+        "feat_a": "v4.1__mdd30",
+        "feat_b": "v4.1__dd_max30",
+        "corr": 1.0
+      },
+      {
+        "feat_a": "K116__mdd30",
+        "feat_b": "K116__dd_max30",
+        "corr": 1.0
+      },
+      {
+        "feat_a": "v4.1__mdd30",
+        "feat_b": "v4.1__dd90",
+        "corr": 0.7271
+      },
+      {
+        "feat_a": "v4.1__mdd30",
+        "feat_b": "v4.1__dd30",
+        "corr": 0.7145
+      },
+      {
+        "feat_a": "K116__mdd30",
+        "feat_b": "K116__dd90",
+        "corr": 0.708
+      },
+      {
+        "feat_a": "K116__mdd30",
+        "feat_b": "K116__dd30",
+        "corr": 0.6856
+      },
+      {
+        "feat_a": "v4.1__sh_neg30",
+        "feat_b": "v4.1__calmar30",
+        "corr": -0.634
+      },
+      {
+        "feat_a": "v4.1__mdd30",
+        "feat_b": "v4.1__calmar30",
+        "corr": 0.5163
+      },
+      {
+        "feat_a": "K116__mdd30",
+        "feat_b": "K116__sh_neg30",
+        "corr": -0.4367
+      },
+      {
+        "feat_a": "v4.1__mdd30",
+        "feat_b": "v4.1__sh_neg30",
+        "corr": -0.4291
+      }
+    ]
+  },
+  "acceptance_criteria": {
+    "AC1_oos_sh_ge_k198": {
+      "pass": true,
+      "required": 10.28,
+      "actual": 10.3627,
+      "lift": 0.0827
+    },
+    "AC2_maxdd_improved_vs_k198": {
+      "pass": false,
+      "k198": -0.0053,
+      "k204": -0.0053,
+      "delta": 0.0
+    },
+    "AC3_wf_min_ge_k198": {
+      "pass": false,
+      "required": 6.57,
+      "actual": 6.023,
+      "lift": -0.547
+    },
+    "AC4_dd_features_nonzero": {
+      "pass": true,
+      "nonzero_count": 61,
+      "total_dd_features": 62
+    },
+    "n_criteria_passed": 2,
+    "all_pass": false
+  },
+  "verdict": "REJECT: K204 passes only 2/4 criteria. OOS Sh=10.36 (target\u226510.28), MaxDD=-0.0053 (target<-0.0053), WF min=6.02 (target\u22656.57). K198 v6.5 remains production. Investigate K205.",
+  "k205_next_steps": "If K204 passes: K205 should explore (a) longer training window (180d) to reduce fold variance, (b) adaptive alpha tuning per-fold, (c) non-linear interaction between DD features and Sharpe signals. If K204 fails AC2 (DD): K205 should add stronger DD penalty directly in weight formula: w_i *= (1 + dd30_i) to further reduce exposure. If K204 fails AC1 (Sh): K205 should investigate LightGBM with DD features as the non-linearity may matter for DD-regime interaction."
+}
