@@ -1,0 +1,200 @@
+[
+  {
+    "id": "R7-1",
+    "title": "Funding-Aware Optimal Market Making for Perpetual DEXs",
+    "url": "https://arxiv.org/abs/2605.06405",
+    "source": "arxiv.org",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Hyperliquid ETH/BTC/SOLデータを使いHJB方程式でファンディングレートを確率的状態変数として組み込んだ最適MM理論。古典A-Sモデル比でETH/BTCの在庫ボラが低減し平均リターン改善。",
+    "why_matters": "CEX-DEX FR arb (K175系) の理論的根拠を補強。HL perp のOU半減期7.96hはK175ラグ設計に直接使用可能。",
+    "actionable": "Y",
+    "action_reason": "K185+でFR予測モデルのOU半減期パラメータとして活用。HL ETH/SOL向け在庫制御にも応用検討。"
+  },
+  {
+    "id": "R7-2",
+    "title": "Cryptocurrency as an Investable Asset Class: Carry Trade Sharpe Decline",
+    "url": "https://arxiv.org/abs/2510.14435",
+    "source": "arxiv.org",
+    "date_collected": "2026-05-25",
+    "summary_ja": "2020-2025のクリプトキャリー戦略Sharpe: 全期間6.45→2024年4.06→2025年マイナス。FRプレミアムの圧縮が主因。yield製品の持続可能性に疑問符。",
+    "why_matters": "K176 (FR harvest) の期待リターン低下リスクを定量化。純粋FR収穫からdirectional/cross-sectionへ戦略シフトの根拠。",
+    "actionable": "Y",
+    "action_reason": "K185+では単純FR収穫を超えたCEX-DEX spread arb / FYpGE cross-section 戦略を優先すべき証拠として使用。"
+  },
+  {
+    "id": "R7-3",
+    "title": "Talyxion: Risk-Managed Crypto Portfolio (Sharpe 5.72, 30日ライブ)",
+    "url": "https://arxiv.org/abs/2511.13239",
+    "source": "arxiv.org",
+    "date_collected": "2026-05-25",
+    "summary_ja": "宇宙選択→α BTバック→ボラ加重最適化→動的DDリスク管理の4段階framework。Binance Futuresライブ30日でSharpe 5.72, ROI +16.68%, MDD 4.56%。",
+    "why_matters": "8 ACCEPT戦略の ensemble allocator (ML-based Sharpe-aware weighting) の実装参考。4段階パイプラインがK176群に直接適用可能。",
+    "actionable": "Y",
+    "action_reason": "現行8戦略へのボラ加重+DDリスク管理レイヤー追加。30日ライブ検証手法を forward-test に転用。"
+  },
+  {
+    "id": "R7-4",
+    "title": "Predictability of Funding Rates (DAR Model, Binance/Bybit BTC)",
+    "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5576424",
+    "source": "SSRN",
+    "date_collected": "2026-05-25",
+    "summary_ja": "二重自己回帰(DAR)モデルでBinance/Bybit BTC perpetual FRのOOS予測精度がno-changeベンチマークを上回ることを実証。短期FR予測が可能。",
+    "why_matters": "K175 (CEX-DEX FR maker) の エントリータイミングにDAR予測を組み込むと edge 強化の可能性。FR cache既に構築済み。",
+    "actionable": "Y",
+    "action_reason": "既存FR cacheデータにDAR(p,q)フィッティングを追加し、予測FR > 閾値時のみポジション取得するフィルターとして試験。"
+  },
+  {
+    "id": "R7-5",
+    "title": "AdaptiveTrend: 150+ペア6Hトレンドフォロー, Sharpe 2.41",
+    "url": "https://arxiv.org/abs/2602.11708",
+    "source": "arxiv.org",
+    "date_collected": "2026-05-25",
+    "summary_ja": "6H足ダイナミックトレーリングストップ+rolling Sharpe銘柄選択+非対称70/30ロングショート配分で150+ペア36ヶ月OOS Sharpe 2.41, MDD 12.7%。",
+    "why_matters": "6H足はK147 (hidden RSI div 4H) と時間軸が近い。rolling Sharpe銘柄選択は50+宇宙スクリーニングに直接転用可能。",
+    "actionable": "Y",
+    "action_reason": "K185候補: 6H足+rolling-Sharpe選択フィルターを既存トレンド系戦略に上乗せ。70/30 L/S配分の非対称設計も試験対象。"
+  },
+  {
+    "id": "R7-6",
+    "title": "QuantEvolve: Multi-Agent Evolutionary Framework for Strategy Discovery",
+    "url": "https://arxiv.org/abs/2510.18569",
+    "source": "arxiv.org",
+    "date_collected": "2026-05-25",
+    "summary_ja": "品質多様性最適化×仮説駆動マルチエージェントで自動的に戦略空間を探索。strategy type・risk・turnover・return characteristicsでfeature mapを構築し多様な戦略を進化。",
+    "why_matters": "CT Labオーケストレーター/PMの戦略探索プロセス自体の自動化参考。6エージェント×進化的探索の組み合わせ設計に活用。",
+    "actionable": "N",
+    "action_reason": "直接のαシグナルではなく探索インフラ。現時点では人間オーケストレーター + サブエージェントで十分。将来検討。"
+  },
+  {
+    "id": "R7-7",
+    "title": "Constrained LLM Agent for Crypto Factor Discovery (OOS Sharpe 1.55, 44%リターン)",
+    "url": "https://arxiv.org/abs/2604.26747",
+    "source": "arxiv.org",
+    "date_collected": "2026-05-25",
+    "summary_ja": "LLMがpoint-in-time factor DSLで仮説→バックテスト→改善を反復。5bp片道コスト込みで2024-2026 OOS年率44.55%, Sharpe 1.55。",
+    "why_matters": "K176群の次の alpha candidate を自律的に発掘する仕組み。fixed data split + selection gate による過学習防止設計が flearn 原則と整合。",
+    "actionable": "Y",
+    "action_reason": "DSL仕様とgate設計を参考にK185+ candidate生成ループを半自動化。LLM(Sonnet)+サブエージェントで試験実装可能。"
+  },
+  {
+    "id": "R7-8",
+    "title": "Hyperliquid-Drift Arbitrage Bot: Basis + FR Cross-Venue",
+    "url": "https://github.com/rustjesty/hyperliquid-drift-arbitrage-bot",
+    "source": "GitHub",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Hyperliquid(EVM)とDrift(Solana)間のbasis arb + FR arb を同時実装した研究用ボット。最小利益閾値とmax slippage bpsで制御。",
+    "why_matters": "K175 (XRP/SUI CEX-DEX FR maker) の拡張としてHL-Drift間スプレッドへの展開可能性。2-venue delta-neutral実装の参考実装。",
+    "actionable": "Y",
+    "action_reason": "コード設計の参考として。HL-Drift間の実FR乖離データ収集を先行し、統計的優位性確認後に実装判断。"
+  },
+  {
+    "id": "R7-9",
+    "title": "LOB Microstructure Alpha: クロスアセット転移はspotからfuturesのみ成立",
+    "url": "https://www.frontiersin.org/journals/blockchain/articles/10.3389/fbloc.2026.1811716/abstract",
+    "source": "Frontiers in Blockchain",
+    "date_collected": "2026-05-25",
+    "summary_ja": "6銘柄LOB特徴量は現実的取引コスト後に経済的exploitableなαが消滅。ただし同一資産のspot→futuresへの転移は成立（クロス銘柄は不可）。",
+    "why_matters": "LOBシグナルを独立戦略にするのは困難と確認。ただしspot-futures間の構造的一貫性はK175 CEX-DEX lag設計に使用できる。",
+    "actionable": "N",
+    "action_reason": "独立LOBシグナル戦略は費用対効果が低い。spot-futures LOBデータをCEX-DEX lag補助シグナルとして使う場合のみ再検討。"
+  },
+  {
+    "id": "R7-10",
+    "title": "Loris Tools: 41取引所1568銘柄FR Arb Scanner + Backtester",
+    "url": "https://loris.tools/backtester",
+    "source": "Loris Tools",
+    "date_collected": "2026-05-25",
+    "summary_ja": "41取引所1568銘柄のリアルタイムFR比較+バックテスター。Binance/Bybit/OKX/HL/Drift/MEXC等のFR差をスキャン。登録不要で無料利用可。",
+    "why_matters": "CEX-DEX FR spread候補銘柄の迅速スクリーニングに活用可能。K185候補銘柄の事前リサーチ工数を削減。",
+    "actionable": "Y",
+    "action_reason": "次回スクリーニング時にLoris Toolsで50+宇宙をスキャンし、FR乖離上位銘柄をK185候補リストに追加。"
+  },
+  {
+    "id": "R7-11",
+    "title": "Crypto LOB Microstructure: Data Quality > Model Complexity (2506.05764)",
+    "url": "https://arxiv.org/abs/2506.05764",
+    "source": "arxiv.org",
+    "date_collected": "2026-05-25",
+    "summary_ja": "BybitのBTC/USDT LOBでKalman/SG filterによる前処理が決定的。LogReg/XGBoostが複雑DLモデルと同等のOOS精度を達成。データ品質が支配的。",
+    "why_matters": "K185+のMLシグナル開発における前処理重視の設計指針。過複雑モデル回避と計算コスト削減に活用。",
+    "actionable": "Y",
+    "action_reason": "既存シグナル計算パイプラインにKalman smoothingを前処理として追加し、ノイズ低減後のOOS性能を比較実験。"
+  },
+  {
+    "id": "R7-12",
+    "title": "Price Discovery: CEX leads DEX ETH price 2024 (2506.08718)",
+    "url": "https://arxiv.org/abs/2506.08718",
+    "source": "arxiv.org",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Binance vs Uniswap v2のETH価格発見分析: CEXがリード。BTC先物はspot全般的にリードするが高ボラ局面では混在。Hasbrouck/GG法使用。",
+    "why_matters": "K175 CEX-DEX FR makerの方向性検証。CEX→DEX lag構造が確認され、CEXシグナルを先行指標とする設計に理論的根拠。",
+    "actionable": "Y",
+    "action_reason": "CEX(Binance) FR変化をDEX(HL/Drift)ポジションの先行シグナルとして使用するK175改良版(K185候補)のlagを実証的に決定。"
+  },
+  {
+    "id": "R7-13",
+    "title": "PulseReddit: Reddit×HFT Dataset, LLM Multi-Agent Bull Market Alpha",
+    "url": "https://arxiv.org/abs/2506.03861",
+    "source": "arxiv.org",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Reddit大規模センチメントデータ×高頻度市場データを統合した初の公開データセット。LLM MASがbull市場で伝統的ベースラインを上回る。",
+    "why_matters": "センチメント(bull/bear regime)と組み合わせた directional overlay の参考。Fear&Greed+Reddit複合シグナルの可能性。",
+    "actionable": "N",
+    "action_reason": "Redditデータ取得インフラが必要。現状はCoinGlass FR+OI優先。センチメント補助シグナルとして将来検討。"
+  },
+  {
+    "id": "R7-14",
+    "title": "Extremity Premium: F&G極値で bid-ask spread 拡大, 逆張りシグナル示唆",
+    "url": "https://arxiv.org/abs/2602.07018",
+    "source": "arxiv.org",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Crypto Fear&Greedの極値(extreme fear/greed)でbid-askスプレッドが有意に拡大(「extremity premium」)。2018-2026で6/7サイクル再現。p<0.001。",
+    "why_matters": "K176群の FR<-0.01% AND F&G<20 contrarian long シグナル (R6-7) に理論的裏付けを提供。流動性低下局面をエッジとして再確認。",
+    "actionable": "Y",
+    "action_reason": "R6-7候補(負FR+極端恐怖)のエントリー条件にextremity(|F&G-50|>30)フィルターを追加し、スプレッドコスト増加を考慮したbacktest実施。"
+  },
+  {
+    "id": "R7-15",
+    "title": "Octobder 2025 Liquidation Cascade: Hedge Fund FR Arb Alpha抽出メカニズム",
+    "url": "https://navnoorbawa.substack.com/p/how-hedge-funds-basis-traders-and",
+    "source": "Substack",
+    "date_collected": "2026-05-25",
+    "summary_ja": "2025年10月カスケード($19B OI消失)中に機関投資家がFR arb(年率100%超に急騰)とETH/BTC basis(年率13%)で収益獲得。事前シグナルはWLFI volume 21.7×。",
+    "why_matters": "cascade局面でFR急騰→arb機会急拡大のパターン確認。K175 CEX-DEX FR makerのtail-event収益機会を裏付け。",
+    "actionable": "Y",
+    "action_reason": "Cascade前兆シグナル(OI急増+FR急騰+関連トークンvolume spike)のアラートをforward-testシステムに統合検討。"
+  },
+  {
+    "id": "R7-16",
+    "title": "yodakaart.tech: 仮想通貨Bot戦略体系2025版 (FR delta hedge 基礎戦略)",
+    "url": "https://yodakaart.tech/%F0%9F%A7%A0%E6%88%A6%E7%95%A5%E3%83%AD%E3%82%B012025-5-5%E3%80%8C%E4%BB%AE%E6%83%B3%E9%80%9A%E8%B2%A8bot%E3%81%AE%E6%88%A6%E7%95%A5%E4%BD%93%E7%B3%BB%E4%B8%80%E8%A6%A7%E3%80%8D/",
+    "source": "yodakaart.tech",
+    "date_collected": "2026-05-25",
+    "summary_ja": "日本語botter実践ブログ。MMbot→FRデルタヘッジ→DeFi戦略の3層体系。FR delta hedgeを「基礎戦略の1つ」として位置付け、spot long + perp short 構造を解説。",
+    "why_matters": "日本語コミュニティでのFR delta hedge実装知見。K175改良の実装参考および日本語向けドキュメント充実に活用。",
+    "actionable": "N",
+    "action_reason": "既知の戦略体系と重複多い。実装参考としては有用だが新規αシグナルではない。"
+  },
+  {
+    "id": "R7-17",
+    "title": "AutoQuant: Bayesian最適化でCrypto Perpetual戦略パラメータをAudit",
+    "url": "https://arxiv.org/abs/2512.22476",
+    "source": "arxiv.org",
+    "date_collected": "2026-05-25",
+    "summary_ja": "T+1実行セマンティクス+no-look-ahead funding alignmentの厳格コスト込みBayesian最適化。ダブルスクリーニングでDDを削減。コスト無視BTはリターンを誇張。",
+    "why_matters": "CT LabのBT品質管理に直接適用可能。現行backtestがfunding timing・slippageをどの程度考慮しているかの自己監査ツール。",
+    "actionable": "Y",
+    "action_reason": "K176系のバックテストにT+1実行とfunding alignment strictnessを適用し、現行リターン推定が過大か検証。"
+  },
+  {
+    "id": "R7-18",
+    "title": "FineFT: 3-Stage Ensemble RL for Futures Trading (5x leverage, risk -40%)",
+    "url": "https://arxiv.org/abs/2512.23773",
+    "source": "arxiv.org",
+    "date_collected": "2026-05-25",
+    "summary_ja": "FineFTはtraining-evaluation-deployment3段階ensemble RL。crypto futuresで5倍レバでリスク40%以上削減しつつ収益性改善。安定訓練と適切なリスク管理を実現。",
+    "why_matters": "8戦略ensemble allocator (ML Sharpe-aware)の設計参考。3段階パイプラインとrisk-aware fineTuningがK176群のポートフォリオ管理に応用可能。",
+    "actionable": "Y",
+    "action_reason": "K185+: existing 8戦略をFineFT的な3段階ensemble RLで動的ウェイト調整する allocator として試実装。"
+  }
+]
