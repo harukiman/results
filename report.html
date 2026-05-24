@@ -568,18 +568,26 @@ window.__renderWhenReady = function(fn, label) {
     /* Tables inside details/summary smaller */
     details table, details .data-table { font-size: 0.68rem !important; }
 
-    /* ===== TOC float-button on mobile ===== */
+    /* ===== TOC compact panel on mobile ===== */
     .toc { display: none !important; }
     .toc.toc-open {
-      display: block !important; position: fixed; top: 50px; left: 8px; right: 8px;
-      max-height: 70vh; overflow-y: auto; z-index: 999;
-      background: var(--bg-card); padding: 12px; border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      display: block !important; position: fixed;
+      bottom: 60px; right: 12px;
+      width: 200px; max-height: 45vh;
+      overflow-y: auto; z-index: 999;
+      background: var(--bg-card); padding: 8px 10px; border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      font-size: 0.72rem;
+      border: 1px solid var(--border);
     }
+    .toc.toc-open h3 { font-size: 0.65rem !important; margin-bottom: 4px !important; padding-bottom: 4px !important; }
+    .toc.toc-open ol { padding-left: 0 !important; }
+    .toc.toc-open li { margin-bottom: 2px !important; line-height: 1.2 !important; }
+    .toc.toc-open a { font-size: 0.7rem !important; padding: 1px 2px !important; }
     .toc-toggle {
       display: block !important; position: fixed; bottom: 12px; right: 12px; z-index: 1000;
-      background: var(--accent-blue); color: white; padding: 10px 14px; border-radius: 6px;
-      border: 0; font-size: 0.9rem; cursor: pointer; min-height: 40px;
+      background: var(--accent-blue); color: white; padding: 8px 12px; border-radius: 6px;
+      border: 0; font-size: 0.85rem; cursor: pointer; min-height: 36px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
 
@@ -657,7 +665,7 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 21:20 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 21:56 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 ENSEMBLE:</strong> <span style="color:var(--accent-green);font-weight:700;">K124 5戦略合成 OOS Sh +4.25 / MaxDD -1.16% / Calmar 14.0</span> &nbsp;|&nbsp; <span style="color:var(--text-secondary);font-size:0.85em;">構成: v4.1 + K109 V1 + K114 ALCP + K116 vol_only + K121 Weekend, |ρ| max 0.34</span> &nbsp;|&nbsp;
     <strong>5 base ACCEPT + 1 ensemble / 9 REJECT / 1 CONDITIONAL</strong>
@@ -667,7 +675,7 @@ window.__renderWhenReady = function(fn, label) {
     <h1 style="font-family:Georgia,serif;letter-spacing:-0.01em;">Systematic Alpha Discovery in MEXC Perpetual Futures</h1>
     <div class="subtitle" style="font-style:italic;font-family:Georgia,serif;">A Bias-Controlled Empirical Study of Multi-Axis Portfolio Construction with §6 Audit Validation</div>
     <div class="meta">
-      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 21:20 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
+      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 21:56 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
       Methodology: §6 strict-gate audit (Bailey-LdP CPCV, Hansen SPA, White RC, Bootstrap CI, Block Permutation)
     </div>
   </header>
@@ -6550,7 +6558,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       </div>
       <div id="external-findings-body" style="margin-top:10px;font-size:0.88rem;">
         <div class="findings-page" data-page="1" data-title="Round 1: tip-scraper 初回 (20候補)">
-        <h3 style="color:var(--accent-green);">📅 2026-05-24 21:20 JST — 初回スクレイプ完了 (20候補 / TOP5抽出)</h3>
+        <h3 style="color:var(--accent-green);">📅 2026-05-24 21:56 JST — 初回スクレイプ完了 (20候補 / TOP5抽出)</h3>
         <p>tip-scraper サブエージェントが arxiv/MDPI/ScienceDirect/Bookmap/Glassnode/Amberdata/Coinmonks/Zenn/note 等を巡回。既存17戦略との重複を除外し、20件の新規候補を抽出。</p>
 
         <h4 style="color:var(--accent-cyan);margin-top:14px;">TOP 5 (優先検証)</h4>
@@ -7158,7 +7166,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       <p style="font-size:0.85rem;color:var(--text-secondary);">解析過程で発見した tips・知見・将来役立ちそうなアイデアを時系列で蓄積。</p>
       <div id="tips-log-body" style="margin-top:10px;font-size:0.88rem;">
         <details open>
-          <summary><strong>💡 2026-05-24 21:20 JST — 信号振幅 vs コスト 事前評価原則 (K122 から)</strong></summary>
+          <summary><strong>💡 2026-05-24 21:56 JST — 信号振幅 vs コスト 事前評価原則 (K122 から)</strong></summary>
           <ul>
             <li><strong>K122 Premium-Index MR の失敗から導出された原則</strong></li>
             <li><strong>事象</strong>: arxiv 2310.11771 の theoretically sound な premium-MR 仮説、4H scale で REJECT</li>
@@ -7185,7 +7193,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
-          <summary><strong>🌟 2026-05-24 21:20 JST — K121 Weekend Momentum ACCEPT 6/7 (5番目候補)</strong></summary>
+          <summary><strong>🌟 2026-05-24 21:56 JST — K121 Weekend Momentum ACCEPT 6/7 (5番目候補)</strong></summary>
           <ul>
             <li><strong>5番目の独立 alpha 軸</strong>: calendar effect (時間帯エッジ) — 既存4軸 (mix/regime/onchain/cross-section) と直交</li>
             <li><strong>53/56 銘柄</strong> で weekend > weekday daily SR (breadth 94.6%)</li>
@@ -7242,7 +7250,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details>
-          <summary><strong>📋 2026-05-24 21:20 JST — HTML 監査記録 #1 (定期監査初回)</strong></summary>
+          <summary><strong>📋 2026-05-24 21:56 JST — HTML 監査記録 #1 (定期監査初回)</strong></summary>
           <ul>
             <li><strong>監査範囲</strong>: TOC vs section ID 対応、累積 Sharpe 数値の重複、最新候補の整合性、Plotly 不具合</li>
             <li><strong>是正</strong>: (a) 上部 banner が古い v1 (Sh+3.61) 表示 → 採用候補4軸 (v4.1+4.08, K109+2.93, K114+2.25, K112 OOS+1.71) に更新</li>
@@ -7265,7 +7273,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
-          <summary><strong>2026-05-24 21:20 JST</strong> — インボックス機構稼働 + 外部リサーチ初回 + Wave K109 着手</summary>
+          <summary><strong>2026-05-24 21:56 JST</strong> — インボックス機構稼働 + 外部リサーチ初回 + Wave K109 着手</summary>
           <ul>
             <li>サイト経由の指示インボックス実装完了 (pw=2026, ntfy.sh backend, 3-fails-24h-lock)</li>
             <li>launchd `com.cryptolab.inbox-poll` 登録、StartInterval=1800s (30分)。独立稼働するので Claude セッション断でも受信継続</li>
@@ -7294,7 +7302,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
     <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v4.1</p>
-    <p style="margin-top:4px;">更新: 2026-05-24 21:20 JST &nbsp;|&nbsp; 100+ファミリーで738,388+試行 &nbsp;|&nbsp; ユニバース: 55銘柄 (4H/730日) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
+    <p style="margin-top:4px;">更新: 2026-05-24 21:56 JST &nbsp;|&nbsp; 100+ファミリーで738,388+試行 &nbsp;|&nbsp; ユニバース: 55銘柄 (4H/730日) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 
