@@ -3042,3 +3042,23 @@ S3I (Wave J17 で signal 棄却) を re-purpose: signal でなく <strong>レジ
 
 **累計試行**: ~738,380 + 8 (variants) = ~738,388
 **累計棄却ファミリー**: 107+ (S3I meta-filter は別 axis ではあるが、本番統合せず)
+
+### 2026-05-24 04:55 JST: Wave K19 — Meme correlation breakdown → no valid result (sigfire不足)
+
+仮説: DOGE-SHIB 等の normally-correlated pair が急減相関時 → 回帰トレード
+
+**結果**: シグナル発火数が全ペアで <15 trades 未満 → no valid result
+- correlation < 0.4 + ret divergence 2-2% 条件が厳しすぎ
+- 4Hでこの状況は稀
+
+**17候補スコア**:
+- ✅ FOPD, 8H Meme, vol_z MR, 4-way mix composite (4 success)
+- ❌ FToD, LISRM, HLWI, S3I (signal), Dynamic, LiqCascade, MetaLabel, BTC.D, Pure Funding, BTC/ETH ratio, S3I (filter), Meme corr (合計 13 棄却)
+- 成功率: **4/17 = 23.5%** (前回 28.6% から減)
+
+**Wave K の探索は実質完了**:
+- 新規 alpha の発見はほぼ枯渇
+- 4-way mix が最終形 (§6 全合格 + 期間頑健性 + Stress test 全通過)
+- 残るは <strong>真OOSフォワードテスト累積</strong>のみ
+
+**累計試行**: ~738,388 (K19 新試行なし)
