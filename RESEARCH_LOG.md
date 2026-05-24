@@ -3013,3 +3013,32 @@ K8 で 80/10/10 が 90日窓 100% positive を達成したが、4-way mix はさ
 
 **結論**: 単純な cross-symbol MR/spread はクリプト先物 4H では機能しない、と確認。
 Wave K の探索は実質完了。残りは 4-way mix の磨き込みと運用準備のみ。
+
+### 2026-05-24 04:50 JST: Wave K18 — Stablecoin supply meta-filter → **marginal 改善のみ、本番統合せず**
+
+S3I (Wave J17 で signal 棄却) を re-purpose: signal でなく <strong>レジームフィルター</strong>として 4-way mix に適用。
+
+**実装**: stablecoin supply 7日変化率の60日 z-score が閾値以下 → ポジション 50%減 or オフ。
+
+**結果**:
+| Variant | Sharpe | Return | DD | Calmar |
+|---------|--------|--------|-----|--------|
+| Baseline (no filter) | +3.61 | +66.0% | -1.8% | 36.65 |
+| 50% scale when z<-0.5 | **+3.91** (+0.30) | +56.3% | -1.6% | 35.41 |
+| 50% scale when z<-1.0 | +3.67 | +58.8% | -1.9% | 31.70 |
+| 50% scale when z<-1.5 | +3.64 | +62.3% | -1.8% | 34.50 |
+| 50% scale when z<-2.0 | +3.62 | +66.3% | -1.8% | 36.83 |
+| OFF when z<-1.0 | +3.44 | +51.9% | -1.9% | 27.15 |
+| OFF when z<-1.5 | +3.53 | +58.6% | -1.8% | 32.37 |
+| **OFF when z<-2.0** | +3.64 | +66.7% | -1.8% | **37.00** (+0.35) |
+
+**判定**: 統合不要
+1. **Calmar の改善は marginal** (best +0.35 vs baseline 36.65, 1% 程度)
+2. **Sharpe 改善 (+0.30) は return 犠牲** (-9.7% return) で得られている → Sharpe ↑/Return↓ のトレードオフ
+3. **閾値によって最適が変わる** (Sharpe 最適は z<-0.5、Calmar 最適は z<-2.0) → 単一最適点不在 = 過学習リスク
+4. **DD 改善も marginal** (-1.8% → -1.6% 程度)
+
+**学び**: stablecoin supply は slow signal (週月単位)、4Hで daily aggregation してもメタフィルターとしての価値は限定的。<strong>4-way mix の market-neutral 設計が既に「資金引き上げ局面」をある程度自己防御</strong>している可能性。
+
+**累計試行**: ~738,380 + 8 (variants) = ~738,388
+**累計棄却ファミリー**: 107+ (S3I meta-filter は別 axis ではあるが、本番統合せず)
