@@ -3311,3 +3311,28 @@ Best BNB Sh+1.23 (DD-13%)、DOGE/ADA negative。Single-direction vol spike は v
 
 **結論**: Wave K の strategy hunting は限界に達した。これ以上の新規axisは期待値低い。
 4-way mix (4 axes統合, §6 8/8 PASS) が本研究の最終形。
+
+### 2026-05-24 06:05 JST: Wave K28 — Donchian breakout → **marginal, 統合せず (高DD)**
+
+仮説: 直近50バーの 高値/安値 breakout でトレンドフォロー
+
+**結果**:
+| 銘柄 | Best Sh | Return | DD | Trades |
+|------|---------|--------|-----|--------|
+| **DOGEUSDT** | **+2.01** | +189.4% | -18.2% | 158 |
+| **ETHUSDT** | +1.67 | +90.6% | -14.3% | 186 |
+| **ARBUSDT** | +1.30 | +130.1% | -31.4% | 305 |
+| **INJUSDT** | +1.22 | +123.9% | -28.9% | 318 |
+| BTCUSDT | +0.19 | +3.5% | -18.2% | 183 |
+| AVAXUSDT | -0.01 | -9.6% | -28.5% | 319 |
+| LINKUSDT | -0.01 | -5.7% | -34.8% | 118 |
+
+**集計**: 40% Sh>0, 27 Sh≥1.5, 3 Sh≥2.0
+
+**判定: 統合せず (高 DD)**:
+- DOGE Sh+2.01 興味深いが DD-18% は 4-way mix (-1.8%) より遥かに高い
+- DD -14% to -34% は portfolio level での DD-1.8% 維持と incompatible
+- BTC/BNB弱、AVAX/LINK negative — symbol selection が必要だが overfit リスク
+- 古典的「トレンドフォロー momentum 戦略」は ATR_Ratio に既に近い情報を含む
+
+**累計**: 22候補テスト、4成功 = 18.2% (累積成功率)
