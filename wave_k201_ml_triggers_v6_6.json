@@ -1,0 +1,375 @@
+{
+  "wave": "K201",
+  "task": "ML allocator (K198 Ridge) + T1/T2/T3 safety triggers (K199b) \u2014 v6.6 candidate",
+  "as_of": "2026-05-24T21:00:51.014312+00:00",
+  "runtime_s": 3.4,
+  "config": {
+    "strategies": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ],
+    "n_strategies": 10,
+    "ml_train_days": 90,
+    "ml_test_days": 30,
+    "oos_frac": 0.3,
+    "k121_cap": 0.3,
+    "carry_fwd_cap": 0.1,
+    "carry_rev_cap": 0.05,
+    "t1_window": 30,
+    "t1_thresh": -2.0,
+    "t2_window": 30,
+    "t2_thresh": 0.0,
+    "t3_dd_thresh": -0.02,
+    "fr_threshold": -0.009735,
+    "ridge_alpha": 1.0,
+    "n_folds": 4,
+    "n_days_k201": 448,
+    "date_range": [
+      "2025-01-22",
+      "2026-04-14"
+    ]
+  },
+  "four_way_comparison": {
+    "K196_v6_4_baseline": {
+      "description": "K196 v6.4 static P3 risk-parity (production reference)",
+      "oos_sharpe": 9.2005,
+      "oos_maxdd": -0.0038,
+      "oos_sortino": 26.9957,
+      "oos_ann_ret": 0.2602,
+      "wf_mean": 5.3167,
+      "wf_min": 3.2518,
+      "wf_fold_sharpes": [
+        3.2518,
+        4.3099,
+        4.1683,
+        9.5368
+      ],
+      "note": "Reference values from stored K196 production metrics"
+    },
+    "K198_ML_alone": {
+      "description": "K198 Ridge ML allocator, carry cap 10%, no T1/T2/T3",
+      "oos_sharpe": 10.2796,
+      "oos_maxdd": -0.0053,
+      "oos_sortino": 30.7437,
+      "oos_ann_ret": 0.7771,
+      "wf_mean": 7.912,
+      "wf_min": 6.5722,
+      "wf_fold_sharpes": [
+        6.5722,
+        7.3823,
+        7.9409,
+        9.7527
+      ],
+      "note": "Loaded from wave_k198_curves.json pnl_ridge"
+    },
+    "K199b_triggers_alone": {
+      "description": "K199b triggers only, static P3 allocator, carry cap 5%",
+      "oos_sharpe": 7.8274,
+      "oos_maxdd": -0.004,
+      "oos_sortino": 20.1397,
+      "oos_ann_ret": 0.202,
+      "wf_mean": 4.9834,
+      "wf_min": 3.409,
+      "wf_fold_sharpes": [
+        3.409,
+        4.2779,
+        4.2885,
+        7.9581
+      ],
+      "note": "Loaded from wave_k199_curves.json K199b_P3_risk_parity"
+    },
+    "K201_ML_plus_triggers": {
+      "description": "K201 = K198 Ridge ML + K199b T1/T2/T3, carry cap 5%",
+      "oos_sharpe": 8.5864,
+      "oos_maxdd": -0.0057,
+      "oos_sortino": 24.8701,
+      "oos_calmar": 116.6877,
+      "oos_ann_ret": 0.6706,
+      "oos_ann_vol": 0.06,
+      "oos_n_days": 135,
+      "wf_mean": 7.3779,
+      "wf_min": 6.3919,
+      "wf_max": 8.0124,
+      "wf_std": 0.6114,
+      "wf_fold_sharpes": [
+        6.3919,
+        7.3823,
+        8.0124,
+        7.7248
+      ]
+    }
+  },
+  "synergy_analysis": {
+    "K196_baseline_sh": 9.2005,
+    "K198_marginal_lift": 1.0791,
+    "K199b_marginal_lift": -1.3731,
+    "sum_marginal_lifts": -0.294,
+    "K201_marginal_lift": -0.6141,
+    "synergy_value": -0.3201,
+    "synergy_positive": false,
+    "dd_improvement_K201_vs_K198": -0.0004,
+    "dd_improved": false,
+    "interpretation": "Conflicting: triggers reduce ML alpha"
+  },
+  "ml_vs_trigger_disagreement": {
+    "summary": {
+      "n_days_total": 448,
+      "n_trigger_actions": {
+        "none": 101,
+        "T1_reduce": 104,
+        "T2_halt": 96,
+        "T3_halt": 147
+      },
+      "n_disagreement_days": 185,
+      "pct_disagreement": 41.3,
+      "n_full_override_days": 93,
+      "pct_full_override": 20.8,
+      "n_partial_reduce_days": 92,
+      "pct_partial_reduce": 20.5,
+      "ml_rev_weight_mean": 0.0299,
+      "ml_rev_weight_max": 0.05,
+      "conflict_rate": 41.3
+    },
+    "conflict_rate_pct": 41.3,
+    "interpretation": "High conflict: significant ML-trigger disagreement \u2014 monitor closely"
+  },
+  "trigger_stats": {
+    "T1_per_symbol": {
+      "SOL": {
+        "fire_count": 64,
+        "fire_pct": 9.7
+      },
+      "XRP": {
+        "fire_count": 72,
+        "fire_pct": 10.9
+      },
+      "SUI": {
+        "fire_count": 72,
+        "fire_pct": 10.9
+      },
+      "OP": {
+        "fire_count": 6,
+        "fire_pct": 0.9
+      },
+      "APT": {
+        "fire_count": 26,
+        "fire_pct": 4.0
+      },
+      "AXS": {
+        "fire_count": 8,
+        "fire_pct": 1.2
+      },
+      "JTO": {
+        "fire_count": 31,
+        "fire_pct": 4.7
+      },
+      "IMX": {
+        "fire_count": 0,
+        "fire_pct": 0.0
+      },
+      "SAND": {
+        "fire_count": 0,
+        "fire_pct": 0.0
+      },
+      "ADA": {
+        "fire_count": 10,
+        "fire_pct": 1.5
+      }
+    },
+    "T2_panel": {
+      "fire_count_total": 223,
+      "fire_pct_total": 33.9,
+      "fire_count_oos": 0,
+      "fire_pct_oos": 0.0
+    },
+    "T3_dd": {
+      "fire_count_total": 184,
+      "fire_pct_total": 28.0,
+      "fire_count_oos": 41,
+      "fire_pct_oos": 20.7,
+      "max_dd_pre_trigger": -0.0292
+    },
+    "combined_halt_days": {
+      "total": 407,
+      "pct": 61.9
+    }
+  },
+  "ml_diagnostics": {
+    "overall_mean_r2": 0.9366,
+    "overall_mean_dir_acc": 0.7333,
+    "r2_by_strategy": {
+      "v4.1": {
+        "mean": 0.9239,
+        "n_steps": 15
+      },
+      "V1": {
+        "mean": 0.9244,
+        "n_steps": 15
+      },
+      "K114": {
+        "mean": 0.8913,
+        "n_steps": 15
+      },
+      "K116": {
+        "mean": 0.9422,
+        "n_steps": 15
+      },
+      "K121": {
+        "mean": 0.9452,
+        "n_steps": 15
+      },
+      "K133": {
+        "mean": 0.9346,
+        "n_steps": 15
+      },
+      "K147": {
+        "mean": 0.9183,
+        "n_steps": 15
+      },
+      "K175_DAR": {
+        "mean": 0.9256,
+        "n_steps": 15
+      },
+      "V_fwd_carry": {
+        "mean": 0.9711,
+        "n_steps": 15
+      },
+      "V_rev_carry": {
+        "mean": 0.9893,
+        "n_steps": 15
+      }
+    },
+    "dir_acc_by_strategy": {
+      "v4.1": {
+        "mean_dir_acc": 0.4667,
+        "n_steps": 15
+      },
+      "V1": {
+        "mean_dir_acc": 0.9333,
+        "n_steps": 15
+      },
+      "K114": {
+        "mean_dir_acc": 0.6,
+        "n_steps": 15
+      },
+      "K116": {
+        "mean_dir_acc": 0.6667,
+        "n_steps": 15
+      },
+      "K121": {
+        "mean_dir_acc": 0.6,
+        "n_steps": 15
+      },
+      "K133": {
+        "mean_dir_acc": 0.7333,
+        "n_steps": 15
+      },
+      "K147": {
+        "mean_dir_acc": 0.7333,
+        "n_steps": 15
+      },
+      "K175_DAR": {
+        "mean_dir_acc": 0.7333,
+        "n_steps": 15
+      },
+      "V_fwd_carry": {
+        "mean_dir_acc": 0.9333,
+        "n_steps": 15
+      },
+      "V_rev_carry": {
+        "mean_dir_acc": 0.9333,
+        "n_steps": 15
+      }
+    },
+    "n_wf_steps": 15
+  },
+  "per_fold_breakdown": [
+    {
+      "fold": 0,
+      "date_start": "2025-01-22",
+      "date_end": "2025-05-13",
+      "n_days": 112,
+      "K196_sh": 4.393,
+      "K198_sh": 6.5722,
+      "K199b_sh": 4.2698,
+      "K201_sh": 6.3919,
+      "K201_dd": -0.0117,
+      "K201_vs_K198": -0.1803,
+      "K201_vs_K199b": 2.1221
+    },
+    {
+      "fold": 1,
+      "date_start": "2025-05-14",
+      "date_end": "2025-09-02",
+      "n_days": 112,
+      "K196_sh": 5.6596,
+      "K198_sh": 7.3823,
+      "K199b_sh": 5.8759,
+      "K201_sh": 7.3823,
+      "K201_dd": -0.0183,
+      "K201_vs_K198": -0.0,
+      "K201_vs_K199b": 1.5064
+    },
+    {
+      "fold": 2,
+      "date_start": "2025-09-03",
+      "date_end": "2025-12-23",
+      "n_days": 112,
+      "K196_sh": 2.9005,
+      "K198_sh": 7.9409,
+      "K199b_sh": 2.8818,
+      "K201_sh": 8.0124,
+      "K201_dd": -0.0158,
+      "K201_vs_K198": 0.0715,
+      "K201_vs_K199b": 5.1306
+    },
+    {
+      "fold": 3,
+      "date_start": "2025-12-24",
+      "date_end": "2026-04-14",
+      "n_days": 112,
+      "K196_sh": 10.8765,
+      "K198_sh": 9.7527,
+      "K199b_sh": 8.6984,
+      "K201_sh": 7.7248,
+      "K201_dd": -0.0051,
+      "K201_vs_K198": -2.0279,
+      "K201_vs_K199b": -0.9736
+    }
+  ],
+  "acceptance_criteria": {
+    "AC1_oos_sh_desc": "OOS Sh > K198 (10.28) or within -0.1 with DD/WF gain",
+    "AC1_pass": false,
+    "AC1_beat": false,
+    "AC1_near": false,
+    "AC1_dd_gain": false,
+    "AC1_wf_gain": false,
+    "AC2_wf_min_desc": "WF min > K198 (6.57)",
+    "AC2_pass": false,
+    "AC2_actual": 6.3919,
+    "AC3_maxdd_desc": "MaxDD better than K198 (-0.0053)",
+    "AC3_pass": false,
+    "AC3_actual": -0.0057,
+    "AC4_synergy_desc": "Synergy > -0.20 (no major conflict penalty)",
+    "AC4_pass": false,
+    "AC4_actual": -0.3201,
+    "n_criteria_passed": 0,
+    "all_pass": false
+  },
+  "verdict": "REJECT for v6.6: K201 fails 4/4 criteria. OOS Sh=8.5864 (vs K198=10.28), WF min=6.3919 (vs K198=6.57), MaxDD=-0.0057 (vs K198=-0.0053). ML and triggers conflict more than they compose. K198 remains best single ML candidate; K202 should explore orthogonal combination.",
+  "deployment_risks": {
+    "ml_trigger_conflict": "ML-trigger conflict rate: 41.3% of days. When triggers override ML predictions, the allocator may leave return on the table. Monitor: if conflict rate rises above 30%, consider decoupling ML and trigger layers.",
+    "carry_cap_reduction": "Reverse carry cap reduced from 10% (K198) to 5% (K199b). This reduces max exposure to reverse carry signals and cushions tail events. Tradeoff: may lose reverse carry upside in high-FR regimes.",
+    "regime_sensitivity": "ML features use rolling Sharpe/vol/corr from prior 30-90 days. T2/T3 triggers also use 30d rolling window. In whipsaw regimes, both layers may fire simultaneously (double-jeopardy) or neither fires. Backtest does not capture sequential whipsaw effect.",
+    "overfitting_guard": "Ridge regression (alpha=1.0) is low-complexity \u2014 minimal overfit risk. Walk-forward prevents look-ahead bias. Main OOS risk: if reverse carry spread collapses (perp/spot basis flip), both ML and triggers will lag by up to 30d.",
+    "k202_directions": "If K201 shows ML-trigger conflict, K202 should explore: (1) trigger-aware ML training (encode T1/T2/T3 state as features), (2) two-layer hierarchy (triggers gate ML, not post-apply), (3) regime-conditional ML models (separate models for high/low FR regimes)."
+  }
+}
