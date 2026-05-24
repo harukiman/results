@@ -1,0 +1,618 @@
+{
+  "wave": "K223",
+  "task": "Carry-Stress Index leverage on K218e",
+  "as_of": "2026-05-24T22:32:59Z",
+  "runtime_s": 0.8,
+  "methodology": {
+    "oos_frac": 0.3,
+    "oos_n_days": 135,
+    "wf_folds": 4,
+    "sharpe_formula": "mean*365 / (std*sqrt(365))",
+    "note": "Exact match to K218 oos_metrics() and wf_stats() functions"
+  },
+  "csi_construction": {
+    "symbols": [
+      "BTC",
+      "ETH",
+      "SOL",
+      "XRP"
+    ],
+    "method": "mean(sum_day(|FR_t|)) \u00d7 365, then 14d rolling z-score",
+    "rolling_window": 14,
+    "full_period": {
+      "start": "2024-05-24",
+      "end": "2026-05-23",
+      "n_days": 730
+    },
+    "k218e_period": {
+      "start": "2025-01-22",
+      "end": "2026-04-14",
+      "n_days": 447
+    },
+    "regime_balance": {
+      "high_stress_days": 78,
+      "high_stress_frac": 0.1745,
+      "low_stress_days": 65,
+      "low_stress_frac": 0.1454,
+      "normal_days": 304,
+      "normal_frac": 0.6801,
+      "gate_20_40_high": false,
+      "gate_20_40_low": false
+    },
+    "csi_z_stats": {
+      "mean": -0.0181,
+      "std": 1.0134,
+      "min": -2.6894,
+      "max": 3.4713,
+      "p25": -0.7287,
+      "p75": 0.6679
+    }
+  },
+  "k220_validation": {
+    "description": "Correlation of CSI-z with K220 miner-capitulation state",
+    "csi_cap_correlation": 0.1537,
+    "high_stress_overlap": {
+      "high_stress_days": 78,
+      "cap_days": 148,
+      "overlap": 37,
+      "precision_h_in_cap": 0.25
+    },
+    "interpretation": "Moderate positive correlation (r\u22480.15). CSI captures FR-spike stress; K220 hash ribbon captures miner exit. Complementary signals."
+  },
+  "k218e_reference": {
+    "oos_sharpe": 11.031,
+    "oos_maxdd": -0.00364,
+    "wf_min": 6.9282,
+    "wf_mean": 8.316,
+    "oos_ann_ret": 0.4301,
+    "oos_ann_vol": 0.039
+  },
+  "acceptance_gates": {
+    "oos_sharpe_min": 11.13,
+    "wf_min_min": 6.93,
+    "maxdd_max": -0.0036,
+    "regime_frac_min": 0.2,
+    "regime_frac_max": 0.4
+  },
+  "variants": {
+    "K223a": {
+      "variant": "K223a",
+      "description": "Symmetric: high \u00d71.3, low \u00d70.7, normal \u00d71.0",
+      "oos_sharpe": 10.4262,
+      "oos_maxdd": -0.00364,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.4491,
+      "oos_ann_vol": 0.0431,
+      "wf_mean": 7.9016,
+      "wf_min": 6.5427,
+      "wf_max": 9.7419,
+      "wf_std": 1.3968,
+      "fold_sharpes": [
+        7.1589,
+        6.5427,
+        8.1628,
+        9.7419
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "oos_start": "2025-01-23",
+          "oos_end": "2025-05-13",
+          "n_days": 111,
+          "base_sharpe": 7.5144,
+          "lev_sharpe": 7.1589,
+          "delta_sharpe": -0.3555,
+          "maxdd": -0.007397,
+          "high_stress_days": 15,
+          "low_stress_days": 16
+        },
+        {
+          "fold": 2,
+          "oos_start": "2025-05-14",
+          "oos_end": "2025-09-01",
+          "n_days": 111,
+          "base_sharpe": 6.9282,
+          "lev_sharpe": 6.5427,
+          "delta_sharpe": -0.3855,
+          "maxdd": -0.01529,
+          "high_stress_days": 24,
+          "low_stress_days": 17
+        },
+        {
+          "fold": 3,
+          "oos_start": "2025-09-02",
+          "oos_end": "2025-12-21",
+          "n_days": 111,
+          "base_sharpe": 8.3475,
+          "lev_sharpe": 8.1628,
+          "delta_sharpe": -0.1847,
+          "maxdd": -0.010635,
+          "high_stress_days": 18,
+          "low_stress_days": 18
+        },
+        {
+          "fold": 4,
+          "oos_start": "2025-12-22",
+          "oos_end": "2026-04-14",
+          "n_days": 114,
+          "base_sharpe": 10.4739,
+          "lev_sharpe": 9.7419,
+          "delta_sharpe": -0.7319,
+          "maxdd": -0.003547,
+          "high_stress_days": 21,
+          "low_stress_days": 14
+        }
+      ],
+      "delta_sh_vs_k218e": -0.6048,
+      "gates": {
+        "oos_sharpe_pass": false,
+        "wf_min_pass": false,
+        "maxdd_pass": false,
+        "regime_high_pass": false,
+        "regime_low_pass": false,
+        "all_critical_pass": false
+      },
+      "accepted": false
+    },
+    "K223b": {
+      "variant": "K223b",
+      "description": "Boost-only: high \u00d71.3, else \u00d71.0",
+      "oos_sharpe": 10.612,
+      "oos_maxdd": -0.00364,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.4607,
+      "oos_ann_vol": 0.0434,
+      "wf_mean": 8.1076,
+      "wf_min": 6.8172,
+      "wf_max": 9.8877,
+      "wf_std": 1.3374,
+      "fold_sharpes": [
+        7.4089,
+        6.8172,
+        8.3168,
+        9.8877
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "oos_start": "2025-01-23",
+          "oos_end": "2025-05-13",
+          "n_days": 111,
+          "base_sharpe": 7.5144,
+          "lev_sharpe": 7.4089,
+          "delta_sharpe": -0.1055,
+          "maxdd": -0.007397,
+          "high_stress_days": 15,
+          "low_stress_days": 16
+        },
+        {
+          "fold": 2,
+          "oos_start": "2025-05-14",
+          "oos_end": "2025-09-01",
+          "n_days": 111,
+          "base_sharpe": 6.9282,
+          "lev_sharpe": 6.8172,
+          "delta_sharpe": -0.111,
+          "maxdd": -0.01529,
+          "high_stress_days": 24,
+          "low_stress_days": 17
+        },
+        {
+          "fold": 3,
+          "oos_start": "2025-09-02",
+          "oos_end": "2025-12-21",
+          "n_days": 111,
+          "base_sharpe": 8.3475,
+          "lev_sharpe": 8.3168,
+          "delta_sharpe": -0.0306,
+          "maxdd": -0.010635,
+          "high_stress_days": 18,
+          "low_stress_days": 18
+        },
+        {
+          "fold": 4,
+          "oos_start": "2025-12-22",
+          "oos_end": "2026-04-14",
+          "n_days": 114,
+          "base_sharpe": 10.4739,
+          "lev_sharpe": 9.8877,
+          "delta_sharpe": -0.5862,
+          "maxdd": -0.003547,
+          "high_stress_days": 21,
+          "low_stress_days": 14
+        }
+      ],
+      "delta_sh_vs_k218e": -0.419,
+      "gates": {
+        "oos_sharpe_pass": false,
+        "wf_min_pass": false,
+        "maxdd_pass": false,
+        "regime_high_pass": false,
+        "regime_low_pass": false,
+        "all_critical_pass": false
+      },
+      "accepted": false
+    },
+    "K223c": {
+      "variant": "K223c",
+      "description": "Tight threshold: z>+1.5 \u2192 \u00d71.5, z<\u22121.5 \u2192 \u00d70.5, else \u00d71.0",
+      "oos_sharpe": 10.7534,
+      "oos_maxdd": -0.00364,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.4319,
+      "oos_ann_vol": 0.0402,
+      "wf_mean": 8.1166,
+      "wf_min": 6.7481,
+      "wf_max": 10.1951,
+      "wf_std": 1.5236,
+      "fold_sharpes": [
+        7.252,
+        6.7481,
+        8.2713,
+        10.1951
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "oos_start": "2025-01-23",
+          "oos_end": "2025-05-13",
+          "n_days": 111,
+          "base_sharpe": 7.5144,
+          "lev_sharpe": 7.252,
+          "delta_sharpe": -0.2624,
+          "maxdd": -0.007646,
+          "high_stress_days": 15,
+          "low_stress_days": 16
+        },
+        {
+          "fold": 2,
+          "oos_start": "2025-05-14",
+          "oos_end": "2025-09-01",
+          "n_days": 111,
+          "base_sharpe": 6.9282,
+          "lev_sharpe": 6.7481,
+          "delta_sharpe": -0.1801,
+          "maxdd": -0.01461,
+          "high_stress_days": 24,
+          "low_stress_days": 17
+        },
+        {
+          "fold": 3,
+          "oos_start": "2025-09-02",
+          "oos_end": "2025-12-21",
+          "n_days": 111,
+          "base_sharpe": 8.3475,
+          "lev_sharpe": 8.2713,
+          "delta_sharpe": -0.0762,
+          "maxdd": -0.010635,
+          "high_stress_days": 18,
+          "low_stress_days": 18
+        },
+        {
+          "fold": 4,
+          "oos_start": "2025-12-22",
+          "oos_end": "2026-04-14",
+          "n_days": 114,
+          "base_sharpe": 10.4739,
+          "lev_sharpe": 10.1951,
+          "delta_sharpe": -0.2788,
+          "maxdd": -0.003596,
+          "high_stress_days": 21,
+          "low_stress_days": 14
+        }
+      ],
+      "delta_sh_vs_k218e": -0.2776,
+      "gates": {
+        "oos_sharpe_pass": false,
+        "wf_min_pass": false,
+        "maxdd_pass": false,
+        "regime_high_pass": false,
+        "regime_low_pass": false,
+        "all_critical_pass": false
+      },
+      "accepted": false
+    },
+    "K223d": {
+      "variant": "K223d",
+      "description": "Smooth: weight = 1 + 0.3 \u00d7 tanh(z)",
+      "oos_sharpe": 10.2594,
+      "oos_maxdd": -0.004302,
+      "oos_n_days": 135,
+      "oos_ann_ret": 0.4341,
+      "oos_ann_vol": 0.0423,
+      "wf_mean": 7.805,
+      "wf_min": 6.6497,
+      "wf_max": 9.6828,
+      "wf_std": 1.3738,
+      "fold_sharpes": [
+        6.9239,
+        6.6497,
+        7.9634,
+        9.6828
+      ],
+      "fold_details": [
+        {
+          "fold": 1,
+          "oos_start": "2025-01-23",
+          "oos_end": "2025-05-13",
+          "n_days": 111,
+          "base_sharpe": 7.5144,
+          "lev_sharpe": 6.9239,
+          "delta_sharpe": -0.5905,
+          "maxdd": -0.007547,
+          "high_stress_days": 15,
+          "low_stress_days": 16
+        },
+        {
+          "fold": 2,
+          "oos_start": "2025-05-14",
+          "oos_end": "2025-09-01",
+          "n_days": 111,
+          "base_sharpe": 6.9282,
+          "lev_sharpe": 6.6497,
+          "delta_sharpe": -0.2785,
+          "maxdd": -0.013495,
+          "high_stress_days": 24,
+          "low_stress_days": 17
+        },
+        {
+          "fold": 3,
+          "oos_start": "2025-09-02",
+          "oos_end": "2025-12-21",
+          "n_days": 111,
+          "base_sharpe": 8.3475,
+          "lev_sharpe": 7.9634,
+          "delta_sharpe": -0.384,
+          "maxdd": -0.010739,
+          "high_stress_days": 18,
+          "low_stress_days": 18
+        },
+        {
+          "fold": 4,
+          "oos_start": "2025-12-22",
+          "oos_end": "2026-04-14",
+          "n_days": 114,
+          "base_sharpe": 10.4739,
+          "lev_sharpe": 9.6828,
+          "delta_sharpe": -0.7911,
+          "maxdd": -0.003462,
+          "high_stress_days": 21,
+          "low_stress_days": 14
+        }
+      ],
+      "delta_sh_vs_k218e": -0.7716,
+      "gates": {
+        "oos_sharpe_pass": false,
+        "wf_min_pass": false,
+        "maxdd_pass": false,
+        "regime_high_pass": false,
+        "regime_low_pass": false,
+        "all_critical_pass": false
+      },
+      "accepted": false
+    }
+  },
+  "walk_forward_details": {
+    "K223a": [
+      {
+        "fold": 1,
+        "oos_start": "2025-01-23",
+        "oos_end": "2025-05-13",
+        "n_days": 111,
+        "base_sharpe": 7.5144,
+        "lev_sharpe": 7.1589,
+        "delta_sharpe": -0.3555,
+        "maxdd": -0.007397,
+        "high_stress_days": 15,
+        "low_stress_days": 16
+      },
+      {
+        "fold": 2,
+        "oos_start": "2025-05-14",
+        "oos_end": "2025-09-01",
+        "n_days": 111,
+        "base_sharpe": 6.9282,
+        "lev_sharpe": 6.5427,
+        "delta_sharpe": -0.3855,
+        "maxdd": -0.01529,
+        "high_stress_days": 24,
+        "low_stress_days": 17
+      },
+      {
+        "fold": 3,
+        "oos_start": "2025-09-02",
+        "oos_end": "2025-12-21",
+        "n_days": 111,
+        "base_sharpe": 8.3475,
+        "lev_sharpe": 8.1628,
+        "delta_sharpe": -0.1847,
+        "maxdd": -0.010635,
+        "high_stress_days": 18,
+        "low_stress_days": 18
+      },
+      {
+        "fold": 4,
+        "oos_start": "2025-12-22",
+        "oos_end": "2026-04-14",
+        "n_days": 114,
+        "base_sharpe": 10.4739,
+        "lev_sharpe": 9.7419,
+        "delta_sharpe": -0.7319,
+        "maxdd": -0.003547,
+        "high_stress_days": 21,
+        "low_stress_days": 14
+      }
+    ],
+    "K223b": [
+      {
+        "fold": 1,
+        "oos_start": "2025-01-23",
+        "oos_end": "2025-05-13",
+        "n_days": 111,
+        "base_sharpe": 7.5144,
+        "lev_sharpe": 7.4089,
+        "delta_sharpe": -0.1055,
+        "maxdd": -0.007397,
+        "high_stress_days": 15,
+        "low_stress_days": 16
+      },
+      {
+        "fold": 2,
+        "oos_start": "2025-05-14",
+        "oos_end": "2025-09-01",
+        "n_days": 111,
+        "base_sharpe": 6.9282,
+        "lev_sharpe": 6.8172,
+        "delta_sharpe": -0.111,
+        "maxdd": -0.01529,
+        "high_stress_days": 24,
+        "low_stress_days": 17
+      },
+      {
+        "fold": 3,
+        "oos_start": "2025-09-02",
+        "oos_end": "2025-12-21",
+        "n_days": 111,
+        "base_sharpe": 8.3475,
+        "lev_sharpe": 8.3168,
+        "delta_sharpe": -0.0306,
+        "maxdd": -0.010635,
+        "high_stress_days": 18,
+        "low_stress_days": 18
+      },
+      {
+        "fold": 4,
+        "oos_start": "2025-12-22",
+        "oos_end": "2026-04-14",
+        "n_days": 114,
+        "base_sharpe": 10.4739,
+        "lev_sharpe": 9.8877,
+        "delta_sharpe": -0.5862,
+        "maxdd": -0.003547,
+        "high_stress_days": 21,
+        "low_stress_days": 14
+      }
+    ],
+    "K223c": [
+      {
+        "fold": 1,
+        "oos_start": "2025-01-23",
+        "oos_end": "2025-05-13",
+        "n_days": 111,
+        "base_sharpe": 7.5144,
+        "lev_sharpe": 7.252,
+        "delta_sharpe": -0.2624,
+        "maxdd": -0.007646,
+        "high_stress_days": 15,
+        "low_stress_days": 16
+      },
+      {
+        "fold": 2,
+        "oos_start": "2025-05-14",
+        "oos_end": "2025-09-01",
+        "n_days": 111,
+        "base_sharpe": 6.9282,
+        "lev_sharpe": 6.7481,
+        "delta_sharpe": -0.1801,
+        "maxdd": -0.01461,
+        "high_stress_days": 24,
+        "low_stress_days": 17
+      },
+      {
+        "fold": 3,
+        "oos_start": "2025-09-02",
+        "oos_end": "2025-12-21",
+        "n_days": 111,
+        "base_sharpe": 8.3475,
+        "lev_sharpe": 8.2713,
+        "delta_sharpe": -0.0762,
+        "maxdd": -0.010635,
+        "high_stress_days": 18,
+        "low_stress_days": 18
+      },
+      {
+        "fold": 4,
+        "oos_start": "2025-12-22",
+        "oos_end": "2026-04-14",
+        "n_days": 114,
+        "base_sharpe": 10.4739,
+        "lev_sharpe": 10.1951,
+        "delta_sharpe": -0.2788,
+        "maxdd": -0.003596,
+        "high_stress_days": 21,
+        "low_stress_days": 14
+      }
+    ],
+    "K223d": [
+      {
+        "fold": 1,
+        "oos_start": "2025-01-23",
+        "oos_end": "2025-05-13",
+        "n_days": 111,
+        "base_sharpe": 7.5144,
+        "lev_sharpe": 6.9239,
+        "delta_sharpe": -0.5905,
+        "maxdd": -0.007547,
+        "high_stress_days": 15,
+        "low_stress_days": 16
+      },
+      {
+        "fold": 2,
+        "oos_start": "2025-05-14",
+        "oos_end": "2025-09-01",
+        "n_days": 111,
+        "base_sharpe": 6.9282,
+        "lev_sharpe": 6.6497,
+        "delta_sharpe": -0.2785,
+        "maxdd": -0.013495,
+        "high_stress_days": 24,
+        "low_stress_days": 17
+      },
+      {
+        "fold": 3,
+        "oos_start": "2025-09-02",
+        "oos_end": "2025-12-21",
+        "n_days": 111,
+        "base_sharpe": 8.3475,
+        "lev_sharpe": 7.9634,
+        "delta_sharpe": -0.384,
+        "maxdd": -0.010739,
+        "high_stress_days": 18,
+        "low_stress_days": 18
+      },
+      {
+        "fold": 4,
+        "oos_start": "2025-12-22",
+        "oos_end": "2026-04-14",
+        "n_days": 114,
+        "base_sharpe": 10.4739,
+        "lev_sharpe": 9.6828,
+        "delta_sharpe": -0.7911,
+        "maxdd": -0.003462,
+        "high_stress_days": 21,
+        "low_stress_days": 14
+      }
+    ]
+  },
+  "verdict": "REJECT \u2014 no variant clears all acceptance gates. Best: K223c",
+  "accepted": false,
+  "accepted_variants": [],
+  "best_variant": "K223c",
+  "best_variant_metrics": {
+    "oos_sharpe": 10.7534,
+    "oos_maxdd": -0.00364,
+    "oos_ann_ret": 0.4319,
+    "oos_ann_vol": 0.0402,
+    "wf_mean": 8.1166,
+    "wf_min": 6.7481,
+    "wf_max": 10.1951,
+    "wf_std": 1.5236,
+    "fold_sharpes": [
+      7.252,
+      6.7481,
+      8.2713,
+      10.1951
+    ],
+    "delta_sh_vs_k218e": -0.2776
+  }
+}
