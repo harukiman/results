@@ -1314,8 +1314,32 @@ Plotly.newPlot('sc-fopd-rs', [{
         <li><strong>Alpha の主源泉は Meme Volatility</strong>: SHIB/BONK が 8H/4H で Top 4 のうち 3 つを占める。本研究の利益は「多軸分散」ではなく「meme volatility エッジ」に大きく依存する事実が明確化。</li>
         <li><strong>FOPD DOTUSDT は実質 wash trade</strong> (Sh +0.03, -0.3% return)。除外しても全体に与える影響は微小。但し取引数が稀 (14回 = 730日の 1.9%) なので残しても害も限定的。</li>
         <li><strong>vol_MR の symbol 依存性が極端</strong>: SOL +1.86 >> ETH +1.04 ≈ BTC +0.93 >> BNB +0.41。SOL の high beta + meme proxy 特性が vol_z signal と相性良い可能性。</li>
-        <li><strong>運用上の示唆</strong>: 流動性/上場可否制約で SHIB/BONK が一時使えない事態 (例:取引所一時停止) では 4-way mix の alpha が大幅低下するリスクあり。代替 meme (PEPE, FLOKI 等) の事前 backtest 価値あり。</li>
+        <li><strong>運用上の示唆</strong>: 流動性/上場可否制約で SHIB/BONK が一時使えない事態 (例:取引所一時停止) では 4-way mix の alpha が大幅低下するリスクあり。</li>
       </ol>
+    </div>
+
+    <!-- ── Wave K40: ATR strategy generalization on alt memes (2026-05-23) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-orange);">
+      <h3 style="color:var(--accent-orange);">🔍 Wave K40: ATR戦略の代替meme一般化テスト</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">K39で「meme vol が alpha 主源」と判明 → SHIB/BONK 以外の memes でも同じ ATR_Ratio_Compression が効くか検証:</p>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:10px;">
+        <thead><tr><th>Symbol</th><th>4H Sharpe</th><th>8H Sharpe</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(63,185,80,0.15);"><td><strong>SHIBUSDT</strong> (基準)</td><td class="text-green">+2.06</td><td class="text-green">+2.23</td><td>合格</td></tr>
+          <tr style="background:rgba(63,185,80,0.15);"><td><strong>BONKUSDT</strong> (基準)</td><td>+1.58</td><td class="text-green">+2.12</td><td>合格</td></tr>
+          <tr><td>FLOKIUSDT</td><td class="text-yellow">+1.20</td><td>+0.51</td><td>marginal</td></tr>
+          <tr><td>PEPEUSDT</td><td>+0.91</td><td>+0.80</td><td class="text-red">不合格 (Sh<1)</td></tr>
+          <tr><td>TRUMPUSDT</td><td colspan="2" style="text-align:center;color:var(--text-secondary);">データ取得失敗 (上場新しすぎ)</td><td>-</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.88rem;margin-top:10px;color:var(--accent-orange);">
+        <strong>Verdict</strong>: ATR戦略は <strong>meme一般化しない</strong> — SHIB/BONK 固有エッジ。
+      </p>
+      <ul style="font-size:0.88rem;padding-left:22px;margin-top:8px;">
+        <li>「全 meme が同じパターン」という単純化は誤り。SHIB/BONK は特定の microstructure (流動性、ホルダー分布、上場連動) で他とは異なる挙動</li>
+        <li>FLOKI 4H Sh+1.20 はあえて入れるなら 5番目軸候補だが、主流アルファ寄与は限定的</li>
+        <li><strong>運用上のリスク再評価</strong>: BONK/SHIB が一時利用不能になる事象 (delisting/maintenance) → mix の Sharpe -1.0以上ドロップ予想</li>
+      </ul>
     </div>
 
     <!-- ── Wave K17-K21: Production推奨 + 多角stress + 探索終結 (2026-05-24 05:05 JST) ── -->
