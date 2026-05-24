@@ -759,10 +759,10 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 14:00 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 14:30 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
-    <strong>🏆 PRODUCTION v6.1:</strong> <span style="color:var(--accent-green);font-weight:700;">K192 9戦略 ensemble OOS Sh +5.65 / MaxDD -0.47% / WF std 1.31</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐⭐ K192 = K188 + DAR(2,1) K175 filter, OOS Sh +0.17 lift</span> &nbsp;|&nbsp;
-    <strong>12 ACCEPT base + 6 ensembles (K124/K136/K149/K176/K188/K192) / 47 REJECT / 3 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#fa6;font-weight:700;">⛓ K179 onchain REJECT / K190 DAR ACCEPT</span> &nbsp;|&nbsp; <span style="color:#f66;font-weight:700;">K193 REJECT: FR trigger redundant w/ DAR (OOS Sh 5.65→4.30, trigger fires on positive-return days)</span>
+    <strong>🏆 PRODUCTION v6.2 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K194 9戦略 ensemble OOS Sh +5.71 / MaxDD -0.45% / WF min 3.76 (partial K121+K133 trigger)</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐ K189 で 11 strong carry candidates 発見, K195 で 10-sym panel v6.3 検証中 (projected 6.76)</span> &nbsp;|&nbsp;
+    <strong>12 ACCEPT base + 7 ensembles (K124/K136/K149/K176/K188/K192/K194) / 48 REJECT / 3 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#fa6;font-weight:700;">⛓ K179 onchain REJECT / K190 DAR ACCEPT / K191 K133 unique vulnerability 発見</span>
   </div>
 
   <header class="report-header">
@@ -7531,7 +7531,32 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
-          <summary><strong>★★★★★★ 2026-05-25 6:15 JST — K192 NEW PRODUCTION v6.1 (K188 + DAR FR filter)</strong></summary>
+          <summary><strong>★★★★★★★ 2026-05-25 14:30 JST — K194 NEW v6.2 + K189 11 carry expansion + K191/K193 META-LESSONS</strong></summary>
+          <ul>
+            <li><strong>K194 = K192 + partial trigger on K121+K133 only (threshold -0.015 annualized)</strong></li>
+            <li>OOS Sh: K192 5.65 → <strong>K194 5.71</strong> (+0.06), MaxDD -0.45% 改善, WF min <strong>2.98 → 3.76</strong> (+0.78)</li>
+            <li>K121/K133 diagnostic 重要発見:
+              <ul>
+                <li>K133 on trigger days: <strong>-3.339</strong> (genuinely broken on negative-FR regime)</li>
+                <li>K121 on trigger days: <strong>+2.006</strong> (flipped positive — K193 conflict 主因)</li>
+                <li>→ K133 alone justifies design</li>
+              </ul>
+            </li>
+            <li><strong>META-LESSON (K193 vs K194)</strong>: Defensive triggers must be tested at LATEST production level, not older baselines. Component-level diagnostic before whole-ensemble trigger application 必須</li>
+            <li><strong>K189 11 STRONG carry candidates 発見</strong> (34 symbols screened):
+              <ul>
+                <li>DeFi: LDO (Sh 22.6), AAVE (23.4), MKR (21.5), UNI (19.8), CRV (13.2)</li>
+                <li>L1/Meme/AI: NEAR (17.6), BNB (13.4), BONK (9.6 accel), PEPE (7.6 mild decay), TAO (6.3)</li>
+                <li>AVAX strongest confirmed (23.2)</li>
+              </ul>
+            </li>
+            <li><strong>REVERSE CARRY 発見</strong>: SOL/XRP/SUI/OP/APT 等 10 symbols で Bybit > HL の opposite spread (Sh -7 to -18 magnitude) → LONG HL + SHORT Bybit variant 可能</li>
+            <li>K195 = K194 + 10-sym carry panel (ETH+DOGE+AVAX+LDO+AAVE+UNI+MKR+CRV+PEPE+BONK), projected ensemble Sh 6.76 検証中</li>
+            <li><strong>ENSEMBLE 進化</strong>: v4.1単独 → K124 → K136 → K149 → K176 → K188 → K192 → <strong>K194 (5.71) v6.2</strong></li>
+          </ul>
+        </details>
+        <details>
+          <summary><strong>★★★★★★ 2026-05-25 6:15 JST — K192 PRODUCTION v6.1 (K194 で更新)</strong></summary>
           <ul>
             <li><strong>K192 = K188 + DAR(2,1) K175 filter</strong> (R7-4 academic 実証 from K190)</li>
             <li>OOS Sh: K188 5.48 → <strong>K192a 5.65</strong> (+0.17 lift, 3.3x acceptance margin)</li>
