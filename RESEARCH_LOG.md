@@ -3833,3 +3833,28 @@ K39/K41 の wash trade 仮説を実装版で検証:
 ### 累計実績
 - 45 戦略候補テスト、**5 採用** (FOPD, 8H Meme, vol_z MR, OI capit, BB squeeze)
 - 成功率 11%
+
+## Wave K79-K86: v4 統合・拡張テスト・robustness 検証 (2026-05-23)
+
+### K79: v4 daemon integration
+- `paper_trade_4way_mix.py` に BB squeeze axis 追加 (Wave K70 採用)
+- 7 軸稼働: ATR / FOPD / BONK_8H / SHIB_8H / vol_MR / OI capit / BB squeeze
+- 状態ファイル strategy 名更新
+
+### K80-K85: ADX / CCI / Vol shock regime / Ensemble vote / BTC-alt dispersion
+- K80 ADX trend strength: 32 configs, 0 Sh>=1.0
+- K81 CCI extremes: 48 configs, 0 Sh>=1.0
+- K82 Vol shock regime: 24 configs, 0 Sh>=1.0
+- K83 5-indicator ensemble vote: Portfolio Sh -0.76, DD -75%
+- K84 BTC-alt dispersion: 0/54 Sh>=1.5
+- 全棄却
+
+### K86: v4 robustness deep-dive
+- 4 quarter segments: all Sh +2.56〜+5.10 (consistent)
+- Worst day: -0.83%
+- Skewness: +2.22 (positive skew, good)
+- Max recovery time: 35日, Median 4日
+- DD distribution: median -0.12%, p5 -0.86%, p1/worst -1.12%
+
+### 累計実績
+- **50 戦略候補テスト** (Wave J+K), **5 採用** (FOPD, 8H Meme, vol_z MR, OI capit, BB squeeze) = 成功率 10%
