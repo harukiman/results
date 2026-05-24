@@ -512,7 +512,7 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 20:21 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 20:33 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 採用候補:</strong> <span style="color:var(--accent-green);">v4.1 Sh+4.08 / K109 V1 Sh+2.93 / K114 ALCP Sh+2.25 (onchain) / K112 vol_only Sh+1.71 OOS (条件付)</span> &nbsp;|&nbsp;
     <strong>累計 19/5 success</strong>
@@ -522,7 +522,7 @@ window.__renderWhenReady = function(fn, label) {
     <h1 style="font-family:Georgia,serif;letter-spacing:-0.01em;">Systematic Alpha Discovery in MEXC Perpetual Futures</h1>
     <div class="subtitle" style="font-style:italic;font-family:Georgia,serif;">A Bias-Controlled Empirical Study of Multi-Axis Portfolio Construction with §6 Audit Validation</div>
     <div class="meta">
-      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 20:21 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
+      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 20:33 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
       Methodology: §6 strict-gate audit (Bailey-LdP CPCV, Hansen SPA, White RC, Bootstrap CI, Block Permutation)
     </div>
   </header>
@@ -6404,7 +6404,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       </div>
       <div id="external-findings-body" style="margin-top:10px;font-size:0.88rem;">
         <div class="findings-page" data-page="1" data-title="Round 1: tip-scraper 初回 (20候補)">
-        <h3 style="color:var(--accent-green);">📅 2026-05-24 20:21 JST — 初回スクレイプ完了 (20候補 / TOP5抽出)</h3>
+        <h3 style="color:var(--accent-green);">📅 2026-05-24 20:33 JST — 初回スクレイプ完了 (20候補 / TOP5抽出)</h3>
         <p>tip-scraper サブエージェントが arxiv/MDPI/ScienceDirect/Bookmap/Glassnode/Amberdata/Coinmonks/Zenn/note 等を巡回。既存17戦略との重複を除外し、20件の新規候補を抽出。</p>
 
         <h4 style="color:var(--accent-cyan);margin-top:14px;">TOP 5 (優先検証)</h4>
@@ -6539,6 +6539,57 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 
         <p style="margin-top:10px;font-size:0.82rem;color:var(--text-secondary);">既存オンチェーン候補 (WEIR / S3I / HL Whale Mirror / HLP Liq Alpha / Stablecoin Mint / Tokyo Latency HL) と完全に重複排除済。Wave K114 (ALCP) / K115 (TUCMR) として実装着手予定。</p>
         </div><!-- /page 3 -->
+
+        <div class="findings-page" data-page="4" data-title="Round 3: 中華圏/BIS/HMM等 (18候補)" style="display:none;">
+        <h3 style="color:var(--accent-green);margin-top:18px;">📅 2026-05-24 20:30 JST — Round 3 完了 (18新候補 / TOP3)</h3>
+        <p>中華圏 quant blogs / 韓国 Sandbank / arxiv 最新 / BIS/ECB extensions / Hummingbot 系最新 GitHub trending を巡回。R1+R2+onchain と完全重複排除。累計 66候補。</p>
+
+        <h4 style="color:var(--accent-cyan);margin-top:14px;">TOP 3 (実装可能性順)</h4>
+        <ol style="line-height:1.6;">
+          <li><strong>#40 Weekly-Funding Undervaluation (Sandbank-KR)</strong> [strong-evidence] — 韓国Mediumの未発掘ソース。週次平均funding &gt;0.01% (BTC) / &gt;0.05% (alts) で long、それ以外 flat。**Adj R² 0.18 (BTC) / 0.21 (ETH) on 週次リターン**は crypto では極めて大きい。2021熊相場で B&amp;H 比 DD 改善実証。一行ルールで実装容易。MEXC 15-30銘柄に展開可能。</li>
+          <li><strong>#41 Weekend Momentum Differential</strong> [strong-evidence] — ACR Journal 2026: 7日 momentum 符号で土日のみ取引。**weekend Sharpe ≈ 2x weekday** (alt 0.070 vs 0.035; DOGE t=3.78)。`is_weekend = bar.weekday &gt;= 5` 1行追加。機械的な機関流動性低下→個人 momentum 寄与の構造的 edge。</li>
+          <li><strong>#48 Premium-Index Mean Reversion (Funding-Aware)</strong> [partial-edge / crypto-native] — arxiv 2310.11771: mark-vs-index premium の Z-score (rolling 28-56 4H bar) で fade。premium &gt;+2σ で短く、&lt;-2σ で長い。**funding が設計上規律化する exact construct** で理論的に clean、R1/R2/onchain と完全直交。</li>
+        </ol>
+
+        <h4 style="color:var(--accent-cyan);margin-top:14px;">注目副候補 (HIGH 評価)</h4>
+        <ul style="font-size:0.85rem;line-height:1.55;">
+          <li><strong>#39</strong> Funding-Context 4H Alignment - funding符号と4H trend が一致時のみブレイク取り</li>
+          <li><strong>#45</strong> HMM Regime-Conditional Trend - 2-3 state HMM で turbulent state のみ trend、consolidation で flat (低コスト overlay)</li>
+          <li><strong>#46</strong> Anti-Persistent Hurst MR Filter - rolling local Hurst H&lt;0.4 で MR, H&gt;0.6 で momentum</li>
+          <li><strong>#50</strong> Taker Buy/Sell Ratio Divergence - 価格上昇 + TBSR 低下で逆張り (CVD divergence proxy)</li>
+          <li><strong>#52</strong> NR4/NR7 Volatility Squeeze - 4本/7本中最も narrow range bar の翌バーで stop-buy/sell breakout (ATR magnitude と機構的に別物)</li>
+          <li><strong>#56</strong> Low-Vol Anomaly (ScienceDirect Mar 2026) - vol bottom tercile long, top tercile short (K112 vol_only と類似だが post-2022 再確認)</li>
+        </ul>
+
+        <h4 style="color:var(--accent-cyan);margin-top:14px;">全18候補テーブル (Round 3)</h4>
+        <div style="overflow-x:auto;">
+        <table class="data-table" style="font-size:0.78rem;width:100%;">
+          <thead><tr><th>#</th><th>名称</th><th>カテゴリ</th><th>核アイデア</th><th>エッジ</th><th>優先度</th></tr></thead>
+          <tbody>
+            <tr><td>39</td><td>Funding-Context 4H Alignment</td><td>Funding × Trend</td><td>funding符号 + 4H trend一致時のみブレイク</td><td>partial</td><td>High</td></tr>
+            <tr><td>40</td><td><strong>Weekly-Funding Undervaluation</strong></td><td>Funding</td><td>週次平均funding 閾値超でlong</td><td>strong (R²0.18-0.21)</td><td><strong>TOP1</strong></td></tr>
+            <tr><td>41</td><td><strong>Weekend Momentum Differential</strong></td><td>Calendar × Mom</td><td>7d mom × 土日のみ取引、Sharpe2倍差</td><td>strong (t=3.78)</td><td><strong>TOP1</strong></td></tr>
+            <tr><td>42</td><td>Constrained-LLM Factor Aggregation</td><td>ML</td><td>LLM がfactor提案→ridge合成、OOS Sh 1.55</td><td>strong</td><td>Med</td></tr>
+            <tr><td>43</td><td>Carry as Liquidation Predictor</td><td>Funding × Risk</td><td>+10% carry で short-side liq、risk-off フィルタ</td><td>partial</td><td>Med</td></tr>
+            <tr><td>44</td><td>Polymarket-Macro Vol Forecast</td><td>Macro</td><td>Kalshi/Polymarket確率で vol 予測、size scaling</td><td>partial</td><td>Med</td></tr>
+            <tr><td>45</td><td><strong>HMM Regime-Conditional Trend</strong></td><td>Regime</td><td>HMM 2-3 state で trend条件付き、turbulent のみ</td><td>partial</td><td><strong>High</strong></td></tr>
+            <tr><td>46</td><td><strong>Anti-Persistent Hurst MR Filter</strong></td><td>Memory</td><td>rolling H&lt;0.4 → MR, H&gt;0.6 → mom</td><td>partial</td><td><strong>High</strong></td></tr>
+            <tr><td>47</td><td>X-Asset Microstructure Transfer</td><td>X-asset</td><td>BTC/ETH学習feature を small-cap 転送</td><td>strong</td><td>Med</td></tr>
+            <tr><td>48</td><td><strong>Premium-Index MR (Funding-Aware)</strong></td><td>Basis</td><td>mark-index premium Z-score fade</td><td>partial</td><td><strong>TOP3</strong></td></tr>
+            <tr><td>49</td><td>Top-Trader L/S Contrarian Extreme</td><td>Sentiment</td><td>Binance top-trader L/S |Z|&gt;2.5 で fade</td><td>partial</td><td>Med</td></tr>
+            <tr><td>50</td><td><strong>Taker Buy/Sell Ratio Divergence</strong></td><td>Order flow</td><td>価格上昇 + TBSR 低下 → short (CVD proxy)</td><td>partial</td><td><strong>High</strong></td></tr>
+            <tr><td>51</td><td>OI Δ Confirmation Filter</td><td>OI</td><td>OI上昇 + 価格上昇 → trend confirmed、それ以外 skip</td><td>partial</td><td>Med</td></tr>
+            <tr><td>52</td><td><strong>NR4/NR7 Squeeze Breakout</strong></td><td>Volatility</td><td>4/7バー中 narrowest range で翌バー breakout</td><td>partial</td><td><strong>High</strong></td></tr>
+            <tr><td>53</td><td>BTC-Alt Correlation Breakdown</td><td>X-section regime</td><td>14d corr&lt;20%pct で XS strategy 有効化</td><td>partial</td><td>Med-High</td></tr>
+            <tr><td>54</td><td>Funding Sign Persistence vs Flip</td><td>Funding</td><td>連続+funding≥N回後 long, flip で fade</td><td>partial</td><td>Med</td></tr>
+            <tr><td>55</td><td>Liq Cluster Magnet (Wick Rev)</td><td>Liq</td><td>OI急減 + 長wick → 翌バー fade</td><td>partial</td><td>Med</td></tr>
+            <tr><td>56</td><td><strong>Low-Vol Anomaly (post-2022)</strong></td><td>X-section</td><td>vol bottom tercile long, top short (K112確認)</td><td>strong</td><td><strong>High</strong></td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <p style="margin-top:10px;font-size:0.82rem;color:var(--text-secondary);">Round 3 主要出典: arxiv 2601.06084 / 2604.26747 / 2604.01431 / 2602.00776 / 2310.11771 / 2603.29751 / 2602.11708 / 2602.07018, Sandbank-KR Medium, ACR Journal 2026, ScienceDirect Mar 2026 (S1544612326003818), MDPI 12/18/2911, preprints.org 202603.0831, Binance trading-data API, CryptoQuant userguide, LuxAlgo, AMBCrypto, 1Token blog, XT Exchange Medium, QuantJourney substack。</p>
+        </div><!-- /page 4 -->
       </div>
 
       <script>
@@ -6811,7 +6862,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       <p style="font-size:0.85rem;color:var(--text-secondary);">解析過程で発見した tips・知見・将来役立ちそうなアイデアを時系列で蓄積。</p>
       <div id="tips-log-body" style="margin-top:10px;font-size:0.88rem;">
         <details open>
-          <summary><strong>📋 2026-05-24 20:21 JST — HTML 監査記録 #1 (定期監査初回)</strong></summary>
+          <summary><strong>📋 2026-05-24 20:33 JST — HTML 監査記録 #1 (定期監査初回)</strong></summary>
           <ul>
             <li><strong>監査範囲</strong>: TOC vs section ID 対応、累積 Sharpe 数値の重複、最新候補の整合性、Plotly 不具合</li>
             <li><strong>是正</strong>: (a) 上部 banner が古い v1 (Sh+3.61) 表示 → 採用候補4軸 (v4.1+4.08, K109+2.93, K114+2.25, K112 OOS+1.71) に更新</li>
@@ -6834,7 +6885,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
-          <summary><strong>2026-05-24 20:21 JST</strong> — インボックス機構稼働 + 外部リサーチ初回 + Wave K109 着手</summary>
+          <summary><strong>2026-05-24 20:33 JST</strong> — インボックス機構稼働 + 外部リサーチ初回 + Wave K109 着手</summary>
           <ul>
             <li>サイト経由の指示インボックス実装完了 (pw=2026, ntfy.sh backend, 3-fails-24h-lock)</li>
             <li>launchd `com.cryptolab.inbox-poll` 登録、StartInterval=1800s (30分)。独立稼働するので Claude セッション断でも受信継続</li>
@@ -6863,7 +6914,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
     <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v4.1</p>
-    <p style="margin-top:4px;">更新: 2026-05-24 20:21 JST &nbsp;|&nbsp; 100+ファミリーで738,388+試行 &nbsp;|&nbsp; ユニバース: 55銘柄 (4H/730日) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
+    <p style="margin-top:4px;">更新: 2026-05-24 20:33 JST &nbsp;|&nbsp; 100+ファミリーで738,388+試行 &nbsp;|&nbsp; ユニバース: 55銘柄 (4H/730日) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 
