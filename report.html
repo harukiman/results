@@ -494,8 +494,9 @@
       </p>
 
       <div style="background:rgba(63,185,80,0.20);padding:14px;border-radius:8px;margin-top:14px;border-left:5px solid var(--accent-green);">
-        <h3 style="color:var(--accent-green);margin-bottom:8px;">🏆 推奨ポートフォリオ: 4-way Mix (85/15)</h3>
-        <p style="font-size:0.92rem;"><strong>構成</strong>: 85% × 80/10/10 (ATR×8 + FOPD×6 + 8H Meme BONK/SHIB) + 15% × vol_z MR (BTC/ETH/SOL/BNB)</p>
+        <h3 style="color:var(--accent-green);margin-bottom:8px;">🏆 推奨ポートフォリオ v3: 6-way Mix (5-axis v2 + OI capitulation)</h3>
+        <p style="font-size:0.92rem;"><strong>v3 構成</strong>: ATR×8 (0.272) + FOPD×5 v2 (0.272) + ATR_8H BONK (0.068) + ATR_8H SHIB (0.068) + vol_MR (0.120) + <strong style="color:var(--accent-purple);">OI capit 7銘柄 (0.200) 新</strong></p>
+        <p style="font-size:0.88rem;color:var(--accent-cyan);"><em>過去 v2: 4-way mix (DOT除外) — v3 は OI capitulation portfolio (Sh+1.55 単独, 相関 0.047) を 6番目軸として追加し全 metric 改善</em></p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:10px;font-size:0.88rem;">
           <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;text-align:center;">
             <div style="color:var(--text-secondary);font-size:0.75rem;">Observed Sharpe</div>
@@ -1394,6 +1395,68 @@ Plotly.newPlot('sc-fopd-rs', [{
       <p style="font-size:0.88rem;margin-top:10px;color:var(--accent-purple);">
         <strong>各 axis スタンドアロン Sharpe</strong>: ATR_4H +2.47 / FOPD +1.94 / BONK_8H +2.12 / SHIB_8H +2.23 / vol_MR +1.59 — 全 axis 単独でも G1 OOS 閾値クリア
       </p>
+    </div>
+
+    <!-- ── Wave K45-K53: 大バッチ 新戦略探索 → v3 mix 確立 (2026-05-23) ── -->
+    <div class="card" style="border:3px solid var(--accent-green);background:linear-gradient(135deg,rgba(63,185,80,0.15),rgba(63,185,80,0.05));padding:20px;">
+      <h3 style="color:var(--accent-green);">🚀 Wave K45-K53: v3 Mix 確立 — OI Capitulation 軸が真の独立 alpha 源として採用</h3>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">新戦略探索バッチ (9 候補テスト → 1 採用)</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>Wave</th><th>戦略</th><th>Best Sharpe</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr><td>K45</td><td>1H Bollinger breakout</td><td>+4.35 IS</td><td class="text-yellow">未OOS検証</td></tr>
+          <tr><td>K46</td><td>Cross-sectional L/S momentum (14銘柄)</td><td>+0.89 (DD-40%)</td><td class="text-red">棄却</td></tr>
+          <tr><td>K47</td><td>Volume spike contrarian</td><td>Train+3.4 OOS+0.84</td><td class="text-red">棄却 (overfit)</td></tr>
+          <tr><td>K48</td><td>SOL/BTC ratio MR</td><td>Non-overlap Sh+1.76</td><td class="text-yellow">単独不可、補助候補</td></tr>
+          <tr style="background:rgba(63,185,80,0.20);"><td><strong>K49</strong></td><td><strong>OI capitulation 7銘柄 portfolio</strong></td><td class="text-green"><strong>Sh+1.545, DD-3.0%</strong></td><td class="text-green"><strong>★ 採用</strong></td></tr>
+          <tr><td>K50</td><td>Vol regime classifier</td><td>Mid: ATR Sh+4.47</td><td class="text-cyan">分析価値あり</td></tr>
+          <tr><td>K51</td><td>Adaptive weights (regime-based)</td><td>OOS Sh+2.50 vs +3.49</td><td class="text-red">棄却 (過学習)</td></tr>
+          <tr><td>K52</td><td>Dynamic leverage (DD/vol-targeted)</td><td>Sh ≈ Flat 3x</td><td class="text-yellow">無意味</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-purple);margin-top:14px;">K49 OI Capitulation の発見 (新軸)</h4>
+      <ul style="font-size:0.88rem;padding-left:22px;margin-top:6px;">
+        <li><strong>Signal</strong>: OI z-score ≤ -2.0 AND price z-score ≤ -1.0 (lookback 120 bars) → LONG, hold 12 bars</li>
+        <li><strong>Logic</strong>: ロング崩壊 + shorts も追い切れず → capitulation low、短期反発捉える</li>
+        <li><strong>7 銘柄 portfolio</strong>: BTC/ETH/SOL/BNB/DOGE/AVAX/LINK 等加重</li>
+        <li><strong>Standalone Sharpe +1.545</strong>, Max DD -3.0%, 60日 rolling positive 90.5%</li>
+        <li><strong>既存5軸との Mean |corr| = 0.047</strong>, Max 0.165 (FOPD と、OI 使う点で必然) → <strong>真の独立 alpha 源</strong></li>
+      </ul>
+
+      <h4 style="color:var(--accent-green);margin-top:14px;">v3 vs v2 比較</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>Metric</th><th>v2 (4-way + vol_MR)</th><th>v3 (+ OI capit)</th><th>Δ</th></tr></thead>
+        <tbody>
+          <tr><td>Sharpe</td><td>+3.322</td><td class="text-green"><strong>+3.615</strong></td><td class="text-green">+0.293</td></tr>
+          <tr><td>Max DD</td><td>-1.9%</td><td class="text-green"><strong>-1.2%</strong></td><td class="text-green">+0.7</td></tr>
+          <tr><td>60d positive %</td><td>97.8%</td><td class="text-green"><strong>99.0%</strong></td><td class="text-green">+1.2%</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">v3 §6 audit 結果: 7/8 PASS</h4>
+      <table class="data-table" style="width:100%;font-size:0.83rem;margin-top:6px;">
+        <thead><tr><th>Gate</th><th>Result</th><th>Threshold</th><th>Pass</th></tr></thead>
+        <tbody>
+          <tr><td>G1 OOS Walk-forward (5 folds)</td><td>min Sh +3.28</td><td>>= +1.0</td><td class="text-green">✓</td></tr>
+          <tr><td>G2 PBO (CPCV)</td><td>0.000</td><td>< 0.5</td><td class="text-green">✓</td></tr>
+          <tr><td>G3 DSR</td><td>1.000</td><td>> 0.95</td><td class="text-green">✓</td></tr>
+          <tr><td>G4 Cost stress (5x cost)</td><td>Sh+1.34</td><td>> +1.0</td><td class="text-green">✓</td></tr>
+          <tr><td>G5 MC ruin @5x lev</td><td>0.00%</td><td>< 1.0%</td><td class="text-green">✓</td></tr>
+          <tr><td>G6 Param plateau (w_OI 0.10-0.25)</td><td>all Sh > +3.5</td><td>—</td><td class="text-green">✓</td></tr>
+          <tr><td>G7 Auditor independent reimpl</td><td>partial</td><td>complete match</td><td class="text-yellow">部分 ✓</td></tr>
+          <tr><td>G8 Multi-regime (4 vol buckets)</td><td>all > +1.0</td><td>—</td><td class="text-green">✓</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-yellow);margin-top:14px;">学習</h4>
+      <ul style="font-size:0.88rem;padding-left:22px;margin-top:6px;">
+        <li><strong>Regime adaptation は overfit</strong>: K50 で測定した axis × regime Sharpe は in-sample で強いが、OOS で固定 weights に負ける (ΔSh -1.0)</li>
+        <li><strong>Dynamic leverage は v3 に対し meaningless</strong>: 既に stable な戦略にレバ動的調整は Sharpe を保存するだけ</li>
+        <li><strong>Cross-sectional momentum 不適</strong>: crypto は trending all-up で L/S 不向き</li>
+        <li><strong>OI based contrarian は新天地</strong>: FOPD (OI+FR+Price 3項一致) と異なり OI delta 単独の capitulation pattern で alpha 取れる</li>
+      </ul>
     </div>
 
     <!-- ── Wave K44: Production v2 proposal (DOT excluded) (2026-05-23) ── -->
