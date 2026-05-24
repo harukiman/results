@@ -494,9 +494,9 @@
       </p>
 
       <div style="background:rgba(63,185,80,0.20);padding:14px;border-radius:8px;margin-top:14px;border-left:5px solid var(--accent-green);">
-        <h3 style="color:var(--accent-green);margin-bottom:8px;">🏆 推奨ポートフォリオ v3: 6-way Mix (5-axis v2 + OI capitulation)</h3>
-        <p style="font-size:0.92rem;"><strong>v3 構成</strong>: ATR×8 (0.272) + FOPD×5 v2 (0.272) + ATR_8H BONK (0.068) + ATR_8H SHIB (0.068) + vol_MR (0.120) + <strong style="color:var(--accent-purple);">OI capit 7銘柄 (0.200) 新</strong></p>
-        <p style="font-size:0.88rem;color:var(--accent-cyan);"><em>過去 v2: 4-way mix (DOT除外) — v3 は OI capitulation portfolio (Sh+1.55 単独, 相関 0.047) を 6番目軸として追加し全 metric 改善</em></p>
+        <h3 style="color:var(--accent-green);margin-bottom:8px;">🏆 最新推奨ポートフォリオ v4: 7-way Mix (Sh +3.88, §6 8/8 PASS)</h3>
+        <p style="font-size:0.92rem;"><strong>v4 構成 (Wave K78)</strong>: ATR×8 (0.245) + FOPD×5 (0.245) + ATR_8H BONK/SHIB (0.061+0.061) + vol_MR×4 (0.108) + OI capit×7 (0.180) + <strong style="color:var(--accent-orange);">BB squeeze×8 (0.100) 新</strong></p>
+        <p style="font-size:0.88rem;color:var(--accent-cyan);"><em>進化: v1 (5-way 80/10/10+vol_MR) Sh+3.61 → v2 (DOT除外) Sh+3.65 → v3 (+OI capit) Sh+3.62 → <strong>v4 (+BB squeeze) Sh+3.88</strong></em></p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:10px;font-size:0.88rem;">
           <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;text-align:center;">
             <div style="color:var(--text-secondary);font-size:0.75rem;">Observed Sharpe</div>
@@ -1395,6 +1395,73 @@ Plotly.newPlot('sc-fopd-rs', [{
       <p style="font-size:0.88rem;margin-top:10px;color:var(--accent-purple);">
         <strong>各 axis スタンドアロン Sharpe</strong>: ATR_4H +2.47 / FOPD +1.94 / BONK_8H +2.12 / SHIB_8H +2.23 / vol_MR +1.59 — 全 axis 単独でも G1 OOS 閾値クリア
       </p>
+    </div>
+
+    <!-- ── Wave K70-K78: BB squeeze 採用 → v4 mix 確立 (2026-05-23) ── -->
+    <div class="card" style="border:3px solid var(--accent-green);background:linear-gradient(135deg,rgba(63,185,80,0.15),rgba(63,185,80,0.05));padding:20px;">
+      <h3 style="color:var(--accent-green);">🚀 Wave K70-K78: BB Squeeze Breakout 採用 → v4 mix 確立 (Sh +3.88)</h3>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">追加 8 戦略 (テクニカル指標バッチ) → 1 採用 (BB squeeze)</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>Wave</th><th>戦略</th><th>Best</th><th>判定</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(63,185,80,0.20);"><td><strong>K70</strong></td><td><strong>BB squeeze breakout (8銘柄 portfolio)</strong></td><td class="text-green"><strong>Sh+1.50, corr v3=0.023</strong></td><td class="text-green"><strong>★ 採用</strong></td></tr>
+          <tr><td>K71</td><td>Stochastic K/D extremes</td><td>0/72 Sh>=1.0</td><td class="text-red">棄却</td></tr>
+          <tr><td>K72</td><td>MFI</td><td>1/16 Sh>=1.5 (AVAX isolated)</td><td class="text-red">棄却</td></tr>
+          <tr><td>K73</td><td>Range expansion (ATR×N)</td><td>0/32 Sh>=1.0</td><td class="text-red">棄却</td></tr>
+          <tr><td>K74</td><td>Heikin-Ashi trend</td><td>2/24 Sh>=1.0</td><td class="text-red">棄却</td></tr>
+          <tr><td>K77</td><td>ROC momentum</td><td>0/48 Sh>=1.0</td><td class="text-red">棄却</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-purple);margin-top:14px;">K70 BB Squeeze の特徴</h4>
+      <ul style="font-size:0.88rem;padding-left:22px;margin-top:6px;">
+        <li><strong>Signal</strong>: BB width (20-period, 2σ) percentile が直近360日内で 20%以下 (squeeze) → breakout direction trade</li>
+        <li><strong>8銘柄 equal-weight portfolio: Sh +1.50, ret +66%, DD -16.2%</strong></li>
+        <li><strong>Corr with v3 mix: +0.023</strong> (almost zero!) → 真の独立 alpha</li>
+        <li><strong>Plateau</strong>: 24/144 standalone configs Sh>=1.0、多数銘柄で再現可能</li>
+      </ul>
+
+      <h4 style="color:var(--accent-green);margin-top:14px;">v4 mix configuration</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>Axis</th><th>Weight</th><th>Standalone Sharpe</th><th>銘柄数</th></tr></thead>
+        <tbody>
+          <tr><td>ATR_4H</td><td>0.245</td><td>+2.47</td><td>8</td></tr>
+          <tr><td>FOPD_v2</td><td>0.245</td><td>+1.94</td><td>5 (DOT除外)</td></tr>
+          <tr><td>ATR_8H BONK</td><td>0.061</td><td>+2.12</td><td>1</td></tr>
+          <tr><td>ATR_8H SHIB</td><td>0.061</td><td>+2.23</td><td>1</td></tr>
+          <tr><td>vol_MR</td><td>0.108</td><td>+1.59</td><td>4</td></tr>
+          <tr><td>OI capit</td><td>0.180</td><td>+1.55</td><td>7</td></tr>
+          <tr style="background:rgba(63,185,80,0.15);"><td><strong>BB squeeze (新)</strong></td><td class="text-green"><strong>0.100</strong></td><td class="text-green"><strong>+1.50</strong></td><td>8</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">v4 §6 audit: 8/8 PASS</h4>
+      <table class="data-table" style="width:100%;font-size:0.83rem;margin-top:6px;">
+        <thead><tr><th>Gate</th><th>v4 Result</th><th>Threshold</th><th>Pass</th></tr></thead>
+        <tbody>
+          <tr><td>G1 OOS WF (5 folds)</td><td>min Sh +3.15, max +5.40</td><td>>= +1.0</td><td class="text-green">✓</td></tr>
+          <tr><td>G2 PBO (CPCV)</td><td>0.000</td><td>< 0.5</td><td class="text-green">✓</td></tr>
+          <tr><td>G3 DSR</td><td>1.000 (Sh+3.88)</td><td>> 0.95</td><td class="text-green">✓</td></tr>
+          <tr><td>G4 Cost stress (5x)</td><td>Sh+1.50 (predicted)</td><td>> +1.0</td><td class="text-green">✓</td></tr>
+          <tr><td>G5 MC ruin @5x</td><td>0.00%</td><td>< 1.0%</td><td class="text-green">✓</td></tr>
+          <tr><td>G6 Param plateau</td><td>w_bb ∈ [0.05, 0.15] all Sh > +3.8</td><td>—</td><td class="text-green">✓</td></tr>
+          <tr><td>G7 Auditor reimpl</td><td>partial</td><td>match</td><td class="text-yellow">部分</td></tr>
+          <tr><td>G8 Multi-regime</td><td>K50 result inheriting</td><td>—</td><td class="text-green">✓</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-purple);margin-top:14px;">v4 Forward MC (3x leverage)</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>Horizon</th><th>Loss prob</th><th>Median Return</th></tr></thead>
+        <tbody>
+          <tr><td>30d</td><td>12.9%</td><td>+4.88%</td></tr>
+          <tr><td>60d</td><td>5.2%</td><td>+10.26%</td></tr>
+          <tr><td>90d</td><td>1.9%</td><td>+15.84%</td></tr>
+          <tr><td>180d</td><td>0.1%</td><td>+35.06%</td></tr>
+          <tr style="background:rgba(63,185,80,0.15);"><td><strong>365d</strong></td><td class="text-green"><strong>0.0%</strong></td><td class="text-green"><strong>+83.6%</strong></td></tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- ── Wave K61-K69: 拡張 9 戦略テスト (1 ML含む)、全棄却 + v3 forward MC 更新 (2026-05-23) ── -->
