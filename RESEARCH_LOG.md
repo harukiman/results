@@ -3302,3 +3302,12 @@ HTML サイズ: 524KB
 
 **累計試行**: ~745,581 (K26 は分析のみ、新backtestなし)
 **結論**: production 推奨 4-way mix の真の market-alpha 性を強力に確認。
+
+### 2026-05-24 06:00 JST: Wave K27 — vol spike short only → **棄却 (25% Sh>0, 0 ≥1.5)**
+
+Best BNB Sh+1.23 (DD-13%)、DOGE/ADA negative。Single-direction vol spike は vol_z MR (両方向) より弱い。
+
+**21候補スコア**: 4/21 = 19.0% (継続低下)
+
+**結論**: Wave K の strategy hunting は限界に達した。これ以上の新規axisは期待値低い。
+4-way mix (4 axes統合, §6 8/8 PASS) が本研究の最終形。
