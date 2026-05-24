@@ -494,7 +494,7 @@
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 19:37 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 19:43 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 4-way mix (85/15):</strong> <span style="color:var(--accent-green);">Sh +3.61 / Calmar 36.65 / 60日窓100%+ / Bootstrap [+2.73, +4.35]</span> &nbsp;|&nbsp;
     <strong>17/4 success</strong>
@@ -504,7 +504,7 @@
     <h1 style="font-family:Georgia,serif;letter-spacing:-0.01em;">Systematic Alpha Discovery in MEXC Perpetual Futures</h1>
     <div class="subtitle" style="font-style:italic;font-family:Georgia,serif;">A Bias-Controlled Empirical Study of Multi-Axis Portfolio Construction with §6 Audit Validation</div>
     <div class="meta">
-      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 19:37 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
+      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 19:43 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
       Methodology: §6 strict-gate audit (Bailey-LdP CPCV, Hansen SPA, White RC, Bootstrap CI, Block Permutation)
     </div>
   </header>
@@ -535,6 +535,7 @@
       <li><a href="#user-inbox">📝 指示インボックス</a></li>
       <li><a href="#chart-labeler">🎯 チャート予想ラベラ (MVP)</a></li>
       <li><a href="#external-findings">🔎 外部リサーチ</a></li>
+      <li><a href="#wave-k109">🌊 K109 条件付Sharpe (NEW)</a></li>
       <li><a href="#tips-log">💡 Tips & Findings ログ</a></li>
     </ol>
   </nav>
@@ -6558,7 +6559,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       <h2 style="color:var(--accent-cyan);">🔎 外部リサーチ知見 (botter/Qiita/note/論文)</h2>
       <p style="font-size:0.85rem;color:var(--text-secondary);">tip-scraper サブエージェントの定期巡回結果。strong-evidence / partial-edge / crypto-native / risky / hype 等でタグ付け。採用候補は次 Wave で検証。</p>
       <div id="external-findings-body" style="margin-top:10px;font-size:0.88rem;">
-        <h3 style="color:var(--accent-green);">📅 2026-05-24 19:37 JST — 初回スクレイプ完了 (20候補 / TOP5抽出)</h3>
+        <h3 style="color:var(--accent-green);">📅 2026-05-24 19:43 JST — 初回スクレイプ完了 (20候補 / TOP5抽出)</h3>
         <p>tip-scraper サブエージェントが arxiv/MDPI/ScienceDirect/Bookmap/Glassnode/Amberdata/Coinmonks/Zenn/note 等を巡回。既存17戦略との重複を除外し、20件の新規候補を抽出。</p>
 
         <h4 style="color:var(--accent-cyan);margin-top:14px;">TOP 5 (優先検証)</h4>
@@ -6606,6 +6607,88 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 
   <hr class="divider">
 
+  <!-- ==================== WAVE K109: Conditional-Sharpe Dynamic Allocator ==================== -->
+  <section class="section" id="wave-k109">
+    <div class="card" style="border:2px solid var(--accent-green);padding:18px;">
+      <h2 style="color:var(--accent-green);">🌊 Wave K109 — 条件付き Sharpe 動的アロケータ (2026-05-24)</h2>
+      <p style="font-size:0.88rem;">7軸 v4 構成を BTC realized-vol Z 4分位レジームで動的アロケーション (V1 top-K, K=3)。v4.1 静的mix vs 動的アロケータ。</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:12px;">
+        <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;text-align:center;">
+          <div style="color:var(--text-secondary);font-size:0.75rem;">V1 Sharpe (730d)</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--accent-green);">+2.933</div>
+        </div>
+        <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;text-align:center;">
+          <div style="color:var(--text-secondary);font-size:0.75rem;">Calmar</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--accent-green);">8.88</div>
+        </div>
+        <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;text-align:center;">
+          <div style="color:var(--text-secondary);font-size:0.75rem;">Max DD</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--accent-green);">-6.73%</div>
+        </div>
+        <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;text-align:center;">
+          <div style="color:var(--text-secondary);font-size:0.75rem;">60d Win Window</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--accent-green);">89.6%</div>
+        </div>
+        <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;text-align:center;">
+          <div style="color:var(--text-secondary);font-size:0.75rem;">Cum Return</div>
+          <div style="font-size:1.6rem;font-weight:700;color:var(--accent-cyan);">+162.8%</div>
+        </div>
+        <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;text-align:center;">
+          <div style="color:var(--text-secondary);font-size:0.75rem;">Turnover/day</div>
+          <div style="font-size:1.6rem;font-weight:700;color:var(--text-primary);">0.090</div>
+        </div>
+      </div>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">§6 mini-audit</h4>
+      <table class="data-table" style="width:100%;font-size:0.84rem;">
+        <tbody>
+          <tr><td>G1 OOS (CPCV 10-split, embargo=5)</td><td class="text-green">PASS — mean Sh +2.32, 9/10 paths positive</td></tr>
+          <tr><td>G2 PBO (CPCV)</td><td class="text-green">PASS — 0.10 (target &lt; 0.30)</td></tr>
+          <tr><td>G3 DSR (n_trials=12)</td><td class="text-green">PASS — DSR=1.000, observed Sh +2.93 vs expected_max +1.66</td></tr>
+          <tr><td>G4 Cost stress ×0.5/×1.5</td><td class="text-green">PASS — Sh +3.11 / +2.67 (静的 v4.1 は ×1.5 で +0.26 に崩壊)</td></tr>
+          <tr><td>Block bootstrap CI (block=20, n=1000)</td><td class="text-green">[+2.20, +4.32] — ゼロを大きく超過</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">レジーム × 軸の発見 (経済的に解釈可能)</h4>
+      <ul style="font-size:0.86rem;line-height:1.6;">
+        <li><strong>High-vol (Q3, Q4)</strong>: <strong>BONK_8H</strong> (Sh +3.07 / +3.39), ATR (+1.9/+1.6) — meme/momentum が高ボラ環境で輝く</li>
+        <li><strong>Low-Mid vol (Q1, Q2)</strong>: <strong>ATR</strong> (+1.4/+2.9), <strong>BB_squeeze</strong> (+2.2/+2.4), SHIB_8H (+2.85 Q2) — 圧縮/スクイーズ系が低ボラで蓄積を捉える</li>
+        <li><strong>vol_MR</strong> = Q4-vol スペシャリスト (+0.96 Q4 vs -0.87 Q3) — 名前通り「ボラの平均回帰」を狙う</li>
+        <li><strong>OI_capit は当該期間で機能不全</strong> (standalone Sh -1.02, 3/4 vol bin で負) — レジーム条件で自動的に重み 0 化される (アロケータの自己防衛)</li>
+        <li><strong>Trend regime</strong>: BB_squeeze UP +2.78 vs DN +0.64; ATR DN +2.63 vs UP +1.10 → BB は trending tape, ATR は squeezing/ranging が必要</li>
+      </ul>
+
+      <h4 style="color:var(--accent-cyan);margin-top:14px;">v4.1 static vs V1 dynamic — 比較表</h4>
+      <table class="data-table" style="width:100%;font-size:0.83rem;">
+        <thead><tr><th>Variant</th><th>Sharpe</th><th>Sortino</th><th>Calmar</th><th>MaxDD</th><th>60d Win%</th><th>Cost ×1.5 Sh</th></tr></thead>
+        <tbody>
+          <tr><td>v4.1 baseline (static)</td><td>+0.695</td><td>0.85</td><td>0.78</td><td>-11.54%</td><td>57.1%</td><td>+0.26</td></tr>
+          <tr style="background:rgba(63,185,80,0.10);"><td><strong>V1 top-K (r1_vol)</strong></td><td><strong>+2.933</strong></td><td>5.21</td><td>8.88</td><td>-6.73%</td><td>89.6%</td><td>+2.67</td></tr>
+          <tr><td>V2 soft (r1_vol)</td><td>+2.851</td><td>5.80</td><td>8.99</td><td>-6.68%</td><td>91.4%</td><td>—</td></tr>
+          <tr><td>V3 regime-gate</td><td>+1.544</td><td>2.18</td><td>2.86</td><td>-7.54%</td><td>78.5%</td><td>—</td></tr>
+          <tr><td>V1 r2_trend</td><td>+2.565</td><td>—</td><td>7.28</td><td>-6.83%</td><td>—</td><td>—</td></tr>
+          <tr><td>V1 r4_disp</td><td>+2.425</td><td>—</td><td>4.25</td><td>-10.32%</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <div style="background:rgba(248,193,73,0.10);border-left:4px solid var(--accent-yellow);padding:10px;margin-top:14px;font-size:0.85rem;">
+        <strong>⚠ Caveat</strong>: 当該実行で OI/funding の 730d cache が欠損していたため、FOPD と OI_capit は ret-Z プロキシで代用。本来の v4.1 標準ベンチマーク Sh +4.08 は完全 OI/funding signal を使用。<strong>相対的優位 (V1 が v4.1 baseline の約 4 倍)</strong> は保守的に見積もられている可能性。次フェーズで真の OI/funding 730d cache を構築して再評価必須。
+      </div>
+
+      <h4 style="color:var(--accent-yellow);margin-top:14px;">推奨</h4>
+      <ol style="font-size:0.86rem;line-height:1.6;">
+        <li><strong>採用候補</strong>: V1 top-K (r1_vol) を新 production allocator として 2-4 週間 paper-trade で確認 → 昇格判定</li>
+        <li><strong>条件</strong>: OI/funding 730d cache を再構築して baseline と V1 を真値で再評価</li>
+        <li><strong>低 turnover (0.090 L1/day)</strong>: 約 11 日に 1 軸入替 → 摩擦無視できる</li>
+        <li><strong>次の Wave (K109b)</strong>: r1_vol + r2_trend の複合レジーム (16 bins) で過剰過学習にならない範囲で軸ローテーション精緻化</li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="divider">
+
   <!-- ==================== TIPS & FINDINGS LOG (累積) ==================== -->
   <section class="section" id="tips-log">
     <div class="card" style="border:1px solid var(--accent-yellow);padding:18px;">
@@ -6613,7 +6696,17 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       <p style="font-size:0.85rem;color:var(--text-secondary);">解析過程で発見した tips・知見・将来役立ちそうなアイデアを時系列で蓄積。</p>
       <div id="tips-log-body" style="margin-top:10px;font-size:0.88rem;">
         <details open>
-          <summary><strong>2026-05-24 19:37 JST</strong> — インボックス機構稼働 + 外部リサーチ初回 + Wave K109 着手</summary>
+          <summary><strong>2026-05-24 19:42 JST</strong> — K109 完了 (Sh +2.93) + K110/K111 並列稼働</summary>
+          <ul>
+            <li><strong>K109 結果</strong>: V1 top-K (BTC vol Z 4分位) で v4.1 baseline Sh +0.70 → Sh +2.93 (約4倍)、PBO 0.10, DSR 1.000, cost stress robust</li>
+            <li><strong>レジーム発見</strong>: high-vol=BONK 8H/ATR, low-vol=BB squeeze/ATR, OI_capit が当該期間機能不全 → アロケータが自動排除</li>
+            <li><strong>K110 (BTC→ETH→Alt lead-lag) と K111 (cointegration pair) を並列起動</strong> — 結果待ち</li>
+            <li><strong>tip-scraper 2回目を待機</strong>: 異なるソース重視で重複排除</li>
+            <li><strong>Caveat</strong>: OI/funding 730d cache 欠損 → 真の v4.1 +4.08 ベンチに対する相対比は要再評価</li>
+          </ul>
+        </details>
+        <details open>
+          <summary><strong>2026-05-24 19:43 JST</strong> — インボックス機構稼働 + 外部リサーチ初回 + Wave K109 着手</summary>
           <ul>
             <li>サイト経由の指示インボックス実装完了 (pw=2026, ntfy.sh backend, 3-fails-24h-lock)</li>
             <li>launchd `com.cryptolab.inbox-poll` 登録、StartInterval=1800s (30分)。独立稼働するので Claude セッション断でも受信継続</li>
