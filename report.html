@@ -504,6 +504,75 @@ window.__renderWhenReady = function(fn, label) {
     background: rgba(63,185,80,0.06);
     font-weight: 600;
   }
+
+  /* ===== MOBILE RESPONSIVE — applied at <=768px viewport ===== */
+  @media (max-width: 768px) {
+    /* General typography */
+    body { font-size: 0.92rem; }
+    h1 { font-size: 1.4rem !important; }
+    h2 { font-size: 1.15rem !important; }
+    h3 { font-size: 1.0rem !important; }
+    h4 { font-size: 0.95rem !important; }
+
+    /* Header banner: stack on mobile */
+    .report-header { padding: 12px 8px !important; }
+    .report-header h1 { letter-spacing: 0 !important; }
+
+    /* Plotly chart containers — shrink heights ~40% */
+    #comparison-chart-div, #k109-eq-chart, #fw-eq-chart, #sim-equity-chart { height: 320px !important; }
+    #fw-dd-chart, #fw-rs-chart, #sim-dist-chart, #sim-dd-chart, #k109-bar-chart { height: 200px !important; }
+    #k109-hm-chart { height: 260px !important; }
+    #lbl-chart { height: 240px !important; }
+
+    /* Generic chart divs (catch-all) — anything with height: NNNpx in inline style */
+    [id$="-chart"], [id$="-chart-div"] { max-height: 320px; }
+
+    /* Tables — smaller font, allow horizontal scroll */
+    table.data-table, .data-table { font-size: 0.72rem !important; }
+    table.data-table th, table.data-table td { padding: 4px 6px !important; }
+    /* Wrap wide tables in horizontal scroll containers if not already */
+    section.section .card > table.data-table { display: block; overflow-x: auto; }
+
+    /* TOC: hide by default, button toggle */
+    .toc { display: none !important; }
+    .toc.toc-open { display: block !important; max-height: 60vh; overflow-y: auto; }
+    .toc-toggle { display: block !important; position: fixed; bottom: 12px; right: 12px; z-index: 1000;
+                  background: var(--accent-blue); color: white; padding: 10px 14px; border-radius: 6px;
+                  border: 0; font-size: 0.9rem; cursor: pointer; }
+
+    /* Cards: tighter padding */
+    .card { padding: 10px !important; }
+    section.section { padding: 8px !important; }
+
+    /* Grid that auto-fits KPI tiles — make tiles smaller min-width */
+    div[style*="grid-template-columns"][style*="minmax(180px"] {
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+    }
+    div[style*="grid-template-columns"][style*="minmax(260px"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Form controls: touch-friendly sizing */
+    input, select, button, textarea {
+      font-size: 0.95rem !important; min-height: 38px;
+    }
+    button { padding: 8px 14px !important; }
+
+    /* External findings pagination */
+    #findings-pager { flex-wrap: wrap; }
+    #findings-pager button { min-height: 34px; }
+
+    /* Update timestamp banner */
+    div[style*="bg-tertiary"][style*="border-bottom"] { font-size: 0.72rem !important; padding: 6px 8px !important; }
+  }
+
+  /* Extra-narrow screens (<480px) */
+  @media (max-width: 480px) {
+    h1 { font-size: 1.2rem !important; }
+    h2 { font-size: 1.0rem !important; }
+    #comparison-chart-div, #k109-eq-chart, #fw-eq-chart { height: 280px !important; }
+    table.data-table, .data-table { font-size: 0.68rem !important; }
+  }
 </style>
 </head>
 <body>
@@ -512,7 +581,7 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 20:53 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 20:58 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 採用候補 (5):</strong> <span style="color:var(--accent-green);">v4.1 +4.08 / K109 V1 +2.93 / K114 ALCP +2.25 (onchain) / K116 vol_only +1.59 (xs) / K121 Weekend Mom +1.25 (calendar)</span> &nbsp;|&nbsp;
     <strong>累計 5 ACCEPT / 7 REJECT / 1 CONDITIONAL</strong>
@@ -522,7 +591,7 @@ window.__renderWhenReady = function(fn, label) {
     <h1 style="font-family:Georgia,serif;letter-spacing:-0.01em;">Systematic Alpha Discovery in MEXC Perpetual Futures</h1>
     <div class="subtitle" style="font-style:italic;font-family:Georgia,serif;">A Bias-Controlled Empirical Study of Multi-Axis Portfolio Construction with §6 Audit Validation</div>
     <div class="meta">
-      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 20:53 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
+      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 20:58 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
       Methodology: §6 strict-gate audit (Bailey-LdP CPCV, Hansen SPA, White RC, Bootstrap CI, Block Permutation)
     </div>
   </header>
@@ -6404,7 +6473,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       </div>
       <div id="external-findings-body" style="margin-top:10px;font-size:0.88rem;">
         <div class="findings-page" data-page="1" data-title="Round 1: tip-scraper 初回 (20候補)">
-        <h3 style="color:var(--accent-green);">📅 2026-05-24 20:53 JST — 初回スクレイプ完了 (20候補 / TOP5抽出)</h3>
+        <h3 style="color:var(--accent-green);">📅 2026-05-24 20:58 JST — 初回スクレイプ完了 (20候補 / TOP5抽出)</h3>
         <p>tip-scraper サブエージェントが arxiv/MDPI/ScienceDirect/Bookmap/Glassnode/Amberdata/Coinmonks/Zenn/note 等を巡回。既存17戦略との重複を除外し、20件の新規候補を抽出。</p>
 
         <h4 style="color:var(--accent-cyan);margin-top:14px;">TOP 5 (優先検証)</h4>
@@ -6862,7 +6931,34 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       <p style="font-size:0.85rem;color:var(--text-secondary);">解析過程で発見した tips・知見・将来役立ちそうなアイデアを時系列で蓄積。</p>
       <div id="tips-log-body" style="margin-top:10px;font-size:0.88rem;">
         <details open>
-          <summary><strong>🌟 2026-05-24 20:53 JST — K121 Weekend Momentum ACCEPT 6/7 (5番目候補)</strong></summary>
+          <summary><strong>💡 2026-05-24 20:58 JST — 信号振幅 vs コスト 事前評価原則 (K122 から)</strong></summary>
+          <ul>
+            <li><strong>K122 Premium-Index MR の失敗から導出された原則</strong></li>
+            <li><strong>事象</strong>: arxiv 2310.11771 の theoretically sound な premium-MR 仮説、4H scale で REJECT</li>
+            <li><strong>根本原因</strong>: premium 振幅 (mean ~-3.5e-4, std ~3e-4) → 2σ deviation = 6bp、roundtrip cost 14bp の<u>半分以下</u></li>
+            <li><strong>原則</strong>: 仮説評価時に必ず<strong>信号振幅 (典型 |Δ|) vs コスト境界</strong>を事前見積もる:
+              <ul>
+                <li>信号 typical magnitude &lt; 2× roundtrip cost → 試す前に reject</li>
+                <li>信号 ≥ 5× cost → 有望</li>
+                <li>低 SN 信号は時間軸 broader (4H→1D) または cross-venue で amplitude 拡大で再評価可能</li>
+              </ul>
+            </li>
+            <li><strong>応用</strong>: 今後の onchain/microstructure 候補は magnitude 事前 sanity check を required step として追加</li>
+          </ul>
+        </details>
+        <details open>
+          <summary><strong>📋 2026-05-24 20:55 JST — HTML 監査 #2 (K112以降の精査)</strong></summary>
+          <ul>
+            <li><strong>K112→K122 = 10 wave 経過</strong> 後の監査</li>
+            <li><strong>整合性 OK</strong>: Banner=5/7/1 = 実態と一致, Plotly chart 27箇所</li>
+            <li><strong>是正なし</strong>: historical snapshot (6851/6928) は累積記録原則で意図的保持</li>
+            <li><strong>累計成績</strong>: 5 ACCEPT / 1 CONDITIONAL / 8 REJECT (棄却率 57%)</li>
+            <li><strong>採用 5 軸 (独立)</strong>: v4.1 mix / K109 regime / K114 onchain / K116 cross-section / K121 calendar</li>
+            <li><strong>次回監査</strong>: K128 完了後</li>
+          </ul>
+        </details>
+        <details open>
+          <summary><strong>🌟 2026-05-24 20:58 JST — K121 Weekend Momentum ACCEPT 6/7 (5番目候補)</strong></summary>
           <ul>
             <li><strong>5番目の独立 alpha 軸</strong>: calendar effect (時間帯エッジ) — 既存4軸 (mix/regime/onchain/cross-section) と直交</li>
             <li><strong>53/56 銘柄</strong> で weekend > weekday daily SR (breadth 94.6%)</li>
@@ -6919,7 +7015,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details>
-          <summary><strong>📋 2026-05-24 20:53 JST — HTML 監査記録 #1 (定期監査初回)</strong></summary>
+          <summary><strong>📋 2026-05-24 20:58 JST — HTML 監査記録 #1 (定期監査初回)</strong></summary>
           <ul>
             <li><strong>監査範囲</strong>: TOC vs section ID 対応、累積 Sharpe 数値の重複、最新候補の整合性、Plotly 不具合</li>
             <li><strong>是正</strong>: (a) 上部 banner が古い v1 (Sh+3.61) 表示 → 採用候補4軸 (v4.1+4.08, K109+2.93, K114+2.25, K112 OOS+1.71) に更新</li>
@@ -6942,7 +7038,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
-          <summary><strong>2026-05-24 20:53 JST</strong> — インボックス機構稼働 + 外部リサーチ初回 + Wave K109 着手</summary>
+          <summary><strong>2026-05-24 20:58 JST</strong> — インボックス機構稼働 + 外部リサーチ初回 + Wave K109 着手</summary>
           <ul>
             <li>サイト経由の指示インボックス実装完了 (pw=2026, ntfy.sh backend, 3-fails-24h-lock)</li>
             <li>launchd `com.cryptolab.inbox-poll` 登録、StartInterval=1800s (30分)。独立稼働するので Claude セッション断でも受信継続</li>
@@ -6971,7 +7067,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
     <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v4.1</p>
-    <p style="margin-top:4px;">更新: 2026-05-24 20:53 JST &nbsp;|&nbsp; 100+ファミリーで738,388+試行 &nbsp;|&nbsp; ユニバース: 55銘柄 (4H/730日) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
+    <p style="margin-top:4px;">更新: 2026-05-24 20:58 JST &nbsp;|&nbsp; 100+ファミリーで738,388+試行 &nbsp;|&nbsp; ユニバース: 55銘柄 (4H/730日) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 
