@@ -3557,3 +3557,25 @@ K40 で警告したリスクを実測。Each component を利用不能化し、�
 ### 運用判断への影響
 - **production 修正提案 1**: FOPD DOTUSDT を除外、weight を他5銘柄に再配分
 - **monitoring 提案 2**: SHIB/BONK 一時不可検知 → 自動 weight rebalance 仕組み追加 (ΔSh -0.33 で済むので緊急停止不要)
+
+## Wave K42 — 5軸 daily return 相関行列 (2026-05-23)
+
+K41 のロバスト性の数学的根拠を相関行列で検証:
+
+```
+             ATR_4H  FOPD_4H  BONK_8H  SHIB_8H  vol_MR
+ATR_4H        1.000    0.017    0.374    0.331   0.031
+FOPD_4H       0.017    1.000   -0.006    0.063   0.133
+BONK_8H       0.374   -0.006    1.000    0.295   0.056
+SHIB_8H       0.331    0.063    0.295    1.000   0.040
+vol_MR        0.031    0.133    0.056    0.040   1.000
+```
+
+- Mean off-diagonal = +0.133, Max = +0.374, Min = -0.006
+- Stand-alone Sharpe: ATR_4H +2.47, FOPD +1.94, BONK_8H +2.12, SHIB_8H +2.23, vol_MR +1.59
+
+### 発見
+1. **FOPD と vol_MR は near-orthogonal**: 全 axis に対し |corr| ≤ 0.13
+2. **ATR 4H × 8H meme: 0.30-0.37 中相関**: 同戦略 TF 異なるため自然
+3. **Mean 0.133 < 0.3 閾値**: 「真の low-corr portfolio」基準クリア
+4. **K41 の "FOPD全停止でも Sh+3.31" の数学的説明**: FOPD は他軸とほぼ独立な alpha 源だったため、外しても他軸の Sh が引き継ぐ

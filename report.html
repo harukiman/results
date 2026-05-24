@@ -1367,6 +1367,35 @@ Plotly.newPlot('sc-fopd-rs', [{
       </ul>
     </div>
 
+    <!-- ── Wave K42: 5-axis correlation matrix (2026-05-23) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-cyan);">
+      <h3 style="color:var(--accent-cyan);">🔗 Wave K42: 5軸 daily return 相関行列 — 真の分散効果を測定</h3>
+      <p style="font-size:0.9rem;margin-top:8px;">K41 のロバスト性の数学的根拠を相関行列で検証:</p>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:10px;text-align:center;">
+        <thead><tr><th></th><th>ATR_4H</th><th>FOPD_4H</th><th>BONK_8H</th><th>SHIB_8H</th><th>vol_MR</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ATR_4H</strong></td><td>1.00</td><td style="background:rgba(63,185,80,0.2);">+0.02</td><td style="background:rgba(227,179,65,0.2);">+0.37</td><td style="background:rgba(227,179,65,0.2);">+0.33</td><td style="background:rgba(63,185,80,0.2);">+0.03</td></tr>
+          <tr><td><strong>FOPD_4H</strong></td><td style="background:rgba(63,185,80,0.2);">+0.02</td><td>1.00</td><td style="background:rgba(63,185,80,0.2);">-0.01</td><td style="background:rgba(63,185,80,0.2);">+0.06</td><td style="background:rgba(63,185,80,0.2);">+0.13</td></tr>
+          <tr><td><strong>BONK_8H</strong></td><td style="background:rgba(227,179,65,0.2);">+0.37</td><td style="background:rgba(63,185,80,0.2);">-0.01</td><td>1.00</td><td style="background:rgba(63,185,80,0.2);">+0.30</td><td style="background:rgba(63,185,80,0.2);">+0.06</td></tr>
+          <tr><td><strong>SHIB_8H</strong></td><td style="background:rgba(227,179,65,0.2);">+0.33</td><td style="background:rgba(63,185,80,0.2);">+0.06</td><td style="background:rgba(63,185,80,0.2);">+0.30</td><td>1.00</td><td style="background:rgba(63,185,80,0.2);">+0.04</td></tr>
+          <tr><td><strong>vol_MR</strong></td><td style="background:rgba(63,185,80,0.2);">+0.03</td><td style="background:rgba(63,185,80,0.2);">+0.13</td><td style="background:rgba(63,185,80,0.2);">+0.06</td><td style="background:rgba(63,185,80,0.2);">+0.04</td><td>1.00</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.88rem;margin-top:10px;">
+        <strong>Stats</strong>: Mean off-diagonal = <strong>+0.133</strong>, Max = +0.374, Min = -0.006
+      </p>
+      <h4 style="color:var(--accent-green);margin-top:12px;">構造的発見</h4>
+      <ul style="font-size:0.88rem;padding-left:22px;margin-top:6px;">
+        <li><strong>FOPD と vol_MR は near-orthogonal</strong>: 全 axis に対し |corr| ≤ 0.13 → 真の独立 alpha source。K41 の "FOPD全停止でも Sh+3.31" を数学的に裏付け</li>
+        <li><strong>ATR 4H × 8H meme は中相関 (0.30-0.37)</strong>: 同じ ATR_Ratio_Compression ロジックが TF 違いで動くため自然。但し 0.4未満で分散効果は残る</li>
+        <li><strong>BONK ↔ SHIB 8H: 0.295</strong>: meme 共動性、想定範囲内</li>
+        <li><strong>Mean 0.133 は「low-corr portfolio」の閾値 (<0.3) を大幅クリア</strong> — 4-way mix は単なる相加ではなく真の独立 axis 集合</li>
+      </ul>
+      <p style="font-size:0.88rem;margin-top:10px;color:var(--accent-purple);">
+        <strong>各 axis スタンドアロン Sharpe</strong>: ATR_4H +2.47 / FOPD +1.94 / BONK_8H +2.12 / SHIB_8H +2.23 / vol_MR +1.59 — 全 axis 単独でも G1 OOS 閾値クリア
+      </p>
+    </div>
+
     <!-- ── Wave K17-K21: Production推奨 + 多角stress + 探索終結 (2026-05-24 05:05 JST) ── -->
     <div class="card" style="border-left:4px solid var(--accent-purple);background:linear-gradient(180deg,rgba(188,140,255,0.10),transparent);">
       <h3 style="color:var(--accent-purple);">🎯 Wave K17-K21: 実運用化 + Stress 多角検証 + 探索終結</h3>
