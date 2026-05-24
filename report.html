@@ -449,10 +449,10 @@
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 02:55 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 03:15 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 729,915+ &nbsp;|&nbsp;
-    <strong>🏆 80/10/10 認定 + Hansen SPA p=0.0 / White RC p=0.001 PASS</strong> &nbsp;|&nbsp;
-    <strong>Kelly:</strong> 10x で破産0.6%/median+462%
+    <strong>🚨 Bootstrap CI再評価:</strong> <span style="color:var(--accent-orange);">50/50 (median Sh+3.06) > 80/10/10 (+2.78)</span> &nbsp;|&nbsp;
+    <strong>共に「使用可能」</strong>
   </div>
 
   <header class="report-header">
@@ -937,6 +937,64 @@ Plotly.newPlot('sc-fopd-rs', [{
           <strong>ユーザーの「日利10%」基準について</strong>: 本ポートフォリオの実測日利平均は <strong>0.083%/日 (年率 ~30% / 1xレバ)</strong>。10%/日 に約120倍のギャップ。レバ拡大で平均日利は線形に上がるが破産確率も急増 (10xで 7.28%)。<strong>「10%/日」は本研究の知見では実在不可能</strong>と判断 (1.10^365≈1.3e15 倍/年)。
         </p>
       </div>
+    </div>
+
+    <!-- ── Wave K5: Bootstrap CI 真の優劣 (2026-05-24 03:10 JST) ── -->
+    <div class="card" style="border-left:4px solid var(--accent-red);background:linear-gradient(180deg,rgba(248,81,73,0.10),transparent);">
+      <h3 style="color:var(--accent-red);">🚨 Wave K5: Bootstrap 95% CI で重要な再評価 — 80/10/10 vs 50/50 の真の差</h3>
+
+      <p style="font-size:0.92rem;margin-top:8px;">
+        観測値だけで判断せず、Stationary Bootstrap (5000回 resample, block=20) で<strong>真の期待値分布</strong>を可視化。結果は驚き — <strong>Bootstrap median では 50/50 が 80/10/10 を上回る</strong>。
+      </p>
+
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:10px;">
+        <thead><tr><th>戦略</th><th>観測 Sharpe</th><th>Bootstrap Median Sh</th><th>95% CI</th><th>Bootstrap Calmar Median</th><th>位置</th></tr></thead>
+        <tbody>
+          <tr><td>80/10/10 Triple</td><td class="text-green">+3.57</td><td>+2.78</td><td>[+1.95, +3.55]</td><td>19.24</td><td class="text-orange">95% upper付近</td></tr>
+          <tr style="background:rgba(63,185,80,0.10);"><td><strong>50/50 Combined</strong></td><td>+3.15</td><td class="text-green"><strong>+3.06</strong></td><td>[+2.26, +3.85]</td><td class="text-green"><strong>25.24</strong></td><td class="text-green">median 近傍</td></tr>
+          <tr><td>ATR×8 alone</td><td>+2.69</td><td>+2.52</td><td>[+1.61, +3.34]</td><td>20.16</td><td>median やや上</td></tr>
+          <tr><td>FOPD×6 alone</td><td>+1.84</td><td>+1.85</td><td>[+0.60, +2.87]</td><td>5.92</td><td>median 近傍</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="color:var(--accent-orange);margin-top:14px;">深い考察: 80/10/10 観測値 +3.57 の正体</h4>
+      <ul style="font-size:0.9rem;padding-left:22px;margin-top:6px;">
+        <li><strong>80/10/10 の観測 Sh+3.57 は 95% upper bound (+3.55) 近傍</strong>: bootstrap 分布の上位 ~5% に位置。<strong>期間特異的に有利な並びだった可能性高</strong>。</li>
+        <li><strong>50/50 の観測 Sh+3.15 は bootstrap median (+3.06) 近傍</strong>: 真の期待値と一致、より honest な数値。</li>
+        <li><strong>8H Meme satellites は観測アルファを底上げしたが、bootstrap で安定しない</strong>: 期間内の特定パターン (例えば BONK の急騰期) に依存。期間が違えば再現しない可能性。</li>
+        <li>50/50 Combined Calmar median = 25.24 > 80/10/10 = 19.24 → <strong>真のリスク調整後品質は 50/50 の方が高い</strong>かもしれない。</li>
+      </ul>
+
+      <h4 style="color:var(--accent-yellow);margin-top:14px;">ユーザー原則「数値合わせ禁止」の適用</h4>
+      <p style="font-size:0.9rem;">
+        80/10/10 は §6 全 8/8 PASS、Hansen SPA + White RC PASS で<strong>「使用可能」認定済み</strong>。しかし Bootstrap CI は<strong>「観測値最高だが真の期待値は 50/50 とほぼ同等以下」</strong>を示唆。
+      </p>
+      <p style="font-size:0.88rem;margin-top:8px;">
+        <strong>正直な修正提案</strong>: 「最良戦略」のラベルを <strong>80/10/10 → 50/50 Combined</strong> へ訂正検討。
+        Bootstrap median Sh +3.06 / Calmar 25.24 は 80/10/10 (+2.78 / 19.24) を上回り、観測値との乖離も小さく、 honest な期待値として信頼できる。
+      </p>
+
+      <h4 style="color:var(--accent-green);margin-top:14px;">修正された推奨ポートフォリオ (Bootstrap考慮)</h4>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:6px;">
+        <thead><tr><th>順位</th><th>戦略</th><th>観測</th><th>Bootstrap Median (実運用期待値)</th><th>推奨理由</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(63,185,80,0.15);">
+            <td>🏆1</td><td><strong>50/50 Combined</strong></td><td>Sh+3.15</td><td class="text-green"><strong>Sh+3.06 / Calmar 25.24</strong></td><td>Bootstrap median最高、observed と乖離小、最も honest</td>
+          </tr>
+          <tr>
+            <td>🥈2</td><td>80/10/10 Triple</td><td>Sh+3.57</td><td>Sh+2.78 / Calmar 19.24</td><td>観測最高だが sample-specific 懸念</td>
+          </tr>
+          <tr><td>3</td><td>ATR×8 alone</td><td>Sh+2.69</td><td>Sh+2.52 / Calmar 20.16</td><td>シンプル、安定</td></tr>
+          <tr><td>4</td><td>FOPD×6 alone</td><td>Sh+1.84</td><td>Sh+1.85 / Calmar 5.92</td><td>単独では弱い</td></tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:0.85rem;margin-top:10px;color:var(--text-secondary);">
+        <strong>Auditor 修正注釈</strong>: 80/10/10 の §6「使用可能」ラベルは保持 (技術的に全ゲート PASS)。
+        しかし、Bootstrap CI を踏まえた<strong>真の "リスク調整後品質期待値" 順位では 50/50 > 80/10/10</strong>。
+        実運用ではどちらでも実績は近いはず (両者の bootstrap CI は重なる)。
+        フォワード 90日 OOS で確定検証する。
+      </p>
     </div>
 
     <!-- ── Wave K1-K3: Kelly / Hansen SPA / Paper trade (2026-05-24 02:55 JST) ── -->
