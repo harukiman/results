@@ -39,7 +39,6 @@ FOPD_BEST = {
     "ETHUSDT":  {"fr": 1.5, "oi": 1.5, "ret": 0.5, "sl": 0.04, "tp": 0.06, "mhb": 6},
     "ADAUSDT":  {"fr": 2.0, "oi": 0.5, "ret": 0.5, "sl": 0.04, "tp": 0.06, "mhb": 6},
     "LINKUSDT": {"fr": 1.0, "oi": 0.5, "ret": 1.0, "sl": 0.04, "tp": 0.06, "mhb": 6},
-    "DOTUSDT":  {"fr": 2.0, "oi": 1.0, "ret": 1.0, "sl": 0.04, "tp": 0.06, "mhb": 6},
 }
 ATR_PARAMS_4H = {"atr_short": 7, "atr_long": 56, "threshold": 0.6, "ema_fast": 20, "ema_slow": 80}
 ATR_PARAMS_8H = {"atr_short": 4, "atr_long": 28, "threshold": 0.6, "ema_fast": 10, "ema_slow": 40}
@@ -122,7 +121,7 @@ def load_or_init_state():
         return json.loads(STATE_PATH.read_text())
     return {
         "start_date": START_DATE,
-        "strategy": "80/10/10 Triple (ATR×8 4H + FOPD×6 4H + BONK_8H + SHIB_8H)",
+        "strategy": "4-way mix v2 (ATR×8 4H + FOPD×5 4H + BONK_8H + SHIB_8H + vol_MR) — K44 DOT除外版",
         "initial_capital_usd": INITIAL_CAPITAL,
         "leverage": LEVERAGE,
         "equity_usd": INITIAL_CAPITAL,
