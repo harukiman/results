@@ -1,0 +1,161 @@
+{
+  "wave": "K213",
+  "task": "Ethena TVL rule-based regime gate for K198 (v6.6 candidate)",
+  "as_of": "2026-05-24T21:50:16.897040+00:00",
+  "runtime_s": 1.6,
+  "config": {
+    "strategies": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ],
+    "tvl_drop_threshold": -0.15,
+    "tvl_grow_threshold": 0.1,
+    "tvl_lag_days": 7,
+    "carry_rev_cap": 0.1,
+    "carry_fwd_cap": 0.1,
+    "k198_oos_sh_baseline": 10.28,
+    "k198_oos_dd_baseline": -0.0053,
+    "k198_wf_min_baseline": 6.57,
+    "oos_frac": 0.3,
+    "n_folds": 4,
+    "date_range": [
+      "2025-01-22",
+      "2026-04-14"
+    ],
+    "n_days_total": 448,
+    "n_oos_days": 135
+  },
+  "tvl_regime_stats": {
+    "n_total_days": 448,
+    "n_drop_days": 61,
+    "n_grow_days": 124,
+    "n_neutral_days": 263,
+    "pct_drop": 0.1362,
+    "pct_grow": 0.2768,
+    "pct_neutral": 0.5871
+  },
+  "comparison_table": {
+    "K198_v6_5_baseline": {
+      "description": "K198 Ridge ML, 51 features, 90d window (production v6.5)",
+      "oos_sharpe": 10.2795,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.9121,
+      "wf_min": 6.573,
+      "wf_fold_sharpes": [
+        6.573,
+        7.3821,
+        7.9407,
+        9.7526
+      ],
+      "note": "Re-derived from stored weights x returns (may differ marginally from original K198 reported metrics)"
+    },
+    "K213a_halt_on_drop": {
+      "description": "K198 + halt V_rev/fwd_carry when eth_tvl_change_30d < -0.15",
+      "oos_sharpe": 10.198,
+      "oos_maxdd": -0.0074,
+      "oos_sortino": 27.1537,
+      "oos_calmar": 116.8699,
+      "oos_ann_ret": 0.8658,
+      "oos_ann_vol": 0.0614,
+      "oos_n_days": 135,
+      "wf_mean": 8.0004,
+      "wf_min": 6.573,
+      "wf_max": 9.8118,
+      "wf_std": 1.1996,
+      "wf_fold_sharpes": [
+        6.573,
+        7.3821,
+        8.2346,
+        9.8118
+      ],
+      "fire_rate": 0.1362,
+      "n_fired": 61,
+      "fire_rate_pass": true,
+      "sh_pass": false,
+      "mdd_pass": false,
+      "wf_min_pass": true,
+      "all_pass": false,
+      "lift_vs_k198_oos_sh": -0.082
+    },
+    "K213b_boost_on_grow": {
+      "description": "K198 + boost V_rev_carry to 10% cap when eth_tvl_change_30d > +0.10",
+      "oos_sharpe": 10.2795,
+      "oos_maxdd": -0.0053,
+      "oos_sortino": 30.7423,
+      "oos_calmar": 147.5609,
+      "oos_ann_ret": 0.7771,
+      "oos_ann_vol": 0.0561,
+      "oos_n_days": 135,
+      "wf_mean": 7.9343,
+      "wf_min": 6.573,
+      "wf_max": 9.7526,
+      "wf_std": 1.1716,
+      "wf_fold_sharpes": [
+        6.573,
+        7.369,
+        8.0426,
+        9.7526
+      ],
+      "fire_rate": 0.2768,
+      "n_fired": 124,
+      "fire_rate_pass": true,
+      "sh_pass": false,
+      "mdd_pass": true,
+      "wf_min_pass": true,
+      "all_pass": false,
+      "lift_vs_k198_oos_sh": -0.0005
+    },
+    "K213c_both_rules": {
+      "description": "K198 + both halt (drop) and boost (grow) rules combined",
+      "oos_sharpe": 10.198,
+      "oos_maxdd": -0.0074,
+      "oos_sortino": 27.1537,
+      "oos_calmar": 116.8699,
+      "oos_ann_ret": 0.8658,
+      "oos_ann_vol": 0.0614,
+      "oos_n_days": 135,
+      "wf_mean": 8.0022,
+      "wf_min": 6.573,
+      "wf_max": 9.8118,
+      "wf_std": 1.2023,
+      "wf_fold_sharpes": [
+        6.573,
+        7.369,
+        8.2551,
+        9.8118
+      ],
+      "fire_rate": 0.4129,
+      "n_fired": 185,
+      "fire_rate_pass": false,
+      "sh_pass": false,
+      "mdd_pass": false,
+      "wf_min_pass": true,
+      "all_pass": false,
+      "lift_vs_k198_oos_sh": -0.082
+    }
+  },
+  "best_variant": "K213b",
+  "best_variant_lift_vs_k198": -0.0005,
+  "acceptance_gates": {
+    "oos_sh_threshold": 10.28,
+    "oos_dd_threshold": -0.0053,
+    "wf_min_threshold": 6.57,
+    "fire_rate_max": 0.3,
+    "k213a_all_pass": false,
+    "k213b_all_pass": false,
+    "k213c_all_pass": false,
+    "any_variant_passes": false
+  },
+  "verdict": "NEAR-MISS: K213b OOS Sh=10.2795 close to K198 baseline 10.28. TVL regime gate adds structure but insufficient standalone lift. Recommend: combine with momentum or volatility filter for K214.",
+  "deploy_recommendation": "No deployment recommended. K198 v6.5 retained.",
+  "methodology_note": "K213 applies TVL regime gates AFTER K198 ML allocation. No ML re-training required. Gate operates on post-allocation weights. 7-day TVL lag prevents look-ahead bias. FR trigger (K121, K133 zeroed on negative FR) applied before gate.",
+  "k211_prior_context": "K211 used carry-specific ML interaction features (eth_x_V_rev_carry, eth_x_V_fwd_carry) and was REJECTED (OOS Sh 8.81). K213 bypasses ML entirely with a direct rule gate. If K213 also rejects, the TVL signal may not be implementable within the current K198 Ridge ML architecture."
+}
