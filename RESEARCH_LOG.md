@@ -3579,3 +3579,27 @@ vol_MR        0.031    0.133    0.056    0.040   1.000
 2. **ATR 4H × 8H meme: 0.30-0.37 中相関**: 同戦略 TF 異なるため自然
 3. **Mean 0.133 < 0.3 閾値**: 「真の low-corr portfolio」基準クリア
 4. **K41 の "FOPD全停止でも Sh+3.31" の数学的説明**: FOPD は他軸とほぼ独立な alpha 源だったため、外しても他軸の Sh が引き継ぐ
+
+## Wave K43 — 曜日バイアス + ATR compression filter (2026-05-23)
+
+K21 で却下した「Wed long + Thu short」を ATR compression filter (atr_5 / atr_30 < 0.7) 下でのみ取る形に絞り込み:
+
+| Symbol | Wed raw | Wed filtered | Thu filtered (short) | Combined |
+|--------|---------|--------------|---------------------|----------|
+| BTC | +1.18 | **+2.78 (n=12)** | +0.00 | +1.65 |
+| ETH | +1.18 | **+2.43 (n=15)** | -1.21 | +0.88 |
+| SOL | +0.56 | +0.48 | +1.68 | +0.85 |
+| DOGE | +1.22 | -0.82 | +3.75 | +1.20 |
+| BNB | +1.03 | -0.14 | -1.43 | -0.68 |
+| **Mean** | **+1.03** | +0.95 | +0.56 | **+0.78** |
+
+### 結論
+- Combined: raw +1.03 → filtered +0.78 (Δ-0.25)。**フィルターは改善しない**
+- 個別では BTC/ETH の Wed long が compression 下で大幅改善 (Sh+2.4-2.8) だが、sample n=12-15 で confidence 不十分
+- DOGE Thu short が Sh+3.75 (n=17) だが BNB は -1.43、銘柄依存性大
+
+### 棄却理由 (再確認)
+- Portfolio-level: 改善しない
+- 銘柄ごとに方向違う → robust ではない
+- BNB combined -0.68 が portfolio drag
+- **K21 棄却維持**
