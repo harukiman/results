@@ -3343,3 +3343,16 @@ Best BNB Sh+1.23 (DD-13%)、DOGE/ADA negative。Single-direction vol spike は v
 momentum overshoots は典型的に継続、reverse しない。
 
 **23候補 4成功 = 17.4%** (累積継続低下)
+
+### 2026-05-24 06:15 JST: Wave K31 — BB squeeze breakout → portfolio level 棄却
+
+**個別**: 10/10 銘柄 Sh>0, LINK Sh+1.65 / ETH Sh+1.62 / SOL Sh+1.56 — 非常に良い
+**Portfolio (10銘柄 EW)**: Sh+0.50 (低い)
+**Correlation vs 4-way mix**: +0.236 (独立)
+**合成**: 全 variants が baseline +3.61 を下回る (95/5: +3.60, 90/10: +3.58)
+
+**棄却理由**: portfolio Sh+0.50 が低すぎ、独立でも統合価値なし。BB squeeze は ATR_Ratio と異なる検出方法だが、信号としては似通っている。
+
+**24候補スコア**: 4/24 = 16.7% (継続低下)
+
+**最終確定**: これ以上の strategy hunting は明確に非効率。4-way mix が production 最終形。
