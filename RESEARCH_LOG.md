@@ -3486,3 +3486,31 @@ ADA Sh+2.23 (26 trades) は K25 FR shock の ADA Sh+2.71 と似た edge — 同�
 - 50x レバ (10%/日相当) → 破産確率 96.5% (前述)
 
 **累計試行**: ~745,591 + 50000 (MC simulations) = ~795,591
+
+## Wave K39 — Per-symbol contribution decomposition (2026-05-23)
+
+4-way mix の 20 個の (axis, symbol) について individual Sharpe を算出。
+
+### Top 5 contributors
+| Axis | Symbol | Sharpe | Return | DD | Trades |
+|------|--------|--------|--------|-----|--------|
+| ATR 8H | SHIBUSDT | +2.23 | +141.4% | -9.7% | 64 |
+| ATR 8H | BONKUSDT | +2.12 | +181.3% | -12.3% | 74 |
+| ATR 4H | INJUSDT | +2.09 | +107.4% | -11.2% | 40 |
+| ATR 4H | SHIBUSDT | +2.06 | +74.4% | -6.4% | 58 |
+| vol_MR 4H | SOLUSDT | +1.86 | +111.6% | -12.5% | 96 |
+
+### Bottom 5 (border-line)
+| Axis | Symbol | Sharpe | Return |
+|------|--------|--------|--------|
+| vol_MR 4H | BTCUSDT | +0.93 | +42.9% |
+| FOPD 4H | AVAXUSDT | +0.82 | +13.6% |
+| FOPD 4H | ADAUSDT | +0.54 | +12.4% |
+| vol_MR 4H | BNBUSDT | +0.41 | +12.7% |
+| FOPD 4H | DOTUSDT | +0.03 | -0.3% |
+
+### 重要な発見
+1. **Meme volatility が alpha の主源泉**: SHIB/BONK が 8H/4H 共に Top4 を占有 → mix は分散だけでなく **meme volatility エッジ** に強く依存
+2. **Marginal legs の存在**: FOPD DOT (Sh=+0.03) は実質 wash trade。除外しても全体 Sharpe へのマイナス影響は限定的。但しコスト面メリットも小 (取引数 14 = 730日中 1.9%)
+3. **Diversification value**: Bottom legs を残す理由は、Top contributors が **意外に短期相関を持つ可能性** に対する保険。decorrelation 検証は K40 で実施予定
+4. **vol_MR の symbol 依存性**: SOL (+1.86) >> BTC (+0.93) >> ETH (+1.04) >> BNB (+0.41)。SOL の特異性 (high beta meme proxy?) が際立つ
