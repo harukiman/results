@@ -3062,3 +3062,44 @@ S3I (Wave J17 で signal 棄却) を re-purpose: signal でなく <strong>レジ
 - 残るは <strong>真OOSフォワードテスト累積</strong>のみ
 
 **累計試行**: ~738,388 (K19 新試行なし)
+
+### 2026-05-24 05:05 JST: Wave K21b — Day-of-week 実トレード化 → **棄却 (Portfolio Sh+0.71, DD-26%)**
+
+K21 で発見した「Wed up / Thu down が 5銘柄全て」を実トレード化:
+- Wed (UTC) → long, Thu (UTC) → short on BTC/ETH/SOL/BNB/DOGE
+
+**結果**:
+| 銘柄 | Sharpe | Return | DD | Trades |
+|------|--------|--------|-----|--------|
+| BTCUSDT | +1.37 | +82.3% | -27.9% | 227 |
+| ETHUSDT | +1.44 | +122.6% | -23.3% | 267 |
+| SOLUSDT | +0.33 | +11.1% | -33.9% | 305 |
+| BNBUSDT | +0.53 | +22.7% | -22.0% | 247 |
+| DOGEUSDT | **-0.27** | **-29.9%** | **-53.2%** | 320 |
+
+**Portfolio** (5銘柄等加重): Sh+0.71, Return+35.4%, DD-26.1%, Calmar 1.35
+
+**期間不安定**:
+- H1: Sh+0.19 (ほぼ flat)
+- H2: Sh+1.18 (機能した)
+
+**棄却理由**:
+1. DOGE が完全失敗 (-29.9%) — period内で逆方向
+2. DD -26% は受け入れ不可
+3. H1/H2 で別物 — sample-specific
+4. 観察 (Wed up/Thu down) は集計上の statistical artifact、SL/TP込み実トレードでは利益化困難
+
+**学び**:
+- Day-of-week効果は集計表面では存在するが、cost-aware tradingでは消える典型例
+- 「平均リターン > 0」と「Sharpe > 0」は別物 (volatility が高ければ前者でも後者ならず)
+- Thursday の structural reason (US options) を別途調査する余地あり
+
+**累計試行**: ~738,388 + 5 (Wave K21b backtests) = ~738,393
+**累計棄却ファミリー**: 108+
+
+**Wave J+K 全体スコア確定**:
+- 候補テスト: 17 (FToD, LISRM, HLWI, S3I signal, FOPD, Dynamic, LiqCascade, MetaLabel, BTC.D, 8H Meme, Pure Funding, BTC/ETH ratio, S3I filter, Meme corr, Day-of-week, vol_z MR, 4-way mix)
+- 成功: 4 (FOPD, 8H Meme, vol_z MR, 4-way mix composite)
+- 成功率: **4/17 = 23.5%**
+
+**残る価値ある作業**: 真OOSフォワード累積、HTMLのpolish、ユーザー指示があれば追加実装
