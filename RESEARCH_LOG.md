@@ -2978,3 +2978,38 @@ K8 で 80/10/10 が 90日窓 100% positive を達成したが、4-way mix はさ
 
 **累計試行**: ~737,300 + 0 (新backtestなし、解析のみ)
 **Wave K の最終成果**: 4-way mix が <strong>§6 + Bootstrap + H1/H2 + Stress test 全クリア</strong>、production-ready
+
+### 2026-05-24 04:40 JST: Wave K16 — BTC/ETH ratio spread MR → **棄却 (BTC側 Sh+1.02 best, ETH側 10% positive のみ)**
+
+仮説: BTC/ETH log-ratio z-score 極値で spread mean-reversion を狙う pair MR
+
+**結果 (540 configs × 2 sides = 1080 backtests)**:
+| 側 | Best Sh | Return | DD | Trades | Sh>0% | ≥1.5 |
+|-----|---------|--------|-----|--------|-------|------|
+| BTC | +1.02 | +17.0% | -11.4% | 49 | 48% | 0 |
+| ETH | **+0.60** | +25.6% | -30.0% | 91 | **10%** | 0 |
+
+**棄却理由**:
+1. Sh≥1.5 ゼロ — 生存者級 candidate なし
+2. ETH side が 10% positive のみ — 戦略が anti-skill
+3. **DD -30〜-40%** が頻発 — リスク管理として致命的
+4. BTC/ETH ratio は long-term trend を持ち、stationary でない
+
+**構造的考察**:
+- BTC/ETH ratio は 2020年以降、ETH の outperformance トレンドが長期持続
+- Mean-reversion を仮定すると long-term trend に逆らうことに
+- 4Hで「spread が戻る」前に loss cut が頻発
+- Cointegration (T8 J17 で棄却) と同じ「長期非定常性」の問題
+
+**学び**: クロス銘柄 spread/ratio 戦略は、(a) **真の cointegration** 関係が必要、(b) **短期 (intra-day)** で trade 完結、(c) **複雑な hedging** が必要 — どれも 4H 単純実装では満たせない。
+
+**14候補スコア更新**:
+- ✅ FOPD (J12-J14), 8H Meme (J27), vol_z MR (K11), 4-way mix (K13)
+- ❌ FToD, LISRM, HLWI, S3I, Dynamic, LiqCascade, MetaLabel, BTC.D, Pure Funding Carry, BTC/ETH ratio (合計 10 棄却)
+- 成功率: **4/14 = 28.6%** (前回 4/13=30.8% から微減、業界平均水準維持)
+
+**累計試行**: ~737,300 + 1080 = ~738,380
+**累計棄却ファミリー**: 107+
+
+**結論**: 単純な cross-symbol MR/spread はクリプト先物 4H では機能しない、と確認。
+Wave K の探索は実質完了。残りは 4-way mix の磨き込みと運用準備のみ。
