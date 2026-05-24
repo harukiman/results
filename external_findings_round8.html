@@ -1,0 +1,196 @@
+<!-- external_findings_round8.html — paginated section snippet for report.html -->
+<!-- Round 8 | Generated: 2026-05-25 JST | 20 entries -->
+<div class="findings-page" id="findings-r8">
+  <div class="page-header">
+    <h2>External Findings Round 8 <span class="badge">20 entries</span></h2>
+    <p class="subtitle">焦点: Orderbook microstructure / Options GEX / Macro prediction markets / Cross-chain spillovers / Stablecoin risk / Validator queues / MEV / On-chain metrics</p>
+    <p class="updated">更新: 2026-05-25 JST | 累計 R1-R8: 182 entries</p>
+  </div>
+
+  <!-- TOP 3 HIGHLIGHT BOX -->
+  <div class="highlight-box top3">
+    <h3>Top 3 for K216+ (最高優先度)</h3>
+    <ol>
+      <li><strong>R8-03 Slippage-at-Risk (SaR)</strong> — オーダーブック現在構造から前向きに清算カスケードリスクを定量化。HLデータで2025/10/10事例で実証済み。K216リスク先行設計に即実装可能。</li>
+      <li><strong>R8-01 Kalshi Prediction Market Macro Signals</strong> — KXRECSSNBER (景気後退確率) が BTC ボラ OOS MSFE 0.979 で予測、従来ツール（FF先物/DVOL）に含まれない情報。K216 レジームフィルタとして即利用可能。</li>
+      <li><strong>R8-04 Taker-Flow GEX / Gamma Flip</strong> — Glassnode の新手法でディーラーヘッジフローを実際のtaker orderから再構築。ガンマフリップがレジーム転換の先行指標として確立。K216 ポジションサイジングに組み込み価値最高。</li>
+    </ol>
+  </div>
+
+  <table class="findings-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Summary (JA)</th>
+        <th>Why Orthogonal to K198</th>
+        <th>Actionable</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="actionable-y">
+        <td><strong>R8-01</strong></td>
+        <td><a href="https://arxiv.org/abs/2604.01431" target="_blank">Kalshi Macro Contracts → Crypto Volatility (arxiv:2604.01431)</a></td>
+        <td>Kalshi規制市場の3コントラクト（KXFED/KXRECSSNBER/KXCPI）日次確率変化がBTC/ETH/SOLボラを予測。KXRECSNBEROOSp=0.020。FFレート先物・米国債・Deribit IVIXにない情報を保有。</td>
+        <td>K198はマクロ予測市場シグナルを一切持たない。集合知ベースのBTCボラ予測は51特徴と完全直交。</td>
+        <td class="yes">Y — Kalshi API日次取得、景気後退確率急増でポジション縮小</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-02</strong></td>
+        <td><a href="https://arxiv.org/abs/2602.23762" target="_blank">Cross-Chain Negative Spillovers (arxiv:2602.23762)</a></td>
+        <td>ETH/SOL/BSC/ARB/AVAX（2022-2025）で一方のチェーンONチェーンアクティビティ急増→他チェーン資産が下落する負スピルオーバーを実証。注意駆動資本再配分が原因。</td>
+        <td>K198はチェーン間資本フロー特徴を持たない。チェーン別TXN急増→他チェーン資産リバーサルはFRと直交。</td>
+        <td class="yes">Y — チェーン別DAU/TXN +2σ急増時に他チェーン銘柄ロングバイアス追加</td>
+      </tr>
+      <tr class="actionable-y top3">
+        <td><strong>R8-03 ★TOP3</strong></td>
+        <td><a href="https://arxiv.org/abs/2603.09164" target="_blank">Slippage-at-Risk (SaR): Perpetual Futures Liquidity Framework (arxiv:2603.09164)</a></td>
+        <td>SaR(α)/ESaR/TSaRの3メトリクスで現在LOBから前向きに清算リスク評価。マーケットメーカー集中度補正付き。HL 2025/10/10カスケードで事前予測力実証。</td>
+        <td>K198にリアルタイムLOB流動性リスク指標なし。前向きリスク評価は後向きVaRと根本的に異なる直交概念。</td>
+        <td class="yes">Y — HL APIでLOBスナップショット取得→TSaR計算→90pct超で新規エントリー停止</td>
+      </tr>
+      <tr class="actionable-y top3">
+        <td><strong>R8-04 ★TOP3</strong></td>
+        <td><a href="https://insights.glassnode.com/gamma-exposure/" target="_blank">Taker-Flow GEX: ディーラーヘッジフロー + Gamma Flip (Glassnode)</a></td>
+        <td>taker識別可能なCEXデータからディーラー在庫をネット再構築。正GEX帯=価格ピニング、負GEX帯=モメンタム増幅。ガンマフリップがレジーム転換シグナル。BTC/ETH/XRP/SOL、10分粒度。</td>
+        <td>K198はオプションガンマエクスポージャーを全く参照しない。Deribit日次$12Bの市場が価格に与える影響はFR直交。</td>
+        <td class="yes">Y — Glassnode Pro API→GEX符号・フリップレベルでK216ポジションサイジング補正</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-05</strong></td>
+        <td><a href="https://arxiv.org/abs/2602.18820" target="_blank">Stablecoin Tail Spillovers: アルゴ型がリスク増幅器 (arxiv:2602.18820)</a></td>
+        <td>8種ステーブルコイン（2021-2025）QVAR分析。フィアット担保型=安定アンカー、アルゴ/暗号担保型=極端市場でリスク増幅器。USDC-USDT AMM在庫比がストレス先行指標。</td>
+        <td>K198にステーブルコイン間スプレッド指標なし。デペグ連鎖リスクの定量化はFR完全直交。</td>
+        <td class="yes">Y — Curve USDC/USDT在庫比日次取得、アルゴステーブルデペグでK216縮小</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-06</strong></td>
+        <td><a href="https://www.ainvest.com/news/ethereum-staking-dynamics-institutional-confidence-validator-queue-shifts-leading-indicators-market-sentiment-eth-price-performance-2601/" target="_blank">ETH Validator Entry/Exit Queue Flip → ETH Price Leading Indicator</a></td>
+        <td>2025/12にバリデータキュー反転（exit→entry）、過去事例ではETH価格がその後2倍。ステーキング比率46.5%で流通量構造的減少。Beaconchain APIでリアルタイム追跡可能。</td>
+        <td>K198はETHバリデータキュー情報を持たない。ロック供給→流通量減少という構造シグナルはFRと直交。</td>
+        <td class="yes">Y — Beaconchain APIで入退行列差分日次取得、正転換+累計+50万ETH超でETH強気フラグ</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-07</strong></td>
+        <td><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6365329" target="_blank">Anatomy of Crypto Perp Returns: 170 Predictors Cross-Section (SSRN:6365329)</a></td>
+        <td>170指標のうち63が有意（5%水準）。log basis（先物-スポット対数差）がFRより優れた予測変数として特定。コストキャリーモデルで期待リターンを分解。2026/03発表。</td>
+        <td>K198はlog basisを明示的に持たない（FRと相関するが変動タイミングが異なる直交成分を含む）。</td>
+        <td class="yes">Y — 全銘柄でlog basis算出→FR z-scoreとの残差を追加特徴としてK216テスト</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-08</strong></td>
+        <td><a href="https://www.coindesk.com/markets/2026/02/25/one-of-longest-mining-capitulations-nears-end-signaling-potential-btc-price-bottom" target="_blank">Hash Ribbon + Miner Capitulation: BTCサイクル底信号 (VanEck, 2026)</a></td>
+        <td>ハッシュリボン（30日MA < 60日MA）発動後2〜4ヶ月でBTC底打ち。VanEck: 90日ハッシュレート成長率マイナス時に180日後リターン正の確率77%。2026/02難易度14.73%最大急騰が典型例。</td>
+        <td>K198はBTCマイニングハッシュレート・難易度データを使用しない。Proof-of-Work信号はFR完全直交。</td>
+        <td class="yes">Y — Glassnode hashrate 30/60日MA取得→ハッシュリボン復活でBTC関連ロングバイアス追加</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-09</strong></td>
+        <td><a href="https://rob-liquidityape.medium.com/jito-tips-on-solana-an-economic-analysis-of-mev-validator-incentives-and-user-behavior-4cc41e6e2429" target="_blank">Jito MEV Tip Revenue as SOL Volatility Proxy (Medium, 2025)</a></td>
+        <td>Jito日次チップ通常$2-3Mが2024/11/17に$14.7Mに急騰→同日広範な市場急変動。高ボラ時ユーザーが高額チップで即時インクルージョンを争うため、チップ急騰がボラ先行指標。2025年SOL MEV収益$720M超。</td>
+        <td>K198はSolanaオンチェーンMEVデータを全く使わない。Jito チップはSOL固有の流動性需要の直接指標で完全直交。</td>
+        <td class="yes">Y — Jito Stats API日次チップ取得→前日比+200%超でSOL銘柄高ボラレジームフラグ</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-10</strong></td>
+        <td><a href="https://arxiv.org/html/2507.13023v1" target="_blank">CEX-DEX MEV Searcher Extraction: 0.5-1.5秒収益窓 (arxiv:2507.13023)</a></td>
+        <td>19ヶ月・19サーチャーが$241.7Bから$233.8M抽出（ブロック価値15%超）。High-liquidity: 0.5-1.5秒後に収益ピーク。altcoin<$5K規模で20-120bps。3者が量の75%を独占。</td>
+        <td>K198はCEX-DEX価格収束タイミングを特徴に持たない。CEX確定後1.5秒以内のHL有利スリッページはFR直交の執行機会。</td>
+        <td class="yes">Y — Binance/Bybit WSとHLのラテンシー差を利用したK216高頻度エントリーモジュール検証</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-11</strong></td>
+        <td><a href="https://www.methodalgo.com/press/research/liquidation-heatmap-research" target="_blank">Hawkes Process Liquidation Cascade: ブランチング比n≥1で爆発 (MethodAlgo)</a></td>
+        <td>ホークス過程でDeFi清算をモデル化。n=0.6-7.0の範囲で低ボラ時n≈0.6（安定）、2025/10極端環境でn>1.0（爆発）。30分足が最適タイムフレーム。清算ライン集中→空白帯がバウンスポイント。</td>
+        <td>K198に清算カスケードの数学的構造指標なし。ブランチング比nの前向き推定はHawkesモデル固有の情報。</td>
+        <td class="yes">Y — HL清算データでローリング30分Hawkesパラメータ推定→n>0.8で新規エントリー停止</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-12</strong></td>
+        <td><a href="https://arxiv.org/abs/2604.24366" target="_blank">Polymarket Orderbook Microstructure: オンチェーン注文フロー優位 (arxiv:2604.24366)</a></td>
+        <td>Polymarket WebSocket 52日間13K市場分析。BookフィードからのTrade方向推定精度59%、オンチェーンOrderFilledは高精度。ロングショットスプレッドプレミアム存在、大口ウォレット集中。</td>
+        <td>K198は予測市場シグナルを全く持たない。Polymarket暗号イベント確率変化はBTC/ETH価格の数日前先行指標として直交。</td>
+        <td class="yes">Y — Polymarket CLOB APIで暗号関連イベント確率日次取得、急変動でK216方向バイアスフラグ</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-13</strong></td>
+        <td><a href="https://arxiv.org/abs/2512.00893" target="_blank">P2P Stablecoin Flows: 政治的リスク2日前早期警報 (arxiv:2512.00893)</a></td>
+        <td>2024年米大統領選分析。人間主導ERC-20 P2Pステーブルコイン取引が選挙2日前に構造変化。取引所ボリュームは当日、スマートコントラクトは2025/01まで反応遅延。最も早い先行指標。</td>
+        <td>K198は人間主導P2P ERC-20フローを参照しない。政治・規制リスクの2日前シグナルはFR基盤戦略と完全直交。</td>
+        <td class="yes">Y — EtherscanでUSDC/USDT P2P大口転送量日次モニタリング→+3σ急増で一時縮小</td>
+      </tr>
+      <tr class="actionable-n">
+        <td><strong>R8-14</strong></td>
+        <td><a href="https://www.coindesk.com/business/2025/10/31/unveiling-godark-crypto-s-new-institutional-dark-pool-backed-by-copper-gsr-others" target="_blank">GoDark: 機関向け暗号ダークプール (CoinDesk, 2025/10)</a></td>
+        <td>Copper/GSRが支援するダークプールが2025/10開設。$250K超ブロックトレード、$5M超が「サイズ」。IOI（非確定流動性表明）で大口注文を市場インパクトなしに執行する第4のベニュー。</td>
+        <td>K198は機関OTCフローを参照しない。ダークプール取引量急増は機関蓄積/分配の先行シグナルとして直交。</td>
+        <td class="no">N — リアルタイムAPIが機関限定。Coinbase Prime出来高等の間接プロキシで将来的に検討。</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-15</strong></td>
+        <td><a href="https://menthorq.com/guide/dealer-flow-in-btc-options/" target="_blank">Options Max Pain + Weekly Expiry Pinning: 価格引力効果 (MenthorQ/Deribit)</a></td>
+        <td>BTC/ETHオプションMax Pain周辺でディーラーヘッジが価格ピニング。$14B決済（2025/06）でput-call比急上昇後に決済後$90K方向解放。3日前以内のガンマが支配的、30日超は影響軽微。</td>
+        <td>K198はオプション決済カレンダーや週次ガンマピニングを特徴として持たない。週次リズムはFR戦略と独立。</td>
+        <td class="yes">Y — Deribit APIでMax Pain自動取得→価格-Max Pain乖離を週次方向フィルタとしてK216追加</td>
+      </tr>
+      <tr class="actionable-n">
+        <td><strong>R8-16</strong></td>
+        <td><a href="https://arxiv.org/html/2602.01531v1" target="_blank">NFT PFP Sentiment → ETH価格予測 (arxiv:2602.01531)</a></td>
+        <td>ETH NFT（BAYC/Punks）の評価は注目度・センチメントと有意相関。BAYCフロアが5→10ETHに倍増し、NFT月次売来高+56%がETH先行指標の可能性。CSIとNFT売来高が連動。</td>
+        <td>K198はNFT市場活動を特徴として持たない。ETHコミュニティ文化的資産評価というプロキシは完全直交。</td>
+        <td class="no">N — NFT→ETH因果連鎖が不明確・ノイジー。OOS検証後に判断。R9でバックテスト実施推奨。</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-17</strong></td>
+        <td><a href="https://studio.glassnode.com/charts/institutions.UsSpotEtfFlowsNet?a=BTC" target="_blank">BTC/ETH スポットETF日次フロー: 機関資金移動シグナル (Glassnode)</a></td>
+        <td>大規模ETF流入（$2.1B/週）後2週間でBTC+15-20%。ネット流出3日継続で68%の確率でBTC下落先行。7日累計フローが中期レジーム判定の有効シグナル。</td>
+        <td>K198はETFフロー特徴量を持たない（TVLとは別物）。機関の実物BTC需要直接指標はFR直交。</td>
+        <td class="yes">Y — Glassnode/CoinGlass ETF日次フローAPI取得→7日累計でBull/Risk-offレジームフラグ</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-18</strong></td>
+        <td><a href="https://oakresearch.io/en/reports/protocols/hyperliquid-hype-s1-2025-activity-report" target="_blank">HLP Vault Inverse Relationship: トレーダー損益の鏡としての収益監視</a></td>
+        <td>HLP収益はトレーダー総損益と逆相関。HLP APY週次-30%以下下落はトレーダーが大量に勝っている=FR逆転リスク高。OI急増（3倍）がHLP収益悪化と連動。月平均1.75%、年率~20%。</td>
+        <td>K200でHLPモニタリング開始済みだがK198特徴には未組み込み。HLP APY変化率はFR方向予測の補完シグナル。</td>
+        <td class="yes">Y — HLP Vault APY週次記録→前週比-30%超下落でFR逆方向リスク高フラグ設定</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-19</strong></td>
+        <td><a href="https://bitcoinist.com/bitcoin-indicator-all-2025-tops-close-flashing/" target="_blank">NVT Golden Cross: BTC 2025年3天井を全事前検知 (CryptoQuant)</a></td>
+        <td>NVT Golden Cross 2.2超でBTCの局所天井が発生: 2025年の3天井を全て事前警告。直近値1.98が2.2に接近中。オンチェーントランザクション実需とMCAPの乖離測定。CryptoQuant APIで取得可能。</td>
+        <td>K198はBTC NVT比率を持たない。オンチェーン実需需要とMCAPの乖離はFR/TVLと完全独立。</td>
+        <td class="yes">Y — CryptoQuant APIでNVT GC日次取得→2.0超で新規ロング停止、2.2超でBTCポジション50%縮小</td>
+      </tr>
+      <tr class="actionable-y">
+        <td><strong>R8-20</strong></td>
+        <td><a href="https://defillama.com/protocol/lido" target="_blank">stETH Discount + ETH Staking Rate vs FR: Liquid Staking Arbitrage信号</a></td>
+        <td>Lido TVL $32B（ETHステーキング29%シェア）。stETH APR 3%がFR戦略の担保機会コスト。stETH discount急拡大がETHパニック売り先行指標。HL Portfolio Marginと組み合わせで複合リターン最大化。</td>
+        <td>K198はstETH/ETHペグ乖離やLiquid Staking ArbitrageシグナルをFRとの差分で持たない。ステーキング利回り vs FRの比較は新しい情報軸。</td>
+        <td class="yes">Y — Lido/Curve stETH-ETH比率日次取得→discount>0.3%でリスクオフシグナル、staking rate>FR時は戦略優先度下げ</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <style scoped>
+    .findings-page { font-family: 'Inter', sans-serif; padding: 16px; }
+    .page-header { margin-bottom: 20px; }
+    .badge { background: #2a5caa; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85em; }
+    .subtitle { color: #555; font-size: 0.9em; }
+    .updated { color: #888; font-size: 0.8em; }
+    .highlight-box.top3 { background: #fffbe6; border: 2px solid #f0a500; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+    .highlight-box h3 { margin-top: 0; color: #8b6000; }
+    .findings-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+    .findings-table th { background: #2a5caa; color: white; padding: 8px; text-align: left; }
+    .findings-table td { padding: 8px; border-bottom: 1px solid #ddd; vertical-align: top; }
+    .findings-table tr.actionable-y { background: #f0fff0; }
+    .findings-table tr.actionable-n { background: #fff8f0; }
+    .findings-table tr.top3 { background: #fffbe6 !important; }
+    .yes { color: #2a7a2a; font-weight: bold; }
+    .no { color: #a05000; }
+    @media (max-width: 768px) {
+      .findings-table th:nth-child(3), .findings-table td:nth-child(3),
+      .findings-table th:nth-child(4), .findings-table td:nth-child(4) { display: none; }
+      .findings-table { font-size: 0.78em; }
+    }
+  </style>
+</div>
