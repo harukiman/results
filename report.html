@@ -494,7 +494,7 @@
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 19:23 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-24 19:28 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 4-way mix (85/15):</strong> <span style="color:var(--accent-green);">Sh +3.61 / Calmar 36.65 / 60日窓100%+ / Bootstrap [+2.73, +4.35]</span> &nbsp;|&nbsp;
     <strong>17/4 success</strong>
@@ -504,7 +504,7 @@
     <h1 style="font-family:Georgia,serif;letter-spacing:-0.01em;">Systematic Alpha Discovery in MEXC Perpetual Futures</h1>
     <div class="subtitle" style="font-style:italic;font-family:Georgia,serif;">A Bias-Controlled Empirical Study of Multi-Axis Portfolio Construction with §6 Audit Validation</div>
     <div class="meta">
-      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 19:23 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
+      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-24 19:28 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
       Methodology: §6 strict-gate audit (Bailey-LdP CPCV, Hansen SPA, White RC, Bootstrap CI, Block Permutation)
     </div>
   </header>
@@ -6259,7 +6259,48 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       <h2 style="color:var(--accent-cyan);">🔎 外部リサーチ知見 (botter/Qiita/note/論文)</h2>
       <p style="font-size:0.85rem;color:var(--text-secondary);">tip-scraper サブエージェントの定期巡回結果。strong-evidence / partial-edge / crypto-native / risky / hype 等でタグ付け。採用候補は次 Wave で検証。</p>
       <div id="external-findings-body" style="margin-top:10px;font-size:0.88rem;">
-        <p><em>初回スクレイプ実行中... 結果が揃い次第ここに表へ追記されます。</em></p>
+        <h3 style="color:var(--accent-green);">📅 2026-05-24 19:28 JST — 初回スクレイプ完了 (20候補 / TOP5抽出)</h3>
+        <p>tip-scraper サブエージェントが arxiv/MDPI/ScienceDirect/Bookmap/Glassnode/Amberdata/Coinmonks/Zenn/note 等を巡回。既存17戦略との重複を除外し、20件の新規候補を抽出。</p>
+
+        <h4 style="color:var(--accent-cyan);margin-top:14px;">TOP 5 (優先検証)</h4>
+        <ol style="line-height:1.6;">
+          <li><strong>#17 Cross-Sectional 170-Predictor Sort</strong> [strong-evidence] — MEXC 1500+ perp 横断、週次リバランス。既存に横断ファクター皆無 → 直交性最大。出典: ScienceDirect S2096720925000818 (170予測子のうち63が有意)。<em>検証コスト: 中、見込みedge: 高</em>。</li>
+          <li><strong>#3 CEX→DEX Funding Information Flow</strong> [strong-evidence / crypto-native] — MDPI 2026 因果 100% directional (CEX→DEX, 逆方向 0%)。30分-3時間 lag で Hyperliquid/dYdX に伝播。既存 FundingSpread_CrossCEX (CEX-CEX) と直交。<em>実装難度: 中 (DEX API要)</em>。</li>
+          <li><strong>#8 MEXC 新規上場 24h Mean Reversion</strong> [partial-edge / crypto-native / risky] — MEXC 戦略的に新規上場最速 → 50-300% pump 後の反転を体系的に取る。取引所固有 edge。<em>注意: 流動性薄、size cap 必須</em>。</li>
+          <li><strong>#2 Tick-Size-Aware LOB Imbalance</strong> [strong-evidence / crypto-native] — arxiv 2506.05764 + 2602.00776 が tick/price 比と imbalance 予測力の単調関係を実証。MEXC alts は tick/price ばらつき大 → 自然に銘柄選別軸となる。</li>
+          <li><strong>#4 Funding-Aware MM + #12 VRP Harvest</strong> [strong-evidence] tie — 既存17は全て directional/factor。MM/short-gamma sleeve 追加で meta-portfolio リスクプロファイル多様化。arxiv 2605.06405 (FAOMM), Panoptic research (VRP)。</li>
+        </ol>
+
+        <h4 style="color:var(--accent-cyan);margin-top:14px;">全20候補テーブル</h4>
+        <div style="overflow-x:auto;">
+        <table class="data-table" style="font-size:0.78rem;width:100%;">
+          <thead><tr><th>#</th><th>名称</th><th>カテゴリ</th><th>核アイデア</th><th>データ要件</th><th>エッジ</th><th>新規性</th><th>優先度</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>OI-Delta Divergence (OIDD)</td><td>Order flow</td><td>price up + OI下落 + neg CVD で空売り消尽を fade</td><td>1m OHLC+OI Δ+taker buy/sell</td><td>partial</td><td>high</td><td>TOP1</td></tr>
+            <tr><td>2</td><td>Tick-Size Imbalance Predictor (TSIP)</td><td>Microstructure</td><td>tick/price比大の銘柄ほど LOB imbalance の予測力強い</td><td>L1 LOB</td><td>strong</td><td>high</td><td>TOP1</td></tr>
+            <tr><td>3</td><td>CEX→DEX Funding Info Flow (CDFI)</td><td>Funding/cross-venue</td><td>CEX funding が DEX funding に lead (100% directional)</td><td>3-4 CEX + 2 DEX funding 1h</td><td>strong</td><td>high</td><td>TOP1</td></tr>
+            <tr><td>4</td><td>Funding-Aware Optimal MM (FAOMM)</td><td>Market making</td><td>Avellaneda-Stoikov + funding inventory cost で skew</td><td>L2 LOB+funding+在庫</td><td>strong</td><td>high</td><td>TOP2</td></tr>
+            <tr><td>5</td><td>Microprice HD Predictor</td><td>Microstructure ML</td><td>Tsetlin Machine で imbalance-weighted mid を tick 予測</td><td>full LOB depth</td><td>partial</td><td>high</td><td>TOP2</td></tr>
+            <tr><td>6</td><td>Two-Tier Funding Persistence (TTFP)</td><td>Funding</td><td>tier別 funding AR(1) 差を取引</td><td>6+ venue funding</td><td>partial</td><td>med</td><td>TOP5/skip</td></tr>
+            <tr><td>7</td><td>Meta-Order Flow Whale Detection</td><td>Order flow</td><td>連続同方向 child trade から親 meta-order を検出 → 順張り</td><td>tick trades</td><td>partial</td><td>high</td><td>TOP3</td></tr>
+            <tr><td>8</td><td>New-Listing First 24h MR</td><td>Listing event</td><td>新規上場 50-300% pump 後の反転を体系収益化</td><td>MEXC listing feed+1m</td><td>partial</td><td>high</td><td>TOP1</td></tr>
+            <tr><td>9</td><td>Cointegrated Alt Pair Z-Score</td><td>Stat arb</td><td>Johansen共和分ペアの spread mean reversion</td><td>1h close 30 alts</td><td>strong</td><td>high</td><td>TOP2</td></tr>
+            <tr><td>10</td><td>BTC→ETH→Alt Lead-Lag</td><td>Cross-asset</td><td>BTC lag を alt 方向予測 feature に</td><td>1m returns BTC/ETH/20alts</td><td>partial</td><td>med</td><td>TOP4</td></tr>
+            <tr><td>11</td><td>Stablecoin Mint Liquidity Pulse</td><td>On-chain macro</td><td>大型 USDT/USDC mint &gt;500M → 24-72h BTC 上方ドリフト</td><td>Whale Alert API</td><td>partial</td><td>high</td><td>TOP3</td></tr>
+            <tr><td>12</td><td>Crypto VRP Harvest</td><td>Vol premium</td><td>Deribit IV-RV 乖離で short-gamma 体制スイッチ</td><td>Deribit IV+RV</td><td>strong</td><td>high</td><td>TOP2</td></tr>
+            <tr><td>13</td><td>Liquidation Heatmap Magnet</td><td>Liquidation</td><td>近接清算 cluster 方向に momentum で寄せる → cluster で exit</td><td>est. liq map</td><td>partial</td><td>med</td><td>TOP4</td></tr>
+            <tr><td>14</td><td>L/S Ratio Sentiment Contrarian</td><td>Sentiment</td><td>top-trader L/S 極値+funding 確認で fade</td><td>per-ex L/S+funding</td><td>partial</td><td>med</td><td>TOP5</td></tr>
+            <tr><td>15</td><td>HL Whale Mirror to MEXC</td><td>On-chain perp</td><td>Hyperliquid 公開 wallet を MEXC 側で遅延ミラー</td><td>HL API+MEXC exec</td><td>partial</td><td>high</td><td>TOP3</td></tr>
+            <tr><td>16</td><td>Funding Term Structure Slope</td><td>Funding term</td><td>8h funding と先物 basis の slope を carry シグナル化</td><td>funding+四半期 basis</td><td>strong</td><td>med-high</td><td>TOP3</td></tr>
+            <tr><td>17</td><td>170-Predictor Cross-Section Sort</td><td>Cross-section</td><td>50+ perp を multi-factor で sort、long-short funding-neutral</td><td>daily features 50+ perps</td><td>strong</td><td>high</td><td>TOP1</td></tr>
+            <tr><td>18</td><td>Maker Rebate Inventory MM</td><td>Market making</td><td>post-only quote+inventory skew on alt maker-rebate</td><td>L2+own fills+fees</td><td>partial</td><td>high</td><td>TOP4</td></tr>
+            <tr><td>19</td><td>Alpha-R1 LLM Screener</td><td>ML/discovery</td><td>RL-LLM が alpha factor を生成・スクリーン</td><td>LLM+factor lib</td><td>hype</td><td>med</td><td>skip</td></tr>
+            <tr><td>20</td><td>AutoQuant Exec Tuner</td><td>Execution</td><td>per-symbol exec param 自動チューニング</td><td>per-sym exec stats</td><td>strong-partial</td><td>high</td><td>TOP5</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <p style="margin-top:12px;font-size:0.82rem;color:var(--text-secondary);">主要出典: arxiv 2506.05764 / 2506.08573 / 2411.13594 / 2605.06405 / q-fin.TR Dec 2025, MDPI Mathematics 14/2/346, ScienceDirect S2096720925000818, Amberdata, Glassnode, Panoptic, Coinmonks Medium, Zenn (magito), Zenn (s0g0m1hara), Cointelegraph, ainvest, yodakaart.tech, note (rog_peter/btcml/hht). 全 URL は実在性検証済み。</p>
       </div>
     </div>
   </section>
@@ -6273,13 +6314,24 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       <p style="font-size:0.85rem;color:var(--text-secondary);">解析過程で発見した tips・知見・将来役立ちそうなアイデアを時系列で蓄積。</p>
       <div id="tips-log-body" style="margin-top:10px;font-size:0.88rem;">
         <details open>
-          <summary><strong>2026-05-24 19:23 JST</strong> — インボックス機構稼働開始</summary>
+          <summary><strong>2026-05-24 19:28 JST</strong> — インボックス機構稼働 + 外部リサーチ初回 + Wave K109 着手</summary>
           <ul>
-            <li>サイト経由の指示インボックス実装 (pw=2026, ntfy.sh backend, 3-fails-24h-lock)</li>
-            <li>Claude Code 側 30分ポーリング (loop skill) で受信 → 即対応</li>
-            <li>tip-scraper の定期巡回をプロセスに組込み (External Findings セクション)</li>
+            <li>サイト経由の指示インボックス実装完了 (pw=2026, ntfy.sh backend, 3-fails-24h-lock)</li>
+            <li>launchd `com.cryptolab.inbox-poll` 登録、StartInterval=1800s (30分)。独立稼働するので Claude セッション断でも受信継続</li>
+            <li>tip-scraper 初回スクレイプ完了: 20候補抽出 → TOP5 = 横断factor sort / CEX→DEX funding lead-lag / MEXC新規上場MR / TSIP / FAOMM+VRP</li>
             <li>恒久指示 4 件メモリ追加: HTML逐次tips記録 / explore=exploit同等 / 指示インボックス / 外部リサーチ</li>
-            <li>運用方針: 案1 (条件付きSharpe合成) + 案2 (チャート暗黙知ラベラ MVP) を並行検討</li>
+            <li>運用方針確定: 案1 (条件付きSharpe合成) + 案2 (チャート暗黙知ラベラ MVP) を並行、12h以上継続</li>
+          </ul>
+        </details>
+        <details>
+          <summary><strong>知見メモ (随時追記)</strong> — 過去の学習</summary>
+          <ul>
+            <li><strong>10%/日は閾値ではなく赤旗</strong>: 複利 1.1^365 ≈ 1.3e15。出たら偽陽性原因 (ルックアヘッド/コスト過小/データリーク) を必ず先に潰す</li>
+            <li><strong>OOS ギリギリ通過 = OOS over-fit</strong>: 閾値の上にも margin が必要。IS→OOS 劣化率 &lt;50% を要件化</li>
+            <li><strong>3独立次元の発見</strong> = ボラ圧縮 / Sample Entropy / 方向的ボラ非対称性。今後はこの3軸との相関 |ρ| &lt; 0.2 を新規候補の足切り条件にすると効率的</li>
+            <li><strong>BTC 60-bar vol Z &gt; 1.5 で全停止フィルタ</strong> = Calmar が 4.86→22.96 に改善。「重要なのはレジーム回避」</li>
+            <li><strong>サブエージェント並列の効果</strong>: tip-scraper 一回で20候補生成 (20分弱)。tip-scraper を週次定期化する価値あり</li>
+            <li><strong>v4 シリーズ進化則</strong>: 1因子追加で Sh +0.1-0.3、ただし因子相関要 0.15 未満。crowding を疑う場合は OI capit ストレス必須</li>
           </ul>
         </details>
       </div>
