@@ -3624,3 +3624,43 @@ K39/K41 の wash trade 仮説を実装版で検証:
 ### 運用への提言
 - 次回 paper_trade daemon 改訂時に v2 へ
 - 一般原則: 「wash trade leg は抜く」が成立 — 今後の最適化方針として確立
+
+## Wave K45-K49: 新戦略探索バッチ (2026-05-23)
+
+### K45: 1H Bollinger breakout
+- 9/45 configs Sh>=2.0 (in-sample)
+- 推定 overlap inflation あり、OOS未検証
+
+### K46: Cross-sectional L/S momentum
+- 14 銘柄 × 6 lookback × 4 hold = 24 configs
+- 全棄却 (0/24 Sh>=1.0)
+- crypto market は trending all-up で XS L/S 困難
+
+### K47: Volume spike contrarian
+- In-sample: 20/72 configs Sh>=2.0
+- OOS test: Train+3.4 → OOS+0.84、Decay +2.55
+- 棄却 (selection bias)
+
+### K48: alt/base ratio z-score MR — SOL/BTC は genuine
+- K48b (overlap inflated): 89/147 Sh>=2.0
+- **K48c non-overlap honest**: 7/60 Sh>=1.0, 0/60 Sh>=2.0
+- Best Sh +1.76 (w=360 z=3.0 hold=6, n=15)
+- Standalone production 不適、6番目軸候補にはなる
+
+### K49: OI delta divergence — BREAKTHROUGH
+- **K49 (overlap)**: 101/179 Sh>=2.0, mode='oi-_ret-' 圧倒
+- **K49b (non-overlap)**: 16/126 Sh>=1.0、modest 単独 Sh+1.0-1.35
+- **K49c portfolio (7 銘柄等加重, w=120, z=2.0)**: Sharpe **+1.545**, DD -3.0%, 60d pos 90.5%
+- **K49d 相関**: 5 axes との mean |corr| = **0.047**、max |corr| = 0.165 (FOPD と)
+- **K49e 6-way mix**: w_OI=0.20 で v3 = Sh **+3.615** (vs v2 +3.322, ΔSh +0.29)、DD -1.2%、60d pos 99.0%
+
+### v3 mix 候補確定
+- 構成: 5-axis v2 × 0.80 + OI capit × 0.20
+- Weights:
+  - ATR_4H: 0.272
+  - FOPD_v2: 0.272
+  - ATR_8H BONK: 0.068
+  - ATR_8H SHIB: 0.068
+  - vol_MR: 0.120
+  - **OI_capit (新)**: 0.200
+- 全 metric で v2 を改善
