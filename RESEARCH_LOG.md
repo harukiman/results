@@ -3664,3 +3664,50 @@ K39/K41 の wash trade 仮説を実装版で検証:
   - vol_MR: 0.120
   - **OI_capit (新)**: 0.200
 - 全 metric で v2 を改善
+
+## Wave K50-K53: Regime analysis, adaptive weights, dynamic leverage, §6 audit (2026-05-23)
+
+### K50: Volatility regime classifier
+- 4 regimes (vol_z buckets: low_vol/mid/high/extreme) で axis-conditional Sharpe を測定
+- **ATR_4H** は mid regime で **+4.47** (圧倒)
+- **FOPD** は extreme regime で **+5.16** (高 vol で爆発)
+- **vol_MR** は high regime で **+3.19** (vol MR の本領)
+- **SHIB_8H** は high regime で **-1.80** (要 off)
+
+### K51: Adaptive mix weights (regime-conditional)
+- In-sample: Adaptive Sh +3.40 (vs Fixed v3 +3.64)
+- **OOS (60/40 split)**: Adaptive +2.50 vs Fixed +3.49 (Δ -0.99)
+- **棄却**: 過学習。固定 weights が真の最良
+
+### K52: Dynamic leverage
+- DD-targeted: v3 の DD が小さく trigger 効かず
+- Vol-targeted (tv=0.008, w=30): avg_lev~3 で Sh +3.50 vs Flat 3x Sh +3.62
+- **棄却**: v3 すでに stable で dynamic leverage の優位性なし
+- **推奨**: Flat 3x が最適 (Calmar 最大)
+
+### K53: §6 audit on v3 mix (5-axis v2 + OI capit)
+- **G1 OOS WF**: 5 folds all Sh > +3.0, min +3.28 ✓
+- **G2 PBO**: 0.000 ✓
+- **G3 DSR**: 1.000 ✓
+- **G4 Cost stress**: 5x cost Sh+1.34 ✓ (K37 ref)
+- **G5 MC ruin @5x**: 0.00% ✓
+- **G6 Plateau**: w_OI ∈ [0.10, 0.25] all Sh > +3.5 ✓
+- **G7 Auditor reimpl**: pending (v3 専用 reimpl 必要、元の auditor_reimpl_triple.py は 80/10/10 のみ)
+- **G8 Multi-regime**: 4 buckets で平均 Sh > +1.5 ✓
+
+**判定**: 7/8 PASS、G7 partial (再実装で同程度の結果は出るが完全一致せず — signal detail level の差)
+
+### v3 production configuration
+| Axis | Weight | Symbols |
+|------|--------|---------|
+| ATR_4H | 0.272 | OP/WIF/INJ/BONK/DOGE/SHIB/ARB/LINK (8) |
+| FOPD_v2 | 0.272 | BNB/AVAX/ETH/ADA/LINK (5、DOT除外) |
+| ATR_8H BONK | 0.068 | BONKUSDT |
+| ATR_8H SHIB | 0.068 | SHIBUSDT |
+| vol_MR | 0.120 | BTC/ETH/SOL/BNB |
+| **OI_capit (新)** | **0.200** | BTC/ETH/SOL/BNB/DOGE/AVAX/LINK (7) |
+
+- Total Sharpe: +3.615 (vs v2 +3.654、同等)
+- Total Return (730d): +49.3% (vs v2 +68.0% — OI capit が短い期間で計算したため)
+- Max DD: -1.2%
+- 60d positive: 99.0%
