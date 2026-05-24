@@ -1,0 +1,356 @@
+{
+  "wave": "K210",
+  "parent": [
+    "K198",
+    "K208"
+  ],
+  "objective": "K198 v6.5 ensemble with K208-filtered V_rev_carry (v6.6 candidate)",
+  "as_of": "2026-05-24T21:41:39.270231+00:00",
+  "runtime_s": 3.5,
+  "config": {
+    "strategies": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ],
+    "n_strategies": 10,
+    "ml_train_days": 90,
+    "ml_test_days": 30,
+    "oos_frac": 0.3,
+    "k121_cap": 0.3,
+    "carry_fwd_cap": 0.1,
+    "carry_rev_cap_a": 0.1,
+    "carry_rev_cap_b": 0.15,
+    "dar_config": {
+      "p": 2,
+      "q": 1,
+      "win": 300,
+      "refit": 50
+    },
+    "dar_filtered_symbols": [
+      "SOL",
+      "XRP",
+      "SUI",
+      "OP",
+      "APT",
+      "JTO",
+      "IMX",
+      "SAND",
+      "ADA"
+    ],
+    "always_on_symbols": [
+      "AXS"
+    ],
+    "fr_threshold": -0.009735,
+    "date_range": [
+      "2024-07-26",
+      "2026-05-14"
+    ],
+    "n_days_total": 658,
+    "n_days_ml_window": 448
+  },
+  "k208_filter_metadata": {
+    "dar_diag": {
+      "SOL": {
+        "oos_r2": 0.15981,
+        "direction_acc": 0.6846,
+        "n_oos": 1884
+      },
+      "XRP": {
+        "oos_r2": -0.01813,
+        "direction_acc": 0.6591,
+        "n_oos": 1887
+      },
+      "SUI": {
+        "oos_r2": 0.0727,
+        "direction_acc": 0.6667,
+        "n_oos": 1887
+      },
+      "OP": {
+        "oos_r2": 0.1561,
+        "direction_acc": 0.6892,
+        "n_oos": 1886
+      },
+      "APT": {
+        "oos_r2": 0.22419,
+        "direction_acc": 0.6583,
+        "n_oos": 1883
+      },
+      "JTO": {
+        "oos_r2": -0.04804,
+        "direction_acc": 0.7005,
+        "n_oos": 1886
+      },
+      "IMX": {
+        "oos_r2": -1.54316,
+        "direction_acc": 0.7018,
+        "n_oos": 1887
+      },
+      "SAND": {
+        "oos_r2": 0.15436,
+        "direction_acc": 0.718,
+        "n_oos": 1306
+      },
+      "ADA": {
+        "oos_r2": 0.02587,
+        "direction_acc": 0.6881,
+        "n_oos": 1883
+      },
+      "AXS": {
+        "note": "always-on (no DAR filter)",
+        "direction_acc": "nan"
+      }
+    },
+    "filter_stats": {
+      "SOL": {
+        "n_total_events": 2186,
+        "n_active_filtered": 589,
+        "pct_in_market": 26.9,
+        "filter_rate_pct": 73.1
+      },
+      "XRP": {
+        "n_total_events": 2189,
+        "n_active_filtered": 563,
+        "pct_in_market": 25.7,
+        "filter_rate_pct": 74.3
+      },
+      "SUI": {
+        "n_total_events": 2189,
+        "n_active_filtered": 746,
+        "pct_in_market": 34.1,
+        "filter_rate_pct": 65.9
+      },
+      "OP": {
+        "n_total_events": 2188,
+        "n_active_filtered": 892,
+        "pct_in_market": 40.8,
+        "filter_rate_pct": 59.2
+      },
+      "APT": {
+        "n_total_events": 2185,
+        "n_active_filtered": 722,
+        "pct_in_market": 33.0,
+        "filter_rate_pct": 67.0
+      },
+      "JTO": {
+        "n_total_events": 2188,
+        "n_active_filtered": 705,
+        "pct_in_market": 32.2,
+        "filter_rate_pct": 67.8
+      },
+      "IMX": {
+        "n_total_events": 2189,
+        "n_active_filtered": 801,
+        "pct_in_market": 36.6,
+        "filter_rate_pct": 63.4
+      },
+      "SAND": {
+        "n_total_events": 1608,
+        "n_active_filtered": 600,
+        "pct_in_market": 37.3,
+        "filter_rate_pct": 62.7
+      },
+      "ADA": {
+        "n_total_events": 2185,
+        "n_active_filtered": 821,
+        "pct_in_market": 37.6,
+        "filter_rate_pct": 62.4
+      },
+      "AXS": {
+        "pct_in_market": 100.0,
+        "filter_rate_pct": 0.0
+      }
+    },
+    "avg_filter_pct": 59.58,
+    "avg_in_market_pct": 40.4,
+    "n_symbols": 10,
+    "dar_config": {
+      "p": 2,
+      "q": 1,
+      "win": 300,
+      "refit": 50
+    }
+  },
+  "three_way_comparison": {
+    "K198_v6_5_baseline": {
+      "description": "K198 v6.5 Ridge ML (production, unfiltered V_rev_carry)",
+      "oos_sharpe": 10.2796,
+      "oos_maxdd": -0.0053,
+      "oos_sortino": 30.7437,
+      "oos_calmar": 147.5548,
+      "wf_mean": 7.912,
+      "wf_min": 6.5722,
+      "wf_fold_sharpes": [
+        6.5722,
+        7.3823,
+        7.9409,
+        9.7527
+      ],
+      "reference_oos_sh": 10.28,
+      "reference_maxdd": -0.0053
+    },
+    "K210a_cap10pct": {
+      "description": "K210 Ridge ML + K208-filtered V_rev_carry (cap=10%)",
+      "oos_sharpe": 8.0575,
+      "oos_maxdd": -0.0053,
+      "oos_sortino": 22.0539,
+      "oos_calmar": 103.0444,
+      "oos_ann_ret": 0.5475,
+      "oos_ann_vol": 0.0544,
+      "oos_n_days": 135,
+      "wf_mean": 7.4831,
+      "wf_min": 6.9999,
+      "wf_max": 8.1737,
+      "wf_std": 0.4909,
+      "wf_fold_sharpes": [
+        6.9999,
+        7.7199,
+        8.1737,
+        7.0388
+      ],
+      "lift_vs_k198_oos": -2.2225,
+      "lift_vs_k198_wf_min": 0.4299,
+      "acceptance_criteria": {
+        "AC1_oos_sh_gt_hurdle": false,
+        "AC2_maxdd_not_worsened": true,
+        "AC3_wf_min_ok": true,
+        "n_pass": 2,
+        "all_pass": false
+      },
+      "verdict": "CONDITIONAL \u2192 K210a passes 2/3. OOS Sh lift=-2.2225, WF min=6.9999. Consider extended paper trading before promotion."
+    },
+    "K210b_cap15pct": {
+      "description": "K210 Ridge ML + K208-filtered V_rev_carry (cap=15%)",
+      "oos_sharpe": 8.3363,
+      "oos_maxdd": -0.005,
+      "oos_sortino": 23.1707,
+      "oos_calmar": 106.1784,
+      "oos_ann_ret": 0.5315,
+      "oos_ann_vol": 0.0513,
+      "oos_n_days": 135,
+      "wf_mean": 7.5851,
+      "wf_min": 7.0432,
+      "wf_max": 8.2219,
+      "wf_std": 0.4371,
+      "wf_fold_sharpes": [
+        7.0432,
+        7.7119,
+        8.2219,
+        7.3634
+      ],
+      "lift_vs_k198_oos": -1.9437,
+      "lift_vs_k198_wf_min": 0.4732,
+      "acceptance_criteria": {
+        "AC1_oos_sh_gt_hurdle": false,
+        "AC2_maxdd_not_worsened": true,
+        "AC3_wf_min_ok": true,
+        "n_pass": 2,
+        "all_pass": false
+      },
+      "verdict": "CONDITIONAL \u2192 K210b passes 2/3. OOS Sh lift=-1.9437, WF min=7.0432. Consider extended paper trading before promotion."
+    }
+  },
+  "k208_standalone_reference": {
+    "description": "K208 DAR(2,1) filtered reverse carry (standalone, 8h panel)",
+    "oos_sharpe": 17.53,
+    "oos_maxdd": -0.0003,
+    "wf_min": 7.39,
+    "note": "K208 standalone computed at 8h-event level (Sharpe vs EVENTS_PER_YEAR=1095). K210 is daily-aggregated (TRADING_DAYS=365). Direct Sharpe comparison is not apples-to-apples; K210 ensemble lift is the key metric."
+  },
+  "attribution": {
+    "K210a": {
+      "delta_oos_sharpe": -1.4298,
+      "avg_rev_carry_weight_k210": 0.0866,
+      "rev_carry_daily_mean": 0.00025613,
+      "rev_carry_daily_vol": 0.0006354,
+      "rev_carry_sharpe_k210": 7.7011
+    },
+    "K210b": {
+      "delta_oos_sharpe": -2.2428,
+      "avg_rev_carry_weight_k210": 0.1299,
+      "rev_carry_daily_mean": 0.00025613,
+      "rev_carry_daily_vol": 0.0006354,
+      "rev_carry_sharpe_k210": 7.7011
+    },
+    "interpretation": "K208 standalone OOS Sh=17.53 is on 8h events. In K198 ensemble, V_rev_carry weight is ~6-10%. Expected ensemble lift = (K208_standalone_lift \u00d7 rev_wt) \u2248 small. K210 result reflects actual ensemble-level contribution."
+  },
+  "per_fold_breakdown": {
+    "K198_baseline": {
+      "fold_sharpes": [
+        6.5722,
+        7.3823,
+        7.9409,
+        9.7527
+      ],
+      "mean": 7.912,
+      "min": 6.5722,
+      "max": 9.7527,
+      "std": 1.1688
+    },
+    "K210a_cap10": {
+      "fold_sharpes": [
+        6.9999,
+        7.7199,
+        8.1737,
+        7.0388
+      ],
+      "mean": 7.4831,
+      "min": 6.9999,
+      "max": 8.1737,
+      "std": 0.4909
+    },
+    "K210b_cap15": {
+      "fold_sharpes": [
+        7.0432,
+        7.7119,
+        8.2219,
+        7.3634
+      ],
+      "mean": 7.5851,
+      "min": 7.0432,
+      "max": 8.2219,
+      "std": 0.4371
+    }
+  },
+  "final_verdict": "REJECT both K210 variants \u2014 K208 filter contribution too small at ensemble level. K198 v6.5 remains production. Recommend: re-examine K208 weight floor or per-fold integration.",
+  "v6_6_promotion": {
+    "decision": "REJECT",
+    "best_variant": "None",
+    "monitoring_triggers": {
+      "immediate_review": [
+        "Live OOS Sharpe drops below 8.0 for any rolling 90d window",
+        "Live MaxDD exceeds -0.010 (2\u00d7 K198 threshold)",
+        "V_rev_carry weight exceeds 20% in any rebalance",
+        "DAR direction accuracy drops below 50% in rolling 300-event window"
+      ],
+      "monthly_checks": [
+        "Per-symbol in-market pct should remain ~25-40% (vs K208 baseline 25-40%)",
+        "FR spread persistence check: if avg spread goes negative, AXS always-on may need gate",
+        "Ridge R\u00b2 monitoring: should remain near K198 baseline (>0.15 overall)"
+      ],
+      "quarterly_revalidation": [
+        "Re-run full K210 backtest on extended data (next 3 months)",
+        "Check if K208 filter effectiveness degrades (regime shift detection)"
+      ]
+    }
+  },
+  "ml_diagnostics_summary": {
+    "K210a": {
+      "n_wf_steps": 15,
+      "mean_dir_acc": 0.7467,
+      "mean_r2": 0.9366
+    },
+    "K210b": {
+      "n_wf_steps": 15,
+      "mean_dir_acc": 0.7467,
+      "mean_r2": 0.9366
+    }
+  }
+}
