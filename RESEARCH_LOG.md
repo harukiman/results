@@ -2791,3 +2791,60 @@ White RC 初回実装で `p_value = mean(bootstrap_max + f_bar.max() >= f_max)` 
 
 **累計試行**: ~730,009 + 2010 (3 window sizes × 670 windows) = ~732,019
 **§6 G5 (MC ruin) を超える stress evidence**: 実データでの 100% 90日 positive
+
+### 2026-05-24 04:00 JST: Wave K11+K12 — BTC vol_z MR が 4軸目候補に (+0.081 相関、85/15 mix で Calmar 36.65)
+
+**Wave K11 (BTC vol_z mean-reversion)**:
+仮説: vol_z 極値時の BTC/ETH/SOL/BNB ロング/ショート (低vol+方向bias または 高vol反転狙い)
+
+**結果 (5184 backtests)**:
+| 銘柄 | Best Sh | Return | DD | Trades | パラメータ |
+|------|---------|--------|-----|--------|-----------|
+| **SOLUSDT** | +2.23 | +183.5% | -12.1% | 81 | vzl=-1.5, vzh=2.0, tw=10 |
+| **ETHUSDT** | +1.99 | +105.3% | -11.8% | 90 | vzl=-2.0, vzh=1.0, tw=20 |
+| BTCUSDT | +1.53 | +77.4% | -12.6% | 130 | vzl=-1.0, vzh=1.0, tw=10 |
+| BNBUSDT | +1.24 | +58.0% | -20.2% | 94 | vzl=-1.5, vzh=1.0, tw=10 |
+
+**全体カウント**: Sh>0 **84%** (これまで最高!), ≥1.5: 148, ≥2.0: 5
+
+**Wave K12 (相関+合成検証)**:
+4銘柄等加重 vol_MR portfolio:
+- Sharpe: +1.59
+- Return: +54.3%
+- DD: -6.7%
+- Calmar: 8.15
+
+**🎯 相関 vs 80/10/10 = +0.081** (ほぼ完全独立)
+
+**80/10/10 + vol_MR 合成バリアント**:
+| 構成 | Sharpe | Return | DD | Calmar |
+|------|--------|--------|-----|--------|
+| 100% 80/10/10 (baseline) | +3.37 | +67.6% | -2.0% | 34.37 |
+| 90% + 10% vol_MR | +3.56 | +66.6% | -1.8% | **37.03** (Calmar最大) |
+| **85% + 15%** | **+3.61** | +66.0% | -1.8% | 36.65 |
+| 80% + 20% | +3.61 | +65.5% | -2.0% | 33.27 |
+| 70% + 30% | +3.49 | +64.3% | -2.3% | 27.95 |
+
+**重大発見**: 4軸目 (vol_MR) が **+0.08 相関で完全独立**、Sharpe を +0.24 上乗せ可能。
+85/15 mix で Sh+3.61 / Calmar 36.65 — 80/10/10 単独 (Calmar 34.37) を上回る。
+
+**慎重な判定**: <strong>「promising candidate」</strong>として記録、まだ「新ベスト」昇格は保留:
+- vol_MR 単独 DD-12〜-20% は高い (80/10/10 -2% に比べ)
+- §6 監査未実施
+- Bootstrap CI で sample-specific 確認必要
+- 4-way 合成は新規構成 — full audit 必須
+
+**3軸目→4軸目への進化**:
+| 戦略軸 | 種類 | 時間軸 | 銘柄カテゴリ |
+|--------|------|--------|-------------|
+| 軸1: ATR_Ratio | Compression+EMA | 4H | Meme/L2/SmallCap (8) |
+| 軸2: FOPD | Funding-OI-Price 3項一致 | 4H | Major/LargeCap (6) |
+| 軸3: 8H Meme | Range Compression (高TF) | 8H | Meme (BONK/SHIB) |
+| **軸4: vol_z MR** | Volatility mean-rev | **4H** | **Major (BTC/ETH/SOL/BNB)** |
+
+→ 4 軸全てが (a) 異なるシグナル種、(b) 部分的に異なるTF、(c) 異なる銘柄セクター をカバー。
+これは Wave K7 で学んだ「3軸の分散」の<strong>4軸への自然な拡張</strong>。
+
+**累計試行**: ~732,019 + 5184 (K11) + 6 (K12 variants) = ~737,209
+**累計成功戦略**: 3 (FOPD, 8H Meme, vol_z MR候補)
+**11候補スコア**: 3/11 = 27% (前回 2/10 = 20% から改善)
