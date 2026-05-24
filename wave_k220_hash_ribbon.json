@@ -1,0 +1,306 @@
+{
+  "wave": "K220",
+  "task": "Hash Ribbon BTC Miner Capitulation Indicator",
+  "as_of": "2026-05-24T22:20:57.018228+00:00",
+  "runtime_s": 0.12,
+  "data_source": {
+    "hashrate_rows": 727,
+    "hashrate_date_min": "2024-05-24",
+    "hashrate_date_max": "2026-05-23",
+    "k217_return_days": 447
+  },
+  "hash_ribbon_signals": {
+    "total_firings": 7,
+    "signal_dates": [
+      "2024-07-23",
+      "2024-10-12",
+      "2025-02-04",
+      "2025-03-22",
+      "2025-05-21",
+      "2025-07-23",
+      "2026-02-26"
+    ],
+    "raw_crossings_before_debounce": 7,
+    "debounce_days": 30,
+    "smoothing_window": 7,
+    "capitulation_days": 214,
+    "buy_window_days": 308,
+    "gate_firings_ge2": true
+  },
+  "known_bottom_validation": {
+    "known_bottoms": [
+      {
+        "date": "2020-03-12",
+        "price": 3800,
+        "event": "COVID crash"
+      },
+      {
+        "date": "2022-06-18",
+        "price": 17600,
+        "event": "Luna/3AC collapse"
+      },
+      {
+        "date": "2022-11-21",
+        "price": 15500,
+        "event": "FTX collapse"
+      },
+      {
+        "date": "2024-08-05",
+        "price": 49500,
+        "event": "Yen carry unwind"
+      },
+      {
+        "date": "2025-04-07",
+        "price": 74500,
+        "event": "2025-Apr low"
+      }
+    ],
+    "signal_validations": [
+      {
+        "signal_date": "2024-07-23",
+        "matched_bottom": "Yen carry unwind",
+        "bottom_date": "2024-08-05",
+        "bottom_price": 49500,
+        "days_to_bottom": 13,
+        "validated": true
+      },
+      {
+        "signal_date": "2024-10-12",
+        "matched_bottom": "Yen carry unwind",
+        "bottom_date": "2024-08-05",
+        "bottom_price": 49500,
+        "days_to_bottom": -68,
+        "validated": true
+      },
+      {
+        "signal_date": "2025-02-04",
+        "matched_bottom": "2025-Apr low",
+        "bottom_date": "2025-04-07",
+        "bottom_price": 74500,
+        "days_to_bottom": 62,
+        "validated": true
+      },
+      {
+        "signal_date": "2025-03-22",
+        "matched_bottom": "2025-Apr low",
+        "bottom_date": "2025-04-07",
+        "bottom_price": 74500,
+        "days_to_bottom": 16,
+        "validated": true
+      },
+      {
+        "signal_date": "2025-05-21",
+        "matched_bottom": "2025-Apr low",
+        "bottom_date": "2025-04-07",
+        "bottom_price": 74500,
+        "days_to_bottom": -44,
+        "validated": true
+      },
+      {
+        "signal_date": "2025-07-23",
+        "matched_bottom": null,
+        "bottom_date": null,
+        "bottom_price": null,
+        "days_to_bottom": null,
+        "validated": false
+      },
+      {
+        "signal_date": "2026-02-26",
+        "matched_bottom": null,
+        "bottom_date": null,
+        "bottom_price": null,
+        "days_to_bottom": null,
+        "validated": false
+      }
+    ],
+    "accuracy": 0.7143,
+    "false_positive_rate": 0.2857
+  },
+  "conditional_sharpe": {
+    "all_period": {
+      "n_days": 447,
+      "sharpe": 7.7674,
+      "ann_ret": 0.5302
+    },
+    "buy_window": {
+      "n_days": 308,
+      "sharpe": 6.3806,
+      "ann_ret": 0.4288
+    },
+    "capitulation": {
+      "n_days": 148,
+      "sharpe": 10.0002,
+      "ann_ret": 0.566
+    },
+    "normal": {
+      "n_days": 48,
+      "sharpe": 9.6347,
+      "ann_ret": 0.783
+    },
+    "sharpe_delta_buy_vs_cap": -3.6196,
+    "gate_passed": false
+  },
+  "leveraged_variant": {
+    "leverage": 1.5,
+    "base_oos_sharpe": 10.43,
+    "leveraged_oos_sharpe": 10.2689,
+    "oos_sharpe_delta": -0.1611,
+    "base_wf_min": 6.8323,
+    "leveraged_wf_min": 6.8323,
+    "gate_passed": false
+  },
+  "walk_forward": {
+    "folds": [
+      {
+        "fold": 1,
+        "n_days": 111,
+        "base_sharpe": 6.9565,
+        "lev_sharpe": 7.0888,
+        "delta": 0.1323,
+        "hr_regime_days": 99
+      },
+      {
+        "fold": 2,
+        "n_days": 111,
+        "base_sharpe": 6.8323,
+        "lev_sharpe": 6.8323,
+        "delta": 0.0,
+        "hr_regime_days": 111
+      },
+      {
+        "fold": 3,
+        "n_days": 111,
+        "base_sharpe": 8.1303,
+        "lev_sharpe": 7.4018,
+        "delta": -0.7285,
+        "hr_regime_days": 50
+      },
+      {
+        "fold": 4,
+        "n_days": 114,
+        "base_sharpe": 9.8314,
+        "lev_sharpe": 9.6635,
+        "delta": -0.1678,
+        "hr_regime_days": 48
+      }
+    ],
+    "wf_base_mean_sharpe": 7.9376,
+    "wf_lev_mean_sharpe": 7.7466,
+    "wf_delta": -0.191,
+    "gate_passed": false
+  },
+  "acceptance_gates": {
+    "gate1_firings_ge2": {
+      "value": 7,
+      "threshold": 2,
+      "passed": true
+    },
+    "gate2_cond_sh_delta_gt1": {
+      "value": -3.6196,
+      "threshold": 1.0,
+      "passed": false
+    },
+    "gate3_wf_improvement": {
+      "value": -0.1611,
+      "threshold": 0.05,
+      "passed": false
+    }
+  },
+  "verdict": "REJECT \u2014 acceptance gates not met",
+  "accepted": false,
+  "k222_integration_spec": null,
+  "key_finding": {
+    "inverted_relationship": true,
+    "description": "K217 carry ensemble performs BETTER during miner capitulation (Sh=10.0) than during hash ribbon buy windows (Sh=6.38). Delta=-3.62. Mechanistically: carry premium is highest during market stress/capitulation.",
+    "root_cause": "Hash Ribbon designed for directional BTC long; K217 is market-neutral carry. Structurally mismatched.",
+    "cap_state_conditional": {
+      "capitulation_sharpe": 10.0,
+      "buy_window_sharpe": 6.38,
+      "delta_cap_vs_buy": 3.62,
+      "explanation": "Capitulation = elevated funding rates = more carry premium = higher K217 returns"
+    },
+    "quarter_by_quarter": [
+      {
+        "quarter": "2025Q1",
+        "k217_sharpe": 5.57,
+        "cap_fraction": 0.088,
+        "btc_ann_ret": -1.12
+      },
+      {
+        "quarter": "2025Q2",
+        "k217_sharpe": 7.21,
+        "cap_fraction": 0.121,
+        "btc_ann_ret": 1.02
+      },
+      {
+        "quarter": "2025Q3",
+        "k217_sharpe": 8.23,
+        "cap_fraction": 0.239,
+        "btc_ann_ret": 0.35
+      },
+      {
+        "quarter": "2025Q4",
+        "k217_sharpe": 8.11,
+        "cap_fraction": 0.359,
+        "btc_ann_ret": -1.13
+      },
+      {
+        "quarter": "2026Q1",
+        "k217_sharpe": 9.52,
+        "cap_fraction": 0.678,
+        "btc_ann_ret": -0.9
+      },
+      {
+        "quarter": "2026Q2",
+        "k217_sharpe": 12.0,
+        "cap_fraction": 1.0,
+        "btc_ann_ret": 2.48
+      }
+    ]
+  },
+  "anti_hash_ribbon_exploratory": {
+    "description": "Leverage K217 x1.5 during capitulation (cap_state=1) instead of buy windows",
+    "wf_folds": [
+      {
+        "fold": 1,
+        "cap_days": 6,
+        "base_sharpe": 6.9565,
+        "lev_sharpe": 6.5311,
+        "delta": -0.4255
+      },
+      {
+        "fold": 2,
+        "cap_days": 33,
+        "base_sharpe": 6.8323,
+        "lev_sharpe": 7.1806,
+        "delta": 0.3483
+      },
+      {
+        "fold": 3,
+        "cap_days": 23,
+        "base_sharpe": 8.1303,
+        "lev_sharpe": 8.4814,
+        "delta": 0.3511
+      },
+      {
+        "fold": 4,
+        "cap_days": 85,
+        "base_sharpe": 9.8314,
+        "lev_sharpe": 9.727,
+        "delta": -0.1044
+      }
+    ],
+    "oos_delta": -0.0874,
+    "conclusion": "Mixed WF, fails OOS gate. Promising in mid-window folds 2-3. K222 alternative: funding-rate stress index."
+  },
+  "k222_recommendation": {
+    "standard_hash_ribbon": "REJECT - structurally mismatched with K217 carry strategy",
+    "alternative_for_k222": "Develop funding-rate stress index as carry regime filter (separate wave)",
+    "funding_stress_spec": {
+      "signal": "14d rolling mean funding rate (cross-symbol) > 0.03% per 8h",
+      "action": "Leverage K217 x1.2 when elevated",
+      "rationale": "Mechanistically aligned with K217 carry alpha"
+    },
+    "hash_ribbon_use_case": "Useful for directional BTC long strategies; 71.4% bottom proximity; 7 signals/2yr; NOT for carry"
+  }
+}
