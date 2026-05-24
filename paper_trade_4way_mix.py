@@ -46,12 +46,24 @@ EXIT_4H = {"sl": 0.04, "tp": 0.08, "mhb": 24}  # in bars
 EXIT_8H = {"sl": 0.04, "tp": 0.08, "mhb": 12}
 VOL_Z = 1.5
 
-# Portfolio weights (4-way mix: 85% × 80/10/10 + 15% × vol_MR)
-W_ATR = 0.34       # 0.85 × 0.40
-W_FOPD = 0.34      # 0.85 × 0.40
-W_BONK_8H = 0.085  # 0.85 × 0.10
-W_SHIB_8H = 0.085  # 0.85 × 0.10
-W_VOL_MR = 0.15    # 15% split into 4 symbols (BTC/ETH/SOL/BNB)
+# Portfolio weights (v3 mix: 5-axis v2 × 0.80 + OI capit × 0.20, Wave K49e)
+W_ATR = 0.272       # 0.34 × 0.80
+W_FOPD = 0.272      # 0.34 × 0.80
+W_BONK_8H = 0.068   # 0.085 × 0.80
+W_SHIB_8H = 0.068   # 0.085 × 0.80
+W_VOL_MR = 0.120    # 0.15 × 0.80
+W_OI_CAPIT = 0.200  # 6番目軸 (Wave K49)
+
+# OI capitulation params (Wave K49)
+OI_CAPIT_SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "DOGEUSDT", "AVAXUSDT", "LINKUSDT"]
+OI_CAPIT_PARAMS = {
+    "window": 120,        # lookback for z-score
+    "z_thresh": 2.0,      # OI z-score threshold (negative for capit)
+    "ret_z_thresh": 1.0,  # price z-score threshold (negative for capit)
+    "hold_bars": 12,      # 48h hold
+    "sl": 0.04,
+    "tp": 0.06,
+}
 
 # vol_MR per symbol params (Wave K11)
 VOL_MR_BEST = {
@@ -121,7 +133,7 @@ def load_or_init_state():
         return json.loads(STATE_PATH.read_text())
     return {
         "start_date": START_DATE,
-        "strategy": "4-way mix v2 (ATR×8 4H + FOPD×5 4H + BONK_8H + SHIB_8H + vol_MR) — K44 DOT除外版",
+        "strategy": "v3 mix (ATR×8 + FOPD×5 + BONK_8H + SHIB_8H + vol_MR + OI_capit×7) — K49 §6 7/8 PASS",
         "initial_capital_usd": INITIAL_CAPITAL,
         "leverage": LEVERAGE,
         "equity_usd": INITIAL_CAPITAL,
@@ -378,6 +390,55 @@ async def process_vol_mr_strategy(state, weight):
     return n_new
 
 
+async def process_oi_capit_strategy(state, weight):
+    """OI Capitulation 7 銘柄 portfolio (Wave K49). Signal: OI z<=-2 AND price z<=-1 → LONG."""
+    n_new = 0
+    for sym in OI_CAPIT_SYMBOLS:
+        try:
+            df = await fetch_klines(sym, "4h", 90)
+            oi = await fetch_historical_metrics(sym, 90)
+        except Exception:
+            continue
+        if df is None or oi is None or len(df) < 130:
+            continue
+        oi = oi.copy()
+        oi['timestamp'] = pd.to_datetime(oi['timestamp']).astype('datetime64[ns]')
+        df['open_time'] = pd.to_datetime(df['open_time']).astype('datetime64[ns]')
+        m = pd.merge_asof(df[['open_time','close']].sort_values('open_time'),
+                          oi[['timestamp','oi']].rename(columns={'timestamp':'open_time'}).sort_values('open_time'),
+                          on='open_time', direction='backward')
+        m['ret_n'] = m['close'].pct_change(6)
+        m['oi_delta_n'] = m['oi'].pct_change(6)
+        w = OI_CAPIT_PARAMS['window']
+        ret_z = (m['ret_n'] - m['ret_n'].rolling(w).mean()) / (m['ret_n'].rolling(w).std() + 1e-10)
+        oi_z = (m['oi_delta_n'] - m['oi_delta_n'].rolling(w).mean()) / (m['oi_delta_n'].rolling(w).std() + 1e-10)
+        last_idx = len(m) - 1
+        if not (np.isfinite(oi_z.iloc[last_idx]) and np.isfinite(ret_z.iloc[last_idx])):
+            continue
+        bar_time = m['open_time'].iloc[last_idx].isoformat()
+        last_processed = state['last_processed_bar'].get(f"OI_CAPIT_{sym}", "")
+        if bar_time <= last_processed:
+            continue
+        state['last_processed_bar'][f"OI_CAPIT_{sym}"] = bar_time
+        # Trigger: OI capit pattern
+        if oi_z.iloc[last_idx] > -OI_CAPIT_PARAMS['z_thresh'] or ret_z.iloc[last_idx] > -OI_CAPIT_PARAMS['ret_z_thresh']:
+            continue
+        close = float(m['close'].iloc[last_idx])
+        size_usd = state['equity_usd'] * weight / len(OI_CAPIT_SYMBOLS) * state['leverage']
+        position = {
+            "entry_bar": bar_time, "symbol": sym, "strategy": "OI_capit",
+            "side": "long", "entry_price": close,
+            "sl": close * (1 - OI_CAPIT_PARAMS['sl']),
+            "tp": close * (1 + OI_CAPIT_PARAMS['tp']),
+            "expiry_bar_offset": OI_CAPIT_PARAMS['hold_bars'],
+            "size_usd": size_usd,
+        }
+        state['open_positions'].append(position)
+        n_new += 1
+        print(f"  [OI_CAPIT NEW] {sym:<10} LONG entry=${close:.4f} oi_z={float(oi_z.iloc[last_idx]):.2f} ret_z={float(ret_z.iloc[last_idx]):.2f}")
+    return n_new
+
+
 async def main():
     t0 = time.time()
     print(f"=== 4-way Paper Trade Snapshot — {datetime.now().isoformat()} ===")
@@ -391,8 +452,8 @@ async def main():
     n_closed, pnl_closed = await manage_open_positions(state)
     print(f"  Closed: {n_closed}, total PnL: ${pnl_closed:+.2f}")
 
-    # Then process new signals (5 axes)
-    print("\n[Generating new signals — 5 strategy axes]")
+    # Then process new signals (6 axes — v3)
+    print("\n[Generating new signals — 6 strategy axes (v3)]")
     btc_4h = await get_btc_volz_4h()
     btc_8h = await get_btc_volz_8h()
 
@@ -400,9 +461,10 @@ async def main():
     n_fopd = await process_fopd_strategy(state, W_FOPD)
     n_bonk = await process_8h_meme_single(state, btc_8h, "BONKUSDT", W_BONK_8H)
     n_shib = await process_8h_meme_single(state, btc_8h, "SHIBUSDT", W_SHIB_8H)
-    n_vol_mr = await process_vol_mr_strategy(state, W_VOL_MR)  # NEW (Wave K17)
+    n_vol_mr = await process_vol_mr_strategy(state, W_VOL_MR)
+    n_oi = await process_oi_capit_strategy(state, W_OI_CAPIT)  # Wave K49 NEW axis
 
-    total_new = n_atr + n_fopd + n_bonk + n_shib + n_vol_mr
+    total_new = n_atr + n_fopd + n_bonk + n_shib + n_vol_mr + n_oi
     print(f"\n  Total new signals: {total_new}")
     print(f"  Currently open: {len(state['open_positions'])}")
 
@@ -414,7 +476,7 @@ async def main():
         "n_closed_this_run": n_closed,
         "pnl_closed_this_run_usd": round(pnl_closed, 2),
         "n_new_signals_this_run": total_new,
-        "axes_signals": {"ATR": n_atr, "FOPD": n_fopd, "BONK_8H": n_bonk, "SHIB_8H": n_shib, "vol_MR": n_vol_mr},
+        "axes_signals": {"ATR": n_atr, "FOPD": n_fopd, "BONK_8H": n_bonk, "SHIB_8H": n_shib, "vol_MR": n_vol_mr, "OI_capit": n_oi},
         "total_closed_trades": len(state['closed_trades']),
     })
 
