@@ -1,0 +1,530 @@
+{
+  "wave": "K141",
+  "label": "Funding sign cluster >=80% contrarian (R5-18)",
+  "hypothesis": "When fraction_positive across 15 perp symbols is extreme (>=80% or <=20%), the market is one-sided; fade by going SHORT (resp. LONG) an equal-weight BTC+ETH+SOL basket.",
+  "universe_15": [
+    "BTC",
+    "ETH",
+    "SOL",
+    "BNB",
+    "DOGE",
+    "AVAX",
+    "LINK",
+    "ADA",
+    "XRP",
+    "INJ",
+    "OP",
+    "WIF",
+    "ARB",
+    "BONK",
+    "SHIB*"
+  ],
+  "universe_map": [
+    {
+      "label": "BTC",
+      "fr_token": "BTCUSDT",
+      "price_token": "BTCUSDT"
+    },
+    {
+      "label": "ETH",
+      "fr_token": "ETHUSDT",
+      "price_token": "ETHUSDT"
+    },
+    {
+      "label": "SOL",
+      "fr_token": "SOLUSDT",
+      "price_token": "SOLUSDT"
+    },
+    {
+      "label": "BNB",
+      "fr_token": "BNBUSDT",
+      "price_token": "BNBUSDT"
+    },
+    {
+      "label": "DOGE",
+      "fr_token": "DOGEUSDT",
+      "price_token": "DOGEUSDT"
+    },
+    {
+      "label": "AVAX",
+      "fr_token": "AVAXUSDT",
+      "price_token": "AVAXUSDT"
+    },
+    {
+      "label": "LINK",
+      "fr_token": "LINKUSDT",
+      "price_token": "LINKUSDT"
+    },
+    {
+      "label": "ADA",
+      "fr_token": "ADAUSDT",
+      "price_token": "ADAUSDT"
+    },
+    {
+      "label": "XRP",
+      "fr_token": "XRPUSDT",
+      "price_token": "XRPUSDT"
+    },
+    {
+      "label": "INJ",
+      "fr_token": "INJUSDT",
+      "price_token": "INJUSDT"
+    },
+    {
+      "label": "OP",
+      "fr_token": "OPUSDT",
+      "price_token": "OPUSDT"
+    },
+    {
+      "label": "WIF",
+      "fr_token": "WIFUSDT",
+      "price_token": "WIFUSDT"
+    },
+    {
+      "label": "ARB",
+      "fr_token": "ARBUSDT",
+      "price_token": "ARBUSDT"
+    },
+    {
+      "label": "BONK",
+      "fr_token": "1000BONKUSDT",
+      "price_token": "BONKUSDT"
+    },
+    {
+      "label": "SHIB*",
+      "fr_token": "1000PEPEUSDT",
+      "price_token": "PEPEUSDT"
+    }
+  ],
+  "basket": [
+    "BTC",
+    "ETH",
+    "SOL"
+  ],
+  "cost_bps_per_leg": 7.0,
+  "is_frac": 0.7,
+  "events_per_day": 3,
+  "events_per_year": 1095,
+  "n_events_total": 2187,
+  "panel_start": "2024-05-24T16:00:00",
+  "panel_end": "2026-05-23T08:00:00",
+  "regime_freq": {
+    "frac_ge_70": 0.6721536351165981,
+    "frac_ge_80": 0.5738454503886603,
+    "frac_ge_90": 0.36991312299954276,
+    "frac_le_30": 0.04983996342021033,
+    "frac_le_20": 0.03337905807041609,
+    "frac_le_10": 0.006858710562414266,
+    "frac_pos_mean": 0.7632373113854596,
+    "frac_pos_p50": 0.8,
+    "frac_pos_p05": 0.3333333333333333,
+    "frac_pos_p95": 1.0
+  },
+  "n_perm": 300,
+  "n_boot": 300,
+  "n_trials_dsr": 4,
+  "wf_folds": 4,
+  "variants": [
+    {
+      "name": "V_thresh_80",
+      "n_events": 2187,
+      "hold_events": 3,
+      "n_raw_signal_long": 36,
+      "n_raw_signal_short": 1255,
+      "n_held_active": 1749,
+      "n_held_long": 80,
+      "n_held_short": 1669,
+      "n_pos_flips": 257,
+      "exposure_pct": 79.97256515775034,
+      "frac_pos_mean": 0.7632373113854596,
+      "frac_pos_p5": 0.3333333333333333,
+      "frac_pos_p50": 0.8,
+      "frac_pos_p95": 1.0,
+      "full": {
+        "sharpe": 0.4230510071938078,
+        "sharpe_gross": 0.6094294372095003,
+        "max_dd": -0.6152260210578138,
+        "total_ret": 0.4503567653469033,
+        "winrate": 0.45547210300429186
+      },
+      "is": {
+        "sharpe": -0.0538323589889416,
+        "total_ret": -0.0407207828960372,
+        "max_dd": -0.6152260210578138,
+        "n": 1530
+      },
+      "oos": {
+        "sharpe": 1.59562843709577,
+        "total_ret": 0.4910775482429406,
+        "max_dd": -0.21352454575768406,
+        "winrate": 0.44422700587084146,
+        "n": 657
+      },
+      "decomposition": {
+        "sum_price_pnl": 0.5492833686802367,
+        "sum_funding_pnl": 0.09917339666666666,
+        "sum_cost": 0.19809999999999997,
+        "sum_net": 0.4503567653469033
+      },
+      "perm_p": 0.17940199335548174,
+      "perm_null": {
+        "perm_mean": 0.1512556344072197,
+        "perm_p5": -0.34239721513547483,
+        "perm_p95": 0.6453577814790076
+      },
+      "bootstrap_oos": {
+        "mean": 1.6477784033791911,
+        "ci_lo": -0.12397366198816062,
+        "ci_hi": 3.405347477083787
+      },
+      "dsr_oos": 0.364337937143561,
+      "dsr_full": 0.18845530699371243,
+      "n_trials_dsr": 4,
+      "wf_folds": [
+        {
+          "fold": 0,
+          "n": 437,
+          "sharpe": 0.2685513735025375,
+          "total_ret": 0.0723219291854279,
+          "max_dd": -0.4169526202026352
+        },
+        {
+          "fold": 1,
+          "n": 437,
+          "sharpe": -0.6938393183747535,
+          "total_ret": -0.12938184554344917,
+          "max_dd": -0.47621139846619587
+        },
+        {
+          "fold": 2,
+          "n": 437,
+          "sharpe": -0.05505820900681456,
+          "total_ret": -0.01198849746356384,
+          "max_dd": -0.2592618040077932
+        },
+        {
+          "fold": 3,
+          "n": 437,
+          "sharpe": 2.116695275046434,
+          "total_ret": 0.4110900362973906,
+          "max_dd": -0.21352454575768406
+        }
+      ],
+      "wf_mean_sharpe": 0.4090872802918509,
+      "wf_min_sharpe": -0.6938393183747535,
+      "cost_stress": {
+        "cost_x0.5": 0.5162347109977843,
+        "cost_x1.0": 0.4230510071938078,
+        "cost_x1.5": 0.3298963333965788,
+        "cost_x2.0": 0.23678864779554623
+      },
+      "gates": {
+        "G1_oos_sharpe_ge_1": true,
+        "G2_perm_p_lt_005": false,
+        "G3_dsr_ge_095": false,
+        "pass_all": false
+      }
+    },
+    {
+      "name": "V_thresh_90",
+      "n_events": 2187,
+      "hold_events": 3,
+      "n_raw_signal_long": 15,
+      "n_raw_signal_short": 809,
+      "n_held_active": 1192,
+      "n_held_long": 41,
+      "n_held_short": 1151,
+      "n_pos_flips": 257,
+      "exposure_pct": 54.50388660265203,
+      "frac_pos_mean": 0.7632373113854596,
+      "frac_pos_p5": 0.3333333333333333,
+      "frac_pos_p50": 0.8,
+      "frac_pos_p95": 1.0,
+      "full": {
+        "sharpe": -0.00926415848064426,
+        "sharpe_gross": 0.1956079520572381,
+        "max_dd": -0.577705772794852,
+        "total_ret": -0.008260835237044656,
+        "winrate": 0.4317147192716237
+      },
+      "is": {
+        "sharpe": -0.22772778126057674,
+        "total_ret": -0.14906313178343397,
+        "max_dd": -0.577705772794852,
+        "n": 1530
+      },
+      "oos": {
+        "sharpe": 0.6006675956290215,
+        "total_ret": 0.14080229654638926,
+        "max_dd": -0.21736194559109967,
+        "winrate": 0.4068441064638783,
+        "n": 657
+      },
+      "decomposition": {
+        "sum_price_pnl": 0.08775440809628851,
+        "sum_funding_pnl": 0.08668475666666665,
+        "sum_cost": 0.18269999999999997,
+        "sum_net": -0.008260835237044656
+      },
+      "perm_p": 0.5016611295681063,
+      "perm_null": {
+        "perm_mean": -0.014395275386835327,
+        "perm_p5": -0.6691337619012335,
+        "perm_p95": 0.634594550671838
+      },
+      "bootstrap_oos": {
+        "mean": 0.47988301663473426,
+        "ci_lo": -1.4899075793681504,
+        "ci_hi": 2.5789480389397235
+      },
+      "dsr_oos": 0.1273195866461278,
+      "dsr_full": 0.07434833462082836,
+      "n_trials_dsr": 4,
+      "wf_folds": [
+        {
+          "fold": 0,
+          "n": 437,
+          "sharpe": -0.13846611269506828,
+          "total_ret": -0.03557360299480278,
+          "max_dd": -0.42668127458069627
+        },
+        {
+          "fold": 1,
+          "n": 437,
+          "sharpe": -0.7992003695824684,
+          "total_ret": -0.11500661758171668,
+          "max_dd": -0.33486236906102435
+        },
+        {
+          "fold": 2,
+          "n": 437,
+          "sharpe": -0.595593771830649,
+          "total_ret": -0.10939944258277146,
+          "max_dd": -0.23449151492706496
+        },
+        {
+          "fold": 3,
+          "n": 437,
+          "sharpe": 0.9339519727940148,
+          "total_ret": 0.13435497716126896,
+          "max_dd": -0.21736194559109967
+        }
+      ],
+      "wf_mean_sharpe": -0.14982707032854273,
+      "wf_min_sharpe": -0.7992003695824684,
+      "cost_stress": {
+        "cost_x0.5": 0.09317996717362503,
+        "cost_x1.0": -0.00926415848064426,
+        "cost_x1.5": -0.11170192440661149,
+        "cost_x2.0": -0.2141108380375209
+      },
+      "gates": {
+        "G1_oos_sharpe_ge_1": false,
+        "G2_perm_p_lt_005": false,
+        "G3_dsr_ge_095": false,
+        "pass_all": false
+      }
+    },
+    {
+      "name": "V_thresh_70",
+      "n_events": 2187,
+      "hold_events": 3,
+      "n_raw_signal_long": 109,
+      "n_raw_signal_short": 1470,
+      "n_held_active": 2002,
+      "n_held_long": 201,
+      "n_held_short": 1801,
+      "n_pos_flips": 263,
+      "exposure_pct": 91.54092363968907,
+      "frac_pos_mean": 0.7632373113854596,
+      "frac_pos_p5": 0.3333333333333333,
+      "frac_pos_p50": 0.8,
+      "frac_pos_p95": 1.0,
+      "full": {
+        "sharpe": 0.48042606560417445,
+        "sharpe_gross": 0.7029866205566647,
+        "max_dd": -0.7214070349075363,
+        "total_ret": 0.5594012687569698,
+        "winrate": 0.46826923076923077
+      },
+      "is": {
+        "sharpe": 0.04928271044119215,
+        "total_ret": 0.04004776786502179,
+        "max_dd": -0.7214070349075363,
+        "n": 1530
+      },
+      "oos": {
+        "sharpe": 1.4762649735649627,
+        "total_ret": 0.5193535008919482,
+        "max_dd": -0.3209668675563349,
+        "winrate": 0.46991869918699186,
+        "n": 657
+      },
+      "decomposition": {
+        "sum_price_pnl": 0.7155944954236368,
+        "sum_funding_pnl": 0.10210677333333333,
+        "sum_cost": 0.25830000000000003,
+        "sum_net": 0.5594012687569698
+      },
+      "perm_p": 0.09966777408637874,
+      "perm_null": {
+        "perm_mean": 0.04487915134012652,
+        "perm_p5": -0.606547332018214,
+        "perm_p95": 0.6805285503921185
+      },
+      "bootstrap_oos": {
+        "mean": 1.444624662785859,
+        "ci_lo": -0.657082565695082,
+        "ci_hi": 3.7318686613354073
+      },
+      "dsr_oos": 0.37100620521163385,
+      "dsr_full": 0.2199911144883252,
+      "n_trials_dsr": 4,
+      "wf_folds": [
+        {
+          "fold": 0,
+          "n": 437,
+          "sharpe": 0.4762782336832939,
+          "total_ret": 0.13255697210182948,
+          "max_dd": -0.4169526202026352
+        },
+        {
+          "fold": 1,
+          "n": 437,
+          "sharpe": -0.7287251395089528,
+          "total_ret": -0.1549624795330567,
+          "max_dd": -0.5247828319481067
+        },
+        {
+          "fold": 2,
+          "n": 437,
+          "sharpe": 0.27148839952114423,
+          "total_ret": 0.06711807229764924,
+          "max_dd": -0.20492923485550424
+        },
+        {
+          "fold": 3,
+          "n": 437,
+          "sharpe": 2.305291523019506,
+          "total_ret": 0.49715636982489597,
+          "max_dd": -0.2803119509287653
+        }
+      ],
+      "wf_mean_sharpe": 0.5810832541787478,
+      "wf_min_sharpe": -0.7287251395089528,
+      "cost_stress": {
+        "cost_x0.5": 0.5916764405560888,
+        "cost_x1.0": 0.48042606560417445,
+        "cost_x1.5": 0.36926661717584097,
+        "cost_x2.0": 0.2582290265477446
+      },
+      "gates": {
+        "G1_oos_sharpe_ge_1": true,
+        "G2_perm_p_lt_005": false,
+        "G3_dsr_ge_095": false,
+        "pass_all": false
+      }
+    },
+    {
+      "name": "V_z_score",
+      "n_events": 2187,
+      "hold_events": 3,
+      "n_raw_signal_long": 217,
+      "n_raw_signal_short": 36,
+      "n_held_active": 548,
+      "n_held_long": 461,
+      "n_held_short": 87,
+      "n_pos_flips": 245,
+      "exposure_pct": 25.057155921353452,
+      "frac_pos_mean": 0.7632373113854596,
+      "frac_pos_p5": 0.3333333333333333,
+      "frac_pos_p50": 0.8,
+      "frac_pos_p95": 1.0,
+      "full": {
+        "sharpe": -0.30723525324735035,
+        "sharpe_gross": -0.06018518915743298,
+        "max_dd": -0.6667887246480222,
+        "total_ret": -0.21938321819523357,
+        "winrate": 0.42128935532233885
+      },
+      "is": {
+        "sharpe": -0.10068207160921366,
+        "total_ret": -0.04903602733094939,
+        "max_dd": -0.5160665537140905,
+        "n": 1530
+      },
+      "oos": {
+        "sharpe": -0.7515595025040925,
+        "total_ret": -0.17034719086428424,
+        "max_dd": -0.5033721881990469,
+        "winrate": 0.42386831275720166,
+        "n": 657
+      },
+      "decomposition": {
+        "sum_price_pnl": -0.039666624861900396,
+        "sum_funding_pnl": -0.0033165933333333336,
+        "sum_cost": 0.1764,
+        "sum_net": -0.21938321819523357
+      },
+      "perm_p": 0.2857142857142857,
+      "perm_null": {
+        "perm_mean": -0.6008266656803453,
+        "perm_p5": -1.6562420392057606,
+        "perm_p95": 0.3913832409757174
+      },
+      "bootstrap_oos": {
+        "mean": -0.8958834172470486,
+        "ci_lo": -3.0949694766567553,
+        "ci_hi": 1.518870621370566
+      },
+      "dsr_oos": 0.03657651291658831,
+      "dsr_full": 0.046783961716223905,
+      "n_trials_dsr": 4,
+      "wf_folds": [
+        {
+          "fold": 0,
+          "n": 437,
+          "sharpe": -0.771688841945083,
+          "total_ret": -0.12391374410343427,
+          "max_dd": -0.17318390255702906
+        },
+        {
+          "fold": 1,
+          "n": 437,
+          "sharpe": 1.8713360533263204,
+          "total_ret": 0.18842022292767024,
+          "max_dd": -0.1314111809957638
+        },
+        {
+          "fold": 2,
+          "n": 437,
+          "sharpe": -0.5633889147644928,
+          "total_ret": -0.09533001204407116,
+          "max_dd": -0.37299755244386906
+        },
+        {
+          "fold": 3,
+          "n": 437,
+          "sharpe": 0.22279119689645657,
+          "total_ret": 0.029593238265950186,
+          "max_dd": -0.2752257498192154
+        }
+      ],
+      "wf_mean_sharpe": 0.1897623733783003,
+      "wf_min_sharpe": -0.771688841945083,
+      "cost_stress": {
+        "cost_x0.5": -0.18370972599920854,
+        "cost_x1.0": -0.30723525324735035,
+        "cost_x1.5": -0.43071961887578974,
+        "cost_x2.0": -0.5541207193412016
+      },
+      "gates": {
+        "G1_oos_sharpe_ge_1": false,
+        "G2_perm_p_lt_005": false,
+        "G3_dsr_ge_095": false,
+        "pass_all": false
+      }
+    }
+  ],
+  "wall_seconds": 3.9388391971588135
+}
