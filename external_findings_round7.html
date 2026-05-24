@@ -1,0 +1,162 @@
+<!-- External Findings Round 7 — Generated 2026-05-25 JST -->
+<!-- 20 findings | Sources: arXiv, SSRN, BitMEX, OAK Research, Substack, GitHub, Medium, Pendle, Hyperliquid Docs -->
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://arxiv.org/abs/2506.08573" target="_blank">Designing Funding Rates for Perpetual Futures — BSDE Framework (Kim &amp; Park, arXiv 2506.08573)</a></div>
+  <div class="ef-source">arXiv q-fin.MF · 2026-05-25</div>
+  <div class="ef-summary">ソウル国立大学がBSDEと裁定価格理論でパーペチュアルFR設計を理論化。パス依存型（8時間移動平均）FRがスポット価格に収束することを証明。発行者向けのレプリケーションポートフォリオ構築法を提供。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> K196のREVERSE carry戦略が依拠するFR持続性・収束ダイナミクスに理論的根拠。パス依存型レートの遅延特性（8h MA）を利用した先行シグナル設計に活用可能。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — 理論モデルが予測するFR収束半減期をK197のエントリー/エグジット閾値設計に組み込む。8hMA遅延を利用した先行ポジション戦略を検討。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://arxiv.org/html/2605.06405v1" target="_blank">Funding-Aware Optimal Market Making for Perpetual DEXs — HL OU+Jump分析 (Le, arXiv 2605.06405)</a></div>
+  <div class="ef-source">arXiv q-fin.TR · 2026-05-25</div>
+  <div class="ef-summary">HLデータでFRのOU過程+ジャンプモデルを推定、HJBでMMスプレッド最適化。FR平均回帰半減期2〜6時間を実証。純ガウス過程より大幅に優位なフィット。ETH/BTCで在庫リスク大幅低減を確認。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> K196のFR予測モジュール（現状OUベース）にジャンプ拡張が有効である実証的根拠。HL特有の半減期2〜6hをK197のポジション保有時間最適化に直接利用可能。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — OU+ジャンプパラメータをHLデータで推定しFR乖離時のエントリー判断と決済タイミングを最適化。K197のFR予測精度向上に直結。(R6既発見、実装は未完了)</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://www.neuralarb.com/2026/04/24/hyperliquid-vs-cexs-perp-arbitrage-after-fees-funding-slippage/" target="_blank">Hyperliquid vs CEX パープ裁定の真のコスト分析 — 2026年版 (Neural Arb)</a></div>
+  <div class="ef-source">Neural Arb Blog · 2026-05-25</div>
+  <div class="ef-summary">HL vs Binance/Bybitの裁定を実データで分析。主要ペアAPR 3〜12%、ロングテール20〜60%。スリッページが$250K超で支配的（$1MではHL 28bps vs CEX 9bps）。最適サイズ$1K〜$100K。損益分岐FR差: 1.3bps/8h。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> K196のポジションサイジング上限設計に直結。スリッページ30%以内という閾値とTWAP分割推奨がK197の執行ルール設計のベースになる。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — スリッページ閾値（FR差の30%未満）をK197リスク先行設計に組み込み。$100K上限とTWAP分割のバックテスト条件を明示的に追加する。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://0xian.substack.com/p/understanding-hyperliquids-hlp-vault" target="_blank">HLP Vault 解剖: 構造・リターン・カウンターパーティリスク (0xian Substack)</a></div>
+  <div class="ef-source">0xian Substack · 2026-05-25</div>
+  <div class="ef-summary">HLPが「わずかにネットショート」傾向でFR裁定を構築し、3秒更新の分散型オラクルで価格を管理。残高$400M、Assistance Fund $1.3Bと分離管理。安定期の年率~17%。ADLが最終防衛ラインで無制限ではない。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> HLPのネットショート構造はK196のREVERSE carry方向性と一致し、継続性の根拠になる。HLP残高動向をモニタリング指標に追加する根拠。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — HLPがネットショートに傾く構造的理由をK196のFR方向予測モデルに組み込み。HLP残高・Assistance Fund残高をモニタリング指標として週次チェック体制を構築する。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://wublock.substack.com/p/hyperliquid-activates-cross-margin" target="_blank">Hyperliquid ADL初作動 (2025年10月) — クロスマージン強制デレバレッジの全容 (WuBlockchain)</a></div>
+  <div class="ef-source">WuBlockchain Substack · 2026-05-25</div>
+  <div class="ef-summary">2025年10月にHLが2年以上の運営で初めてADLを発動。通常清算→HLP吸収→ADL（利益ポジション強制クローズ）という3段階瀑布構造と、勝ちポジション保有者が強制決済されるリスクを解説。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> デルタニュートラル戦略の勝ちサイドが強制決済されるADLリスクがK196のHL上ショートポジションに直接影響。ADL発動条件をトリガー監視指標として設定すべき。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — HLP残高・Insurance Fund残高を定期モニタリングし、低下時に自動でポジション縮小するリスクルールをK197+に追加。大型清算イベント時の戦略一時停止条件を明文化。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://oakresearch.io/en/analyses/investigations/hyperliquid-jelly-attack-context-vulnerability-team-solution" target="_blank">JELLY攻撃: Hyperliquid オラクル操作・清算脆弱性の完全解剖 (OAK Research)</a></div>
+  <div class="ef-source">OAK Research · 2026-05-25</div>
+  <div class="ef-summary">2025年3月26日、$4.5M JELLYショート＋自己清算誘発でオラクルを250%吊り上げ。HLPが$12Mの未実現損失を被り、バリデーターがオラクル価格を手動上書き決済。ADLトリガー比率の設計欠陥が露呈。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> 低時価総額銘柄でのHL裁定ポジションが同様の攻撃ベクターにさらされる。K196の銘柄選別基準にオラクル操作耐性フィルタが必要。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — K197+の銘柄ユニバースに「HL OI / 銘柄時価総額 &lt; X%」フィルタを追加。メムコイン系銘柄の除外ルールを明示的にバックテスト設計に組み込む。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://academy.exmon.pro/hyperliquid-fartcoin-attack-adl-exploit-hlp-loss-case-study" target="_blank">FARTCOIN「自殺清算」攻撃 — ADL悪用・HLP $1.5M損失 (2026年4月) (Exmon Academy)</a></div>
+  <div class="ef-source">Exmon Academy · 2026-05-25</div>
+  <div class="ef-summary">2026年4月9日、攻撃者が4ウォレットで$15MロングをHLに建て自己清算誘発、HLPに$13Mのロングを押し付け。外部DEX/CEXでの事前ショートヘッジで攻撃者は純利益。HLPは$1〜1.5M損失。JELLYと同パターンが1年後も再現。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> JELLYと類似の攻撃が2026年も継続する証拠。HLP損失蓄積がADL発動閾値を近づけ、K196のHL側ポジションへの間接リスクになる。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — HLP健全性ダッシュボードを週次チェックし、残高急減時はポジション縮小を自動化。ADL被害を受けやすい高利益・高レバレッジ配置の管理ルールを追加。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://blog.can.ac/2025/12/20/reverse-engineering-hyperliquid/" target="_blank">Hyperliquid内部構造の逆エンジニアリング: オラクル単一鍵・放送者独占・ガバナンス価格上書き (can.ac)</a></div>
+  <div class="ef-source">can.ac Blog · 2026-05-25</div>
+  <div class="ef-summary">HLバイナリ解析でoracle_updater単一アドレスが全市場価格を制御、8ホワイトリスト放送者のみが取引送信可能、OverrideFundingImpactUsdでFR影響額の上書き可能であることが判明。JELLY事件でこれらが実際に行使された。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> HLの「分散型」主張とは裏腹に中央集権的制御が実質存在。K196のHL総エクスポージャー上限設定の根拠として戦略ドキュメントに明示すべき。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> N — 即座のコード変更につながらない。「HL中央集権リスク」として戦略ドキュメントに記載し、HL総エクスポージャー上限（例: AUM10%以内）を戦略制約として文書化する。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://www.bitmex.com/blog/state-of-crypto-perps-2025" target="_blank">BitMEX「State of Crypto Perps 2025」— FR裁定のPost-Yield Era突入</a></div>
+  <div class="ef-source">BitMEX Blog · 2026-05-25</div>
+  <div class="ef-summary">2025年中頃にFR裁定年利が初めて4%未満に圧縮され米国債を下回る局面が発生。Ethena等の自動ヘッジ$7.83BがFRスパイクを即時圧縮。受動的スポット-パープ裁定の時代終焉を宣言し、能動的FRボラ取引へのシフトを示唆。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> K196が依存する「構造的FRスプレッド」の競争激化を裏付ける。HL特有の高FRボラ特性（CEX比6〜7倍）を活用する方向性への強い支持材料。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — 主要ペア（BTC/ETH）への配分を縮小し、HL固有の高FRボラ銘柄への比重を高める方向でK197のユニバース再設計を検討する。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://www.bitmex.com/blog/2025q3-derivatives-report" target="_blank">BitMEX Q3 2025 Derivatives Report — HL vs CEX FR構造の定量比較</a></div>
+  <div class="ef-source">BitMEX Blog · 2026-05-25</div>
+  <div class="ef-summary">HL ETH最大FR 0.0752%（BitMEX 0.0276%の2.7倍）、標準偏差0.0131%（BitMEX比2.9倍）。HLのFRは92%の期間でプラス。ETHはBTCより35%高いボラ。機関資本が$65.7B OIの12%を占めFRスパイクを圧縮。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> HLのFRが構造的にCEX比高ボラである定量的根拠。K196のHLサイドでの受取FR期待値がBitMEX比2.7〜2.9倍というデータはポジションサイジングの入力値として直接利用可能。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — HL vs CEXのFR標準偏差比（ETH: 3.4倍）をシグナル強度の標準化係数として組み込む。ETH対BTC高ボラ特性を利用してETH比重をやや高める設定を検討。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://www.mdpi.com/2227-7390/14/2/346" target="_blank">Two-Tiered Structure of Cryptocurrency Funding Rate Markets (MDPI Mathematics, 2026)</a></div>
+  <div class="ef-source">MDPI Mathematics · 2026-05-25</div>
+  <div class="ef-summary">2600万件の1分足観測（26取引所、749銘柄）を分析。CEXがDEXより61%高い統合度を持ち、情報フローはCEX→DEXの一方通行。観測の17%が20bps超スプレッドを示すが、コスト控除後に正のリターンを生む機会は40%のみ。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> K196の戦略ロジック（CEXで価格発見→HLに遅延）の学術的裏付け。コスト後利益率40%という数字はK196のエントリー閾値設計の外部ベンチマークとして有用。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — 20bps未満スプレッドはスキップするフィルタを追加検討。「20bps超スプレッドの中でコスト後利益40%」というベースレートをK197閾値最適化のベンチマークとして使用。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://www.mdpi.com/2227-7072/14/5/103" target="_blank">Temporal Dynamics of Market Microstructure in Crypto Perps: CEX-DEX GARCH/Granger分析 (MDPI IJFS, 2026)</a></div>
+  <div class="ef-source">MDPI Int'l Journal of Financial Studies · 2026-05-25</div>
+  <div class="ef-summary">26取引所・812銘柄の910万件時間足FR観測（2025/11-2026/1）でGARCH(1,1)・Bai-Perron構造破断・Granger VAR適用。CEX-DEXの二層構造が定性的に持続するも、変動幅は銘柄間で大きく異なる。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> K196のFRスプレッド戦略が「構造的かつ持続的」であることを統計的に確認。GARCH持続性パラメータがK197のボラティリティレジームフィルタ構築に直接利用可能。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — GARCH(1,1)のβ（ボラ持続性）を銘柄別に推定し、β高い銘柄ではポジションサイズを縮小するレジームフィルタとして実装する。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5290137" target="_blank">Stochastic Modeling of Funding Rate Dynamics with Jumps (Kharat, SSRN 5290137)</a></div>
+  <div class="ef-source">SSRN Working Paper · 2026-05-25</div>
+  <div class="ef-summary">OU平均回帰モデルにGaussian複合ジャンプを加えてFRをモデル化。Euler-Maruyamaベースのジャンプ検出テストを開発、HFT向けローリングウィンドウでリアルタイムパラメータ更新。OOS予測（2024/12/25時点）を実施。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> K196のFR予測モジュールをOU+ジャンプで高度化する具体的手法。ローリングウィンドウにより新規上場後も素早くパラメータ適応可能。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — 既存OUパラメータ推定にジャンプ検出レイヤーを追加し、ジャンプ発生直後の特定方向エントリーシグナルとして実装を検討。K197のFR予測精度向上に直結。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://medium.com/boros-fi/cross-exchange-funding-rate-arbitrage-a-fixed-yield-strategy-through-boros-c9e828b61215" target="_blank">Pendle Boros: クロス取引所FRをFixed Yield化するオンチェーンスワップ</a></div>
+  <div class="ef-source">Boros/Pendle Medium · 2026-05-25</div>
+  <div class="ef-summary">HL vs BinanceのFRスプレッドをYield Unit（YU）スワップで固定利回り化。BTC Oct'25: 平均11.4% APR、ピーク23.5%。ETH Oct'25: 平均9.94%、ピーク23.88%。変動FR曝露をゼロにしながら高リターンを固定。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> K196の変動FRリスクを固定利回りに変換するDeFiプリミティブが実用段階に。FRレート逆転リスクのヘッジ手段として将来的な活用価値がある。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> N — DeFiオーバーヘッド（4脚実行、wBTC信頼リスク、$6桁USDC上限）が現状フレームワークには重い。スケール拡大フェーズで再評価する。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://hyperliquid.gitbook.io/hyperliquid-docs/trading/portfolio-margin" target="_blank">Hyperliquid Portfolio Margin: スポット-パープ相殺とCarry Trade効率化 (2025年12月ローンチ)</a></div>
+  <div class="ef-source">Hyperliquid Docs · 2026-05-25</div>
+  <div class="ef-summary">2025年12月23日メインネット公開。スポット残高でパープショートをヘッジする際にPnLを相殺し、レバレッジ10倍なら名目の1/10のみ担保拘束。価格変動時の自動再バランスで取引コスト大幅削減。借入利率: 5%基礎（80%利用率超で急増）APY。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> K196のスポット-パープ同時保有型carry戦略の担保効率が劇的に改善。同じ資本で従来より高いシャープを狙える可能性。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — K197でPortfolio Marginを有効化したアカウントでcarry戦略をテスト。担保効率改善により同額資本で実効リターン1.5〜2倍が期待できる。マスターアカウント要件（$5M出来高）の事前確認が必要。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://arxiv.org/html/2602.00776v1" target="_blank">Explainable Microstructure Patterns in Crypto: CatBoost+SHAPで普遍的特徴を特定 (Warsaw, arXiv 2602.00776)</a></div>
+  <div class="ef-source">arXiv q-fin.TR · 2026-05-25</div>
+  <div class="ef-summary">Binance Futures 2022-2025（1秒足LOB）を5銘柄で分析。OFI・Bid-Ask Spread・VWAP乖離が時価総額に依存せず普遍的に最重要特徴。テイカー戦略はROSEで年利7.0（IR 5.28）を達成。メイカー戦略は2025年10月フラッシュクラッシュで壊滅的損失。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> K196がメイカーフィルでの収益を組み込む場合、フラッシュクラッシュ時の逆選択リスクを定量化すべき。OFI「極値で飽和」特性をシグナル設計に活用可能。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — OFIベースのエントリーフィルタ（OFI極値時はスキップ）とVOL急上昇時のメイカーポジション一時停止ルールをK197に追加。HL LOBデータで同様のSHAP分析を実行することを提案。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://blog.1token.tech/crypto-quant-strategy-index-x-feb-2026/" target="_blank">Crypto Quant Strategy Index X (Feb 2026) — FYpGE新指標とFR裁定ベンチマーク (1Token)</a></div>
+  <div class="ef-source">1Token Blog · 2026-05-25</div>
+  <div class="ef-summary">AUM $100億超の12チームの裁定指数を分析。新指標「FYpGE（粗エクスポージャー当たり資金調達利回り）」を業界標準として提案。裁定戦略のβ=0.0885（BTC/ETH/SOL集中・高分散化）。ロングショートのβ=0.0672（高分散化）。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> FYpGEという標準指標でK196の資金調達効率を外部ベンチマークと比較できる。BTC/ETH/SOL集中の裁定戦略が業界の大勢であり、K197でのユニバース拡張方向性を支持。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — K196のパフォーマンスをFYpGEで測定し業界平均との乖離を定量化。FYpGE低下傾向なら新銘柄探索フェーズへ移行する判断トリガーとして使用。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://oakresearch.io/en/reports/protocols/hyperliquid-hype-s1-2025-activity-report" target="_blank">Hyperliquid S1 2025 Activity Report: 73%DEXシェア・OI $7.5B・収益$406M (OAK Research)</a></div>
+  <div class="ef-source">OAK Research · 2026-05-25</div>
+  <div class="ef-summary">HLはDEXパープの73%シェア（Binanceの12%相当）。OI $7.5B（ByBitの61%）。清算総額$53B。HLP純利益$68M（年利11%）。月次フィー収益は日次$3M超。HyperEVMは立ち上げ4ヶ月でTVL $2.08Bに到達。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> HLの市場シェアと流動性急増により裁定ポジションの執行コストが改善傾向。新規上場ラッシュ（PUMP, TRUMP等）は高FR銘柄の発掘機会を提供。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — HL OI増加に連動したスリッページ改善を次回バックテストで確認。新規上場銘柄の初期FR（通常高い）を狙うエントリーロジックをK198で試験実装する。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://docs.ethena.fi/solution-overview/risks/funding-risk" target="_blank">Ethena USDe $7.83B流動性がFRスパイクを即時圧縮: 裁定の構造的上限 (Ethena Docs)</a></div>
+  <div class="ef-source">Ethena Docs / BitMEX Analysis · 2026-05-25</div>
+  <div class="ef-summary">Ethena USDe等のデルタニュートラルプロダクトが$7.83Bの未展開流動性（全体OI $65.7Bの12%）を保有。FRスパイク時に即時ショートを追加してスプレッドを圧縮。2025年中頃に平均FR利回りが4%未満に低下。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> K196戦略が依存するFRスプレッドの「天井」を機関資本が実質設定。Ethena TVL急減（脱出フロー）時にFRスパイクが発生する先行シグナルとして活用可能。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> Y — Ethena TVL動向をFRスプレッド上限のプロキシとしてモニタリングし、TVL急減時はFRスパイク発生の先行シグナルとして活用。K197のシグナル設計に外部データソースとして追加。</div>
+</div>
+
+<div class="ef-card">
+  <div class="ef-title"><a href="https://github.com/hamood1337/CryptoFundingArb" target="_blank">CryptoFundingArb: HL/Binance/Bybit/OKX等6取引所FRスキャナー (GitHub OSS)</a></div>
+  <div class="ef-source">GitHub · 2026-05-25</div>
+  <div class="ef-summary">PythonでHL・Binance・Bybit・KuCoin・Kraken・OKXの6取引所FRをスキャンし、クロス取引所スプレッドをバーチャートで可視化するOSSツール。レートリミット対策の逐次取得実装。バックテスト・フィー計算・BBシグナルはロードマップ段階。</div>
+  <div class="ef-relevance"><strong>関連性:</strong> K196の対象（HL-Bybit）以外のスプレッド機会（HL-KuCoin, HL-OKX等）を定期スキャンするベースとして利用可能。</div>
+  <div class="ef-action"><strong>テスト価値:</strong> N — バックテスト機能なし・フィー計算なしで現状実用的でない。HL-Bybit以外のペアスキャン追加の参考コードとして保存し、K197の多ペア展開時に参照する。</div>
+</div>
