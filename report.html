@@ -494,13 +494,13 @@
       </p>
 
       <div style="background:rgba(63,185,80,0.20);padding:14px;border-radius:8px;margin-top:14px;border-left:5px solid var(--accent-green);">
-        <h3 style="color:var(--accent-green);margin-bottom:8px;">🏆 最新推奨ポートフォリオ v4: 7-way Mix (Sh +3.88, §6 8/8 PASS)</h3>
-        <p style="font-size:0.92rem;"><strong>v4 構成 (Wave K78)</strong>: ATR×8 (0.245) + FOPD×5 (0.245) + ATR_8H BONK/SHIB (0.061+0.061) + vol_MR×4 (0.108) + OI capit×7 (0.180) + <strong style="color:var(--accent-orange);">BB squeeze×8 (0.100) 新</strong></p>
-        <p style="font-size:0.88rem;color:var(--accent-cyan);"><em>進化: v1 (5-way 80/10/10+vol_MR) Sh+3.61 → v2 (DOT除外) Sh+3.65 → v3 (+OI capit) Sh+3.62 → <strong>v4 (+BB squeeze) Sh+3.88</strong></em></p>
+        <h3 style="color:var(--accent-green);margin-bottom:8px;">🏆 最新推奨ポートフォリオ v4.1: BB squeeze + RSI filter (Sh +4.08, K97)</h3>
+        <p style="font-size:0.92rem;"><strong>v4.1 構成 (Wave K97)</strong>: 5-axis v2 (0.85) + OI capit (0.20×0.85) + <strong style="color:var(--accent-orange);">BB squeeze + RSI extreme avoid (0.15) 改良版</strong></p>
+        <p style="font-size:0.88rem;color:var(--accent-cyan);"><em>進化: v1 Sh+3.61 → v2 Sh+3.65 → v3 Sh+3.62 → v4 Sh+3.88 → <strong>v4.1 Sh+4.08 (RSI extreme avoid filter)</strong></em></p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:10px;font-size:0.88rem;">
           <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;text-align:center;">
-            <div style="color:var(--text-secondary);font-size:0.75rem;">v4 Observed Sharpe</div>
-            <div style="font-size:1.8rem;font-weight:700;color:var(--accent-green);">+3.88</div>
+            <div style="color:var(--text-secondary);font-size:0.75rem;">v4.1 Observed Sharpe</div>
+            <div style="font-size:1.8rem;font-weight:700;color:var(--accent-green);">+4.08</div>
           </div>
           <div style="background:var(--bg-secondary);padding:10px;border-radius:6px;text-align:center;">
             <div style="color:var(--text-secondary);font-size:0.75rem;">Block Boot 95% CI</div>
@@ -1172,6 +1172,13 @@ Plotly.newPlot('sc-fopd-rs', [{
       </div>
     </div>
 
+    <!-- ============= 古い Wave 履歴 (折りたたみ) ============= -->
+    <details style="margin-top:18px;background:rgba(48,54,61,0.4);border-radius:8px;padding:8px 14px;">
+      <summary style="cursor:pointer;color:var(--accent-orange);font-weight:600;font-size:1.05rem;padding:8px 0;">
+        ▼ 過去 Wave 履歴 (K1-K38) を展開 — 5月23-24日初期の発見・stress test・MC simulation 等
+      </summary>
+      <div style="margin-top:12px;">
+
     <!-- ── Wave K8: 90日窓 100% positive Stress Test (2026-05-24 03:45 JST) ── -->
     <div class="card" style="border-left:4px solid var(--accent-green);background:linear-gradient(180deg,rgba(63,185,80,0.15),transparent);">
       <h3 style="color:var(--accent-green);">🎯 Wave K8: Stress Test — 過去640個の90日窓 100% Positive (BTC暴落でも +3% 維持)</h3>
@@ -1286,6 +1293,38 @@ Plotly.newPlot('sc-fopd-rs', [{
         但しこれは<strong>過去730日と同分布前提</strong>の前向き推計。実際は構造変化リスクを織り込む必要あり。
       </p>
     </div>
+      </div>
+    </details>
+    <!-- ============= 古い Wave 履歴 終了 ============= -->
+
+    <!-- ============= LATEST FINDING — v4.1 (K97) ============= -->
+    <div class="card" style="border:3px solid var(--accent-green);background:linear-gradient(135deg,rgba(63,185,80,0.20),rgba(63,185,80,0.05));padding:20px;margin-top:18px;">
+      <h3 style="color:var(--accent-green);font-size:1.3rem;">🚀 最新発見 (Wave K97): BB Squeeze + RSI Filter → v4.1 mix Sh +4.08</h3>
+      <p style="font-size:0.95rem;margin-top:10px;">
+        BB squeeze breakout の false signal を RSI extreme avoid filter (RSI 30-70 のみ) で除去。<br>
+        Standalone Sharpe: <strong style="color:var(--accent-green);">+1.79</strong> (vs original BB squeeze +1.50), DD <strong>-4.6%</strong> (vs -16.2%).<br>
+        v4.1 mix (w_bb=0.15): <strong style="color:var(--accent-green);">Sharpe +4.08</strong> (vs v4 +3.88, ΔSh +0.20).
+      </p>
+      <table class="data-table" style="width:100%;font-size:0.85rem;margin-top:10px;">
+        <thead><tr><th>w_bb</th><th>Sharpe</th><th>Return (730d)</th><th>DD</th></tr></thead>
+        <tbody>
+          <tr><td>0.00 (v3 only)</td><td>+3.615</td><td>+49.3%</td><td>-1.25%</td></tr>
+          <tr><td>0.10 (v4 original BB)</td><td>+3.881</td><td>+51.3%</td><td>-1.12%</td></tr>
+          <tr style="background:rgba(63,185,80,0.15);"><td><strong>0.15 (v4.1 with RSI filter)</strong></td><td class="text-green"><strong>+4.078</strong></td><td>+51.3%</td><td>-1.05%</td></tr>
+          <tr><td>0.20</td><td>+4.079</td><td>+51.9%</td><td>-1.10%</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.85rem;margin-top:8px;color:var(--accent-cyan);">
+        Plateau: w_bb ∈ [0.10, 0.20] all Sh > +3.99. 推奨: w_bb=0.15 (DD最小)。
+      </p>
+    </div>
+
+    <!-- ── 過去発見の折りたたみ (K39-K78) ── -->
+    <details style="margin-top:18px;background:rgba(48,54,61,0.4);border-radius:8px;padding:8px 14px;">
+      <summary style="cursor:pointer;color:var(--accent-orange);font-weight:600;font-size:1.05rem;padding:8px 0;">
+        ▼ 過去発見 Wave K39-K91 (中期成果: per-symbol decomposition、4-way mix → v3 → v4 進化、§6 audit 結果)
+      </summary>
+      <div style="margin-top:12px;">
 
     <!-- ── Wave K39: Per-symbol contribution (2026-05-23) ── -->
     <div class="card" style="border-left:4px solid var(--accent-purple);">
@@ -1617,6 +1656,9 @@ Plotly.newPlot('sc-fopd-rs', [{
         <li><strong>意義</strong>: alpha は構成軸だけでなく <strong>leg 純化</strong> によっても向上。今後の最適化方針</li>
       </ul>
     </div>
+      </div>
+    </details>
+    <!-- ============= 過去発見の折りたたみ 終了 ============= -->
 
     <!-- ── Wave K17-K21: Production推奨 + 多角stress + 探索終結 (2026-05-24 05:05 JST) ── -->
     <div class="card" style="border-left:4px solid var(--accent-purple);background:linear-gradient(180deg,rgba(188,140,255,0.10),transparent);">
