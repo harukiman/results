@@ -1,0 +1,126 @@
+{
+  "wave": "K228",
+  "strategy": "Stablecoin Mint/Burn USDT+USDC Liquidity Proxy",
+  "data_source": "DefiLlama stablecoincharts/all (id=1 USDT, id=2 USDC), free no-auth",
+  "generated_at": "2026-05-24T22:53:47.643094+00:00",
+  "runtime_s": 0.23,
+  "date_range": {
+    "start": "2024-05-23",
+    "end": "2026-05-22",
+    "n_days": 730
+  },
+  "supply_snapshot": {
+    "date": "2026-05-22",
+    "USDT_B": 189.59,
+    "USDC_B": 77.05,
+    "TOTAL_B": 266.63,
+    "mint_1d_M": 727.9,
+    "mint_7d_sum_B": 0.19,
+    "mint_7d_z": -0.3879,
+    "current_signal": 0
+  },
+  "design": {
+    "z_threshold": 1.5,
+    "net_flow_window": 7,
+    "z_window": 90,
+    "cost_per_side_bps": 7.0,
+    "oos_n_days": 135
+  },
+  "full_sample": {
+    "sharpe": 1.5997,
+    "ann_return": 0.3043,
+    "ann_vol": 0.1902,
+    "max_drawdown": -0.1607,
+    "win_rate": 0.4326,
+    "long_days": 58,
+    "short_days": 49,
+    "cash_days": 623,
+    "n_days": 730
+  },
+  "is_metrics": {
+    "sharpe": 1.3591,
+    "ann_ret": 0.2625,
+    "ann_vol": 0.1931,
+    "max_dd": -0.1607,
+    "n_days": 595
+  },
+  "oos_135d": {
+    "oos_sharpe": 2.7665,
+    "oos_ann_ret": 0.4883,
+    "oos_ann_vol": 0.1765,
+    "oos_max_dd": -0.0299,
+    "oos_n_days": 135
+  },
+  "walk_forward": {
+    "fold_sharpes": [
+      2.0199,
+      0.5669,
+      0.5561,
+      2.8889
+    ],
+    "wf_mean": 1.5079,
+    "wf_min": 0.5561,
+    "wf_max": 2.8889,
+    "wf_std": 0.9951,
+    "all_positive": true,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2024-05-23",
+        "end": "2024-11-20",
+        "n_days": 182,
+        "sharpe": 2.019882020182117,
+        "ann_ret": 0.5801507570196952,
+        "max_dd": -0.16065013638516548
+      },
+      {
+        "fold": 2,
+        "start": "2024-11-21",
+        "end": "2025-05-21",
+        "n_days": 182,
+        "sharpe": 0.5669285289348847,
+        "ann_ret": 0.06847170953045127,
+        "max_dd": -0.060621546412507984
+      },
+      {
+        "fold": 3,
+        "start": "2025-05-22",
+        "end": "2025-11-19",
+        "n_days": 182,
+        "sharpe": 0.5560569667574952,
+        "ann_ret": 0.0751382210721628,
+        "max_dd": -0.07675352348214814
+      },
+      {
+        "fold": 4,
+        "start": "2025-11-20",
+        "end": "2026-05-22",
+        "n_days": 184,
+        "sharpe": 2.8888868470921993,
+        "ann_ret": 0.49279807302330214,
+        "max_dd": -0.029885385116993766
+      }
+    ]
+  },
+  "correlations": {
+    "K228_vs_K198": 0.1239,
+    "K198_n_overlap": 448,
+    "K228_vs_K204": 0.1113,
+    "K204_n_overlap": 448,
+    "K228_vs_K208": -0.0022,
+    "K208_n_overlap": 729,
+    "K228_vs_K225": 0.2827,
+    "K225_n_overlap": 514,
+    "K228_vs_K226": 0.2968,
+    "K226_n_overlap": 488
+  },
+  "acceptance_gates": {
+    "gate_sharpe_pass": true,
+    "gate_corr_pass": true,
+    "gate_wf_positive": true,
+    "all_pass": true
+  },
+  "verdict": "ACCEPT \u2192 K229 K228 integration",
+  "verdict_detail": "**ACCEPT \u2192 K229 K218 integration.** All gates pass. OOS Sharpe > 1.0, all WF folds positive, |\u03c1| < 0.5 with every K218/K225/K226 component. Stablecoin mint/burn is a genuinely independent liquidity proxy signal.",
+  "accepted": true
+}
