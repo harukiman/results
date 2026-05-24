@@ -759,10 +759,10 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 04:30 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 06:15 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
-    <strong>🏆 PRODUCTION v6 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K188 9戦略 ensemble OOS Sh +5.48 / MaxDD -0.45% (Safer Carry, cap 7%)</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐ K188 = K176 + V_carry_panel (ETH35/DOGE30/AVAX25/BTC10, K186 decay-aware)</span> &nbsp;|&nbsp;
-    <strong>12 ACCEPT base + 5 ensembles (K124/K136/K149/K176/K188) / 47 REJECT / 3 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#fa6;font-weight:700;">⛓ K179 On-Chain Whale Flow REJECT: OOS gross Sh +1.51 / needs maker &le;8bp or Glassnode paid</span>
+    <strong>🏆 PRODUCTION v6.1 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K192 9戦略 ensemble OOS Sh +5.65 / MaxDD -0.47% / WF std 1.31</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐⭐ K192 = K188 + DAR(2,1) K175 filter, OSh +0.17 lift, WF fold min 2.376→2.984</span> &nbsp;|&nbsp;
+    <strong>12 ACCEPT base + 6 ensembles (K124/K136/K149/K176/K188/K192) / 47 REJECT / 3 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#fa6;font-weight:700;">⛓ K179 onchain REJECT OOS gross +1.51 / K190 DAR filter ACCEPT 6/7</span>
   </div>
 
   <header class="report-header">
@@ -7516,7 +7516,22 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
-          <summary><strong>★★★★★ 2026-05-25 5:30 JST — K188 NEW PRODUCTION v6 SAFER (9戦略, carry cap 7% decay-aware)</strong></summary>
+          <summary><strong>★★★★★★ 2026-05-25 6:15 JST — K192 NEW PRODUCTION v6.1 (K188 + DAR FR filter)</strong></summary>
+          <ul>
+            <li><strong>K192 = K188 + DAR(2,1) K175 filter</strong> (R7-4 academic 実証 from K190)</li>
+            <li>OOS Sh: K188 5.48 → <strong>K192a 5.65</strong> (+0.17 lift, 3.3x acceptance margin)</li>
+            <li>WF stability dramatically improved: fold min 2.376 → <strong>2.984</strong> (+0.608), std 2.23 → 1.31 (-38%)</li>
+            <li>K175 standalone OOS net Sh: 2.068 → 2.193 (DAR_a) → 2.299 (DAR_b)</li>
+            <li>49% trade reduction (operational benefit: lower fill-miss/adverse selection/overhead)</li>
+            <li>8/8 cells improve, MaxDD essentially equal (-0.47% vs -0.45%)</li>
+            <li><strong>Mechanism</strong>: DAR(2,1) direction-only filter (66% direction accuracy on next FR) eliminates K175 entries when predicted FR is K175-unfavorable</li>
+            <li>K175_DAR vs other 8 components: max |r|=0.085 (slight negative with carry = desirable counter)</li>
+            <li><strong>ENSEMBLE 進化 final</strong>: v4.1単独 → K124 → K136 → K149 → K176 → K188 → <strong>K192 (5.65) v6.1</strong></li>
+            <li>v6.1 spec: 9 components, P3 risk-parity, K121 cap30, carry cap7%, K175 with DAR filter</li>
+          </ul>
+        </details>
+        <details>
+          <summary><strong>★★★★★ 2026-05-25 5:30 JST — K188 PRODUCTION v6 SAFER (K192 で更新)</strong></summary>
           <ul>
             <li><strong>K188 = K176 + V_carry_panel_weighted</strong> (ETH35/DOGE30/AVAX25/BTC10 sub-alloc, total 7% cap)</li>
             <li>OOS Sh: K176 5.39 → K185 cap20 5.64 → <strong>K188 cap7 5.48</strong> (+0.10 lift, near-miss strict +0.10)</li>
