@@ -759,10 +759,10 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 15:30 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 16:00 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
-    <strong>🏆 PRODUCTION v6.4 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K196 9戦略 + reverse carry OOS Sh +9.20 / MaxDD -0.38% / HL net -5.1%</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐⭐⭐ K196 = K195 + reverse carry (10 opposite-spread sym), counterparty risk 48.8% 削減</span> &nbsp;|&nbsp;
-    <strong>12 ACCEPT base + 9 ensembles (K124/K136/K149/K176/K188/K192/K194/K195/K196) / 48 REJECT / 4 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#f88;font-weight:700;">⚠ K196 caveat: alpha は recent regime (post-2025 sign flip), 6mo effective history, quarterly spread sign monitor 必須</span>
+    <strong>🏆 PRODUCTION v6.4 CONDITIONAL:</strong> <span style="color:var(--accent-green);font-weight:700;">K196 + cap5% (K197 reduced) Sh 真の forward E[Sh] 5.5-7.0 (post-K197 stress)</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">K195 (Sh 5.77) は safer alternative</span> &nbsp;|&nbsp;
+    <strong>12 ACCEPT base + 9 ensembles (K124/K136/K149/K176/K188/K192/K194/K195/K196) / 48 REJECT / 5 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:#f88;font-weight:700;">⚠ K197: P(no flip 12m)=18.6%, deactivation T1/T2/T3 + cap 5% 必須, K198 ML allocator 検証中</span>
   </div>
 
   <header class="report-header">
@@ -7531,7 +7531,39 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
-          <summary><strong>★★★★★★★★★ 2026-05-25 15:30 JST — K196 NEW PRODUCTION v6.4 (reverse carry, OOS Sh 9.20, HL net -5.1%)</strong></summary>
+          <summary><strong>⚠★★ 2026-05-25 16:00 JST — K197 stress test = K196 v6.4 CONDITIONAL (cap 5%, 真の E[Sh] 5.5-7.0)</strong></summary>
+          <ul>
+            <li><strong>K197 = K196 v6.4 stress test (5 scenarios + capital efficiency + deactivation trigger)</strong></li>
+            <li>★ <strong>K196 真の Sharpe は 7.13</strong> (9.20 でなく — recent-regime conditional value だった)</li>
+            <li>Flip-back scenarios: 全 worst case (10/10 sym flip 90d) でも portfolio Sh 6.92 維持 (non-carry 80% base が floor 提供)</li>
+            <li><strong>Forward-looking risk</strong>: 3 regime flips / 21.4mo → Poisson rate 0.14/mo
+              <ul>
+                <li>P(no flip in 12mo) = <strong>18.6%</strong> (essentially guaranteed to flip)</li>
+                <li>P(no flip in 24mo) = <strong>3.5%</strong></li>
+                <li>24-month E[Sh] = 6.88 (no trigger) / 4.69 (with trigger)</li>
+              </ul>
+            </li>
+            <li><strong>Capital efficiency K195 が勝つ</strong>:
+              <ul>
+                <li>K195: 3.0% AUM margin / Sh/M\$ 192.3</li>
+                <li>K196: 6.1% AUM margin / Sh/M\$ 151.5</li>
+                <li>→ Capital constrained 環境では K195 推奨</li>
+              </ul>
+            </li>
+            <li><strong>Deactivation trigger 仕様 (production-ready)</strong>:
+              <ul>
+                <li>T1: per-symbol 30d rolling Sh &lt; -2.0 → halt that sym</li>
+                <li>T2: panel 30d Sh &lt; 0 → halt entire reverse panel</li>
+                <li>T3: -2% loss circuit breaker</li>
+              </ul>
+            </li>
+            <li><strong>CONDITIONAL ACCEPT</strong>: K196 v6.4 deployment は **cap 10% → 5% に縮減**, 6mo post-flip stability 確認まで保留</li>
+            <li>K198 ML allocator (R7-3 Talyxion-inspired) で dynamic regime adaptation 検証中</li>
+            <li>K199 (next): K196 with cap 5% + T1/T2/T3 を re-validate</li>
+          </ul>
+        </details>
+        <details>
+          <summary><strong>★★★★★★★★★ 2026-05-25 15:30 JST — K196 PRODUCTION v6.4 (K197 で reduce 推奨)</strong></summary>
           <ul>
             <li><strong>K196 = K195 + V_reverse_carry_panel (LONG HL + SHORT Bybit on K189 opposite-spread 10 sym)</strong></li>
             <li>Reverse panel: SOL/XRP/SUI/OP/APT/AXS/JTO/IMX/SAND/ADA</li>
