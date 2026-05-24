@@ -3932,3 +3932,22 @@ K39/K41 の wash trade 仮説を実装版で検証:
 - **55 戦略候補テスト**
 - **5 採用** (FOPD, 8H Meme, vol_z MR, OI capit, BB squeeze)
 - 成功率 9%
+
+## Wave K93-K94: 拡張検証 (2026-05-23)
+
+### K93: 1100-day extended history (中断)
+- BTC/ETH/SOL/BNB/DOGE で 1100 日 (3年) データ確認 (2023-05-20 - 2026-05-24)
+- 1100日での v4 検証は API rate-limit で時間掛かり中断 (cache 不足)
+- 730d 結果が代表値として使用継続
+
+### K94: v4 vol regime stratification (own 30d vol)
+| Regime (vol pct) | n days | v4 Sharpe | v3 Sharpe |
+|------------------|--------|-----------|-----------|
+| Q1 (low) | 147 | +2.67 | +3.17 |
+| Q2 (mid-low) | 62 | +0.96 | +1.42 |
+| Q3 (mid-high) | 332 | +4.56 | +3.88 |
+| Q4 (high) | 188 | +4.41 | +4.70 |
+
+- 全 quartile で positive Sharpe
+- 高 vol regime (Q3, Q4) で v4 が圧倒的 (FOPD/OI capit が活躍)
+- Q2 が最弱だが +0.96 で実害なし
