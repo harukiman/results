@@ -3603,3 +3603,24 @@ K21 で却下した「Wed long + Thu short」を ATR compression filter (atr_5 /
 - 銘柄ごとに方向違う → robust ではない
 - BNB combined -0.68 が portfolio drag
 - **K21 棄却維持**
+
+## Wave K44 — Production v2 proposal: DOT 除外 mix (2026-05-23)
+
+K39/K41 の wash trade 仮説を実装版で検証:
+
+**変更**: FOPD レッグから DOTUSDT 除外、他構造は不変
+
+| Metric | v1 (DOT入り) | v2 (DOT 除外) | Δ |
+|--------|--------------|---------------|---|
+| Sharpe | +3.607 | **+3.654** | +0.047 |
+| Total Return (730d) | +66.0% | **+68.0%** | +2.0% |
+| Max DD | -1.8% | **-1.7%** | +0.1% |
+| Calmar | 16.04 | **17.03** | +0.99 |
+| 60d pos % | 100.0% | 100.0% | — |
+
+**結論**: 全 metric で v2 が僅かに優位。production 移行推奨。
+**FOPD v2 銘柄**: BNB / AVAX / ETH / ADA / LINK
+
+### 運用への提言
+- 次回 paper_trade daemon 改訂時に v2 へ
+- 一般原則: 「wash trade leg は抜く」が成立 — 今後の最適化方針として確立
