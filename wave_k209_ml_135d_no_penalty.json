@@ -1,0 +1,1154 @@
+{
+  "wave": "K209",
+  "task": "ML allocator: 135d training window + NO DD penalty (K205 prescription #1+#2)",
+  "as_of": "2026-05-24T21:36:33.718279+00:00",
+  "runtime_s": 3.9,
+  "config": {
+    "strategies": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ],
+    "n_strategies": 10,
+    "ml_train_days": 135,
+    "ml_test_days": 30,
+    "dd_penalty": "NONE \u2014 removed per K205 diagnostic (Ridge already encodes DD in 103 features)",
+    "oos_frac": 0.3,
+    "k121_cap": 0.3,
+    "carry_fwd_cap": 0.1,
+    "carry_rev_cap": 0.1,
+    "fr_threshold": -0.009735,
+    "feature_win_short": 30,
+    "feature_win_long": 90,
+    "target_horizon_days": 30,
+    "ridge_alpha": 1.0,
+    "n_baseline_features": 51,
+    "n_new_dd_features": 52,
+    "n_total_features": 103,
+    "k209_changes_vs_k205": [
+      "train_window: 180 -> 135 (midpoint K198-K205, balance OOS and cold-start)",
+      "removed soft DD penalty (Ridge already learns DD via 103 features)",
+      "feature matrix identical to K205 (103 features: K204 minus dd_max30)"
+    ],
+    "date_range": [
+      "2024-07-26",
+      "2026-05-14"
+    ],
+    "n_days_total": 658,
+    "n_days_ml_window": 403
+  },
+  "four_way_comparison": {
+    "K198_v6.5_baseline": {
+      "oos_sharpe": 10.28,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.91,
+      "wf_min": 6.57,
+      "n_features": 51,
+      "window_days": 90,
+      "dd_penalty": "none",
+      "status": "PRODUCTION"
+    },
+    "K204_rejected": {
+      "oos_sharpe": 10.36,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.5451,
+      "wf_min": 6.02,
+      "wf_fold_sharpes": [
+        6.023,
+        6.2648,
+        8.1003,
+        9.7924
+      ],
+      "n_features": 113,
+      "window_days": 90,
+      "dd_penalty": "none",
+      "status": "REJECTED",
+      "reject_reason": "WF min 6.02 < 6.57 threshold; cold-start with 90d window"
+    },
+    "K205_rejected": {
+      "oos_sharpe": 9.22,
+      "oos_maxdd": -0.0039,
+      "wf_mean": 8.52,
+      "wf_min": 6.46,
+      "wf_fold_sharpes": [
+        6.46,
+        8.52,
+        9.0,
+        10.1
+      ],
+      "n_features": 103,
+      "window_days": 180,
+      "dd_penalty": "2.0 coef (double-counts Ridge DD features)",
+      "status": "REJECTED",
+      "reject_reason": "OOS Sh 9.22 < 10.28 K198; soft DD penalty double-counts with Ridge DD features"
+    },
+    "K209_prescription": {
+      "oos_sharpe": 8.8562,
+      "oos_maxdd": -0.027,
+      "oos_sortino": 11.3359,
+      "oos_calmar": 30.0871,
+      "oos_ann_ret": 0.8115,
+      "oos_ann_vol": 0.0674,
+      "wf_mean": 6.5934,
+      "wf_min": 3.4614,
+      "wf_max": 9.1606,
+      "wf_std": 2.2519,
+      "wf_fold_sharpes": [
+        8.2406,
+        5.511,
+        3.4614,
+        9.1606
+      ],
+      "n_features": 103,
+      "window_days": 135,
+      "dd_penalty": "none",
+      "sh_lift_vs_k198": -1.4238,
+      "sh_lift_vs_k205": -0.3638,
+      "dd_lift_vs_k198": -0.0217,
+      "wf_min_lift_vs_k198": -3.1086,
+      "wf_mean_lift_vs_k205": -1.9266,
+      "status": "REJECT"
+    }
+  },
+  "acceptance_criteria": {
+    "AC1_oos_sh_ge_k198": {
+      "pass": false,
+      "required": 10.28,
+      "actual": 8.8562,
+      "lift": -1.4238,
+      "note": "primary: OOS Sh must beat K198 production"
+    },
+    "AC2_maxdd_comparable": {
+      "pass": false,
+      "required": -0.0053,
+      "actual": -0.027,
+      "note": "relaxed: -0.004x to -0.005x acceptable"
+    },
+    "AC3_wf_min_ge_k198": {
+      "pass": false,
+      "required": 6.57,
+      "actual": 3.4614,
+      "lift": -3.1086,
+      "note": "primary: cold-start fix verification"
+    },
+    "AC4_wf_mean_ge_k205": {
+      "pass": false,
+      "required": 8.52,
+      "actual": 6.5934,
+      "lift": -1.9266,
+      "note": "keep K205 stability gain"
+    },
+    "hard_criteria_pass": false,
+    "all_4_pass": false
+  },
+  "per_fold_breakdown_threeway": [
+    {
+      "fold": 1,
+      "K209_sharpe": 8.2406,
+      "K205_fold_ref": 6.46,
+      "K204_fold_ref": 6.023,
+      "K209_vs_K205": 1.7806,
+      "K209_vs_K204": 2.2176,
+      "vs_K198_wf_min": 1.6706
+    },
+    {
+      "fold": 2,
+      "K209_sharpe": 5.511,
+      "K205_fold_ref": 8.52,
+      "K204_fold_ref": 6.2648,
+      "K209_vs_K205": -3.009,
+      "K209_vs_K204": -0.7538,
+      "vs_K198_wf_min": -1.059
+    },
+    {
+      "fold": 3,
+      "K209_sharpe": 3.4614,
+      "K205_fold_ref": 9.0,
+      "K204_fold_ref": 8.1003,
+      "K209_vs_K205": -5.5386,
+      "K209_vs_K204": -4.6389,
+      "vs_K198_wf_min": -3.1086
+    },
+    {
+      "fold": 4,
+      "K209_sharpe": 9.1606,
+      "K205_fold_ref": 10.1,
+      "K204_fold_ref": 9.7924,
+      "K209_vs_K205": -0.9394,
+      "K209_vs_K204": -0.6318,
+      "vs_K198_wf_min": 2.5906
+    }
+  ],
+  "cold_start_analysis": {
+    "early_steps_1_5": {
+      "n_steps": 5,
+      "mean_train_days": 135.0,
+      "min_train_days": 135,
+      "mean_r2": 0.9658,
+      "mean_dir_acc": 0.78
+    },
+    "middle_steps": {
+      "n_steps": 4,
+      "mean_train_days": 135.0,
+      "min_train_days": 135,
+      "mean_r2": 0.9586,
+      "mean_dir_acc": 0.825
+    },
+    "late_steps": {
+      "n_steps": 5,
+      "mean_train_days": 135.0,
+      "min_train_days": 135,
+      "mean_r2": 0.9671,
+      "mean_dir_acc": 0.84
+    },
+    "interpretation": "135d window (midpoint K198 90d vs K205 180d). Cold-start is partially alleviated vs K204 90d. Without DD penalty, Ridge's dd30/dd90/mdd30 features drive allocation directly."
+  },
+  "feature_importance_k209": {
+    "top_30": {
+      "K116__dd90": 2.004046,
+      "V_rev_carry__dd90": 1.755452,
+      "K114__sh_neg30": 1.61872,
+      "V1__dd90": 1.497025,
+      "V1__dd30": 1.262359,
+      "K116__vol30": 1.237321,
+      "K121__dd30": 1.237212,
+      "K147__sh_neg30": 1.187255,
+      "V_rev_carry__sh90": 1.155349,
+      "v4.1__dd90": 1.119756,
+      "V_rev_carry__mdd30": 1.105829,
+      "K121__sh30": 1.082857,
+      "K175_DAR__sh90": 1.071451,
+      "V_rev_carry__vol30": 1.059002,
+      "K175_DAR__dd90": 1.055972,
+      "K116__dd30": 1.014218,
+      "V_rev_carry__dd30": 1.00436,
+      "K147__sh90": 0.999766,
+      "K175_DAR__dd30": 0.965939,
+      "K121__mdd30": 0.96044,
+      "V_fwd_carry__sh90": 0.938973,
+      "K114__mdd30": 0.936447,
+      "V_rev_carry__sh30": 0.936152,
+      "K116__mdd30": 0.914665,
+      "K133__dd90": 0.905184,
+      "K121__sh90": 0.875827,
+      "V_rev_carry__sh_neg30": 0.869465,
+      "K116__sh90": 0.834332,
+      "K175_DAR__sh30": 0.828132,
+      "K121__dd90": 0.817527
+    },
+    "n_total_features": 103,
+    "note": "135d window vs K205 180d \u2014 check if DD feature importance shifts"
+  },
+  "ml_predictor_diagnostics": {
+    "overall_mean_r2": 0.9642,
+    "overall_mean_dir_acc": 0.8143,
+    "r2_by_strategy": {
+      "v4.1": {
+        "mean": 0.9565,
+        "median": 0.9717
+      },
+      "V1": {
+        "mean": 0.9618,
+        "median": 0.9606
+      },
+      "K114": {
+        "mean": 0.9409,
+        "median": 0.9606
+      },
+      "K116": {
+        "mean": 0.9693,
+        "median": 0.9784
+      },
+      "K121": {
+        "mean": 0.9719,
+        "median": 0.9719
+      },
+      "K133": {
+        "mean": 0.9597,
+        "median": 0.9599
+      },
+      "K147": {
+        "mean": 0.9428,
+        "median": 0.9466
+      },
+      "K175_DAR": {
+        "mean": 0.9593,
+        "median": 0.9556
+      },
+      "V_fwd_carry": {
+        "mean": 0.9846,
+        "median": 0.987
+      },
+      "V_rev_carry": {
+        "mean": 0.9952,
+        "median": 0.9973
+      }
+    },
+    "dir_acc_by_strategy": {
+      "v4.1": {
+        "mean_dir_acc": 0.6429,
+        "above_55pct": true
+      },
+      "V1": {
+        "mean_dir_acc": 0.9286,
+        "above_55pct": true
+      },
+      "K114": {
+        "mean_dir_acc": 0.7857,
+        "above_55pct": true
+      },
+      "K116": {
+        "mean_dir_acc": 0.7857,
+        "above_55pct": true
+      },
+      "K121": {
+        "mean_dir_acc": 0.7857,
+        "above_55pct": true
+      },
+      "K133": {
+        "mean_dir_acc": 0.7857,
+        "above_55pct": true
+      },
+      "K147": {
+        "mean_dir_acc": 0.8571,
+        "above_55pct": true
+      },
+      "K175_DAR": {
+        "mean_dir_acc": 0.7143,
+        "above_55pct": true
+      },
+      "V_fwd_carry": {
+        "mean_dir_acc": 0.9286,
+        "above_55pct": true
+      },
+      "V_rev_carry": {
+        "mean_dir_acc": 0.9286,
+        "above_55pct": true
+      }
+    },
+    "n_wf_steps": 14,
+    "per_step_summary": [
+      {
+        "step": 0,
+        "train_start": "2024-10-24",
+        "train_end": "2025-03-07",
+        "test_start": "2025-03-08",
+        "test_end": "2025-04-06",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": -1.7589,
+          "V1": 5.3201,
+          "K114": 0.2387,
+          "K116": 4.5451,
+          "K121": -0.8165,
+          "K133": -6.9183,
+          "K147": 5.3129,
+          "K175_DAR": 1.5555,
+          "V_fwd_carry": 8.7763,
+          "V_rev_carry": 15.6025
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.2325,
+          "K114": 0.0104,
+          "K116": 0.1987,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.2322,
+          "K175_DAR": 0.068,
+          "V_fwd_carry": 0.1582,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9762,
+          "V1": 0.9793,
+          "K114": 0.8434,
+          "K116": 0.9319,
+          "K121": 0.9922,
+          "K133": 0.9764,
+          "K147": 0.9694,
+          "K175_DAR": 0.939,
+          "V_fwd_carry": 0.9928,
+          "V_rev_carry": 0.9979
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": false,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": false,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9598,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 1,
+        "train_start": "2024-11-23",
+        "train_end": "2025-04-06",
+        "test_start": "2025-04-07",
+        "test_end": "2025-05-06",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": 7.66,
+          "V1": 0.5724,
+          "K114": 6.3109,
+          "K116": -5.7126,
+          "K121": 1.2975,
+          "K133": 3.0864,
+          "K147": 6.1651,
+          "K175_DAR": 2.1557,
+          "V_fwd_carry": 6.8556,
+          "V_rev_carry": 14.3427
+        },
+        "weights": {
+          "v4.1": 0.2163,
+          "V1": 0.0162,
+          "K114": 0.1782,
+          "K116": 0.0,
+          "K121": 0.0366,
+          "K133": 0.0872,
+          "K147": 0.1741,
+          "K175_DAR": 0.0609,
+          "V_fwd_carry": 0.1305,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9792,
+          "V1": 0.9757,
+          "K114": 0.9524,
+          "K116": 0.9757,
+          "K121": 0.9861,
+          "K133": 0.9744,
+          "K147": 0.9424,
+          "K175_DAR": 0.9219,
+          "V_fwd_carry": 0.9922,
+          "V_rev_carry": 0.9979
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": false
+        },
+        "mean_r2": 0.9698,
+        "mean_dir_acc": 0.9
+      },
+      {
+        "step": 2,
+        "train_start": "2024-12-23",
+        "train_end": "2025-05-06",
+        "test_start": "2025-05-07",
+        "test_end": "2025-06-05",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": -0.7083,
+          "V1": 5.5519,
+          "K114": 3.7806,
+          "K116": -0.0205,
+          "K121": -1.709,
+          "K133": 4.0333,
+          "K147": 4.4786,
+          "K175_DAR": -4.9038,
+          "V_fwd_carry": 19.7369,
+          "V_rev_carry": -23.3042
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.28,
+          "K114": 0.1907,
+          "K116": 0.0,
+          "K121": 0.0,
+          "K133": 0.2034,
+          "K147": 0.2259,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9822,
+          "V1": 0.966,
+          "K114": 0.9704,
+          "K116": 0.9885,
+          "K121": 0.981,
+          "K133": 0.9738,
+          "K147": 0.9163,
+          "K175_DAR": 0.9363,
+          "V_fwd_carry": 0.9952,
+          "V_rev_carry": 0.9978
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": false,
+          "K121": true,
+          "K133": false,
+          "K147": true,
+          "K175_DAR": false,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9708,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 3,
+        "train_start": "2025-01-22",
+        "train_end": "2025-06-05",
+        "test_start": "2025-06-06",
+        "test_end": "2025-07-05",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": -3.6072,
+          "V1": -1.2215,
+          "K114": -0.8886,
+          "K116": 2.7997,
+          "K121": 1.4092,
+          "K133": 2.9888,
+          "K147": 6.0703,
+          "K175_DAR": 1.3191,
+          "V_fwd_carry": 28.3189,
+          "V_rev_carry": -9.702
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.0,
+          "K114": 0.0,
+          "K116": 0.1727,
+          "K121": 0.0869,
+          "K133": 0.1844,
+          "K147": 0.3745,
+          "K175_DAR": 0.0814,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9848,
+          "V1": 0.9463,
+          "K114": 0.975,
+          "K116": 0.9841,
+          "K121": 0.9665,
+          "K133": 0.9305,
+          "K147": 0.9243,
+          "K175_DAR": 0.9138,
+          "V_fwd_carry": 0.9906,
+          "V_rev_carry": 0.9982
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": false,
+          "K114": false,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9614,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 4,
+        "train_start": "2025-02-21",
+        "train_end": "2025-07-05",
+        "test_start": "2025-07-06",
+        "test_end": "2025-08-04",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": -2.0877,
+          "V1": 6.2649,
+          "K114": 2.1793,
+          "K116": 3.1602,
+          "K121": 0.6069,
+          "K133": 2.0204,
+          "K147": 0.2954,
+          "K175_DAR": 4.1555,
+          "V_fwd_carry": 19.9641,
+          "V_rev_carry": -16.0995
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.3018,
+          "K114": 0.105,
+          "K116": 0.1522,
+          "K121": 0.0292,
+          "K133": 0.0973,
+          "K147": 0.0142,
+          "K175_DAR": 0.2002,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9827,
+          "V1": 0.9503,
+          "K114": 0.9708,
+          "K116": 0.9808,
+          "K121": 0.9648,
+          "K133": 0.9522,
+          "K147": 0.9585,
+          "K175_DAR": 0.921,
+          "V_fwd_carry": 0.9919,
+          "V_rev_carry": 0.9983
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9671,
+        "mean_dir_acc": 0.9
+      },
+      {
+        "step": 5,
+        "train_start": "2025-03-23",
+        "train_end": "2025-08-04",
+        "test_start": "2025-08-05",
+        "test_end": "2025-09-03",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": 4.3482,
+          "V1": 5.9787,
+          "K114": 2.983,
+          "K116": 5.0103,
+          "K121": -4.4841,
+          "K133": 0.0478,
+          "K147": 3.5293,
+          "K175_DAR": 3.2873,
+          "V_fwd_carry": 11.1599,
+          "V_rev_carry": -34.1272
+        },
+        "weights": {
+          "v4.1": 0.1554,
+          "V1": 0.2137,
+          "K114": 0.1066,
+          "K116": 0.179,
+          "K121": 0.0,
+          "K133": 0.0017,
+          "K147": 0.1261,
+          "K175_DAR": 0.1175,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9831,
+          "V1": 0.9712,
+          "K114": 0.9735,
+          "K116": 0.9865,
+          "K121": 0.9641,
+          "K133": 0.9466,
+          "K147": 0.9608,
+          "K175_DAR": 0.9398,
+          "V_fwd_carry": 0.9877,
+          "V_rev_carry": 0.9969
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.971,
+        "mean_dir_acc": 1.0
+      },
+      {
+        "step": 6,
+        "train_start": "2025-04-22",
+        "train_end": "2025-09-03",
+        "test_start": "2025-09-04",
+        "test_end": "2025-10-03",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": -1.5433,
+          "V1": 2.7903,
+          "K114": -0.454,
+          "K116": 0.6436,
+          "K121": -2.8911,
+          "K133": 1.8127,
+          "K147": 0.4912,
+          "K175_DAR": 1.0921,
+          "V_fwd_carry": 29.6761,
+          "V_rev_carry": -25.645
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.3677,
+          "K114": 0.0,
+          "K116": 0.0848,
+          "K121": 0.0,
+          "K133": 0.2389,
+          "K147": 0.0647,
+          "K175_DAR": 0.1439,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9718,
+          "V1": 0.9572,
+          "K114": 0.8921,
+          "K116": 0.9556,
+          "K121": 0.9622,
+          "K133": 0.9554,
+          "K147": 0.9447,
+          "K175_DAR": 0.9412,
+          "V_fwd_carry": 0.955,
+          "V_rev_carry": 0.985
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": false,
+          "K116": true,
+          "K121": true,
+          "K133": false,
+          "K147": true,
+          "K175_DAR": false,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.952,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 7,
+        "train_start": "2025-05-22",
+        "train_end": "2025-10-03",
+        "test_start": "2025-10-04",
+        "test_end": "2025-11-02",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": 0.2541,
+          "V1": 0.9608,
+          "K114": 0.0996,
+          "K116": 1.8454,
+          "K121": -2.4232,
+          "K133": -3.1537,
+          "K147": -1.112,
+          "K175_DAR": -0.1898,
+          "V_fwd_carry": 5.6133,
+          "V_rev_carry": 0.2015
+        },
+        "weights": {
+          "v4.1": 0.068,
+          "V1": 0.2573,
+          "K114": 0.0267,
+          "K116": 0.4941,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.0,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.054
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9692,
+          "V1": 0.9621,
+          "K114": 0.9221,
+          "K116": 0.9317,
+          "K121": 0.9738,
+          "K133": 0.9756,
+          "K147": 0.9067,
+          "K175_DAR": 0.97,
+          "V_fwd_carry": 0.9695,
+          "V_rev_carry": 0.9872
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": false,
+          "K175_DAR": false,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9568,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 8,
+        "train_start": "2025-06-21",
+        "train_end": "2025-11-02",
+        "test_start": "2025-11-03",
+        "test_end": "2025-12-02",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": 1.9372,
+          "V1": 6.6828,
+          "K114": 6.3518,
+          "K116": 3.2693,
+          "K121": -2.6172,
+          "K133": -3.4746,
+          "K147": 1.5225,
+          "K175_DAR": 8.3942,
+          "V_fwd_carry": 18.9036,
+          "V_rev_carry": 21.0771
+        },
+        "weights": {
+          "v4.1": 0.0518,
+          "V1": 0.1789,
+          "K114": 0.17,
+          "K116": 0.0875,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.0407,
+          "K175_DAR": 0.2247,
+          "V_fwd_carry": 0.1464,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9266,
+          "V1": 0.9591,
+          "K114": 0.9332,
+          "K116": 0.9383,
+          "K121": 0.9733,
+          "K133": 0.9749,
+          "K147": 0.8816,
+          "K175_DAR": 0.9848,
+          "V_fwd_carry": 0.9787,
+          "V_rev_carry": 0.9968
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": false,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9547,
+        "mean_dir_acc": 0.9
+      },
+      {
+        "step": 9,
+        "train_start": "2025-07-21",
+        "train_end": "2025-12-02",
+        "test_start": "2025-12-03",
+        "test_end": "2026-01-01",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": -0.3428,
+          "V1": 3.6938,
+          "K114": 0.3616,
+          "K116": 6.236,
+          "K121": -1.8239,
+          "K133": 2.1979,
+          "K147": 5.4611,
+          "K175_DAR": -4.7042,
+          "V_fwd_carry": 24.9506,
+          "V_rev_carry": 33.4421
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.1405,
+          "K114": 0.0138,
+          "K116": 0.2372,
+          "K121": 0.0,
+          "K133": 0.0836,
+          "K147": 0.2077,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.2172,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9056,
+          "V1": 0.9498,
+          "K114": 0.9127,
+          "K116": 0.9776,
+          "K121": 0.956,
+          "K133": 0.9513,
+          "K147": 0.9327,
+          "K175_DAR": 0.9906,
+          "V_fwd_carry": 0.9814,
+          "V_rev_carry": 0.9977
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": false,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9555,
+        "mean_dir_acc": 0.9
+      },
+      {
+        "step": 10,
+        "train_start": "2025-08-20",
+        "train_end": "2026-01-01",
+        "test_start": "2026-01-02",
+        "test_end": "2026-01-31",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": -4.635,
+          "V1": 0.4638,
+          "K114": 2.9877,
+          "K116": 4.606,
+          "K121": 6.0186,
+          "K133": 0.7525,
+          "K147": 0.8042,
+          "K175_DAR": -2.0195,
+          "V_fwd_carry": 5.6501,
+          "V_rev_carry": 16.8923
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.0217,
+          "K114": 0.1397,
+          "K116": 0.2154,
+          "K121": 0.2814,
+          "K133": 0.0352,
+          "K147": 0.0376,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.169,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.8884,
+          "V1": 0.954,
+          "K114": 0.9041,
+          "K116": 0.9832,
+          "K121": 0.9717,
+          "K133": 0.9641,
+          "K147": 0.9484,
+          "K175_DAR": 0.9903,
+          "V_fwd_carry": 0.9837,
+          "V_rev_carry": 0.9978
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9586,
+        "mean_dir_acc": 1.0
+      },
+      {
+        "step": 11,
+        "train_start": "2025-09-19",
+        "train_end": "2026-01-31",
+        "test_start": "2026-02-01",
+        "test_end": "2026-03-02",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": 0.5742,
+          "V1": 3.1983,
+          "K114": 9.2853,
+          "K116": 0.7964,
+          "K121": 3.5132,
+          "K133": 1.8546,
+          "K147": 3.4277,
+          "K175_DAR": -8.0789,
+          "V_fwd_carry": 27.368,
+          "V_rev_carry": 24.6234
+        },
+        "weights": {
+          "v4.1": 0.0185,
+          "V1": 0.1032,
+          "K114": 0.2995,
+          "K116": 0.0257,
+          "K121": 0.1133,
+          "K133": 0.0598,
+          "K147": 0.1106,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.1694,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9282,
+          "V1": 0.9582,
+          "K114": 0.9688,
+          "K116": 0.9785,
+          "K121": 0.9804,
+          "K133": 0.96,
+          "K147": 0.9655,
+          "K175_DAR": 0.9943,
+          "V_fwd_carry": 0.993,
+          "V_rev_carry": 0.9946
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": false,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": false,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9722,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 12,
+        "train_start": "2025-10-19",
+        "train_end": "2026-03-02",
+        "test_start": "2026-03-03",
+        "test_end": "2026-04-01",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": -1.3769,
+          "V1": -1.2553,
+          "K114": 2.1384,
+          "K116": -4.6031,
+          "K121": 3.6857,
+          "K133": -1.7342,
+          "K147": 0.1626,
+          "K175_DAR": 1.7752,
+          "V_fwd_carry": 10.4474,
+          "V_rev_carry": 19.0645
+        },
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.0,
+          "K114": 0.1792,
+          "K116": 0.0,
+          "K121": 0.3088,
+          "K133": 0.0,
+          "K147": 0.0136,
+          "K175_DAR": 0.1487,
+          "V_fwd_carry": 0.2497,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.942,
+          "V1": 0.9622,
+          "K114": 0.9767,
+          "K116": 0.9783,
+          "K121": 0.9721,
+          "K133": 0.9599,
+          "K147": 0.9628,
+          "K175_DAR": 0.994,
+          "V_fwd_carry": 0.9857,
+          "V_rev_carry": 0.9928
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": false,
+          "V1": true,
+          "K114": false,
+          "K116": true,
+          "K121": false,
+          "K133": false,
+          "K147": false,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9727,
+        "mean_dir_acc": 0.5
+      },
+      {
+        "step": 13,
+        "train_start": "2025-11-18",
+        "train_end": "2026-04-01",
+        "test_start": "2026-04-02",
+        "test_end": "2026-04-14",
+        "train_n_days": 135,
+        "preds_raw": {
+          "v4.1": 7.9673,
+          "V1": -6.2139,
+          "K114": -1.4574,
+          "K116": 3.0594,
+          "K121": -3.9715,
+          "K133": 2.6012,
+          "K147": -2.3831,
+          "K175_DAR": 5.0824,
+          "V_fwd_carry": 35.5729,
+          "V_rev_carry": 23.5013
+        },
+        "weights": {
+          "v4.1": 0.3064,
+          "V1": 0.0,
+          "K114": 0.0,
+          "K116": 0.1177,
+          "K121": 0.0,
+          "K133": 0.1,
+          "K147": 0.0,
+          "K175_DAR": 0.1955,
+          "V_fwd_carry": 0.1804,
+          "V_rev_carry": 0.1
+        },
+        "r2_per_strat": {
+          "v4.1": 0.9715,
+          "V1": 0.9738,
+          "K114": 0.9779,
+          "K116": 0.9795,
+          "K121": 0.9621,
+          "K133": 0.9402,
+          "K147": 0.9851,
+          "K175_DAR": 0.9926,
+          "V_fwd_carry": 0.9863,
+          "V_rev_carry": 0.9945
+        },
+        "dir_accuracy_per_strat": {
+          "v4.1": true,
+          "V1": true,
+          "K114": true,
+          "K116": true,
+          "K121": true,
+          "K133": true,
+          "K147": true,
+          "K175_DAR": true,
+          "V_fwd_carry": true,
+          "V_rev_carry": true
+        },
+        "mean_r2": 0.9764,
+        "mean_dir_acc": 1.0
+      }
+    ]
+  },
+  "verdict": "REJECT: K209 passes 0/4 criteria. OOS Sh=8.86 (target>=10.28), MaxDD=-0.0270 (target>=-0.0053), WF min=3.46 (target>=6.57), WF mean=6.59 (target>=8.52). K198 v6.5 remains production.",
+  "k210_next_steps": "If K209 ACCEPT: v6.6 production. If K209 REJECT OOS Sh: try K210 at 120d window (closer to K198's 90d) or restore threshold-only DD penalty (only dd30 < -0.15). If K209 REJECT WF min: try K210 at 150-160d window for more cold-start data. If K209 REJECT WF mean: investigate fold-level weight stability; consider adding L2 weight regularization or Sharpe-weighted Ridge."
+}
