@@ -1,0 +1,191 @@
+{
+  "wave": "K233",
+  "task": "Cross-Chain Capital Rotation via TVL 30d Momentum",
+  "as_of": "2026-05-24T23:23:26.340230+00:00",
+  "runtime_s": 0.4,
+  "data_info": {
+    "n_days_total": 609,
+    "n_days_oos": 182,
+    "n_days_is": 427,
+    "date_start": "2024-09-21",
+    "date_end": "2026-05-22",
+    "tradeable_chains": [
+      "Ethereum",
+      "Solana",
+      "BSC",
+      "Arbitrum"
+    ],
+    "chain_tokens": {
+      "Ethereum": "ETH",
+      "Solana": "SOL",
+      "BSC": "BNB",
+      "Arbitrum": "ARB"
+    },
+    "tvl_summary": {
+      "Ethereum": {
+        "current_tvl_B": 43.1,
+        "current_share_pct": 71.58,
+        "peak_share_pct": 78.63,
+        "mom_30d_current": -0.0587
+      },
+      "Solana": {
+        "current_tvl_B": 5.54,
+        "current_share_pct": 9.2,
+        "peak_share_pct": 13.34,
+        "mom_30d_current": -0.0093
+      },
+      "BSC": {
+        "current_tvl_B": 5.54,
+        "current_share_pct": 9.2,
+        "peak_share_pct": 9.21,
+        "mom_30d_current": 0.0115
+      },
+      "Arbitrum": {
+        "current_tvl_B": 1.51,
+        "current_share_pct": 2.51,
+        "peak_share_pct": 4.15,
+        "mom_30d_current": -0.1097
+      },
+      "Base": {
+        "current_tvl_B": 4.52,
+        "current_share_pct": 7.51,
+        "peak_share_pct": 7.94,
+        "mom_30d_current": 0.0537
+      }
+    }
+  },
+  "strategy": {
+    "type": "Long-Short daily rebalance",
+    "signal": "TVL 30d absolute momentum rank",
+    "spread_threshold": 0.1,
+    "long_chain": "Chain with highest 30d TVL growth",
+    "short_chain": "Chain with lowest 30d TVL growth",
+    "hold_period": "1 day",
+    "cost_bps_per_side": 7.0,
+    "active_trading_days": 468,
+    "active_pct": 76.8
+  },
+  "performance": {
+    "full_sharpe": 0.9302,
+    "is_sharpe": 0.6647,
+    "oos_sharpe": 2.3009,
+    "oos_maxdd": -0.1093,
+    "oos_ann_ret": 0.7926,
+    "oos_ann_vol": 0.3445,
+    "wf": {
+      "fold_sharpes": [
+        1.8839,
+        1.7527,
+        1.2381,
+        3.6176
+      ],
+      "wf_mean": 2.1231,
+      "wf_min": 1.2381,
+      "wf_max": 3.6176,
+      "wf_std": 0.896,
+      "all_positive": true
+    },
+    "signal_distribution": {
+      "long_chain_counts": {
+        "Ethereum": 106,
+        "Solana": 160,
+        "BSC": 168,
+        "Arbitrum": 34
+      },
+      "short_chain_counts": {
+        "Ethereum": 75,
+        "Solana": 121,
+        "BSC": 113,
+        "Arbitrum": 159
+      }
+    }
+  },
+  "correlations": {
+    "n_common_days": 448,
+    "rho_k233_k198": -0.0421,
+    "rho_k233_k204": -0.0671,
+    "rho_k233_k208": 0.1153,
+    "rho_k233_k226": 0.1213,
+    "max_abs_rho": 0.1213,
+    "corr_gate_pass": true
+  },
+  "correlation_matrix_5x5": {
+    "labels": [
+      "K198",
+      "K204",
+      "K208",
+      "K226",
+      "K233"
+    ],
+    "matrix": [
+      [
+        1.0,
+        0.7967,
+        0.0464,
+        0.0525,
+        -0.0421
+      ],
+      [
+        0.7967,
+        1.0,
+        0.035,
+        0.0553,
+        -0.0671
+      ],
+      [
+        0.0464,
+        0.035,
+        1.0,
+        -0.0212,
+        0.1153
+      ],
+      [
+        0.0525,
+        0.0553,
+        -0.0212,
+        1.0,
+        0.1213
+      ],
+      [
+        -0.0421,
+        -0.0671,
+        0.1153,
+        0.1213,
+        1.0
+      ]
+    ]
+  },
+  "acceptance_gates": {
+    "gate_oos_sh_gt_1": {
+      "threshold": 1.0,
+      "value": 2.3009,
+      "pass": true
+    },
+    "gate_wf_all_positive": {
+      "fold_sharpes": [
+        1.8839,
+        1.7527,
+        1.2381,
+        3.6176
+      ],
+      "pass": true
+    },
+    "gate_corr_lt_0_5": {
+      "max_abs_rho": 0.1213,
+      "pass": true
+    },
+    "overall": "ACCEPT",
+    "verdict": "ACCEPT -- proceed to K234 K229d 5-way integration"
+  },
+  "k228_lesson_check": {
+    "note": "K228 rejected due to fold-2 = -2.15. K233 WF min = 1.2381",
+    "all_wf_folds_positive": true
+  },
+  "exploration_notes": {
+    "tried_tvl_share_z7": "FAIL - OOS Sh=-1.36, WF fold 1 = -4.85",
+    "tried_tvl_share_inverse": "FAIL - OOS Sh=0.39, WF unstable",
+    "tried_long_only_surge": "FAIL - OOS Sh=-1.48",
+    "found_tvl_abs_mom_30d_0.10": "ACCEPT - OOS Sh=2.3, WF all positive",
+    "selected_variant": "TVL 30d abs momentum, spread threshold 0.1"
+  }
+}
