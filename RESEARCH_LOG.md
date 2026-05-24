@@ -2654,3 +2654,41 @@ White RC 初回実装で `p_value = mean(bootstrap_max + f_bar.max() >= f_max)` 
 
 **累計試行**: ~729,915 (新backtestなし、bootstrap 解析のみ)
 **学び**: 観測値だけで判断せず、Bootstrap CI で真の不確実性を可視化することが「正直さ」の核。
+
+### 2026-05-24 03:20 JST: Wave K6 — Pure Funding Carry → **棄却 (7/9銘柄 no result、DOT/LINK のみ)**
+
+仮説: FR が極端な時にcontrarian、純粋carry収益狙い、価格方向予測なし
+
+**スキャン**: 9 Major+LargeCap銘柄 × 432 configs
+
+**結果**:
+| 銘柄 | Best Sh | Return | DD | Trades | パラメータ |
+|------|---------|--------|-----|--------|-----------|
+| DOTUSDT | +1.89 | +39.9% | -5.4% | 15 | span=10, thr=0.0005 |
+| LINKUSDT | +0.39 | +6.7% | -10.6% | 15 | — |
+| BTC/ETH/SOL/BNB/XRP/ADA/AVAX | no valid result | — | — | — | (n_sig<20 で除外) |
+
+**棄却理由**:
+1. **7/9 銘柄で no valid result**: FR が threshold (0.0005-0.005) を超える頻度が低すぎ
+2. DOT Sh+1.89 は trades=15 のみ — Bootstrap CI K5 で学んだ通り「small sample sharpe は untrustworthy」
+3. Pure carry は FOPD (FR+OI+Price 3項) の方が edge大きい
+4. 78% Sh>0 は高いが、有効サンプル少ない (76/3888)
+
+**学び**: 
+- Carry系は **CEX間 spread (異なる FR の同銘柄)** で取らないと単独では弱い → 真の funding carry には2取引所が必要
+- 単一取引所内の carry はFOPDの方が validated edge
+
+**10候補スコア累計**:
+- ✅ FOPD (J12-14): 部分エッジ → ATR と合成で Calmar 30.56
+- ✅ 8H Meme satellites (J27): 80/10/10 で Calmar 32.63 (Bootstrap で再評価必要)
+- ❌ FToD, LISRM, HLWI, S3I, Dynamic, LiqCascade, MetaLabel, BTC.D, Pure Funding Carry (合計 8 棄却)
+
+成功率 = 2/10 = 20% — 業界平均的水準。**「ほとんどのアイデアは機能しない」が現実**。
+
+**累計試行**: ~729,915 + 76 (valid K6) = ~729,991
+**累計棄却ファミリー**: 106+ (Pure Funding Carry追加)
+**真の Wave J+K 最終状態**:
+- 「使用可能」認定: 80/10/10 (§6 8/8) + 50/50 (Bootstrap median 上位、§6 7/8)
+- フォワードテスト 2 系統稼働
+- ペーパートレード 1 系統稼働
+- 国際クオンツ標準4テスト クリア
