@@ -46,21 +46,34 @@ EXIT_4H = {"sl": 0.04, "tp": 0.08, "mhb": 24}  # in bars
 EXIT_8H = {"sl": 0.04, "tp": 0.08, "mhb": 12}
 VOL_Z = 1.5
 
-# Portfolio weights (v3 mix: 5-axis v2 × 0.80 + OI capit × 0.20, Wave K49e)
-W_ATR = 0.272       # 0.34 × 0.80
-W_FOPD = 0.272      # 0.34 × 0.80
-W_BONK_8H = 0.068   # 0.085 × 0.80
-W_SHIB_8H = 0.068   # 0.085 × 0.80
-W_VOL_MR = 0.120    # 0.15 × 0.80
-W_OI_CAPIT = 0.200  # 6番目軸 (Wave K49)
+# Portfolio weights (v4 mix: v3 × 0.90 + BB squeeze × 0.10, Wave K70c)
+W_ATR = 0.245       # 0.272 × 0.90
+W_FOPD = 0.245      # 0.272 × 0.90
+W_BONK_8H = 0.061   # 0.068 × 0.90
+W_SHIB_8H = 0.061   # 0.068 × 0.90
+W_VOL_MR = 0.108    # 0.120 × 0.90
+W_OI_CAPIT = 0.180  # 0.200 × 0.90
+W_BB_SQUEEZE = 0.100  # 7番目軸 (Wave K70)
 
 # OI capitulation params (Wave K49)
 OI_CAPIT_SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "DOGEUSDT", "AVAXUSDT", "LINKUSDT"]
 OI_CAPIT_PARAMS = {
-    "window": 120,        # lookback for z-score
-    "z_thresh": 2.0,      # OI z-score threshold (negative for capit)
-    "ret_z_thresh": 1.0,  # price z-score threshold (negative for capit)
-    "hold_bars": 12,      # 48h hold
+    "window": 120,
+    "z_thresh": 2.0,
+    "ret_z_thresh": 1.0,
+    "hold_bars": 12,
+    "sl": 0.04,
+    "tp": 0.06,
+}
+
+# BB squeeze params (Wave K70)
+BB_SQUEEZE_SYMBOLS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "DOGEUSDT", "BNBUSDT", "LINKUSDT", "AVAXUSDT", "INJUSDT"]
+BB_SQUEEZE_PARAMS = {
+    "ma_window": 40,
+    "sd_mult": 2.0,
+    "squeeze_pct_threshold": 0.20,
+    "squeeze_lookback": 360,
+    "hold_bars": 12,
     "sl": 0.04,
     "tp": 0.06,
 }
@@ -439,6 +452,60 @@ async def process_oi_capit_strategy(state, weight):
     return n_new
 
 
+async def process_bb_squeeze_strategy(state, weight):
+    """BB Squeeze Breakout 8 銘柄 portfolio (Wave K70).
+    Signal: BB width percentile < 20% over 360 bars → recent squeeze → breakout direction trade.
+    """
+    n_new = 0
+    p = BB_SQUEEZE_PARAMS
+    for sym in BB_SQUEEZE_SYMBOLS:
+        try:
+            df = await fetch_klines(sym, "4h", 365)
+        except Exception:
+            continue
+        if df is None or len(df) < p['squeeze_lookback'] + 10:
+            continue
+        c = df['close'].values
+        ma = pd.Series(c).rolling(p['ma_window']).mean()
+        sd = pd.Series(c).rolling(p['ma_window']).std()
+        bb_width = (2 * p['sd_mult'] * sd) / ma
+        bb_width_pct = bb_width.rolling(p['squeeze_lookback']).rank(pct=True)
+        squeezed_recent = (bb_width_pct < p['squeeze_pct_threshold']).fillna(False).rolling(5).max() > 0
+        upper = (ma + p['sd_mult']*sd).values
+        lower = (ma - p['sd_mult']*sd).values
+        last_idx = len(c) - 1
+        if not squeezed_recent.iloc[last_idx]:
+            continue
+        if not (np.isfinite(upper[last_idx]) and np.isfinite(lower[last_idx])):
+            continue
+        bar_time = df['open_time'].iloc[last_idx].isoformat()
+        last_processed = state['last_processed_bar'].get(f"BB_SQUEEZE_{sym}", "")
+        if bar_time <= last_processed:
+            continue
+        state['last_processed_bar'][f"BB_SQUEEZE_{sym}"] = bar_time
+        # Determine breakout direction
+        if c[last_idx] > upper[last_idx]:
+            direction = 1; side = 'long'
+        elif c[last_idx] < lower[last_idx]:
+            direction = -1; side = 'short'
+        else:
+            continue
+        close = float(c[last_idx])
+        size_usd = state['equity_usd'] * weight / len(BB_SQUEEZE_SYMBOLS) * state['leverage']
+        position = {
+            "entry_bar": bar_time, "symbol": sym, "strategy": "BB_squeeze",
+            "side": side, "entry_price": close,
+            "sl": close * (1 - p['sl']) if direction > 0 else close * (1 + p['sl']),
+            "tp": close * (1 + p['tp']) if direction > 0 else close * (1 - p['tp']),
+            "expiry_bar_offset": p['hold_bars'],
+            "size_usd": size_usd,
+        }
+        state['open_positions'].append(position)
+        n_new += 1
+        print(f"  [BB_SQUEEZE NEW] {sym:<10} {side:<5} entry=${close:.4f}")
+    return n_new
+
+
 async def main():
     t0 = time.time()
     print(f"=== 4-way Paper Trade Snapshot — {datetime.now().isoformat()} ===")
@@ -452,8 +519,8 @@ async def main():
     n_closed, pnl_closed = await manage_open_positions(state)
     print(f"  Closed: {n_closed}, total PnL: ${pnl_closed:+.2f}")
 
-    # Then process new signals (6 axes — v3)
-    print("\n[Generating new signals — 6 strategy axes (v3)]")
+    # Then process new signals (7 axes — v4)
+    print("\n[Generating new signals — 7 strategy axes (v4)]")
     btc_4h = await get_btc_volz_4h()
     btc_8h = await get_btc_volz_8h()
 
@@ -462,9 +529,10 @@ async def main():
     n_bonk = await process_8h_meme_single(state, btc_8h, "BONKUSDT", W_BONK_8H)
     n_shib = await process_8h_meme_single(state, btc_8h, "SHIBUSDT", W_SHIB_8H)
     n_vol_mr = await process_vol_mr_strategy(state, W_VOL_MR)
-    n_oi = await process_oi_capit_strategy(state, W_OI_CAPIT)  # Wave K49 NEW axis
+    n_oi = await process_oi_capit_strategy(state, W_OI_CAPIT)
+    n_bb = await process_bb_squeeze_strategy(state, W_BB_SQUEEZE)  # Wave K70 NEW
 
-    total_new = n_atr + n_fopd + n_bonk + n_shib + n_vol_mr + n_oi
+    total_new = n_atr + n_fopd + n_bonk + n_shib + n_vol_mr + n_oi + n_bb
     print(f"\n  Total new signals: {total_new}")
     print(f"  Currently open: {len(state['open_positions'])}")
 
@@ -476,7 +544,7 @@ async def main():
         "n_closed_this_run": n_closed,
         "pnl_closed_this_run_usd": round(pnl_closed, 2),
         "n_new_signals_this_run": total_new,
-        "axes_signals": {"ATR": n_atr, "FOPD": n_fopd, "BONK_8H": n_bonk, "SHIB_8H": n_shib, "vol_MR": n_vol_mr, "OI_capit": n_oi},
+        "axes_signals": {"ATR": n_atr, "FOPD": n_fopd, "BONK_8H": n_bonk, "SHIB_8H": n_shib, "vol_MR": n_vol_mr, "OI_capit": n_oi, "BB_squeeze": n_bb},
         "total_closed_trades": len(state['closed_trades']),
     })
 
