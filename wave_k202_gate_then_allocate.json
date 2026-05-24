@@ -1,0 +1,852 @@
+{
+  "wave": "K202",
+  "task": "Gate-Then-Allocate: pre-filter via T1/T2/T3 triggers \u2192 Ridge ML allocator",
+  "as_of": "2026-05-24T21:08:56.789963+00:00",
+  "runtime_s": 4.2,
+  "config": {
+    "strategies": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ],
+    "n_strategies": 10,
+    "ml_train_days": 90,
+    "ml_test_days": 30,
+    "oos_frac": 0.3,
+    "k121_cap": 0.3,
+    "carry_fwd_cap": 0.1,
+    "carry_rev_cap": 0.05,
+    "fr_threshold": -0.009735,
+    "t1_window": 30,
+    "t1_thresh": -2.0,
+    "t2_window": 30,
+    "t2_thresh": 0.0,
+    "t3_dd_thresh": -0.02,
+    "ridge_alpha": 1.0,
+    "n_folds": 4,
+    "date_range": [
+      "2024-07-26",
+      "2026-05-14"
+    ],
+    "n_days_total": 658,
+    "n_days_k202": 448
+  },
+  "trigger_state_summary": {
+    "t1_any_fire_pct": 78.7,
+    "t2_fire_pct": 53.3,
+    "t3_fire_pct": 28.0,
+    "rev_excluded_pct": 78.7,
+    "rev_excluded_oos_pct": 57.1,
+    "per_symbol_t1_fire_pct": {
+      "SOL": 67.6,
+      "XRP": 71.1,
+      "SUI": 50.8,
+      "OP": 37.7,
+      "APT": 46.2,
+      "AXS": 1.2,
+      "JTO": 54.3,
+      "IMX": 34.3,
+      "SAND": 24.3,
+      "ADA": 35.3
+    }
+  },
+  "wf_step_summary": {
+    "n_steps": 15,
+    "n_steps_rev_excluded": 12,
+    "rev_excluded_pct": 80.0,
+    "n_steps_opp_cost": 7,
+    "opp_cost_pct": 46.7
+  },
+  "oos_metrics_k202": {
+    "sharpe": 7.8395,
+    "sortino": 21.0567,
+    "calmar": 96.2207,
+    "max_dd": -0.0071,
+    "ann_ret": 0.6838,
+    "ann_vol": 0.0668,
+    "n_days": 135
+  },
+  "wf_fold_metrics_k202": {
+    "fold_sharpes": [
+      6.2933,
+      7.3823,
+      8.1203,
+      6.8329
+    ],
+    "mean": 7.1572,
+    "min": 6.2933,
+    "max": 8.1203,
+    "std": 0.6763
+  },
+  "five_way_comparison": {
+    "K196_v6_4_baseline": {
+      "oos_sharpe": 9.2,
+      "oos_maxdd": -0.0038,
+      "wf_mean": 5.37,
+      "wf_min": 3.54,
+      "description": "Static P3 risk-parity, v6.4 production"
+    },
+    "K198_ML_alone": {
+      "oos_sharpe": 10.28,
+      "oos_maxdd": -0.0053,
+      "wf_mean": 7.91,
+      "wf_min": 6.57,
+      "description": "Ridge ML allocator, v6.5 current production"
+    },
+    "K199b_triggers_alone": {
+      "oos_sharpe": 7.83,
+      "oos_maxdd": -0.004,
+      "wf_mean": 4.98,
+      "wf_min": 3.41,
+      "description": "T1/T2/T3 safety triggers on static P3"
+    },
+    "K201_ML_then_trigger": {
+      "oos_sharpe": 8.59,
+      "oos_maxdd": -0.0057,
+      "wf_mean": 7.38,
+      "wf_min": 6.39,
+      "description": "K201 rejected: post-allocation trigger override (adversarial)"
+    },
+    "K202_trigger_then_ML": {
+      "oos_sharpe": 7.8395,
+      "oos_maxdd": -0.0071,
+      "wf_mean": 7.1572,
+      "wf_min": 6.2933,
+      "wf_folds": [
+        6.2933,
+        7.3823,
+        8.1203,
+        6.8329
+      ],
+      "description": "K202: gate-then-allocate (this wave)",
+      "vs_k198_oos_sh": -2.4405,
+      "vs_k198_maxdd": -0.0018,
+      "vs_k198_wf_min": -0.2767
+    }
+  },
+  "acceptance_criteria": {
+    "AC1_oos_sh_ge_k198": {
+      "required": 10.28,
+      "actual": 7.8395,
+      "pass": false
+    },
+    "AC2_wf_min_ge_k198": {
+      "required": 6.57,
+      "actual": 6.2933,
+      "pass": false
+    },
+    "AC3_maxdd_better_k198": {
+      "required_better_than": -0.0053,
+      "actual": -0.0071,
+      "pass": false
+    },
+    "AC4_no_adversarial": {
+      "opp_cost_steps_pct": 46.7,
+      "pass": true
+    },
+    "n_criteria_passed": 1,
+    "promote_to_v6_6": false
+  },
+  "opportunity_cost_analysis": {
+    "n_opp_events": 7,
+    "trigger_correct_pct": 0.0,
+    "mean_excluded_realized_sh": 22.8752,
+    "events": [
+      {
+        "step": 0,
+        "date": "2025-01-22",
+        "strat": "V_rev_carry",
+        "ml_pred": 1.9288,
+        "realized_sh": 3.1795,
+        "trigger_saved": false
+      },
+      {
+        "step": 1,
+        "date": "2025-02-21",
+        "strat": "V_rev_carry",
+        "ml_pred": 31.6115,
+        "realized_sh": 35.7589,
+        "trigger_saved": false
+      },
+      {
+        "step": 9,
+        "date": "2025-10-19",
+        "strat": "V_rev_carry",
+        "ml_pred": 30.0044,
+        "realized_sh": 25.1155,
+        "trigger_saved": false
+      },
+      {
+        "step": 10,
+        "date": "2025-11-18",
+        "strat": "V_rev_carry",
+        "ml_pred": 31.8375,
+        "realized_sh": 31.0285,
+        "trigger_saved": false
+      },
+      {
+        "step": 11,
+        "date": "2025-12-18",
+        "strat": "V_rev_carry",
+        "ml_pred": 17.3976,
+        "realized_sh": 10.1424,
+        "trigger_saved": false
+      },
+      {
+        "step": 12,
+        "date": "2026-01-17",
+        "strat": "V_rev_carry",
+        "ml_pred": 21.6018,
+        "realized_sh": 24.3885,
+        "trigger_saved": false
+      },
+      {
+        "step": 14,
+        "date": "2026-03-18",
+        "strat": "V_rev_carry",
+        "ml_pred": 27.5938,
+        "realized_sh": 30.5129,
+        "trigger_saved": false
+      }
+    ]
+  },
+  "filter_log": [
+    {
+      "step": 0,
+      "gate_date": "2025-01-22",
+      "rev_excluded": true,
+      "t1_fired_syms": [
+        "SOL",
+        "XRP",
+        "SUI",
+        "OP",
+        "JTO",
+        "IMX",
+        "SAND",
+        "ADA"
+      ],
+      "t2_fired": true,
+      "t3_fired": true,
+      "excluded_strats": [
+        "V_rev_carry"
+      ]
+    },
+    {
+      "step": 1,
+      "gate_date": "2025-02-21",
+      "rev_excluded": true,
+      "t1_fired_syms": [
+        "SOL",
+        "XRP"
+      ],
+      "t2_fired": false,
+      "t3_fired": true,
+      "excluded_strats": [
+        "V_rev_carry"
+      ]
+    },
+    {
+      "step": 2,
+      "gate_date": "2025-03-23",
+      "rev_excluded": false,
+      "t1_fired_syms": [],
+      "t2_fired": false,
+      "t3_fired": false,
+      "excluded_strats": []
+    },
+    {
+      "step": 3,
+      "gate_date": "2025-04-22",
+      "rev_excluded": false,
+      "t1_fired_syms": [],
+      "t2_fired": false,
+      "t3_fired": false,
+      "excluded_strats": []
+    },
+    {
+      "step": 4,
+      "gate_date": "2025-05-22",
+      "rev_excluded": true,
+      "t1_fired_syms": [
+        "SOL",
+        "XRP",
+        "SUI",
+        "ADA"
+      ],
+      "t2_fired": true,
+      "t3_fired": false,
+      "excluded_strats": [
+        "V_rev_carry"
+      ]
+    },
+    {
+      "step": 5,
+      "gate_date": "2025-06-21",
+      "rev_excluded": true,
+      "t1_fired_syms": [
+        "SOL",
+        "XRP",
+        "SUI",
+        "APT",
+        "IMX",
+        "SAND",
+        "ADA"
+      ],
+      "t2_fired": true,
+      "t3_fired": false,
+      "excluded_strats": [
+        "V_rev_carry"
+      ]
+    },
+    {
+      "step": 6,
+      "gate_date": "2025-07-21",
+      "rev_excluded": true,
+      "t1_fired_syms": [
+        "SOL",
+        "XRP",
+        "SUI",
+        "APT",
+        "JTO",
+        "ADA"
+      ],
+      "t2_fired": true,
+      "t3_fired": false,
+      "excluded_strats": [
+        "V_rev_carry"
+      ]
+    },
+    {
+      "step": 7,
+      "gate_date": "2025-08-20",
+      "rev_excluded": true,
+      "t1_fired_syms": [
+        "SOL",
+        "XRP",
+        "SUI",
+        "OP",
+        "APT",
+        "JTO",
+        "IMX",
+        "SAND",
+        "ADA"
+      ],
+      "t2_fired": true,
+      "t3_fired": false,
+      "excluded_strats": [
+        "V_rev_carry"
+      ]
+    },
+    {
+      "step": 8,
+      "gate_date": "2025-09-19",
+      "rev_excluded": true,
+      "t1_fired_syms": [
+        "SOL",
+        "XRP",
+        "SUI",
+        "OP",
+        "APT",
+        "JTO",
+        "IMX",
+        "SAND",
+        "ADA"
+      ],
+      "t2_fired": true,
+      "t3_fired": true,
+      "excluded_strats": [
+        "V_rev_carry"
+      ]
+    },
+    {
+      "step": 9,
+      "gate_date": "2025-10-19",
+      "rev_excluded": true,
+      "t1_fired_syms": [
+        "SOL",
+        "XRP",
+        "SUI",
+        "APT",
+        "ADA"
+      ],
+      "t2_fired": true,
+      "t3_fired": true,
+      "excluded_strats": [
+        "V_rev_carry"
+      ]
+    },
+    {
+      "step": 10,
+      "gate_date": "2025-11-18",
+      "rev_excluded": true,
+      "t1_fired_syms": [
+        "SOL",
+        "XRP",
+        "IMX"
+      ],
+      "t2_fired": false,
+      "t3_fired": true,
+      "excluded_strats": [
+        "V_rev_carry"
+      ]
+    },
+    {
+      "step": 11,
+      "gate_date": "2025-12-18",
+      "rev_excluded": true,
+      "t1_fired_syms": [
+        "XRP",
+        "SUI"
+      ],
+      "t2_fired": false,
+      "t3_fired": false,
+      "excluded_strats": [
+        "V_rev_carry"
+      ]
+    },
+    {
+      "step": 12,
+      "gate_date": "2026-01-17",
+      "rev_excluded": true,
+      "t1_fired_syms": [
+        "SOL",
+        "XRP",
+        "SUI",
+        "APT",
+        "JTO"
+      ],
+      "t2_fired": false,
+      "t3_fired": false,
+      "excluded_strats": [
+        "V_rev_carry"
+      ]
+    },
+    {
+      "step": 13,
+      "gate_date": "2026-02-16",
+      "rev_excluded": false,
+      "t1_fired_syms": [],
+      "t2_fired": false,
+      "t3_fired": false,
+      "excluded_strats": []
+    },
+    {
+      "step": 14,
+      "gate_date": "2026-03-18",
+      "rev_excluded": true,
+      "t1_fired_syms": [
+        "ADA"
+      ],
+      "t2_fired": false,
+      "t3_fired": false,
+      "excluded_strats": [
+        "V_rev_carry"
+      ]
+    }
+  ],
+  "ml_diagnostics_summary": {
+    "n_steps": 15,
+    "mean_r2": 0.9366,
+    "mean_dir_acc": 0.7333,
+    "per_step": [
+      {
+        "step": 0,
+        "train_start": "2024-10-24",
+        "train_end": "2025-01-21",
+        "test_start": "2025-01-22",
+        "test_end": "2025-02-20",
+        "gate_date": "2025-01-22",
+        "rev_excluded": true,
+        "weights": {
+          "v4.1": 0.0723,
+          "V1": 0.0,
+          "K114": 0.328,
+          "K116": 0.0101,
+          "K121": 0.4171,
+          "K133": 0.0418,
+          "K147": 0.0,
+          "K175_DAR": 0.0307,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {
+          "V_rev_carry": 1.9288
+        },
+        "opportunity_cost_exists": true,
+        "mean_r2": 0.9506,
+        "mean_dir_acc": 0.4
+      },
+      {
+        "step": 1,
+        "train_start": "2024-11-23",
+        "train_end": "2025-02-20",
+        "test_start": "2025-02-21",
+        "test_end": "2025-03-22",
+        "gate_date": "2025-02-21",
+        "rev_excluded": true,
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.1722,
+          "K114": 0.0417,
+          "K116": 0.1842,
+          "K121": 0.0,
+          "K133": 0.2277,
+          "K147": 0.2742,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {
+          "V_rev_carry": 31.6115
+        },
+        "opportunity_cost_exists": true,
+        "mean_r2": 0.9358,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 2,
+        "train_start": "2024-12-23",
+        "train_end": "2025-03-22",
+        "test_start": "2025-03-23",
+        "test_end": "2025-04-21",
+        "gate_date": "2025-03-23",
+        "rev_excluded": false,
+        "weights": {
+          "v4.1": 0.2474,
+          "V1": 0.2126,
+          "K114": 0.2245,
+          "K116": 0.0,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.2514,
+          "K175_DAR": 0.0141,
+          "V_fwd_carry": 0.0,
+          "V_rev_carry": 0.05
+        },
+        "ml_wanted_excluded": {},
+        "opportunity_cost_exists": false,
+        "mean_r2": 0.9253,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 3,
+        "train_start": "2025-01-22",
+        "train_end": "2025-04-21",
+        "test_start": "2025-04-22",
+        "test_end": "2025-05-21",
+        "gate_date": "2025-04-22",
+        "rev_excluded": false,
+        "weights": {
+          "v4.1": 0.1545,
+          "V1": 0.1565,
+          "K114": 0.1803,
+          "K116": 0.0,
+          "K121": 0.1494,
+          "K133": 0.0717,
+          "K147": 0.1546,
+          "K175_DAR": 0.033,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {},
+        "opportunity_cost_exists": false,
+        "mean_r2": 0.9335,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 4,
+        "train_start": "2025-02-21",
+        "train_end": "2025-05-21",
+        "test_start": "2025-05-22",
+        "test_end": "2025-06-20",
+        "gate_date": "2025-05-22",
+        "rev_excluded": true,
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.0844,
+          "K114": 0.0,
+          "K116": 0.2698,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.3699,
+          "K175_DAR": 0.176,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {},
+        "opportunity_cost_exists": false,
+        "mean_r2": 0.9367,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 5,
+        "train_start": "2025-03-23",
+        "train_end": "2025-06-20",
+        "test_start": "2025-06-21",
+        "test_end": "2025-07-20",
+        "gate_date": "2025-06-21",
+        "rev_excluded": true,
+        "weights": {
+          "v4.1": 0.2045,
+          "V1": 0.1105,
+          "K114": 0.034,
+          "K116": 0.0067,
+          "K121": 0.1164,
+          "K133": 0.2842,
+          "K147": 0.0156,
+          "K175_DAR": 0.1281,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {},
+        "opportunity_cost_exists": false,
+        "mean_r2": 0.9481,
+        "mean_dir_acc": 1.0
+      },
+      {
+        "step": 6,
+        "train_start": "2025-04-22",
+        "train_end": "2025-07-20",
+        "test_start": "2025-07-21",
+        "test_end": "2025-08-19",
+        "gate_date": "2025-07-21",
+        "rev_excluded": true,
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.2904,
+          "K114": 0.1253,
+          "K116": 0.24,
+          "K121": 0.0626,
+          "K133": 0.091,
+          "K147": 0.0,
+          "K175_DAR": 0.0907,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {},
+        "opportunity_cost_exists": false,
+        "mean_r2": 0.9292,
+        "mean_dir_acc": 0.7
+      },
+      {
+        "step": 7,
+        "train_start": "2025-05-22",
+        "train_end": "2025-08-19",
+        "test_start": "2025-08-20",
+        "test_end": "2025-09-18",
+        "gate_date": "2025-08-20",
+        "rev_excluded": true,
+        "weights": {
+          "v4.1": 0.2068,
+          "V1": 0.0128,
+          "K114": 0.0,
+          "K116": 0.0,
+          "K121": 0.1856,
+          "K133": 0.2014,
+          "K147": 0.1996,
+          "K175_DAR": 0.0938,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {},
+        "opportunity_cost_exists": false,
+        "mean_r2": 0.9289,
+        "mean_dir_acc": 0.5
+      },
+      {
+        "step": 8,
+        "train_start": "2025-06-21",
+        "train_end": "2025-09-18",
+        "test_start": "2025-09-19",
+        "test_end": "2025-10-18",
+        "gate_date": "2025-09-19",
+        "rev_excluded": true,
+        "weights": {
+          "v4.1": 0.0349,
+          "V1": 0.3845,
+          "K114": 0.3244,
+          "K116": 0.1562,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.0,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {},
+        "opportunity_cost_exists": false,
+        "mean_r2": 0.9343,
+        "mean_dir_acc": 0.6
+      },
+      {
+        "step": 9,
+        "train_start": "2025-07-21",
+        "train_end": "2025-10-18",
+        "test_start": "2025-10-19",
+        "test_end": "2025-11-17",
+        "gate_date": "2025-10-19",
+        "rev_excluded": true,
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.1403,
+          "K114": 0.1868,
+          "K116": 0.0,
+          "K121": 0.0,
+          "K133": 0.0,
+          "K147": 0.0648,
+          "K175_DAR": 0.5081,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {
+          "V_rev_carry": 30.0044
+        },
+        "opportunity_cost_exists": true,
+        "mean_r2": 0.9284,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 10,
+        "train_start": "2025-08-20",
+        "train_end": "2025-11-17",
+        "test_start": "2025-11-18",
+        "test_end": "2025-12-17",
+        "gate_date": "2025-11-18",
+        "rev_excluded": true,
+        "weights": {
+          "v4.1": 0.065,
+          "V1": 0.1471,
+          "K114": 0.0086,
+          "K116": 0.4096,
+          "K121": 0.0847,
+          "K133": 0.0,
+          "K147": 0.1223,
+          "K175_DAR": 0.0627,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {
+          "V_rev_carry": 31.8375
+        },
+        "opportunity_cost_exists": true,
+        "mean_r2": 0.9112,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 11,
+        "train_start": "2025-09-19",
+        "train_end": "2025-12-17",
+        "test_start": "2025-12-18",
+        "test_end": "2026-01-16",
+        "gate_date": "2025-12-18",
+        "rev_excluded": true,
+        "weights": {
+          "v4.1": 0.2022,
+          "V1": 0.0682,
+          "K114": 0.0,
+          "K116": 0.0089,
+          "K121": 0.1068,
+          "K133": 0.2408,
+          "K147": 0.2733,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {
+          "V_rev_carry": 17.3976
+        },
+        "opportunity_cost_exists": true,
+        "mean_r2": 0.9359,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 12,
+        "train_start": "2025-10-19",
+        "train_end": "2026-01-16",
+        "test_start": "2026-01-17",
+        "test_end": "2026-02-15",
+        "gate_date": "2026-01-17",
+        "rev_excluded": true,
+        "weights": {
+          "v4.1": 0.0,
+          "V1": 0.1425,
+          "K114": 0.2147,
+          "K116": 0.067,
+          "K121": 0.2578,
+          "K133": 0.2527,
+          "K147": 0.0,
+          "K175_DAR": 0.0,
+          "V_fwd_carry": 0.0655,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {
+          "V_rev_carry": 21.6018
+        },
+        "opportunity_cost_exists": true,
+        "mean_r2": 0.9586,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 13,
+        "train_start": "2025-11-18",
+        "train_end": "2026-02-15",
+        "test_start": "2026-02-16",
+        "test_end": "2026-03-17",
+        "gate_date": "2026-02-16",
+        "rev_excluded": false,
+        "weights": {
+          "v4.1": 0.1314,
+          "V1": 0.1128,
+          "K114": 0.0143,
+          "K116": 0.0836,
+          "K121": 0.0923,
+          "K133": 0.0879,
+          "K147": 0.0991,
+          "K175_DAR": 0.1834,
+          "V_fwd_carry": 0.1451,
+          "V_rev_carry": 0.05
+        },
+        "ml_wanted_excluded": {},
+        "opportunity_cost_exists": false,
+        "mean_r2": 0.9567,
+        "mean_dir_acc": 0.8
+      },
+      {
+        "step": 14,
+        "train_start": "2025-12-18",
+        "train_end": "2026-03-17",
+        "test_start": "2026-03-18",
+        "test_end": "2026-04-14",
+        "gate_date": "2026-03-18",
+        "rev_excluded": true,
+        "weights": {
+          "v4.1": 0.4312,
+          "V1": 0.0,
+          "K114": 0.0153,
+          "K116": 0.0,
+          "K121": 0.0122,
+          "K133": 0.1265,
+          "K147": 0.0,
+          "K175_DAR": 0.3148,
+          "V_fwd_carry": 0.1,
+          "V_rev_carry": 0.0
+        },
+        "ml_wanted_excluded": {
+          "V_rev_carry": 27.5938
+        },
+        "opportunity_cost_exists": true,
+        "mean_r2": 0.9356,
+        "mean_dir_acc": 0.7
+      }
+    ]
+  },
+  "verdict": "REJECT: K202 fails all primary metrics vs K198. OOS Sh=7.84, WF min=6.29, MaxDD=-0.0071. Gate architecture does not improve over ML alone. K198 remains production (v6.5). Investigate: trigger frequency or alternative pre-filter mechanism.",
+  "deployment_plan": "K198 v6.5 retained as production. K202 architecture logs stored for analysis."
+}
