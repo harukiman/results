@@ -3514,3 +3514,22 @@ ADA Sh+2.23 (26 trades) は K25 FR shock の ADA Sh+2.71 と似た edge — 同�
 2. **Marginal legs の存在**: FOPD DOT (Sh=+0.03) は実質 wash trade。除外しても全体 Sharpe へのマイナス影響は限定的。但しコスト面メリットも小 (取引数 14 = 730日中 1.9%)
 3. **Diversification value**: Bottom legs を残す理由は、Top contributors が **意外に短期相関を持つ可能性** に対する保険。decorrelation 検証は K40 で実施予定
 4. **vol_MR の symbol 依存性**: SOL (+1.86) >> BTC (+0.93) >> ETH (+1.04) >> BNB (+0.41)。SOL の特異性 (high beta meme proxy?) が際立つ
+
+## Wave K40 — ATR strat の代替 meme 一般化テスト (2026-05-23)
+
+K39で「meme vol が alpha 主源」が判明後、SHIB/BONK 以外でも効くか検証:
+
+| Symbol | 4H Sharpe | 8H Sharpe |
+|--------|-----------|-----------|
+| SHIBUSDT (basis) | +2.06 | +2.23 |
+| BONKUSDT (basis) | +1.58 | +2.12 |
+| PEPEUSDT | +0.91 | +0.80 |
+| FLOKIUSDT | +1.20 | +0.51 |
+| TRUMPUSDT | (no data) | - |
+
+**Verdict**: SHIB/BONK 固有エッジ。ATR_Ratio_Compression は meme 一般化しない。
+- FLOKI 4H Sh+1.20 は marginal pass、5番目軸候補にはなり得るが優先度低
+- PEPE は Sharpe<1 で却下
+- 「mix の alpha は分散効果ではなく特定銘柄エッジ依存」を再確認
+
+**示唆**: BONK/SHIB 上場廃止リスクや流動性枯渇は 4-way mix 全体の主要リスクファクター。
