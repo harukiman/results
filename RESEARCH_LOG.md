@@ -3336,3 +3336,10 @@ Best BNB Sh+1.23 (DD-13%)、DOGE/ADA negative。Single-direction vol spike は v
 - 古典的「トレンドフォロー momentum 戦略」は ATR_Ratio に既に近い情報を含む
 
 **累計**: 22候補テスト、4成功 = 18.2% (累積成功率)
+
+### 2026-05-24 06:10 JST: Wave K29 — RSI extreme reversal 棄却 (0 Sh≥1.5)
+
+古典 RSI 逆張り: best AVAX Sh+1.40, 25% Sh>0, 0 Sh≥1.5。
+momentum overshoots は典型的に継続、reverse しない。
+
+**23候補 4成功 = 17.4%** (累積継続低下)
