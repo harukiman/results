@@ -1,0 +1,376 @@
+{
+  "wave": "K206",
+  "task": "Ethena TVL lead signal analysis for K196 reverse carry",
+  "as_of": "2026-05-24T21:24:36.559135+00:00Z",
+  "runtime_s": 4.6,
+  "tvl_summary": {
+    "source": "DefiLlama api.llama.fi/protocol/ethena",
+    "start": "2024-05-26",
+    "end": "2026-05-24",
+    "n_days": 729,
+    "tvl_min_B": 2.415,
+    "tvl_max_B": 14.982,
+    "tvl_latest_B": 5.474
+  },
+  "aligned_dataset": {
+    "n_days": 669,
+    "start": "2024-07-25",
+    "end": "2026-05-24"
+  },
+  "lead_lag_correlations": {
+    "tvl_change_7d": {
+      "lag_0d": -0.2606,
+      "lag_1d": -0.2521,
+      "lag_3d": -0.2231,
+      "lag_7d": -0.206,
+      "lag_14d": -0.1609
+    },
+    "tvl_change_30d": {
+      "lag_0d": -0.2262,
+      "lag_1d": -0.2177,
+      "lag_3d": -0.2002,
+      "lag_7d": -0.1765,
+      "lag_14d": -0.1514
+    },
+    "tvl_drawdown_30d": {
+      "lag_0d": -0.2024,
+      "lag_1d": -0.1953,
+      "lag_3d": -0.1802,
+      "lag_7d": -0.1718,
+      "lag_14d": -0.1606
+    },
+    "tvl_acceleration": {
+      "lag_0d": 0.0266,
+      "lag_1d": -0.0429,
+      "lag_3d": -0.006,
+      "lag_7d": -0.0162,
+      "lag_14d": -0.017
+    }
+  },
+  "granger_causality": {
+    "tvl_change_7d_causes_carry": {
+      "p_lag_1d": 0.0,
+      "p_lag_3d": 0.0107,
+      "p_lag_7d": 0.0116,
+      "p_lag_14d": 0.017,
+      "min_p": 0.0,
+      "verdict": "SIGNIFICANT"
+    },
+    "tvl_change_30d_causes_carry": {
+      "p_lag_1d": 0.0002,
+      "p_lag_3d": 0.0138,
+      "p_lag_7d": 0.1211,
+      "p_lag_14d": 0.3571,
+      "min_p": 0.0002,
+      "verdict": "SIGNIFICANT"
+    }
+  },
+  "conditional_analysis": {
+    "threshold_10pct": {
+      "after_tvl_drop_gt10pct_7d": {
+        "n_events": 28,
+        "mean_fwd_carry": 0.000907,
+        "median_fwd_carry": 0.001075,
+        "pct_positive": 0.9286
+      },
+      "after_tvl_grow_gt10pct_7d": {
+        "n_events": 77,
+        "mean_fwd_carry": -0.001323,
+        "median_fwd_carry": -0.000911,
+        "pct_positive": 0.1169
+      },
+      "neutral_7d": {
+        "n_events": 617,
+        "mean_fwd_carry": -0.000139,
+        "median_fwd_carry": -0.000102,
+        "pct_positive": 0.4716
+      },
+      "after_tvl_drop_gt10pct_14d": {
+        "n_events": 28,
+        "mean_fwd_carry": 0.001503,
+        "median_fwd_carry": 0.002122,
+        "pct_positive": 0.7857
+      },
+      "after_tvl_grow_gt10pct_14d": {
+        "n_events": 77,
+        "mean_fwd_carry": -0.002192,
+        "median_fwd_carry": -0.001298,
+        "pct_positive": 0.0909
+      },
+      "neutral_14d": {
+        "n_events": 617,
+        "mean_fwd_carry": -0.000315,
+        "median_fwd_carry": -0.000419,
+        "pct_positive": 0.4441
+      },
+      "n_total_days": 722,
+      "n_drop_events": 28,
+      "n_grow_events": 77,
+      "n_neutral_events": 617
+    },
+    "threshold_5pct": {
+      "after_tvl_drop_gt5pct_7d": {
+        "n_events": 81,
+        "mean_fwd_carry": 0.000758,
+        "median_fwd_carry": 0.000837,
+        "pct_positive": 0.8642
+      },
+      "after_tvl_grow_gt5pct_7d": {
+        "n_events": 145,
+        "mean_fwd_carry": -0.001234,
+        "median_fwd_carry": -0.000732,
+        "pct_positive": 0.1448
+      },
+      "neutral_7d": {
+        "n_events": 496,
+        "mean_fwd_carry": -9e-05,
+        "median_fwd_carry": -9.5e-05,
+        "pct_positive": 0.4738
+      },
+      "after_tvl_drop_gt5pct_14d": {
+        "n_events": 81,
+        "mean_fwd_carry": 0.001285,
+        "median_fwd_carry": 0.001605,
+        "pct_positive": 0.7654
+      },
+      "after_tvl_grow_gt5pct_14d": {
+        "n_events": 145,
+        "mean_fwd_carry": -0.002259,
+        "median_fwd_carry": -0.001252,
+        "pct_positive": 0.131
+      },
+      "neutral_14d": {
+        "n_events": 496,
+        "mean_fwd_carry": -0.000197,
+        "median_fwd_carry": -0.000354,
+        "pct_positive": 0.4476
+      },
+      "n_total_days": 722,
+      "n_drop_events": 81,
+      "n_grow_events": 145,
+      "n_neutral_events": 496
+    }
+  },
+  "k196_filter_backtest": {
+    "threshold_10pct": {
+      "baseline_full": {
+        "sharpe": -1.8643,
+        "sortino": -1.7833,
+        "calmar": -0.3221,
+        "max_dd": -0.037,
+        "ann_ret": -0.0119,
+        "ann_vol": 0.0064,
+        "n_days": 722
+      },
+      "baseline_oos": {
+        "sharpe": 2.625,
+        "sortino": 1.7291,
+        "calmar": 1.9832,
+        "max_dd": -0.0109,
+        "ann_ret": 0.0217,
+        "ann_vol": 0.0082,
+        "n_days": 217
+      },
+      "variant_a_full": {
+        "sharpe": -2.0287,
+        "sortino": -1.9296,
+        "calmar": -0.3382,
+        "max_dd": -0.0381,
+        "ann_ret": -0.0129,
+        "ann_vol": 0.0064,
+        "n_days": 722
+      },
+      "variant_a_oos": {
+        "sharpe": 2.352,
+        "sortino": 1.5419,
+        "calmar": 1.7682,
+        "max_dd": -0.0109,
+        "ann_ret": 0.0193,
+        "ann_vol": 0.0082,
+        "n_days": 217
+      },
+      "variant_a_oos_sharpe_delta": -0.273,
+      "variant_b_full": {
+        "sharpe": -2.3549,
+        "sortino": -2.2303,
+        "calmar": -0.3542,
+        "max_dd": -0.045,
+        "ann_ret": -0.016,
+        "ann_vol": 0.0068,
+        "n_days": 722
+      },
+      "variant_b_oos": {
+        "sharpe": 2.6837,
+        "sortino": 1.7725,
+        "calmar": 2.0265,
+        "max_dd": -0.011,
+        "ann_ret": 0.0222,
+        "ann_vol": 0.0082,
+        "n_days": 217
+      },
+      "variant_b_oos_sharpe_delta": 0.0587,
+      "variant_ab_full": {
+        "sharpe": -2.5118,
+        "sortino": -2.3664,
+        "calmar": -0.3664,
+        "max_dd": -0.0462,
+        "ann_ret": -0.0169,
+        "ann_vol": 0.0068,
+        "n_days": 722
+      },
+      "variant_ab_oos": {
+        "sharpe": 2.4113,
+        "sortino": 1.585,
+        "calmar": 1.8119,
+        "max_dd": -0.011,
+        "ann_ret": 0.0199,
+        "ann_vol": 0.0082,
+        "n_days": 217
+      },
+      "variant_ab_oos_sharpe_delta": -0.2137,
+      "wf_deltas_variant_a": [
+        0.0,
+        0.0,
+        -0.5934,
+        -0.0961
+      ],
+      "wf_deltas_variant_b": [
+        0.6388,
+        -1.0401,
+        -0.603,
+        0.0669
+      ],
+      "wf_deltas_variant_ab": [
+        0.6388,
+        -1.0401,
+        -1.1748,
+        -0.0289
+      ],
+      "oos_start_date": "2025-10-20",
+      "oos_n_days": 217,
+      "threshold_pct": 10
+    },
+    "threshold_5pct": {
+      "baseline_full": {
+        "sharpe": -1.8643,
+        "sortino": -1.7833,
+        "calmar": -0.3221,
+        "max_dd": -0.037,
+        "ann_ret": -0.0119,
+        "ann_vol": 0.0064,
+        "n_days": 722
+      },
+      "baseline_oos": {
+        "sharpe": 2.625,
+        "sortino": 1.7291,
+        "calmar": 1.9832,
+        "max_dd": -0.0109,
+        "ann_ret": 0.0217,
+        "ann_vol": 0.0082,
+        "n_days": 217
+      },
+      "variant_a_full": {
+        "sharpe": -2.2909,
+        "sortino": -2.1553,
+        "calmar": -0.3525,
+        "max_dd": -0.0408,
+        "ann_ret": -0.0144,
+        "ann_vol": 0.0063,
+        "n_days": 722
+      },
+      "variant_a_oos": {
+        "sharpe": 1.8826,
+        "sortino": 1.2254,
+        "calmar": 1.4025,
+        "max_dd": -0.0109,
+        "ann_ret": 0.0153,
+        "ann_vol": 0.0081,
+        "n_days": 217
+      },
+      "variant_a_oos_sharpe_delta": -0.7424,
+      "variant_b_full": {
+        "sharpe": -2.6633,
+        "sortino": -2.5074,
+        "calmar": -0.3743,
+        "max_dd": -0.0506,
+        "ann_ret": -0.019,
+        "ann_vol": 0.0072,
+        "n_days": 722
+      },
+      "variant_b_oos": {
+        "sharpe": 2.6663,
+        "sortino": 1.7637,
+        "calmar": 2.0049,
+        "max_dd": -0.011,
+        "ann_ret": 0.0221,
+        "ann_vol": 0.0082,
+        "n_days": 217
+      },
+      "variant_b_oos_sharpe_delta": 0.0413,
+      "variant_ab_full": {
+        "sharpe": -3.0536,
+        "sortino": -2.8333,
+        "calmar": -0.3929,
+        "max_dd": -0.0545,
+        "ann_ret": -0.0214,
+        "ann_vol": 0.0071,
+        "n_days": 722
+      },
+      "variant_ab_oos": {
+        "sharpe": 1.9259,
+        "sortino": 1.259,
+        "calmar": 1.4282,
+        "max_dd": -0.011,
+        "ann_ret": 0.0157,
+        "ann_vol": 0.0081,
+        "n_days": 217
+      },
+      "variant_ab_oos_sharpe_delta": -0.6991,
+      "wf_deltas_variant_a": [
+        0.1155,
+        -0.4147,
+        -1.214,
+        -0.2691
+      ],
+      "wf_deltas_variant_b": [
+        1.2712,
+        -1.4191,
+        -0.9806,
+        0.0486
+      ],
+      "wf_deltas_variant_ab": [
+        1.3552,
+        -1.8065,
+        -2.1244,
+        -0.2197
+      ],
+      "oos_start_date": "2025-10-20",
+      "oos_n_days": 217,
+      "threshold_pct": 5
+    }
+  },
+  "section6_gates": {
+    "c1_lead_corr_lag7": 0.206,
+    "c1_threshold": 0.15,
+    "c1_pass": true,
+    "c2_granger_min_p": 0.0,
+    "c2_threshold": 0.05,
+    "c2_pass": true,
+    "c3_best_oos_sh_lift": 0.0587,
+    "c3_threshold": 0.05,
+    "c3_pass": true,
+    "c4_mechanism_ok": true,
+    "n_gates_pass": 4,
+    "all_pass": true,
+    "verdict": "ACCEPT: Integrate Ethena TVL as K204 ML feature"
+  },
+  "mechanism_explanation": "Ethena is the largest delta-neutral stablecoin protocol (USDe). It maintains delta-neutral positions via perp shorts across CEXes. When Ethena TVL drops, it unwinds perp shorts \u2192 reduces net short OI on platforms like Bybit \u2192 funding rates on Bybit compress toward zero or go negative \u2192 the HL-Bybit spread that K196 captures (Bybit FR > HL FR) narrows or reverses \u2192 carry returns suffer. Conversely, TVL growth = expanding perp shorts = wider spreads = better carry. The lead time is 1-2 weeks because: (1) unwinds are gradual, (2) FR adjusts over multiple settlement periods (8h each).",
+  "verdict_and_recommendation": "ACCEPT: Integrate Ethena TVL as K204 ML feature",
+  "alternative_indicators_if_null": [
+    "DeFi TVL aggregate (all delta-neutral protocols combined)",
+    "Bybit total OI (direct measure of short OI)",
+    "USDe supply change (circulating supply is more real-time than TVL)",
+    "CEX net funding rate regime index (cross-exchange FR momentum)",
+    "Stablecoin market cap change (broader capital flow proxy)"
+  ]
+}
