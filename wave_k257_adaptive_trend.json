@@ -1,0 +1,181 @@
+{
+  "wave": "K257",
+  "strategy": "AdaptiveTrend",
+  "arxiv_ref": "2602.11708",
+  "as_of": "2026-05-25T01:11:28.369799+00:00",
+  "runtime_s": 1.3,
+  "config": {
+    "symbols": [
+      "ADA",
+      "APT",
+      "ARB",
+      "ATOM",
+      "AVAX",
+      "BNB",
+      "BTC",
+      "DOGE",
+      "DOT",
+      "ENA",
+      "ETC",
+      "ETH",
+      "FET",
+      "FIL",
+      "GRT",
+      "ICP",
+      "INJ",
+      "JTO",
+      "JUP",
+      "LINK",
+      "LTC",
+      "NEAR",
+      "OP",
+      "PEPE",
+      "RUNE",
+      "SEI",
+      "SOL",
+      "SUI",
+      "TAO",
+      "TIA",
+      "TRX",
+      "UNI",
+      "WIF",
+      "XRP"
+    ],
+    "n_symbols": 34,
+    "data_source": "4h_730d_resampled_6h",
+    "date_range_6h": [
+      "2024-05-23 12:00:00",
+      "2026-05-24 06:00:00"
+    ],
+    "ema_fast_6h_periods": 4,
+    "ema_slow_6h_periods": 16,
+    "rebal_days": 21,
+    "trailing_sharpe_days": 30,
+    "long_frac": 0.7,
+    "short_frac": 0.3,
+    "top_quartile": 0.25,
+    "bot_quartile": 0.25,
+    "cost_bps_per_side": 7,
+    "n_long": 8,
+    "n_short": 8
+  },
+  "full_period": {
+    "n_days": 697,
+    "date_range": [
+      "2024-06-27",
+      "2026-05-24"
+    ],
+    "sharpe": 0.3405,
+    "maxdd": -0.387996,
+    "ann_ret": 0.1165
+  },
+  "oos": {
+    "oos_sharpe": -0.9183,
+    "oos_maxdd": -0.265884,
+    "oos_n_days": 210,
+    "oos_ann_ret": -0.2427
+  },
+  "walkforward": {
+    "fold_sharpes": [
+      1.5042,
+      0.6671,
+      -1.1054,
+      0.0118
+    ],
+    "fold_details": [
+      {
+        "fold": 1,
+        "n_days": 174,
+        "sharpe": 1.5042,
+        "start_date": "2024-06-27",
+        "end_date": "2024-12-17"
+      },
+      {
+        "fold": 2,
+        "n_days": 174,
+        "sharpe": 0.6671,
+        "start_date": "2024-12-18",
+        "end_date": "2025-06-09"
+      },
+      {
+        "fold": 3,
+        "n_days": 174,
+        "sharpe": -1.1054,
+        "start_date": "2025-06-10",
+        "end_date": "2025-11-30"
+      },
+      {
+        "fold": 4,
+        "n_days": 175,
+        "sharpe": 0.0118,
+        "start_date": "2025-12-01",
+        "end_date": "2026-05-24"
+      }
+    ],
+    "wf_mean": 0.2694,
+    "wf_min": -1.1054,
+    "wf_max": 1.5042,
+    "all_positive": false
+  },
+  "correlation_vs_k246a": {
+    "wave_k251_curves/K246a": 0.0102,
+    "wave_k258_curves/K246a": 0.0102
+  },
+  "acceptance_gates": {
+    "g1_oos_sh": {
+      "required": 1.5,
+      "actual": -0.9183,
+      "pass": false
+    },
+    "g2_all_folds_positive": {
+      "required": true,
+      "actual": false,
+      "fold_sharpes": [
+        1.5042,
+        0.6671,
+        -1.1054,
+        0.0118
+      ],
+      "pass": false
+    },
+    "g3_rho": {
+      "threshold": 0.5,
+      "values": {
+        "wave_k251_curves/K246a": 0.0102,
+        "wave_k258_curves/K246a": 0.0102
+      },
+      "pass": true
+    },
+    "all_pass": false
+  },
+  "k246a_reference": {
+    "oos_sharpe": 12.6929,
+    "wf_min": 8.9347,
+    "fold_sharpes": [
+      13.6029,
+      8.9347,
+      13.8374,
+      12.6097
+    ]
+  },
+  "parameter_sweep_summary": {
+    "variants_tested": 25,
+    "best_oos_sharpe_found": -0.0128,
+    "best_config": "EMA(4,16) 6h + BTC market regime filter (EMA 30/90), Full Sh=1.65 but OOS=0.01",
+    "key_failure_mode": "Fold covering 2025-05 to 2025-10 consistently negative across all variants",
+    "regime_context": {
+      "btc_aug_nov_2025": "Sharpe=-1.77, return=-22.3%",
+      "btc_nov25_feb26": "Sharpe=-2.56, return=-44.6%",
+      "conclusion": "Crypto bear market 2025-H2 destroys 70/30 long-biased trend-follow strategies"
+    }
+  },
+  "verdict": {
+    "decision": "REJECT",
+    "reasons": [
+      "OOS Sh -0.9183 < gate 1.5",
+      "Negative folds: Fold3=-1.1054"
+    ],
+    "summary": "AdaptiveTrend (strict spec, 34 symbols, 6h EMA(4,16), monthly rebal, 70/30 L/S): OOS Sh -0.9183 vs gate 1.5; Fold Sharpes [1.5042, 0.6671, -1.1054, 0.0118]; Fold 3 (2025-05 to 2025-10) persistently negative across 25 parameter variants tested. Strategy concept is sound (arxiv OOS Sh=2.41 on 150+ pairs) but fails in 2024-2026 crypto bear regime with 34 symbols.",
+    "k258_integration_plan": "K258 integration NOT recommended. AdaptiveTrend fails standalone acceptance gates in the 2024-2026 crypto dataset. Root cause: cross-sectional momentum L/S with 70/30 long bias suffers severely in the 2025-H2 crypto bear market (BTC -22% Aug-Nov 2025, -45% Nov 2025-Feb 2026). EMA trend signal has insufficient edge to compensate long-side losses during drawdown periods. Recommended next steps before K258: (1) Source data from 2020-2024 (pre-bear) to replicate arxiv:2602.11708 claimed OOS Sh=2.41; (2) Add macro regime filter (reduce gross when BTC 200d trend is negative); (3) Extend to 150+ pairs as in the original paper; (4) Test on intraday (hourly) rather than 6h bars which may better capture micro-trends."
+  }
+}
