@@ -1,0 +1,299 @@
+{
+  "wave": "K248",
+  "task": "2-Way Simplification Search \u2014 K208+K226 with Alternative Allocators",
+  "as_of": "2026-05-25T00:14:35.725993+00:00",
+  "runtime_s": 0.31,
+  "data_info": {
+    "n_days": 448,
+    "date_start": "2025-01-22",
+    "date_end": "2026-04-14",
+    "n_returns": 447,
+    "k208_missing_days": 0,
+    "k226_missing_days": 0
+  },
+  "acceptance_gates": {
+    "gate1_oos_sharpe": 12.69,
+    "gate2_wf_min": 8.93,
+    "gate3_maxdd": -0.00115,
+    "gate4_simplification": "components = 2 (vs K246a 3)",
+    "reference": "K246a v6.9"
+  },
+  "comparison": {
+    "K246a_reference": {
+      "oos_sharpe": 12.6929,
+      "oos_maxdd": -0.001145,
+      "wf_mean": 12.2462,
+      "wf_min": 8.9347,
+      "fold_sharpes": [
+        13.6029,
+        8.9347,
+        13.8374,
+        12.6097
+      ],
+      "components": 3,
+      "component_list": [
+        "K198",
+        "K208",
+        "K226"
+      ],
+      "gates_pass": true
+    },
+    "K248a": {
+      "oos_sharpe": 12.0273,
+      "oos_maxdd": -0.001111,
+      "wf_mean": 10.7118,
+      "wf_min": 3.6102,
+      "fold_sharpes": [
+        14.1342,
+        3.6102,
+        13.1201,
+        11.9826
+      ],
+      "components": 2,
+      "component_list": [
+        "K208",
+        "K226"
+      ],
+      "allocator": "Inv-vol rolling 30d + K226 cap 20% (K246c reproduce)",
+      "avg_w208": 0.987,
+      "avg_w226": 0.013,
+      "per_fold_w208": [
+        0.9783,
+        0.9987,
+        0.9808,
+        0.9902
+      ],
+      "gates_pass": false,
+      "gate_details": {
+        "gate1_oos_sh": false,
+        "gate2_wf_min": false,
+        "gate3_maxdd": true,
+        "gate4_simplification": true
+      },
+      "delta_oos_sh": -0.6627,
+      "delta_wf_min": -5.3198,
+      "delta_maxdd": 3.9e-05
+    },
+    "K248b": {
+      "oos_sharpe": 13.5635,
+      "oos_maxdd": -9e-05,
+      "wf_mean": 13.3848,
+      "wf_min": 6.1239,
+      "fold_sharpes": [
+        16.5523,
+        6.1239,
+        17.4757,
+        13.3875
+      ],
+      "components": 2,
+      "component_list": [
+        "K208",
+        "K226"
+      ],
+      "allocator": "MVP rolling 60d",
+      "avg_w208": 0.9934,
+      "avg_w226": 0.0066,
+      "per_fold_w208": [
+        0.9743,
+        0.9999,
+        0.9997,
+        0.9995
+      ],
+      "gates_pass": false,
+      "gate_details": {
+        "gate1_oos_sh": true,
+        "gate2_wf_min": false,
+        "gate3_maxdd": true,
+        "gate4_simplification": true
+      },
+      "delta_oos_sh": 0.8735,
+      "delta_wf_min": -2.8061,
+      "delta_maxdd": 0.00106
+    },
+    "K248c": {
+      "oos_sharpe": 2.7399,
+      "oos_maxdd": -0.045221,
+      "wf_mean": 2.4574,
+      "wf_min": 0.3932,
+      "fold_sharpes": [
+        3.4481,
+        0.3932,
+        3.0405,
+        2.9479
+      ],
+      "components": 2,
+      "component_list": [
+        "K208",
+        "K226"
+      ],
+      "allocator": "Fixed K208=70% K226=30%",
+      "avg_w208": 0.7,
+      "avg_w226": 0.3,
+      "per_fold_w208": [
+        0.7,
+        0.7,
+        0.7,
+        0.7
+      ],
+      "gates_pass": false,
+      "gate_details": {
+        "gate1_oos_sh": false,
+        "gate2_wf_min": false,
+        "gate3_maxdd": false,
+        "gate4_simplification": true
+      },
+      "delta_oos_sh": -9.9501,
+      "delta_wf_min": -8.5368,
+      "delta_maxdd": -0.044071
+    },
+    "K248d": {
+      "oos_sharpe": 2.6221,
+      "oos_maxdd": -0.06111,
+      "wf_mean": 2.3957,
+      "wf_min": 0.3885,
+      "fold_sharpes": [
+        3.3938,
+        0.3885,
+        2.9682,
+        2.8324
+      ],
+      "components": 2,
+      "component_list": [
+        "K208",
+        "K226"
+      ],
+      "allocator": "Fixed K208=60% K226=40%",
+      "avg_w208": 0.6,
+      "avg_w226": 0.4,
+      "per_fold_w208": [
+        0.6,
+        0.6,
+        0.6,
+        0.6
+      ],
+      "gates_pass": false,
+      "gate_details": {
+        "gate1_oos_sh": false,
+        "gate2_wf_min": false,
+        "gate3_maxdd": false,
+        "gate4_simplification": true
+      },
+      "delta_oos_sh": -10.0679,
+      "delta_wf_min": -8.5415,
+      "delta_maxdd": -0.05996
+    },
+    "K248e": {
+      "oos_sharpe": 2.975,
+      "oos_maxdd": -0.029167,
+      "wf_mean": 2.5806,
+      "wf_min": 0.4026,
+      "fold_sharpes": [
+        3.5565,
+        0.4026,
+        3.1853,
+        3.1782
+      ],
+      "components": 2,
+      "component_list": [
+        "K208",
+        "K226"
+      ],
+      "allocator": "Fixed K208=80% K226=20%",
+      "avg_w208": 0.8,
+      "avg_w226": 0.2,
+      "per_fold_w208": [
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ],
+      "gates_pass": false,
+      "gate_details": {
+        "gate1_oos_sh": false,
+        "gate2_wf_min": false,
+        "gate3_maxdd": false,
+        "gate4_simplification": true
+      },
+      "delta_oos_sh": -9.715,
+      "delta_wf_min": -8.5274,
+      "delta_maxdd": -0.028017
+    },
+    "K248f": {
+      "oos_sharpe": 3.0983,
+      "oos_maxdd": -0.031492,
+      "wf_mean": 3.0248,
+      "wf_min": 0.7817,
+      "fold_sharpes": [
+        4.6624,
+        0.7817,
+        3.3561,
+        3.2989
+      ],
+      "components": 2,
+      "component_list": [
+        "K208",
+        "K226"
+      ],
+      "allocator": "Sharpe-weighted rolling 90d",
+      "avg_w208": 0.8301,
+      "avg_w226": 0.1699,
+      "per_fold_w208": [
+        0.8305,
+        0.8358,
+        0.8131,
+        0.8406
+      ],
+      "gates_pass": false,
+      "gate_details": {
+        "gate1_oos_sh": false,
+        "gate2_wf_min": false,
+        "gate3_maxdd": false,
+        "gate4_simplification": true
+      },
+      "delta_oos_sh": -9.5917,
+      "delta_wf_min": -8.1483,
+      "delta_maxdd": -0.030342
+    },
+    "K248g": {
+      "oos_sharpe": 2.5513,
+      "oos_maxdd": -0.076834,
+      "wf_mean": 2.3587,
+      "wf_min": 0.3857,
+      "fold_sharpes": [
+        3.3612,
+        0.3857,
+        2.9247,
+        2.7631
+      ],
+      "components": 2,
+      "component_list": [
+        "K208",
+        "K226"
+      ],
+      "allocator": "Equal weight 50/50",
+      "avg_w208": 0.5,
+      "avg_w226": 0.5,
+      "per_fold_w208": [
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "gates_pass": false,
+      "gate_details": {
+        "gate1_oos_sh": false,
+        "gate2_wf_min": false,
+        "gate3_maxdd": false,
+        "gate4_simplification": true
+      },
+      "delta_oos_sh": -10.1387,
+      "delta_wf_min": -8.5443,
+      "delta_maxdd": -0.075684
+    }
+  },
+  "verdict": "REJECT 2-way simplification \u2014 K246a 3-way is optimal architecture",
+  "accepted": false,
+  "best_variant": null,
+  "best_variant_metrics": null,
+  "k249_plan": "No 2-way allocator variant matched K246a on all three gates. K198 provides unique fold-2 stability that cannot be replicated by re-weighting K208+K226. K246a v6.9 (K198+K208+K226) is confirmed as final production architecture."
+}
