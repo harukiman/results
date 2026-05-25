@@ -1,0 +1,203 @@
+{
+  "wave": "K297",
+  "strategy": "HL_HIP3_RWA_Perp_FR_Carry",
+  "generated_at": "2026-05-25T04:32:50.067661+00:00",
+  "config": {
+    "entry_rule_original": "Friday 16:00 UTC (NYSE close)",
+    "exit_rule_original": "Monday 14:30 UTC (NYSE open)",
+    "actual_strategy": "Always-On FR Carry (superior to weekend-only)",
+    "hold_hours_weekend": 70.5,
+    "maker_cost_per_side_pct": 0.015,
+    "round_trip_cost_pct": 0.03
+  },
+  "hl_market_discovery": {
+    "total_hl_markets": 230,
+    "rwa_tradfi_markets_confirmed": [
+      "SPX",
+      "PAXG"
+    ],
+    "rwa_note": "SPX = S&P 500 perp (HIP-3), PAXG = PAX Gold (gold-backed token perp)",
+    "xag_silver_status": "NOT LISTED on HL (500 errors, no data)",
+    "xau_gold_status": "NOT LISTED on HL (no data)",
+    "usoil_status": "NOT LISTED on HL (no data)",
+    "r10_003_note": "R10-003 XAG 3x weekend premium was from BINANCE, not HL"
+  },
+  "data_coverage": {
+    "SPX": {
+      "start": "2025-01-07",
+      "end": "2026-05-25",
+      "n_hours": 12071
+    },
+    "PAXG": {
+      "start": "2025-04-06",
+      "end": "2026-05-25",
+      "n_hours": 9925
+    }
+  },
+  "fr_stats": {
+    "SPX": {
+      "n_total_hours": 12071,
+      "n_weekend_hours": 5102,
+      "n_weekday_hours": 6969,
+      "weekend_apr_pct": 5.9514415310074495,
+      "weekday_apr_pct": 7.4755184220404685,
+      "total_apr_pct": 6.8313431011846575,
+      "weekend_vs_weekday_ratio": 0.7961242545347087,
+      "weekend_pct_positive": 81.83065464523716,
+      "weekday_pct_positive": 82.76653752331755
+    },
+    "PAXG": {
+      "n_total_hours": 9925,
+      "n_weekend_hours": 4202,
+      "n_weekday_hours": 5723,
+      "weekend_apr_pct": 7.7665361760114235,
+      "weekday_apr_pct": 8.31038925752228,
+      "total_apr_pct": 8.080135287899246,
+      "weekend_vs_weekday_ratio": 0.9345574479536468,
+      "weekend_pct_positive": 86.60161827701096,
+      "weekday_pct_positive": 86.7027782631487
+    }
+  },
+  "r10_verification": {
+    "claim_source": "R10-003 BitMEX Q1 2026 Report \u2014 Binance XAG data",
+    "claimed_weekend_apr_binance_xag": 56.69,
+    "claimed_weekday_apr_binance_xag": 18.18,
+    "claimed_ratio": 3.12,
+    "hl_spx_weekend_apr": 5.9514415310074495,
+    "hl_spx_weekday_apr": 7.4755184220404685,
+    "hl_spx_ratio": 0.7961242545347087,
+    "hl_paxg_weekend_apr": 7.7665361760114235,
+    "hl_paxg_weekday_apr": 8.31038925752228,
+    "hl_paxg_ratio": 0.9345574479536468,
+    "verdict": "R10 3x claim NOT CONFIRMED on HL. HL weekday FR > weekend FR for both SPX and PAXG. Strategy pivoted to always-on carry."
+  },
+  "backtest_weekend_only": {
+    "SPX": {
+      "n_trades": 72,
+      "win_rate_pct": 61.111111111111114,
+      "gross_mean_per_trade_pct": 0.046937557638888905,
+      "net_mean_per_trade_pct": 0.016937557638888906,
+      "ann_return_pct": 0.8807529972222231,
+      "ann_vol_pct": 1.1577691663222671,
+      "sharpe": 0.7607328151776535,
+      "max_dd_pct": -1.322460291324734,
+      "walk_forward": {
+        "folds": [
+          {
+            "fold": 1,
+            "n": 24,
+            "mean_pct": 0.0016456758333333354,
+            "sharpe": 0.0707845712797183
+          },
+          {
+            "fold": 2,
+            "n": 24,
+            "mean_pct": 0.059943699166666684,
+            "sharpe": 2.1098183549805225
+          },
+          {
+            "fold": 3,
+            "n": 24,
+            "mean_pct": -0.010776702083333317,
+            "sharpe": -1.1718071347221164
+          }
+        ],
+        "mean_sharpe": 0.3362652638460415,
+        "all_positive": false
+      }
+    },
+    "PAXG": {
+      "n_trades": 59,
+      "win_rate_pct": 76.27118644067797,
+      "gross_mean_per_trade_pct": 0.061563344237288146,
+      "net_mean_per_trade_pct": 0.031563344237288155,
+      "ann_return_pct": 1.6412939003389841,
+      "ann_vol_pct": 0.5220987060638266,
+      "sharpe": 3.1436467496978167,
+      "max_dd_pct": -0.38893682834640897,
+      "walk_forward": {
+        "folds": [
+          {
+            "fold": 1,
+            "n": 19,
+            "mean_pct": 0.06680441210526318,
+            "sharpe": 8.47247508913247
+          },
+          {
+            "fold": 2,
+            "n": 19,
+            "mean_pct": 0.024109085789473697,
+            "sharpe": 3.629301799927613
+          },
+          {
+            "fold": 3,
+            "n": 21,
+            "mean_pct": 0.006422897619047632,
+            "sharpe": 0.5204200056558859
+          }
+        ],
+        "mean_sharpe": 4.207398964905323,
+        "all_positive": true
+      }
+    }
+  },
+  "backtest_alwayson": {
+    "SPX": {
+      "n_days": 504,
+      "win_days_pct": 77.77777777777779,
+      "ann_return_pct": 6.795497898015873,
+      "ann_vol_pct": 1.1569426916676073,
+      "sharpe": 5.873668546383141,
+      "max_dd_pct": -1.7405000070309207
+    },
+    "PAXG": {
+      "n_days": 415,
+      "win_days_pct": 87.71084337349397,
+      "ann_return_pct": 8.025355696024096,
+      "ann_vol_pct": 0.47469698481803146,
+      "sharpe": 16.90627063725822,
+      "max_dd_pct": -0.3554573839097186
+    }
+  },
+  "portfolio_spx_paxg_ew": {
+    "n_days": 504,
+    "win_days_pct": 81.34920634920636,
+    "ann_return_pct": 7.368170224404763,
+    "ann_vol_pct": 0.7247817678197084,
+    "sharpe": 10.166053495757383,
+    "max_dd_pct": -0.7041758260279196,
+    "spx_paxg_intra_correlation": 0.184306689792725
+  },
+  "correlations_vs_k287d": {
+    "K270_dYdX": {
+      "rho": 0.18185116578155552,
+      "abs_rho": 0.18185116578155552,
+      "n_days": 504
+    },
+    "K265_HL_longtail": {
+      "rho": 0.4307482198936547,
+      "abs_rho": 0.4307482198936547,
+      "n_days": 504
+    },
+    "K275_OKX": {
+      "rho": 0.33540910810254304,
+      "abs_rho": 0.33540910810254304,
+      "n_days": 96
+    }
+  },
+  "verdict": {
+    "status": "ACCEPTED",
+    "k298_recommendation": "ADD_AS_SATELLITE_ALWAYS_ON_CARRY",
+    "portfolio_sharpe": 10.166053495757383,
+    "spx_sharpe": 5.873668546383141,
+    "paxg_sharpe": 16.90627063725822,
+    "passes_sharpe_15": true,
+    "wf_paxg_all_positive": true,
+    "wf_spx_all_positive": false,
+    "corr_below_05": true,
+    "key_insight": "HL HIP-3 has NO weekend premium (unlike Binance XAG). Weekday FR > Weekend FR. Always-on carry is superior strategy. PAXG gold perp Sh=16.91 is the anchor.",
+    "weekend_strategy_verdict": "INEFFECTIVE at any reasonable maker cost due to insufficient FR premium during weekend vs weekday.",
+    "alwayson_strategy_verdict": "EFFECTIVE: PAXG Sh=16.91, SPX Sh=5.87, portfolio Sh=10.17"
+  },
+  "runtime_s": 0
+}
