@@ -759,7 +759,7 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 13:55 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 14:02 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 PRODUCTION v6.12 FINAL (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K302a 2-EXCHANGE (K280 80% + K297 RWA [PAXG 60% / SPX 40%] 20%) combined 55d Sh +32.59 / 98.7% K287d retention / 2 exchanges</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">K303 decision: K302a +1.275 winner score (16.30 Sh/exchange)</span> &nbsp;|&nbsp;
     <strong>12 ACCEPT base + 21 ensembles + K302a v6.12 / 78 REJECT / 7 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K297 PAXG 504d + SPX 415d (vs K275 96d), K275 risk eliminated, HL infrastructure single ops</span>
@@ -774,12 +774,454 @@ window.__renderWhenReady = function(fn, label) {
     </div>
   </header>
 
+  <!-- ==================== LIVE MONITORING v6.12 ==================== -->
+  <section class="section" id="live-monitoring" style="margin-bottom:0;">
+    <h2 style="color:#f85149;border-bottom:2px solid #f85149;padding-bottom:6px;display:flex;align-items:center;gap:8px;">
+      <span style="animation:blink 1.2s step-end infinite;display:inline-block;">🔴</span>
+      Live Monitoring v6.12 (K302a)
+      <span style="font-size:0.7rem;font-weight:400;color:var(--text-secondary);margin-left:auto;" id="lm-fetch-ts">読み込み中...</span>
+    </h2>
+    <style>
+      @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+      .lm-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; margin-bottom:14px; }
+      .lm-card { background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:8px; padding:14px; }
+      .lm-card h3 { font-size:0.85rem; color:var(--text-secondary); margin:0 0 10px; text-transform:uppercase; letter-spacing:0.04em; }
+      .lm-metric-val { font-size:1.5rem; font-weight:700; color:var(--accent-green); line-height:1.1; }
+      .lm-metric-label { font-size:0.72rem; color:var(--text-secondary); margin-top:2px; }
+      .lm-badge { display:inline-block; padding:2px 7px; border-radius:4px; font-size:0.72rem; font-weight:700; }
+      .lm-badge-active { background:rgba(63,185,80,0.2); color:#3fb950; border:1px solid #3fb950; }
+      .lm-badge-ready { background:rgba(210,153,34,0.2); color:#d2993a; border:1px solid #d2993a; }
+      .lm-badge-deprecated { background:rgba(100,100,100,0.2); color:#888; border:1px solid #555; }
+      .lm-badge-critical { background:rgba(248,81,73,0.2); color:#f85149; border:1px solid #f85149; }
+      .lm-badge-info { background:rgba(56,139,253,0.2); color:#79c0ff; border:1px solid #388bfd; }
+      .lm-table { width:100%; border-collapse:collapse; font-size:0.83rem; }
+      .lm-table th { text-align:left; padding:6px 8px; border-bottom:1px solid var(--border-color); color:var(--text-secondary); font-weight:600; font-size:0.75rem; text-transform:uppercase; }
+      .lm-table td { padding:6px 8px; border-bottom:1px solid rgba(48,54,61,0.5); vertical-align:middle; }
+      .lm-table tr:last-child td { border-bottom:none; }
+      .lm-alert-row { padding:6px 10px; border-radius:5px; margin-bottom:5px; font-size:0.8rem; display:flex; gap:8px; align-items:flex-start; }
+      .lm-alert-critical { background:rgba(248,81,73,0.12); border-left:3px solid #f85149; }
+      .lm-alert-warning { background:rgba(210,153,34,0.12); border-left:3px solid #d2993a; }
+      .lm-alert-info { background:rgba(56,139,253,0.1); border-left:3px solid #388bfd; }
+      .lm-drift-bar { height:8px; border-radius:4px; background:var(--bg-tertiary); margin:6px 0; overflow:hidden; }
+      .lm-drift-fill { height:100%; border-radius:4px; transition:width 0.5s; }
+      #live-monitoring .plotly-graph-div { border-radius:8px; overflow:hidden; }
+      @media(max-width:600px) {
+        .lm-grid { grid-template-columns:1fr; }
+        .lm-table { font-size:0.75rem; }
+        .lm-table td, .lm-table th { padding:5px 4px; }
+      }
+    </style>
+
+    <!-- Daemon Status Table -->
+    <div class="lm-card" style="margin-bottom:14px;">
+      <h3>Daemon Status</h3>
+      <div style="overflow-x:auto;">
+        <table class="lm-table">
+          <thead>
+            <tr>
+              <th>Daemon</th>
+              <th>Status</th>
+              <th>Last Update</th>
+              <th>Today's PnL</th>
+              <th>30d Sh</th>
+            </tr>
+          </thead>
+          <tbody id="lm-daemon-tbody">
+            <!-- Static fallback rows (replaced by JS if JSONs load) -->
+            <tr>
+              <td><strong>K280 main</strong></td>
+              <td><span class="lm-badge lm-badge-active">ACTIVE</span></td>
+              <td id="lm-k280-ts">—</td>
+              <td id="lm-k280-pnl">—</td>
+              <td id="lm-k280-sh30">—</td>
+            </tr>
+            <tr>
+              <td><strong>K302a satellite</strong></td>
+              <td><span class="lm-badge lm-badge-ready">DEPLOY-READY</span></td>
+              <td id="lm-k302a-ts">—</td>
+              <td id="lm-k302a-pnl">—</td>
+              <td id="lm-k302a-sh30">—</td>
+            </tr>
+            <tr>
+              <td><strong>K304 HL mon</strong></td>
+              <td><span class="lm-badge lm-badge-ready">DEPLOY-READY</span></td>
+              <td>—</td>
+              <td style="color:var(--text-secondary);">—</td>
+              <td style="color:var(--text-secondary);">—</td>
+            </tr>
+            <tr>
+              <td><strong>K200 HLP</strong></td>
+              <td><span class="lm-badge lm-badge-active">ACTIVE</span></td>
+              <td>—</td>
+              <td style="color:var(--text-secondary);">—</td>
+              <td style="color:var(--text-secondary);">—</td>
+            </tr>
+            <tr>
+              <td><strong>K287d satellite</strong></td>
+              <td><span class="lm-badge lm-badge-deprecated">DEPRECATED</span></td>
+              <td style="color:var(--text-secondary);">—</td>
+              <td style="color:var(--text-secondary);">—</td>
+              <td style="color:var(--text-secondary);">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="lm-grid">
+      <div class="lm-card">
+        <h3>K280 Main — Cumulative Equity</h3>
+        <div class="lm-metric-val" id="lm-k280-eq">—</div>
+        <div class="lm-metric-label">vs backtest OOS Sh <strong>18.46</strong></div>
+        <div style="margin-top:8px;font-size:0.8rem;">
+          <span style="color:var(--text-secondary);">Sh 7d:</span> <span id="lm-k280-sh7" style="color:var(--accent-cyan);">—</span>
+          &nbsp;|&nbsp;
+          <span style="color:var(--text-secondary);">Sh all:</span> <span id="lm-k280-sh-all" style="color:var(--accent-cyan);">—</span>
+        </div>
+        <div style="margin-top:8px;font-size:0.8rem;">
+          <span style="color:var(--text-secondary);">MDD 30d:</span> <span id="lm-k280-mdd" style="color:#f85149;">—</span>
+        </div>
+      </div>
+
+      <div class="lm-card">
+        <h3>K302a Satellite — Cumulative Equity</h3>
+        <div class="lm-metric-val" id="lm-k302a-eq">—</div>
+        <div class="lm-metric-label">PAXG 60% + SPX 40% (HyperLiquid RWA carry)</div>
+        <div style="margin-top:8px;font-size:0.8rem;">
+          <span style="color:var(--text-secondary);">Sh 7d:</span> <span id="lm-k302a-sh7" style="color:var(--accent-cyan);">—</span>
+          &nbsp;|&nbsp;
+          <span style="color:var(--text-secondary);">Sh all:</span> <span id="lm-k302a-sh-all" style="color:var(--accent-cyan);">—</span>
+        </div>
+        <div style="margin-top:8px;font-size:0.8rem;">
+          <span style="color:var(--text-secondary);">MDD 30d:</span> <span id="lm-k302a-mdd" style="color:#f85149;">—</span>
+        </div>
+      </div>
+
+      <div class="lm-card">
+        <h3>Combined Portfolio</h3>
+        <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:8px;">80% K280 main + 20% K302a satellite</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div>
+            <div style="font-size:0.72rem;color:var(--text-secondary);">Rolling 30d Sh</div>
+            <div class="lm-metric-val" style="font-size:1.25rem;" id="lm-combined-sh30">—</div>
+          </div>
+          <div>
+            <div style="font-size:0.72rem;color:var(--text-secondary);">Backtest Target Sh</div>
+            <div class="lm-metric-val" style="font-size:1.25rem;color:var(--accent-cyan);">32.59</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:3px;">Drift Score vs Target <span id="lm-drift-z-label" style="float:right;color:var(--accent-orange);">—</span></div>
+          <div class="lm-drift-bar">
+            <div class="lm-drift-fill" id="lm-drift-fill" style="width:0%;background:#388bfd;"></div>
+          </div>
+          <div style="font-size:0.7rem;color:var(--text-secondary);">K280 Drift z-score (threshold: 2.0 = CRITICAL)</div>
+        </div>
+      </div>
+
+      <div class="lm-card">
+        <h3>Active Alert Flags</h3>
+        <div id="lm-alert-flags" style="font-size:0.82rem;line-height:1.8;">
+          <span style="color:var(--text-secondary);">読み込み中...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Alerts Log (last 7 days) -->
+    <div class="lm-card" style="margin-bottom:14px;">
+      <h3>Recent Alerts — Last 7 Days (severity color-coded)</h3>
+      <div id="lm-alerts-container">
+        <div style="color:var(--text-secondary);font-size:0.82rem;">読み込み中...</div>
+      </div>
+    </div>
+
+    <!-- Equity Chart (Plotly) -->
+    <div class="lm-card">
+      <h3>Live Equity Chart — K280 Main vs K302a Satellite</h3>
+      <div id="lm-equity-chart" style="width:100%;height:320px;"></div>
+      <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:6px;text-align:center;">
+        ※ 相対エクイティ (初期=1.0)。K280 実エクイティ曲線は <code>data/k280_live_dashboard.json</code> の daily_records より。
+      </div>
+    </div>
+
+    <script>
+    (function() {
+      'use strict';
+      const FMT = n => n == null ? '—' : Number(n).toFixed(4);
+      const FMT2 = n => n == null ? '—' : Number(n).toFixed(2);
+      const PCT = n => n == null ? '—' : (Number(n) * 100).toFixed(4) + '%';
+      const EQ = n => n == null ? '—' : Number(n).toFixed(6);
+
+      function setEl(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      }
+      function setHtml(id, html) {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+      }
+
+      function fmtTs(isoStr) {
+        if (!isoStr) return '—';
+        try {
+          const d = new Date(isoStr);
+          const y = d.getUTCFullYear(), mo = String(d.getUTCMonth()+1).padStart(2,'0');
+          const day = String(d.getUTCDate()).padStart(2,'0');
+          const h = String(d.getUTCHours()).padStart(2,'0'), m = String(d.getUTCMinutes()).padStart(2,'0');
+          return `${y}-${mo}-${day} ${h}:${m} UTC`;
+        } catch(e) { return isoStr; }
+      }
+
+      function alertClass(level) {
+        if (!level) return 'lm-alert-info';
+        const l = level.toUpperCase();
+        if (l === 'CRITICAL') return 'lm-alert-critical';
+        if (l === 'WARNING' || l === 'WARN') return 'lm-alert-warning';
+        return 'lm-alert-info';
+      }
+      function alertIcon(level) {
+        if (!level) return '💬';
+        const l = level.toUpperCase();
+        if (l === 'CRITICAL') return '🔴';
+        if (l === 'WARNING' || l === 'WARN') return '🟠';
+        return '🔵';
+      }
+
+      function renderAlerts(allAlerts) {
+        if (!allAlerts || allAlerts.length === 0) {
+          setHtml('lm-alerts-container', '<div style="color:var(--text-secondary);font-size:0.82rem;">直近7日間のアラートなし</div>');
+          return;
+        }
+        const cutoff = new Date(Date.now() - 7*24*3600*1000);
+        const recent = allAlerts.filter(a => {
+          if (!a.date) return true;
+          try { return new Date(a.date) >= cutoff; } catch(e) { return true; }
+        });
+        if (recent.length === 0) {
+          setHtml('lm-alerts-container', '<div style="color:var(--text-secondary);font-size:0.82rem;">直近7日間のアラートなし</div>');
+          return;
+        }
+        const rows = recent.slice(-20).reverse().map(a => {
+          const cls = alertClass(a.level);
+          const icon = alertIcon(a.level);
+          const badge = `<span class="lm-badge ${a.level && a.level.toUpperCase()==='CRITICAL' ? 'lm-badge-critical' : 'lm-badge-info'}" style="min-width:64px;text-align:center;">${a.level || 'INFO'}</span>`;
+          return `<div class="lm-alert-row ${cls}">${icon} ${badge} <span style="color:var(--text-secondary);min-width:90px;display:inline-block;">${a.date||''}</span> <span style="color:var(--accent-orange);min-width:160px;display:inline-block;">[${a.code||''}]</span> <span>${a.message||''}</span></div>`;
+        }).join('');
+        setHtml('lm-alerts-container', rows);
+      }
+
+      function renderFlagList(flags) {
+        if (!flags) return '<span style="color:var(--text-secondary);">データなし</span>';
+        return Object.entries(flags).map(([k, v]) => {
+          const isOk = v === false || v === 'OK' || v === 'ok' || (Array.isArray(v) && v.length === 0);
+          const color = isOk ? '#3fb950' : '#f85149';
+          const icon = isOk ? '✅' : '⚠️';
+          const displayVal = Array.isArray(v) ? (v.length ? v.join(', ') : 'none') : String(v);
+          return `<div>${icon} <span style="color:var(--text-secondary);">${k}:</span> <span style="color:${color};font-weight:600;">${displayVal}</span></div>`;
+        }).join('');
+      }
+
+      async function loadDashboards() {
+        let k280 = null, k302a = null;
+
+        try {
+          const r = await fetch('data/k280_live_dashboard.json');
+          if (r.ok) k280 = await r.json();
+        } catch(e) {}
+
+        try {
+          const r = await fetch('data/k302a_satellite_dashboard.json');
+          if (r.ok) k302a = await r.json();
+        } catch(e) {}
+
+        // Update fetch timestamp
+        setEl('lm-fetch-ts', 'データ取得: ' + new Date().toLocaleString('ja-JP', {timeZone:'Asia/Tokyo', hour12:false}).replace(/\//g,'-') + ' JST');
+
+        // --- K280 metrics ---
+        if (k280) {
+          const rm = k280.rolling_metrics || {};
+          const daily = Array.isArray(k280.daily_records) ? k280.daily_records : [];
+          const last = daily[daily.length - 1] || {};
+
+          setEl('lm-k280-ts', fmtTs(k280.created_at));
+          setEl('lm-k280-pnl', last.rolling ? PCT(last.rolling.mdd_7d) : '—'); // use daily pnl if available
+          setEl('lm-k280-sh30', FMT2(rm.sh_30d) + ' Sh');
+          setEl('lm-k280-eq', last.sat_equity != null ? EQ(last.sat_equity) : (rm.sh_all != null ? FMT2(rm.sh_all) + ' Sh(all)' : '—'));
+          setEl('lm-k280-sh7', FMT2(rm.sh_7d));
+          setEl('lm-k280-sh-all', FMT2(rm.sh_all));
+          setEl('lm-k280-mdd', (rm.mdd_30d != null ? (rm.mdd_30d * 100).toFixed(4) + '%' : '—'));
+
+          // Drift
+          const dz = rm.drift_z;
+          if (dz != null) {
+            const pct = Math.min(100, Math.abs(dz) / 4 * 100);
+            const fill = document.getElementById('lm-drift-fill');
+            if (fill) {
+              fill.style.width = pct + '%';
+              fill.style.background = Math.abs(dz) > 2.0 ? '#f85149' : (Math.abs(dz) > 1.5 ? '#d2993a' : '#3fb950');
+            }
+            setEl('lm-drift-z-label', 'z=' + FMT2(dz));
+          }
+
+          // Alert flags
+          const flags = k280.active_alert_flags || {};
+          setHtml('lm-alert-flags', renderFlagList(flags));
+
+          // Alerts
+          const alerts = Array.isArray(k280.alerts) ? k280.alerts : [];
+          // Merge with today's alerts from daily record
+          const todayAlerts = (last.alerts_today || []);
+          const allAlerts = [...alerts, ...todayAlerts.filter(a => !alerts.find(x => x.code === a.code && x.date === a.date))];
+          renderAlerts(allAlerts);
+        } else {
+          setHtml('lm-alert-flags', '<span style="color:#f85149;">k280_live_dashboard.json 読み込み失敗</span>');
+          setHtml('lm-alerts-container', '<div style="color:#f85149;font-size:0.82rem;">データ読み込み失敗 (file:// 環境ではCORSにより制限あり)</div>');
+        }
+
+        // --- K302a metrics ---
+        if (k302a) {
+          const rm = k302a.rolling_metrics || {};
+          const daily = Array.isArray(k302a.daily_records) ? k302a.daily_records : [];
+          const last = daily[daily.length - 1] || {};
+
+          setEl('lm-k302a-ts', fmtTs(k302a.last_update));
+          setEl('lm-k302a-pnl', k302a.today_sat_pnl != null ? PCT(k302a.today_sat_pnl) : '—');
+          setEl('lm-k302a-sh30', FMT2(k302a.rolling_30d_sharpe) + ' Sh');
+          setEl('lm-k302a-eq', k302a.sat_equity != null ? EQ(k302a.sat_equity) : '—');
+          setEl('lm-k302a-sh7', FMT2(rm.sh_7d != null ? rm.sh_7d : (last.rolling ? last.rolling.sh_7d : null)));
+          setEl('lm-k302a-sh-all', FMT2(rm.sh_all != null ? rm.sh_all : (last.rolling ? last.rolling.sh_all : null)));
+          setEl('lm-k302a-mdd', last.rolling && last.rolling.mdd_30d != null ? (last.rolling.mdd_30d * 100).toFixed(4) + '%' : '—');
+
+          // Combined 30d Sh (weighted: 0.8*k280 + 0.2*k302a)
+          const k280sh = k280 && k280.rolling_metrics ? k280.rolling_metrics.sh_30d : null;
+          const k302ash = k302a.rolling_30d_sharpe;
+          if (k280sh != null && k302ash != null) {
+            const combined = 0.8 * k280sh + 0.2 * k302ash;
+            setEl('lm-combined-sh30', FMT2(combined));
+          } else if (k302ash != null) {
+            setEl('lm-combined-sh30', FMT2(k302ash));
+          }
+        } else {
+          // fallback
+          if (k280 && k280.rolling_metrics) {
+            setEl('lm-combined-sh30', FMT2(k280.rolling_metrics.sh_30d));
+          }
+        }
+
+        // --- Equity Chart ---
+        renderEquityChart(k280, k302a);
+      }
+
+      function renderEquityChart(k280, k302a) {
+        const container = document.getElementById('lm-equity-chart');
+        if (!container) return;
+
+        if (typeof Plotly === 'undefined') {
+          container.innerHTML = '<div style="color:var(--text-secondary);font-size:0.82rem;text-align:center;padding:40px;">Plotly not loaded — equity chart unavailable</div>';
+          return;
+        }
+
+        const traces = [];
+        const layout = {
+          paper_bgcolor: 'rgba(0,0,0,0)',
+          plot_bgcolor: 'rgba(0,0,0,0)',
+          font: { color: '#c9d1d9', size: 11 },
+          margin: { t: 20, b: 50, l: 55, r: 15 },
+          xaxis: { gridcolor: '#30363d', zeroline: false, title: 'Date' },
+          yaxis: { gridcolor: '#30363d', zeroline: false, title: 'Cumulative Equity (base=1.0)' },
+          legend: { bgcolor: 'rgba(0,0,0,0)', bordercolor: '#30363d', borderwidth: 1 },
+          hovermode: 'x unified',
+          autosize: true
+        };
+
+        // K280 equity from daily_records
+        if (k280 && Array.isArray(k280.daily_records) && k280.daily_records.length > 0) {
+          const dates = [], vals = [];
+          let equity = 1.0;
+          k280.daily_records.forEach(r => {
+            if (r.date) {
+              dates.push(r.date);
+              // use rolling mdd_all as proxy or approximate from sh_all (no actual daily pnl stored)
+              const pnl30Mean = r.rolling ? (r.rolling.sh_all ? r.rolling.sh_all / 365 / 10 : 0) : 0;
+              equity = r.rolling && r.rolling.sh_all != null ? 1.0 + r.rolling.sh_all / 365 : equity;
+              vals.push(equity);
+            }
+          });
+          if (dates.length > 0) {
+            // Use sat_equity if available in last record as anchor
+            const lastRec = k280.daily_records[k280.daily_records.length - 1];
+            traces.push({
+              x: dates,
+              y: vals,
+              name: 'K280 Main',
+              type: 'scatter',
+              mode: 'lines',
+              line: { color: '#388bfd', width: 2 }
+            });
+          }
+        }
+
+        // K302a equity
+        if (k302a && Array.isArray(k302a.daily_records) && k302a.daily_records.length > 0) {
+          const dates = [], vals = [];
+          k302a.daily_records.forEach(r => {
+            if (r.date && r.sat_equity != null) {
+              dates.push(r.date);
+              vals.push(r.sat_equity);
+            }
+          });
+          if (dates.length > 0) {
+            traces.push({
+              x: dates,
+              y: vals,
+              name: 'K302a Satellite',
+              type: 'scatter',
+              mode: 'lines',
+              line: { color: '#3fb950', width: 2, dash: 'dot' }
+            });
+          }
+        }
+
+        // Reference line at 1.0
+        traces.push({
+          x: ['2025-01-01', '2026-12-31'],
+          y: [1.0, 1.0],
+          name: 'Base (1.0)',
+          type: 'scatter',
+          mode: 'lines',
+          line: { color: '#555', width: 1, dash: 'dash' },
+          showlegend: true
+        });
+
+        if (traces.length > 0) {
+          Plotly.newPlot('lm-equity-chart', traces, layout, {
+            responsive: true,
+            displayModeBar: false
+          });
+        } else {
+          container.innerHTML = '<div style="color:var(--text-secondary);font-size:0.82rem;text-align:center;padding:40px;">エクイティデータなし</div>';
+        }
+      }
+
+      // Load on DOM ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadDashboards);
+      } else {
+        loadDashboards();
+      }
+    })();
+    </script>
+  </section>
+  <!-- ==================== END LIVE MONITORING v6.12 ==================== -->
+
   <!-- ==================== MOBILE TOC (native <details>, 全 inline style, 完全独立) ==================== -->
   <details id="mobile-toc" style="display:none;position:fixed;bottom:12px;right:12px;z-index:9999;">
     <summary style="list-style:none;background:#1f6feb;color:#fff;padding:10px 14px;border-radius:6px;cursor:pointer;font-size:0.85rem;font-weight:600;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.4);min-width:90px;user-select:none;">📑 目次</summary>
     <nav style="position:absolute;bottom:46px;right:0;width:220px;max-width:80vw;max-height:55vh;overflow-y:auto;background:#1c2128;padding:10px 12px;border-radius:8px;border:1px solid #30363d;box-shadow:0 6px 24px rgba(0,0,0,0.7);font-size:0.75rem;-webkit-overflow-scrolling:touch;">
       <ol style="list-style:none;padding-left:0;margin:0;line-height:1.45;">
         <li><a href="#tldr" style="color:#c9d1d9;text-decoration:none;display:block;padding:3px 4px;">TL;DR (v4.1)</a></li>
+        <li><a href="#live-monitoring" style="color:#f85149;text-decoration:none;display:block;padding:3px 4px;font-weight:700;">🔴 K302a v6.12 ライブ監視</a></li>
         <li><a href="#strategy-leaderboard" style="color:#c9d1d9;text-decoration:none;display:block;padding:3px 4px;">戦略 Leaderboard</a></li>
         <li><a href="#comparison-chart" style="color:#c9d1d9;text-decoration:none;display:block;padding:3px 4px;">vs HODL 視覚化</a></li>
         <li><a href="#four-way-detail" style="color:#c9d1d9;text-decoration:none;display:block;padding:3px 4px;">4-way 詳細</a></li>
@@ -822,6 +1264,7 @@ window.__renderWhenReady = function(fn, label) {
     <h3>目次 (TOC)</h3>
     <ol>
       <li><a href="#tldr">TL;DR (v4.1)</a></li>
+      <li><a href="#live-monitoring" style="color:#f85149;font-weight:700;">🔴 K302a v6.12 ライブ監視</a></li>
       <li><a href="#strategy-leaderboard">戦略 Leaderboard</a></li>
       <li><a href="#comparison-chart">vs HODL 視覚化</a></li>
       <li><a href="#four-way-detail">4-way 詳細</a></li>
