@@ -1,0 +1,209 @@
+{
+  "architecture": "K287d Satellite (K270 dYdX + K275 OKX)",
+  "version": "K287d v1.0",
+  "description": "Satellite component of K287d = K280 main (80%) + K287c satellite (20%)",
+  "created": "2026-05-25T00:00:00+00:00",
+  "backtest_sat_oos_sh": 22.95,
+  "backtest_sat_oos_dd": -0.000496,
+  "backtest_sat_wf_min": 17.01,
+  "backtest_sat_k270_w": 0.355,
+  "backtest_sat_k275_w": 0.645,
+  "backtest_k270_oos_sh": 11.854,
+  "backtest_k275_oos_sh": 30.249,
+  "backtest_k287d_combined_sh": 33.0,
+  "k287d_main_weight": 0.8,
+  "k287d_satellite_weight": 0.2,
+  "k287d_allocation": {
+    "K280_main": {
+      "weight_in_portfolio": 0.8,
+      "components": "K198 + K208 + K276b_top20",
+      "exchange": "Bybit + HyperLiquid",
+      "daemon": "com.cryptolab.k280-live.plist",
+      "schedule_jst": "09:00"
+    },
+    "K287c_satellite": {
+      "weight_in_portfolio": 0.2,
+      "K270_weight_in_satellite": 0.355,
+      "K275_weight_in_satellite": 0.645,
+      "K270_weight_in_portfolio": 0.071,
+      "K275_weight_in_portfolio": 0.129,
+      "exchange": "dYdX v4 (K270) + OKX (K275)",
+      "daemon": "com.cryptolab.k287-satellite.plist",
+      "schedule_jst": "09:30"
+    }
+  },
+  "satellite_weights": {
+    "K270": 0.180088,
+    "K275": 0.819912
+  },
+  "today_sat_pnl": 8.49e-06,
+  "sat_equity": 1.050618,
+  "rolling_metrics": {
+    "sh_7d": 11.4103,
+    "sh_30d": 15.8025,
+    "sh_all": 9.7676,
+    "mdd_30d": -5.1e-05,
+    "mdd_all": -0.000739,
+    "drift_z": 1.787,
+    "n_days": 731,
+    "label": "satellite"
+  },
+  "active_alert_flags": {
+    "sat_dd_exceed": false,
+    "k270_low_sh": false,
+    "k275_low_sh": true,
+    "dydx_exchange_err": false,
+    "okx_exchange_err": false,
+    "k270_low_liq": false,
+    "k275_low_liq": false
+  },
+  "alert_thresholds": {
+    "SAT_DD_EXCEED": "Satellite 30d DD > 1.5% => REDUCE satellite weight (20% -> 10%)",
+    "K270_LOW_SH": "K270 30d Sharpe < 3.0 => ALERT: low dYdX carry regime",
+    "K275_LOW_SH": "K275 30d Sharpe < 3.0 => ALERT: low OKX carry regime",
+    "DYDX_EXCHANGE_ERROR": "dYdX v4 indexer unreachable => CRITICAL counterparty risk",
+    "OKX_EXCHANGE_ERROR": "OKX API unreachable => CRITICAL counterparty risk",
+    "K270_LOW_LIQ": "dYdX symbol coverage < 70% in last 7d",
+    "K275_LOW_LIQ": "OKX symbol coverage < 70% in last 7d"
+  },
+  "deployment_notes": {
+    "separation_rationale": "Satellite uses dYdX v4 (Cosmos DEX) and OKX \u2014 different from K280 main (Bybit+HL). Different operational risks: DEX outages, OKX API limits.",
+    "offset_schedule": "Satellite daemon runs 30 min after K280 main (09:30 vs 09:00 JST) to avoid API conflicts.",
+    "incremental_fetch": "dYdX and OKX fetches are incremental (only recent days). Full history available in cache/k270_dydx/ and cache/okx_fr_{sym}.parquet.",
+    "data_constraint": "K275 OKX has only ~90d history (vs 731d dYdX). K275 uses 7d FR window (vs K270 14d) per K275 spec.",
+    "dydx_cost_note": "K270 uses 3bp maker cost (vs 2bp for HL/Bybit) due to thinner dYdX DEX liquidity.",
+    "combined_view": "K287d combined equity = 80% K280 main + 20% satellite. K280 equity from data/k280_live_dashboard.json."
+  },
+  "combined_equity_note": "Combined K287d = 80% K280 main + 20% satellite. K280 equity from k280_live_dashboard.json.",
+  "daily_records": [
+    {
+      "date": "2026-05-25",
+      "satellite_weights": {
+        "K270": 0.180088,
+        "K275": 0.819912
+      },
+      "rolling": {
+        "sh_7d": 11.4103,
+        "sh_30d": 15.8025,
+        "sh_all": 9.7676,
+        "mdd_30d": -5.1e-05,
+        "mdd_all": -0.000739,
+        "drift_z": 1.787,
+        "n_days": 731,
+        "label": "satellite"
+      },
+      "today_sat_pnl": 8.49e-06,
+      "sat_equity": 1.050618,
+      "k280_total_eq": null,
+      "component": {
+        "K270": {
+          "exchange": "dYdX v4",
+          "weight": 0.180088,
+          "ref_weight": 0.355,
+          "sh_30d": 21.2973,
+          "ref_oos_sh": 11.854,
+          "signal": {
+            "exchange": "dYdX v4 (Cosmos DEX)",
+            "fr_window_days": 14,
+            "n_symbols_active": 30,
+            "n_symbols_universe": 30,
+            "long_today": [
+              "BLUR",
+              "INJ",
+              "JUP",
+              "OP",
+              "SOL",
+              "WIF",
+              "XRP"
+            ],
+            "short_today": [
+              "AAVE",
+              "AXS",
+              "BONK",
+              "DOGE",
+              "ENA",
+              "UNI",
+              "BNB"
+            ],
+            "panel_last_date": "2026-05-25",
+            "panel_n_days": 731,
+            "pnl_30d_mean": 0.00047996,
+            "cost_rate_bp": 2.9999999999999996
+          }
+        },
+        "K275": {
+          "exchange": "OKX",
+          "weight": 0.819912,
+          "ref_weight": 0.645,
+          "sh_30d": -3.5472,
+          "ref_oos_sh": 30.249,
+          "signal": {
+            "exchange": "OKX (CEX, 8h settlement)",
+            "fr_window_days": 7,
+            "n_symbols_active": 35,
+            "n_symbols_universe": 35,
+            "long_today": [
+              "TIA",
+              "SEI",
+              "WLD",
+              "BLUR",
+              "BONK",
+              "JUP",
+              "MEME",
+              "COMP"
+            ],
+            "short_today": [
+              "DOGE",
+              "NEAR",
+              "DOT",
+              "UNI",
+              "AAVE",
+              "SUSHI",
+              "TAO",
+              "GRT"
+            ],
+            "panel_last_date": "2026-05-25",
+            "panel_n_days": 96,
+            "pnl_30d_mean": -1.322e-05,
+            "cost_rate_bp": 2.0
+          }
+        }
+      },
+      "alerts_today": [
+        {
+          "date": "2026-05-25",
+          "level": "ALERT",
+          "code": "K275_LOW_SH",
+          "message": "K275 (OKX) 30d rolling Sh = -3.55 < 3.0. Low carry regime on OKX. Check funding rate compression."
+        }
+      ],
+      "exchange_status": {
+        "dydx": {
+          "status": "OK",
+          "server_time": "2026-05-25T03:33:56.974Z"
+        },
+        "okx": {
+          "status": "OK",
+          "server_ts_ms": "1779680037146"
+        }
+      },
+      "backtest_ref": {
+        "sat_oos_sh": 22.95,
+        "sat_oos_dd": -0.000496,
+        "sat_wf_min": 17.01,
+        "k287d_combined_sh": 33.0,
+        "k270_backtest_oos_sh": 11.854,
+        "k275_backtest_oos_sh": 30.249
+      }
+    }
+  ],
+  "alerts": [
+    {
+      "date": "2026-05-25",
+      "level": "ALERT",
+      "code": "K275_LOW_SH",
+      "message": "K275 (OKX) 30d rolling Sh = -3.55 < 3.0. Low carry regime on OKX. Check funding rate compression."
+    }
+  ],
+  "last_update": "2026-05-25T03:34:15.542220+00:00"
+}

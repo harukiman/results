@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  com.cryptolab.k287-satellite.plist
+  K287d Satellite Paper-Trade Daily Runner (launchctl daemon)
+
+  Architecture: K270 (dYdX v4 Cosmos DEX) + K275 (OKX perp) — Satellite
+  Satellite is 20% of K287d combined portfolio (K280 main = 80%).
+
+  Backtest: K287c inv-vol satellite OOS Sh=22.95, MaxDD=-0.000496, WF min=17.01
+  K270 (dYdX):  OOS Sh=11.85, WF min=10.38  | K270 weight in satellite ~35.5%
+  K275 (OKX):   OOS Sh=30.25, WF min=5.94   | K275 weight in satellite ~64.5%
+  K287d combined (K280 80% + sat 20%): Sh=33.00 (+1.70 vs K280 alone)
+
+  Parallel to: com.cryptolab.k280-live.plist (K280 main at 09:00 JST)
+
+  Schedule: 09:30 JST daily = 00:30 UTC
+    30 min after K280 main daemon to avoid simultaneous API calls.
+    Step 1: k287_satellite_fetch.py  (incremental dYdX/OKX FR fetch)
+    Step 2: k287_satellite_run.py    (K270+K275 signals + satellite dashboard)
+
+  Install:
+    cp /Users/nekonaomichi/crypto-lab/com.cryptolab.k287-satellite.plist \
+       ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.cryptolab.k287-satellite.plist
+
+  Uninstall:
+    launchctl unload ~/Library/LaunchAgents/com.cryptolab.k287-satellite.plist
+    rm ~/Library/LaunchAgents/com.cryptolab.k287-satellite.plist
+
+  Monitor:
+    tail -f /Users/nekonaomichi/crypto-lab/logs/k287_satellite.log
+    tail -f /Users/nekonaomichi/crypto-lab/logs/k287_satellite_err.log
+
+  Manual trigger:
+    /Users/nekonaomichi/crypto-lab/.venv311/bin/python3 \
+        /Users/nekonaomichi/crypto-lab/scripts/k287_satellite_fetch.py --force
+    /Users/nekonaomichi/crypto-lab/.venv311/bin/python3 \
+        /Users/nekonaomichi/crypto-lab/scripts/k287_satellite_run.py
+
+  K280 main daemon continues independently via com.cryptolab.k280-live.plist.
+  Both daemons write separate log files and separate dashboard JSONs — no conflict.
+
+  Exchange Risk:
+    K270 (dYdX): Cosmos-based DEX — isolated from CEX ecosystem. Monitor DYDX_EXCHANGE_ERROR.
+    K275 (OKX):  Centralized exchange — OKX API rate limits (429). Monitor OKX_EXCHANGE_ERROR.
+    Alert code SAT_DD_EXCEED triggers if satellite 30d MaxDD > 1.5%.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k287-satellite</string>
+
+    <!-- Run fetch + daily_run as a sequential shell script -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>
+PYTHON=/Users/nekonaomichi/crypto-lab/.venv311/bin/python3
+BASE=/Users/nekonaomichi/crypto-lab
+
+echo "=== K287d Satellite Run: $(date -u) ===" >> $BASE/logs/k287_satellite.log
+
+# Step 1: Incremental fetch (dYdX K270 + OKX K275 FR panels)
+$PYTHON $BASE/scripts/k287_satellite_fetch.py >> $BASE/logs/k287_satellite.log 2>> $BASE/logs/k287_satellite_err.log
+FETCH_EXIT=$?
+
+if [ $FETCH_EXIT -ne 0 ]; then
+  echo "FETCH FAILED (exit $FETCH_EXIT) — continuing with cached data" >> $BASE/logs/k287_satellite.log
+fi
+
+# Step 2: Compute satellite signals + update k287_satellite_dashboard.json
+$PYTHON $BASE/scripts/k287_satellite_run.py >> $BASE/logs/k287_satellite.log 2>> $BASE/logs/k287_satellite_err.log
+RUN_EXIT=$?
+
+echo "=== Done: fetch=$FETCH_EXIT run=$RUN_EXIT ===" >> $BASE/logs/k287_satellite.log
+        </string>
+    </array>
+
+    <!-- 09:30 JST = 00:30 UTC (offset 30 min from K280 main at 00:00 UTC) -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>0</integer>
+        <key>Minute</key>
+        <integer>30</integer>
+    </dict>
+
+    <!-- Log paths (separate from K280 main) -->
+    <key>StandardOutPath</key>
+    <string>/Users/nekonaomichi/crypto-lab/logs/k287_satellite.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/nekonaomichi/crypto-lab/logs/k287_satellite_err.log</string>
+
+    <!-- Do not run immediately at load (run only at scheduled time) -->
+    <key>RunAtLoad</key>
+    <false/>
+
+    <!-- One-shot per schedule, not a keep-alive daemon -->
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- Working directory -->
+    <key>WorkingDirectory</key>
+    <string>/Users/nekonaomichi/crypto-lab</string>
+</dict>
+</plist>
