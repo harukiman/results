@@ -1,0 +1,170 @@
+{
+  "generated_at_jst": "2026-05-25 20:12 JST",
+  "wave": "K338",
+  "mandate": "User: 未調査事項や戦略が多くなりすぎないように。タスクを適切に管理するエージェントを稼働",
+  "wip_limits": {
+    "in_progress": 3,
+    "pending": 5,
+    "deferred": 8,
+    "backlog_med_plus": 15
+  },
+  "snapshot": {
+    "in_progress": 3,
+    "pending": 2,
+    "deferred": 6,
+    "backlog_before_prune": 112,
+    "backlog_after_prune": 12
+  },
+  "wip_violations": [
+    {
+      "category": "backlog_med_plus",
+      "current": 112,
+      "limit": 15,
+      "severity": "CRITICAL",
+      "action": "Bulk discard R1-R9 (98 items) + 19 specific R10/R11 LOW/INFO items"
+    }
+  ],
+  "in_progress_agents": [
+    {"id": "K337", "topic": "HypurrFi × Euler Finance feasibility", "status": "MONITOR decision issued", "can_close": true},
+    {"id": "K334-R12", "topic": "External research round 12", "status": "in_flight"},
+    {"id": "K338", "topic": "Task governance agent (this)", "status": "completing"}
+  ],
+  "pending_tasks": [
+    {"id": "K339", "topic": "Transformer Actor-Critic perp rebalancer", "source": "R11-16", "priority": "MED-HIGH"},
+    {"id": "K340", "topic": "On-chain USDT flow → BTC 1h predictor", "source": "R11-17", "priority": "MED-HIGH"}
+  ],
+  "keep": [
+    {
+      "id": "K339",
+      "type": "pending_wave",
+      "source": "R11-16",
+      "priority": "MED-HIGH",
+      "effort_hours": 6,
+      "expected_outcome": "Close ML-allocator hypothesis chain (K198→K323→K327→K331→K339). Negative result acceptable — closes an open question definitively.",
+      "go_condition": "Immediate — no blockers",
+      "recommended_launch": "NEXT"
+    },
+    {
+      "id": "K340",
+      "type": "pending_wave",
+      "source": "R11-17",
+      "priority": "MED-HIGH",
+      "effort_hours": 5,
+      "expected_outcome": "New signal axis orthogonal to FR carry. Augments K280 entry timing if OOS-positive.",
+      "go_condition": "After K339 launches",
+      "recommended_launch": "AFTER_K339"
+    },
+    {
+      "id": "R10-016",
+      "type": "r_finding",
+      "source": "R10-016",
+      "priority": "MED",
+      "effort_hours": 4,
+      "expected_outcome": "CEX-CEX FR arb signal (Binance-OKX 2% spread). Diversifies FR signal beyond HL-only.",
+      "go_condition": "After K340 completes, after R12 screened",
+      "recommended_launch": "K341b"
+    },
+    {
+      "id": "R10-004",
+      "type": "r_finding",
+      "source": "R10-004",
+      "priority": "MED",
+      "effort_hours": 5,
+      "expected_outcome": "Solana DEX 40-min price discovery lead over CEX — novel lead-lag entry signal for HL.",
+      "go_condition": "Deferred until K339/K340 done",
+      "recommended_launch": "K342_range"
+    },
+    {
+      "id": "R11-03",
+      "type": "r_finding",
+      "source": "R11-03",
+      "priority": "MED",
+      "effort_hours": 3,
+      "expected_outcome": "HL portfolio margin capital efficiency design for K297+K280 combined position.",
+      "go_condition": "Low effort, schedule K342 range",
+      "recommended_launch": "K342_range"
+    }
+  ],
+  "defer": [
+    {
+      "id": "K341",
+      "topic": "HL native options Q3 launch monitor",
+      "source": "R11-20",
+      "reason": "Product not launched. Q3 2026 target.",
+      "revisit_trigger": "HL options go-live announcement",
+      "drop_date": "2026-10-01"
+    },
+    {
+      "id": "K342-weight-retest",
+      "topic": "K280/K297 weight re-test at 600d overlap",
+      "source": "K331 secondary finding",
+      "reason": "Current joint window 448d; need 600d for statistical power",
+      "revisit_trigger": "K280/K297 joint window reaches 600d",
+      "drop_date": "2027-01-01"
+    },
+    {
+      "id": "R11-9-10",
+      "topic": "CEX→DEX info flow / Two-tiered FR arb",
+      "source": "R11-09, R11-10",
+      "reason": "K304 data pipeline needs ~30 more days of HL order flow accumulation",
+      "revisit_trigger": "K304 has 60+ days of data",
+      "drop_date": "2026-07-01"
+    },
+    {
+      "id": "R11-13",
+      "topic": "HMM non-homogeneous Bayesian variant",
+      "source": "R11-13",
+      "reason": "K315 stationary baseline was REJECT. Non-hom variant incremental without baseline evidence.",
+      "revisit_trigger": "New evidence stationary HMM was misspecified",
+      "drop_date": "2026-09-01"
+    },
+    {
+      "id": "R10-002",
+      "topic": "Boros OKX three-venue FR arb",
+      "source": "R10-002",
+      "reason": "Requires multi-venue API infra (OKX + Binance) not yet built",
+      "revisit_trigger": "K304 expands to OKX/Binance feeds",
+      "drop_date": "2026-08-01"
+    },
+    {
+      "id": "R10-005",
+      "topic": "HLP vault risk factor overlay (Sh 5.2, CAGR 22%)",
+      "source": "R10-005",
+      "reason": "HL API v2 vault position endpoints not confirmed available",
+      "revisit_trigger": "HL API vault endpoints confirmed",
+      "drop_date": "2026-08-01"
+    }
+  ],
+  "discard": [
+    {"id": "R6-all-18", "rationale": "2025-era findings, pre-K297/K302a. Entire round superseded by production system. Conscious focus, not abandonment."},
+    {"id": "R7-all-20", "rationale": "2025-era findings, pre-K302a production. No actionable delta vs current system."},
+    {"id": "R8-all-20", "rationale": "2025-era findings, may have seeded K280/K297. Credit taken; forward action nil."},
+    {"id": "R9-all-20", "rationale": "2025/2026-era findings, K304 monitor origin possible but design complete. Forward action nil."},
+    {"id": "R11-12", "rationale": "Pure BSDE FR theory. No implementable component in ≤6h scope."},
+    {"id": "R11-14", "rationale": "Wavelet-Transformer Fear/Greed — requires high-freq data infra absent from our stack."},
+    {"id": "R11-15", "rationale": "Meta-RL Actor-Judge-MetaJudge — extremely ambitious, no credible OOS test path in budget."},
+    {"id": "R11-18", "rationale": "Functional PCA intraday — high-freq focus; our system is daily-bar."},
+    {"id": "R11-19", "rationale": "Deep RL Free-Energy (Riemannian geometry) — theoretical, no near-term implementation path."},
+    {"id": "R11-01", "rationale": "RWA OI $1.74B ATH — informational, absorbed by K314 context."},
+    {"id": "R11-02", "rationale": "SPX 24/7 license — informational; K297 already uses SPX."},
+    {"id": "R11-04", "rationale": "Ripple Prime × HL — blocked: RLUSD not yet on HL listing."},
+    {"id": "R11-06", "rationale": "HL HIP-4 prediction market — different asset class, no path to FR framework."},
+    {"id": "R11-08", "rationale": "USDH stablecoin — design-phase product, informational only."},
+    {"id": "R10-006", "rationale": "Kelp DAO $292M exploit — risk awareness only, no strategy action."},
+    {"id": "R10-007", "rationale": "Drift Protocol $285M exploit — risk awareness only, no strategy action."},
+    {"id": "R10-009", "rationale": "HL HIP-4 Outcome Markets — different asset class."},
+    {"id": "R10-013", "rationale": "MEV on dYdX v4 — dYdX not our target exchange."},
+    {"id": "R10-014", "rationale": "ICE invests in OKX — macro news, no direct strategy action."},
+    {"id": "R10-015", "rationale": "OKX VIP tier adjustment — affects OKX fees; we run on HL."},
+    {"id": "R10-018", "rationale": "dYdX affiliate booster — dYdX not our exchange."},
+    {"id": "R10-019", "rationale": "Designing FR BSDE theory — same as R11-12, pure theory."},
+    {"id": "R10-001", "rationale": "HL Tokenomics $65M/month — ecosystem context, informational, no strategy action."}
+  ],
+  "governance_schedule": {
+    "quick_mode_every_n_waves": 5,
+    "full_mode_every_n_waves": 20,
+    "next_full_mode_target_wave": "K358",
+    "next_full_mode_estimated_date": "2026-06-15"
+  },
+  "next_wave_recommendation": "K339 — Transformer Actor-Critic perp rebalancer. Immediate launch, no blockers. Closes ML-allocator hypothesis chain."
+}

@@ -1243,6 +1243,132 @@ launchctl list | grep cryptolab</pre>
   </section>
   <!-- ==================== END LIVE MONITORING v6.12 ==================== -->
 
+  <!-- ==================== TASK PIPELINE K338 GOVERNANCE ==================== -->
+  <section class="section" id="task-pipeline" style="margin-top:0;">
+    <style>
+      .tp-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+      .tp-updated { font-size:0.72rem; color:var(--text-secondary); margin-left:auto; }
+      .tp-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin:14px 0; }
+      .tp-card { background:var(--bg-secondary); border:1px solid var(--border); border-radius:8px; padding:12px; text-align:center; }
+      .tp-card .tp-val { font-size:1.8rem; font-weight:700; line-height:1.1; }
+      .tp-card .tp-label { font-size:0.7rem; color:var(--text-secondary); margin-top:3px; text-transform:uppercase; letter-spacing:0.04em; }
+      .tp-card .tp-limit { font-size:0.68rem; color:var(--text-secondary); }
+      .tp-ok { color:#3fb950; }
+      .tp-warn { color:#d2993a; }
+      .tp-crit { color:#f85149; }
+      .tp-keep-table { width:100%; border-collapse:collapse; font-size:0.82rem; margin-top:10px; }
+      .tp-keep-table th { text-align:left; padding:6px 8px; border-bottom:1px solid var(--border); color:var(--text-secondary); font-size:0.73rem; text-transform:uppercase; font-weight:600; }
+      .tp-keep-table td { padding:6px 8px; border-bottom:1px solid rgba(48,54,61,0.5); vertical-align:top; }
+      .tp-keep-table tr:last-child td { border-bottom:none; }
+      .tp-badge { display:inline-block; padding:1px 6px; border-radius:4px; font-size:0.68rem; font-weight:700; }
+      .tp-badge-high { background:rgba(248,81,73,0.15); color:#f85149; border:1px solid #f85149; }
+      .tp-badge-medh { background:rgba(210,153,34,0.15); color:#d2993a; border:1px solid #d2993a; }
+      .tp-badge-med { background:rgba(56,139,253,0.12); color:#79c0ff; border:1px solid #388bfd; }
+      .tp-badge-next { background:rgba(63,185,80,0.15); color:#3fb950; border:1px solid #3fb950; }
+      .tp-discard-box { background:rgba(248,81,73,0.06); border:1px solid rgba(248,81,73,0.25); border-radius:6px; padding:10px 14px; font-size:0.82rem; margin-top:10px; }
+      @media (max-width:600px) {
+        .tp-grid { grid-template-columns:repeat(2,1fr); }
+        .tp-keep-table { font-size:0.75rem; }
+        .tp-updated { font-size:0.65rem; }
+      }
+    </style>
+    <h2 style="color:#d2993a;border-bottom:2px solid #d2993a;padding-bottom:6px;">
+      <span class="tp-header">
+        🛂 Task Pipeline (K338 Governance)
+        <span class="tp-updated" id="tp-ts">最終更新: 2026-05-25 20:12 JST</span>
+      </span>
+    </h2>
+
+    <!-- WIP Counters -->
+    <div class="tp-grid">
+      <div class="tp-card">
+        <div class="tp-val tp-ok">3/3</div>
+        <div class="tp-label">In Progress</div>
+        <div class="tp-limit">limit: 3</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-val tp-ok">2/5</div>
+        <div class="tp-label">Pending</div>
+        <div class="tp-limit">limit: 5</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-val tp-ok">6/8</div>
+        <div class="tp-label">Deferred</div>
+        <div class="tp-limit">limit: 8</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-val tp-ok">12/15</div>
+        <div class="tp-label">Backlog (MED+)</div>
+        <div class="tp-limit">after prune (was 112)</div>
+      </div>
+    </div>
+
+    <!-- Discard summary -->
+    <div class="tp-discard-box">
+      <strong style="color:#f85149;">117 items discarded</strong> this wave —
+      R6 (18) + R7 (20) + R8 (20) + R9 (20) bulk as 2025-era superseded findings +
+      19 specific R10/R11 LOW/INFO/theoretical items.
+      This is conscious focus, not abandonment.
+    </div>
+
+    <!-- Top 5 KEEP items -->
+    <h3 style="font-size:0.9rem;color:var(--text-secondary);margin:14px 0 6px;text-transform:uppercase;letter-spacing:0.04em;">Top KEEP items (ordered by priority × ROI)</h3>
+    <table class="tp-keep-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Topic</th>
+          <th>Priority</th>
+          <th>Effort</th>
+          <th>Launch</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>K339</strong></td>
+          <td>Transformer A-C perp rebalancer (R11-16)</td>
+          <td><span class="tp-badge tp-badge-medh">MED-HIGH</span></td>
+          <td>~6h</td>
+          <td><span class="tp-badge tp-badge-next">NEXT</span></td>
+        </tr>
+        <tr>
+          <td><strong>K340</strong></td>
+          <td>On-chain USDT flow → BTC 1h predictor (R11-17)</td>
+          <td><span class="tp-badge tp-badge-medh">MED-HIGH</span></td>
+          <td>~5h</td>
+          <td>After K339</td>
+        </tr>
+        <tr>
+          <td><strong>R10-016</strong></td>
+          <td>Binance-OKX BTC FR mean reversion (2% spread)</td>
+          <td><span class="tp-badge tp-badge-med">MED</span></td>
+          <td>~4h</td>
+          <td>K341b</td>
+        </tr>
+        <tr>
+          <td><strong>R10-004</strong></td>
+          <td>Solana DEX 40min price discovery lead over CEX</td>
+          <td><span class="tp-badge tp-badge-med">MED</span></td>
+          <td>~5h</td>
+          <td>K342 range</td>
+        </tr>
+        <tr>
+          <td><strong>R11-03</strong></td>
+          <td>HL Portfolio Margin capital efficiency design</td>
+          <td><span class="tp-badge tp-badge-med">MED</span></td>
+          <td>~3h</td>
+          <td>K342 range</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:0.75rem;color:var(--text-secondary);margin-top:10px;">
+      Governance cadence: Quick check every 5 waves · Full audit every 20 waves · Next full mode: K358 (~2026-06-15)
+      · Source: <a href="wave_k338_task_governance.md" style="color:var(--accent-blue);">wave_k338_task_governance.md</a>
+    </p>
+  </section>
+  <!-- ==================== END TASK PIPELINE ==================== -->
+
   <!-- ==================== MOBILE TOC (native <details>, 全 inline style, 完全独立) ==================== -->
   <details id="mobile-toc" style="display:none;position:fixed;bottom:12px;right:12px;z-index:9999;">
     <summary style="list-style:none;background:#1f6feb;color:#fff;padding:10px 14px;border-radius:6px;cursor:pointer;font-size:0.85rem;font-weight:600;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.4);min-width:90px;user-select:none;">📑 目次</summary>
@@ -1250,6 +1376,7 @@ launchctl list | grep cryptolab</pre>
       <ol style="list-style:none;padding-left:0;margin:0;line-height:1.45;">
         <li><a href="#tldr" style="color:#c9d1d9;text-decoration:none;display:block;padding:3px 4px;">TL;DR (v4.1)</a></li>
         <li><a href="#live-monitoring" style="color:#f85149;text-decoration:none;display:block;padding:3px 4px;font-weight:700;">🔴 K302a v6.12 ライブ監視</a></li>
+        <li><a href="#task-pipeline" style="color:#d2993a;text-decoration:none;display:block;padding:3px 4px;font-weight:700;">🛂 Task Pipeline (K338)</a></li>
         <li><a href="#strategy-leaderboard" style="color:#c9d1d9;text-decoration:none;display:block;padding:3px 4px;">戦略 Leaderboard</a></li>
         <li><a href="#comparison-chart" style="color:#c9d1d9;text-decoration:none;display:block;padding:3px 4px;">vs HODL 視覚化</a></li>
         <li><a href="#four-way-detail" style="color:#c9d1d9;text-decoration:none;display:block;padding:3px 4px;">4-way 詳細</a></li>
@@ -1299,6 +1426,7 @@ launchctl list | grep cryptolab</pre>
     <ol>
       <li><a href="#tldr">TL;DR (v4.1)</a></li>
       <li><a href="#live-monitoring" style="color:#f85149;font-weight:700;">🔴 K302a v6.12 ライブ監視</a></li>
+      <li><a href="#task-pipeline" style="color:#d2993a;font-weight:700;">🛂 Task Pipeline (K338)</a></li>
       <li><a href="#strategy-leaderboard">戦略 Leaderboard</a></li>
       <li><a href="#comparison-chart">vs HODL 視覚化</a></li>
       <li><a href="#four-way-detail">4-way 詳細</a></li>
