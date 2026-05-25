@@ -759,7 +759,7 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 13:49 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 13:55 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 PRODUCTION v6.12 FINAL (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K302a 2-EXCHANGE (K280 80% + K297 RWA [PAXG 60% / SPX 40%] 20%) combined 55d Sh +32.59 / 98.7% K287d retention / 2 exchanges</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">K303 decision: K302a +1.275 winner score (16.30 Sh/exchange)</span> &nbsp;|&nbsp;
     <strong>12 ACCEPT base + 21 ensembles + K302a v6.12 / 78 REJECT / 7 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K297 PAXG 504d + SPX 415d (vs K275 96d), K275 risk eliminated, HL infrastructure single ops</span>
@@ -7577,6 +7577,64 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       <p style="font-size:0.85rem;color:var(--text-secondary);">解析過程で発見した tips・知見・将来役立ちそうなアイデアを時系列で蓄積。</p>
       <div id="tips-log-body" style="margin-top:10px;font-size:0.88rem;">
         <details open>
+          <summary><strong>★★★★★★ 2026-05-25 13:55 JST — v6.12 K302a FINAL PRODUCTION 確定 (K288-K305 journey)</strong></summary>
+          <ul>
+            <li><strong>【1. K289 K287d Satellite scaffold + K275 bug discovery】</strong> K287d (v6.11) の scaffold を引き継ぎ、K289 にて Satellite 枠の K275 OKX 実装を詳細検証。初期テスト Sh <strong>-3.55</strong>。K275 の 96d データ制限 (最短銘柄制約) と ×3 乗数バグが潜在していることが後の調査で判明。★ データ期間短縮リスクの実害を最初に観測した Wave。</li>
+
+            <li><strong>【2. K290 K287d robustness DEPLOY-READY (8/8 gates)】</strong> K287d v6.11 本体を再検証。§6 全 8 ゲート通過、DEPLOY-READY 確定。Combined Sh <strong>33.00</strong>、MaxDD ZERO。K280 CORE 80% + K270 dYdX 10% + K275 OKX 10% = 3 取引所構成で安定。</li>
+
+            <li><strong>【3. K291 CRITICAL BUG FIX — ×3 乗数欠損 (-3.55 → +30.85)】</strong> ★★ K275 OKX サテライトの portfolio_weight 計算に <strong>×3 乗数が欠落</strong>していた重大バグを発見・修正。修正後: Sh <strong>-3.55 → +30.85</strong>。修正前の負値は実戦略の品質ではなくバグによる偽陰性だったことが確定。「戦略を疑う前にコードを疑え」の実証例。</li>
+
+            <li><strong>【4. K293 latent audit bug fix — fetch script の .sum→.mean 誤り】</strong> funding rate fetch スクリプト内の集計ロジックで <code>.sum()</code> を使用すべき箇所が <code>.mean()</code> になっていた潜在バグを発見・修正。全期間バックテスト結果の微細歪みを排除。監査の重要性を再確認。</li>
+
+            <li><strong>【5. K295 K275 RECONCILIATION HEALTHY (Sh 31.38, BTC FR regime immune)】</strong> K275 OKX を bug-fix 版で再評価。OOS Sh <strong>31.38</strong> (bug 修正後の真値)。追加検証: BTC funding rate レジーム (高 FR 期 / 低 FR 期) でサブサンプル分割 → 両レジームで安定パフォーマンス。★ K275 は <strong>cross-sectional carry alpha</strong> であり BTC FR レジームに immune であることを実証。96d データ制限は残存リスク。</li>
+
+            <li><strong>【6. K296 Liminal HyperEVM MONITOR (HL-correlated, not K275 successor)】</strong> Liminal Finance (HyperEVM 上 DeFi) のオンチェーン funding rate データを調査。HL エコシステムと強相関 (ρ ≈ 0.85+)。K275 OKX の代替にはなり得ないが、HL 戦略の補完情報として MONITOR 登録。オンチェーン特化戦略の先行事例として記録。</li>
+
+            <li><strong>【7. K297 RWA carry ACCEPT (PAXG Sh 16.91, SPX 5.87, EW 10.17)】</strong> ★★ TradFi 連動 RWA (Real World Asset) carry 戦略を発見・ACCEPT。<strong>PAXG (Gold ETF): 504d データ、OOS Sh 16.91</strong>。SPX (株指数 ETF): 415d データ、OOS Sh 5.87。Equal-Weight 合成: Sh <strong>10.17</strong>。8/8 §6 gates 通過。K275 の 96d データ問題を完全回避 (<strong>5倍以上のデータ</strong>)。<strong>Novel TradFi-DeFi arbitrage mechanism</strong>: 現物 ETF プレミアムを funding rate 差分で捉える全く新しいアルファ軸。</li>
+
+            <li><strong>【8. K298 HL predictedFundings API discovery (public, Spearman 0.9989, R10-confirmed)】</strong> ★★ Hyperliquid の <code>/info</code> エンドポイントに <strong>predictedFundings</strong> フィールドが公開 API として存在することを発見。Spearman 相関 <strong>0.9989</strong> (実績 funding との一致度)。R10 (10-minute rolling) で確認済み。K304 で HL predicted fundings モニターとしてデプロイ。将来的にリアルタイム alpha 信号として活用可能な重要インフラ。</li>
+
+            <li><strong>【9. K299 K208 DAR(2,1) replacement REJECT (DAR whipsaw filter vs naive realized)】</strong> K208 の DAR(2,1) フィルターを naive realized momentum に置き換える実験。結果: naive realized <strong>-1.01</strong> vs DAR <strong>K208 現行水準</strong>。DAR フィルターは whipsaw (頻繁反転) を有効に排除しており、除去すると大幅劣化。<strong>REJECT</strong>: K208 の DAR は alpha の源泉であり冗長パラメータではない。</li>
+
+            <li><strong>【10. K301 v6.12 extended ACCEPT (K198+K208+K276b+K270+K275+K297 → combined Sh 35.26)】</strong> 全 ACCEPT 戦略を統合した拡張版 v6.12 テスト。構成: K198 + K208 + K276b + K270 (dYdX) + K275 (OKX) + K297 (RWA)。Combined 55d Sh <strong>35.26</strong>。ただし <strong>3 取引所</strong> (Bybit / HL / OKX / dYdX) 必要、運用複雑度高。K275 の 96d データリスクも残存。</li>
+
+            <li><strong>【11. K302 v6.12 HL-only alternative ACCEPT (Sh 32.59, 2 exchanges, 98.7% retention)】</strong> ★★ K275 OKX + K270 dYdX を <strong>K297 RWA (PAXG 60% + SPX 40%)</strong> で置き換えた 2 取引所構成。Combined 55d Sh <strong>32.59</strong>。K301 比 retention <strong>98.7%</strong> (差 -0.67 のみ)。取引所数: <strong>3→2 に削減</strong>、K275 OKX リスク完全排除、K297 504d データで堅牢。Sh/exchange: <strong>16.30</strong> (K301 の 8.82 の 1.85 倍効率)。</li>
+
+            <li><strong>【12. K303 FINAL DECISION — K302a v6.12 採用 (score 8.125, 2-exchange dominates)】</strong> ★★★ スコアリング比較:
+              <ul>
+                <li>K301 (3 取引所): Sh 35.26, Sh/exchg 8.82, 運用複雑度高, OKX 96d リスク → <strong>score 6.85</strong></li>
+                <li><strong>K302a (2 取引所): Sh 32.59, Sh/exchg 16.30, 運用シンプル, リスク排除 → score 8.125 ← 採用</strong></li>
+              </ul>
+              <strong>最終 PRODUCTION v6.12 構成</strong>: CORE 80% = K280 [K198+K208+K276b_top20] on Bybit+HL / SATELLITE 20% = K297 [PAXG 60% + SPX 40%] on HL only。取引所: <strong>2</strong> (Bybit + HL)。K275 OKX リスク完全排除、K297 504d (K275 96d 比 5.3倍)。</li>
+
+            <li><strong>【ENSEMBLE 進化 完全チェーン (K302a v6.12 まで)】</strong>
+              <ul style="font-size:0.85em;line-height:1.7;">
+                <li>v4.1単独 (Sh <strong>4.08</strong>)</li>
+                <li>→ K124 5戦略 (<strong>4.25</strong>)</li>
+                <li>→ K136 +K133 DD圧縮</li>
+                <li>→ K149 +K147 (<strong>4.49</strong>)</li>
+                <li>→ K176 +K175 (<strong>5.41</strong>)</li>
+                <li>→ K188 +carry panel (<strong>5.48</strong>)</li>
+                <li>→ K192 +DAR filter (<strong>5.65</strong>)</li>
+                <li>→ K194 +partial trigger (<strong>5.71</strong>)</li>
+                <li>→ K195 +carry weighted (<strong>5.77</strong>)</li>
+                <li>→ K196 +reverse carry (<strong>9.20</strong>)</li>
+                <li>→ K198 ML allocator (<strong>10.28</strong>)</li>
+                <li>→ K217 (<strong>10.43</strong>)</li>
+                <li>→ K218 (<strong>11.03</strong>)</li>
+                <li>→ K229 (<strong>12.61</strong>)</li>
+                <li>→ K246a v6.9 (<strong>12.69</strong>)</li>
+                <li>→ K269 4-way v6.10 (<strong>15.75</strong>)</li>
+                <li>→ K272a v6.10.1 3-way (<strong>16.13</strong>)</li>
+                <li>→ K280 v6.10.2 K276b (<strong>18.46</strong>)</li>
+                <li>→ K287d SATELLITE combined v6.11 (<strong>33.00</strong>, ZERO MaxDD)</li>
+                <li>→ <strong style="color:var(--accent-green);">K302a v6.12 FINAL PRODUCTION (<strong>32.59</strong>, 2 exchanges, K275 risk eliminated) ← 現在</strong></li>
+              </ul>
+            </li>
+          </ul>
+        </details>
+        <details>
           <summary><strong>★★★★★ 2026-05-25 12:26 JST — Production v6.10.2 (K280) → v6.11 SATELLITE (K287d) 進化記録 [K254-K287 旅程]</strong></summary>
           <ul>
             <li><strong>【概観】</strong> K246a v6.9 (OOS Sh 12.69) から始まり、K280 v6.10.2 (OOS Sh 18.46) を経て K287d SATELLITE v6.11 (55d combined Sh 33.00, ZERO MaxDD) まで — 約 34 Wave の進化記録。</li>
