@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  com.cryptolab.k280-live.plist
+  K280 v6.10.2 Paper-Trade Daily Runner (launchctl daemon)
+
+  Architecture: K198 + K208 + K276b_top20 (3-way, K265 upgraded to K276b per K280/K283)
+  Backtest OOS Sharpe: 18.46 | WF min: 12.97 | MaxDD: -0.000013
+
+  Replaces: com.cryptolab.k272a-live (K274 scaffold, K272a v6.10.1, OOS Sh 16.13)
+  Migration: K274 → K283 (K272a → K280, K265 35-sym → K276b_top20 20-sym)
+
+  Schedule: 09:00 JST daily = 00:00 UTC
+    Step 1: k280_live_fetch.py  (fetch live data: K208 spreads, K276b_top20 panel, HLP balance)
+    Step 2: k280_daily_run.py   (compute signals + update k280_live_dashboard.json)
+
+  Install:
+    cp /Users/nekonaomichi/crypto-lab/com.cryptolab.k280-live.plist \
+       ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+
+  Uninstall:
+    launchctl unload ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+    rm ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+
+  Monitor:
+    tail -f /Users/nekonaomichi/crypto-lab/logs/k280_live.log
+    tail -f /Users/nekonaomichi/crypto-lab/logs/k280_live_err.log
+
+  Manual trigger:
+    /Users/nekonaomichi/crypto-lab/.venv311/bin/python3 \
+        /Users/nekonaomichi/crypto-lab/scripts/k280_live_fetch.py --force
+    /Users/nekonaomichi/crypto-lab/.venv311/bin/python3 \
+        /Users/nekonaomichi/crypto-lab/scripts/k280_daily_run.py
+
+  Legacy K272a scaffold continues via com.cryptolab.k272a-live.plist.
+  Run both in parallel for 30d, then unload K272a daemon.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k280-live</string>
+
+    <!-- Run fetch + daily_run as a sequential shell script -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>
+PYTHON=/Users/nekonaomichi/crypto-lab/.venv311/bin/python3
+BASE=/Users/nekonaomichi/crypto-lab
+
+echo "=== K280 v6.10.2 Live Run: $(date -u) ===" >> $BASE/logs/k280_live.log
+
+# Step 1: Fetch live data (K208 spreads, K276b_top20 panel, HLP balance)
+$PYTHON $BASE/scripts/k280_live_fetch.py >> $BASE/logs/k280_live.log 2>> $BASE/logs/k280_live_err.log
+FETCH_EXIT=$?
+
+if [ $FETCH_EXIT -ne 0 ]; then
+  echo "FETCH FAILED (exit $FETCH_EXIT)" >> $BASE/logs/k280_live.log
+fi
+
+# Step 2: Compute daily signals + update dashboard (proceeds even if fetch partial)
+$PYTHON $BASE/scripts/k280_daily_run.py >> $BASE/logs/k280_live.log 2>> $BASE/logs/k280_live_err.log
+RUN_EXIT=$?
+
+echo "=== Done: fetch=$FETCH_EXIT run=$RUN_EXIT ===" >> $BASE/logs/k280_live.log
+        </string>
+    </array>
+
+    <!-- 09:00 JST = 00:00 UTC -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>0</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- Log paths -->
+    <key>StandardOutPath</key>
+    <string>/Users/nekonaomichi/crypto-lab/logs/k280_live.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/nekonaomichi/crypto-lab/logs/k280_live_err.log</string>
+
+    <!-- Do not run immediately at load (run only at scheduled time) -->
+    <key>RunAtLoad</key>
+    <false/>
+
+    <!-- One-shot per schedule, not a keep-alive daemon -->
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- Working directory -->
+    <key>WorkingDirectory</key>
+    <string>/Users/nekonaomichi/crypto-lab</string>
+</dict>
+</plist>
