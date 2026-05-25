@@ -1,0 +1,324 @@
+{
+  "wave": "K303",
+  "objective": "v6.12 Final Architecture Decision",
+  "generated_at": "2026-05-25T04:47:46.340927Z",
+  "sharpe_per_exchange": {
+    "K287d": {
+      "sharpe": 33.0032,
+      "n_exchanges": 3,
+      "sh_per_exchange": 11.0
+    },
+    "K301c": {
+      "sharpe": 35.2593,
+      "n_exchanges": 4,
+      "sh_per_exchange": 8.81
+    },
+    "K302a": {
+      "sharpe": 32.5858,
+      "n_exchanges": 2,
+      "sh_per_exchange": 16.29
+    }
+  },
+  "counterparty_outage_scenarios": {
+    "K287d": {
+      "dYdX (K270)": {
+        "capital_fraction": 0.071,
+        "pct_of_total": 7.1,
+        "Sh_after_outage": 30.66,
+        "Sh_delta": -2.34,
+        "severity": "MEDIUM"
+      },
+      "OKX (K275)": {
+        "capital_fraction": 0.129,
+        "pct_of_total": 12.9,
+        "Sh_after_outage": 28.75,
+        "Sh_delta": -4.26,
+        "severity": "MEDIUM"
+      },
+      "HL (K280-HL)": {
+        "capital_fraction": 0.4,
+        "pct_of_total": 40.0,
+        "Sh_after_outage": 19.8,
+        "Sh_delta": -13.2,
+        "severity": "HIGH"
+      },
+      "Bybit (K280-BB)": {
+        "capital_fraction": 0.4,
+        "pct_of_total": 40.0,
+        "Sh_after_outage": 19.8,
+        "Sh_delta": -13.2,
+        "severity": "HIGH"
+      }
+    },
+    "K301c": {
+      "dYdX (K270)": {
+        "capital_fraction": 0.0656,
+        "pct_of_total": 6.6,
+        "Sh_after_outage": 32.95,
+        "Sh_delta": -2.31,
+        "severity": "MEDIUM"
+      },
+      "OKX (K275)": {
+        "capital_fraction": 0.1044,
+        "pct_of_total": 10.4,
+        "Sh_after_outage": 31.58,
+        "Sh_delta": -3.68,
+        "severity": "MEDIUM"
+      },
+      "HL (K297+K280)": {
+        "capital_fraction": 0.43,
+        "pct_of_total": 43.0,
+        "Sh_after_outage": 20.1,
+        "Sh_delta": -15.16,
+        "severity": "CRITICAL"
+      },
+      "Bybit (K280-BB)": {
+        "capital_fraction": 0.4,
+        "pct_of_total": 40.0,
+        "Sh_after_outage": 21.16,
+        "Sh_delta": -14.1,
+        "severity": "HIGH"
+      }
+    },
+    "K302a": {
+      "HL (K297+K280)": {
+        "capital_fraction": 0.6,
+        "pct_of_total": 60.0,
+        "Sh_after_outage": 13.03,
+        "Sh_delta": -19.55,
+        "severity": "CRITICAL"
+      },
+      "Bybit (K280-BB)": {
+        "capital_fraction": 0.4,
+        "pct_of_total": 40.0,
+        "Sh_after_outage": 19.55,
+        "Sh_delta": -13.03,
+        "severity": "HIGH"
+      },
+      "dYdX (K270)": {
+        "capital_fraction": 0.0,
+        "pct_of_total": 0.0,
+        "Sh_after_outage": 32.59,
+        "Sh_delta": -0.0,
+        "severity": "LOW"
+      },
+      "OKX (K275)": {
+        "capital_fraction": 0.0,
+        "pct_of_total": 0.0,
+        "Sh_after_outage": 32.59,
+        "Sh_delta": -0.0,
+        "severity": "LOW"
+      }
+    }
+  },
+  "operational_overhead": {
+    "K287d": {
+      "api_monitors": 4,
+      "plist_daemons": 4,
+      "reconciliation_effort": "HIGH",
+      "subscription_costs": {
+        "Glassnode/CoinGlass": 150,
+        "dYdX_api": 0,
+        "OKX_api": 0
+      },
+      "rebalance_complexity": "MEDIUM",
+      "k275_bug_risk": "YES - K291 bug history (fr_daily multiply)",
+      "notes": "Requires K291 bug fix to be maintained in live K287 satellite daemon"
+    },
+    "K301c": {
+      "api_monitors": 5,
+      "plist_daemons": 5,
+      "reconciliation_effort": "VERY HIGH",
+      "subscription_costs": {
+        "Glassnode/CoinGlass": 150,
+        "dYdX_api": 0,
+        "OKX_api": 0
+      },
+      "rebalance_complexity": "HIGH",
+      "k275_bug_risk": "YES - same K291 bug risk as K287d",
+      "notes": "Most complex architecture; 4 exchanges require independent monitoring"
+    },
+    "K302a": {
+      "api_monitors": 2,
+      "plist_daemons": 3,
+      "reconciliation_effort": "LOW",
+      "subscription_costs": {
+        "Glassnode/CoinGlass": 150,
+        "dYdX_api": 0,
+        "OKX_api": 0
+      },
+      "rebalance_complexity": "LOW",
+      "k275_bug_risk": "NO - K275 eliminated",
+      "notes": "All activity on 2 exchanges; K297 is HL-native (same infra as K280-HL)"
+    }
+  },
+  "k275_forward_risk": {
+    "data_days": 96,
+    "k291_fixed_Sh": 11.3155,
+    "k291_live_sh_pre_fix": -3.55,
+    "k291_live_sh_post_fix": 30.85,
+    "data_caveat": "Only 96d OKX history \u2014 binding constraint for all K301 variants",
+    "bug_history": "K291 found fr_daily multiply bug \u2014 deployed fix required maintenance",
+    "regime_dependence": "Cross-sectional FR sign matters; K295 ruled out BTC FR sign reversal for K275",
+    "production_confidence": "MEDIUM",
+    "vs_k297": {
+      "k297_data_days": 504,
+      "k297_paxg_Sh": 16.91,
+      "k297_portfolio_Sh": 10.13,
+      "k297_production_confidence": "HIGH",
+      "k297_data_advantage": "5.25x more data history",
+      "k297_bug_risk": "None \u2014 simpler always-on FR carry, no signal processing"
+    }
+  },
+  "robustness_analysis": {
+    "K287d": {
+      "SPOF_analysis": {
+        "HL_outage": "CATASTROPHIC \u2014 K280-HL (40%) + partial satellite exposure",
+        "Bybit_outage": "SEVERE \u2014 K280-Bybit (40%) suspended",
+        "dYdX_outage": "LOW \u2014 only 7.1% capital, K270 satellite can stop",
+        "OKX_outage": "MEDIUM \u2014 12.9% capital, K275 stops"
+      },
+      "exchange_diversification": "GOOD for satellite (dYdX, OKX separate from HL)",
+      "data_risk": "HIGH \u2014 K275 only 96d history; K291 bug susceptible",
+      "regime_risk": "MEDIUM \u2014 K270 dYdX has 731d data, robust"
+    },
+    "K301c": {
+      "SPOF_analysis": {
+        "HL_outage": "CATASTROPHIC \u2014 K280-HL (40%) + K297 (3%)",
+        "Bybit_outage": "SEVERE \u2014 K280-Bybit (40%) suspended",
+        "dYdX_outage": "LOW \u2014 6.6% capital",
+        "OKX_outage": "MEDIUM \u2014 10.4% capital"
+      },
+      "exchange_diversification": "BEST \u2014 4 exchanges, most distributed satellite",
+      "data_risk": "HIGH \u2014 K275 96d binding constraint; K291 bug risk",
+      "regime_risk": "MEDIUM \u2014 K270 robust, K297 SPX/PAXG regime-independent"
+    },
+    "K302a": {
+      "SPOF_analysis": {
+        "HL_outage": "DEVASTATING \u2014 60% of capital (K280-HL 40% + K297 20%)",
+        "Bybit_outage": "SEVERE \u2014 40% capital",
+        "dYdX_outage": "N/A \u2014 not exposed",
+        "OKX_outage": "N/A \u2014 not exposed"
+      },
+      "exchange_diversification": "WORST \u2014 HL holds 60% of capital",
+      "data_risk": "LOW \u2014 K297 has 504d data, no K275 bug risk",
+      "regime_risk": "LOW \u2014 SPX/PAXG FR carry is regime-independent RWA exposure"
+    }
+  },
+  "decision_matrix": {
+    "factor_weights": {
+      "sharpe_55d": 0.2,
+      "sh_per_exchange": 0.15,
+      "wf_stability": 0.15,
+      "data_quality": 0.15,
+      "operational_simplicity": 0.15,
+      "hl_concentration_risk": 0.1,
+      "k275_risk": 0.1
+    },
+    "factor_scores": {
+      "K287d": {
+        "sharpe_55d": 7.0,
+        "sh_per_exchange": 7.0,
+        "wf_stability": 8.5,
+        "data_quality": 6.0,
+        "operational_simplicity": 6.5,
+        "hl_concentration_risk": 7.5,
+        "k275_risk": 5.0
+      },
+      "K301c": {
+        "sharpe_55d": 9.0,
+        "sh_per_exchange": 4.0,
+        "wf_stability": 8.0,
+        "data_quality": 5.0,
+        "operational_simplicity": 3.0,
+        "hl_concentration_risk": 7.5,
+        "k275_risk": 4.0
+      },
+      "K302a": {
+        "sharpe_55d": 6.5,
+        "sh_per_exchange": 10.0,
+        "wf_stability": 7.0,
+        "data_quality": 10.0,
+        "operational_simplicity": 9.5,
+        "hl_concentration_risk": 3.5,
+        "k275_risk": 10.0
+      }
+    },
+    "weighted_scores": {
+      "K287d": 6.85,
+      "K301c": 5.95,
+      "K302a": 8.125
+    }
+  },
+  "architectures": {
+    "K287d": {
+      "label": "K287d (current v6.11)",
+      "combined_Sh_55d": 33.0032,
+      "n_exchanges": 3,
+      "sh_per_exchange": 11.0,
+      "wf_min_Sh": 30.1162,
+      "max_dd": 0.0,
+      "ann_ret": 0.1434,
+      "k275_dependency": true,
+      "complexity": "Mid"
+    },
+    "K301c": {
+      "label": "K301c (Extended 4-exchange)",
+      "combined_Sh_55d": 35.2593,
+      "n_exchanges": 4,
+      "sh_per_exchange": 8.81,
+      "wf_min_Sh": 29.8544,
+      "max_dd": 0.0,
+      "ann_ret": 0.1466,
+      "k275_dependency": true,
+      "complexity": "High"
+    },
+    "K302a": {
+      "label": "K302a (HL-only 2-exchange)",
+      "combined_Sh_55d": 32.5858,
+      "n_exchanges": 2,
+      "sh_per_exchange": 16.29,
+      "wf_min_Sh": 24.5278,
+      "max_dd": 0.0,
+      "ann_ret": 0.1028,
+      "k275_dependency": false,
+      "complexity": "Low"
+    }
+  },
+  "final_recommendation": {
+    "winner": "K302a",
+    "winner_label": "K302a (HL-only 2-exchange)",
+    "winner_score": 8.125,
+    "runner_up": "K287d",
+    "score_margin": 1.275,
+    "deployment_plan": {
+      "recommended_architecture": "K302a",
+      "reasoning_summary": "K302a achieves 16.30 Sh/exchange vs K301c's 8.82, eliminating K275 data fragility (96d caveat + K291 bug history). While K302a's combined Sh=32.59 is 2.0% below K287d (current) and 7.6% below K301c, the operational simplification (2 vs 3-4 exchanges), elimination of K275 risk, and K297's 5.25x data advantage justify the modest Sh trade-off. The 60% HL concentration is the main risk offset: mitigated by HL's strong track record and K280's proven 400+ day history on HL infrastructure.",
+      "monitoring_triggers": {
+        "HL_15min_ping": "Alert if HL API latency > 500ms for 3 consecutive checks",
+        "satellite_MaxDD_stop": "Stop K297 satellite if daily DD > -0.5% (half of K297 full-period MaxDD)",
+        "combined_Sh_floor": "Re-evaluate architecture if rolling 30d combined Sh < 20.0",
+        "K302a_55d_Sh_floor": "Revert to K287d if K302a combined 55d Sh < 28.0",
+        "bybit_halt": "K280 auto-pauses on Bybit if position reconciliation fails for 2 consecutive 8h periods"
+      },
+      "paper_trade_timeline": {
+        "phase_1_shadow": "Day 1-14: K302a runs paper alongside K287d live; compare daily PnL",
+        "phase_2_parallel_live": "Day 15-30: K302a goes live at 20% of target capital",
+        "phase_3_full_deploy": "Day 31+: Full capital allocation if 30d Sh >= 25.0",
+        "rollback_condition": "If 14d Sh < 20.0 or MaxDD < -0.3%, revert to K287d"
+      },
+      "deprecation_plan": {
+        "dYdX_account": "Close K270 positions Day 0; maintain account for 30d (residuals)",
+        "OKX_account": "Stop K275 daemon Day 0; maintain account for 14d (settlement)",
+        "K287d": "Keep K287d plist disabled but installed for 60d as rollback option"
+      }
+    }
+  },
+  "v6_12_production_architecture": {
+    "name": "K302a",
+    "core": "K280 (80% capital) \u2014 Bybit + HyperLiquid",
+    "satellite": "K297 PAXG/SPX FR Carry (20% capital) \u2014 HyperLiquid only",
+    "total_exchanges": 2,
+    "rationale": "K302a achieves 16.30 Sh/exchange vs K301c's 8.82, eliminating K275 data fragility (96d caveat + K291 bug history). While K302a's combined Sh=32.59 is 2.0% below K287d (current) and 7.6% below K301c, the operational simplification (2 vs 3-4 exchanges), elimination of K275 risk, and K297's 5.25x data advantage justify the modest Sh trade-off. The 60% HL concentration is the main risk offset: mitigated by HL's strong track record and K280's proven 400+ day history on HL infrastructure."
+  }
+}
