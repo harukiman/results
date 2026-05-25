@@ -1,0 +1,261 @@
+{
+  "wave": "K299",
+  "parent_waves": [
+    "K208",
+    "K298"
+  ],
+  "objective": "Replace DAR(2,1) in K208 with HL predictedFundings (realized-FR proxy upper bound)",
+  "as_of": "2026-05-25T04:32:05.208226+00:00",
+  "runtime_s": 1.7,
+  "config": {
+    "symbols": [
+      "SOL",
+      "XRP",
+      "SUI",
+      "OP",
+      "APT",
+      "AXS",
+      "JTO",
+      "IMX",
+      "SAND",
+      "ADA"
+    ],
+    "skipped": [],
+    "k299_gate_logic": "enter reverse carry if current_period_spread > 0 (realized FR proxy)",
+    "k208_gate_logic": "enter if DAR(2,1) predicted_bybit_fr > hl_fr",
+    "proxy_justification": "K298 \u03c1=0.9989 (Spearman), mean dev=0.0008 bps",
+    "proxy_optimism_note": "realized FR is UPPER BOUND; predictedFundings deviates by ~0.0008 bps",
+    "events_per_year": 1095,
+    "oos_frac": 0.3
+  },
+  "k208_baseline": {
+    "variant": "K208_DAR21_baseline",
+    "sharpe_full": 12.2258,
+    "sharpe_is": 11.7891,
+    "sharpe_oos": 17.5288,
+    "max_dd_full": -0.00063,
+    "max_dd_oos": -0.000275,
+    "wf_mean": 13.9431,
+    "wf_min": 7.3859,
+    "wf_folds": [
+      7.3859,
+      18.4624,
+      12.8209,
+      17.103
+    ],
+    "perm_pvalue": 0.0,
+    "bootstrap_ci_5_95": [
+      10.1711,
+      15.9559
+    ],
+    "dsr": 0.0,
+    "n_events": 2193
+  },
+  "k208_reference_stored": {
+    "sharpe_oos": 17.5288,
+    "wf_mean": 13.9431,
+    "wf_min": 7.3859,
+    "wf_folds": [
+      7.3859,
+      18.4624,
+      12.8209,
+      17.103
+    ]
+  },
+  "k208_reproduced_vs_stored_delta": {
+    "oos_sh": 0.0,
+    "note": "Small deltas expected due to recomputation; baseline is valid"
+  },
+  "k299_metrics": {
+    "variant": "K299_realizedFR_proxy",
+    "sharpe_full": 10.462,
+    "sharpe_is": 14.9027,
+    "sharpe_oos": 16.5238,
+    "max_dd_full": -0.00052,
+    "max_dd_oos": -0.000335,
+    "wf_mean": 17.1013,
+    "wf_min": 14.2818,
+    "wf_folds": [
+      15.6918,
+      20.9509,
+      14.2818,
+      17.4806
+    ],
+    "perm_pvalue": 0.0,
+    "bootstrap_ci_5_95": [
+      9.9274,
+      11.1837
+    ],
+    "dsr": 0.0,
+    "n_events": 2193
+  },
+  "comparison": {
+    "delta_oos_sh_k299_vs_k208": -1.005,
+    "k208_oos_sh": 17.5288,
+    "k299_oos_sh": 16.5238,
+    "k208_wf_folds": [
+      7.3859,
+      18.4624,
+      12.8209,
+      17.103
+    ],
+    "k299_wf_folds": [
+      15.6918,
+      20.9509,
+      14.2818,
+      17.4806
+    ],
+    "k208_wf_mean": 13.9431,
+    "k299_wf_mean": 17.1013,
+    "k208_wf_min": 7.3859,
+    "k299_wf_min": 14.2818
+  },
+  "per_symbol_comparison": {
+    "ADA": {
+      "k208_sharpe": 10.4367,
+      "k299_sharpe": 11.0264,
+      "delta_sharpe": 0.5898,
+      "pct_in_market_k208": 37.6,
+      "pct_in_market_k299": 43.2,
+      "pct_spread_positive": 43.2
+    },
+    "APT": {
+      "k208_sharpe": 7.0223,
+      "k299_sharpe": 7.9437,
+      "delta_sharpe": 0.9214,
+      "pct_in_market_k208": 33.0,
+      "pct_in_market_k299": 38.4,
+      "pct_spread_positive": 38.4
+    },
+    "AXS": {
+      "k208_sharpe": 0.7984,
+      "k299_sharpe": 15.4641,
+      "delta_sharpe": 14.6657,
+      "pct_in_market_k208": 1.1,
+      "pct_in_market_k299": 58.8,
+      "pct_spread_positive": 59.1
+    },
+    "IMX": {
+      "k208_sharpe": 9.9316,
+      "k299_sharpe": 11.1986,
+      "delta_sharpe": 1.267,
+      "pct_in_market_k208": 36.6,
+      "pct_in_market_k299": 42.9,
+      "pct_spread_positive": 42.9
+    },
+    "JTO": {
+      "k208_sharpe": 4.1006,
+      "k299_sharpe": 4.2832,
+      "delta_sharpe": 0.1826,
+      "pct_in_market_k208": 32.2,
+      "pct_in_market_k299": 35.3,
+      "pct_spread_positive": 35.3
+    },
+    "OP": {
+      "k208_sharpe": 10.0995,
+      "k299_sharpe": 10.8445,
+      "delta_sharpe": 0.745,
+      "pct_in_market_k208": 40.8,
+      "pct_in_market_k299": 40.8,
+      "pct_spread_positive": 40.8
+    },
+    "SAND": {
+      "k208_sharpe": 12.7505,
+      "k299_sharpe": 12.1675,
+      "delta_sharpe": -0.583,
+      "pct_in_market_k208": 37.3,
+      "pct_in_market_k299": 49.5,
+      "pct_spread_positive": 49.6
+    },
+    "SOL": {
+      "k208_sharpe": 4.2915,
+      "k299_sharpe": 3.5637,
+      "delta_sharpe": -0.7278,
+      "pct_in_market_k208": 26.9,
+      "pct_in_market_k299": 31.6,
+      "pct_spread_positive": 31.6
+    },
+    "SUI": {
+      "k208_sharpe": 6.0476,
+      "k299_sharpe": 8.3184,
+      "delta_sharpe": 2.2708,
+      "pct_in_market_k208": 34.1,
+      "pct_in_market_k299": 39.6,
+      "pct_spread_positive": 39.6
+    },
+    "XRP": {
+      "k208_sharpe": 5.305,
+      "k299_sharpe": 6.605,
+      "delta_sharpe": 1.3001,
+      "pct_in_market_k208": 25.7,
+      "pct_in_market_k299": 27.8,
+      "pct_spread_positive": 27.9
+    }
+  },
+  "s6_gates": {
+    "k299_gates": {
+      "G1_oos_sh_gt_15": true,
+      "G2_oos_sh_vs_k208": false,
+      "G3_wf_min_positive": true,
+      "G4_wf_all_pos": true,
+      "G5_perm_p_le_0p1": true,
+      "G6_dsr_gt_0p5": false,
+      "G7_no_oos_dd_regress": true
+    },
+    "k299_n_pass": 5,
+    "k299_verdict": "PASS"
+  },
+  "k280_integration": {
+    "n_days": 448,
+    "date_start": "2025-01-22",
+    "date_end": "2026-04-14",
+    "weights": {
+      "K198": 0.0257,
+      "K208": 0.7582,
+      "K276b": 0.216
+    },
+    "scale_k208": 7.250491,
+    "scale_k299": 2.665632,
+    "k280_baseline_sim": {
+      "sharpe_full": 21.6928,
+      "sharpe_oos": 26.3264,
+      "wf_mean": 30.3231,
+      "wf_min": 24.2166,
+      "wf_folds": [
+        34.3276,
+        24.2166,
+        37.0523,
+        25.6959
+      ]
+    },
+    "k299_ensemble_sim": {
+      "sharpe_full": 16.9861,
+      "sharpe_oos": 24.472,
+      "wf_mean": 36.0587,
+      "wf_min": 26.0051,
+      "wf_folds": [
+        41.4775,
+        31.2241,
+        45.5282,
+        26.0051
+      ]
+    },
+    "delta_oos_sh": -1.8544,
+    "note": "Simulation: K208/K299 8h PnL aggregated to daily + scaled to log-return magnitude of K198. Absolute Sharpe values differ from official K280 due to scaling; delta is directionally valid."
+  },
+  "acceptance": {
+    "criterion_1_standalone_lift": false,
+    "criterion_2_wf_all_pos": true,
+    "criterion_3_k280_lift": false,
+    "n_criteria_met": 1,
+    "final_verdict": "REJECT \u2192 DAR(2,1) already captures predictedFundings signal; keep K208 as-is"
+  },
+  "dar_replacement_verdict": {
+    "summary": "KEEP DAR AS PRIMARY",
+    "action": "KEEP_DAR_AS_PRIMARY",
+    "delta_oos_sh": -1.005,
+    "k208_dar_mean_dir_acc": 0.6709,
+    "explanation": "K299 underperforms K208 DAR(2,1). DAR(2,1) was actively ADDING value beyond the simple spread gate. The prediction component was filtering out noise effectively. Keep DAR(2,1) as-is. PredictedFundings has marginal value here.",
+    "production_recommendation": "Poll predictedFundings every 5min as live signal monitor regardless of K299 outcome (K298 recommendation)."
+  }
+}
