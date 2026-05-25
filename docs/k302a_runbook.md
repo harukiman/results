@@ -792,4 +792,97 @@ for f in ['cache/hl_k276b_fr_daily.parquet', 'cache/k302a_fr_daily.parquet']:
 
 ---
 
+## 12. K310 Plist Deployment Instructions (2026-05-25 14:14 JST)
+
+### Background
+
+Waves K283/K289/K304/K305 documented daemons as "ACTIVE" or "DEPLOY-READY" in the report,
+but the LaunchAgent plist files were **never actually created** at `~/Library/LaunchAgents/`.
+Wave K310 (2026-05-25) performed a ground-truth audit against `launchctl list | grep cryptolab`
+and found 3 missing plists. The files were created and staged but intentionally NOT loaded
+pending user verification.
+
+### Plists Created (SCAFFOLD-READY, not yet loaded)
+
+| Plist file | Daemon label | Cadence | Scripts |
+|-----------|--------------|---------|---------|
+| `~/Library/LaunchAgents/com.cryptolab.k280-live.plist` | `com.cryptolab.k280-live` | 8×/day at HH:05 (00,03,06,09,12,15,18,21) | `k280_live_fetch.py && k280_daily_run.py` |
+| `~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist` | `com.cryptolab.k302a-satellite` | 8×/day at HH:05 (00,03,06,09,12,15,18,21) | `k302a_satellite_fetch.py && k302a_satellite_run.py` |
+| `~/Library/LaunchAgents/com.cryptolab.hl-predicted-monitor.plist` | `com.cryptolab.hl-predicted-monitor` | every 5 min (StartInterval 300) | `hl_predicted_fr_monitor.py` |
+
+### Pre-Activation Checklist
+
+Before loading any plist, verify the following:
+
+1. **Test each script manually in your terminal:**
+   ```bash
+   cd /Users/nekonaomichi/crypto-lab
+   # K280 main
+   .venv311/bin/python scripts/k280_live_fetch.py --dry-run 2>&1 | tail -20
+   .venv311/bin/python scripts/k280_daily_run.py 2>&1 | tail -20
+
+   # K302a satellite
+   .venv311/bin/python scripts/k302a_satellite_fetch.py --dry-run 2>&1 | tail -20
+   .venv311/bin/python scripts/k302a_satellite_run.py 2>&1 | tail -20
+
+   # HL predicted monitor (single-shot)
+   .venv311/bin/python scripts/hl_predicted_fr_monitor.py --dry-run 2>&1 | tail -20
+   ```
+
+2. **Check that required cache files exist:**
+   ```bash
+   ls cache/hl_k276b_fr_daily.parquet cache/k302a_fr_daily.parquet 2>/dev/null
+   ```
+
+3. **Check log directory is writable:**
+   ```bash
+   touch logs/k310-test.tmp && rm logs/k310-test.tmp && echo "logs writable"
+   ```
+
+### Load Commands (run AFTER checklist passes)
+
+Load all 3 daemons:
+```bash
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.hl-predicted-monitor.plist
+```
+
+Verify they appear in launchctl:
+```bash
+launchctl list | grep cryptolab
+```
+
+Expected output (after loading):
+```
+-   0   com.cryptolab.k280-live
+-   0   com.cryptolab.k302a-satellite
+-   0   com.cryptolab.hl-predicted-monitor
+# ... plus existing daemons
+```
+
+### Monitor Logs After Loading
+
+```bash
+tail -f logs/k280-live.log
+tail -f logs/k302a-satellite.log
+tail -f logs/hl-predicted-monitor.log
+```
+
+### Unload / Disable Commands (if needed)
+
+```bash
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.hl-predicted-monitor.plist
+```
+
+### HLP Monitor (K200)
+
+The K200 HLP balance monitor daemon (`com.cryptolab.hlp-monitor`) was listed in the K310
+task as potentially missing. A scan of `scripts/` found no `*hlp*` script files. This daemon
+was **not scaffolded** in K310. If required, a corresponding script must be created first.
+
+---
+
 *K307 Runbook — K302a v6.12 — 2026-05-25*

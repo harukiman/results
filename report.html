@@ -759,7 +759,7 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 14:02 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 14:14 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 PRODUCTION v6.12 FINAL (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K302a 2-EXCHANGE (K280 80% + K297 RWA [PAXG 60% / SPX 40%] 20%) combined 55d Sh +32.59 / 98.7% K287d retention / 2 exchanges</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">K303 decision: K302a +1.275 winner score (16.30 Sh/exchange)</span> &nbsp;|&nbsp;
     <strong>12 ACCEPT base + 21 ensembles + K302a v6.12 / 78 REJECT / 7 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K297 PAXG 504d + SPX 415d (vs K275 96d), K275 risk eliminated, HL infrastructure single ops</span>
@@ -791,6 +791,7 @@ window.__renderWhenReady = function(fn, label) {
       .lm-badge { display:inline-block; padding:2px 7px; border-radius:4px; font-size:0.72rem; font-weight:700; }
       .lm-badge-active { background:rgba(63,185,80,0.2); color:#3fb950; border:1px solid #3fb950; }
       .lm-badge-ready { background:rgba(210,153,34,0.2); color:#d2993a; border:1px solid #d2993a; }
+      .lm-badge-scaffold { background:rgba(56,139,253,0.15); color:#79c0ff; border:1px solid #388bfd; }
       .lm-badge-deprecated { background:rgba(100,100,100,0.2); color:#888; border:1px solid #555; }
       .lm-badge-critical { background:rgba(248,81,73,0.2); color:#f85149; border:1px solid #f85149; }
       .lm-badge-info { background:rgba(56,139,253,0.2); color:#79c0ff; border:1px solid #388bfd; }
@@ -828,30 +829,36 @@ window.__renderWhenReady = function(fn, label) {
           </thead>
           <tbody id="lm-daemon-tbody">
             <!-- Static fallback rows (replaced by JS if JSONs load) -->
+            <!-- K310 (2026-05-25 14:14 JST): Corrected from ACTIVE/DEPLOY-READY to SCAFFOLD-READY.
+                 Prior waves K283/K289/K304/K305 labelled these daemons as ACTIVE/DEPLOY-READY
+                 but plist files were never created at ~/Library/LaunchAgents/. K310 audit
+                 confirmed via `launchctl list | grep cryptolab` — none of these 3 daemons
+                 were loaded. Plist files now staged (created but NOT loaded). Manual activation
+                 required — see docs/k302a_runbook.md §12. -->
             <tr>
               <td><strong>K280 main</strong></td>
-              <td><span class="lm-badge lm-badge-active">ACTIVE</span></td>
+              <td><span class="lm-badge lm-badge-scaffold" title="Plist staged at ~/Library/LaunchAgents/com.cryptolab.k280-live.plist — NOT yet loaded. Run: launchctl load ~/Library/LaunchAgents/com.cryptolab.k280-live.plist">SCAFFOLD-READY</span></td>
               <td id="lm-k280-ts">—</td>
               <td id="lm-k280-pnl">—</td>
               <td id="lm-k280-sh30">—</td>
             </tr>
             <tr>
               <td><strong>K302a satellite</strong></td>
-              <td><span class="lm-badge lm-badge-ready">DEPLOY-READY</span></td>
+              <td><span class="lm-badge lm-badge-scaffold" title="Plist staged at ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist — NOT yet loaded. Run: launchctl load ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist">SCAFFOLD-READY</span></td>
               <td id="lm-k302a-ts">—</td>
               <td id="lm-k302a-pnl">—</td>
               <td id="lm-k302a-sh30">—</td>
             </tr>
             <tr>
               <td><strong>K304 HL mon</strong></td>
-              <td><span class="lm-badge lm-badge-ready">DEPLOY-READY</span></td>
+              <td><span class="lm-badge lm-badge-scaffold" title="Plist staged at ~/Library/LaunchAgents/com.cryptolab.hl-predicted-monitor.plist — NOT yet loaded. Run: launchctl load ~/Library/LaunchAgents/com.cryptolab.hl-predicted-monitor.plist">SCAFFOLD-READY</span></td>
               <td>—</td>
               <td style="color:var(--text-secondary);">—</td>
               <td style="color:var(--text-secondary);">—</td>
             </tr>
             <tr>
               <td><strong>K200 HLP</strong></td>
-              <td><span class="lm-badge lm-badge-active">ACTIVE</span></td>
+              <td><span class="lm-badge lm-badge-deprecated" title="No HLP monitor script found in scripts/. Daemon not scaffolded in K310.">NO SCRIPT</span></td>
               <td>—</td>
               <td style="color:var(--text-secondary);">—</td>
               <td style="color:var(--text-secondary);">—</td>
@@ -866,6 +873,25 @@ window.__renderWhenReady = function(fn, label) {
           </tbody>
         </table>
       </div>
+    </div>
+
+    <!-- K310 Activation Notice (2026-05-25 14:14 JST) -->
+    <div class="lm-card" style="margin-bottom:14px;border-color:#388bfd;">
+      <h3 style="color:#79c0ff;">K310 Plist Scaffold Status — Awaiting Manual Activation</h3>
+      <p style="font-size:0.82rem;color:var(--text-secondary);margin:0 0 10px;">
+        Audit (2026-05-25 14:14 JST): Prior wave reports claimed daemons "ACTIVE" / "DEPLOY-READY" but
+        <code>launchctl list | grep cryptolab</code> confirmed none of the 3 daemons below were loaded.
+        Plist files have now been staged at <code>~/Library/LaunchAgents/</code> but are intentionally
+        <strong>NOT loaded</strong> pending user verification. See
+        <a href="docs/k302a_runbook.md" style="color:#79c0ff;">docs/k302a_runbook.md §12</a> for pre-activation checklist.
+      </p>
+      <p style="font-size:0.82rem;color:var(--text-secondary);margin:0 0 6px;">Load commands (run after manual verification):</p>
+      <pre style="background:var(--bg-tertiary);padding:10px 12px;border-radius:6px;font-size:0.78rem;overflow-x:auto;color:#e6edf3;margin:0;">launchctl load ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.hl-predicted-monitor.plist
+
+# Verify:
+launchctl list | grep cryptolab</pre>
     </div>
 
     <!-- Metrics Cards -->

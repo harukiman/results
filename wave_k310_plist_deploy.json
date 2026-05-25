@@ -1,0 +1,127 @@
+{
+  "wave": "K310",
+  "timestamp_jst": "2026-05-25 14:16 JST",
+  "task": "v6.12 plist deployment scaffold + HTML reconciliation",
+  "phase1_audit": {
+    "launchctl_verified_running": [
+      "com.cryptolab.ct-forward",
+      "com.cryptolab.strategy-reports",
+      "com.cryptolab.strategy-explorer"
+    ],
+    "launchctl_verified_loaded_idle": [
+      "com.cryptolab.forward-test",
+      "com.cryptolab.paper-trade",
+      "com.cryptolab.paper-trade-4way",
+      "com.cryptolab.inbox-poll"
+    ],
+    "missing_plists_confirmed": [
+      "com.cryptolab.k280-live",
+      "com.cryptolab.k302a-satellite",
+      "com.cryptolab.hl-predicted-monitor"
+    ],
+    "missing_script_no_plist_created": {
+      "com.cryptolab.hlp-monitor": "No HLP monitor script found in scripts/. Cannot scaffold without script."
+    },
+    "scripts_found": [
+      "scripts/k280_live_fetch.py",
+      "scripts/k280_daily_run.py",
+      "scripts/k302a_satellite_fetch.py",
+      "scripts/k302a_satellite_run.py",
+      "scripts/hl_predicted_fr_monitor.py"
+    ],
+    "logs_dir_exists": true,
+    "venv311_exists": true
+  },
+  "phase2_plists_created": [
+    {
+      "label": "com.cryptolab.k280-live",
+      "path": "/Users/nekonaomichi/Library/LaunchAgents/com.cryptolab.k280-live.plist",
+      "scripts": [
+        "scripts/k280_live_fetch.py",
+        "scripts/k280_daily_run.py"
+      ],
+      "cadence": "StartCalendarInterval 8x/day at Minute=5, Hours=[0,3,6,9,12,15,18,21]",
+      "run_at_load": false,
+      "log_out": "logs/k280-live.log",
+      "log_err": "logs/k280-live.err",
+      "cadence_rationale": "HL FR settles 8h; 3h interval cadence with 5-min buffer after settlement. 8x/day avoids redundant API calls vs 24x/day."
+    },
+    {
+      "label": "com.cryptolab.k302a-satellite",
+      "path": "/Users/nekonaomichi/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist",
+      "scripts": [
+        "scripts/k302a_satellite_fetch.py",
+        "scripts/k302a_satellite_run.py"
+      ],
+      "cadence": "StartCalendarInterval 8x/day at Minute=5, Hours=[0,3,6,9,12,15,18,21]",
+      "run_at_load": false,
+      "log_out": "logs/k302a-satellite.log",
+      "log_err": "logs/k302a-satellite.err",
+      "cadence_rationale": "PAXG/SPX settle hourly on HL; 8x/day aligned with k280-live for synchronized dashboard updates."
+    },
+    {
+      "label": "com.cryptolab.hl-predicted-monitor",
+      "path": "/Users/nekonaomichi/Library/LaunchAgents/com.cryptolab.hl-predicted-monitor.plist",
+      "scripts": [
+        "scripts/hl_predicted_fr_monitor.py"
+      ],
+      "cadence": "StartInterval 300 (every 5 minutes = 288 polls/day)",
+      "run_at_load": true,
+      "log_out": "logs/hl-predicted-monitor.log",
+      "log_err": "logs/hl-predicted-monitor.err",
+      "cadence_rationale": "Single-shot mode + StartInterval 300 preferred over KeepAlive+--loop. Script docstring explicitly recommends 'use launchctl instead' of --loop mode. StartInterval provides clean lifecycle, no overlap, auto-restart on crash."
+    }
+  ],
+  "daemons_loaded": [],
+  "daemons_loaded_note": "Intentionally empty — user must manually verify scripts then run launchctl load commands in docs/k302a_runbook.md §12",
+  "html_corrections": {
+    "file": "report.html",
+    "section_modified": "Live Monitoring v6.12 (K302a) — #live-monitoring",
+    "banner_timestamp_modified": false,
+    "changes": [
+      {
+        "element": "K280 main daemon row badge",
+        "before": "lm-badge-active / ACTIVE",
+        "after": "lm-badge-scaffold / SCAFFOLD-READY",
+        "tooltip": "Plist staged at ~/Library/LaunchAgents/com.cryptolab.k280-live.plist — NOT yet loaded"
+      },
+      {
+        "element": "K302a satellite daemon row badge",
+        "before": "lm-badge-ready / DEPLOY-READY",
+        "after": "lm-badge-scaffold / SCAFFOLD-READY",
+        "tooltip": "Plist staged at ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist — NOT yet loaded"
+      },
+      {
+        "element": "K304 HL mon daemon row badge",
+        "before": "lm-badge-ready / DEPLOY-READY",
+        "after": "lm-badge-scaffold / SCAFFOLD-READY",
+        "tooltip": "Plist staged at ~/Library/LaunchAgents/com.cryptolab.hl-predicted-monitor.plist — NOT yet loaded"
+      },
+      {
+        "element": "K200 HLP daemon row badge",
+        "before": "lm-badge-active / ACTIVE",
+        "after": "lm-badge-deprecated / NO SCRIPT",
+        "reason": "No HLP monitor script found in scripts/. Cannot claim ACTIVE status."
+      },
+      {
+        "element": "CSS",
+        "change": "Added .lm-badge-scaffold class (blue/info color: #79c0ff)"
+      },
+      {
+        "element": "New card block",
+        "change": "Added K310 activation notice card with audit context, explanation, and load commands pre block"
+      }
+    ]
+  },
+  "runbook_corrections": {
+    "file": "docs/k302a_runbook.md",
+    "section_appended": "§12 K310 Plist Deployment Instructions",
+    "content_summary": "Background audit context, plist table, pre-activation checklist, load commands, log monitoring commands, unload commands, HLP gap note"
+  },
+  "lessons_learned": [
+    "Prior waves K283/K289/K304/K305 labelled daemons ACTIVE/DEPLOY-READY without verifying via launchctl list",
+    "HTML badge values were used as source of truth by subsequent waves instead of launchctl",
+    "plist file creation ≠ plist loading: launchctl load is required to activate",
+    "Any future wave claiming daemon status change MUST include launchctl list output as evidence"
+  ]
+}
