@@ -1,0 +1,464 @@
+{
+  "wave": "K258",
+  "parent_waves": [
+    "K246a",
+    "K256",
+    "K198",
+    "K226"
+  ],
+  "objective": "Replace K208 with K256_EqWt in K246a ensemble (v6.9.2 candidate)",
+  "as_of": "2026-05-25T01:05:22.723379+00:00",
+  "runtime_s": 0.3,
+  "config": {
+    "ml_window": {
+      "start": "2025-01-22",
+      "end": "2026-04-14"
+    },
+    "n_days": 448,
+    "n_returns": 447,
+    "components": [
+      "K198",
+      "K256_EqWt",
+      "K226"
+    ],
+    "methodology": "inv-vol rolling-30d + K226 cap 20% (K246a methodology)",
+    "wf_n_folds": 4,
+    "wf_fold_size_days": 111,
+    "missing_k256_days": 0,
+    "missing_k226_days": 0,
+    "missing_k208_days": 0
+  },
+  "acceptance_gates": {
+    "gate1_oos_sh_min": 12.7929,
+    "gate2_wf_min_min": 8.9347,
+    "gate3_maxdd_max": -0.001145,
+    "gate4_ml_folds_positive": true,
+    "gate5_all_nonzero_wt": 0.02,
+    "reference": "K246a v6.9",
+    "note": "Gate 1 requires +0.10 vs K246a (12.69 + 0.10 = 12.79)"
+  },
+  "k246a_reference": {
+    "oos_sharpe": 12.6929,
+    "wf_mean": 12.2462,
+    "wf_min": 8.9347,
+    "maxdd": -0.001145,
+    "fold_sharpes": [
+      13.6029,
+      8.9347,
+      13.8374,
+      12.6097
+    ],
+    "components": [
+      "K198",
+      "K208",
+      "K226"
+    ]
+  },
+  "k256_eqwt_ml_window_validation": {
+    "sharpe_full": 10.0965,
+    "oos_sharpe": 12.6269,
+    "oos_maxdd": -0.000204,
+    "wf_mean": 12.8641,
+    "wf_min": 5.7721,
+    "wf_folds": [
+      16.4121,
+      5.7721,
+      16.8,
+      12.4721
+    ],
+    "oos_reported_k256": 11.7478,
+    "wf_min_reported_k256": 7.0596,
+    "window_delta_oos": 0.8791,
+    "window_delta_wf_min": -1.2875,
+    "window_consistent": true,
+    "ml_folds_all_positive": true,
+    "note": "K256_EqWt re-measured on K246a daily ML window (2025-01-22 -> 2026-04-14)"
+  },
+  "correlation_matrix_3x3": {
+    "components": [
+      "K198",
+      "K256_EqWt",
+      "K226"
+    ],
+    "matrix": [
+      [
+        1.0,
+        0.05330732543343813,
+        0.05186950934021241
+      ],
+      [
+        0.05330732543343812,
+        1.0,
+        0.0035620554089071553
+      ],
+      [
+        0.05186950934021241,
+        0.0035620554089071553,
+        1.0
+      ]
+    ],
+    "rho_k198_k256": 0.0533,
+    "rho_k198_k226": 0.0519,
+    "rho_k256_k226": 0.0036,
+    "k208_k256_rho": 0.9943,
+    "k208_k198_rho": 0.0619,
+    "note": "K208-K256 rho confirms daily orthogonality level vs K256 self-report 0.694"
+  },
+  "k246a_reproduction": {
+    "oos_sharpe": 12.6929,
+    "oos_maxdd": -0.001145,
+    "wf_mean": 12.2462,
+    "wf_min": 8.9347,
+    "fold_sharpes": [
+      13.6029,
+      8.9347,
+      13.8374,
+      12.6097
+    ],
+    "avg_weights_k198_k208_k226": [
+      0.0481,
+      0.9396,
+      0.0123
+    ]
+  },
+  "synergy_analysis": {
+    "fold_deltas_k258a_vs_k246a": [
+      -0.3896,
+      -0.1384,
+      -0.6995,
+      -0.5299
+    ],
+    "synergy_mean": -0.4394,
+    "k256_oos_sh_on_k246a_window": 12.6269,
+    "k208_k256_daily_rho": 0.9943
+  },
+  "variants": {
+    "K258a": {
+      "oos_sharpe": 12.1184,
+      "oos_maxdd": -0.001223,
+      "oos_ann_ret": 0.1062,
+      "oos_ann_vol": 0.0088,
+      "wf_mean": 11.8068,
+      "wf_min": 8.7963,
+      "fold_sharpes": [
+        13.2133,
+        8.7963,
+        13.1379,
+        12.0798
+      ],
+      "avg_weights": [
+        0.0475,
+        0.9404,
+        0.0121
+      ],
+      "description": "K198+K256_EqWt+K226 inv-vol + K226 cap 20%",
+      "gates": {
+        "g1_oos_sh": false,
+        "g2_wf_min": false,
+        "g3_maxdd": false,
+        "g4_ml_folds_positive": true,
+        "g5_all_nonzero_wt": false,
+        "all_pass": false,
+        "verdict": "FAIL"
+      },
+      "fold_contribution": [
+        {
+          "fold": 1,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "component_sharpes": {
+            "K198": 6.5911,
+            "K256_EqWt": 16.4121,
+            "K226": 3.2959
+          },
+          "top_contributor": "K256_EqWt"
+        },
+        {
+          "fold": 2,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "component_sharpes": {
+            "K198": 7.3739,
+            "K256_EqWt": 5.7721,
+            "K226": 0.38
+          },
+          "top_contributor": "K198"
+        },
+        {
+          "fold": 3,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "component_sharpes": {
+            "K198": 7.9652,
+            "K256_EqWt": 16.8,
+            "K226": 2.8378
+          },
+          "top_contributor": "K256_EqWt"
+        },
+        {
+          "fold": 4,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "component_sharpes": {
+            "K198": 9.731,
+            "K256_EqWt": 12.4721,
+            "K226": 2.6243
+          },
+          "top_contributor": "K256_EqWt"
+        }
+      ],
+      "delta_oos_sh": -0.5745,
+      "delta_wf_min": -0.1384,
+      "delta_maxdd": -7.8e-05
+    },
+    "K258b": {
+      "oos_sharpe": 12.1184,
+      "oos_maxdd": -0.001223,
+      "oos_ann_ret": 0.1062,
+      "oos_ann_vol": 0.0088,
+      "wf_mean": 11.7037,
+      "wf_min": 8.7963,
+      "fold_sharpes": [
+        13.1336,
+        8.7963,
+        12.805,
+        12.0798
+      ],
+      "avg_weights": [
+        0.0471,
+        0.9259,
+        0.027
+      ],
+      "description": "K198+K256_EqWt+K226 inv-vol uncapped",
+      "gates": {
+        "g1_oos_sh": false,
+        "g2_wf_min": false,
+        "g3_maxdd": false,
+        "g4_ml_folds_positive": true,
+        "g5_all_nonzero_wt": true,
+        "all_pass": false,
+        "verdict": "FAIL"
+      },
+      "fold_contribution": [
+        {
+          "fold": 1,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "component_sharpes": {
+            "K198": 6.5911,
+            "K256_EqWt": 16.4121,
+            "K226": 3.2959
+          },
+          "top_contributor": "K256_EqWt"
+        },
+        {
+          "fold": 2,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "component_sharpes": {
+            "K198": 7.3739,
+            "K256_EqWt": 5.7721,
+            "K226": 0.38
+          },
+          "top_contributor": "K198"
+        },
+        {
+          "fold": 3,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "component_sharpes": {
+            "K198": 7.9652,
+            "K256_EqWt": 16.8,
+            "K226": 2.8378
+          },
+          "top_contributor": "K256_EqWt"
+        },
+        {
+          "fold": 4,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "component_sharpes": {
+            "K198": 9.731,
+            "K256_EqWt": 12.4721,
+            "K226": 2.6243
+          },
+          "top_contributor": "K256_EqWt"
+        }
+      ],
+      "delta_oos_sh": -0.5745,
+      "delta_wf_min": -0.1384,
+      "delta_maxdd": -7.8e-05
+    },
+    "K258c": {
+      "oos_sharpe": 7.5801,
+      "oos_maxdd": -0.017208,
+      "oos_ann_ret": 0.4639,
+      "oos_ann_vol": 0.0612,
+      "wf_mean": 6.8357,
+      "wf_min": 6.6024,
+      "fold_sharpes": [
+        6.6858,
+        6.6024,
+        6.9777,
+        7.0768
+      ],
+      "avg_weights": [
+        0.5906,
+        0.2946,
+        0.1147
+      ],
+      "description": "K198+K256_EqWt+K226 inv-vol + K256 cap 30%",
+      "gates": {
+        "g1_oos_sh": false,
+        "g2_wf_min": false,
+        "g3_maxdd": false,
+        "g4_ml_folds_positive": true,
+        "g5_all_nonzero_wt": true,
+        "all_pass": false,
+        "verdict": "FAIL"
+      },
+      "fold_contribution": [
+        {
+          "fold": 1,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "component_sharpes": {
+            "K198": 6.5911,
+            "K256_EqWt": 16.4121,
+            "K226": 3.2959
+          },
+          "top_contributor": "K256_EqWt"
+        },
+        {
+          "fold": 2,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "component_sharpes": {
+            "K198": 7.3739,
+            "K256_EqWt": 5.7721,
+            "K226": 0.38
+          },
+          "top_contributor": "K198"
+        },
+        {
+          "fold": 3,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "component_sharpes": {
+            "K198": 7.9652,
+            "K256_EqWt": 16.8,
+            "K226": 2.8378
+          },
+          "top_contributor": "K256_EqWt"
+        },
+        {
+          "fold": 4,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "component_sharpes": {
+            "K198": 9.731,
+            "K256_EqWt": 12.4721,
+            "K226": 2.6243
+          },
+          "top_contributor": "K256_EqWt"
+        }
+      ],
+      "delta_oos_sh": -5.1128,
+      "delta_wf_min": -2.3323,
+      "delta_maxdd": -0.016063
+    },
+    "K258d": {
+      "oos_sharpe": 12.8734,
+      "oos_maxdd": -0.000163,
+      "oos_ann_ret": 0.0799,
+      "oos_ann_vol": 0.0062,
+      "wf_mean": 10.7554,
+      "wf_min": 5.852,
+      "fold_sharpes": [
+        5.852,
+        6.5185,
+        18.0324,
+        12.6187
+      ],
+      "avg_weights": [
+        0.0234,
+        0.9547,
+        0.0219
+      ],
+      "description": "K198+K256_EqWt+K226 MVP (rolling min-var)",
+      "gates": {
+        "g1_oos_sh": true,
+        "g2_wf_min": false,
+        "g3_maxdd": true,
+        "g4_ml_folds_positive": true,
+        "g5_all_nonzero_wt": true,
+        "all_pass": false,
+        "verdict": "FAIL"
+      },
+      "fold_contribution": [
+        {
+          "fold": 1,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "component_sharpes": {
+            "K198": 6.5911,
+            "K256_EqWt": 16.4121,
+            "K226": 3.2959
+          },
+          "top_contributor": "K256_EqWt"
+        },
+        {
+          "fold": 2,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "component_sharpes": {
+            "K198": 7.3739,
+            "K256_EqWt": 5.7721,
+            "K226": 0.38
+          },
+          "top_contributor": "K198"
+        },
+        {
+          "fold": 3,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "component_sharpes": {
+            "K198": 7.9652,
+            "K256_EqWt": 16.8,
+            "K226": 2.8378
+          },
+          "top_contributor": "K256_EqWt"
+        },
+        {
+          "fold": 4,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "component_sharpes": {
+            "K198": 9.731,
+            "K256_EqWt": 12.4721,
+            "K226": 2.6243
+          },
+          "top_contributor": "K256_EqWt"
+        }
+      ],
+      "delta_oos_sh": 0.1805,
+      "delta_wf_min": -3.0827,
+      "delta_maxdd": 0.000982
+    }
+  },
+  "accepted": [],
+  "best_variant": null,
+  "verdict": {
+    "decision": "REJECT",
+    "best_variant": null,
+    "summary": "REJECT \u2014 K258 does not pass acceptance gates; maintain K246a v6.9",
+    "detail": "ROOT CAUSE: K208-K256_EqWt daily rho=0.9943 on K246a window (NOT 0.694 as K256 reported). K256 reported 0.5694 for K256_Ridge vs K208 only; K256_EqWt daily rho was not tracked separately. K256_EqWt aggregates K208-style DAR+spread-gate PnL over 10 symbols equally \u2014 daily returns sum near-identically to K208. No genuine diversification. All K258a/b variants score OOS Sh=12.12, WF min=8.80 \u2014 below K246a gates. K258c (K256 cap 30%) collapses to OOS Sh=7.58. K258d (MVP) achieves OOS Sh=12.87 but WF min=5.85. K246a v6.9 (K198+K208+K226) remains production. Follow-on: test K198+K256_Ridge+K226 \u2014 ridge rho=0.569 may provide genuine alpha.",
+    "production_label": "v6.9 (unchanged)",
+    "rho_clarification": {
+      "k256_ridge_k208_rho_reported": 0.5694,
+      "k256_eqwt_k208_rho_on_k246a_window": 0.9943,
+      "finding": "K256_EqWt daily rho with K208 is 0.9943, not 0.694. The 0.694 figure was for K256_Ridge vs K208.",
+      "implication": "K256_EqWt is not a genuinely new alpha source vs K208 in ensemble context."
+    }
+  }
+}
