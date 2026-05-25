@@ -1,0 +1,244 @@
+{
+  "audit_meta": {
+    "wave": "K329",
+    "audit_number": 6,
+    "auditor": "K329 Subagent",
+    "timestamp_jst": "2026-05-25 14:46 JST",
+    "file": "report.html",
+    "file_lines": 8919,
+    "file_bytes": 952608,
+    "file_kb": 930,
+    "prior_audits": ["K274", "K293", "K300"],
+    "k_era": "K326"
+  },
+  "summary": {
+    "findings_total": 11,
+    "HIGH": 2,
+    "MED": 4,
+    "LOW": 4,
+    "INFO": 1,
+    "PASS": 24,
+    "overall_status": "AMBER"
+  },
+  "findings": [
+    {
+      "id": "F01",
+      "area": "dead_sections",
+      "severity": "HIGH",
+      "title": "Footer still claims Production v6.11 K287d SATELLITE",
+      "lines": [8911, 8912],
+      "evidence": "line 8911: 'Research Baseline v4.1 / Production v6.11 K287d SATELLITE'",
+      "actual_production": "v6.12 K302a (K280 80% + K297 RWA 20%)",
+      "fix": "Update line 8911 to 'Production v6.12 K302a (K280 80% + K297 RWA 20%)' and update footer timestamp to 14:37 JST",
+      "effort_min": 5
+    },
+    {
+      "id": "F02",
+      "area": "dead_sections",
+      "severity": "HIGH",
+      "title": "K287d '← 現在' arrow in K254-K287 chronicle points to superseded v6.11",
+      "lines": [8196, 8200],
+      "evidence": "line 8196: 'K287d SATELLITE combined v6.11 (33.00, ZERO MaxDD) ← 現在'; line 8200: recommends K287d satellite deploy",
+      "fix": "Change '← 現在' to '← v6.11 (K303にてv6.12 K302aへ更新済み)'; append historical note to line 8200 deploy recommendation",
+      "effort_min": 5
+    },
+    {
+      "id": "F03",
+      "area": "performance",
+      "severity": "MED",
+      "title": "12 bare Plotly.newPlot calls not wrapped in __renderWhenReady",
+      "lines": [1771, 1782, 1794, 1846, 1857, 1869, 1921, 1932, 1944, 6929, 6940, 6949],
+      "chart_ids": ["sc-combined-eq", "sc-combined-dd", "sc-combined-rs", "sc-atr-eq", "sc-atr-dd", "sc-atr-rs", "sc-fopd-eq", "sc-fopd-dd", "sc-fopd-rs", "sim-equity-chart", "sim-dist-chart", "sim-dd-chart"],
+      "evidence": "Plotly.newPlot calls executed inline without renderWhenReady wrapper — risk of silent fail on slow/mobile",
+      "fix": "Wrap each in window.__renderWhenReady(function() { Plotly.newPlot(...) }, 'chart-id')",
+      "effort_min": 30
+    },
+    {
+      "id": "F04",
+      "area": "live_monitoring",
+      "severity": "MED",
+      "title": "CSS variable --border-color undefined in :root (only --border is defined)",
+      "lines": [787, 799],
+      "root_defined": "--border: #30363d (line 31)",
+      "used_as": "--border-color (lines 787, 799 in scoped Live Monitoring style block)",
+      "impact": "lm-card borders and lm-table th borders may render as transparent/incorrect in strict browsers",
+      "fix": "Add '--border-color: #30363d;' to :root block at line 31, OR change lines 787/799 to var(--border)",
+      "effort_min": 5
+    },
+    {
+      "id": "F05",
+      "area": "tips_log",
+      "severity": "MED",
+      "title": "K320 and K323 listed as in-flight with no resolution (now at K329)",
+      "lines": [8142],
+      "evidence": "K320 (HMM on K297 satellite), K323 (FR-regime filter for K280) listed as 'sonnet agent 実行中' — 7 waves later, no outcome recorded",
+      "fix": "Add outcome entries for K320 and K323 in the K306-K322 chronicle, or create a new K323-K328 chronicle entry",
+      "effort_min": 30
+    },
+    {
+      "id": "F06",
+      "area": "dead_sections",
+      "severity": "MED",
+      "title": "Survivor-card note cites v6.11 as current production",
+      "lines": [3480],
+      "evidence": "line 3480: 現在のプロダクション（v6.11 K287d SATELLITE: K280 (80%) + K287d Sat [K270 dYdX + K275 OKX] (20%)）",
+      "fix": "Update parenthetical to 'v6.12 K302a: K280 (80%) + K297 RWA [PAXG 60% / SPX 40%] (20%)'",
+      "effort_min": 5
+    },
+    {
+      "id": "F07",
+      "area": "banner",
+      "severity": "LOW",
+      "title": "report-header meta timestamp lags banner by 9 hours",
+      "lines": [772],
+      "banner_timestamp": "2026-05-25 14:37 JST (line 762)",
+      "meta_timestamp": "2026-05-25 05:30 JST (line 772)",
+      "fix": "Update line 772 to match 14:37 JST or remove duplicate timestamp",
+      "effort_min": 5
+    },
+    {
+      "id": "F08",
+      "area": "mobile_responsive",
+      "severity": "LOW",
+      "title": "No 375px (iPhone SE) or 414px (iPhone Plus) breakpoints",
+      "lines": [],
+      "present_breakpoints": ["1001px", "1000px", "768px", "600px", "480px"],
+      "missing_breakpoints": ["375px", "414px"],
+      "mitigation": "480px breakpoint covers 375px and 414px — no hard breakage, but no fine-tuned optimization",
+      "fix": "Add @media (max-width:375px) block for micro-adjustments if needed",
+      "effort_min": 30
+    },
+    {
+      "id": "F09",
+      "area": "dead_sections",
+      "severity": "LOW",
+      "title": "Mobile TOC missing 6 sections present in desktop TOC",
+      "lines": [1255],
+      "missing_sections": [
+        "#daily-tf-advantage (line 5982)",
+        "#scan-4h (line 6023)",
+        "#asymmetric-edge (line 6106)",
+        "#portfolio-analysis (line 6183)",
+        "#equity-simulator (line 6725)",
+        "#is-oos-reversal (line 6520)"
+      ],
+      "fix": "Add 6 missing <li> entries to mobile TOC <ol> block",
+      "effort_min": 5
+    },
+    {
+      "id": "F10",
+      "area": "performance",
+      "severity": "LOW",
+      "title": "Duplicate @media query blocks for same breakpoints",
+      "occurrences": {
+        "768px": [480, 558],
+        "480px": [489, 733]
+      },
+      "fix": "Consolidate into single blocks per breakpoint during next refactoring wave",
+      "effort_min": 30
+    },
+    {
+      "id": "F11",
+      "area": "performance",
+      "severity": "INFO",
+      "title": "File approaching 1 MB — large inline JSON equity arrays",
+      "file_bytes": 952608,
+      "large_arrays": {
+        "comparison_chart_series": "lines 1597-1600, ~4 arrays x 700+ points = ~150 KB",
+        "sc_combined_eq": "line 1771+, ~700+ points, ~80 KB",
+        "chart_labeler_cases": "line 7183, inline JSON ~15 KB"
+      },
+      "fix": "Extract equity arrays to data/*.json files and load via fetch",
+      "effort_min": 120
+    }
+  ],
+  "passes": [
+    {"id": "P01", "area": "banner", "title": "Banner timestamp 2026-05-25 14:37 JST current", "line": 762},
+    {"id": "P02", "area": "banner", "title": "Production architecture K302a v6.12 correctly stated", "line": 764},
+    {"id": "P03", "area": "banner", "title": "v6.12 FINAL mentions consistent across banner/monitoring/TOC"},
+    {"id": "P04", "area": "banner", "title": "試行数 738,388+ credible"},
+    {"id": "P05", "area": "tips_log", "title": "K306-K322 chronicle open by default", "line": 8114},
+    {"id": "P06", "area": "tips_log", "title": "K288-K305 chronicle closed by default", "line": 8056},
+    {"id": "P07", "area": "tips_log", "title": "All older entries collapsed"},
+    {"id": "P08", "area": "tips_log", "title": "No duplicate K-number references"},
+    {"id": "P09", "area": "tips_log", "title": "K317 retraction properly contextualized at lines 8132/8134"},
+    {"id": "P10", "area": "live_monitoring", "title": "All 3 active daemons show SCAFFOLD-READY badge", "lines": [840, 847, 854]},
+    {"id": "P11", "area": "live_monitoring", "title": "K310 activation notice card present", "lines": [878, 894]},
+    {"id": "P12", "area": "live_monitoring", "title": "K200 HLP correctly marked NO SCRIPT", "lines": [861, 864]},
+    {"id": "P13", "area": "live_monitoring", "title": "K287d satellite marked DEPRECATED"},
+    {"id": "P14", "area": "live_monitoring", "title": "Plotly equity chart placeholder present with responsive:true"},
+    {"id": "P15", "area": "mobile", "title": "768px iPad breakpoint present"},
+    {"id": "P16", "area": "mobile", "title": "Tables horizontally scrollable via overflow-x:auto"},
+    {"id": "P17", "area": "mobile", "title": "Font sizes readable at small viewports"},
+    {"id": "P18", "area": "mobile", "title": "Plotly charts have responsive:true flag"},
+    {"id": "P19", "area": "dead_sections", "title": "No TODO/FIXME/WIP comments found"},
+    {"id": "P20", "area": "dead_sections", "title": "No inappropriate ACTIVE/DEPLOY-READY badges"},
+    {"id": "P21", "area": "consistency", "title": "All key Sharpe numbers consistent across sections"},
+    {"id": "P22", "area": "consistency", "title": "K317 retraction consistent across all mentions"},
+    {"id": "P23", "area": "consistency", "title": "K-number sequence coherent"},
+    {"id": "P24", "area": "consistency", "title": "K302a vs K302 distinction maintained"}
+  ],
+  "sharpe_verification": {
+    "K280_OOS_Sh": {"expected": 18.46, "found_at_lines": [902, 8148, 8158, 8195], "status": "CONSISTENT"},
+    "K287d_combined_55d_Sh": {"expected": 33.00, "found_at_lines": [8108, 8148, 8166], "status": "CONSISTENT"},
+    "K302a_combined_55d_Sh": {"expected": 32.59, "found_at_lines": [764, 937, 8079, 8084, 8109], "status": "CONSISTENT"},
+    "K302a_Sh_per_exchange": {"expected": 16.30, "found_at_lines": [764, 8079, 8084], "status": "CONSISTENT"},
+    "K297_EW_Sh": {"expected": 10.17, "found_at_lines": [8071, 8883, 8892], "status": "CONSISTENT"},
+    "K297_PAXG_Sh": {"expected": 16.91, "found_at_lines": [8071, 8892], "status": "CONSISTENT"},
+    "K297_SPX_Sh": {"expected": 5.87, "found_at_lines": [8071, 8891], "status": "CONSISTENT"},
+    "K302a_retention": {"expected": "98.7%", "found_at_lines": [764, 1379, 8079], "status": "CONSISTENT"},
+    "K301_combined_Sh": {"expected": 35.26, "found_at_lines": [8077, 8084], "status": "CONSISTENT"},
+    "K280_HMM_baseline_Sh": {
+      "value": 17.11,
+      "context": "55d realized Sh window used in K315 HMM filter experiment (not the OOS Sh of 18.46)",
+      "status": "CLARIFICATION_NEEDED",
+      "note": "The 17.11 vs 18.46 discrepancy is a different measurement window, not an error. Text at line 8138 does not clarify this distinction."
+    }
+  },
+  "daemon_status_audit": {
+    "K280_main": {"badge": "SCAFFOLD-READY", "line": 840, "correct": true},
+    "K302a_satellite": {"badge": "SCAFFOLD-READY", "line": 847, "correct": true},
+    "K304_HL_mon": {"badge": "SCAFFOLD-READY", "line": 854, "correct": true},
+    "K200_HLP": {"badge": "NO SCRIPT", "line": 861, "correct": true},
+    "K287d_satellite": {"badge": "DEPRECATED", "line": 867, "correct": true}
+  },
+  "k317_retraction_audit": {
+    "mentions": [
+      {"line": 8132, "text": "K317 (bug confirmed but mis-attributed) — 誤主張: K208 production bug, K280 Sh overstated 10-20%", "correctly_retracted": true},
+      {"line": 8134, "text": "K317 retracted, K302a v6.12 deployment 安全", "correctly_retracted": true}
+    ],
+    "status": "PASS"
+  },
+  "toc_audit": {
+    "desktop_toc_entries": 27,
+    "mobile_toc_entries": 22,
+    "missing_from_mobile": [
+      {"id": "daily-tf-advantage", "section_line": 5982},
+      {"id": "scan-4h", "section_line": 6023},
+      {"id": "asymmetric-edge", "section_line": 6106},
+      {"id": "portfolio-analysis", "section_line": 6183},
+      {"id": "equity-simulator", "section_line": 6725},
+      {"id": "is-oos-reversal", "section_line": 6520}
+    ]
+  },
+  "css_audit": {
+    "border_var_defined": "--border: #30363d (line 31)",
+    "border_color_var_defined": false,
+    "border_color_used_at_lines": [787, 799],
+    "media_queries": {
+      "1001px": [384],
+      "1000px": [449, 1284],
+      "768px": [480, 558],
+      "600px": [809],
+      "480px": [489, 733]
+    },
+    "missing_breakpoints": ["375px", "414px"]
+  },
+  "plotly_audit": {
+    "total_newPlot_calls": 28,
+    "wrapped_in_renderWhenReady": 16,
+    "bare_calls": 12,
+    "bare_call_lines": [1771, 1782, 1794, 1846, 1857, 1869, 1921, 1932, 1944, 6929, 6940, 6949],
+    "responsive_flag_present": "26 of 28 calls"
+  }
+}
