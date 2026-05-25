@@ -759,7 +759,7 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 14:14 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 14:37 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 PRODUCTION v6.12 FINAL (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K302a 2-EXCHANGE (K280 80% + K297 RWA [PAXG 60% / SPX 40%] 20%) combined 55d Sh +32.59 / 98.7% K287d retention / 2 exchanges</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">K303 decision: K302a +1.275 winner score (16.30 Sh/exchange)</span> &nbsp;|&nbsp;
     <strong>12 ACCEPT base + 21 ensembles + K302a v6.12 / 78 REJECT / 7 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K297 PAXG 504d + SPX 415d (vs K275 96d), K275 risk eliminated, HL infrastructure single ops</span>
@@ -8053,7 +8053,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       <h2 style="color:var(--accent-yellow);">💡 Tips & Findings ログ (累積・上書き禁止)</h2>
       <p style="font-size:0.85rem;color:var(--text-secondary);">解析過程で発見した tips・知見・将来役立ちそうなアイデアを時系列で蓄積。</p>
       <div id="tips-log-body" style="margin-top:10px;font-size:0.88rem;">
-        <details open>
+        <details>
           <summary><strong>★★★★★★ 2026-05-25 13:55 JST — v6.12 K302a FINAL PRODUCTION 確定 (K288-K305 journey)</strong></summary>
           <ul>
             <li><strong>【1. K289 K287d Satellite scaffold + K275 bug discovery】</strong> K287d (v6.11) の scaffold を引き継ぎ、K289 にて Satellite 枠の K275 OKX 実装を詳細検証。初期テスト Sh <strong>-3.55</strong>。K275 の 96d データ制限 (最短銘柄制約) と ×3 乗数バグが潜在していることが後の調査で判明。★ データ期間短縮リスクの実害を最初に観測した Wave。</li>
@@ -8109,6 +8109,37 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
                 <li>→ <strong style="color:var(--accent-green);">K302a v6.12 FINAL PRODUCTION (<strong>32.59</strong>, 2 exchanges, K275 risk eliminated) ← 現在</strong></li>
               </ul>
             </li>
+          </ul>
+        </details>
+        <details open>
+          <summary><strong>★★★ 2026-05-25 14:35 JST — K306-K322 chronicle: deployment scaffolding, ground-truth audit, data-quality probes, HMM follow-up</strong></summary>
+          <ul>
+            <li><strong>【K306-K308 HTML maintenance】</strong> K306 Tips log K288-K305 chronicle; K307 K302a runbook 795 lines (11 sections); K308 HTML Live Monitoring dashboard section deployed (444 lines, Plotly equity + JS live JSON fetch + mobile responsive).</li>
+
+            <li><strong>【★ K310 ★ ground-truth reckoning: plists never existed】</strong> launchctl ground truth revealed K283/K289/K304/K305 daemons claimed "ACTIVE/DEPLOY-READY" but plist files were never created at ~/Library/LaunchAgents/. K310 created 3 plists (k280-live, k302a-satellite, hl-predicted-monitor — 8×/day cadence, NOT auto-loaded), corrected HTML Live Monitoring badges (ACTIVE→SCAFFOLD-READY, etc), and discovered HLP monitor has NO backing script at all (K200 claim was fully fictional). Runbook §12 appended with manual activation commands. <strong>核心教訓</strong>: subagent claim を信頼せず launchctl/ls で実体確認してから HTML 反映する (memory: feedback_agent_groundtruth_verify)。</li>
+
+            <li><strong>【K311 verify_deployment_status.py】</strong> 5 daemon registry + 6 status levels (SCAFFOLD-READY / PENDING ACTIVATION / LOADED / ACTIVE / DEPRECATED / UNKNOWN)。HTML expected_html_status と diff、mismatches_with_html=0 達成。再実行可能な日次監査ツールとして定着。</li>
+
+            <li><strong>【K312 cache parquet integrity audit】</strong> 6 v6.12-critical parquet 全 OK 判定 (hl_longtail 733行、hl_hip3 21996行、okx_fr 96行、alt_exchange 731行、hlp 1111行、ethena 729行)。<strong>盲点</strong>: sanity check (|value| < 1.0) は通ったが zero-density は未測定。後の K316 で問題顕在化。</li>
+
+            <li><strong>【K313 K298 predictedFR snapshot pair analysis (Spearman 0.9751)】</strong> HL predictedFundings の 2 snapshots (04:49 / 04:51 JST = 140.7s 差) を比較。230 coins × 3 venues、symbol alignment 100%。<strong>主要発見</strong>: (a) K265 rank Spearman 0.9751 = 2 分で順位ほぼ不変 (短期 rank-based bet 安全); (b) ME 77.2 bps cross-venue spread = K208 最強 carry 候補; (c) BinPerp は alts で構造的弱さ (ME -830 bps 等); (d) RWA universe は PAXG + SPX のみ (XAG/WTI 未上場確認)。</li>
+
+            <li><strong>【K314 HL universe baseline (183 active perps, 51% 3x leverage)】</strong> HL info/meta スナップショット。レバレッジ階層: 3x=93 (long-tail), 5x=55 (mid-cap), 10x=31 (major+RWA), 20x+=4 (top liquidity)。RWA は PAXG/SPX のみ 10x。XAG/XAU/WTI 等は HL 未上場 (R11-1 confirm)。K297 universe expansion は HL HIP-3 listing 待ち。</li>
+
+            <li><strong>【★★ K316-K319 discovery chain: K208 production health verified】</strong>
+              <ul style="font-size:0.92em;">
+                <li><strong>K316 (pattern detect)</strong>: alt_exchange_fr_daily.parquet 今日 60% cells zero, 2025-02-21 以降 50%+ zero 慢性化。ARB 25% / TIA 36% coverage only。</li>
+                <li><strong>K317 (bug confirmed but mis-attributed)</strong>: 29d 個別 parquet vs daily aggregator cross-check で H2 (silent fetch failure) 確定。<strong>誤主張</strong>: "K208 production bug, K280 Sh overstated 10-20%"。</li>
+                <li><strong>K318 (correction)</strong>: alt_exchange_fr_daily は <strong>K270 dYdX v4 source</strong> であり K208 source ではない (grep parquet scripts/k280_live_fetch.py で検証)。K208 は bybit_fr_* + k163_hl/hl_fr_* を使用。K270 は K287d satellite 経由で K302a 切替時に deprecated → 現 production 影響なし。</li>
+                <li><strong>K319 (actual K208 audit) ✓ CLEAN</strong>: K208 candidate 9 シンボル (ARB/ADA/DOGE/SOL/AAVE/BNB/BTC/ETH/AVAX) すべて bybit_fr_* 0.0% zeros / HL 0.0% zeros / 1-2日 freshness。<strong>K280 production 健全、K317 retracted, K302a v6.12 deployment 安全</strong>。</li>
+              </ul>
+              <strong>核心教訓</strong>: pattern detection と production impact attribution を分離せよ。常に grep で strategy ↔ data source mapping を確認してから影響範囲を主張する (cache audit に consumer_strategies 列を K322 で追加)。</li>
+
+            <li><strong>【K315 HMM regime filter for K280 REJECT (carry orthogonal to price)】</strong> R11-3 finding 実装: 3-state Gaussian HMM (manual Baum-Welch EM、hmmlearn 未 install) を BTC 4h 4,514 bars に fit。BEAR mean -0.113%/4h, NEUTRAL +0.016%, BULL +0.029%。K280 equity に no-bear/bull-only filter 適用 → <strong>Sh 17.11 → 15.27 (-10.7%) / 10.63 (-37.9%)</strong>。WF 4-fold 全悪化。<strong>核心理由</strong>: K280 は carry strategy、BTC BEAR (11h flash crashes) 時に longs panic-pay → FR spike → K208 shorts MORE profitable。filter は黒字を消す。<strong>推奨</strong>: HMM は K297 directional satellite で再試行 (K320)、K280 は FR-regime filter で再試行 (K323)。</li>
+
+            <li><strong>【K322 audit_cache_integrity.py 拡張】</strong> K316-K319 教訓を恒久化: (a) consumer_strategies フィールド (各 parquet がどの戦略の input か明示); (b) zero_fraction_recent_30d メトリック; (c) INTERMITTENT status (zero_frac > 0.30)。現在 alt_exchange 25.33% 境界直下、他は < 6%。</li>
+
+            <li><strong>【インフライト】</strong> K320 (HMM on K297 satellite, K315 follow-up), K323 (FR-regime filter for K280, K315 alt) は並列 sonnet agent 実行中。R11 (累計 242 findings) + 上記 K306-K322 lessons を統合した次フェーズへ。</li>
           </ul>
         </details>
         <details>
