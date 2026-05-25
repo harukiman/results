@@ -1,0 +1,414 @@
+{
+  "wave": "K249",
+  "parent_waves": [
+    "K208",
+    "K247"
+  ],
+  "objective": "Spread magnitude gating for K208 fold2 recovery",
+  "as_of": "2026-05-25T00:18:40.316059+00:00",
+  "runtime_s": 1.4,
+  "config": {
+    "symbols": [
+      "SOL",
+      "XRP",
+      "SUI",
+      "OP",
+      "APT",
+      "AXS",
+      "JTO",
+      "IMX",
+      "SAND",
+      "ADA"
+    ],
+    "symbols_skipped": [],
+    "dar_p": 2,
+    "dar_q": 1,
+    "dar_win": 300,
+    "dar_refit": 50,
+    "spread_roll_win_events": 21,
+    "spread_roll_win_days": 7,
+    "gate_percentiles": {
+      "K249a": 25,
+      "K249b": 30,
+      "K249c": 35
+    },
+    "accept_active_pct": 65.0,
+    "ml_window": {
+      "start": "2025-01-22",
+      "end": "2026-04-14"
+    },
+    "fold_bounds": [
+      {
+        "fold": 1,
+        "start": "2025-01-22",
+        "end": "2025-05-13"
+      },
+      {
+        "fold": 2,
+        "start": "2025-05-14",
+        "end": "2025-09-02"
+      },
+      {
+        "fold": 3,
+        "start": "2025-09-03",
+        "end": "2025-12-23"
+      },
+      {
+        "fold": 4,
+        "start": "2025-12-24",
+        "end": "2026-04-14"
+      }
+    ]
+  },
+  "acceptance_thresholds": {
+    "fold2_sh_min": 7.0,
+    "oos_sh_min": 10.57,
+    "wf_min_min": 7.0,
+    "active_pct_min": 65.0
+  },
+  "reference_metrics": {
+    "K208_baseline": {
+      "oos_sh": 10.57,
+      "wf_folds": [
+        17.35,
+        5.74,
+        17.41,
+        13.11
+      ],
+      "wf_min": 5.74,
+      "fold2_sh": 5.74
+    },
+    "K229d_ensemble": {
+      "oos_sh": 10.17,
+      "wf_folds": [
+        12.91,
+        7.48,
+        13.01,
+        12.22
+      ],
+      "wf_min": 7.48
+    },
+    "K246a_v6_9": {
+      "oos_sh": 12.69,
+      "wf_min": 8.93
+    }
+  },
+  "spread_distribution": {
+    "p10_bps": 0.4926,
+    "p25_bps": 0.6446,
+    "p30_bps": 0.6995,
+    "p35_bps": 0.742,
+    "p50_bps": 0.8971,
+    "p75_bps": 1.3224,
+    "p90_bps": 2.2429,
+    "mean_bps": 1.345
+  },
+  "baseline": {
+    "sharpe_full": 12.2258,
+    "wf_mean": 18.653,
+    "wf_min": 6.809,
+    "wf_folds": [
+      26.4355,
+      6.809,
+      23.4889,
+      17.8788
+    ],
+    "fold2_sh": 6.809
+  },
+  "variants": {
+    "K249a": {
+      "variant": "K249a",
+      "sharpe_full": 12.1889,
+      "sharpe_oos": 17.5288,
+      "max_dd_oos": -0.000275,
+      "wf_mean": 19.0487,
+      "wf_min": 7.5679,
+      "wf_folds": [
+        27.0314,
+        7.5679,
+        23.7168,
+        17.8788
+      ],
+      "fold2_sh": 7.5679,
+      "fold_gate_stats": [
+        {
+          "fold": 1,
+          "start": "2025-01-22",
+          "end": "2025-05-13",
+          "pct_active": 93.7,
+          "mean_spread_mag_bps": 1.0895,
+          "note": "NORMAL"
+        },
+        {
+          "fold": 2,
+          "start": "2025-05-14",
+          "end": "2025-09-02",
+          "pct_active": 48.5,
+          "mean_spread_mag_bps": 0.72,
+          "note": "LOW_SPREAD"
+        },
+        {
+          "fold": 3,
+          "start": "2025-09-03",
+          "end": "2025-12-23",
+          "pct_active": 71.6,
+          "mean_spread_mag_bps": 1.0142,
+          "note": "MODERATE"
+        },
+        {
+          "fold": 4,
+          "start": "2025-12-24",
+          "end": "2026-04-14",
+          "pct_active": 100.0,
+          "mean_spread_mag_bps": 3.4639,
+          "note": "NORMAL"
+        }
+      ],
+      "gate_stats": {
+        "spread_threshold_bps": 0.6446,
+        "pct_threshold": 25,
+        "pct_active_spread": 75.0,
+        "avg_sym_active_rate": 25.7,
+        "spread_mag_p10": 0.4926,
+        "spread_mag_p25": 0.6446,
+        "spread_mag_p50": 0.8971,
+        "spread_mag_p75": 1.3224,
+        "spread_mag_mean": 1.345,
+        "regime_gate": false
+      },
+      "acceptance": {
+        "fold2_ok": true,
+        "oos_ok": true,
+        "wfmin_ok": true,
+        "active_ok": true,
+        "gates_pass": 4,
+        "verdict": "ACCEPT"
+      }
+    },
+    "K249b": {
+      "variant": "K249b",
+      "sharpe_full": 12.1582,
+      "sharpe_oos": 17.54,
+      "max_dd_oos": -0.000275,
+      "wf_mean": 18.8284,
+      "wf_min": 6.735,
+      "wf_folds": [
+        26.8875,
+        6.735,
+        23.7963,
+        17.8948
+      ],
+      "fold2_sh": 6.735,
+      "fold_gate_stats": [
+        {
+          "fold": 1,
+          "start": "2025-01-22",
+          "end": "2025-05-13",
+          "pct_active": 92.5,
+          "mean_spread_mag_bps": 1.0895,
+          "note": "NORMAL"
+        },
+        {
+          "fold": 2,
+          "start": "2025-05-14",
+          "end": "2025-09-02",
+          "pct_active": 39.8,
+          "mean_spread_mag_bps": 0.72,
+          "note": "LOW_SPREAD"
+        },
+        {
+          "fold": 3,
+          "start": "2025-09-03",
+          "end": "2025-12-23",
+          "pct_active": 68.3,
+          "mean_spread_mag_bps": 1.0142,
+          "note": "MODERATE"
+        },
+        {
+          "fold": 4,
+          "start": "2025-12-24",
+          "end": "2026-04-14",
+          "pct_active": 98.8,
+          "mean_spread_mag_bps": 3.4639,
+          "note": "NORMAL"
+        }
+      ],
+      "gate_stats": {
+        "spread_threshold_bps": 0.6995,
+        "pct_threshold": 30,
+        "pct_active_spread": 70.0,
+        "avg_sym_active_rate": 25.1,
+        "spread_mag_p10": 0.4926,
+        "spread_mag_p25": 0.6446,
+        "spread_mag_p50": 0.8971,
+        "spread_mag_p75": 1.3224,
+        "spread_mag_mean": 1.345,
+        "regime_gate": false
+      },
+      "acceptance": {
+        "fold2_ok": false,
+        "oos_ok": true,
+        "wfmin_ok": false,
+        "active_ok": true,
+        "gates_pass": 2,
+        "verdict": "MARGINAL"
+      }
+    },
+    "K249c": {
+      "variant": "K249c",
+      "sharpe_full": 11.9332,
+      "sharpe_oos": 17.3988,
+      "max_dd_oos": -0.000275,
+      "wf_mean": 17.8746,
+      "wf_min": 3.7417,
+      "wf_folds": [
+        26.1972,
+        3.7417,
+        23.8778,
+        17.6816
+      ],
+      "fold2_sh": 3.7417,
+      "fold_gate_stats": [
+        {
+          "fold": 1,
+          "start": "2025-01-22",
+          "end": "2025-05-13",
+          "pct_active": 89.5,
+          "mean_spread_mag_bps": 1.0895,
+          "note": "NORMAL"
+        },
+        {
+          "fold": 2,
+          "start": "2025-05-14",
+          "end": "2025-09-02",
+          "pct_active": 27.2,
+          "mean_spread_mag_bps": 0.72,
+          "note": "LOW_SPREAD"
+        },
+        {
+          "fold": 3,
+          "start": "2025-09-03",
+          "end": "2025-12-23",
+          "pct_active": 67.7,
+          "mean_spread_mag_bps": 1.0142,
+          "note": "MODERATE"
+        },
+        {
+          "fold": 4,
+          "start": "2025-12-24",
+          "end": "2026-04-14",
+          "pct_active": 94.0,
+          "mean_spread_mag_bps": 3.4639,
+          "note": "NORMAL"
+        }
+      ],
+      "gate_stats": {
+        "spread_threshold_bps": 0.742,
+        "pct_threshold": 35,
+        "pct_active_spread": 65.0,
+        "avg_sym_active_rate": 24.3,
+        "spread_mag_p10": 0.4926,
+        "spread_mag_p25": 0.6446,
+        "spread_mag_p50": 0.8971,
+        "spread_mag_p75": 1.3224,
+        "spread_mag_mean": 1.345,
+        "regime_gate": false
+      },
+      "acceptance": {
+        "fold2_ok": false,
+        "oos_ok": true,
+        "wfmin_ok": false,
+        "active_ok": true,
+        "gates_pass": 2,
+        "verdict": "MARGINAL"
+      }
+    },
+    "K249d": {
+      "variant": "K249d",
+      "sharpe_full": 6.9161,
+      "sharpe_oos": 10.3984,
+      "max_dd_oos": -7.6e-05,
+      "wf_mean": 8.2961,
+      "wf_min": 2.8947,
+      "wf_folds": [
+        11.216,
+        2.8947,
+        7.9911,
+        11.0827
+      ],
+      "fold2_sh": 2.8947,
+      "fold_gate_stats": [
+        {
+          "fold": 1,
+          "start": "2025-01-22",
+          "end": "2025-05-13",
+          "pct_active": 92.5,
+          "mean_spread_mag_bps": 1.0895,
+          "note": "NORMAL"
+        },
+        {
+          "fold": 2,
+          "start": "2025-05-14",
+          "end": "2025-09-02",
+          "pct_active": 39.8,
+          "mean_spread_mag_bps": 0.72,
+          "note": "LOW_SPREAD"
+        },
+        {
+          "fold": 3,
+          "start": "2025-09-03",
+          "end": "2025-12-23",
+          "pct_active": 68.3,
+          "mean_spread_mag_bps": 1.0142,
+          "note": "MODERATE"
+        },
+        {
+          "fold": 4,
+          "start": "2025-12-24",
+          "end": "2026-04-14",
+          "pct_active": 98.8,
+          "mean_spread_mag_bps": 3.4639,
+          "note": "NORMAL"
+        }
+      ],
+      "gate_stats": {
+        "spread_threshold_bps": 0.6995,
+        "pct_threshold": 30,
+        "pct_active_spread": 70.0,
+        "avg_sym_active_rate": 6.5,
+        "spread_mag_p10": 0.4926,
+        "spread_mag_p25": 0.6446,
+        "spread_mag_p50": 0.8971,
+        "spread_mag_p75": 1.3224,
+        "spread_mag_mean": 1.345,
+        "regime_gate": true
+      },
+      "acceptance": {
+        "fold2_ok": false,
+        "oos_ok": false,
+        "wfmin_ok": false,
+        "active_ok": true,
+        "gates_pass": 1,
+        "verdict": "FAIL"
+      }
+    }
+  },
+  "accepted": [
+    "K249a"
+  ],
+  "best_variant": "K249a",
+  "best_fold2_sh": 7.5679,
+  "verdict_k208_fold2_reducibility": {
+    "verdict": "REDUCIBLE",
+    "best_fold2": 7.5679,
+    "target": 7.0,
+    "action": "ACCEPT K249a \u2192 replace V_K208 slot in K246a",
+    "series_tried": [
+      "K242 binary gate",
+      "K245 DAR confidence soft-scale",
+      "K247 direction accuracy scalar",
+      "K249 spread magnitude halt"
+    ],
+    "conclusion": "All four K208 component-level optimization approaches attempted. Best fold2 achieved: 7.57. Fold2 target met \u2014 integrate."
+  }
+}
