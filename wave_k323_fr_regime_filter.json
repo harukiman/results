@@ -1,0 +1,350 @@
+{
+  "wave": "K323",
+  "task": "FR-regime filter prototype for K280 (K315 carry-relevant alternative)",
+  "as_of": "2026-05-25",
+  "fr_source": "/Users/nekonaomichi/crypto-lab/cache/hl_longtail_fr_daily.parquet",
+  "k280_source": "/Users/nekonaomichi/crypto-lab/wave_k280_curves.json",
+  "fr_signal_stats": {
+    "mean": 1.6287891636571852e-05,
+    "std": 1.1693963783572093e-05,
+    "min": 7.0412165476190485e-06,
+    "p25": 1.062570732142857e-05,
+    "median": 1.2762449761904763e-05,
+    "p75": 1.6877283511904764e-05,
+    "max": 0.00012743470297619047
+  },
+  "baseline": {
+    "sharpe": 17.112,
+    "mdd": -0.00055832,
+    "ann_return": 0.07684,
+    "n_days": 447
+  },
+  "config": {
+    "roll_tercile": 60,
+    "roll_pct": 90,
+    "ema_short": 7,
+    "ema_long": 30,
+    "zscore_thresh": 1.0,
+    "pct_thresh": 30,
+    "n_folds": 4
+  },
+  "filters": {
+    "Tercile_HIGH": {
+      "sharpe": 7.8793,
+      "sh_delta": -9.2327,
+      "sh_delta_pct": -53.95,
+      "ann_return": 0.0316,
+      "mdd": -0.00021622,
+      "n_active": 141,
+      "n_total": 447,
+      "trade_drop_pct": 68.46,
+      "wf_min_sh": 6.6296,
+      "wf_all_positive": false,
+      "wf_folds": [
+        {
+          "fold": 1,
+          "start": "2025-01-23",
+          "end": "2025-05-13",
+          "n_days": 111,
+          "n_active": 31,
+          "baseline_sh": 21.0986,
+          "filtered_sh": 8.1568,
+          "delta_sh": -12.9418
+        },
+        {
+          "fold": 2,
+          "start": "2025-05-14",
+          "end": "2025-09-01",
+          "n_days": 111,
+          "n_active": 33,
+          "baseline_sh": 13.4404,
+          "filtered_sh": 6.6296,
+          "delta_sh": -6.8108
+        },
+        {
+          "fold": 3,
+          "start": "2025-09-02",
+          "end": "2025-12-21",
+          "n_days": 111,
+          "n_active": 32,
+          "baseline_sh": 20.366,
+          "filtered_sh": 7.9104,
+          "delta_sh": -12.4556
+        },
+        {
+          "fold": 4,
+          "start": "2025-12-22",
+          "end": "2026-04-14",
+          "n_days": 114,
+          "n_active": 45,
+          "baseline_sh": 18.7322,
+          "filtered_sh": 9.4859,
+          "delta_sh": -9.2463
+        }
+      ],
+      "gates": {
+        "G1_wf_all_pos": false,
+        "G2_wf_min": false,
+        "G3_sh_10pct": false,
+        "G4_trade_drop": false
+      },
+      "gates_passed": 0,
+      "verdict": "REJECT"
+    },
+    "Tercile_MID+HIGH": {
+      "sharpe": 12.2458,
+      "sh_delta": -4.8662,
+      "sh_delta_pct": -28.44,
+      "ann_return": 0.053009,
+      "mdd": -0.0004368,
+      "n_active": 284,
+      "n_total": 447,
+      "trade_drop_pct": 36.47,
+      "wf_min_sh": 9.8886,
+      "wf_all_positive": false,
+      "wf_folds": [
+        {
+          "fold": 1,
+          "start": "2025-01-23",
+          "end": "2025-05-13",
+          "n_days": 111,
+          "n_active": 54,
+          "baseline_sh": 21.0986,
+          "filtered_sh": 11.3799,
+          "delta_sh": -9.7187
+        },
+        {
+          "fold": 2,
+          "start": "2025-05-14",
+          "end": "2025-09-01",
+          "n_days": 111,
+          "n_active": 74,
+          "baseline_sh": 13.4404,
+          "filtered_sh": 9.8886,
+          "delta_sh": -3.5517
+        },
+        {
+          "fold": 3,
+          "start": "2025-09-02",
+          "end": "2025-12-21",
+          "n_days": 111,
+          "n_active": 74,
+          "baseline_sh": 20.366,
+          "filtered_sh": 13.4225,
+          "delta_sh": -6.9434
+        },
+        {
+          "fold": 4,
+          "start": "2025-12-22",
+          "end": "2026-04-14",
+          "n_days": 114,
+          "n_active": 82,
+          "baseline_sh": 18.7322,
+          "filtered_sh": 15.2527,
+          "delta_sh": -3.4795
+        }
+      ],
+      "gates": {
+        "G1_wf_all_pos": false,
+        "G2_wf_min": false,
+        "G3_sh_10pct": false,
+        "G4_trade_drop": false
+      },
+      "gates_passed": 0,
+      "verdict": "REJECT"
+    },
+    "Zscore_abs_ge1": {
+      "sharpe": 4.54,
+      "sh_delta": -12.5721,
+      "sh_delta_pct": -73.47,
+      "ann_return": 0.012289,
+      "mdd": -0.00020543,
+      "n_active": 63,
+      "n_total": 447,
+      "trade_drop_pct": 85.91,
+      "wf_min_sh": 3.5167,
+      "wf_all_positive": false,
+      "wf_folds": [
+        {
+          "fold": 1,
+          "start": "2025-01-23",
+          "end": "2025-05-13",
+          "n_days": 111,
+          "n_active": 7,
+          "baseline_sh": 21.0986,
+          "filtered_sh": 3.5167,
+          "delta_sh": -17.5819
+        },
+        {
+          "fold": 2,
+          "start": "2025-05-14",
+          "end": "2025-09-01",
+          "n_days": 111,
+          "n_active": 18,
+          "baseline_sh": 13.4404,
+          "filtered_sh": 5.6148,
+          "delta_sh": -7.8256
+        },
+        {
+          "fold": 3,
+          "start": "2025-09-02",
+          "end": "2025-12-21",
+          "n_days": 111,
+          "n_active": 21,
+          "baseline_sh": 20.366,
+          "filtered_sh": 5.4825,
+          "delta_sh": -14.8835
+        },
+        {
+          "fold": 4,
+          "start": "2025-12-22",
+          "end": "2026-04-14",
+          "n_days": 114,
+          "n_active": 17,
+          "baseline_sh": 18.7322,
+          "filtered_sh": 4.4662,
+          "delta_sh": -14.266
+        }
+      ],
+      "gates": {
+        "G1_wf_all_pos": false,
+        "G2_wf_min": false,
+        "G3_sh_10pct": false,
+        "G4_trade_drop": false
+      },
+      "gates_passed": 0,
+      "verdict": "REJECT"
+    },
+    "EMA_trend_up": {
+      "sharpe": 8.6529,
+      "sh_delta": -8.4591,
+      "sh_delta_pct": -49.43,
+      "ann_return": 0.03398,
+      "mdd": -0.0001523,
+      "n_active": 162,
+      "n_total": 447,
+      "trade_drop_pct": 63.76,
+      "wf_min_sh": 7.9689,
+      "wf_all_positive": false,
+      "wf_folds": [
+        {
+          "fold": 1,
+          "start": "2025-01-23",
+          "end": "2025-05-13",
+          "n_days": 111,
+          "n_active": 33,
+          "baseline_sh": 21.0986,
+          "filtered_sh": 7.9689,
+          "delta_sh": -13.1296
+        },
+        {
+          "fold": 2,
+          "start": "2025-05-14",
+          "end": "2025-09-01",
+          "n_days": 111,
+          "n_active": 39,
+          "baseline_sh": 13.4404,
+          "filtered_sh": 8.1113,
+          "delta_sh": -5.3291
+        },
+        {
+          "fold": 3,
+          "start": "2025-09-02",
+          "end": "2025-12-21",
+          "n_days": 111,
+          "n_active": 42,
+          "baseline_sh": 20.366,
+          "filtered_sh": 9.4575,
+          "delta_sh": -10.9085
+        },
+        {
+          "fold": 4,
+          "start": "2025-12-22",
+          "end": "2026-04-14",
+          "n_days": 114,
+          "n_active": 48,
+          "baseline_sh": 18.7322,
+          "filtered_sh": 9.9676,
+          "delta_sh": -8.7646
+        }
+      ],
+      "gates": {
+        "G1_wf_all_pos": false,
+        "G2_wf_min": false,
+        "G3_sh_10pct": false,
+        "G4_trade_drop": false
+      },
+      "gates_passed": 0,
+      "verdict": "REJECT"
+    },
+    "Pct_ge30": {
+      "sharpe": 11.9931,
+      "sh_delta": -5.119,
+      "sh_delta_pct": -29.91,
+      "ann_return": 0.05092,
+      "mdd": -0.0004368,
+      "n_active": 280,
+      "n_total": 447,
+      "trade_drop_pct": 37.36,
+      "wf_min_sh": 9.8469,
+      "wf_all_positive": false,
+      "wf_folds": [
+        {
+          "fold": 1,
+          "start": "2025-01-23",
+          "end": "2025-05-13",
+          "n_days": 111,
+          "n_active": 44,
+          "baseline_sh": 21.0986,
+          "filtered_sh": 9.8515,
+          "delta_sh": -11.2471
+        },
+        {
+          "fold": 2,
+          "start": "2025-05-14",
+          "end": "2025-09-01",
+          "n_days": 111,
+          "n_active": 77,
+          "baseline_sh": 13.4404,
+          "filtered_sh": 9.8469,
+          "delta_sh": -3.5935
+        },
+        {
+          "fold": 3,
+          "start": "2025-09-02",
+          "end": "2025-12-21",
+          "n_days": 111,
+          "n_active": 81,
+          "baseline_sh": 20.366,
+          "filtered_sh": 14.5585,
+          "delta_sh": -5.8074
+        },
+        {
+          "fold": 4,
+          "start": "2025-12-22",
+          "end": "2026-04-14",
+          "n_days": 114,
+          "n_active": 78,
+          "baseline_sh": 18.7322,
+          "filtered_sh": 14.967,
+          "delta_sh": -3.7652
+        }
+      ],
+      "gates": {
+        "G1_wf_all_pos": false,
+        "G2_wf_min": false,
+        "G3_sh_10pct": false,
+        "G4_trade_drop": false
+      },
+      "gates_passed": 0,
+      "verdict": "REJECT"
+    }
+  },
+  "decision": {
+    "accepted": [],
+    "conditionals": [],
+    "final_verdict": "REJECT",
+    "final_filter": null,
+    "mechanism": "No FR-regime filter consistently improves K280 across all K266 gates. K280 ensemble (K198+K208+K276b) is already regime-self-adapting: K208 reverse-carry profits during low-FR periods by shorting longs who panic-pay FR during BTC crashes; K276b long-tail carry profits during high-FR periods. The ensemble is FR-regime-agnostic by design."
+  }
+}
