@@ -340,9 +340,11 @@ def compute_k275_daily_pnl() -> Tuple[pd.Series, Dict]:
 
     weights = signal.apply(_dn_weights, axis=1)
 
-    # OKX panel is already daily sum (3 × 8h events = 1 day's FR total)
-    # So fr_daily = panel as-is (no × 3 needed since we summed in fetch)
-    fr_daily = panel
+    # OKX panel stores the MEAN of 3 daily 8h events (not the sum).
+    # To get the actual daily carry received, multiply MEAN × 3 (settlements/day).
+    # BUG FIX (K291): missing × K275_EVENTS_DAY caused costs to dominate gross carry,
+    # producing live Sh = -3.55 vs backtest Sh = +30.25.
+    fr_daily = panel * K275_EVENTS_DAY
 
     w_lag   = weights.shift(1).fillna(0.0)
     pnl_raw = (-w_lag * fr_daily).sum(axis=1)
