@@ -30,15 +30,18 @@ JST = timezone(timedelta(hours=9))
 class CacheSpec:
     path: str
     role: str
-    expected_symbol_column: Optional[str] = None  # column name that holds the symbol
+    consumer_strategies: list[str] = field(default_factory=list)  # K317 lesson: track who reads this
+    expected_symbol_column: Optional[str] = None
     expected_value_column: Optional[str] = None
-    sanity_abs_max: Optional[float] = None  # |value| should be below this
+    sanity_abs_max: Optional[float] = None
+    intermittency_threshold: float = 0.30  # K316 lesson: flag if recent zero_frac > this
 
 
 REGISTRY: list[CacheSpec] = [
     CacheSpec(
         path="cache/hl_longtail_fr_daily.parquet",
         role="K265/K276 HL long-tail FR (cross-sectional source)",
+        consumer_strategies=["K265", "K276b", "K280 (via K276b)"],
         expected_symbol_column="symbol",
         expected_value_column="fr_daily",
         sanity_abs_max=1.0,
@@ -46,6 +49,7 @@ REGISTRY: list[CacheSpec] = [
     CacheSpec(
         path="cache/hl_hip3_fr_daily.parquet",
         role="K297 PAXG/SPX RWA FR (satellite source)",
+        consumer_strategies=["K297", "K302a (satellite 20%)"],
         expected_symbol_column="symbol",
         expected_value_column="fr_daily",
         sanity_abs_max=1.0,
@@ -53,26 +57,30 @@ REGISTRY: list[CacheSpec] = [
     CacheSpec(
         path="cache/okx_fr_daily.parquet",
         role="K275 OKX cross-sectional FR",
+        consumer_strategies=["K275 (deprecated in K302a)"],
         expected_symbol_column="symbol",
         expected_value_column="fr_daily",
         sanity_abs_max=1.0,
     ),
     CacheSpec(
         path="cache/alt_exchange_fr_daily.parquet",
-        role="K208 CEX-DEX FR carry",
-        expected_symbol_column="symbol",
-        expected_value_column="fr_daily",
+        role="K270 dYdX v4 cross-sectional FR (NOT K208 — corrected K318)",
+        consumer_strategies=["K270 (deprecated, K287d satellite)"],
+        expected_symbol_column=None,
+        expected_value_column=None,
         sanity_abs_max=1.0,
     ),
     CacheSpec(
         path="cache/hlp_balance_daily.parquet",
         role="K200 HLP balance monitor (R7-001)",
+        consumer_strategies=["K200 monitor"],
         expected_value_column=None,
         sanity_abs_max=None,
     ),
     CacheSpec(
         path="cache/ethena_tvl_daily.parquet",
         role="Ethena USDe TVL (auxiliary)",
+        consumer_strategies=["auxiliary"],
         expected_value_column=None,
         sanity_abs_max=None,
     ),
@@ -101,6 +109,7 @@ def audit_one(spec: CacheSpec) -> dict:
     result: dict = {
         "path": spec.path,
         "role": spec.role,
+        "consumer_strategies": spec.consumer_strategies,
         "status": "OK",
         "rows": int(len(df)),
         "columns": list(df.columns.astype(str)),
@@ -162,6 +171,24 @@ def audit_one(spec: CacheSpec) -> dict:
                 if viol > 0:
                     result["status"] = "SANITY_FAIL"
 
+    # K316/K317 lesson: detect intermittent fetch failures (silent zeros in recent window)
+    # For wide-format panels (date × symbols), measure share of zero cells in last 30d.
+    if dt_idx is not None and len(dt_idx) > 0:
+        try:
+            recent_mask = dt_idx > (dt_idx.max() - pd.Timedelta(days=30))
+            recent_df = df[recent_mask] if isinstance(df.index, pd.DatetimeIndex) else df.iloc[recent_mask]
+            numeric = recent_df.select_dtypes(include="number")
+            total = numeric.size
+            if total > 0:
+                zero_cells = int((numeric == 0).to_numpy().sum())
+                zero_frac = zero_cells / total
+                result["zero_fraction_recent_30d"] = round(zero_frac, 4)
+                if zero_frac > spec.intermittency_threshold:
+                    if result["status"] == "OK":
+                        result["status"] = "INTERMITTENT"
+        except Exception as exc:
+            result["zero_check_error"] = f"{type(exc).__name__}: {exc}"
+
     return result
 
 
@@ -174,6 +201,7 @@ def main() -> int:
             "missing": sum(1 for r in results if r["status"] == "MISSING"),
             "stale": sum(1 for r in results if r["status"] == "STALE"),
             "sanity_fail": sum(1 for r in results if r["status"] == "SANITY_FAIL"),
+            "intermittent": sum(1 for r in results if r["status"] == "INTERMITTENT"),
             "read_error": sum(1 for r in results if r["status"].startswith("READ_ERROR")),
             "ok": sum(1 for r in results if r["status"] == "OK"),
         },
