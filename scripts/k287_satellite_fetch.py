@@ -375,8 +375,9 @@ def fetch_okx_fr_incremental(sym: str) -> pd.DataFrame:
 def build_okx_daily_panel(incremental: bool = True) -> pd.DataFrame:
     """
     Refresh K275 OKX FR panel.
-    OKX settles 3x/day (8h): daily = sum of 3 events (or mean × 3).
-    Aggregate 8h FR events → daily total = sum of 3 settlements.
+    OKX settles 3x/day (8h): panel stores the daily MEAN of 8h events.
+    k287_satellite_run.py multiplies by K275_EVENTS_DAY=3 to get daily total.
+    Convention: panel = mean(8h_events), run applies *3 = daily_total.
     Returns daily panel DataFrame (index=date, columns=symbols).
     """
     print(f"\n  [K275 OKX] Building daily FR panel ({len(K275_SYMBOLS)} symbols)...")
@@ -415,9 +416,12 @@ def build_okx_daily_panel(incremental: bool = True) -> pd.DataFrame:
 
             raw["timestamp"] = pd.to_datetime(raw["timestamp"])
             raw = raw.set_index("timestamp").sort_index()
-            # OKX 8h events: daily total = sum of up to 3 events per day
-            # This matches K275 backtest: daily_fr_total = 3 × mean_8h_rate
-            daily = raw["okx_fr"].resample("D").sum().dropna()
+            # OKX 8h events: store daily MEAN of 8h rate (not sum).
+            # k287_satellite_run.py compute_k275_daily_pnl() multiplies by K275_EVENTS_DAY=3
+            # to reconstruct the daily total. Panel must store MEAN to avoid 3× double-count.
+            # BUG FIX (K293): was .sum() which would cause 3× overcounting when run script
+            # applies *3. Changed to .mean() to match backtest (wave_k275_okx_fr.py line 217).
+            daily = raw["okx_fr"].resample("D").mean().dropna()
             daily.index = daily.index.normalize()
             # Filter out days with < 2 events (incomplete)
             event_count = raw["okx_fr"].resample("D").count()

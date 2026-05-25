@@ -1,0 +1,117 @@
+{
+  "wave": "K293",
+  "audit_date": "2026-05-25",
+  "scope": "All live paper-trade daemons: K280 (k280_live_fetch + k280_daily_run) and K287d (k287_satellite_fetch + k287_satellite_run)",
+  "prior_context": {
+    "K291_finding": "K275 OKX panel stored MEAN of 3 daily 8h events; run script missing *3 multiplier (live Sharpe was -3.55 vs backtest +30.25). Fixed in K291.",
+    "K275_convention": "Panel = daily MEAN of 8h FR events; run script applies *3 = daily total."
+  },
+
+  "strategies_audited": [
+    {
+      "strategy": "K208",
+      "daemon": "k280_daily_run.py / k280_live_fetch.py",
+      "exchange": "Bybit + HyperLiquid",
+      "event_freq": "8h (3 events/day)",
+      "panel_stored_as": "Raw 8h-event series (not pre-aggregated to daily)",
+      "daily_aggregation": "groupby date → sum of event-level pnl (k280_daily_run.py line 321)",
+      "backtest_convention": "8h event-level PnL summed to daily (wave_k208_dar_reverse_carry.py)",
+      "multiplier_in_run_script": "None needed (event-level sum IS daily total)",
+      "hl_8h_resample": "resample('8h').sum() applied to hourly HL data before alignment (line 295, 435)",
+      "status": "CORRECT",
+      "bug": null,
+      "daily_mean_pnl_bps": 1.21,
+      "daily_std_pnl_bps": 2.17,
+      "backtest_oos_sharpe": 18.46
+    },
+    {
+      "strategy": "K276b",
+      "daemon": "k280_daily_run.py / k280_live_fetch.py",
+      "exchange": "HyperLiquid",
+      "event_freq": "Hourly (24 events/day)",
+      "panel_stored_as": "Daily MEAN of hourly FR (confirmed by sampling hl_k276b_fr_daily.parquet vs k163_hl raw)",
+      "panel_file": "cache/hl_k276b_fr_daily.parquet",
+      "daily_aggregation": "fetch: .groupby(Grouper('D')).mean() (k280_live_fetch.py line 351-354); run: fr_daily = panel * 24.0 (k280_daily_run.py line 396)",
+      "backtest_convention": "fr_daily = fr_c * 24.0 (wave_k276_k265_decompose.py line 148)",
+      "multiplier_in_run_script": 24,
+      "status": "CORRECT",
+      "bug": null,
+      "daily_mean_pnl_bps": 5.26,
+      "daily_std_pnl_bps": 4.86,
+      "backtest_oos_sharpe": 20.67
+    },
+    {
+      "strategy": "K270",
+      "daemon": "k287_satellite_run.py / k287_satellite_fetch.py",
+      "exchange": "dYdX v4 (Cosmos DEX)",
+      "event_freq": "Hourly (24 events/day)",
+      "panel_stored_as": "Daily MEAN of hourly FR (k287_satellite_fetch.py line 247: .resample('D').mean())",
+      "panel_file": "cache/k270_dydx_daily.parquet",
+      "daily_aggregation": "fetch: resample('D').mean(); run: fr_daily = panel * K270_EVENTS_DAY (=24) (k287_satellite_run.py line 261)",
+      "backtest_convention": "fr_daily = fr_c * 24.0 (wave_k270_alt_exchange_fr.py line 361)",
+      "multiplier_in_run_script": 24,
+      "status": "CORRECT",
+      "bug": null,
+      "daily_mean_pnl_bps": 3.98,
+      "daily_std_pnl_bps": 7.21,
+      "backtest_oos_sharpe": 11.85
+    },
+    {
+      "strategy": "K275",
+      "daemon": "k287_satellite_run.py / k287_satellite_fetch.py",
+      "exchange": "OKX",
+      "event_freq": "8h (3 events/day)",
+      "panel_stored_as": "Daily MEAN of 8h FR events (confirmed by sampling okx_fr_daily.parquet vs okx_fr_DOGE.parquet raw)",
+      "panel_file": "cache/okx_fr_daily.parquet",
+      "daily_aggregation_in_run": "fr_daily = panel * K275_EVENTS_DAY (=3) (k287_satellite_run.py line 347) — CORRECT if panel=MEAN",
+      "daily_aggregation_in_fetch_BEFORE_FIX": "resample('D').sum() (k287_satellite_fetch.py line 420 pre-K293) — WRONG: would write SUM to panel; run script then applies *3 → 3x overcounting",
+      "daily_aggregation_in_fetch_AFTER_FIX": "resample('D').mean() (k287_satellite_fetch.py line 420 post-K293) — CORRECT",
+      "backtest_convention": "fr_daily = fr_c * 3.0 (wave_k275_okx_fr.py line 315); panel built with .mean() (wave_k275_okx_fr.py line 217)",
+      "multiplier_in_run_script": 3,
+      "status": "LATENT_BUG_FIXED",
+      "bug": "k287_satellite_fetch.py build_okx_daily_panel() used .resample('D').sum() but k287_satellite_run.py expected .mean() and applied *3. Current panel was built with .mean() (safe for now), but first incremental fetch would corrupt new days with SUM, causing 3x overcounting. Fixed in K293.",
+      "bug_severity": "MEDIUM (latent — not yet activated because panel predates fetch-daemon operation, but would corrupt new-day data on next fetch run)",
+      "fix_applied": "Changed line 420 in k287_satellite_fetch.py from .sum() to .mean(). Comment updated to explain convention.",
+      "daily_mean_pnl_bps": 2.44,
+      "daily_std_pnl_bps": 4.12,
+      "backtest_oos_sharpe": 30.25
+    }
+  ],
+
+  "event_aggregation_table": {
+    "K208":  {"exchange": "Bybit+HL",  "events_per_day": 3,  "panel_format": "8h event-level", "panel_x_multiplier": 1,  "correct": true},
+    "K276b": {"exchange": "HL",        "events_per_day": 24, "panel_format": "daily_mean_of_hourly", "panel_x_multiplier": 24, "correct": true},
+    "K270":  {"exchange": "dYdX v4",   "events_per_day": 24, "panel_format": "daily_mean_of_hourly", "panel_x_multiplier": 24, "correct": true},
+    "K275":  {"exchange": "OKX",       "events_per_day": 3,  "panel_format": "daily_mean_of_8h (FIXED from .sum to .mean in fetch)", "panel_x_multiplier": 3, "correct": true}
+  },
+
+  "cost_carry_sanity": {
+    "K208":  {"daily_carry_bps": 1.21, "cost_per_side_bp": 2, "cost_events": "rare rebalance", "ratio": "carry >> cost"},
+    "K276b": {"daily_carry_bps": 5.26, "gross_per_symbol_bps": 0.60, "cost_per_side_bp": 2, "ratio": "carry >> cost"},
+    "K270":  {"daily_carry_bps": 3.98, "gross_per_symbol_bps": 0.089, "cost_per_side_bp": 3, "note": "thin margin; DEX liquidity concern. AAVE showing 0 in live panel — data gap?"},
+    "K275":  {"daily_carry_bps": 2.44, "gross_per_symbol_bps": 0.144, "cost_per_side_bp": 2, "ratio": "moderate margin"}
+  },
+
+  "bugs_found": [
+    {
+      "id": "BUG-K293-001",
+      "file": "scripts/k287_satellite_fetch.py",
+      "line": 420,
+      "severity": "MEDIUM (latent)",
+      "description": "build_okx_daily_panel() used resample('D').sum() to build OKX daily panel, but k287_satellite_run.py compute_k275_daily_pnl() expected daily MEAN and applies *3 (K275_EVENTS_DAY). This would cause 3x overcounting for any day written by the fetch script. Current panel was safe (built with .mean() from backtest), but first incremental fetch run would corrupt new days.",
+      "fix": "Changed .sum() to .mean() on line 420. Updated comments to clarify convention.",
+      "fix_wave": "K293"
+    }
+  ],
+
+  "no_bugs_confirmed": [
+    "K276b fetch+run: both use .mean() and *24 — CORRECT",
+    "K270 fetch+run: both use .mean() and *24 — CORRECT",
+    "K208 run: event-level 8h sum to daily — CORRECT; backtest annualization difference (sqrt(1095) vs sqrt(365)) is expected, not a bug",
+    "K275 run script K291 fix: *3 multiplier already present — CORRECT given MEAN panel"
+  ],
+
+  "verdict": "1 latent bug found and fixed (K293-001: K275 OKX fetch .sum() vs run .mean()*3 mismatch). All other aggregation paths are correct and internally consistent with their respective backtests.",
+  "fix_applied": true,
+  "files_modified": ["scripts/k287_satellite_fetch.py"]
+}
