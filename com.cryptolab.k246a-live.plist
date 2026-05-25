@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  com.cryptolab.k246a-live.plist
+  K246a v6.9 Paper-Trade Daily Runner (launchctl daemon)
+
+  Schedule: 09:00 JST daily = 00:00 UTC
+    Step 1: k246a_live_fetch.py  (fetch live data, ~15-30s)
+    Step 2: k246a_daily_run.py   (compute signals + update dashboard, ~10s)
+
+  Install:
+    cp com.cryptolab.k246a-live.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.cryptolab.k246a-live.plist
+
+  Uninstall:
+    launchctl unload ~/Library/LaunchAgents/com.cryptolab.k246a-live.plist
+    rm ~/Library/LaunchAgents/com.cryptolab.k246a-live.plist
+
+  Monitor:
+    tail -f /Users/nekonaomichi/crypto-lab/logs/k246a_live.log
+    tail -f /Users/nekonaomichi/crypto-lab/logs/k246a_live_err.log
+
+  Manual trigger (single date):
+    /Users/nekonaomichi/crypto-lab/.venv311/bin/python3 \
+        /Users/nekonaomichi/crypto-lab/scripts/k246a_live_fetch.py
+    /Users/nekonaomichi/crypto-lab/.venv311/bin/python3 \
+        /Users/nekonaomichi/crypto-lab/scripts/k246a_daily_run.py
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k246a-live</string>
+
+    <!-- Run both fetch + daily run as a shell sequence -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>-c</string>
+        <string>
+PYTHON=/Users/nekonaomichi/crypto-lab/.venv311/bin/python3
+BASE=/Users/nekonaomichi/crypto-lab
+
+echo "=== K246a Live Run: $(date -u) ===" >> $BASE/logs/k246a_live.log
+
+# Step 1: Fetch live data
+$PYTHON $BASE/scripts/k246a_live_fetch.py >> $BASE/logs/k246a_live.log 2>> $BASE/logs/k246a_live_err.log
+FETCH_EXIT=$?
+
+if [ $FETCH_EXIT -ne 0 ]; then
+  echo "FETCH FAILED (exit $FETCH_EXIT)" >> $BASE/logs/k246a_live.log
+fi
+
+# Step 2: Compute daily run (proceeds even if fetch partially failed)
+$PYTHON $BASE/scripts/k246a_daily_run.py >> $BASE/logs/k246a_live.log 2>> $BASE/logs/k246a_live_err.log
+RUN_EXIT=$?
+
+echo "=== Done: fetch=$FETCH_EXIT run=$RUN_EXIT ===" >> $BASE/logs/k246a_live.log
+        </string>
+    </array>
+
+    <!-- 09:00 JST = 00:00 UTC -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>0</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- Log paths -->
+    <key>StandardOutPath</key>
+    <string>/Users/nekonaomichi/crypto-lab/logs/k246a_live.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/nekonaomichi/crypto-lab/logs/k246a_live_err.log</string>
+
+    <!-- Do not run immediately at load (run only at scheduled time) -->
+    <key>RunAtLoad</key>
+    <false/>
+
+    <!-- One-shot per schedule, not a keep-alive daemon -->
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- Working directory -->
+    <key>WorkingDirectory</key>
+    <string>/Users/nekonaomichi/crypto-lab</string>
+</dict>
+</plist>
