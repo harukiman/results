@@ -1,0 +1,228 @@
+{
+  "wave": "K259",
+  "parent_waves": [
+    "K256",
+    "K258"
+  ],
+  "objective": "K256_Ridge rebuilt without AXS (9-symbol universe). Verify WF stability.",
+  "hypothesis": "AXS data contaminates K256_Ridge WF fold 2 (WF min=0.32). Remove AXS -> all folds positive.",
+  "as_of": "2026-05-25T01:13:41.314090+00:00",
+  "runtime_s": 10.4,
+  "config": {
+    "symbols": [
+      "SOL",
+      "XRP",
+      "SUI",
+      "OP",
+      "APT",
+      "JTO",
+      "IMX",
+      "SAND",
+      "ADA"
+    ],
+    "symbols_excluded": [
+      "AXS"
+    ],
+    "n_symbols": 9,
+    "dar_p": 2,
+    "dar_q": 1,
+    "dar_win": 300,
+    "dar_refit": 50,
+    "spread_gate_win": 90,
+    "spread_gate_pct": 25,
+    "ridge_feat_win": 30,
+    "ridge_train_win": 90,
+    "ridge_refit": 30,
+    "ridge_alpha": 1.0,
+    "max_weight": 0.3,
+    "cost_per_side_bps": 0.0,
+    "events_per_year": 1095,
+    "ml_window": {
+      "start": "2025-01-22",
+      "end": "2026-04-14"
+    },
+    "fold_bounds": [
+      {
+        "fold": 1,
+        "start": "2025-01-22",
+        "end": "2025-05-13"
+      },
+      {
+        "fold": 2,
+        "start": "2025-05-14",
+        "end": "2025-09-02"
+      },
+      {
+        "fold": 3,
+        "start": "2025-09-03",
+        "end": "2025-12-23"
+      },
+      {
+        "fold": 4,
+        "start": "2025-12-24",
+        "end": "2026-04-14"
+      }
+    ]
+  },
+  "gate0_thresholds": {
+    "wf_all_folds_positive": true,
+    "oos_sh_min": 1.5,
+    "rho_k208_max": 0.7
+  },
+  "reference_metrics": {
+    "K208_daily": {
+      "oos_sh": 10.57,
+      "wf_min": 5.74,
+      "wf_folds": [
+        17.35,
+        5.74,
+        17.41,
+        13.11
+      ]
+    },
+    "K246a_v6_9": {
+      "oos_sh": 12.69,
+      "wf_min": 8.93
+    },
+    "K256_EqWt_10sym": {
+      "oos_sh": 11.7478,
+      "wf_min": 7.0596
+    },
+    "K256_Ridge_10sym": {
+      "oos_sh": 11.9863,
+      "wf_min": 0.3172,
+      "rho_k208": 0.5694,
+      "note": "AXS contaminated fold 2"
+    }
+  },
+  "results": {
+    "K259_eqwt_9sym": {
+      "sharpe_oos": 11.7462,
+      "max_dd": -0.000394,
+      "wf_mean": 18.0791,
+      "wf_min": 7.0596,
+      "wf_folds": [
+        25.2008,
+        7.0596,
+        23.4417,
+        16.6144
+      ]
+    },
+    "K259_ridge_9sym": {
+      "sharpe_oos": 12.5659,
+      "max_dd": -0.000839,
+      "wf_mean": 16.4556,
+      "wf_min": 2.2894,
+      "wf_folds": [
+        23.3338,
+        2.2894,
+        19.1948,
+        21.0045
+      ],
+      "wf_all_positive": true,
+      "corr_k208_daily": 0.58
+    }
+  },
+  "per_symbol": {
+    "SOL": {
+      "n_events": 2186,
+      "n_active": 1607,
+      "pct_active": 73.5,
+      "sharpe": 4.1864,
+      "max_dd": -0.002098
+    },
+    "XRP": {
+      "n_events": 2189,
+      "n_active": 1760,
+      "pct_active": 80.4,
+      "sharpe": 5.4988,
+      "max_dd": -0.003162
+    },
+    "SUI": {
+      "n_events": 2189,
+      "n_active": 1775,
+      "pct_active": 81.1,
+      "sharpe": 6.4945,
+      "max_dd": -0.001191
+    },
+    "OP": {
+      "n_events": 2188,
+      "n_active": 1772,
+      "pct_active": 81.0,
+      "sharpe": 10.0295,
+      "max_dd": -0.000923
+    },
+    "APT": {
+      "n_events": 2185,
+      "n_active": 1680,
+      "pct_active": 76.9,
+      "sharpe": 6.8236,
+      "max_dd": -0.001872
+    },
+    "JTO": {
+      "n_events": 2188,
+      "n_active": 1757,
+      "pct_active": 80.3,
+      "sharpe": 3.9139,
+      "max_dd": -0.003508
+    },
+    "IMX": {
+      "n_events": 2189,
+      "n_active": 1747,
+      "pct_active": 79.8,
+      "sharpe": 9.8129,
+      "max_dd": -0.00116
+    },
+    "SAND": {
+      "n_events": 1608,
+      "n_active": 1287,
+      "pct_active": 80.0,
+      "sharpe": 12.1093,
+      "max_dd": -0.000837
+    },
+    "ADA": {
+      "n_events": 2185,
+      "n_active": 1784,
+      "pct_active": 81.6,
+      "sharpe": 9.9448,
+      "max_dd": -0.000781
+    }
+  },
+  "gate0": {
+    "gate1_wf_all_positive": true,
+    "gate2_oos_sh_ok": true,
+    "gate3_rho_ok": true,
+    "gates_passed": 3,
+    "gates_total": 3,
+    "verdict": "PASS",
+    "action": "K260 integration APPROVED: K198 + K259 + K226 5-way meta integration"
+  },
+  "comparison": {
+    "K208_daily": {
+      "oos_sh": 10.57,
+      "wf_min": 5.74
+    },
+    "K246a_v6_9": {
+      "oos_sh": 12.69,
+      "wf_min": 8.93
+    },
+    "K256_EqWt_10sym_AXS": {
+      "oos_sh": 11.7478,
+      "wf_min": 7.0596
+    },
+    "K256_Ridge_10sym_AXS": {
+      "oos_sh": 11.9863,
+      "wf_min": 0.3172,
+      "rho_k208": 0.5694
+    },
+    "K259_EqWt_9sym_noAXS": {
+      "oos_sh": 11.7462,
+      "wf_min": 7.0596
+    },
+    "K259_Ridge_9sym_noAXS": {
+      "oos_sh": 12.5659,
+      "wf_min": 2.2894,
+      "rho_k208": 0.58
+    }
+  }
+}
