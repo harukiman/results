@@ -1,0 +1,443 @@
+{
+  "wave": "K251",
+  "parent_waves": [
+    "K246a",
+    "K249a",
+    "K198",
+    "K226"
+  ],
+  "objective": "Replace K208 with K249a in K246a ensemble (v6.9.1 candidate)",
+  "as_of": "2026-05-25T00:27:16.335720+00:00",
+  "runtime_s": 0.3,
+  "config": {
+    "ml_window": {
+      "start": "2025-01-22",
+      "end": "2026-04-14"
+    },
+    "n_days": 448,
+    "n_returns": 447,
+    "components": [
+      "K198",
+      "K249a",
+      "K226"
+    ],
+    "methodology": "inv-vol rolling-30d + K226 cap 20% (K246a methodology)",
+    "wf_n_folds": 4,
+    "wf_fold_size_days": 111,
+    "missing_k249a_days": 0,
+    "missing_k226_days": 0,
+    "missing_k208_days": 0
+  },
+  "acceptance_gates": {
+    "gate1_oos_sh_min": 12.69,
+    "gate2_wf_min_min": 8.93,
+    "gate3_maxdd_max": -0.00115,
+    "gate4_k249a_wt_min": 0.05,
+    "reference": "K246a v6.9"
+  },
+  "k246a_reference": {
+    "oos_sharpe": 12.6929,
+    "wf_mean": 12.2462,
+    "wf_min": 8.9347,
+    "maxdd": -0.001145,
+    "fold_sharpes": [
+      13.6029,
+      8.9347,
+      13.8374,
+      12.6097
+    ],
+    "components": [
+      "K198",
+      "K208",
+      "K226"
+    ]
+  },
+  "k249a_ml_window_validation": {
+    "sharpe_full": 10.6755,
+    "oos_sharpe": 13.5396,
+    "oos_maxdd": -8e-05,
+    "wf_mean": 13.5894,
+    "wf_min": 5.8789,
+    "wf_folds": [
+      17.6641,
+      5.8789,
+      17.4529,
+      13.3618
+    ],
+    "oos_reported_k249": 17.5288,
+    "wf_min_reported_k249": 7.5679,
+    "window_delta_oos": -3.9892,
+    "window_delta_wf_min": -1.689,
+    "window_consistent": true,
+    "note": "K249a measured on K246a daily ML window (2025-01-22 -> 2026-04-14)"
+  },
+  "correlation_matrix_3x3": {
+    "components": [
+      "K198",
+      "K249a",
+      "K226"
+    ],
+    "matrix": [
+      [
+        1.0,
+        0.06259841423667512,
+        0.05186950934021241
+      ],
+      [
+        0.06259841423667512,
+        1.0,
+        0.00150427702578728
+      ],
+      [
+        0.05186950934021241,
+        0.00150427702578728,
+        1.0
+      ]
+    ],
+    "rho_k198_k249a": 0.0626,
+    "rho_k198_k226": 0.0519,
+    "rho_k249a_k226": 0.0015,
+    "k208_k249a_rho": 0.999,
+    "k208_k198_rho": 0.0619
+  },
+  "k246a_reproduction": {
+    "oos_sharpe": 12.6929,
+    "oos_maxdd": -0.001145,
+    "wf_mean": 12.2462,
+    "wf_min": 8.9347,
+    "fold_sharpes": [
+      13.6029,
+      8.9347,
+      13.8374,
+      12.6097
+    ],
+    "avg_weights_k198_k208_k226": [
+      0.0481,
+      0.9396,
+      0.0123
+    ]
+  },
+  "variants": {
+    "K251a": {
+      "oos_sharpe": 12.6931,
+      "oos_maxdd": -0.001146,
+      "oos_ann_ret": 0.1123,
+      "oos_ann_vol": 0.0088,
+      "wf_mean": 12.2468,
+      "wf_min": 8.8032,
+      "fold_sharpes": [
+        13.8171,
+        8.8032,
+        13.7568,
+        12.6099
+      ],
+      "avg_weights": [
+        0.047,
+        0.9412,
+        0.0118
+      ],
+      "description": "K198+K249a+K226 inv-vol + K226 cap 20%",
+      "gates": {
+        "g1_oos_sh": true,
+        "g2_wf_min": false,
+        "g3_maxdd": true,
+        "g4_k249a_wt": true,
+        "all_pass": false,
+        "verdict": "FAIL",
+        "k249a_weight": 0.9412
+      },
+      "fold_contribution": [
+        {
+          "fold": 1,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "component_sharpes": {
+            "K198": 6.5911,
+            "K249a": 17.6641,
+            "K226": 3.2959
+          },
+          "top_contributor": "K249a"
+        },
+        {
+          "fold": 2,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "component_sharpes": {
+            "K198": 7.3739,
+            "K249a": 5.8789,
+            "K226": 0.38
+          },
+          "top_contributor": "K198"
+        },
+        {
+          "fold": 3,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "component_sharpes": {
+            "K198": 7.9652,
+            "K249a": 17.4529,
+            "K226": 2.8378
+          },
+          "top_contributor": "K249a"
+        },
+        {
+          "fold": 4,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "component_sharpes": {
+            "K198": 9.731,
+            "K249a": 13.3618,
+            "K226": 2.6243
+          },
+          "top_contributor": "K249a"
+        }
+      ],
+      "delta_oos_sh": 0.0002,
+      "delta_wf_min": -0.1315,
+      "delta_maxdd": -1e-06
+    },
+    "K251b": {
+      "oos_sharpe": 12.6931,
+      "oos_maxdd": -0.001146,
+      "oos_ann_ret": 0.1123,
+      "oos_ann_vol": 0.0088,
+      "wf_mean": 12.1303,
+      "wf_min": 8.8032,
+      "fold_sharpes": [
+        13.7357,
+        8.8032,
+        13.3725,
+        12.6099
+      ],
+      "avg_weights": [
+        0.0466,
+        0.9267,
+        0.0267
+      ],
+      "description": "K198+K249a+K226 inv-vol uncapped",
+      "gates": {
+        "g1_oos_sh": true,
+        "g2_wf_min": false,
+        "g3_maxdd": true,
+        "g4_k249a_wt": true,
+        "all_pass": false,
+        "verdict": "FAIL",
+        "k249a_weight": 0.9267
+      },
+      "fold_contribution": [
+        {
+          "fold": 1,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "component_sharpes": {
+            "K198": 6.5911,
+            "K249a": 17.6641,
+            "K226": 3.2959
+          },
+          "top_contributor": "K249a"
+        },
+        {
+          "fold": 2,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "component_sharpes": {
+            "K198": 7.3739,
+            "K249a": 5.8789,
+            "K226": 0.38
+          },
+          "top_contributor": "K198"
+        },
+        {
+          "fold": 3,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "component_sharpes": {
+            "K198": 7.9652,
+            "K249a": 17.4529,
+            "K226": 2.8378
+          },
+          "top_contributor": "K249a"
+        },
+        {
+          "fold": 4,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "component_sharpes": {
+            "K198": 9.731,
+            "K249a": 13.3618,
+            "K226": 2.6243
+          },
+          "top_contributor": "K249a"
+        }
+      ],
+      "delta_oos_sh": 0.0002,
+      "delta_wf_min": -0.1315,
+      "delta_maxdd": -1e-06
+    },
+    "K251c": {
+      "oos_sharpe": 7.4421,
+      "oos_maxdd": -0.019708,
+      "oos_ann_ret": 0.5201,
+      "oos_ann_vol": 0.0699,
+      "wf_mean": 6.7632,
+      "wf_min": 6.5927,
+      "fold_sharpes": [
+        6.595,
+        6.5927,
+        6.9273,
+        6.938
+      ],
+      "avg_weights": [
+        0.675,
+        0.1964,
+        0.1286
+      ],
+      "description": "K198+K249a+K226 inv-vol + K249a cap 20%",
+      "gates": {
+        "g1_oos_sh": false,
+        "g2_wf_min": false,
+        "g3_maxdd": false,
+        "g4_k249a_wt": true,
+        "all_pass": false,
+        "verdict": "FAIL",
+        "k249a_weight": 0.1964
+      },
+      "fold_contribution": [
+        {
+          "fold": 1,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "component_sharpes": {
+            "K198": 6.5911,
+            "K249a": 17.6641,
+            "K226": 3.2959
+          },
+          "top_contributor": "K249a"
+        },
+        {
+          "fold": 2,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "component_sharpes": {
+            "K198": 7.3739,
+            "K249a": 5.8789,
+            "K226": 0.38
+          },
+          "top_contributor": "K198"
+        },
+        {
+          "fold": 3,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "component_sharpes": {
+            "K198": 7.9652,
+            "K249a": 17.4529,
+            "K226": 2.8378
+          },
+          "top_contributor": "K249a"
+        },
+        {
+          "fold": 4,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "component_sharpes": {
+            "K198": 9.731,
+            "K249a": 13.3618,
+            "K226": 2.6243
+          },
+          "top_contributor": "K249a"
+        }
+      ],
+      "delta_oos_sh": -5.2508,
+      "delta_wf_min": -2.342,
+      "delta_maxdd": -0.018563
+    },
+    "K251d": {
+      "oos_sharpe": 13.7321,
+      "oos_maxdd": -9e-05,
+      "oos_ann_ret": 0.0857,
+      "oos_ann_vol": 0.0062,
+      "wf_mean": 11.2084,
+      "wf_min": 6.2032,
+      "fold_sharpes": [
+        6.2032,
+        6.6147,
+        18.5717,
+        13.4439
+      ],
+      "avg_weights": [
+        0.0232,
+        0.9549,
+        0.0219
+      ],
+      "description": "K198+K249a+K226 MVP (rolling min-var)",
+      "gates": {
+        "g1_oos_sh": true,
+        "g2_wf_min": false,
+        "g3_maxdd": true,
+        "g4_k249a_wt": true,
+        "all_pass": false,
+        "verdict": "FAIL",
+        "k249a_weight": 0.9549
+      },
+      "fold_contribution": [
+        {
+          "fold": 1,
+          "start_date": "2025-01-23",
+          "end_date": "2025-05-13",
+          "component_sharpes": {
+            "K198": 6.5911,
+            "K249a": 17.6641,
+            "K226": 3.2959
+          },
+          "top_contributor": "K249a"
+        },
+        {
+          "fold": 2,
+          "start_date": "2025-05-14",
+          "end_date": "2025-09-01",
+          "component_sharpes": {
+            "K198": 7.3739,
+            "K249a": 5.8789,
+            "K226": 0.38
+          },
+          "top_contributor": "K198"
+        },
+        {
+          "fold": 3,
+          "start_date": "2025-09-02",
+          "end_date": "2025-12-21",
+          "component_sharpes": {
+            "K198": 7.9652,
+            "K249a": 17.4529,
+            "K226": 2.8378
+          },
+          "top_contributor": "K249a"
+        },
+        {
+          "fold": 4,
+          "start_date": "2025-12-22",
+          "end_date": "2026-04-14",
+          "component_sharpes": {
+            "K198": 9.731,
+            "K249a": 13.3618,
+            "K226": 2.6243
+          },
+          "top_contributor": "K249a"
+        }
+      ],
+      "delta_oos_sh": 1.0392,
+      "delta_wf_min": -2.7315,
+      "delta_maxdd": 0.001055
+    }
+  },
+  "accepted": [],
+  "best_variant": null,
+  "verdict": {
+    "decision": "REJECT",
+    "best_variant": null,
+    "summary": "REJECT \u2014 K251 does not pass acceptance gates; maintain K246a v6.9",
+    "detail": "No K251 variant passes all 4 gates simultaneously. K249a's spread gate may reduce ensemble correlation benefit. K246a v6.9 (K198+K208+K226) remains production.",
+    "production_label": "v6.9 (unchanged)"
+  }
+}
