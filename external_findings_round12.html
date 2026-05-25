@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>External Findings Round 12 — Wave K334</title>
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #161618;
+    --surface2: #1e1e22;
+    --border: #2a2a30;
+    --accent: #7c6ff7;
+    --accent2: #4ecdc4;
+    --accent3: #f7b731;
+    --text: #e8e8f0;
+    --muted: #8888a0;
+    --green: #4caf50;
+    --red: #ef5350;
+    --tag-bg: #252530;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a1040 0%, #0d1a30 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 24px 20px 20px;
+  }
+  .header h1 {
+    font-size: clamp(18px, 4vw, 26px);
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .header .meta {
+    color: var(--muted);
+    font-size: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  .badge {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent2);
+  }
+  .update-time {
+    color: var(--accent3);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* Summary bar */
+  .summary-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+  }
+  .stat-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Top actionable */
+  .top3-section {
+    background: linear-gradient(135deg, #1a1228 0%, #121a24 100%);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    margin: 16px 20px;
+    padding: 16px;
+  }
+  .top3-section h2 {
+    color: var(--accent3);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .top3-item {
+    background: var(--tag-bg);
+    border-left: 3px solid var(--accent3);
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .top3-item .top3-id { color: var(--accent3); font-weight: 700; font-size: 12px; }
+  .top3-item .top3-title { color: var(--text); font-weight: 600; margin: 2px 0; }
+  .top3-item .top3-note { color: var(--muted); font-size: 12px; }
+
+  /* Filter bar */
+  .filter-bar {
+    padding: 10px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .filter-btn {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 4px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* Cards grid */
+  .cards {
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 14px;
+  }
+  @media (max-width: 600px) {
+    .cards { grid-template-columns: 1fr; padding: 10px; }
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card.actionable { border-left: 3px solid var(--accent3); }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .card-id {
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .card-id.actionable { background: var(--accent3); color: #000; }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .card-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .card-title a:hover { color: var(--accent2); }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .tag {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: var(--tag-bg);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .tag.area { color: var(--accent2); border-color: var(--accent2); }
+  .tag.source { color: #b2bec3; }
+  .tag.date { color: #a29bfe; }
+
+  .card-summary {
+    font-size: 12px;
+    color: #c8c8d8;
+    margin-bottom: 8px;
+    line-height: 1.55;
+  }
+  .card-relevance {
+    font-size: 11px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    line-height: 1.5;
+  }
+  .card-relevance strong { color: var(--accent2); }
+  .card-k336 {
+    background: rgba(247, 183, 49, 0.08);
+    border: 1px solid rgba(247, 183, 49, 0.3);
+    border-radius: 4px;
+    padding: 6px 8px;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--accent3);
+    line-height: 1.5;
+  }
+  .card-k336 strong { display: block; margin-bottom: 2px; }
+
+  /* Focus area color map */
+  .area-hip3 { color: #fd79a8 !important; border-color: #fd79a8 !important; }
+  .area-portfolio-margin { color: #74b9ff !important; border-color: #74b9ff !important; }
+  .area-academic { color: #55efc4 !important; border-color: #55efc4 !important; }
+  .area-funding { color: #fdcb6e !important; border-color: #fdcb6e !important; }
+  .area-bocpd { color: #e17055 !important; border-color: #e17055 !important; }
+  .area-dex { color: #a29bfe !important; border-color: #a29bfe !important; }
+  .area-cex-dex { color: #00cec9 !important; border-color: #00cec9 !important; }
+  .area-rl { color: #6c5ce7 !important; border-color: #6c5ce7 !important; }
+  .area-flash { color: #ff7675 !important; border-color: #ff7675 !important; }
+  .area-stable { color: #00b894 !important; border-color: #00b894 !important; }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 11px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>External Findings — Round 12 <span style="color:var(--muted);font-weight:400;font-size:16px">/ Wave K334</span></h1>
+  <div class="meta">
+    <span class="update-time">最終更新: 2026-05-25 20:11 JST</span>
+    <span class="badge">R1-R11: 242件</span>
+    <span class="badge">R12: +20件</span>
+    <span class="badge">累計: 262件</span>
+    <span class="badge">重複0件</span>
+  </div>
+</div>
+
+<div class="summary-bar">
+  <div class="stat"><span class="stat-value">20</span><span class="stat-label">New Findings</span></div>
+  <div class="stat"><span class="stat-value">5</span><span class="stat-label">Actionable K336</span></div>
+  <div class="stat"><span class="stat-value">8</span><span class="stat-label">arXiv Papers</span></div>
+  <div class="stat"><span class="stat-value">4</span><span class="stat-label">HL HIP-3</span></div>
+  <div class="stat"><span class="stat-value">3</span><span class="stat-label">Stablecoin Arb</span></div>
+  <div class="stat"><span class="stat-value">262</span><span class="stat-label">Cumulative</span></div>
+</div>
+
+<!-- Top 3 Actionable -->
+<div class="top3-section">
+  <h2>★ Top 3 Actionable for K336+</h2>
+
+  <div class="top3-item">
+    <div class="top3-id">R12-10 | QuantBeckman</div>
+    <div class="top3-title">BOCPD Switch-Off: 戦略De-allocation実装 (Python付)</div>
+    <div class="top3-note">K315-K327で失敗中のBOCPD FR regime detectionに直接移植可能。shock/erosionのdual-triggerとStudent-t posterior。kill_threshold=0.5の即実装可能コード。K323/K327の代替として最優先。</div>
+  </div>
+
+  <div class="top3-item">
+    <div class="top3-id">R12-12 | Crypto.com Research</div>
+    <div class="top3-title">RWA Perps 予測エッジ: 日曜22:00 UTC最適窓 + Silver 84.6%精度</div>
+    <div class="top3-note">K297 weekend戦略の直接強化。Silver84.6%/Gold69.2%/NVDA78.9%の方向精度データと具体的な執行窓。Tech株はfake-outフィルター必須。5種測定フレームワークをそのまま実装へ。</div>
+  </div>
+
+  <div class="top3-item">
+    <div class="top3-id">R12-05 | arXiv 2605.11263</div>
+    <div class="top3-title">Ethena最適制御: delta-neutral carry sizing (Lorig, UW, May 2026)</div>
+    <div class="top3-note">K206/K207 Ethena TVLシグナルのサイジング理論を提供。funding rate正の時に積み上げ、inventory増大で速度低下する解析的optimal policy。K336でのdynamic Ethena sizeに活用。</div>
+  </div>
+</div>
+
+<!-- Filter -->
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterCards('all')">全20件</button>
+  <button class="filter-btn" onclick="filterCards('actionable')">★ Actionable (5)</button>
+  <button class="filter-btn" onclick="filterCards('arxiv_paper')">arXiv (8)</button>
+  <button class="filter-btn" onclick="filterCards('hip3')">HL HIP-3 RWA</button>
+  <button class="filter-btn" onclick="filterCards('stablecoin')">Stablecoin Arb</button>
+  <button class="filter-btn" onclick="filterCards('bocpd')">BOCPD</button>
+  <button class="filter-btn" onclick="filterCards('rl')">RL Allocators</button>
+  <button class="filter-btn" onclick="filterCards('flash')">Flash Crash / ADL</button>
+  <button class="filter-btn" onclick="filterCards('dex')">DEX Microstructure</button>
+</div>
+
+<!-- Cards -->
+<div class="cards" id="cards-container">
+
+  <!-- R12-01 -->
+  <div class="card" data-area="hip3" data-source="institutional_research">
+    <div class="card-header">
+      <span class="card-id">R12-01</span>
+      <div class="card-title"><a href="https://www.falconx.io/newsroom/the-transformational-potential-of-hyperliquids-hip-3" target="_blank">FalconX: The Transformational Potential of Hyperliquid's HIP-3</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-hip3">HL HIP-3 RWA</span>
+      <span class="tag source">Institutional Research</span>
+      <span class="tag date">2025-10</span>
+    </div>
+    <div class="card-summary">HIP-3のdeployer要件(500K HYPE≈$25M)、フィー構造(50/50 split)、slashing riskを定量分析。MAG7株: 潜在日次$0.9B、0DTE指数オプション: $9.0B。通常フィーの2倍(6/18bps)設定がcarryコスト計算に直結。RWA perp市場TAMを初めて機関視点で定量化した論文。</div>
+    <div class="card-relevance"><strong>関連性:</strong> HIP-3のfee economicsを定量化。v6.12のHIP-3拡張コスト前提として利用可能。</div>
+  </div>
+
+  <!-- R12-02 -->
+  <div class="card actionable" data-area="rl" data-source="arxiv_paper" data-actionable="true">
+    <div class="card-header">
+      <span class="card-id actionable">R12-02 ★</span>
+      <div class="card-title"><a href="https://arxiv.org/abs/2602.17098" target="_blank">arXiv 2602.17098: Deep RL for Portfolio Allocation vs MVO (Feb 2026)</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-rl">RL Allocators</span>
+      <span class="tag source">arXiv Paper</span>
+      <span class="tag date">2026-02-19</span>
+    </div>
+    <div class="card-summary">DRLエージェントと古典的MVO(Mean-Variance最適化)をSharpe/最大DD/絶対リターンで直接比較。DRLがMVOを全指標で上回ることを初めて実用的設定で実証。FinPlan'23@ICADSでの採択済み研究。Goldman/JPMorgan系AI研究者チーム。</div>
+    <div class="card-relevance"><strong>関連性:</strong> K198/K201のMLアロケーターをDRLに発展させる理論的根拠。v6.12の静的ウェイト比較対象として利用。</div>
+    <div class="card-k336"><strong>K336実装メモ:</strong> K198 MLアロケーターをSAC/DDPGベースに置き換えるexploration。DRL vs MVO比較フレームをv6.12バックテストに適用可能。</div>
+  </div>
+
+  <!-- R12-03 -->
+  <div class="card" data-area="rl" data-source="arxiv_paper">
+    <div class="card-header">
+      <span class="card-id">R12-03</span>
+      <div class="card-title"><a href="https://arxiv.org/abs/2603.22880" target="_blank">arXiv 2603.22880: Portfolio Optimization under Recursive Utility via RL (Mar 2026)</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-rl">RL Allocators</span>
+      <span class="tag source">arXiv Paper</span>
+      <span class="tag date">2026-03-24</span>
+    </div>
+    <div class="card-summary">Recursive Utility(リスク感応的目的関数)をRLに組み込む新手法。K-sample Monte Carlo + actor-critic(PPO/A2C)で実装。韓国ETF 10分割OOSでSharpe/MaxDD/累積リターンを改善。certainty equivalentのBellman近似がポイント。</div>
+    <div class="card-relevance"><strong>関連性:</strong> 標準Sharpe最大化を超えたリスク感応的目的関数。v6.12のサブ戦略ウェイト最適化への応用候補。</div>
+  </div>
+
+  <!-- R12-04 -->
+  <div class="card" data-area="cex-dex" data-source="arxiv_paper">
+    <div class="card-header">
+      <span class="card-id">R12-04</span>
+      <div class="card-title"><a href="https://arxiv.org/abs/2602.10798" target="_blank">arXiv 2602.10798: Trading in CEXs and DEXs with Priority Fees and Stochastic Delays</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-cex-dex">CEX-DEX Info Flow</span>
+      <span class="tag source">arXiv Paper</span>
+      <span class="tag date">2026-02-19</span>
+    </div>
+    <div class="card-summary">CEX/DEX間最適トレーディングをimpulse control + stochastic delay問題として定式化。Priority feeで遅延分布を操作することが非戦略的fee選択に対し"significant outperformance"を数学的に証明。viscosity解のQuasi-Variational Inequalityを導出。Paris Dauphine/Ecole Polytechniqueグループ。</div>
+    <div class="card-relevance"><strong>関連性:</strong> R11-2のCEX→DEX情報流仮説の数学的基礎。HL-Binance間のpriority feeと実行遅延のモデル化フレームワーク。</div>
+  </div>
+
+  <!-- R12-05 -->
+  <div class="card actionable" data-area="stablecoin" data-source="arxiv_paper" data-actionable="true">
+    <div class="card-header">
+      <span class="card-id actionable">R12-05 ★</span>
+      <div class="card-title"><a href="https://arxiv.org/abs/2605.11263" target="_blank">arXiv 2605.11263: Optimal Control of the Ethena Yield-Bearing Stablecoin (May 2026)</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-stable">Stablecoin Yield Arb</span>
+      <span class="tag source">arXiv Paper</span>
+      <span class="tag date">2026-05-11</span>
+    </div>
+    <div class="card-summary">Ethena(long stETH + short perp = delta-neutral carry)の最適制御問題を初めて解析的に解いた論文。Infinite-horizon(長期蓄積)とFinite-horizon(清算タイムライン)の2ケース。永続的impact(将来funding収入を圧縮)vs一時的impact(slippage)のトレードオフ。University of Washington応用数学・Matthew Lorig。</div>
+    <div class="card-relevance"><strong>関連性:</strong> K206/K207のEthena TVLシグナルにfunding rate最適蓄積speed理論を追加。delta-neutral carryのdynamic sizeの理論値を初めて提供。</div>
+    <div class="card-k336"><strong>K336実装メモ:</strong> K206/K207をEthena最適制御ポリシーに基づくdynamic sizingに改良。FR正の時に積み上げ・inventory大で速度低下する解析的ルールを実装。sUSDe APY 9%超えの現状は再エントリータイミング。</div>
+  </div>
+
+  <!-- R12-06 -->
+  <div class="card actionable" data-area="flash" data-source="arxiv_paper" data-actionable="true">
+    <div class="card-header">
+      <span class="card-id actionable">R12-06 ★</span>
+      <div class="card-title"><a href="https://arxiv.org/abs/2602.15182" target="_blank">arXiv 2602.15182: Autodeleveraging as Online Learning (Feb 2026)</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-flash">Flash Crash / ADL</span>
+      <span class="tag source">arXiv Paper</span>
+      <span class="tag date">2026-02-28</span>
+    </div>
+    <div class="card-summary">ADLをonline learningとして定式化。2025年10月10日のHL本番ADLイベント($2.1B清算/12分)に適用: 本番アルゴregret=上限の50%、最適アルゴ=2.6%。本番は$51.7M過剰清算、最適では$3Mに削減可能。Tarun Chitra, Nagu Thogiti et al.。</div>
+    <div class="card-relevance"><strong>関連性:</strong> K200 HLP-ADL監視戦略の信号設計に直接利用可能。ADLイベントの予測・回避フレームワーク。</div>
+    <div class="card-k336"><strong>K336実装メモ:</strong> K200のADL監視をonline learning regret最小化として再設計。本番アルゴの過剰清算パターン(50%→2.6%)をアービトラージシグナルとして抽出可能。</div>
+  </div>
+
+  <!-- R12-07 -->
+  <div class="card" data-area="flash" data-source="arxiv_paper">
+    <div class="card-header">
+      <span class="card-id">R12-07</span>
+      <div class="card-title"><a href="https://arxiv.org/abs/2512.01112" target="_blank">arXiv 2512.01112: Autodeleveraging: Impossibilities and Optimization (Tarun Chitra)</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-flash">Flash Crash / ADL</span>
+      <span class="tag source">arXiv Paper</span>
+      <span class="tag date">2025-11-30 / 2026-02 rev</span>
+    </div>
+    <div class="card-summary">ADLの根本的trilemmaを証明: solvency/revenue/fairnessは同時充足不可能。3種のADLクラスがpartial fairnessを実現。Binance > HL の過剰ADL傾向を実証。2025年10月HLデータで$45M-$51.7Mの超過清算を測定。</div>
+    <div class="card-relevance"><strong>関連性:</strong> ADL impossibility theoremでHL vs Binanceの設計差が予測可能な歪みを生む。取引所間funding rate乖離の一部をADL設計差として説明できる。</div>
+  </div>
+
+  <!-- R12-08 -->
+  <div class="card" data-area="dex" data-source="arxiv_paper">
+    <div class="card-header">
+      <span class="card-id">R12-08</span>
+      <div class="card-title"><a href="https://arxiv.org/abs/2601.10812" target="_blank">arXiv 2601.10812: Optimal Liquidation of Perpetual Contracts (Jan 2026)</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-dex">DEX Microstructure</span>
+      <span class="tag source">arXiv Paper</span>
+      <span class="tag date">2026-01</span>
+    </div>
+    <div class="card-summary">perpのポジション清算をtransaction cost/inventory risk/funding rate支払いを考慮した最適制御問題として定式化。linear payoff(identity function)にclosed-form解を導出。non-linearはshort-time近似でlinearに帰着。Donnelly, Lin, Lorig (University of Washington)。</div>
+    <div class="card-relevance"><strong>関連性:</strong> v6.12のexit戦略をfunding rate考慮の最適清算として再設計する理論基盤。K181 intraperiod execution戦略との統合候補。</div>
+  </div>
+
+  <!-- R12-09 -->
+  <div class="card" data-area="rl" data-source="arxiv_paper">
+    <div class="card-header">
+      <span class="card-id">R12-09</span>
+      <div class="card-title"><a href="https://arxiv.org/abs/2511.20678" target="_blank">arXiv 2511.20678: Cryptocurrency Portfolio Management with SAC and DDPG (Nov 2025)</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-rl">RL Allocators</span>
+      <span class="tag source">arXiv Paper</span>
+      <span class="tag date">2025-11-16</span>
+    </div>
+    <div class="card-summary">SAC(Soft Actor-Critic)とDDPG(Deep Deterministic Policy Gradient)を暗号通貨ポートフォリオ管理に適用。SACがDDPGより安定性・ロバスト性で優位。equal-weight/MVO両方を全指標で上回る。continuous action空間でportfolio weightsを直接最適化。</div>
+    <div class="card-relevance"><strong>関連性:</strong> K198/K201のMLアロケーターをSACに移行する直接的先行研究。noisy crypto marketでのSAC優位性はv6.12の複数サブ戦略ウェイト最適化に応用可能。</div>
+  </div>
+
+  <!-- R12-10 -->
+  <div class="card actionable" data-area="bocpd" data-source="quant_blog" data-actionable="true">
+    <div class="card-header">
+      <span class="card-id actionable">R12-10 ★</span>
+      <div class="card-title"><a href="https://www.quantbeckman.com/p/with-code-switch-off-bayesian-online" target="_blank">QuantBeckman: Switch-Off — BOCPD for Strategy De-allocation (Python付)</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-bocpd">Bayesian Changepoint</span>
+      <span class="tag source">Quant Blog</span>
+      <span class="tag date">2026</span>
+    </div>
+    <div class="card-summary">戦略de-allocationのBOCPD実装ガイド(Pythonコード付)。shock(急崩壊, P>50%でdeallocate即時)とerosion(漸進的alpha decay, expected run length崩壊)のdual-trigger設計。Normal-Inverse-Gamma conjugate priorによるStudent-t後験分布でfat tail対応。log-space再帰でO(K*T)に削減。7つのコンポーネントを完全実装。</div>
+    <div class="card-relevance"><strong>関連性:</strong> K315-K327で失敗中のBOCPD FR regime detectionに直接移植可能。戦略のde-allocationにBOCPDを使う唯一の実装付き先行事例。</div>
+    <div class="card-k336"><strong>K336実装メモ:</strong> K323/K327の代替としてBOCPD switch-offをv6.12サブ戦略に組み込む。erosion triggerがfunding rate carryのalpha decayの早期検知に最適。Pythonコード公開済みで実装コスト最小。</div>
+  </div>
+
+  <!-- R12-11 -->
+  <div class="card" data-area="dex" data-source="institutional_research">
+    <div class="card-header">
+      <span class="card-id">R12-11</span>
+      <div class="card-title"><a href="https://paradex.trade/blog/perp-dex-wars-the-8-trillion-institutional-endgame" target="_blank">A1 Research / Paradex: Perp DEX Wars — The $8 Trillion Institutional Endgame</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-dex">DEX Microstructure</span>
+      <span class="tag source">Institutional Research</span>
+      <span class="tag date">2026-02</span>
+    </div>
+    <div class="card-summary">8つのperp DEX(HL/Paradex/Lighter/EdgeX/GRVT/Variational/Aster)を8軸比較。HL: $248B/30日/OI-Volume比0.021(最高)。Paradexは連続funding accrual(snapshot非依存)でbasis volatility排除、0.5bps/institutional flow課金でRPI実現。Lighterは0fee+500+市場+zk-proof matchingだが2025年10月障害。資本stickiness: HL 0.021、Paradex 0.014、bottom venues 0.005。</div>
+    <div class="card-relevance"><strong>関連性:</strong> v6.12のexecution venue選択。HLのfunding cap(4%/時)・固定金利(0.01%/8h)はcarryリターン計算の前提。Paradexの連続funding accrualはbasis riskを排除できる。</div>
+  </div>
+
+  <!-- R12-12 -->
+  <div class="card actionable" data-area="hip3" data-source="exchange_research" data-actionable="true">
+    <div class="card-header">
+      <span class="card-id actionable">R12-12 ★</span>
+      <div class="card-title"><a href="https://crypto.com/eea/research/rwa-perps-find-predictive-edge-apr-2026" target="_blank">Crypto.com Research: RWA Perps — Find The Predictive Edge (Apr 2026)</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-hip3">HL HIP-3 RWA</span>
+      <span class="tag source">Exchange Research</span>
+      <span class="tag date">2026-04</span>
+    </div>
+    <div class="card-summary">RWA perpsが翌月曜TradFi開場の予測オラクルとして機能することを実証。最適執行窓: 日曜22:00 UTC(CMEオープン直前)。Silver 84.6%精度/1.73%誤差、Gold 69.2%/0.90%、NVDA 78.9%/1.21%。Tech株shortシグナルは機関buy-backでfake-out頻発。5種測定フレームワーク: fake-out rate/predictive error/golden window/portfolio protection/liquidation buffer。</div>
+    <div class="card-relevance"><strong>関連性:</strong> K297 hip3_weekend戦略の外部バリデーション。Silver/Goldの方向精度80%超えは直接的alpha source。</div>
+    <div class="card-k336"><strong>K336実装メモ:</strong> K297/K302のweekend戦略に日曜22:00 UTC執行窓を実装。Silver/Gold方向シグナルをcrypto perp週明けリターン予測に転用。Tech株はfake-outフィルターとして逆シグナル扱いに変更。</div>
+  </div>
+
+  <!-- R12-13 -->
+  <div class="card" data-area="hip3" data-source="hedge_fund_research">
+    <div class="card-header">
+      <span class="card-id">R12-13</span>
+      <div class="card-title"><a href="https://medium.com/@Monarq_Mgmt/price-discovery-while-the-world-sleeps-c489a0a08dd1" target="_blank">Monarq Asset Management: Price Discovery While the World Sleeps</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-hip3">HL HIP-3 RWA</span>
+      <span class="tag source">Hedge Fund Research</span>
+      <span class="tag date">2026</span>
+    </div>
+    <div class="card-summary">2026年2月28日深夜のUS-Israel-Iran核施設攻撃時(土曜2:47 AM EST)、全主要取引所が閉場中にHLでprice discoveryが発生。Oil-USDH+5%、SilverがBTC次の最取引資産に。COMEXの約1%をHL が処理。元NYMEX CIOが著者。on-chain = 電子取引革命の次フェーズと結論。</div>
+    <div class="card-relevance"><strong>関連性:</strong> K297のHIP-3 weekend戦略の現実的バリデーション。地政学イベント時のHLが唯一の価格発見場所になるケース。</div>
+  </div>
+
+  <!-- R12-14 -->
+  <div class="card" data-area="dex" data-source="hedge_fund_research">
+    <div class="card-header">
+      <span class="card-id">R12-14</span>
+      <div class="card-title"><a href="https://medium.com/@Monarq_Mgmt/perp-dexs-in-2025-the-shift-from-subsidies-to-market-structure-68a1138f4c10" target="_blank">Monarq: Perp DEXs in 2025 — From Subsidies to Market Structure (Feb 2026)</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-dex">DEX Microstructure</span>
+      <span class="tag source">Hedge Fund Research</span>
+      <span class="tag date">2026-02</span>
+    </div>
+    <div class="card-summary">2025年DEX perp総ボリューム$6.7T(前年比4x)、市場シェア2.5%→8%。HLが年末OI$9.5Bで参照取引所に。インセンティブ依存→構造的優位への移行分析。HL: observable collateral/auditable execution/incremental liquidationがstress時の反射的デリスク抑制。Lighter: zk-proof matchingで検証可能性を提供。</div>
+    <div class="card-relevance"><strong>関連性:</strong> DEX perp市場の構造変化を定量化した機関レポート。HLのincremental liquidationがstress時に優位であることがK200 ADL戦略設計根拠に。</div>
+  </div>
+
+  <!-- R12-15 -->
+  <div class="card" data-area="dex" data-source="news">
+    <div class="card-header">
+      <span class="card-id">R12-15</span>
+      <div class="card-title"><a href="https://www.coindesk.com/business/2026/05/21/peer-to-peer-trading-startup-variational-raises-usd50-million-for-real-world-perps-in-funding-round-led-by-dragonfly" target="_blank">CoinDesk: Variational Raises $50M for RWA Perpetuals — Dragonfly Led (May 2026)</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-dex">DEX Microstructure</span>
+      <span class="tag area area-stable">RWA Arb</span>
+      <span class="tag source">News</span>
+      <span class="tag date">2026-05-21</span>
+    </div>
+    <div class="card-summary">Variational(p2p on-chain derivatives)がDragonfly主導で$50M調達。Bain Capital Crypto/Coinbase Ventures参加。RFQ(Request-for-Quote)アーキテクチャでCME/NYSE流動性をon-chainに集約しGold/Silver/Copper/WTI perpetualを提供。CLOB cold-start問題をTradFiルーティングで解決。累積$200B+。100+市場展開予定(2026後半)。</div>
+    <div class="card-relevance"><strong>関連性:</strong> HIP-3 CLOB vs Variational RFQという競合構図が明確化。v6.12のRWA carry戦略のexecution venue候補として評価要。</div>
+  </div>
+
+  <!-- R12-16 -->
+  <div class="card actionable" data-area="hip3" data-source="news" data-actionable="true">
+    <div class="card-header">
+      <span class="card-id actionable">R12-16 ★</span>
+      <div class="card-title"><a href="https://www.coindesk.com/markets/2026/05/15/cme-ice-push-u-s-regulators-to-scrutinize-hyperliquid-over-manipulation-risks-bloomberg" target="_blank">CoinDesk: CME/ICE Push US Regulators to Scrutinize Hyperliquid (May 2026)</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-hip3">HL HIP-3 RWA</span>
+      <span class="tag source">News</span>
+      <span class="tag date">2026-05-15</span>
+    </div>
+    <div class="card-summary">CME GroupとICEがCFTCにHL監視を要求。WTI perp volume $339M(2/末)→$7.3B(3/12)の急増を根拠に'グローバル原油ベンチマーク歪曲'リスクを指摘。HLはPolicy Center(Jake Chervinsky)設置でCFTC登録交渉中。市場シェア53%(on-chain derivatives fee)。2026年5月時点でCFTCの正式行動はなし。</div>
+    <div class="card-relevance"><strong>関連性:</strong> HIP-3 RWA戦略の最大テールリスク。CFTC登録成功→US機関資金流入。規制強化→HIP-3停止リスク。</div>
+    <div class="card-k336"><strong>K336実装メモ:</strong> K297/K302のHIP-3 weekend戦略にregulatory risk discountを実装。CFTCニュースをexit条件として組み込み。HIP-3使用比率を全体の20%以下にcapするposition sizeルールを設定。</div>
+  </div>
+
+  <!-- R12-17 -->
+  <div class="card" data-area="stablecoin" data-source="research_report">
+    <div class="card-header">
+      <span class="card-id">R12-17</span>
+      <div class="card-title"><a href="https://stablecoininsider.org/ethena-usde-q1-2026-report/" target="_blank">Stablecoin Insider: Ethena USDe Q1 2026 Report</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-stable">Stablecoin Yield Arb</span>
+      <span class="tag source">Research Report</span>
+      <span class="tag date">2026-03-16</span>
+    </div>
+    <div class="card-summary">USDe供給$5.92B(ピーク$14B+から低下)、市場シェア約5%。sUSDe APY: 2024年18%→2026年Q1 3.72%(4月回復: 7日MA 9.4%、90日MA 11.8%)。Q1 Gross Revenue前期比-32%($65.06M)。保険基金$61M(TVLの1.18%)。2025年10月デペッグ$0.97。Aave/Pendleループ$4.2Bがsystemic risk。Krakenが週次proof-of-reserves開始(2026年1月〜)。</div>
+    <div class="card-relevance"><strong>関連性:</strong> K206/K207 Ethena TVLシグナルの有効性再評価に必須。sUSDe APY 3.72%→9.4%回復は再エントリータイミングシグナル。保険基金サイズ監視がtail risk管理に使える。</div>
+  </div>
+
+  <!-- R12-18 -->
+  <div class="card" data-area="academic" data-source="arxiv_paper">
+    <div class="card-header">
+      <span class="card-id">R12-18</span>
+      <div class="card-title"><a href="https://arxiv.org/abs/2505.24831" target="_blank">arXiv 2505.24831: Optimising Crypto Portfolios via Stable Clustering of Correlation Networks</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-academic">Academic Research</span>
+      <span class="tag source">arXiv Paper</span>
+      <span class="tag date">2025-05</span>
+    </div>
+    <div class="card-summary">Louvainコミュニティ検出+consensus clusteringで暗号通貨価格相関ネットワークから安定クラスターを抽出。ARIMAベース予測で14日以内の投資ホライズンで継続的プラスパフォーマンス。5年間日次closing priceで評価。gain-loss asymmetry・tail-risk controlが改善。</div>
+    <div class="card-relevance"><strong>関連性:</strong> v6.12の50+銘柄ユニバースをLouvainクラスタリングで分群し、ポートフォリオ構築を効率化する手法の理論的基盤。</div>
+  </div>
+
+  <!-- R12-19 -->
+  <div class="card" data-area="hip3" data-source="institutional_research">
+    <div class="card-header">
+      <span class="card-id">R12-19</span>
+      <div class="card-title"><a href="https://www.kkdemian.com/blog/hyperliquid_report_2026" target="_blank">kkdemian: Hyperliquid Investment-Grade Research Report 2026</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-hip3">HL Portfolio Margin</span>
+      <span class="tag source">Institutional Research</span>
+      <span class="tag date">2026</span>
+    </div>
+    <div class="card-summary">HLエコシステム包括レポート。HLP vault: 累積$845.6M収益の93%をLP配分。HIP-3: $10B+累積ボリューム。Portfolio Margin(BLP): pre-alpha/$5M+限定/HYPE担保で最大$1M USDC借入/USDC global supply cap $500M/borrow cap $100M。HYPE: 962.3M supply/37M burned/毎月unlock through 2028。競合優位: latency 0.2s vs dYdX 1-2s、throughput 200k/s vs dYdX 2k/s。規制リスク: 16バリデーターのみ。</div>
+    <div class="card-relevance"><strong>関連性:</strong> HLP/BLP returnの定量的基盤。Portfolio Marginの$5M閾値・担保制限・グローバルcapはv6.12のposition sizeと直結。</div>
+  </div>
+
+  <!-- R12-20 -->
+  <div class="card" data-area="hip3" data-source="exchange_research">
+    <div class="card-header">
+      <span class="card-id">R12-20</span>
+      <div class="card-title"><a href="https://crypto.com/en/research/research-roundup-may-2026" target="_blank">Crypto.com Research Roundup — May 2026</a></div>
+    </div>
+    <div class="card-tags">
+      <span class="tag area area-hip3">HL HIP-3 RWA</span>
+      <span class="tag source">Exchange Research</span>
+      <span class="tag date">2026-05</span>
+    </div>
+    <div class="card-summary">2026年5月研究ラウンドアップ。RWA perps = TradFi月曜開場の予測オラクルが主要発見。CME先物直前の日曜22:00 UTCが最良シグナル窓。Tokenized RWA市場: $5.8B(2025/1)→$30.8B(2026/4)で431%成長。Bitcoin機関保有: 206社/1.2M BTC/$98B(流通供給の5.8%)。4月: price index +12.93%、volume -14.80%、volatility -19.52%のdiverging trend。Stable supply増加でもadjusted transfer volume -11%。</div>
+    <div class="card-relevance"><strong>関連性:</strong> RWA市場$30.8Bの確認でHIP-3外部環境を定量化。Volume/Volatility乖離がfunding rate carryの収益圧縮を示す。日曜22:00 UTCシグナル窓を複数ソースで確認。</div>
+  </div>
+
+</div><!-- /cards -->
+
+<footer>
+  Wave K334 | Round 12 | 最終更新: 2026-05-25 20:11 JST | R1-R11: 242件 + R12: 20件 = 累計262件 | 全URL重複なし確認済
+</footer>
+
+<script>
+function filterCards(filter) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  const cards = document.querySelectorAll('.card');
+  cards.forEach(card => {
+    let show = false;
+    if (filter === 'all') show = true;
+    else if (filter === 'actionable') show = card.dataset.actionable === 'true';
+    else if (filter === 'arxiv_paper') show = card.dataset.source === 'arxiv_paper';
+    else if (filter === 'hip3') show = card.dataset.area === 'hip3';
+    else if (filter === 'stablecoin') show = card.dataset.area === 'stablecoin';
+    else if (filter === 'bocpd') show = card.dataset.area === 'bocpd';
+    else if (filter === 'rl') show = card.dataset.area === 'rl';
+    else if (filter === 'flash') show = card.dataset.area === 'flash';
+    else if (filter === 'dex') show = card.dataset.area === 'dex';
+    card.style.display = show ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
