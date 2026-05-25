@@ -1,0 +1,89 @@
+{
+  "wave": "K315",
+  "date": "2026-05-25",
+  "hmmlearn_available": false,
+  "hmm_implementation": "ManualBaumWelch_EM",
+  "hmm_n_states": 3,
+  "hmm_n_iter": 200,
+  "hmm_random_seed": 42,
+  "btc_data_source": "/Users/nekonaomichi/crypto-lab/cache/BTCUSDT_4h_730d.parquet",
+  "k280_source": "/Users/nekonaomichi/crypto-lab/wave_k280_curves.json",
+  "k280_date_range": [
+    "2025-01-23",
+    "2026-04-14"
+  ],
+  "k280_n_days": 447,
+  "hmm_state_names": [
+    "BEAR",
+    "NEUTRAL",
+    "BULL"
+  ],
+  "hmm_state_means": [
+    -0.001133360524393226,
+    0.00016273768973702944,
+    0.0002910348136941667
+  ],
+  "hmm_state_stds": [
+    0.020089250236944512,
+    0.003253345439479313,
+    0.008308356343264274
+  ],
+  "hmm_transition_matrix": [
+    [
+      0.6353476717363782,
+      1.1671513515177848e-05,
+      0.36464065675010665
+    ],
+    [
+      0.020297992377211155,
+      0.7794699968285778,
+      0.20023201079421094
+    ],
+    [
+      0.07770516623420787,
+      0.11854227738487311,
+      0.803752556380919
+    ]
+  ],
+  "hmm_startprob": [
+    2.569168774444942e-10,
+    1.308161131318111e-10,
+    0.999999999612267
+  ],
+  "baseline_sh": 17.112038092705657,
+  "baseline_mdd": -0.0005583213789963608,
+  "baseline_trades": 447,
+  "baseline_ann_return": 0.07683981343878576,
+  "no_bear_sh": 15.273878320143124,
+  "no_bear_mdd": -0.0005583213789963768,
+  "no_bear_trades": 447,
+  "no_bear_ann_return": 0.06770459452555655,
+  "bull_only_sh": 10.633301818466476,
+  "bull_only_mdd": -0.0003191598641722702,
+  "bull_only_trades": 447,
+  "bull_only_ann_return": 0.04833776033723125,
+  "per_fold_baseline_sh": [
+    13.440395455807739,
+    20.365957878660573,
+    18.424184907586277
+  ],
+  "per_fold_filtered_sh": [
+    13.440395455807739,
+    16.731737327263883,
+    13.764282486119638
+  ],
+  "fold_deltas": [
+    0.0,
+    -3.634221,
+    -4.659902
+  ],
+  "decision": "REJECT",
+  "notes": "Majority of folds (2/3) show negative Sharpe delta. HMM regime filter does not consistently improve K280.",
+  "limitations": [
+    "K280 equity covers 2025-01-22 to 2026-04-14 only (~15 months) \u2014 limited walk-forward depth",
+    "K280 Sharpe ~17 suggests highly risk-controlled / near-delta-neutral strategy with low daily vol",
+    "hmmlearn not available; manual Baum-Welch EM used (mathematically equivalent but slower)",
+    "Bayesian non-homogeneous transition matrix not implemented \u2014 standard stationary HMM used",
+    "Daily PnL zeroing is a simplified filter; production would need intraday regime lookback"
+  ]
+}
