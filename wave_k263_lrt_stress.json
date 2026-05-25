@@ -1,0 +1,238 @@
+{
+  "wave": "K263",
+  "as_of": "2026-05-25T01:40:04.220138+00:00",
+  "runtime_s": 0.2,
+  "mechanism": "LRT peg z-score stress \u2192 defensive ETH short",
+  "signal_params": {
+    "z_thresh": -1.5,
+    "z_roll_window": 30,
+    "rolling_trigger": 3,
+    "hold_days": 2
+  },
+  "data": {
+    "source": "cache",
+    "cached": true,
+    "date_start": "2025-05-26",
+    "date_end": "2026-05-25",
+    "n_days": 365,
+    "disc_cols": [
+      "disc_rsETH",
+      "disc_ezETH",
+      "disc_weETH"
+    ],
+    "z_cols": [
+      "z_disc_rsETH",
+      "z_disc_ezETH",
+      "z_disc_weETH"
+    ],
+    "lrt_tokens": [
+      "rsETH",
+      "ezETH",
+      "weETH"
+    ],
+    "benchmark": "wrapped-steth",
+    "insight": "LRTs structurally trade ~13% below wstETH (token economics, not stress). Stress signal = z-score deviation from rolling 30d baseline (acute widening)."
+  },
+  "structural_discounts": {
+    "rsETH": {
+      "mean": -0.1367,
+      "std": 0.0195,
+      "min": -0.2967,
+      "max": -0.1153
+    },
+    "ezETH": {
+      "mean": -0.1275,
+      "std": 0.0016,
+      "min": -0.1336,
+      "max": -0.1108
+    },
+    "weETH": {
+      "mean": -0.1131,
+      "std": 0.0014,
+      "min": -0.1171,
+      "max": -0.096
+    }
+  },
+  "stress_events": [
+    {
+      "start": "2025-06-30",
+      "end": "2025-07-10",
+      "n_days": 10,
+      "peak_z": -2.114
+    },
+    {
+      "start": "2025-07-11",
+      "end": "2025-07-18",
+      "n_days": 7,
+      "peak_z": -1.941
+    },
+    {
+      "start": "2025-07-28",
+      "end": "2025-08-10",
+      "n_days": 13,
+      "peak_z": -2.241
+    },
+    {
+      "start": "2025-09-29",
+      "end": "2025-10-27",
+      "n_days": 28,
+      "peak_z": -2.161
+    },
+    {
+      "start": "2025-11-05",
+      "end": "2025-11-19",
+      "n_days": 14,
+      "peak_z": -2.36
+    },
+    {
+      "start": "2025-11-21",
+      "end": "2025-12-02",
+      "n_days": 11,
+      "peak_z": -1.998
+    },
+    {
+      "start": "2025-12-26",
+      "end": "2026-01-02",
+      "n_days": 7,
+      "peak_z": -1.737
+    },
+    {
+      "start": "2026-01-08",
+      "end": "2026-01-15",
+      "n_days": 7,
+      "peak_z": -1.77
+    },
+    {
+      "start": "2026-02-01",
+      "end": "2026-02-20",
+      "n_days": 19,
+      "peak_z": -4.058
+    },
+    {
+      "start": "2026-03-08",
+      "end": "2026-03-24",
+      "n_days": 16,
+      "peak_z": -2.943
+    },
+    {
+      "start": "2026-04-01",
+      "end": "2026-05-13",
+      "n_days": 42,
+      "peak_z": -5.455
+    }
+  ],
+  "signal_stats": {
+    "n_stress_days": 174,
+    "n_valid_days": 327,
+    "n_total_days": 362,
+    "pct_active": 53.2
+  },
+  "walk_forward": {
+    "folds": [
+      {
+        "fold": 1,
+        "n_days": 72,
+        "sharpe": -5.4963,
+        "start_date": "2025-06-30",
+        "end_date": "2025-09-09",
+        "ann_ret": -2.514179,
+        "n_active": 30
+      },
+      {
+        "fold": 2,
+        "n_days": 72,
+        "sharpe": 1.9044,
+        "start_date": "2025-09-10",
+        "end_date": "2025-11-20",
+        "ann_ret": 1.08437,
+        "n_active": 42
+      },
+      {
+        "fold": 3,
+        "n_days": 72,
+        "sharpe": -4.0753,
+        "start_date": "2025-11-21",
+        "end_date": "2026-01-31",
+        "ann_ret": -1.415808,
+        "n_active": 25
+      },
+      {
+        "fold": 4,
+        "n_days": 73,
+        "sharpe": -0.7477,
+        "start_date": "2026-02-01",
+        "end_date": "2026-04-14",
+        "ann_ret": -0.492087,
+        "n_active": 49
+      }
+    ],
+    "wf_mean": -2.1037,
+    "wf_min": -5.4963,
+    "wf_max": 1.9044,
+    "all_folds_positive": false
+  },
+  "in_sample": {
+    "sharpe": -1.5828,
+    "n_days": 289,
+    "ann_ret": -0.833242
+  },
+  "oos": {
+    "n_days": 38,
+    "sharpe": 0.411,
+    "ann_ret": 0.120905,
+    "ann_vol": 0.294166,
+    "max_dd": -0.051319,
+    "n_active": 28,
+    "start_date": "2026-04-15"
+  },
+  "correlation": {
+    "K263_vs_K198": 0.1937,
+    "K263_vs_K198_n": 324,
+    "K263_vs_K208": -0.0011,
+    "K263_vs_K208_n": 324,
+    "K263_vs_K226": 0.3118,
+    "K263_vs_K226_n": 324,
+    "K263_vs_K259": -0.0104,
+    "K263_vs_K259_n": 324
+  },
+  "acceptance_gates": {
+    "data_ok": true,
+    "wf_all_positive": false,
+    "oos_sh_gt_1": false,
+    "rho_K198_lt_04": true,
+    "rho_K208_lt_04": true,
+    "rho_K226_lt_04": true,
+    "rho_K259_lt_04": true
+  },
+  "verdict": "REJECT",
+  "conditional_return_analysis": {
+    "lag_1d": {
+      "n_stress": 50,
+      "n_no_stress": 312,
+      "eth_mean_stress": -0.00478,
+      "eth_mean_no_stress": 0.000903,
+      "short_win_pct": 54.0
+    },
+    "lag_2d": {
+      "n_stress": 50,
+      "n_no_stress": 312,
+      "eth_mean_stress": -0.007127,
+      "eth_mean_no_stress": 0.001279,
+      "short_win_pct": 56.0
+    },
+    "lag_3d": {
+      "n_stress": 50,
+      "n_no_stress": 312,
+      "eth_mean_stress": 0.011443,
+      "eth_mean_no_stress": -0.001697,
+      "short_win_pct": 34.0
+    },
+    "same_day": {
+      "n_stress": 50,
+      "eth_mean_stress": -0.000929,
+      "eth_mean_no_stress": 0.000286,
+      "short_win_pct": 54.0
+    }
+  },
+  "data_gap_note": "CoinGecko free tier: 365 days only. Full 2-year history needs CG Pro API ($129/mo) or on-chain data pipeline (e.g., TheGraph + EigenLayer subgraph). ML window (Jan 2025 \u2013 Apr 2026) only partially overlaps LRT data."
+}
