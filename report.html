@@ -759,10 +759,10 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 09:38 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 11:11 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
-    <strong>🏆 PRODUCTION v6.9 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K246a SIMPLIFIED 3-WAY (K198+K208+K226, drop K204) OOS Sh +12.69 / WF min 8.93 / MaxDD -0.00115</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐ First SIMPLIFICATION milestone (4-way → 3-way, WF min +1.49)</span> &nbsp;|&nbsp;
-    <strong>12 ACCEPT base + 15 ensembles + K246a v6.9 / 60 REJECT / 5 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K244 window stability PASS (Sh range 12.0-12.6), K237/K239/K242/K246 architecture全 validated</span>
+    <strong>🏆 PRODUCTION v6.10 (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K269a 4-WAY +K265 HL long-tail OOS Sh +15.75 / WF min 9.05 / MaxDD -0.00019 (4x improved!)</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">⭐⭐⭐ +3.05 lift over K246a (biggest since K217→K218)</span> &nbsp;|&nbsp;
+    <strong>12 ACCEPT base + 16 ensembles + K269 v6.10 / 75 REJECT / 6 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K265 FIRST candidate to meet K266 strict criteria (Sh≥7 all folds, |ρ|<0.06 vs all components)</span>
   </div>
 
   <header class="report-header">
@@ -4128,6 +4128,69 @@ skew_z = (skew_ratio - rolling_mean) / rolling_std
     <div class="section-header">
       <div><span class="section-num">05</span><span class="jp-title">不合格戦略</span></div>
       <div class="en-subtitle">棄却された候補</div>
+    </div>
+
+    <!-- K262 Dollar-Neutral XS Momentum -->
+    <div class="card rejected">
+      <h3>K262 Dollar-Neutral Cross-Sectional Momentum <span class="badge badge-fail">棄却</span></h3>
+      <div class="metric-row">
+        <span class="metric-key">ユニバース / 時間足</span>
+        <span class="metric-val">56銘柄 (4h→日次集計)</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">シグナル</span>
+        <span class="metric-val">30日モメンタム、日次リバランス、上位/下位25%</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">OOS シャープ</span>
+        <span class="metric-val text-red">-1.505</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">WF 4-fold (Sh)</span>
+        <span class="metric-val text-red">-1.247 / +0.894 / +0.852 / -1.878</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">WF 全fold正</span>
+        <span class="metric-val text-red">No (fold0, fold3 負)</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">市場ベータ</span>
+        <span class="metric-val text-yellow">-0.168 (目標 |β|&lt;0.10)</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">K246a 相関 (K198/K208)</span>
+        <span class="metric-val text-green">ρ=+0.074 / -0.002 (直交確認)</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">ゲート通過</span>
+        <span class="metric-val text-red">2/6</span>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:var(--accent-red);">棄却理由:</strong> OOS Sh=-1.505、WF fold0・fold3が大幅負。ウィンドウスイープ(7d~90d)で全窓7bp/sideコスト込みのWF全fold正は達成不可。XSモメンタムシグナルが約6ヶ月ごとに継続/反転レジームを切り替えるため、2024-2026データでは安定したエッジが存在しない。</p>
+      <p><strong>根本原因:</strong> BTC主導の市場構造がリスクオン(モメンタム継続)とデレバレッジ(反転)を交互に繰り返す。K257 AdaptiveTrendも同様に失敗→<strong>モメンタムファミリー全体が2024-2026レジームと非適合</strong>の証拠。</p>
+      <p><strong>直交性:</strong> K262はK246a FR/carryメカニズムとは無相関(ρ≈0)だが、アルファ自体が存在しない。参照: SSRN:6300843は2018-2023データで0.68%/day、当データでは-0.113%/day。</p>
+      <p><strong>K263方針:</strong> モメンタムファミリーを放棄。(1) XSファンディングスプレッド carry、(2) コインテグレーションペア stat-arb、(3) OIダイバージェンス クリプトネイティブ戦略を優先探索。</p>
+    </div>
+
+    <!-- K257 AdaptiveTrend -->
+    <div class="card rejected">
+      <h3>K257 AdaptiveTrend (70/30 Long-Biased XS Momentum) <span class="badge badge-fail">棄却</span></h3>
+      <div class="metric-row">
+        <span class="metric-key">ユニバース</span>
+        <span class="metric-val">34銘柄 (4h→6h集計)</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">OOS シャープ</span>
+        <span class="metric-val text-red">-0.918</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">WF 4-fold (Sh)</span>
+        <span class="metric-val text-red">+1.504 / +0.667 / -1.105 / +0.012</span>
+      </div>
+      <div class="metric-row">
+        <span class="metric-key">失敗期間</span>
+        <span class="metric-val text-red">2025-H2 bear market (Fold3 persistently negative across 25 param variants)</span>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:var(--accent-red);">棄却理由:</strong> 70/30ロングバイアスがBTC -45% 2025年11月-2026年2月の下落に直撃。25パラメータ変種で全てFold3負を確認。arxivの主張(OOS Sh=2.41)は2018-2023データかつ150+ペアで現在のクリプトレジームに非適用。</p>
     </div>
 
     <!-- Dual ST Ribbon -->
@@ -8192,7 +8255,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
     <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; v4.1</p>
-    <p style="margin-top:4px;">更新: 2026-05-25 01:35 JST &nbsp;|&nbsp; 100+ファミリーで738,388+試行 &nbsp;|&nbsp; ユニバース: 55銘柄 (4H/730日) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
+    <p style="margin-top:4px;">更新: 2026-05-25 11:00 JST &nbsp;|&nbsp; 100+ファミリーで738,388+試行 &nbsp;|&nbsp; ユニバース: 56銘柄 (4H/730日) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 
