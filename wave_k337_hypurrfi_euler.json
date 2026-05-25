@@ -1,0 +1,188 @@
+{
+  "wave": "K337",
+  "generated": "2026-05-25T20:09:00+09:00",
+  "finding_source": "R11-07",
+  "title": "HypurrFi × Euler Finance HyperEVM分離リスク市場 Feasibility Study",
+  "decision": "MONITOR",
+
+  "protocol": {
+    "name": "HypurrFi",
+    "chain": "HyperEVM (Hyperliquid L1 sidechain)",
+    "architecture": "Euler Finance v2 — Euler Vault Kit (EVK)",
+    "market_types": ["Pooled", "Isolated"],
+    "launch_date_pooled": "2025-Q1",
+    "launch_date_isolated": "2025-Q4",
+    "audit": {
+      "firm": "Pashov Audit Group",
+      "date": "2026-04",
+      "status": "COMPLETED_ALL_ISSUES_RESOLVED",
+      "inherited_euler_audits": 45
+    },
+    "risk_manager": "Clearstar Labs",
+    "oracle": "Pyth Network",
+    "security_monitoring": "Hypernative"
+  },
+
+  "tvl_metrics": {
+    "as_of": "2026-05-25",
+    "source": "DefiLlama",
+    "hypurrfi_pooled_tvl_usd": 16560000,
+    "hypurrfi_pooled_active_loans_usd": 8070000,
+    "hypurrfi_pooled_pools": 39,
+    "hypurrfi_pooled_avg_apy_pct": 9.59,
+    "hypurrfi_pooled_annualized_fees_usd": 908546,
+    "hypurrfi_isolated_tvl_usd": 854375,
+    "hypurrfi_isolated_active_loans_usd": 258993,
+    "hypurrfi_isolated_pools": 20,
+    "hypurrfi_isolated_avg_apy_pct": 9.69,
+    "hypurrfi_isolated_annualized_fees_usd": 66209,
+    "k336_tvl_accept_threshold_usd": 20000000,
+    "tvl_gate_cleared": false
+  },
+
+  "supported_assets": {
+    "pooled": ["HYPE", "stHYPE", "USDXL", "USDC", "USDT"],
+    "isolated": ["HYPE", "stHYPE", "USDH", "BLP", "USDC", "USDT"]
+  },
+
+  "usdh": {
+    "type": "fiat_backed",
+    "peg": "1:1 USD",
+    "reserve_managers": ["BlackRock", "Superstate"],
+    "reserve_assets": ["US_Treasuries", "cash", "cash_equivalents"],
+    "launch_date": "2024-09",
+    "first_day_volume_usd": 2000000,
+    "secondary_market_liquidity": "THIN",
+    "depeg_incidents": 0,
+    "peg_risk_score": 2.0
+  },
+
+  "blp": {
+    "description": "Builder Liquidity Provider portfolio margin basket (HyperCore)",
+    "composition": ["HYPE_spot", "BTC_spot", "ETH_spot", "USDC"],
+    "collateral_on_hypurrfi": true,
+    "risk_isolation": true,
+    "liquidation_risk": "MEDIUM_HIGH",
+    "composability_depth": 3
+  },
+
+  "yield_scenarios": {
+    "scenario_a": {
+      "name": "USDC supply + HL FR hedge (delta-neutral)",
+      "supply_apy_pct": 12.0,
+      "hl_fr_carry_pct": 8.0,
+      "gross_apy_pct": 20.0,
+      "costs": {
+        "hl_taker_fee_annualized_pct": 0.24,
+        "gas_hyperevm_pct": 0.001,
+        "slippage_pct": 0.20,
+        "smart_contract_risk_premium_pct": 1.50
+      },
+      "total_costs_pct": 1.961,
+      "net_apy_pct": 18.04,
+      "feasible": true,
+      "min_capital_usd": 20000,
+      "optimal_capital_band_usd": {"min": 50000, "max": 500000}
+    },
+    "scenario_b": {
+      "name": "HYPE collateral loop (HYPE supply → borrow USDC → HYPE buy)",
+      "hype_staking_yield_pct": 6.5,
+      "hype_fr_carry_pct": 15.0,
+      "borrow_cost_pct": -10.0,
+      "gross_apy_pct": 11.5,
+      "costs": {
+        "liquidation_buffer_opportunity_cost_pct": 2.5
+      },
+      "total_costs_pct": 2.5,
+      "net_apy_pct": 9.0,
+      "feasible": false,
+      "note": "Below 15% net APY threshold"
+    },
+    "scenario_c": {
+      "name": "USDH lending + USDH/USDC peg arb",
+      "usdh_supply_apy_pct": {"min": 9.0, "max": 15.0},
+      "peg_arb_annualized_pct": {"min": 5.0, "max": 20.0},
+      "gross_apy_pct": {"min": 14.0, "max": 35.0},
+      "slippage_pct": 0.5,
+      "net_apy_pct": {"min": 13.5, "max": 34.5},
+      "feasible": "CONDITIONAL",
+      "note": "Episodic, not systematic. USDH secondary market thin."
+    }
+  },
+
+  "hl_funding_rates": {
+    "source": "CoinGlass + Hyperliquid docs",
+    "as_of": "2026-05",
+    "btc_hourly_pct": {"low": 0.005, "high": 0.010},
+    "btc_annualized_pct": {"low": 4.4, "high": 8.8},
+    "eth_hourly_pct": {"low": 0.005, "high": 0.015},
+    "eth_annualized_pct": {"low": 4.4, "high": 13.1},
+    "hype_hourly_pct": {"low": 0.010, "high": 0.030},
+    "hype_annualized_pct": {"low": 8.8, "high": 26.3},
+    "note": "HYPE FR elevated and volatile; best hedging target"
+  },
+
+  "risk_scores": {
+    "scale": "1-5 (5=worst)",
+    "protocol_risk": 2.4,
+    "liquidity_risk_isolated": 3.5,
+    "liquidity_risk_pooled": 3.0,
+    "usdh_peg_risk": 2.0,
+    "smart_contract_hyperevm_risk": 2.75,
+    "automation_gap_risk": 5.0,
+    "composite_risk": 3.3
+  },
+
+  "accept_criteria_check": {
+    "net_apy_gt_15pct": {"threshold": 15.0, "actual": 18.04, "pass": true},
+    "tvl_gt_20m": {"threshold": 20000000, "actual": 16560000, "pass": false},
+    "audited": {"pass": true, "firm": "Pashov Audit Group"},
+    "automatable": {"pass": false, "reason": "No web3.py / HyperEVM SDK in CT Lab"}
+  },
+
+  "decision_rationale": [
+    "Scenario A yields 18% net APY — clears 15% hurdle",
+    "Isolated TVL $0.85M far below $20M threshold — self-defeating at scale",
+    "Pooled TVL $16.6M just below $20M — close but not there yet",
+    "No automation pathway: web3.py excluded from K337 constraints",
+    "Positive trend: TVL growing, audit completed April 2026, Euler integration mature"
+  ],
+
+  "monitor_triggers": [
+    {"trigger": "hypurrfi_isolated_tvl_usd_gt", "value": 20000000, "check": "monthly"},
+    {"trigger": "hypurrfi_pooled_tvl_usd_gt", "value": 50000000, "check": "monthly"},
+    {"trigger": "usdh_marketcap_usd_gt", "value": 50000000, "check": "monthly"},
+    {"trigger": "automation_pathway_available", "value": true, "check": "per_wave"},
+    {"trigger": "additional_audit_completed", "value": true, "check": "per_announcement"}
+  ],
+
+  "next_review_wave": "K345",
+  "next_review_est_date": "2026-06",
+
+  "capital_allocation": {
+    "recommendation": "0% (MONITOR status — no allocation until triggers met)",
+    "if_accept_max_portfolio_pct": 2.5,
+    "if_accept_example_1m_portfolio_usd": 25000,
+    "if_accept_example_10m_portfolio_usd": 250000,
+    "tvl_concentration_cap_pct": 10
+  },
+
+  "k302a_integration_note": "K302a BLP holders should monitor HypurrFi BLP collateral TVL. When isolated TVL > $20M, idle BLP positions can earn additional lending yield without new position creation — pure composable yield on existing positions.",
+
+  "data_sources": [
+    {"name": "DefiLlama HypurrFi", "url": "https://defillama.com/protocol/hypurrfi", "quality": "GOOD"},
+    {"name": "DefiLlama HypurrFi Isolated", "url": "https://defillama.com/protocol/hypurrfi-isolated", "quality": "GOOD"},
+    {"name": "Blocmates HypurrFi × Euler", "url": "https://www.blocmates.com/news-posts/hypurrfi-brings-euler-finance-to-hyperliquid-s-growing-ecosystem", "quality": "GOOD"},
+    {"name": "Impossible Finance HypurrFi", "url": "https://blog.impossible.finance/hypurrfi-the-next-big-lending-protocol-on-hyperliquid/", "quality": "PARTIAL_DATED"},
+    {"name": "Pashov Audit Group", "url": "https://x.com/PashovAuditGrp/status/1913215299320414234", "quality": "CONFIRMED"},
+    {"name": "CoinGlass HL FR", "url": "https://www.coinglass.com/FundingRate/HYPE", "quality": "ESTIMATED"}
+  ],
+
+  "research_gaps": [
+    "Per-pool APY breakdown (requires app.hypurrfi.com or on-chain query)",
+    "BLP collateral LTV and liquidation thresholds (Clearstar Labs dynamic, not documented)",
+    "USDH total market cap and outstanding supply",
+    "Admin key structure (multisig vs single owner — unconfirmed)",
+    "Exact Euler revenue sharing terms"
+  ]
+}
