@@ -1,0 +1,188 @@
+{
+  "wave": "K298",
+  "run_date": "2026-05-25T04:24:31.160227+00:00",
+  "endpoint_discovery": {
+    "url": "https://api.hyperliquid.xyz/info",
+    "type": "predictedFundings",
+    "public": true,
+    "auth_required": false,
+    "total_coins": 230,
+    "venues_available": [
+      "BinPerp",
+      "HlPerp",
+      "BybitPerp"
+    ],
+    "hl_settlement_interval_hours": 1,
+    "status": "CONFIRMED_PUBLIC_ACCESSIBLE",
+    "note": "predictedFundings returns predicted FR for next settlement per venue. HlPerp = 1h interval. BinPerp/BybitPerp = their own settlement cycle. No API key required."
+  },
+  "pred_vs_realized_accuracy": {
+    "mean_delta_bps": 0.000765,
+    "interpretation": "predictedFundings.HlPerp \u2248 current realized FR with <0.01bps deviation. It reflects real-time EMA premium, effectively a leading indicator by the API poll latency (~30-60s). The signal is the current unfixed FR being computed, not a multi-period forecast.",
+    "spearman_cross_section": {
+      "n_coins": 230,
+      "spearman_rho": 0.9989
+    }
+  },
+  "ar1_analysis": {
+    "coins": {
+      "SOL": {
+        "n": 499,
+        "ar1_corr": 0.8103,
+        "ar1_sign_acc": 84.17,
+        "pct_at_floor": 31.4
+      },
+      "XRP": {
+        "n": 499,
+        "ar1_corr": 0.851,
+        "ar1_sign_acc": 81.76,
+        "pct_at_floor": 21.8
+      },
+      "SUI": {
+        "n": 499,
+        "ar1_corr": 0.8279,
+        "ar1_sign_acc": 82.16,
+        "pct_at_floor": 24.2
+      },
+      "OP": {
+        "n": 499,
+        "ar1_corr": 0.5442,
+        "ar1_sign_acc": 84.77,
+        "pct_at_floor": 67.2
+      },
+      "APT": {
+        "n": 499,
+        "ar1_corr": 0.784,
+        "ar1_sign_acc": 83.77,
+        "pct_at_floor": 36.2
+      },
+      "JTO": {
+        "n": 499,
+        "ar1_corr": 0.5533,
+        "ar1_sign_acc": 81.36,
+        "pct_at_floor": 41.4
+      },
+      "ADA": {
+        "n": 499,
+        "ar1_corr": 0.8152,
+        "ar1_sign_acc": 86.77,
+        "pct_at_floor": 52.0
+      },
+      "ETH": {
+        "n": 499,
+        "ar1_corr": 0.8197,
+        "ar1_sign_acc": 90.38,
+        "pct_at_floor": 42.8
+      },
+      "BTC": {
+        "n": 499,
+        "ar1_corr": 0.7965,
+        "ar1_sign_acc": 86.17,
+        "pct_at_floor": 18.2
+      },
+      "AVAX": {
+        "n": 499,
+        "ar1_corr": 0.6595,
+        "ar1_sign_acc": 97.19,
+        "pct_at_floor": 84.6
+      }
+    },
+    "summary": "HL hourly FR shows AR(1) sign accuracy 81-97% across major coins. This is the theoretical ceiling for any 1-period-ahead predictor. K208 DAR(2,1) operates on 8h Bybit FR and achieves 66-72% direction accuracy \u2014 consistent with AR(1) persistence on that longer interval."
+  },
+  "k208_enhancement": {
+    "baseline_dar21_acc": "66-72% direction accuracy on 8h Bybit-HL spread",
+    "predictedFundings_advantage": "Replaces lagged AR model with live API read of Bybit predicted FR. Direct spread = pred_bybit_fr - pred_hl_fr. No model fitting required. Updates every ~30s (API polling), 5-10 min before CEX settlement.",
+    "recommendation": "INTEGRATE as primary signal, replace DAR(2,1)",
+    "implementation_note": "Poll predictedFundings every 5 min. Compute spread = bybit_fr - hl_fr. Enter reverse carry if spread > threshold. Exit when spread <= 0. Eliminates AR(2) refit overhead; simpler and more accurate.",
+    "current_spread_signals": {
+      "SOL": -1.0754,
+      "XRP": -0.0883,
+      "SUI": 0.2595,
+      "OP": -0.0343,
+      "APT": 1.1776,
+      "JTO": -1.064,
+      "IMX": 0.375,
+      "SAND": -0.3702,
+      "ADA": 0.2526
+    }
+  },
+  "k265_enhancement": {
+    "baseline": "14d rolling FR rank for cross-sectional sizing",
+    "predictedFundings_advantage": "predictedFundings.HlPerp gives the NEXT period rank directly. Eliminates 14d lookback lag. Allows intra-hour rank updates vs daily rebalance.",
+    "recommendation": "SUPPLEMENT (use predicted rank to time daily rebalance execution)",
+    "top8_short_signals": [
+      [
+        "AAVE",
+        0.125
+      ],
+      [
+        "ARB",
+        0.125
+      ],
+      [
+        "ATOM",
+        0.125
+      ],
+      [
+        "AVAX",
+        0.125
+      ],
+      [
+        "BNB",
+        0.125
+      ],
+      [
+        "CRV",
+        0.125
+      ],
+      [
+        "DOGE",
+        0.125
+      ],
+      [
+        "FET",
+        0.125
+      ]
+    ],
+    "bottom8_long_signals": [
+      [
+        "TIA",
+        -0.068218
+      ],
+      [
+        "BTC",
+        -0.09228800000000001
+      ],
+      [
+        "ONDO",
+        -0.09498799999999999
+      ],
+      [
+        "DOT",
+        -0.10199300000000001
+      ],
+      [
+        "ETH",
+        -0.135692
+      ],
+      [
+        "SUSHI",
+        -0.275827
+      ],
+      [
+        "JUP",
+        -0.34433600000000003
+      ],
+      [
+        "SEI",
+        -0.551468
+      ]
+    ]
+  },
+  "verdict": {
+    "api_status": "CONFIRMED_PUBLIC",
+    "k298_viability": "HIGH",
+    "r10_tip_accuracy": "R10 tip confirmed: predictedFundings is real, underdocumented, and public. Returns live predicted FR for HL and major CEX venues. 5-10 min advance is API polling delay, not a built-in predictive horizon.",
+    "integration_plan": "1. K208: Replace DAR(2,1) with real-time pred_bybit - pred_hl spread from API.    Poll every 5 min. Simpler, no refit, direct signal. 2. K265: Add predictedFundings rank as execution trigger for daily rebalance.    Rebalance when predicted rank changes by >2 quartile positions. 3. New strategy K299: Pure predictedFundings cross-sectional FR carry.    Intra-hour updates, trade on HL perp maker orders."
+  }
+}
