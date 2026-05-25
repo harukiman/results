@@ -759,7 +759,7 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 12:23 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 12:26 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
     <strong>🏆 PRODUCTION v6.10.2:</strong> <span style="color:var(--accent-green);font-weight:700;">K280 3-WAY OOS Sh +18.46 / MaxDD -0.000013</span> &nbsp;|&nbsp; <strong>v6.11 SATELLITE (NEW):</strong> <span style="color:var(--accent-cyan);font-weight:700;">K280 (80%) + K287d Sat [K270 dYdX + K275 OKX] (20%) = combined 55d Sh **33.00** (+1.70, ZERO MaxDD)</span> &nbsp;|&nbsp;
     <strong>12 ACCEPT base + 20 ensembles + K287d Satellite / 77 REJECT / 7 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K270 dYdX 2.6yr ACCEPT 8/8 + K275 OKX 96d ACCEPT 8/8 + K270-K275 anti-corr -0.672</span>
@@ -7577,6 +7577,64 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
       <p style="font-size:0.85rem;color:var(--text-secondary);">解析過程で発見した tips・知見・将来役立ちそうなアイデアを時系列で蓄積。</p>
       <div id="tips-log-body" style="margin-top:10px;font-size:0.88rem;">
         <details open>
+          <summary><strong>★★★★★ 2026-05-25 12:26 JST — Production v6.10.2 (K280) → v6.11 SATELLITE (K287d) 進化記録 [K254-K287 旅程]</strong></summary>
+          <ul>
+            <li><strong>【概観】</strong> K246a v6.9 (OOS Sh 12.69) から始まり、K280 v6.10.2 (OOS Sh 18.46) を経て K287d SATELLITE v6.11 (55d combined Sh 33.00, ZERO MaxDD) まで — 約 34 Wave の進化記録。</li>
+
+            <li><strong>【K265 ACCEPT (Wave K265)】</strong> HL long-tail FR carry 戦略。35 銘柄スクリーニング、OOS Sh <strong>13.10</strong>、8/8 §6 gates 全通過。K266 strict gate を初めて満たした戦略。既存 K198+K208 との ρ が低く (decorrelated)、追加価値が明確。</li>
+
+            <li><strong>【K269 v6.10 (Wave K269)】</strong> K198 + K208 + K226 + K265 の 4-way ensemble。OOS Sh <strong>15.75</strong> (K246a 比 <strong>+3.05 lift</strong>)。4 軸で多様な alpha メカニズムを統合し、過去最高水準を達成。</li>
+
+            <li><strong>【K272a v6.10.1 (Wave K272)】</strong> K226 を除外 (vestigial 寄与 0.55% に過ぎず)。K198 + K208 + K265 の 3-way に単純化 → OOS Sh <strong>16.13</strong> (+0.38 lift)。<strong>「簡約化による勝利」</strong>: 成分削除でも改善、過剰パラメータの排除が有効であることを実証。</li>
+
+            <li><strong>【K276 K265 分解実験 (Wave K276)】</strong> K265 を 3 バリアント (K276a_top15 / K276b_top20 / K276c_excl5) に分解。ARK の Sh <strong>-3.736</strong> が判明 (marginal noise polluter)。K276b_top20 が最良 — ARK 除外 + top 20 銘柄 構成が最適。</li>
+
+            <li><strong>【K280 v6.10.2 (Wave K280)】</strong> K265 → K276b_top20 に差し替え。OOS Sh <strong>18.46</strong> (+2.33 lift)、MaxDD <strong>-0.000013</strong> (K272a 比 63% 改善)、Calmar <strong>1.4M+</strong>。<strong>現行 PRODUCTION CORE</strong>。</li>
+
+            <li><strong>【K270 dYdX ACCEPT (Wave K270)】</strong> dYdX 取引所クロスベニュー alpha。2.6 年データ、OOS Sh <strong>11.85</strong>、K265 との相関 ρ = <strong>0.258</strong> (低相関 = 独立 alpha 源)。8/8 §6 gates 通過。</li>
+
+            <li><strong>【K275 OKX ACCEPT (Wave K275)】</strong> OKX 取引所データ 96d 限定だが OOS Sh <strong>30.25</strong>。データ期間が短いためサテライト扱い。K270 との anti-correlation ρ = <strong>-0.672</strong> — 両者組み合わせで強力な分散効果。</li>
+
+            <li><strong>【K285 K270 統合 FAIL (Wave K285)】</strong> K270 を K280 に統合試行。K270 MaxDD <strong>-0.002</strong> vs K280 MaxDD <strong>-0.000013</strong> — <strong>154 倍の DD 予算差</strong>。統合するとリスクバジェット大幅超過。<strong>教訓</strong>: 優秀な単体戦略でも MaxDD スケールが合わなければ ensemble 統合は不可 → Satellite 構造の必要性へ。</li>
+
+            <li><strong>【K287d SATELLITE v6.11 (Wave K287)】</strong> <strong>パラダイムシフト</strong>: K280 (80%) + Satellite [K270 dYdX + K275 OKX] (20%) = combined 55d Sh <strong>33.00</strong> (+1.70 vs K280 単独 31.30)、<strong>ZERO MaxDD</strong>。統合ではなく独立バジェット割り当てによる risk isolation が突破口。</li>
+
+            <li><strong>【フェーズ変遷の洞察】</strong>
+              <ul>
+                <li><strong>統合フェーズ (K231-K258)</strong>: 多軸統合で Sh を積み上げる試み。K262 momentum REJECT、K257 AdaptiveTrend REJECT など多数の棄却を経験。</li>
+                <li><strong>簡約化フェーズ (K246a, K272a, K280)</strong>: 「削ることで改善」を複数回実証。K226 除外 (+0.38)、K265→K276b 差し替え (+2.33) が典型例。</li>
+                <li><strong>サテライトフェーズ (K287)</strong>: MaxDD 不整合の解決策として独立バジェット割り当て。ZERO MaxDD + combined Sh 大幅向上。「統合不可 → 分離 satellite」の思想転換。</li>
+              </ul>
+            </li>
+
+            <li><strong>【ENSEMBLE 進化 完全チェーン】</strong>
+              <ul style="font-size:0.85em;line-height:1.7;">
+                <li>v4.1単独 (Sh <strong>4.08</strong>)</li>
+                <li>→ K124 5戦略 (<strong>4.25</strong>)</li>
+                <li>→ K136 +K133 DD圧縮</li>
+                <li>→ K149 +K147 (<strong>4.49</strong>)</li>
+                <li>→ K176 +K175 (<strong>5.41</strong>)</li>
+                <li>→ K188 +carry panel (<strong>5.48</strong>)</li>
+                <li>→ K192 +DAR filter (<strong>5.65</strong>)</li>
+                <li>→ K194 +partial trigger (<strong>5.71</strong>)</li>
+                <li>→ K195 +carry weighted (<strong>5.77</strong>)</li>
+                <li>→ K196 +reverse carry (<strong>9.20</strong>)</li>
+                <li>→ K198 ML allocator (<strong>10.28</strong>)</li>
+                <li>→ K217 (<strong>10.43</strong>)</li>
+                <li>→ K218 (<strong>11.03</strong>)</li>
+                <li>→ K229 (<strong>12.61</strong>)</li>
+                <li>→ K246a v6.9 (<strong>12.69</strong>)</li>
+                <li>→ K269 4-way v6.10 (<strong>15.75</strong>)</li>
+                <li>→ K272a v6.10.1 3-way (<strong>16.13</strong>)</li>
+                <li>→ K280 v6.10.2 K276b (<strong>18.46</strong>)</li>
+                <li>→ <strong style="color:var(--accent-cyan);">K287d SATELLITE combined v6.11 (<strong>33.00</strong>, ZERO MaxDD) ← 現在</strong></li>
+              </ul>
+            </li>
+
+            <li><strong>【推奨デプロイ構成】</strong> K280 (80%) = PRODUCTION CORE / K287d Satellite [K270 dYdX 50% + K275 OKX 50%] (20%) = SATELLITE。合計 55d Sh 33.00、ZERO MaxDD。</li>
+          </ul>
+        </details>
+        <details>
           <summary><strong>💡 2026-05-25 01:35 JST — 信号振幅 vs コスト 事前評価原則 (K122 から)</strong></summary>
           <ul>
             <li><strong>K122 Premium-Index MR の失敗から導出された原則</strong></li>
@@ -7592,7 +7650,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
             <li><strong>応用</strong>: 今後の onchain/microstructure 候補は magnitude 事前 sanity check を required step として追加</li>
           </ul>
         </details>
-        <details open>
+        <details>
           <summary><strong>📋 2026-05-24 20:55 JST — HTML 監査 #2 (K112以降の精査)</strong></summary>
           <ul>
             <li><strong>K112→K122 = 10 wave 経過</strong> 後の監査</li>
@@ -7603,7 +7661,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
             <li><strong>次回監査</strong>: K128 完了後</li>
           </ul>
         </details>
-        <details open>
+        <details>
           <summary><strong>⚠️⚠️ 2026-05-25 02:35 JST — META-LESSON: Sign-mirror evaluation の罠 (K161 + K173)</strong></summary>
           <ul>
             <li><strong>事象</strong>: K171 NET Sh -1.38, perm p=0.000 → "inverted edge" 推測 → K173 で検証 → REJECT (gross +0.06)</li>
@@ -7643,7 +7701,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
             <li><strong>K156/K165 FRAMEWORK READY</strong>: Hyperliquid leaderboard + Binance top-trader = live data accumulation 必要、historical 不可</li>
           </ul>
         </details>
-        <details open>
+        <details>
           <summary><strong>⛔ 2026-05-25 14:00 JST — K193 REJECTED: v6.2 Combine (K192 + K191 FR trigger) — trigger redundant with DAR</strong></summary>
           <ul>
             <li><strong>K193 objective</strong>: Combine K192 (v6.1, DAR K175 filter) + K191 (FR-mean defensive trigger) → v6.2 candidate</li>
@@ -7658,7 +7716,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
             <li><strong>Monitoring update</strong>: FR_mean &lt; −0.009735 does NOT trigger halt for K192 — it's a positive-alpha regime. Check K175_DAR OOS rolling Sh during these periods instead.</li>
           </ul>
         </details>
-        <details open>
+        <details>
           <summary><strong>🔬 2026-05-25 06:48 JST — K212 Isolated Prescription Analysis: REJECT all variants / K213 next</strong></summary>
           <ul>
             <li><strong>K212 = 3-way prescription isolation to decompose K205's two changes (window vs DD penalty)</strong></li>
@@ -7710,7 +7768,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
             </li>
           </ul>
         </details>
-        <details open>
+        <details>
           <summary><strong>🛡 2026-05-25 21:03 JST — K200 HLP/ADL Monitor COMPLETE: K199b/K198 v6.5 deploy GREEN LIGHT</strong></summary>
           <ul>
             <li><strong>K200 = HLP (Hyperliquid Liquidity Pool) balance監視 → K196/K199b/K198 v6.5 ADLリスク管理システム</strong></li>
@@ -7760,7 +7818,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
             <li>HLP全期間 (2023-05〜2026-05): 20件のドローダウンイベント (10%超)、過去ピーク $603.9M (2025-09)</li>
           </ul>
         </details>
-        <details open>
+        <details>
           <summary><strong>⚠★★ 2026-05-25 16:00 JST — K197 stress test = K196 v6.4 CONDITIONAL (cap 5%, 真の E[Sh] 5.5-7.0)</strong></summary>
           <ul>
             <li><strong>K197 = K196 v6.4 stress test (5 scenarios + capital efficiency + deactivation trigger)</strong></li>
