@@ -51,7 +51,7 @@ REGISTRY: list[DaemonSpec] = [
         purpose="K280 main 80% (K198+K208+K276b_top20 on Bybit+HL)",
         scripts=["scripts/k280_live_fetch.py", "scripts/k280_daily_run.py"],
         log_basename="k280_live",
-        expected_html_status="ACTIVE",
+        expected_html_status="PENDING ACTIVATION",  # K310 plist staged, awaiting manual load
     ),
     DaemonSpec(
         label="com.cryptolab.k302a-satellite",
@@ -61,28 +61,28 @@ REGISTRY: list[DaemonSpec] = [
             "scripts/k302a_satellite_run.py",
         ],
         log_basename="k302a_satellite",
-        expected_html_status="DEPLOY-READY",
+        expected_html_status="PENDING ACTIVATION",
     ),
     DaemonSpec(
         label="com.cryptolab.hl-predicted-monitor",
         purpose="K304 HL predictedFundings 5min poll (230 coins × 3 venues)",
         scripts=["scripts/hl_predicted_fr_monitor.py"],
         log_basename="hl_predicted_monitor",
-        expected_html_status="DEPLOY-READY",
+        expected_html_status="PENDING ACTIVATION",
     ),
     DaemonSpec(
         label="com.cryptolab.hlp-monitor",
-        purpose="K200 HLP balance monitor (R7-001)",
+        purpose="K200 HLP balance monitor — NO BACKING SCRIPT (K310 audit finding)",
         scripts=["scripts/hlp_balance_monitor.py"],
         log_basename="hlp_monitor",
-        expected_html_status="ACTIVE",
+        expected_html_status="UNKNOWN",  # K310 corrected from ACTIVE; no script exists
     ),
     DaemonSpec(
         label="com.cryptolab.k287-satellite",
         purpose="K287d satellite (DEPRECATED — K289, 60d rollback until 2026-07-25)",
         scripts=["scripts/k287_satellite_fetch.py", "scripts/k287_satellite_run.py"],
         log_basename="k287_satellite",
-        expected_html_status="DEPRECATED",
+        expected_html_status="SCAFFOLD-READY",  # K310 acknowledged plist never created
     ),
 ]
 

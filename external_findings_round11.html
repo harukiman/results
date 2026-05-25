@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>External Findings Round 11 | Systematic Alpha Discovery</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d2e;
+      --surface2: #232638;
+      --accent: #7c6af7;
+      --accent2: #4fc3f7;
+      --accent3: #81c784;
+      --warn: #ffb74d;
+      --danger: #ef5350;
+      --text: #e8eaf6;
+      --text2: #9fa8da;
+      --border: #2a2d45;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 16px;
+    }
+    .header {
+      background: linear-gradient(135deg, #1a1d2e 0%, #232638 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .header h1 { font-size: 1.6rem; color: var(--accent); margin-bottom: 8px; }
+    .header .meta { color: var(--text2); font-size: 0.85rem; }
+    .update-time {
+      background: var(--surface2);
+      border-left: 4px solid var(--accent);
+      padding: 8px 16px;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      color: var(--text2);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-card .num { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .stat-card .label { font-size: 0.75rem; color: var(--text2); margin-top: 4px; }
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent2);
+      padding: 10px 16px;
+      background: var(--surface);
+      border-radius: 8px;
+      margin: 20px 0 12px;
+      border-left: 4px solid var(--accent2);
+    }
+    .top3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .top3-card {
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .top3-card .rank {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--accent);
+      opacity: 0.4;
+      float: right;
+    }
+    .top3-card h3 { font-size: 0.95rem; color: var(--accent2); margin-bottom: 8px; }
+    .top3-card p { font-size: 0.82rem; color: var(--text2); }
+    .findings-grid { display: grid; gap: 12px; }
+    .finding-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      transition: border-color 0.2s;
+    }
+    .finding-card:hover { border-color: var(--accent); }
+    .finding-card.actionable { border-left: 3px solid var(--accent3); }
+    .finding-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .finding-id {
+      background: var(--surface2);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .finding-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .finding-summary { font-size: 0.82rem; color: var(--text2); margin-bottom: 10px; }
+    .finding-orth {
+      font-size: 0.78rem;
+      color: var(--accent3);
+      background: rgba(129, 199, 132, 0.08);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+    }
+    .finding-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .tag {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .tag-cat { background: rgba(124, 106, 247, 0.2); color: var(--accent); }
+    .tag-act { background: rgba(129, 199, 132, 0.2); color: var(--accent3); }
+    .tag-date { background: var(--surface2); color: var(--text2); }
+    .finding-link {
+      font-size: 0.75rem;
+      color: var(--accent2);
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .finding-link:hover { text-decoration: underline; }
+    .rwa-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 12px;
+    }
+    .rwa-table th {
+      background: var(--surface2);
+      color: var(--accent2);
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .rwa-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    .rwa-table tr:hover td { background: var(--surface2); }
+    .ready-yes { color: var(--accent3); font-weight: 700; }
+    .ready-exist { color: var(--warn); }
+    .ready-check { color: var(--text2); }
+    .cat-group { margin-bottom: 24px; }
+    .cat-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .cat-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .cat-label { font-size: 0.9rem; font-weight: 700; color: var(--text2); }
+    .overlap-check {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 0.8rem;
+      color: var(--text2);
+      margin-top: 20px;
+    }
+    .overlap-check h3 { color: var(--accent3); margin-bottom: 8px; }
+    @media (max-width: 600px) {
+      .top3 { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .header h1 { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>External Findings — Round 11</h1>
+  <div class="meta">
+    Systematic Alpha Discovery Program | crypto-lab | v6.12 K302a Post-Deployment Research
+  </div>
+</div>
+
+<div class="update-time">
+  最終更新: <strong>2026-05-25 (JST)</strong> &nbsp;|&nbsp;
+  累計エントリー: <strong>242件</strong> (R1-R10: 222 + R11: 20) &nbsp;|&nbsp;
+  戦略ベース: <strong>K302a (K280 80% + K297 PAXG/SPX HL-only 20%)</strong>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="num">20</div>
+    <div class="label">R11 新規Findings</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">242</div>
+    <div class="label">累計Findings</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">6</div>
+    <div class="label">K311+ Actionable</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">7</div>
+    <div class="label">戦略カテゴリ</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">$2.6B</div>
+    <div class="label">HL HIP-3 RWA OI ATH</div>
+  </div>
+  <div class="stat-card">
+    <div class="num">$4.4B</div>
+    <div class="label">Tokenized Gold 時価総額</div>
+  </div>
+</div>
+
+<!-- TOP 3 ACTIONABLE -->
+<div class="section-title">Top 3 Actionable for K311+</div>
+<div class="top3">
+  <div class="top3-card">
+    <span class="rank">1</span>
+    <h3>XAG(銀)・WTI原油 → K297ユニバース拡張 Ready</h3>
+    <p>Silver OI $100M超、WTI OI $200M超(2026年4月)。Ripple Primeが機関向けに金/銀/原油perpsを統合済み。S&P DJI正式ライセンスがSPXを制度的に確立。K297の衛星ユニバースをPAXG/SPXのみから拡張する十分な流動性基盤が整備完了。</p>
+  </div>
+  <div class="top3-card">
+    <span class="rank">2</span>
+    <h3>CEX→DEX情報フロー一方向 → CEXシグナルをK302a先行指標化</h3>
+    <p>26取引所・812シンボルの実証: CEXがDEXに61%高い市場統合度、逆因果ゼロ。FR有意スプレッドの84%がCEX-DEXペア。Binance/Bybitの8h FR→HL 1h FR予測への先行シグナル設計が可能。</p>
+  </div>
+  <div class="top3-card">
+    <span class="rank">3</span>
+    <h3>3状態HMM + Bayesian非同次推移確率 → K280 regimeフィルタ</h3>
+    <p>bull/bear/neutral 3状態モデルがBTC 4h足で2状態を有意に上回る(2024-2026実証)。K280のentryフィルタとして組み込み → bearish neutralでの誤エントリー削減。</p>
+  </div>
+</div>
+
+<!-- K297 RWA EXPANSION TABLE -->
+<div class="section-title">K297 RWA拡張候補テーブル (Special Focus)</div>
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px;overflow-x:auto;">
+  <table class="rwa-table">
+    <thead>
+      <tr>
+        <th>資産</th>
+        <th>HL OI</th>
+        <th>日次ボリューム</th>
+        <th>機関統合</th>
+        <th>拡張Ready</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>XAG (銀)</strong></td>
+        <td>$100M+</td>
+        <td>$300M+</td>
+        <td>Ripple Prime経由</td>
+        <td class="ready-yes">YES ★</td>
+      </tr>
+      <tr>
+        <td><strong>WTI原油</strong></td>
+        <td>$200M+</td>
+        <td>$600M+</td>
+        <td>Ripple Prime経由</td>
+        <td class="ready-yes">YES ★</td>
+      </tr>
+      <tr>
+        <td>S&P 500 (SPX)</td>
+        <td>$420M</td>
+        <td>$10B+</td>
+        <td>S&P DJIライセンス</td>
+        <td class="ready-exist">既存</td>
+      </tr>
+      <tr>
+        <td>PAXG (金)</td>
+        <td>既存</td>
+        <td>既存</td>
+        <td>週末独占価格形成</td>
+        <td class="ready-exist">既存</td>
+      </tr>
+      <tr>
+        <td>NASDAQ/TSLA/GOOG</td>
+        <td>流動性確認中</td>
+        <td>-</td>
+        <td>HIP-3 permissionless</td>
+        <td class="ready-check">要検証</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ALL FINDINGS -->
+<div class="section-title">全20件 Findings</div>
+
+<!-- HL RWA -->
+<div class="cat-group">
+  <div class="cat-header">
+    <div class="cat-dot" style="background:#7c6af7;"></div>
+    <div class="cat-label">HL RWA拡張 (4件)</div>
+  </div>
+  <div class="findings-grid">
+
+    <div class="finding-card actionable">
+      <div class="finding-header">
+        <span class="finding-id">R11-01</span>
+        <span class="finding-title">HyperLiquid HIP-3 RWA OI $1.74B ATH — WTI/Silver/SPX主導</span>
+      </div>
+      <div class="finding-summary">HIP-3 RWA無期限先物OIが2026年4月に$1.74B ATHを更新。WTI原油($200M OI)、Silver($100M OI)、S&P 500($420M OI)が牽引。Trade.xyzが91.3%のシェアを保持。XAG/WTIがK297拡張の実現可能性を直接証明するデータ。</div>
+      <div class="finding-orth">K302a直交性: K297はPAXG/SPXのみ。XAGの$100M+ OIは拡張候補として実行可能な閾値を超えた。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">HL_RWA_expansion</span>
+        <span class="tag tag-act">K311 Actionable</span>
+        <span class="tag tag-date">2026-04</span>
+        <a class="finding-link" href="https://cryptonews.com/news/hyperliquid-hip-3-open-interest-hits-record-tokenized-commodities/" target="_blank">cryptonews.com</a>
+      </div>
+    </div>
+
+    <div class="finding-card actionable">
+      <div class="finding-header">
+        <span class="finding-id">R11-02</span>
+        <span class="finding-title">S&P Dow Jones × Trade[XYZ]: SPX perp 24/7 正式ライセンス</span>
+      </div>
+      <div class="finding-summary">2026年3月18日、S&P DJIがTrade[XYZ]にSPX指数の公式ライセンスを供与。K297 SPX衛星が規制ライセンス基盤の上で稼働中。日次ボリューム$22B、上位30市場中23市場がTradFi資産。</div>
+      <div class="finding-orth">K302a直交性: K297前提が制度的に強化された。流動性増加でFR edgeが変化する可能性の継続監視が必要。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">HL_RWA_expansion</span>
+        <span class="tag tag-act">K311 Actionable</span>
+        <span class="tag tag-date">2026-03-18</span>
+        <a class="finding-link" href="https://www.prnewswire.com/news-releases/sp-dow-jones-indices-licenses-sp-500-to-tradexyz-for-perpetual-contracts-on-hyperliquid-302717487.html" target="_blank">prnewswire.com</a>
+      </div>
+    </div>
+
+    <div class="finding-card actionable">
+      <div class="finding-header">
+        <span class="finding-id">R11-04</span>
+        <span class="finding-title">Ripple Prime × HyperLiquid: 機関向け金・銀・WTI perp統合(RLUSD担保)</span>
+      </div>
+      <div class="finding-summary">2026年3月30日、Ripple PrimeがHIP-3をGold/Silver/WTI perpsに拡張。CME週末閉鎖時の中東紛争ヘッジ需要が直接の導入契機。機関がRLUSD担保で単一フレームワークからクロスマージン管理。HIP-3日次ボリューム$2.3B、OI $1.99B。</div>
+      <div class="finding-orth">K302a直交性: 機関プライムブローカー経由のRWA perp流入という新しい流動性ソース。XAG/WTI追加時の機関フロー確認済み。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">HL_RWA_expansion</span>
+        <span class="tag tag-act">K311 Actionable</span>
+        <span class="tag tag-date">2026-03-30</span>
+        <a class="finding-link" href="https://coinpedia.org/news/ripple-prime-expands-hyperliquid-integration-now-trade-gold-silver-and-oil-on-chain/" target="_blank">coinpedia.org</a>
+      </div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="finding-id">R11-05</span>
+        <span class="finding-title">Tokenized Gold 週末価格発見100%支配: PAXG/XAUtがCME閉鎖中の唯一公開市場</span>
+      </div>
+      <div class="finding-summary">CME金先物停止中(金曜17時ET〜日曜18時ET)にPAXG/XAUtが金価格形成を事実上独占。$4.4B時価総額(1年で177%増)。機関マクロデスクが週末gap riskシグナルとして監視。</div>
+      <div class="finding-orth">K302a直交性: K297 PAXGのweekend edgeの理論的根拠を確立。FR/spread戦略の週末効果の追加検証が必要。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">PAXG_microstructure</span>
+        <span class="tag tag-date">2026-03</span>
+        <a class="finding-link" href="https://cointelegraph.com/news/tokenized-gold-weekend-price-discovery-cme-closed" target="_blank">cointelegraph.com</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- HL Ecosystem -->
+<div class="cat-group">
+  <div class="cat-header">
+    <div class="cat-dot" style="background:#4fc3f7;"></div>
+    <div class="cat-label">HLエコシステム (5件)</div>
+  </div>
+  <div class="findings-grid">
+
+    <div class="finding-card actionable">
+      <div class="finding-header">
+        <span class="finding-id">R11-03</span>
+        <span class="finding-title">HyperLiquid Portfolio Margin + BLP Pre-Alpha: BTC担保・USDH借入 証拠金効率革命</span>
+      </div>
+      <div class="finding-summary">2026年3月、Portfolio MarginとBLP Pre-Alphaを同時発表。spot残高+全perp positionを統合margining。$5M+ボリューム要件。BTC担保でUSDH/USDC最大$1M借入可能。RWA perp(SPX/PAXG/XAG)を同一口座で保有し証拠金効率最大化。</div>
+      <div class="finding-orth">K302a直交性: K302aは固定配分。Portfolio Marginで複数戦略間の相殺が可能になりK297証拠金効率が向上する新設計機会。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">HL_ecosystem</span>
+        <span class="tag tag-act">K311 Actionable</span>
+        <span class="tag tag-date">2026-03</span>
+        <a class="finding-link" href="https://thedefiant.io/news/defi/hyperliquid-launches-portfolio-margin-and-blp-pre-alpha" target="_blank">thedefiant.io</a>
+      </div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="finding-id">R11-06</span>
+        <span class="finding-title">HyperLiquid HIP-4: 予測市場、ゼロ手数料、初日3×Polymarket+Kalshi</span>
+      </div>
+      <div class="finding-summary">2026年5月2日、ゼロ手数料の予測市場をperp同一口座から取引可能。初日BTCアウトカム市場がPolymarket+Kalshi合算の3倍出来高。Arthur Hayes: HYPEが予測市場での競争兵器。マクロイベントヘッジの新次元を開く。</div>
+      <div class="finding-orth">K302a直交性: K302aはperp戦略中心。HIP-4は同一marginからイベント駆動バイナリーpositionを統合した複合戦略を可能にする。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">HL_ecosystem</span>
+        <span class="tag tag-date">2026-05-02</span>
+        <a class="finding-link" href="https://www.dlnews.com/articles/markets/hyperliquid-launches-prediction-markets-for-bitcoin/" target="_blank">dlnews.com</a>
+      </div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="finding-id">R11-07</span>
+        <span class="finding-title">HypurrFi × Euler Finance: HyperEVM上の分離リスク貸借市場、BLP担保化</span>
+      </div>
+      <div class="finding-summary">HypurrFiがEulerの貸借スタックをHyperEVM上にデプロイ。各資産が独立したリスクパラメータを持つ分離市場構造。BLPポジションを担保に借入可能。$2.3B以上のdeposit実績を持つEulerをHL生態系に移植。perp利益のHyperEVM側lending活用が可能。</div>
+      <div class="finding-orth">K302a直交性: K302aはHyperCore完結型。HypurrFiはperp→lending複合資本循環という全く新しいyield経路を開く。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">HL_ecosystem</span>
+        <span class="tag tag-date">2026-Q1</span>
+        <a class="finding-link" href="https://www.blocmates.com/news-posts/hypurrfi-brings-euler-finance-to-hyperliquid-s-growing-ecosystem" target="_blank">blocmates.com</a>
+      </div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="finding-id">R11-08</span>
+        <span class="finding-title">HyperLiquid USDH: Coinbase/Circle支援、GENIUS Act対応ネイティブステーブルコイン</span>
+      </div>
+      <div class="finding-summary">短期米国債担保でGENIUS Act(米ステーブルコイン規制)対応。CoinbaseがUSDH連動資産取得権確保(2026年5月)。供給上限500M/借入上限100M。将来的にUSDC→USDH移行でsettlement通貨が変わる可能性あり。</div>
+      <div class="finding-orth">K302a直交性: 現在USDC清算前提。USDH移行フェーズでの清算・funding settlement通貨変更の影響を監視すべき。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">HL_ecosystem</span>
+        <span class="tag tag-date">2026-05</span>
+        <a class="finding-link" href="https://www.coingecko.com/learn/what-is-usdh-hyperliquid-native-stablecoin" target="_blank">coingecko.com</a>
+      </div>
+    </div>
+
+    <div class="finding-card actionable">
+      <div class="finding-header">
+        <span class="finding-id">R11-20</span>
+        <span class="finding-title">HyperLiquid 2026 H2ロードマップ: ネイティブOptions Q3、HYPE-margin perp、新spot bridge</span>
+      </div>
+      <div class="finding-summary">公式ロードマップ: (1)ネイティブOptions市場 Q3 2026 (2)HYPE担保perp追加 (3)新spot bridge (4)バリデーター50+ノード (5)HyperEVM precompile追加。オプションはevent-driven hedgingの基盤となる。</div>
+      <div class="finding-orth">K302a直交性: Q3のoptionローンチはK311+設計前提を変える。delta-hedged volatility play等の新次元が開く。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">HL_ecosystem</span>
+        <span class="tag tag-act">K311 Actionable</span>
+        <span class="tag tag-date">2026-05</span>
+        <a class="finding-link" href="https://www.hypewatch.io/blog/hyperliquid-complete-guide-2026" target="_blank">hypewatch.io</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Microstructure -->
+<div class="cat-group">
+  <div class="cat-header">
+    <div class="cat-dot" style="background:#ffb74d;"></div>
+    <div class="cat-label">Market Microstructure Research (2件)</div>
+  </div>
+  <div class="findings-grid">
+
+    <div class="finding-card actionable">
+      <div class="finding-header">
+        <span class="finding-id">R11-09</span>
+        <span class="finding-title">Temporal Dynamics: perp先物市場マイクロストラクチャー — CEX→DEX情報フロー一方向 (MDPI JoF&BD 2026)</span>
+      </div>
+      <div class="finding-summary">26取引所・812シンボル・2ヶ月(2025年11月〜2026年1月)の実証研究。CEXがDEXに比べ61%高い市場統合度。情報フローはCEX→DEX一方向でゼロ逆因果。離散的構造変化なく緩やかなドリフトで市場進化。K302aのHL(DEX)戦略がCEXシグナルをラグして受け取ることを実証。</div>
+      <div class="finding-orth">K302a直交性: Binance/OKX等CEXのFR/OIシグナルをHL戦略の先行指標として組み込む設計根拠を実証研究が提供。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">microstructure</span>
+        <span class="tag tag-act">K311 Actionable</span>
+        <span class="tag tag-date">2026-05</span>
+        <a class="finding-link" href="https://www.mdpi.com/2227-7072/14/5/103" target="_blank">mdpi.com/2227-7072/14/5/103</a>
+      </div>
+    </div>
+
+    <div class="finding-card actionable">
+      <div class="finding-header">
+        <span class="finding-id">R11-10</span>
+        <span class="finding-title">Two-Tiered FR Market: CEXタイト統合・DEXフラグメント、スプレッドの84%がCEX-DEXペア</span>
+      </div>
+      <div class="finding-summary">暗号通貨FRマーケットが「CEXタイト統合クラスター」と「DEXフラグメントクラスター」の2層構造を形成。経済的に有意なスプレッド(>=20bps)の84%がCEX-DEXペアから発生。CEX 8h/DEX 1h settlementの差異が主要なアービトラージ源泉。</div>
+      <div class="finding-orth">K302a直交性: CEX-DEX FRスプレッドをlongする戦略は既存K298 predictedFundingとは独立した新軸。K298の再設計にCEX FR差異を組み込む機会。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">funding_rate</span>
+        <span class="tag tag-act">K311 Actionable</span>
+        <span class="tag tag-date">2026-01</span>
+        <a class="finding-link" href="https://www.mdpi.com/2227-7390/14/2/346" target="_blank">mdpi.com/2227-7390/14/2/346</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Funding Rate -->
+<div class="cat-group">
+  <div class="cat-header">
+    <div class="cat-dot" style="background:#ef5350;"></div>
+    <div class="cat-label">Funding Rate Research (1件)</div>
+  </div>
+  <div class="findings-grid">
+
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="finding-id">R11-11</span>
+        <span class="finding-title">Funding-Aware Optimal Market Making for Perpetual DEXs (arxiv 2605.06405, 2026-05-07)</span>
+      </div>
+      <div class="finding-summary">Funding rateが確率的状態変数のときのperp DEX最適流動性供給。HJBスキームでbid/askオフセットを最適化。Hyperliquid ETH/BTC/SOLでキャリブレーション実施。古典Avellaneda-Stoikov比でETH/BTCパフォーマンス改善+inventory RMS低下を100シードhold-outで実証。</div>
+      <div class="finding-orth">K302a直交性: K302aはtaker戦略。HL makerとしてのFR-aware quotingはHLP/BLPに適用。K311以降でmaker satellite追加の理論基盤。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">funding_rate</span>
+        <span class="tag tag-date">2026-05-07</span>
+        <a class="finding-link" href="https://arxiv.org/abs/2605.06405" target="_blank">arxiv.org/abs/2605.06405</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Regime Detection -->
+<div class="cat-group">
+  <div class="cat-header">
+    <div class="cat-dot" style="background:#81c784;"></div>
+    <div class="cat-label">Regime Detection (1件)</div>
+  </div>
+  <div class="findings-grid">
+
+    <div class="finding-card actionable">
+      <div class="finding-header">
+        <span class="finding-id">R11-13</span>
+        <span class="finding-title">HMM 3状態 + Bayesian非同次推移確率: Bitcoin 2024-2026 regime検知 (Preprints 202603.0831)</span>
+      </div>
+      <div class="finding-summary">BTC 4h足2024年1月〜2026年1月のHMM分析。bull/bear/neutral 3状態モデルが2状態を有意に上回る。非同次推移確率+Bayesian推定で動的市場挙動を捕捉。離散的構造変化ではなく連続ドリフトとしてBTC動態を記述。</div>
+      <div class="finding-orth">K302a直交性: K302aはregimeフィルタ未搭載。3状態HMMをK280のentryフィルタとして使うことで、bearish neutralレジームでの誤エントリーを削減できる設計改善。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">regime_detection</span>
+        <span class="tag tag-act">K311 Actionable</span>
+        <span class="tag tag-date">2026-03-11</span>
+        <a class="finding-link" href="https://www.preprints.org/manuscript/202603.0831" target="_blank">preprints.org/202603.0831</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ML Research -->
+<div class="cat-group">
+  <div class="cat-header">
+    <div class="cat-dot" style="background:#ce93d8;"></div>
+    <div class="cat-label">ML/AI Research (5件)</div>
+  </div>
+  <div class="findings-grid">
+
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="finding-id">R11-14</span>
+        <span class="finding-title">Wavelet-Transformer: Fear & Greed 5周波数帯分解→暗号通貨予測改善 (MDPI Algorithms 2026)</span>
+      </div>
+      <div class="finding-summary">210万パラメータのwavelet強化transformer。F&GインデックスをDaubechies-4ウェーブレット4レベルで5周波数帯に分解し技術的指標と統合。高ボラティリティレジームで最大パフォーマンスマージン達成。低ドリフト/高ドリフト両シナリオで従来モデルを上回る。</div>
+      <div class="finding-orth">K302a直交性: K302aはsentimentフィルタ未搭載。Wavelet-TransformerによるF&G多重分解でshort/mediumタームsentimentシフトを早期検知し、K280ポジションサイジングに組み込む設計が可能。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">ml_research</span>
+        <span class="tag tag-date">2026-01</span>
+        <a class="finding-link" href="https://www.mdpi.com/1999-4893/19/2/101" target="_blank">mdpi.com/1999-4893/19/2/101</a>
+      </div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="finding-id">R11-15</span>
+        <span class="finding-title">Meta-RL-Crypto: Transformer+RL Actor-Judge-MetaJudge閉ループ自己改善 (arxiv 2509.09751)</span>
+      </div>
+      <div class="finding-summary">Llama-7Bベースの統合Transformer+強化学習アーキテクチャ。Actor(予測)/Judge(多目的reward評価)/MetaJudge(ループ改善)の3役割を交互実行。on-chain+news+sentimentを統合処理。追加人間監督なしで自己学習。LLMベースbaseline全モデルを上回る。K198 Ridge era後の次世代ML allocator候補。</div>
+      <div class="finding-orth">K302a直交性: K280はRidge回帰ベースsupervised learning。Meta-RL-Cryptoはself-improving型で非定常市場への適応力でRidgeの根本的限界を超えるパラダイム転換。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">ml_research</span>
+        <span class="tag tag-date">2025-09</span>
+        <a class="finding-link" href="https://arxiv.org/abs/2509.09751" target="_blank">arxiv.org/abs/2509.09751</a>
+      </div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="finding-id">R11-16</span>
+        <span class="finding-title">Transformer Actor-Critic + VAEトレンド表現: Expert選択型動的perp portfolio (ScienceDirect 2026)</span>
+      </div>
+      <div class="finding-summary">Transformer VAEで非絡み合いトレンド表現を抽出。Trend-aware actor-criticがexpert strategyプールから動的選択。portfolio管理をdirect weight予測でなくstrategy-selection問題として定式化。Markowitz benchmarkをreturn/Sharpe両面で上回る。</div>
+      <div class="finding-orth">K302a直交性: K302aはK280 80%+K297 20%固定配分。本手法はregime適応的動的配分を可能にし、K297 RWA衛星への配分比を市場状態に応じて変更できる。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">ml_research</span>
+        <span class="tag tag-date">2026</span>
+        <a class="finding-link" href="https://www.sciencedirect.com/science/article/abs/pii/S1568494625010087" target="_blank">sciencedirect.com</a>
+      </div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="finding-id">R11-19</span>
+        <span class="finding-title">Deep RL Free-Energy Framework: Riemannian幾何学的取引コスト+Carnot効率限界 (MDPI Risks 2026)</span>
+      </div>
+      <div class="finding-summary">PPOエージェントをFisher情報多様体上のgeodesic slippage(幾何学的取引コスト)とWasserstein-2レジーム遷移コストで訓練。free-energy Bellman方程式使用。BTC/ETH/XRP/LTC/BCH 2017-2026で5仮説検証。4/5資産でflat-fee baselineより統計的優位なSharpe。ポートフォリオ効率のCarnot限界を理論・実証両面で導出。</div>
+      <div class="finding-orth">K302a直交性: K302aは標準的なperp戦略。取引コストを幾何学的に再定義する根本的に異なるアプローチ。K311でより精緻なコストモデリングに活用可能。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">ml_research</span>
+        <span class="tag tag-date">2026-05</span>
+        <a class="finding-link" href="https://www.mdpi.com/2227-9091/14/5/103" target="_blank">mdpi.com/2227-9091/14/5/103</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Onchain Research -->
+<div class="cat-group">
+  <div class="cat-header">
+    <div class="cat-dot" style="background:#4fc3f7;"></div>
+    <div class="cat-label">Onchain & Academic Research (3件)</div>
+  </div>
+  <div class="findings-grid">
+
+    <div class="finding-card actionable">
+      <div class="finding-header">
+        <span class="finding-id">R11-17</span>
+        <span class="finding-title">On-Chain Flow Forecasting: USDTネット流入がBTC/ETH 1時間リターンを正に予測 (arxiv 2411.06327)</span>
+      </div>
+      <div class="finding-summary">BTC/ETH/USDTの1-6時間頻度on-chain flow解析(2017-2023)。USDTの取引所ネット流入がBTC/ETHリターンを複数区間で正に予測。ETHネット流入はETHリターン/ボラティリティを負に予測。USDT流入=流動性供給→ボラティリティ低下の機制を確認。日中portfolio管理への実用示唆あり。</div>
+      <div class="finding-orth">K302a直交性: K302aはcandle+FR/OIベース。USDTon-chain flowは取引所外部からの資金流入という独立シグナルで、K280 entryタイミングフィルタへの追加で信号直交性が向上。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">onchain_research</span>
+        <span class="tag tag-act">K311 Actionable</span>
+        <span class="tag tag-date">2025-09</span>
+        <a class="finding-link" href="https://arxiv.org/abs/2411.06327" target="_blank">arxiv.org/abs/2411.06327</a>
+      </div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="finding-id">R11-18</span>
+        <span class="finding-title">Intraday Functional PCA: 24/7暗号通貨リターン関数予測、KL動的ファクターモデル (arxiv 2505.20508)</span>
+      </div>
+      <div class="finding-summary">Journal of Forecasting掲載(Jasiak & Zhong)。BitcoinのイントラデイリターンにFPCA適用。KL動的ファクターモデルでfunctional↔discrete-timeを橋渡し。条件付き異分散性考慮でinterval予測改善。1時間・15分サンプリングで未完関数の予測アルゴリズムを開発。24/7連続データへ汎用適用可。</div>
+      <div class="finding-orth">K302a直交性: OHLCVベースの既存手法とは全く異なる関数的アプローチ。日中の価格パスを連続関数として扱うことで既存シグナルと非相関の予測値を生成できる。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">academic_research</span>
+        <span class="tag tag-date">2026-05</span>
+        <a class="finding-link" href="https://arxiv.org/abs/2505.20508" target="_blank">arxiv.org/abs/2505.20508</a>
+      </div>
+    </div>
+
+    <div class="finding-card">
+      <div class="finding-header">
+        <span class="finding-id">R11-12</span>
+        <span class="finding-title">Funding Rate Mechanism in Perpetual Futures: SSRN 2026新理論 (SSRN 6185958)</span>
+      </div>
+      <div class="finding-summary">無期限先物のFunding Rate機構を新たに理論化。発行者視点での価格整合設計とhedging手法を両立。path-dependent FRが実務的な代替として機能することを証明。K297/K298のFR収束前提の理論的裏付けを強化。R10のarxiv 2506.08573と相補的な位置づけ。</div>
+      <div class="finding-orth">K302a直交性: K298 predictedFundingシグナルの根拠を理論面から補強。FR設計の理解が深まることでK298のサインal解釈精度が向上。</div>
+      <div class="finding-meta">
+        <span class="tag tag-cat">funding_rate</span>
+        <span class="tag tag-date">2026</span>
+        <a class="finding-link" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6185958" target="_blank">ssrn.com (6185958)</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Overlap Check -->
+<div class="overlap-check">
+  <h3>重複確認 (R1-R10 vs R11)</h3>
+  <ul style="margin-top:8px;padding-left:16px;">
+    <li>arxiv 2506.08573: R10にHTMLバージョンURL含む → R11では対応するSSRN 6185958(異なるURL)に置換</li>
+    <li>cryptopolitan.com portfolio margin: R10に含む → R11-03はthedefiant.io URLで差別化</li>
+    <li>coindesk.com $1.2B HIP-3記事: R10に含む → R11-01はcryptonews.com ($1.74B ATH)で差別化</li>
+    <li>coingecko.com HIP3/HIP4記事: R10に含む → R11-06はdlnews.com URLで差別化</li>
+    <li>全20件のURLがR1-R10と非重複であることを確認済み</li>
+  </ul>
+</div>
+
+</body>
+</html>
