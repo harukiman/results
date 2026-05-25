@@ -29,7 +29,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Optional
 
-REPO_ROOT = Path("/Users/nekonaomichi/crypto-lab")
+REPO_ROOT = Path(__file__).resolve().parent.parent
 LAUNCH_AGENTS = Path.home() / "Library" / "LaunchAgents"
 LOGS_DIR = REPO_ROOT / "logs"
 

@@ -112,7 +112,7 @@ python3 -c "
 import pandas as pd
 for f in ['cache/hl_k276b_fr_daily.parquet', 'cache/k302a_fr_daily.parquet']:
     try:
-        df = pd.read_parquet(f'/Users/nekonaomichi/crypto-lab/{f}')
+        df = pd.read_parquet(f'$CRYPTO_LAB/{f}')
         print(f'OK: {f} — {df.shape}')
     except Exception as e:
         print(f'CORRUPTED: {f} — {e}')
@@ -136,15 +136,15 @@ for f in ['cache/hl_k276b_fr_daily.parquet', 'cache/k302a_fr_daily.parquet']:
 
 **Check disk usage:**
 ```bash
-du -sh /Users/nekonaomichi/crypto-lab/cache/ 2>/dev/null
-df -h /Users/nekonaomichi/
+du -sh $CRYPTO_LAB/cache/ 2>/dev/null
+df -h $HOME/
 ```
 
 **Manual cleanup (safe to delete older than 90 days):**
 ```bash
 # Remove K280 daily snapshots older than 90 days (keep last 90)
-find /Users/nekonaomichi/crypto-lab/cache -name "k280_live_*.parquet" -mtime +90 -delete
-find /Users/nekonaomichi/crypto-lab/cache -name "k302a_satellite_*.parquet" -mtime +90 -delete
+find $CRYPTO_LAB/cache -name "k280_live_*.parquet" -mtime +90 -delete
+find $CRYPTO_LAB/cache -name "k302a_satellite_*.parquet" -mtime +90 -delete
 # K304 snapshots auto-purge (built-in 24h window) — no action needed
 ```
 
@@ -158,10 +158,10 @@ find /Users/nekonaomichi/crypto-lab/cache -name "k302a_satellite_*.parquet" -mti
 **Recovery:**
 ```bash
 # Force re-fetch after network recovery
-/Users/nekonaomichi/crypto-lab/.venv311/bin/python3 \
-    /Users/nekonaomichi/crypto-lab/scripts/k280_live_fetch.py --force
-/Users/nekonaomichi/crypto-lab/.venv311/bin/python3 \
-    /Users/nekonaomichi/crypto-lab/scripts/k302a_satellite_fetch.py --force
+$CRYPTO_LAB/.venv311/bin/python3 \
+    $CRYPTO_LAB/scripts/k280_live_fetch.py --force
+$CRYPTO_LAB/.venv311/bin/python3 \
+    $CRYPTO_LAB/scripts/k302a_satellite_fetch.py --force
 ```
 
 ### 1.7 Strategy Parameter Drift
@@ -180,7 +180,7 @@ find /Users/nekonaomichi/crypto-lab/cache -name "k302a_satellite_*.parquet" -mti
 ```bash
 python3 -c "
 import json
-with open('/Users/nekonaomichi/crypto-lab/data/k280_live_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k280_live_dashboard.json') as f:
     d = json.load(f)
 rm = d.get('rolling_metrics', {})
 print(f'Drift z-score: {rm.get(\"drift_z\", \"N/A\")} (alert > 2.0, critical > 2.5)')
@@ -221,7 +221,7 @@ files = {
 }
 for name, path in files.items():
     try:
-        with open(f'/Users/nekonaomichi/crypto-lab/{path}') as f:
+        with open(f'$CRYPTO_LAB/{path}') as f:
             d = json.load(f)
         lu = d.get('last_update', 'N/A')
         print(f'{name}: {lu}')
@@ -235,7 +235,7 @@ for name, path in files.items():
 python3 -c "
 import json
 for label, path in [('K280', 'data/k280_live_dashboard.json'), ('K302a', 'data/k302a_satellite_dashboard.json')]:
-    with open(f'/Users/nekonaomichi/crypto-lab/{path}') as f:
+    with open(f'$CRYPTO_LAB/{path}') as f:
         d = json.load(f)
     rm = d.get('rolling_metrics', {})
     print(f'{label}: 7d Sh={rm.get(\"sh_7d\",\"N/A\")}  30d Sh={rm.get(\"sh_30d\",\"N/A\")}  MaxDD={rm.get(\"mdd_all\",\"N/A\")}')
@@ -249,24 +249,24 @@ for label, path in [('K280', 'data/k280_live_dashboard.json'), ('K302a', 'data/k
 ### 2.4 Alert Log Review
 ```bash
 # K280 alerts
-tail -20 /Users/nekonaomichi/crypto-lab/logs/k280_live.log | grep -E "(ALERT|CRITICAL|HALT|REDUCE|ERROR)"
+tail -20 $CRYPTO_LAB/logs/k280_live.log | grep -E "(ALERT|CRITICAL|HALT|REDUCE|ERROR)"
 
 # K302a alerts
-tail -20 /Users/nekonaomichi/crypto-lab/logs/k302a_satellite.log | grep -E "(ALERT|CRITICAL|HALT|REDUCE|ERROR)"
+tail -20 $CRYPTO_LAB/logs/k302a_satellite.log | grep -E "(ALERT|CRITICAL|HALT|REDUCE|ERROR)"
 
 # HL monitor alerts
-tail -20 /Users/nekonaomichi/crypto-lab/logs/hl_predicted_fr_monitor.log | grep -E "(ALERT|HIGH|EXTREME)"
+tail -20 $CRYPTO_LAB/logs/hl_predicted_fr_monitor.log | grep -E "(ALERT|HIGH|EXTREME)"
 
 # Error files
-tail -5 /Users/nekonaomichi/crypto-lab/logs/k280_live_err.log
-tail -5 /Users/nekonaomichi/crypto-lab/logs/k302a_satellite_err.log
+tail -5 $CRYPTO_LAB/logs/k280_live_err.log
+tail -5 $CRYPTO_LAB/logs/k302a_satellite_err.log
 ```
 
 ### 2.5 Drift Score Check
 ```bash
 python3 -c "
 import json
-with open('/Users/nekonaomichi/crypto-lab/data/k280_live_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k280_live_dashboard.json') as f:
     d = json.load(f)
 z = d.get('rolling_metrics', {}).get('drift_z', None)
 if z is None:
@@ -295,7 +295,7 @@ else:
 ```bash
 python3 -c "
 import json
-with open('/Users/nekonaomichi/crypto-lab/data/k280_live_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k280_live_dashboard.json') as f:
     d = json.load(f)
 rm = d.get('rolling_metrics', {})
 sh7 = rm.get('sh_7d', 'N/A')
@@ -303,7 +303,7 @@ sh30 = rm.get('sh_30d', 'N/A')
 print(f'K280 — 7d Sh: {sh7}  |  30d Sh: {sh30}  |  Backtest OOS: 18.46')
 print(f'       WF min threshold: 12.97')
 # K302a
-with open('/Users/nekonaomichi/crypto-lab/data/k302a_satellite_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k302a_satellite_dashboard.json') as f:
     d2 = json.load(f)
 rm2 = d2.get('rolling_metrics', {})
 print(f'K302a — 7d Sh: {rm2.get(\"sh_7d\",\"N/A\")}  |  30d Sh: {rm2.get(\"sh_30d\",\"N/A\")}  |  Backtest Sh: 10.17 (full 504d)')
@@ -318,7 +318,7 @@ print(f'K302a — 7d Sh: {rm2.get(\"sh_7d\",\"N/A\")}  |  30d Sh: {rm2.get(\"sh_
 ```bash
 python3 -c "
 import json
-with open('/Users/nekonaomichi/crypto-lab/data/k280_live_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k280_live_dashboard.json') as f:
     d = json.load(f)
 cc = d.get('component_contribution', {})
 for comp, info in cc.items():
@@ -330,7 +330,7 @@ for comp, info in cc.items():
 ```bash
 python3 -c "
 import json
-with open('/Users/nekonaomichi/crypto-lab/data/k280_live_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k280_live_dashboard.json') as f:
     d = json.load(f)
 hlp = d.get('hlp_status', {})
 print(f'HLP balance:   \${hlp.get(\"balance_m\",\"N/A\")}M')
@@ -339,7 +339,7 @@ print(f'HLP 30d change: {hlp.get(\"change_30d_pct\",\"N/A\")}%')
 print(f'HLP alert level: {hlp.get(\"alert_level\",\"N/A\")}')
 "
 # Also check HLP monitor log
-tail -10 /Users/nekonaomichi/crypto-lab/logs/hlp_monitor.log
+tail -10 $CRYPTO_LAB/logs/hlp_monitor.log
 ```
 
 **HLP thresholds:**
@@ -349,17 +349,17 @@ tail -10 /Users/nekonaomichi/crypto-lab/logs/hlp_monitor.log
 
 ### 3.4 7d Alert Count Summary
 ```bash
-grep -c "ALERT\|CRITICAL\|HALT\|REDUCE" /Users/nekonaomichi/crypto-lab/logs/k280_live.log 2>/dev/null || echo "0 alerts in K280 log"
-grep -c "ALERT\|CRITICAL\|HALT\|REDUCE" /Users/nekonaomichi/crypto-lab/logs/k302a_satellite.log 2>/dev/null || echo "0 alerts in K302a log"
+grep -c "ALERT\|CRITICAL\|HALT\|REDUCE" $CRYPTO_LAB/logs/k280_live.log 2>/dev/null || echo "0 alerts in K280 log"
+grep -c "ALERT\|CRITICAL\|HALT\|REDUCE" $CRYPTO_LAB/logs/k302a_satellite.log 2>/dev/null || echo "0 alerts in K302a log"
 # Per-week count (last 7 days of log)
-grep "$(date -v -7d '+%Y-%m-%d')" /Users/nekonaomichi/crypto-lab/logs/k280_live.log | grep -c "ALERT" || echo "0"
+grep "$(date -v -7d '+%Y-%m-%d')" $CRYPTO_LAB/logs/k280_live.log | grep -c "ALERT" || echo "0"
 ```
 
 ### 3.5 K302a Satellite Weight Stability
 ```bash
 python3 -c "
 import json
-with open('/Users/nekonaomichi/crypto-lab/data/k302a_satellite_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k302a_satellite_dashboard.json') as f:
     d = json.load(f)
 sw = d.get('satellite_weights', {})
 print(f'PAXG weight: {sw.get(\"PAXG\",0):.1%}  (target: 60%)')
@@ -384,11 +384,11 @@ if len(recs) >= 7:
 ```bash
 python3 -c "
 import json
-with open('/Users/nekonaomichi/crypto-lab/data/k280_live_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k280_live_dashboard.json') as f:
     d = json.load(f)
 sh30 = d.get('rolling_metrics', {}).get('sh_30d', 'N/A')
 print(f'K280 30d Sh: {sh30}  |  Backtest OOS: 18.46  |  K303 gate: ≥25 for full capital')
-with open('/Users/nekonaomichi/crypto-lab/data/k302a_satellite_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k302a_satellite_dashboard.json') as f:
     d2 = json.load(f)
 sh30_sat = d2.get('rolling_metrics', {}).get('sh_30d', 'N/A')
 print(f'K302a combined target: 32.59  |  Revert threshold: <25 sustained')
@@ -409,7 +409,7 @@ Check if K208 DAR gate thresholds remain valid:
 # Check recent spread behavior for K208 symbols
 python3 -c "
 import json
-with open('/Users/nekonaomichi/crypto-lab/data/k280_live_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k280_live_dashboard.json') as f:
     d = json.load(f)
 compressed = d.get('active_alert_flags', {}).get('spread_compressed_syms', [])
 print(f'K208 spread compressed symbols: {compressed}')
@@ -421,7 +421,7 @@ Check if K276b universe coverage has degraded:
 ```bash
 python3 -c "
 import json
-with open('/Users/nekonaomichi/crypto-lab/data/k280_live_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k280_live_dashboard.json') as f:
     d = json.load(f)
 low_liq = d.get('active_alert_flags', {}).get('k276b_low_liq', [])
 print(f'K276b low liquidity symbols (coverage < 70% 7d): {low_liq}')
@@ -435,9 +435,9 @@ Run every 30 days to verify K297 still diversifies vs K280:
 ```bash
 python3 -c "
 import json, numpy as np
-with open('/Users/nekonaomichi/crypto-lab/data/k280_live_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k280_live_dashboard.json') as f:
     k280 = json.load(f)
-with open('/Users/nekonaomichi/crypto-lab/data/k302a_satellite_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k302a_satellite_dashboard.json') as f:
     k302a = json.load(f)
 k280_pnls = [r.get('pnl', 0) for r in k280.get('daily_records', [])[-90:]]
 k302a_pnls = [r.get('pnl', 0) for r in k302a.get('daily_records', [])[-90:]]
@@ -499,7 +499,7 @@ else:
 **Action:**
 1. Verify HLP alert in dashboard:
    ```bash
-   python3 -c "import json; d=json.load(open('/Users/nekonaomichi/crypto-lab/data/k280_live_dashboard.json')); print(d.get('hlp_status', {}))"
+   python3 -c "import json; d=json.load(open('$CRYPTO_LAB/data/k280_live_dashboard.json')); print(d.get('hlp_status', {}))"
    ```
 2. Monitor HLP daily until change recovers to > -20%
 3. K208 weight auto-restores when condition clears
@@ -516,7 +516,7 @@ else:
    ```bash
    python3 -c "
    import json
-   with open('/Users/nekonaomichi/crypto-lab/data/k302a_satellite_dashboard.json') as f:
+   with open('$CRYPTO_LAB/data/k302a_satellite_dashboard.json') as f:
        d = json.load(f)
    recs = d.get('daily_records', [])[-7:]
    for r in recs:
@@ -590,7 +590,7 @@ launchctl list | grep k302a  # should show nothing
 ### Step 2: Re-enable K287d Daemon
 ```bash
 # Restore the disabled K287d plist
-cp /Users/nekonaomichi/crypto-lab/com.cryptolab.k287-satellite.plist.disabled_k305 \
+cp $CRYPTO_LAB/com.cryptolab.k287-satellite.plist.disabled_k305 \
    ~/Library/LaunchAgents/com.cryptolab.k287-satellite.plist
 launchctl load ~/Library/LaunchAgents/com.cryptolab.k287-satellite.plist
 launchctl list | grep k287  # should appear
@@ -599,29 +599,29 @@ launchctl list | grep k287  # should appear
 ### Step 3: Restore K287c Satellite Cache
 ```bash
 # Restore backed-up cache files from migration
-cp /Users/nekonaomichi/crypto-lab/cache/k287d_backup/k270_dydx_daily.parquet \
-   /Users/nekonaomichi/crypto-lab/cache/k270_dydx_daily.parquet
-cp /Users/nekonaomichi/crypto-lab/cache/k287d_backup/okx_fr_daily.parquet \
-   /Users/nekonaomichi/crypto-lab/cache/okx_fr_daily.parquet
+cp $CRYPTO_LAB/cache/k287d_backup/k270_dydx_daily.parquet \
+   $CRYPTO_LAB/cache/k270_dydx_daily.parquet
+cp $CRYPTO_LAB/cache/k287d_backup/okx_fr_daily.parquet \
+   $CRYPTO_LAB/cache/okx_fr_daily.parquet
 # Restore K270 per-symbol directory if needed
-cp -r /Users/nekonaomichi/crypto-lab/cache/k287d_backup/k270_dydx \
-      /Users/nekonaomichi/crypto-lab/cache/k270_dydx
+cp -r $CRYPTO_LAB/cache/k287d_backup/k270_dydx \
+      $CRYPTO_LAB/cache/k270_dydx
 echo "Cache restored from k287d_backup/"
 ```
 
 ### Step 4: Reconcile Positions
 ```bash
 # Run K287d fetch to verify data is current
-/Users/nekonaomichi/crypto-lab/.venv311/bin/python3 \
-    /Users/nekonaomichi/crypto-lab/scripts/k287_satellite_fetch.py --force
+$CRYPTO_LAB/.venv311/bin/python3 \
+    $CRYPTO_LAB/scripts/k287_satellite_fetch.py --force
 
-/Users/nekonaomichi/crypto-lab/.venv311/bin/python3 \
-    /Users/nekonaomichi/crypto-lab/scripts/k287_satellite_run.py
+$CRYPTO_LAB/.venv311/bin/python3 \
+    $CRYPTO_LAB/scripts/k287_satellite_run.py
 
 # Verify K287d dashboard updated
 python3 -c "
 import json
-with open('/Users/nekonaomichi/crypto-lab/data/k287_satellite_dashboard.json') as f:
+with open('$CRYPTO_LAB/data/k287_satellite_dashboard.json') as f:
     d = json.load(f)
 print('K287d last update:', d.get('last_update'))
 print('K287d satellite Sh (30d):', d.get('rolling_metrics', {}).get('sh_30d'))
@@ -728,7 +728,7 @@ SYMPTOM: Unexpected PnL deviation or system anomaly
 ## 10. Manual Commands Reference
 
 ```bash
-BASE=/Users/nekonaomichi/crypto-lab
+BASE=$CRYPTO_LAB
 PYTHON=$BASE/.venv311/bin/python3
 
 # Daemon management
@@ -816,7 +816,7 @@ Before loading any plist, verify the following:
 
 1. **Test each script manually in your terminal:**
    ```bash
-   cd /Users/nekonaomichi/crypto-lab
+   cd $CRYPTO_LAB
    # K280 main
    .venv311/bin/python scripts/k280_live_fetch.py --dry-run 2>&1 | tail -20
    .venv311/bin/python scripts/k280_daily_run.py 2>&1 | tail -20

@@ -21,7 +21,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-REPO_ROOT = Path("/Users/nekonaomichi/crypto-lab")
+REPO_ROOT = Path(__file__).resolve().parent.parent
 CACHE = REPO_ROOT / "cache"
 JST = timezone(timedelta(hours=9))
 
