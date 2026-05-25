@@ -1,0 +1,150 @@
+{
+  "wave": "K295",
+  "as_of": "2026-05-25T04:10:35.578933+00:00",
+  "runtime_s": 1.2,
+  "objective": "Reconcile K291 bug fix narrative vs R10 BTC FR sign reversal",
+  "k275_corrected_metrics": {
+    "full_96d": {
+      "label": "Full backtest",
+      "sharpe": 11.3155,
+      "max_dd": -0.002538,
+      "ann_ret": 0.0889,
+      "win_rate": 0.9239,
+      "total_return": 0.02366,
+      "n_days": 96
+    },
+    "last_30d": {
+      "label": "Last 30d",
+      "sharpe": 31.3756,
+      "max_dd": 0.0,
+      "ann_ret": 0.0731,
+      "win_rate": 1.0,
+      "total_return": 0.006027,
+      "n_days": 30
+    },
+    "last_60d": {
+      "label": "Last 60d",
+      "sharpe": 10.9784,
+      "max_dd": -0.002538,
+      "ann_ret": 0.1008,
+      "win_rate": 0.95,
+      "total_return": 0.016698,
+      "n_days": 60
+    },
+    "last_90d": {
+      "label": "Last 90d",
+      "sharpe": 12.1009,
+      "max_dd": -0.002538,
+      "ann_ret": 0.0961,
+      "win_rate": 0.9333,
+      "total_return": 0.023964,
+      "n_days": 90
+    }
+  },
+  "okx_fr_panel": {
+    "n_days": 96,
+    "n_symbols": 35,
+    "start": "2026-02-19",
+    "end": "2026-05-25"
+  },
+  "btc_fr_regime": {
+    "feb_2026": {
+      "n_days": 28,
+      "mean_fr": -7.5e-06,
+      "std_fr": 3.45e-05,
+      "pct_positive": 0.536,
+      "pct_negative": 0.464,
+      "regime": "NEGATIVE",
+      "rolling30d_neg_days": 14
+    },
+    "mar_2026": {
+      "n_days": 31,
+      "mean_fr": -9.9e-06,
+      "std_fr": 2.79e-05,
+      "pct_positive": 0.387,
+      "pct_negative": 0.613,
+      "regime": "NEGATIVE",
+      "rolling30d_neg_days": 31
+    },
+    "apr_2026": {
+      "n_days": 30,
+      "mean_fr": -1.97e-05,
+      "std_fr": 3.62e-05,
+      "pct_positive": 0.333,
+      "pct_negative": 0.667,
+      "regime": "NEGATIVE",
+      "rolling30d_neg_days": 30
+    },
+    "may_2026": {
+      "n_days": 25,
+      "mean_fr": 1.54e-05,
+      "std_fr": 3.73e-05,
+      "pct_positive": 0.72,
+      "pct_negative": 0.28,
+      "regime": "POSITIVE",
+      "rolling30d_neg_days": 22
+    },
+    "r10_sign_reversal_confirmed": true,
+    "first_30d_neg_cross": "2026-02-15",
+    "last_30d_neg_day": "2026-05-22",
+    "current_30d_avg_fr": 1.03e-05,
+    "current_regime": "POSITIVE"
+  },
+  "k275_sensitivity": {
+    "n_overlap": 96,
+    "corr_pnl_btcfr": -0.2921,
+    "positive_btc_fr_regime": {
+      "n_days": 46,
+      "mean_pnl": 0.000191,
+      "sharpe": 15.6123,
+      "win_rate": 0.9302,
+      "ann_ret": 0.0697
+    },
+    "negative_btc_fr_regime": {
+      "n_days": 50,
+      "mean_pnl": 0.0002922,
+      "sharpe": 10.7459,
+      "win_rate": 0.9184,
+      "ann_ret": 0.1067
+    },
+    "monthly_breakdown": {
+      "2026-02": {
+        "sh": 4.4177,
+        "btc_mean_fr": 3.4e-06,
+        "btc_regime": "POS",
+        "n_days": 10
+      },
+      "2026-03": {
+        "sh": 19.4915,
+        "btc_mean_fr": -9.9e-06,
+        "btc_regime": "NEG",
+        "n_days": 31
+      },
+      "2026-04": {
+        "sh": 10.5,
+        "btc_mean_fr": -1.97e-05,
+        "btc_regime": "NEG",
+        "n_days": 30
+      },
+      "2026-05": {
+        "sh": 27.9472,
+        "btc_mean_fr": 1.54e-05,
+        "btc_regime": "POS",
+        "n_days": 25
+      }
+    }
+  },
+  "decision_matrix": {
+    "k275_30d_sharpe": 31.3756,
+    "btc_regime_now": "POSITIVE",
+    "verdict": "HEALTHY",
+    "action": "Keep K287d satellite as-is, monitor weekly"
+  },
+  "k291_context": {
+    "methodology_bug_confirmed": true,
+    "bug": "k287_satellite_run.py: fr_daily = panel (missing * 3)",
+    "fix": "fr_daily = panel * 3 (OKX 8h\u00d73 daily)",
+    "live_sh_buggy": -3.55,
+    "live_sh_projected_fixed": 30.85
+  }
+}
