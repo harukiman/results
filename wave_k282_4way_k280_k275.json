@@ -1,0 +1,349 @@
+{
+  "wave": "K282",
+  "task": "K280 + K275 4-way Meta Ensemble (55-day overlap)",
+  "as_of": "2026-05-25T03:05:38Z",
+  "runtime_s": 0.01,
+  "data_info": {
+    "n_days_overlap": 55,
+    "date_start": "2026-02-19",
+    "date_end": "2026-04-14",
+    "components": [
+      "K198",
+      "K208",
+      "K276b",
+      "K275"
+    ],
+    "n_folds": 2,
+    "oos_days": 18,
+    "caveat_data": "K280 curves end 2026-04-14; K275 covers 2026-02-19\u21922026-05-25. Genuine 4-way overlap = 55d. Overlap falls entirely within K275 IS period (K275 OOS starts 2026-04-28). NO simultaneous 4-way OOS window exists."
+  },
+  "k280_55d_baseline": {
+    "source": "K280 v6.10.2 PRODUCTION (K198+K208+K276b_top20)",
+    "full_sharpe": 29.1427,
+    "full_maxdd": -0.000138,
+    "oos_sharpe": 30.5767,
+    "oos_days": 18,
+    "oos_maxdd": 0.0,
+    "weights": {
+      "K198": 0.0698,
+      "K208": 0.648,
+      "K276b": 0.2823
+    },
+    "production_oos_sh_448d": 18.46,
+    "note": "K280 (3-way) on genuine 55d overlap window. NOT comparable to production 448d OOS Sh=18.46."
+  },
+  "k275_source_metrics": {
+    "oos_sharpe_96d": 30.25,
+    "wf_min_sharpe": 5.94,
+    "correlations_k275_96d": {
+      "K198": -0.018,
+      "K208": -0.076,
+      "K265": -0.529
+    },
+    "n_days_total": 96,
+    "n_days_oos": 28,
+    "n_gates_passed": 8,
+    "note": "From wave_k275_okx_fr.json (ACCEPT 8/8). OOS 2026-04-28\u21922026-05-25 NOT in overlap."
+  },
+  "correlation_matrix_4x4": {
+    "K198": {
+      "K198": 1.0,
+      "K208": 0.103,
+      "K276b": 0.0234,
+      "K275": -0.007
+    },
+    "K208": {
+      "K198": 0.103,
+      "K208": 1.0,
+      "K276b": 0.1966,
+      "K275": -0.0708
+    },
+    "K276b": {
+      "K198": 0.0234,
+      "K208": 0.1966,
+      "K276b": 1.0,
+      "K275": 0.142
+    },
+    "K275": {
+      "K198": -0.007,
+      "K208": -0.0708,
+      "K276b": 0.142,
+      "K275": 1.0
+    }
+  },
+  "variant_results": {
+    "K282a": {
+      "label": "Inv-vol uncapped",
+      "oos_sharpe": 20.5119,
+      "oos_maxdd": -0.000707,
+      "oos_ann_ret": 0.149891,
+      "oos_ann_vol": 0.007063,
+      "wf_mean": 27.8458,
+      "wf_min": 19.3152,
+      "wf_all_pos": true,
+      "weights_oos": {
+        "K198": 0.0593,
+        "K208": 0.3661,
+        "K276b": 0.204,
+        "K275": 0.3706
+      },
+      "k275_weight": 0.3706,
+      "fold_details": [
+        {
+          "sharpe": 36.3763,
+          "max_dd": 0.0,
+          "ann_ret": 0.135219,
+          "ann_vol": 0.003486,
+          "win_rate": 0.963,
+          "n_days": 27,
+          "fold": 1,
+          "start_date": "2026-02-19",
+          "end_date": "2026-03-17",
+          "weights": {
+            "K198": 0.0456,
+            "K208": 0.5407,
+            "K276b": 0.2191,
+            "K275": 0.1947
+          }
+        },
+        {
+          "sharpe": 19.3152,
+          "max_dd": -0.000688,
+          "ann_ret": 0.125817,
+          "ann_vol": 0.006229,
+          "win_rate": 0.9286,
+          "n_days": 28,
+          "fold": 2,
+          "start_date": "2026-03-18",
+          "end_date": "2026-04-14",
+          "weights": {
+            "K198": 0.0623,
+            "K208": 0.4014,
+            "K276b": 0.1802,
+            "K275": 0.3561
+          }
+        }
+      ],
+      "gates": {
+        "g1_oos_sh_gt_baseline+1": false,
+        "g2_wf_all_pos": true,
+        "g3_k275_contribution": true,
+        "threshold_oos_sh": 31.5767,
+        "all_pass": false
+      }
+    },
+    "K282b": {
+      "label": "Inv-vol + K275 cap 15%",
+      "oos_sharpe": 28.4307,
+      "oos_maxdd": -9.3e-05,
+      "oos_ann_ret": 0.18585,
+      "oos_ann_vol": 0.0062,
+      "wf_mean": 29.499,
+      "wf_min": 24.2631,
+      "wf_all_pos": true,
+      "weights_oos": {
+        "K198": 0.0801,
+        "K208": 0.4944,
+        "K276b": 0.2755,
+        "K275": 0.15
+      },
+      "k275_weight": 0.15,
+      "fold_details": [
+        {
+          "sharpe": 34.7349,
+          "max_dd": 0.0,
+          "ann_ret": 0.137708,
+          "ann_vol": 0.003714,
+          "win_rate": 0.963,
+          "n_days": 27,
+          "fold": 1,
+          "start_date": "2026-02-19",
+          "end_date": "2026-03-17",
+          "weights": {
+            "K198": 0.0481,
+            "K208": 0.5707,
+            "K276b": 0.2312,
+            "K275": 0.15
+          }
+        },
+        {
+          "sharpe": 24.2631,
+          "max_dd": -0.000176,
+          "ann_ret": 0.153852,
+          "ann_vol": 0.005982,
+          "win_rate": 0.9286,
+          "n_days": 28,
+          "fold": 2,
+          "start_date": "2026-03-18",
+          "end_date": "2026-04-14",
+          "weights": {
+            "K198": 0.0822,
+            "K208": 0.5299,
+            "K276b": 0.2379,
+            "K275": 0.15
+          }
+        }
+      ],
+      "gates": {
+        "g1_oos_sh_gt_baseline+1": false,
+        "g2_wf_all_pos": true,
+        "g3_k275_contribution": true,
+        "threshold_oos_sh": 31.5767,
+        "all_pass": false
+      }
+    },
+    "K282c": {
+      "label": "Inv-vol + K275 cap 25%",
+      "oos_sharpe": 25.2398,
+      "oos_maxdd": -0.000371,
+      "oos_ann_ret": 0.169415,
+      "oos_ann_vol": 0.00642,
+      "wf_mean": 29.3196,
+      "wf_min": 22.2629,
+      "wf_all_pos": true,
+      "weights_oos": {
+        "K198": 0.0707,
+        "K208": 0.4363,
+        "K276b": 0.2431,
+        "K275": 0.25
+      },
+      "k275_weight": 0.25,
+      "fold_details": [
+        {
+          "sharpe": 36.3763,
+          "max_dd": 0.0,
+          "ann_ret": 0.135219,
+          "ann_vol": 0.003486,
+          "win_rate": 0.963,
+          "n_days": 27,
+          "fold": 1,
+          "start_date": "2026-02-19",
+          "end_date": "2026-03-17",
+          "weights": {
+            "K198": 0.0456,
+            "K208": 0.5407,
+            "K276b": 0.2191,
+            "K275": 0.1947
+          }
+        },
+        {
+          "sharpe": 22.2629,
+          "max_dd": -0.000396,
+          "ann_ret": 0.140166,
+          "ann_vol": 0.005978,
+          "win_rate": 0.9286,
+          "n_days": 28,
+          "fold": 2,
+          "start_date": "2026-03-18",
+          "end_date": "2026-04-14",
+          "weights": {
+            "K198": 0.0726,
+            "K208": 0.4675,
+            "K276b": 0.2099,
+            "K275": 0.25
+          }
+        }
+      ],
+      "gates": {
+        "g1_oos_sh_gt_baseline+1": false,
+        "g2_wf_all_pos": true,
+        "g3_k275_contribution": true,
+        "threshold_oos_sh": 31.5767,
+        "all_pass": false
+      }
+    },
+    "K282d": {
+      "label": "Equal weight 25/25/25/25",
+      "oos_sharpe": 17.5063,
+      "oos_maxdd": -0.000354,
+      "oos_ann_ret": 0.268496,
+      "oos_ann_vol": 0.013793,
+      "wf_mean": 19.6725,
+      "wf_min": 13.1484,
+      "wf_all_pos": true,
+      "weights_oos": {
+        "K198": 0.25,
+        "K208": 0.25,
+        "K276b": 0.25,
+        "K275": 0.25
+      },
+      "k275_weight": 0.25,
+      "fold_details": [
+        {
+          "sharpe": 26.1966,
+          "max_dd": -6.1e-05,
+          "ann_ret": 0.197239,
+          "ann_vol": 0.006872,
+          "win_rate": 0.8889,
+          "n_days": 27,
+          "fold": 1,
+          "start_date": "2026-02-19",
+          "end_date": "2026-03-17",
+          "weights": {
+            "K198": 0.25,
+            "K208": 0.25,
+            "K276b": 0.25,
+            "K275": 0.25
+          }
+        },
+        {
+          "sharpe": 13.1484,
+          "max_dd": -0.000824,
+          "ann_ret": 0.187382,
+          "ann_vol": 0.013183,
+          "win_rate": 0.8214,
+          "n_days": 28,
+          "fold": 2,
+          "start_date": "2026-03-18",
+          "end_date": "2026-04-14",
+          "weights": {
+            "K198": 0.25,
+            "K208": 0.25,
+            "K276b": 0.25,
+            "K275": 0.25
+          }
+        }
+      ],
+      "gates": {
+        "g1_oos_sh_gt_baseline+1": false,
+        "g2_wf_all_pos": true,
+        "g3_k275_contribution": true,
+        "threshold_oos_sh": 31.5767,
+        "all_pass": false
+      }
+    }
+  },
+  "acceptance": {
+    "threshold_oos_sh": 31.5767,
+    "baseline_oos_sh": 30.5767,
+    "accepted_variants": [],
+    "best_variant": "K282b",
+    "best_oos_sh": 28.4307,
+    "provisional_verdict": "FAIL",
+    "conditions": [
+      "55d OOS Sh > K280_55d (30.5767) + 1.0 = 31.5767",
+      "WF 2-fold all positive",
+      "K275 weight > 5%",
+      "CAVEAT: 55d overlap is insufficient for robust production validation",
+      "Final acceptance pending paper trade (K275 OOS extension to 2026-06-25+)"
+    ]
+  },
+  "vs_k277_comparison": {
+    "k277_baseline_used": "K272a (K198+K208+K265)",
+    "k282_baseline_used": "K280 (K198+K208+K276b_top20)",
+    "k277_best_oos_sh_55d": 25.1408,
+    "k282_best_oos_sh_55d": 28.4307,
+    "key_diff": "K282 uses K276b (Sh=17.20 on 448d) instead of K265 (Sh=8.42)",
+    "note": "K277 was PROVISIONAL on K272a; K282 tests K280-level integration"
+  },
+  "caveats": [
+    "Genuine 4-way overlap is only 55 days \u2014 insufficient for robust statistics",
+    "K280 curves end 2026-04-14; K275 OOS (28d, 2026-04-28\u21922026-05-25) has NO K198/K208/K276b counterpart",
+    "All 55 overlap days fall within K275's in-sample period \u2014 NO true 4-way OOS",
+    "K280 55d Sharpe differs substantially from 448d production Sh=18.46",
+    "2-fold WF on 55d = two ~27d periods. Statistical power is extremely low.",
+    "K275 OOS Sh=30.25 measured on 28 days only \u2014 regime-specific, not robust",
+    "\u03c1(K275,K276b) on 55d may differ from longer-window correlation",
+    "DO NOT promote to production without paper trade AND K275 OOS extension \u226560d"
+  ]
+}
