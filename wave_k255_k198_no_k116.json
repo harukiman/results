@@ -1,0 +1,167 @@
+{
+  "wave": "K255",
+  "objective": "Remove K116 from K198 ensemble (fold2 marginal -1.22) and test vs K246a",
+  "as_of": "2026-05-25T00:47:30.775658+00:00",
+  "runtime_s": 2.8,
+  "config": {
+    "k198_original_subs": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K116",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ],
+    "k198_no_k116_subs": [
+      "v4.1",
+      "V1",
+      "K114",
+      "K121",
+      "K133",
+      "K147",
+      "K175_DAR",
+      "V_fwd_carry",
+      "V_rev_carry"
+    ],
+    "ml_train_days": 90,
+    "ml_test_days": 30,
+    "ridge_alpha": 1.0,
+    "k226_cap": 0.2,
+    "n_days_ml_window": 448,
+    "n_returns": 447,
+    "missing_k208": 0,
+    "missing_k226": 0,
+    "missing_nok116_align": 0
+  },
+  "k246a_reference": {
+    "oos_sharpe": 12.6929,
+    "wf_mean": 12.2462,
+    "wf_min": 8.9347,
+    "maxdd": -0.001145,
+    "fold_sharpes": [
+      13.6029,
+      8.9347,
+      13.8374,
+      12.6097
+    ],
+    "fold2": 8.9347,
+    "components": [
+      "K198",
+      "K208",
+      "K226"
+    ]
+  },
+  "k246a_reproduction": {
+    "oos_sharpe": 12.6929,
+    "oos_maxdd": -0.001145,
+    "wf_mean": 12.2462,
+    "wf_min": 8.9347,
+    "fold_sharpes": [
+      13.6029,
+      8.9347,
+      13.8374,
+      12.6097
+    ],
+    "avg_weights_k198_k208_k226": [
+      0.0481,
+      0.9396,
+      0.0123
+    ]
+  },
+  "k198_no_k116_standalone": {
+    "description": "K198_NoK116 Ridge ML allocator on 9-sub ensemble",
+    "n_days": 448,
+    "date_range": [
+      "2025-01-22",
+      "2026-04-14"
+    ],
+    "full_window_sharpe": 7.6499,
+    "oos_sharpe": 9.3589,
+    "oos_maxdd": -0.004167,
+    "wf_mean": 7.7594,
+    "wf_min": 5.6359,
+    "fold_sharpes": [
+      6.8999,
+      8.3851,
+      5.6359,
+      10.1169
+    ],
+    "vs_k198_original": {
+      "k198_oos_sh": 10.2796,
+      "k198_wf_min": 6.5722,
+      "k198_folds": [
+        6.5722,
+        7.3823,
+        7.9409,
+        9.7527
+      ],
+      "delta_oos_sh": -0.9207,
+      "delta_wf_min": -0.9363
+    }
+  },
+  "k255_a": {
+    "description": "K198_NoK116 + K208 + K226, inv-vol + K226 cap 20%",
+    "oos_sharpe": 12.3719,
+    "oos_maxdd": -0.001246,
+    "oos_ann_ret": 0.1128,
+    "wf_mean": 12.0902,
+    "wf_min": 8.9001,
+    "fold_sharpes": [
+      13.7342,
+      8.9001,
+      13.1789,
+      12.5477
+    ],
+    "fold2_sharpe": 8.9001,
+    "avg_weights_nok116_k208_k226": [
+      0.0547,
+      0.933,
+      0.0123
+    ],
+    "delta_vs_k246a": {
+      "oos_sharpe": -0.321,
+      "wf_min": -0.0346,
+      "fold2": -0.0346,
+      "maxdd": -0.000101
+    }
+  },
+  "acceptance_gates": {
+    "gate1_oos_sh": {
+      "required": 12.69,
+      "actual": 12.3719,
+      "pass": false
+    },
+    "gate2_wf_min": {
+      "required": 8.93,
+      "actual": 8.9001,
+      "pass": false
+    },
+    "gate3_fold2_improvement": {
+      "required": 0.5,
+      "actual": -0.0346,
+      "k246a_fold2": 8.9347,
+      "k255a_fold2": 8.9001,
+      "pass": false
+    },
+    "gate4_maxdd": {
+      "required": -0.00115,
+      "actual": -0.001246,
+      "pass": false
+    },
+    "all_pass": false
+  },
+  "verdict": {
+    "decision": "REJECT",
+    "summary": "K255_a fails gates: OOS Sh 12.3719 < 12.69; WF min 8.9001 < 8.93; Fold2 delta -0.0346 < +0.5; MaxDD -0.001246 < -0.00115. K246a v6.9 remains production.",
+    "k198_fine_tunability": "K198 is NOT fine-tunable by removing K116. K116's fold-2 marginal drag (-1.22) does not outweigh its contributions in other folds (fold3: +1.91, fold1: -0.25). K198 is a genuine irreducible ensemble \u2014 K252 GENUINE_ENSEMBLE verdict confirmed.",
+    "production_label": "v6.9 (unchanged)",
+    "k116_marginal_contribution_fold2": -1.2186,
+    "k116_marginal_contribution_fold3": 1.9131,
+    "k116_positive_folds": 1,
+    "conclusion": "K116 has only 1 positive-marginal fold (fold3=+1.91) vs 3 negative/neutral. Fold2 drag of -1.22 is the strongest signal. Fine-tune verdict depends on ensemble test outcome above."
+  }
+}
