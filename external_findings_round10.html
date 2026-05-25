@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>External Findings Round 10 — Systematic Alpha Discovery</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #e6edf3; line-height: 1.6; }
+  .header { background: linear-gradient(135deg, #1a1f2e 0%, #0d1117 100%); border-bottom: 1px solid #21262d; padding: 24px 20px; }
+  .header h1 { font-size: clamp(18px, 4vw, 26px); color: #58a6ff; font-weight: 700; }
+  .header .meta { font-size: 13px; color: #8b949e; margin-top: 6px; }
+  .header .updated { font-size: 12px; color: #3fb950; margin-top: 4px; font-weight: 600; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+  .summary-box { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 28px; }
+  .summary-box h2 { color: #f0883e; font-size: 16px; margin-bottom: 12px; }
+  .top3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .top3-card { background: #1c2128; border: 2px solid #f0883e; border-radius: 8px; padding: 16px; }
+  .top3-card .rank { font-size: 24px; font-weight: 900; color: #f0883e; }
+  .top3-card h3 { font-size: 13px; color: #e6edf3; margin: 6px 0; font-weight: 600; }
+  .top3-card p { font-size: 12px; color: #8b949e; }
+  .category-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .cat-btn { background: #21262d; border: 1px solid #30363d; border-radius: 20px; padding: 5px 14px; font-size: 12px; color: #8b949e; cursor: pointer; transition: all 0.2s; }
+  .cat-btn:hover, .cat-btn.active { background: #58a6ff22; border-color: #58a6ff; color: #58a6ff; }
+  .findings-grid { display: grid; gap: 16px; }
+  .finding-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; transition: border-color 0.2s; }
+  .finding-card:hover { border-color: #58a6ff55; }
+  .finding-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .finding-id { background: #21262d; border-radius: 4px; padding: 2px 8px; font-size: 11px; color: #8b949e; white-space: nowrap; font-family: monospace; }
+  .finding-category { font-size: 11px; padding: 2px 8px; border-radius: 10px; white-space: nowrap; font-weight: 600; }
+  .cat-multi-exchange-arb { background: #1f4e3d; color: #3fb950; }
+  .cat-okx-specific { background: #4a1f1f; color: #f85149; }
+  .cat-dydx-specific { background: #1f2f4a; color: #58a6ff; }
+  .cat-hl-ecosystem { background: #3a2a0f; color: #e3b341; }
+  .cat-academic-research { background: #2a1f4a; color: #bc8cff; }
+  .cat-lrt-restaking { background: #1a3a2a; color: #3fb950; }
+  .cat-solana-perp { background: #3a1f3a; color: #d2a8ff; }
+  .cat-dex-cex-information-flow { background: #2a2f1f; color: #a8d8a8; }
+  .finding-title { font-size: 15px; font-weight: 600; color: #e6edf3; flex: 1; }
+  .finding-title a { color: inherit; text-decoration: none; }
+  .finding-title a:hover { color: #58a6ff; text-decoration: underline; }
+  .finding-body { font-size: 13px; color: #8b949e; margin-bottom: 10px; line-height: 1.7; }
+  .finding-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  @media (max-width: 600px) { .finding-meta { grid-template-columns: 1fr; } }
+  .meta-box { background: #0d1117; border-radius: 6px; padding: 10px; border-left: 3px solid #30363d; }
+  .meta-box.orthogonal { border-left-color: #3fb950; }
+  .meta-box.actionability { border-left-color: #f0883e; }
+  .meta-box.k275 { border-left-color: #f85149; }
+  .meta-box h4 { font-size: 10px; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .meta-box p { font-size: 12px; color: #c9d1d9; }
+  .action-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; margin-left: 8px; }
+  .action-high { background: #3fb95022; color: #3fb950; border: 1px solid #3fb950; }
+  .action-medium { background: #e3b34122; color: #e3b341; border: 1px solid #e3b341; }
+  .action-low { background: #58a6ff22; color: #58a6ff; border: 1px solid #58a6ff; }
+  .stats-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+  .stat-chip { background: #21262d; border-radius: 6px; padding: 8px 16px; font-size: 13px; }
+  .stat-chip span { color: #58a6ff; font-weight: 700; }
+  footer { text-align: center; padding: 40px 20px; font-size: 12px; color: #484f58; border-top: 1px solid #21262d; margin-top: 40px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="container">
+    <h1>External Findings Round 10 — Systematic Alpha Discovery</h1>
+    <div class="meta">R10 Strategic Focus: Multi-exchange arb refinement | dYdX deepening | OKX FR sustainability | LRT/restaking 2026 | Solana perp | HL ecosystem | 2026 H1 academic research</div>
+    <div class="updated">最終更新: 2026-05-25 JST | R10累計: 20件 | R1-R9累計: 202件 | 総計: 222件</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Top 3 Actionable -->
+  <div class="summary-box">
+    <h2>Executive Summary — R10 Key Themes</h2>
+    <p style="font-size:13px;color:#c9d1d9;line-height:1.8;">
+      R10の最重要発見: (1) <strong>K275 -3.55 Sh の根本原因特定</strong> — 2026年3月のBTC FR sign反転（positive→negative carry）とBoros OKX統合による三会場アービトラージ資本流入がOKX FR プレミアムを構造的に消去した。
+      (2) <strong>HL HIP-3 RWA perp $2.6B OI達成</strong> — 全HL取引量の47.1%がRWA perp。equity cash-and-carry arbitrageという新戦略カテゴリが誕生。
+      (3) <strong>Drift崩壊→Jupiter Perp台頭</strong> — Solana perp DEXの重心移動が完了、K293+ SolanaシグナルはJupiterを参照基準に変更必須。
+    </p>
+  </div>
+
+  <div class="top3">
+    <div class="top3-card">
+      <div class="rank">#1</div>
+      <h3>K275 根本原因: 2026年3月のFR negative regime転換 (R10-010)</h3>
+      <p>Binance BTC/USDT 30日平均が2026年3月1日以降ゼロ以下。OKXも同様。K275は正キャリー環境設計 → 負キャリー時は即時レジームゲートで停止。30日平均FR &lt; -0.001% でK275無効化フィルター追加が最優先。</p>
+    </div>
+    <div class="top3-card">
+      <div class="rank">#2</div>
+      <h3>HyperEVM Liminal delta-neutral vault: K275後継アーキテクチャ候補 (R10-020)</h3>
+      <p>LiminalはHL上でFRをdelta-neutralに収集するxTokenを発行。HL maker fee 0.015% + portfolio margin 30%効率化 + 30%以上のキャピタル効率。K275 OKXキャリー戦略の完全オンチェーン代替として K293でプロトタイプすべき。</p>
+    </div>
+    <div class="top3-card">
+      <div class="rank">#3</div>
+      <h3>HL HIP-3 RWA equity perp: 新しいcash-and-carry戦略 (R10-008)</h3>
+      <p>TSLA/AAPL/SPX500のHL perp(24/7) + brokerage spot longでequity perp premium収集。XYZ100(S&P合成指数)がHIP-3最大OI $213M。正funding時はpremiumを収集できる。週末ギャップリスク管理が唯一の制約。</p>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-chip">総件数: <span>20</span></div>
+    <div class="stat-chip">HIGH actionability: <span>11</span></div>
+    <div class="stat-chip">MEDIUM: <span>6</span></div>
+    <div class="stat-chip">LOW-MEDIUM: <span>3</span></div>
+    <div class="stat-chip">K275直接関連: <span>7件</span></div>
+    <div class="stat-chip">新URL重複: <span>0件(確認済)</span></div>
+  </div>
+
+  <!-- Category Nav -->
+  <div class="category-nav">
+    <div class="cat-btn active" onclick="filterAll()">全て (20)</div>
+    <div class="cat-btn" onclick="filterCat('multi-exchange-arb')">Multi-Exchange Arb (2)</div>
+    <div class="cat-btn" onclick="filterCat('okx-specific')">OKX Specific (5)</div>
+    <div class="cat-btn" onclick="filterCat('dydx-specific')">dYdX Specific (2)</div>
+    <div class="cat-btn" onclick="filterCat('hl-ecosystem')">HL Ecosystem (7)</div>
+    <div class="cat-btn" onclick="filterCat('academic-research')">Academic (1)</div>
+    <div class="cat-btn" onclick="filterCat('lrt-restaking')">LRT/Restaking (1)</div>
+    <div class="cat-btn" onclick="filterCat('solana-perp')">Solana Perp (1)</div>
+    <div class="cat-btn" onclick="filterCat('dex-cex-information-flow')">DEX-CEX Flow (1)</div>
+  </div>
+
+  <!-- Findings Grid -->
+  <div class="findings-grid" id="findings-grid">
+
+    <!-- R10-001 -->
+    <div class="finding-card" data-cat="hl-ecosystem">
+      <div class="finding-header">
+        <span class="finding-id">R10-001</span>
+        <span class="finding-category cat-hl-ecosystem">HL Ecosystem</span>
+        <span class="action-badge action-medium">MEDIUM</span>
+        <div class="finding-title"><a href="https://tokenomics.com/articles/hyperliquid-tokenomics-how-hype-captures-65m-monthly-in-holder-revenue" target="_blank">HL Tokenomics: $65M Monthly Holder Revenue, 99% Fees → HYPE Buyback, 13% Burn Proposal</a></div>
+      </div>
+      <div class="finding-body">Precise 2026 HL revenue decomposition: Perps $62.6M/month (90.9%), Spot $1.9M, L1 Gas $549K, HLP $651K. Total >$65M monthly (Jan 2026). Assistance Fund uses 99% of fees to buy HYPE automatically — $1.7M weekly buybacks, +26% WoW during high-volume periods. Cumulative: $1.16B in buybacks since launch ($3.6M/day). Jan 2026 proposal: burn 13% of circulating supply ($920M worth). Compounding mechanism: volume → fees → buybacks → HYPE price → volume.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>Revenue decomposition by product line with weekly buyback velocity data — not in R1-R9. HYPE price becomes indirect proxy for HL trading volume, enabling HYPE momentum as leading indicator for HL FR activity.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>HL's $65M/month revenue vs OKX's declining share quantifies the asymmetric growth trajectory. HYPE buyback compounding attracts capital away from OKX, structurally reducing OKX FR sustainability.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-002 -->
+    <div class="finding-card" data-cat="okx-specific">
+      <div class="finding-header">
+        <span class="finding-id">R10-002</span>
+        <span class="finding-category cat-okx-specific">OKX Specific</span>
+        <span class="action-badge action-high">HIGH</span>
+        <div class="finding-title"><a href="https://blockchainreporter.net/boros-integrates-okx-for-wider-funding-rate-trading-and-arbitrage-opportunities" target="_blank">Boros OKX Integration: Three-Venue Fixed-Rate FR Arbitrage (Binance + HL + OKX)</a></div>
+      </div>
+      <div class="finding-body">Boros (Pendle FR tokenization) integrated OKX Dec 2025 via Yield Units (YUs). Four-leg delta-neutral strategy: short HL YU + short HL perp + long Binance YU + long Binance perp → locked fixed yield while floating rates cancel. Historical Boros yields: BTC 5.98-11.4% Fixed APR (peaks 23.5%); ETH 9.94% avg; three-venue triangular arb achieves up to 30% delta-neutral fixed yield. OKX became third leg after Binance and HL.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>Three-venue triangular arb via DeFi fixed-income wrapper is structurally new vs R1-R9 bilateral venue pairs.</p></div>
+        <div class="meta-box k275"><h4>K275 Root Cause Hypothesis</h4><p>Boros OKX integration Dec 2025 pulled institutional arb capital into the OKX-Binance spread, collapsing the carry that K275 harvests. DIRECT root cause candidate.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-003 -->
+    <div class="finding-card" data-cat="multi-exchange-arb">
+      <div class="finding-header">
+        <span class="finding-id">R10-003</span>
+        <span class="finding-category cat-multi-exchange-arb">Multi-Exchange Arb</span>
+        <span class="action-badge action-high">HIGH</span>
+        <div class="finding-title"><a href="https://www.bitmex.com/blog/2026q1-derivatives-report" target="_blank">BitMEX Q1 2026 TradFi Derivatives Report: XAG Weekend FR 3x Weekday, Binance 62.7% TradFi Perp Share</a></div>
+      </div>
+      <div class="finding-body">TradFi perps: 0.03% → 1.72% of total derivatives volume in Q1; weekly volume $30.7B. KEY ANOMALY: XAG (silver) on Binance weekend FR = +56.69% APR vs weekday +18.18% — a 3x weekend premium. Commodities +65,463% volume growth; crude oil $0 → $6.9B weekly (Iran tensions). BitMEX TradFi perps: deeply negative FR (SPY -163.43% APR, COIN -105.23% APR). Binance: +74,537% volume surge, 62.7% TradFi perp market share. HL grew 953.4% to 29.7% share. OKX absent from TradFi perp growth story.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>First quantified documentation of the 3x weekend vs weekday FR premium on RWA perps — opening a new timing-based FR strategy layer for HL HIP-3 commodity perps not in R1-R9.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>OKX absent from TradFi perp growth (Binance + HL = 92.4% of market). OKX not competing in highest-growth derivative segment — validates structural market share erosion underlying K275 underperformance.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-004 -->
+    <div class="finding-card" data-cat="dex-cex-information-flow">
+      <div class="finding-header">
+        <span class="finding-id">R10-004</span>
+        <span class="finding-category cat-dex-cex-information-flow">DEX-CEX Info Flow</span>
+        <span class="action-badge action-medium">MEDIUM</span>
+        <div class="finding-title"><a href="https://zenodo.org/records/17084252" target="_blank">Price Discovery Lead-Lag DEX vs CEX: SOL DEX Leads Binance by 40 Minutes</a></div>
+      </div>
+      <div class="finding-body">Asset-class-specific price leadership study. BTC: CEX leads 5 min. SOL: DEX leads Binance by 40 minutes (strongest DEX dominance observed). ETH: mixed. Price correlations 0.98-0.99 across venues with MAPE 0.06-0.08% — efficient transmission but with systematic timing offsets. DEX spot volume share doubled 6.9% → 13.6% Jan 2024-Jan 2026.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>Asset-class-dependent lead-lag structure reveals SOL specifically as the DEX-leads-CEX pair — opening a distinct signal source for Solana-listed perps on Jupiter/Drift vs Binance.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>OKX SOL perp FR adjustments are lagged 40 min vs Solana DEX — K275 OKX signal may be buying already-priced information.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-005 -->
+    <div class="finding-card" data-cat="hl-ecosystem">
+      <div class="finding-header">
+        <span class="finding-id">R10-005</span>
+        <span class="finding-category cat-hl-ecosystem">HL Ecosystem</span>
+        <span class="action-badge action-high">HIGH</span>
+        <div class="finding-title"><a href="https://medium.com/@RyskyGeronimo/a-risk-return-analysis-of-hyperliquids-hlp-vault-7c164cd00a0d" target="_blank">HLP Vault Risk-Return Analysis: Sharpe 5.2, CAGR 22%, Max DD -6.6%</a></div>
+      </div>
+      <div class="finding-body">Comprehensive HLP vault metrics: lifetime CAGR 42% → 22% (trailing 12M); vol dropped 17.89% → 4.5%, Sharpe 2.89 → 5.2. Max drawdown -6.6% vs BTC -23%. Negative BTC correlation -9.6%. Portfolio construction: 80/20 HLP+BTC = 175% cumulative return, 16% vol, Sharpe 3.6. Monthly avg 1.75% (20% annualized). 4-day lockup is crisis exit risk. Feb 2026: $700M liquidation event captured $15M profit (5.8% in 24h).</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>Quantified Sharpe decomposition of HLP as standalone strategy asset class — not in R1-R9. Sets passive HL market-making baseline (Sharpe 5.2) that active K287d satellites must beat.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>As OKX carry decays, HLP passive HL exposure (Sh 5.2) is the direct alternative benchmark for K275 capital reallocation decision.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-006 -->
+    <div class="finding-card" data-cat="lrt-restaking">
+      <div class="finding-header">
+        <span class="finding-id">R10-006</span>
+        <span class="finding-category cat-lrt-restaking">LRT/Restaking</span>
+        <span class="action-badge action-medium">MEDIUM</span>
+        <div class="finding-title"><a href="https://defiprime.com/kelpdao-rseth-exploit" target="_blank">Kelp DAO $292M rsETH Bridge Exploit: Largest 2026 DeFi Hack, $5.4B Sector Outflow</a></div>
+      </div>
+      <div class="finding-body">April 18 2026: Lazarus Group RPC poisoning attack. Minted 116,500 unbacked rsETH (18% supply, $292M), drained $236M WETH from Aave. $5.4B total restaking withdrawals in 48 hours. Aave/SparkLend/Fluid froze rsETH markets. Recovery: $71M frozen by investigators. KernelDAO insulated by multi-product structure (Kelp+Kernel+Gain vaults). KernelDAO at $20M market cap vs $2B TVL — 100x trust-discount gap. rsETH peg recovery progress: burn-complete on Arbitrum, refill of 117,132 rsETH underway.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>2026 systemic shock to LRT/restaking — entirely new event category. Creates specific post-exploit alpha playbook for mean-reversion on surviving protocols as trust discount closes.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>Restaking sector fear spikes may create brief FR arb windows for weETH/EIGEN perps on OKX. Not direct K275 input but satellite-adjacent opportunity.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-007 -->
+    <div class="finding-card" data-cat="solana-perp">
+      <div class="finding-header">
+        <span class="finding-id">R10-007</span>
+        <span class="finding-category cat-solana-perp">Solana Perp</span>
+        <span class="action-badge action-high">HIGH</span>
+        <div class="finding-title"><a href="https://unchainedcrypto.com/how-solanas-largest-perp-dex-was-exploited-for-285-million/" target="_blank">Drift Protocol $285M Solana DEX Exploit: DPRK Durable Nonce Attack, Jupiter Wins</a></div>
+      </div>
+      <div class="finding-body">April 1 2026: DPRK attackers socially engineered Drift for months, used Solana durable nonces to pre-sign transactions, gained Security Council control, drained $285M via fake CVT collateral in 12 minutes. Drift TVL $550M → $250M, DRIFT token -42%. Tether $127.5M rescue fund; Drift pivoting to USDT settlement. Jupiter firewalled, maintaining trust. Post-exploit: Drift accounts for 8.6% gap in Solana DeFi TVL — Jupiter + other protocols absorbing flow.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>New 2026 event reshaping Solana perp DEX landscape. Creates clear structural winner (Jupiter) and opens the Solana perp volume migration story for K293+ strategy design.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>If Drift was in K270/K275 cross-venue signal set, it must be removed. Jupiter Perp replaces Drift as Solana DEX funding rate leader for all strategy references.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-008 -->
+    <div class="finding-card" data-cat="hl-ecosystem">
+      <div class="finding-header">
+        <span class="finding-id">R10-008</span>
+        <span class="finding-category cat-hl-ecosystem">HL Ecosystem</span>
+        <span class="action-badge action-high">HIGH</span>
+        <div class="finding-title"><a href="https://www.coindesk.com/markets/2026/03/10/hyperliquid-s-permissionless-market-smashes-usd1-2-billion-in-open-positions-as-oil-and-equity-futures-boom" target="_blank">HL HIP-3 RWA Perps: $2.6B Open Interest ATH, 47% of HL Volume in Tokenized Assets</a></div>
+      </div>
+      <div class="finding-body">HIP-3 (Oct 2025): anyone stakes 500K HYPE → deploys perps. trade.xyz launched TSLA/AAPL/NVDA/AMZN + S&P 500 (licensed S&P Dow Jones Indices Mar 18 2026) + crude oil (CL) + gold + silver. May 2026: $2.6B RWA OI ATH; 47.1% of all HL trading volume is RWA perps. Top market: XYZ100 index $213M OI; CL crude $169.8M OI, $1.62B daily volume. HIP-3 fee: double standard HL rates (3/9 bps), 50% to deployer. First 3 assets per deployer free.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>RWA/equity perp FR dynamics on HL not covered in R1-R9. Opens new cross-asset FR arb category: stock long (brokerage) + HL equity perp short for premium/funding capture. 24/7 trading with weekend gap risk is the novel structural hazard.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>RWA perp growth on HL shows HL cannibalizing OKX/Binance volume in novel asset classes. Institutional HL adoption continues to compress OKX FR premium.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-009 -->
+    <div class="finding-card" data-cat="hl-ecosystem">
+      <div class="finding-header">
+        <span class="finding-id">R10-009</span>
+        <span class="finding-category cat-hl-ecosystem">HL Ecosystem</span>
+        <span class="action-badge action-medium">LOW-MEDIUM</span>
+        <div class="finding-title"><a href="https://www.coingecko.com/learn/hyperliquid-hip3-hip4-tokenized-stocks-and-prediction-markets" target="_blank">HL HIP-4 Outcome Markets: Zero-Fee Binary Prediction vs Polymarket, Unified Portfolio Margin</a></div>
+      </div>
+      <div class="finding-body">HIP-4 launched May 2 2026 via Outcomexyz: fully collateralized binary contracts (USDH, no liquidation risk), settling daily at 06:00 UTC to HL mark price. First market: BTC daily binary (>$79,980 by May 5), 6.05M contracts in 24h. Zero fee to open/mint; fees only on close/settle. Outcome positions share margin with perps/spot in unified HL account. Activity counts toward fee tier (lower perp maker costs). Directly targets Polymarket and Kalshi.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>HIP-4 creates fee-tier compounding incentive: binary market volume unlocks lower perp maker tiers, reducing K287d satellite execution costs up to 30%.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>Indirect: HIP-4 draws volume from OKX options/prediction products, further eroding OKX's competitive FR premium moat.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-010 -->
+    <div class="finding-card" data-cat="okx-specific">
+      <div class="finding-header">
+        <span class="finding-id">R10-010</span>
+        <span class="finding-category cat-okx-specific">OKX Specific</span>
+        <span class="action-badge action-high">HIGH</span>
+        <div class="finding-title"><a href="https://www.coindesk.com/markets/2026/04/16/bitcoin-funding-rates-hit-most-negative-since-2023-history-suggests-bottom-is-in" target="_blank">BTC FR Most Negative Since 2023: OKX/Binance 30-Day Avg Below Zero Since March 2026</a></div>
+      </div>
+      <div class="finding-body">April 2026: BTC aggregate FR -0.005% 7-day avg (most extreme negative since 2023). Binance BTC/USDT 30-day avg below zero since March 1 2026; OKX and Bybit showing identical readings. BTC fell from $126K ATH (Oct 2025) to $65.6K-72.5K. OI dropped 21.7% Jan-Feb as longs flushed. Historical precedent: extreme negative FR preceded bottoms in Mar 2020, mid-2021, Nov 2022, Aug 2024 — all followed by significant reversals. Crowded shorts create squeeze conditions.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>R1-R9 analyzed positive-carry environments. Q1-Q2 2026 sustained negative FR regime is a structural inversion — the first comprehensive regime shift documentation for 2026.</p></div>
+        <div class="meta-box k275"><h4>K275 PRIMARY ROOT CAUSE</h4><p>K275 was designed for positive carry (longs pay shorts). March 2026 flip to negative carry = K275 collecting from wrong side. Add regime filter: disable K275 when 30-day avg FR &lt; -0.001%.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-011 -->
+    <div class="finding-card" data-cat="multi-exchange-arb">
+      <div class="finding-header">
+        <span class="finding-id">R10-011</span>
+        <span class="finding-category cat-multi-exchange-arb">Multi-Exchange Arb</span>
+        <span class="action-badge action-high">HIGH</span>
+        <div class="finding-title"><a href="https://www.coingecko.com/research/publications/cex-dex-trading-activity-report-2026" target="_blank">CoinGecko 2026 CEX-DEX Report: Perp DEX Volume 8x Growth, HL Only DEX in Top 10</a></div>
+      </div>
+      <div class="finding-body">CEX perps: $7.24T/month (Jan 2026). Perp DEX volume: 8x growth $82B → $739B. DEX perp market share: 2.0% (Jan 2024) → 10.2% (Jan 2026). Hyperliquid ONLY DEX in top 10 with $1.59T cumulative volume. DEX spot share doubled 6.9% → 13.6%. Binance: $3.54T spot + $13.61T perp. OKX volume share declining relative to Binance+HL combined. PancakeSwap and Uniswap broke into top 10 spot exchanges.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>Authoritative 2026 full-year market structure report. First quantification of OKX's declining relative volume share at macro level — the structural backdrop for K275 degradation.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>OKX volume market share loss to HL is the structural backdrop for K275 degradation — as volume migrates, OKX FR becomes noisier and less institutionally anchored.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-012 -->
+    <div class="finding-card" data-cat="hl-ecosystem">
+      <div class="finding-header">
+        <span class="finding-id">R10-012</span>
+        <span class="finding-category cat-hl-ecosystem">HL Ecosystem</span>
+        <span class="action-badge action-high">HIGH</span>
+        <div class="finding-title"><a href="https://docs.chainstack.com/docs/hyperliquid-funding-rate-arbitrage" target="_blank">Chainstack HL Spot-Perp Arb Technical Guide: predictedFundings API + 0.11%/h Break-Even</a></div>
+      </div>
+      <div class="finding-body">Break-even: FR > 0.11%/h (maker orders), practical minimum 0.15%/h. Fee cycle: spot 0.08% + perp 0.03% = 0.11% total per round trip. Critical underdocumented feature: 'predictedFundings' API endpoint provides forward-looking FR before settlement. Entry timing: 5-10 min pre-funding. Asset set: intersect spot and perp markets (BTC/ETH/SOL + limited). Liquidity gate: l2Book spread >0.15% = reject. Example: $10K at 0.05% FR = $5 gross / $11 fees → 2.2h break-even. Annualize hourly FR × 365 × 24.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>Technical implementation layer with underdocumented predictedFundings API — provides advance notice of FR changes before they appear in market prices. Directly applicable to K287d signal design.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>HL predictedFundings can serve as early warning for K275 OKX cross-venue: if HL predicted FR diverges from OKX current FR, a cross-venue window may exist 5-10 min before the hour.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-013 -->
+    <div class="finding-card" data-cat="dydx-specific">
+      <div class="finding-header">
+        <span class="finding-id">R10-013</span>
+        <span class="finding-category cat-dydx-specific">dYdX Specific</span>
+        <span class="action-badge action-medium">MEDIUM</span>
+        <div class="finding-title"><a href="https://chorus.one/articles/exploring-mev-implications-and-cross-domain-dynamics-on-dydx-v4" target="_blank">MEV in dYdX v4 Cosmos Appchain: CLOB Architecture is MEV-Resistant vs AMM Venues</a></div>
+      </div>
+      <div class="finding-body">Chorus One research: cross-chain value extraction currently lacks compelling incentives on dYdX v4 — validator MEV threshold not reached even in optimistic volume scenarios. CLOB architecture creates market-maker-validator partnership incentive (unlike AMMs), risking centralization but not active MEV extraction. Proposed mitigations: penalties and flexible unbonding. Key insight: dYdX v4 funding rates are structurally MEV-resistant, making K270 signals more robust than initially assumed. dYdX v5 expanded: spot markets, prediction markets, permissionless perps via Jan 2025 upgrade.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>First detailed dYdX-specific MEV analysis — finding that MEV is NOT the culprit in any dYdX signal degradation changes the diagnostic search for K270 underperformance.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>dYdX's MEV resistance makes it a more reliable FR signal source vs OKX where institutional flow manipulation is possible without blockchain transparency.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-014 -->
+    <div class="finding-card" data-cat="okx-specific">
+      <div class="finding-header">
+        <span class="finding-id">R10-014</span>
+        <span class="finding-category cat-okx-specific">OKX Specific</span>
+        <span class="action-badge action-high">HIGH</span>
+        <div class="finding-title"><a href="https://fortune.com/2026/03/05/okx-ice-intercontinental-exchange-investment-tokenized-securities-25-billio/" target="_blank">ICE (NYSE Parent) Invests in OKX at $25B: Tokenized NYSE Equities on OKX by Late 2026</a></div>
+      </div>
+      <div class="finding-body">March 2026: ICE invested in OKX at $25B valuation, taking board seat. Deal: OKX enables tokenized NYSE stocks and derivatives in late 2026; ICE supplies crypto price feeds to OKX; OKX relocates 2,000/5,000 employees to US. OKX re-entered US market April 2025 post-$505M DOJ settlement (spot-only). OKX now ranks 3rd on CME liquidity ranking behind Binance and Coinbase. VIP tier 1 threshold lowered from $10M to $5M in April 2026. ICE also recently invested $2B in Polymarket.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>Structural regulatory transformation of OKX. ICE partnership signals OKX pivoting from crypto-native to TradFi-bridging venue with imminent equity perp integration — reshaping OKX flow composition fundamentally by late 2026.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>K275 must sunset before late 2026 NYSE tokenized equity launch on OKX. TradFi arb capital entering OKX will drive CEX-CEX FR to near-parity faster than K275's assumptions allow.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-015 -->
+    <div class="finding-card" data-cat="okx-specific">
+      <div class="finding-header">
+        <span class="finding-id">R10-015</span>
+        <span class="finding-category cat-okx-specific">OKX Specific</span>
+        <span class="action-badge action-medium">MEDIUM</span>
+        <div class="finding-title"><a href="https://www.okx.com/en-us/help/advance-notice-adjustment-to-vip-tier-and-future-fees" target="_blank">OKX April 2026 VIP Tier Adjustment: VIP 1-3 Thresholds Lowered, ELP Maker Fee Halved</a></div>
+      </div>
+      <div class="finding-body">April 8 2026: OKX lowered VIP 1 threshold from $10M to $5M 30-day futures volume (~$167K/day), with automatic tier upgrades for users maintaining volume. May 20 2026: ELP (Enhanced Liquidity Program) maker fee for VIP 7-9 cut to 50% of standard maker fee across all product lines (spot, perpetual, expiry futures, options). Designed to retain high-volume market makers facing pressure from Binance and Hyperliquid fee competition.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>OKX-specific incentive structure change not previously tracked. VIP tier lowering + halved ELP maker fees signals OKX actively fighting market maker outflows — directly relevant to K275 FR sustainability debate.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>ELP maker fee halving signals OKX bleeding high-frequency market makers. Market maker exit → wider FR volatility → K275 signal noisier. Structural headwind even as fee cuts try to reverse trend.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-016 -->
+    <div class="finding-card" data-cat="okx-specific">
+      <div class="finding-header">
+        <span class="finding-id">R10-016</span>
+        <span class="finding-category cat-okx-specific">OKX Specific</span>
+        <span class="action-badge action-high">HIGH</span>
+        <div class="finding-title"><a href="https://rho.trading/blog/mean-reversion-strategy-in-crypto-rate-trading" target="_blank">Binance-OKX BTC FR Mean Reversion: 2% Historical Spread, 22-Day 21% Return Case Study</a></div>
+      </div>
+      <div class="finding-body">Quantitative study of Binance vs OKX BTC FR spread mean reversion. Historical mean spread: ~2%; peak observed deviation: >5%. Example trade: -3% spread deviation, 100x leverage on $50K notional / $1K collateral, 22-day convergence for 7pp spread tightening = 21% return. Liquidation buffers: Binance long safe until rates drop to 2.0% APR; OKX short safe until rates rise to 26% APR. Spread historically reverts to mean through negative territory dips.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>First quantitative mean-reversion parameter study for OKX-Binance BTC FR pair with documented liquidation safety levels — not in R1-R9 despite K275 direct relevance.</p></div>
+        <div class="meta-box k275"><h4>K275 DIRECT INPUT</h4><p>Parameterizes K275 risk management: 2% mean spread, 5% peak deviation, 22-day convergence. Alert at 3.5% spread (1.5σ above mean); forced exit at 6%. Monitor SIGN of spread in current negative FR regime.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-017 -->
+    <div class="finding-card" data-cat="hl-ecosystem">
+      <div class="finding-header">
+        <span class="finding-id">R10-017</span>
+        <span class="finding-category cat-hl-ecosystem">HL Ecosystem</span>
+        <span class="action-badge action-high">HIGH</span>
+        <div class="finding-title"><a href="https://www.cryptopolitan.com/hyperliquids-newest-portfolio-margin-upgrade/" target="_blank">HL Portfolio Margin: 30%+ Capital Efficiency Improvement, Unified Spot+Perp, Auto-Borrow</a></div>
+      </div>
+      <div class="finding-body">Pre-alpha live Dec 23 2025; moving to alpha in next upgrade. Net portfolio risk calculation (not sum of individual positions) → 30%+ capital efficiency improvement. Single USDC/USDH balance collateralizes all cross-margin perps + spot. Auto-earn on idle borrowable assets. Borrow up to 1M USDC/USDH against spot HYPE or BTC; $500M global supply cap, $100M borrow cap. Access: >$5M weighted trading volume. HyperEVM Liminal + Hyperbeat use this for delta-neutral strategies.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>Portfolio margin enables new class of HL-native multi-leg strategies — spot long + perp short + leveraged borrowing from one account. 30%+ capital efficiency vs K287d's current two-account model. Not in R1-R9.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>HL portfolio margin makes HL-based carry strategies 30% more capital efficient than OKX equivalents — further tilting competitive balance against K275 OKX-native approach.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-018 -->
+    <div class="finding-card" data-cat="dydx-specific">
+      <div class="finding-header">
+        <span class="finding-id">R10-018</span>
+        <span class="finding-category cat-dydx-specific">dYdX Specific</span>
+        <span class="action-badge action-medium">MEDIUM</span>
+        <div class="finding-title"><a href="https://www.dydx.xyz/blog/first-affiliate-booster-program-of-2026-announced" target="_blank">dYdX 2026 Programs: BTC/SOL Perps Fee-Free + 50% Rebates + $200K Affiliate Booster</a></div>
+      </div>
+      <div class="finding-body">Dec 2025 Season 9: all traders automatically receive 50% fee rebates; BTC and SOL perp markets became completely fee-free (0% maker and taker). Jan-Mar 2026 Affiliate Booster: $200K USDC pool, milestone structure from $1M ($250) to $100M ($12K) per affiliate; minimum $100K volume + 5 new users. BTC/BONK fee-free markets count 0.5x toward milestones. $1M liquidation rebate pilot Dec 2025. Surge Seasons 10/11 continuing trading rewards.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>dYdX's systematic fee elimination on BTC/SOL changes fundamental cost structure for K270 cross-venue arb — temporarily making dYdX lowest-cost venue globally for those pairs.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>dYdX fee elimination periods divert institutional arb flow from OKX to dYdX — contributing to OKX FR carry premium erosion underlying K275 underperformance.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-019 -->
+    <div class="finding-card" data-cat="academic-research">
+      <div class="finding-header">
+        <span class="finding-id">R10-019</span>
+        <span class="finding-category cat-academic-research">Academic Research</span>
+        <span class="action-badge action-medium">LOW-MEDIUM</span>
+        <div class="finding-title"><a href="https://arxiv.org/html/2506.08573v1" target="_blank">Path-Dependent BSDE Framework for Perpetual Futures Funding Rates (arXiv 2506.08573v1)</a></div>
+      </div>
+      <div class="finding-body">June 2026 paper using infinite-horizon path-dependent Backward Stochastic Differential Equations to prove appropriately designed FR can maintain perp price alignment. Establishes existence/uniqueness of BSDE solutions for path-dependent FR structures. Proposes alternative 'path-dependent' FR formulas beyond the standard linear premium index. Replicating portfolios for perpetual future issuers. Key theoretical implication: path-dependent FR accounts for trajectory (not just instantaneous premium), meaning reversals after sustained trends generate predictable correction signals.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>HTML version (v1) adds mathematical developments beyond abstract-level R9 citation. New finding: path-dependent FR design reduces price-tracking error, with trend-reversal correction signals as a novel derivative alpha source.</p></div>
+        <div class="meta-box k275"><h4>K275 Relevance</h4><p>If OKX moves toward path-dependent FR design (possible given ICE TradFi partnership), K275's assumption of stationary linear premium structure breaks. Model OKX FR as path-dependent in K293.</p></div>
+      </div>
+    </div>
+
+    <!-- R10-020 -->
+    <div class="finding-card" data-cat="hl-ecosystem">
+      <div class="finding-header">
+        <span class="finding-id">R10-020</span>
+        <span class="finding-category cat-hl-ecosystem">HL Ecosystem</span>
+        <span class="action-badge action-high">HIGH</span>
+        <div class="finding-title"><a href="https://www.datawallet.com/crypto/top-hyperevm-projects" target="_blank">HyperEVM DeFi: Liminal Delta-Neutral FR Vaults + Hyperbeat HIP-3 Liquidity — K275 Successor</a></div>
+      </div>
+      <div class="finding-body">HyperEVM (Feb 2025 mainnet): Solidity contracts with direct read/write access to HL L1 orderbook. Enables: delta-neutral strategies, on-chain market makers, automated basis trades, structured products — all without external keepers. Liminal: converts HL FR into market-neutral xTokens, customized accounts, composable on-chain products. Hyperbeat: beHYPE liquid staking + HYPE/USDC/UBTC/XAUt vaults + HIP-3 liquidity strategies + delta-neutral tokens. Precompiles: instant collateral checks, synchronized liquidations, no oracle delays, dynamic rebalancing.</div>
+      <div class="finding-meta">
+        <div class="meta-box orthogonal"><h4>Why Orthogonal</h4><p>HyperEVM smart contract composition with CLOB is entirely new strategy category. Liminal xToken model of wrapping FR carry into liquid tokens is a new primitive for K293+ architecture not in R1-R9.</p></div>
+        <div class="meta-box k275"><h4>K275 SUCCESSOR ARCHITECTURE</h4><p>Liminal is the structural replacement for K275 at execution layer: delta-neutral FR capture, lower cost (0.015% HL maker vs OKX 0.02%), +30% capital efficiency (portfolio margin), better composability. K275 sunset roadmap should point to Liminal-equivalent on-chain structure.</p></div>
+      </div>
+    </div>
+
+  </div><!-- /findings-grid -->
+
+</div><!-- /container -->
+
+<footer>
+  Systematic Alpha Discovery Program — Round 10 | 20 findings | R1-R9累計202件 | 生成: 2026-05-25 JST
+</footer>
+
+<script>
+function filterAll() {
+  document.querySelectorAll('.finding-card').forEach(c => c.style.display = '');
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+function filterCat(cat) {
+  document.querySelectorAll('.finding-card').forEach(c => {
+    c.style.display = c.dataset.cat === cat ? '' : 'none';
+  });
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
