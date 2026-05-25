@@ -1,0 +1,222 @@
+[
+  {
+    "id": "R9-01",
+    "title": "AdaptiveTrend: 6時間足トレンドフォロー+月次適応ポートフォリオ構築でSharpe 2.41 (arxiv:2602.11708)",
+    "url": "https://arxiv.org/abs/2602.11708",
+    "source": "arXiv q-fin.PM (2026/02)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "150+銘柄ペア、36ヶ月OOSバックテスト（2022-2024）でSharpe 2.41、最大DD -12.7%、Calmar 3.18を達成するトレンドフォローフレームワーク。イノベーション3点: (1)日中ボラ較正動的トレイリングストップ、(2)ローリングSharpeベース銘柄選択（月次）+時価総額フィルタ、(3)クリプトの正ドリフト実証に基づく非対称70/30ロング/ショート配分。TSMOMベンチマークを大きく凌駕。",
+    "why_matters": "K246aはK198/K208/K226の3戦略合成。AdaptiveTrendは6時間粒度のトレンドシグナル+月次銘柄選択という全く異なる時間軸の組み合わせ。K246aのFR/TVL系特徴と直交する「トレンド持続性×銘柄選択」アルファ源。特に70/30非対称配分は既存の等配分仮定と直交するポートフォリオ改善示唆。",
+    "actionable": "Y",
+    "action_reason": "6時間足高値低値クローズからATR较正動的トレンドスコアを算出し、月次Sharpeランキングで上位30銘柄を選択。70/30ロング/ショート非対称配分をK254+新戦略ベースラインとして検証。150銘柄+ユニバース対応のため銘柄幅フィードバックとも整合。"
+  },
+  {
+    "id": "R9-02",
+    "title": "Arkham Intelligence Ultra API: エンティティラベル付きファンドフロー追跡で99%精度（2026/02 API更新）",
+    "url": "https://intel.arkm.com/api",
+    "source": "Arkham Intelligence / Blockworks",
+    "date_collected": "2026-05-25",
+    "summary_ja": "2026年2月にArkham次世代Intel APIをリリース。取引所ウォレット種別（sweep/deposit）の識別精度99%超。テスラトレジャリー・ドイツ政府・Lazarus GroupなどBTCUTXOフレームワーク内でも機関アクターを追跡可能。エンティティ別累積フロー変化を定量APIで取得可能。大口ラベル付ウォレットの蓄積/分配開始が方向確信の先行指標。",
+    "why_matters": "K246aはオフチェーン機関フロー（Arkhamラベル付きウォレット）を特徴として持たない。特定の機関（例: Lazarus、国家保有分）のファンドフローは市場への売り圧・買い圧の本質的先行情報。ETFフローとは異なる「オンチェーン機関行動」という独自次元のシグナル。R8-17のETFフローとは相補的だが完全に異なる情報源。",
+    "actionable": "Y",
+    "action_reason": "Arkham Intel API（無料枠/ARKM）からBTC/ETH主要ラベルウォレット（国家保有・主要取引所コールドウォレット）の週次ネットフローを取得。大口機関ウォレットからの取引所への流出（売り圧）が前週比+50%超でリスクオフシグナルをK254レジームフィルタに追加。"
+  },
+  {
+    "id": "R9-03",
+    "title": "Kalshi KXRECSSNBER景気後退リスク信号: OOS MSFE 0.979でBTCボラを予測 (arxiv:2604.01431) ★R9独立深掘り",
+    "url": "https://arxiv.org/abs/2604.01431",
+    "source": "arXiv q-fin.GN (2026/04)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "【R8-01の深掘り: R8はボラ予測を発見、R9では実装詳細を特定】KXRECSSNBER（NBER基準景気後退）のOOS MSFE比0.979（p=0.020）がBTCの最も安定した予測変数。KXCPI（インフレ）はETH（MSFE=0.959, p=0.010）/SOL（p=0.048）の altcoinボラ予測に有効。これらシグナルはFFレート先物・米国債・DeribitIVIXと直交（多変数分析で独立性確認済み）。2023年1月〜2026年3月サンプル。",
+    "why_matters": "R8-01で「Kalshiはボラ予測に有効」と発見したが、R9ではチャネル別の精度（景気後退>金融政策>インフレ）と直交性の実証に焦点。KXRECSSNBER単独でBTCボラレジームを予測できることが判明しており、K254のポジションサイジングモジュールへの直接組み込みが可能。",
+    "actionable": "Y",
+    "action_reason": "Kalshi API（/markets?ticker=KXRECSSNBER）から日次確率を取得。景気後退確率が前日比+5%超上昇（ショックシグナル）→K254ポジション全体を50%縮小。ETH/SOLはKXCPIの急変動（±3%/日）を追加フィルタとして使用。実装コストが低く即時組み込み可能。"
+  },
+  {
+    "id": "R9-04",
+    "title": "Hyperliquid Long-tail FR裁定: 長尾パープの年利20-60%スプレッドとHourly Funding優位性",
+    "url": "https://www.neuralarb.com/2026/04/24/hyperliquid-vs-cexs-perp-arbitrage-after-fees-funding-slippage/",
+    "source": "NeuralArb / Hummingbot (2026/04)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Hyperliquid vs CEX（Binance/Bybit）の資金調達率裁定: 主要ペアは純利益3-12%APR、長尾パープ（HYPE/XPL/新規上場）は20-60%APR。HLのhourly funding cadence（vs CEXの8時間）が裁定優位を創出。戦略: BTC funding 0.01%/8h @HL vs 0.05%/8h @Binance → 差分をショート@高い方/ロング@低い方で収益。2026年のedgeは主要ペアでなく長尾ペアに集中。",
+    "why_matters": "K246aのK208はFRを既存戦略として使用するが、K246aはHL-CEX間のFRスプレッド裁定を実施していない。HL特有のhourly funding (vs 8h on CEX)という構造的差異に基づく裁定は、単純なFR予測とは全く異なるメカニズム。長尾ペアの高スプレッドは銘柄幅拡大フィードバックと整合。",
+    "actionable": "Y",
+    "action_reason": "Loris.tools等のFRスキャナーでHL-CEX差分を銘柄別に自動計算。長尾パープでFR差分>15%APR（HL高い）を発見したら、HL側でショート+CEX側でロング（デルタニュートラル）のFRアービ戦略をK254追加モジュールとして実装。Hummingbotのhl-funding-arbitボットをベースに拡張。"
+  },
+  {
+    "id": "R9-05",
+    "title": "CEX-DEX裁定の正体: ジャンプ拡散モデルで裁定収益がBlack-Scholesの過小評価を実証 (arxiv:2604.15973)",
+    "url": "https://arxiv.org/abs/2604.15973",
+    "source": "arXiv q-fin.TR (2026/04, ACM Web Conference 2026)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "「Where Does MEV Really Come From?」: CEX-DEX裁定の理論モデルを刷新。連続価格モデル（Black-Scholes）は裁定収益を過小評価し、実際は「価格ジャンプ」発生点が裁定機会の源泉。ミスプライシング過程をエルゴード的マルコフ連鎖としてモデル化。Binance-Uniswap v3データ（2025年7-9月）で較正。結論: CEX-DEX裁定はMEVの主要源泉であり、取引量が主要流動性プールの全取引量に匹敵。",
+    "why_matters": "R8-10（CEX-DEX抽出パターン）の発展版だが、R9では「ジャンプ拡散による機会モデル」という新知見を追加。価格ジャンプ（大型取引・清算）のタイミング推定がCEX-DEX裁定のエッジを決定することを理論的に実証。R8-10の「0.5-1.5秒ウィンドウ」の背後にあるメカニズムを解明し、K254のHFT実装設計に直接使用可能。",
+    "actionable": "Y",
+    "action_reason": "価格ジャンプ検知モジュールを実装: BinanceWSでΔprice>0.3%/tick（ジャンプ閾値）を検知した瞬間にHL（DEX）サイドで裁定注文を発射。マルコフ連鎖モデルで次の1-3ブロック内の価格収束確率を推定し、期待収益がスリッページ+手数料を超える場合のみ発動。"
+  },
+  {
+    "id": "R9-06",
+    "title": "1秒サブスロット化でCEX-DEX裁定取引数+535%・量+203%の証明 (arxiv:2601.00738)",
+    "url": "https://arxiv.org/abs/2601.00738",
+    "source": "arXiv cs.CR / q-fin.TR (2026/01)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Ethereumスロット時間を12秒から1秒に短縮（サブスロット化）した場合のCEX-DEX裁定挙動をBinance-Uniswap v3（2025/07-09）シミュレーションで分析。裁定取引数+535%、取引量+203%増加。リスク調整後リターン改善がドライバーであり純粋な速度優位でない点が重要。DEXサイドの実行不確実性を組み込んだ新しい裁定モデルを提案。",
+    "why_matters": "ePBS/Glamsterdamアップグレード（2026年H1）でEthereumのブロック時間短縮が実装される場合、ETH-DEX間の裁定機会構造が根本的に変化する。この変化はETH DEXの流動性コスト・スプレッドにも影響し、K246aのETH関連戦略のエッジ持続性に関わる。R8-10を補完するが「将来のプロトコル変化への備え」という観点で直交。",
+    "actionable": "Y",
+    "action_reason": "ePBS実装タイムラインをEthereum Research Forumで監視。実装後は裁定ウィンドウが1/12に縮小するため、現行のCEX-DEX裁定戦略の期待収益モデルを更新。K254ではepoch時刻パラメータをパイプラインに組み込み、Glamsterdam後の自動再校正を準備。"
+  },
+  {
+    "id": "R9-07",
+    "title": "ePBS (Enshrined PBS) 実装SoK: Glamsterdamでリレー依存90%が消滅し新たなMEVフローが誕生 (arxiv:2506.18189)",
+    "url": "https://arxiv.org/abs/2506.18189",
+    "source": "arXiv cs.CR (2026/05, SoK)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Ethereum Glamsterdamアップグレード（EIP-7732）でePBSが実装され、現在80-90%のブロックを処理するFlashbots等の外部リレーが不要になる。ビルダーが「BuilderBid」を提出、バリデータが最高入札を選択し「Payload Timeliness Committee (PTC)」が適時性を検証。インクルージョンリスト（EIP-7547）でトランザクションの検閲が困難に。MEV収益のフロー（バリデータ→ビルダー→サーチャー）が再編される。",
+    "why_matters": "K246aはEthereum MEVのインフラ変化（ePBS）を戦略リスクとして認識していない。外部リレー消滅でFlashbotsへの集中リスクが解消される一方、新たなPTC投票メカニズムでバリデータが主要プレイヤーになる。ETH関連戦略のスリッページ・実行コスト構造が変化する可能性があり、K254設計時に考慮必須。",
+    "actionable": "N",
+    "action_reason": "ePBSは実装準備段階（2026年H1目標）であり直接取引シグナルにはならない。ただしGlamsterdam実装後のETH DEX取引コスト変化を事前にモデル化し、K254のスリッページパラメータを更新する計画を立てること。継続監視推奨。"
+  },
+  {
+    "id": "R9-08",
+    "title": "週末地政学ショックのセッション依存暗号価格反応: 米国土曜夜間セッションが累積反応の67-126%を占有 (SSRN:6600698)",
+    "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6600698",
+    "source": "SSRN (Boon Chuan Lim, 2026/04/18)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "BTC/ETH/SOL/XRPスポット+パープ秒次データで2023年ハマス攻撃・2024年4月イラン-イスラエル・2026年イランWar（BTC+530bps累積）を分析。週末発生地政学ショックに対し、米国土曜夜間セッション1回で累積反応の67-126%が実現。アジア・欧州セッションの寄与は軽微。従来の30-60分評価窓は反応を過小推定（最大5倍低推定）または符号を逆転させる。デジタルゴールド解釈と矛盾。",
+    "why_matters": "K246aは地政学リスクイベントの「セッション別タイミング」を考慮しない。週末地政学ショック時の米国セッション開始（土曜日EST夜間）を予測または検知することで、BTC/ETHの方向バイアスを2-12時間先行してとれる可能性がある。FR戦略が週末の急変動で誤作動するリスクを軽減するセッション別フィルタとして直交。",
+    "actionable": "Y",
+    "action_reason": "地政学ヘッドラインモニタリング（Reuters/AP APIまたはGDELT）で週末イベント検知。土曜日22:00-翌0:00 ESTの価格ボラ急騰（15分足で>1.5σ）をショックシグナルとし、米国セッション開始後の方向を確認してからのみK254でポジション変更する「地政学フィルタ」を実装。"
+  },
+  {
+    "id": "R9-09",
+    "title": "Glassnode GEX Heatmap深掘り: ガンマフリップが価格をSticky→Slipperyに転換するメカニズムの定量化",
+    "url": "https://insights.glassnode.com/gamma-exposure-heatmap/",
+    "source": "Glassnode Insights (2026年)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "【R8-04のGEX基礎版から、R9でHeatmap（時間軸付き）に深掘り】GEXヒートマップで各ストライクレベルのGEX分布を時系列追跡。正GEX高帯域=Sticky（ディーラーが下押しを買い戻す）、負GEX帯=Slippery（モメンタム増幅）。ゼロクロス（ガンマフリップ）が移行のシグナル。BTCでは$86K周辺のガンマ集中が最も強く価格を引き付ける。BTC/ETH/SOL/XRP/PAXGに対応、10分粒度。",
+    "why_matters": "R8-04でGEXの基礎を発見したが、R9ではHeatmap（時空間分布）という深掘り。特定価格レベルのGEX密度が高い場合、その価格水準が磁石のように機能し、K254のターゲットプライス設定と決済レベルに直接使える。現行K246aはこの空間的GEX分布情報を完全に欠く。",
+    "actionable": "Y",
+    "action_reason": "GlassnodeプロAPIからBTC/ETHのGEX Heatmap（ストライク×時間）を10分毎に取得。現在価格付近で正GEX密度が高いストライク=一時的ピニングゾールとしてK254のTPを下方調整。負GEX帯に入ったらトレイリングストップを拡大。ガンマフリップを検知したら即時レジーム変更フラグを立てる。"
+  },
+  {
+    "id": "R9-10",
+    "title": "クロスチェーン負のスピルオーバー深掘り: SOL急増時のETH下落と資本再配分メカニズム (arxiv:2602.23762) ★R9精緻化",
+    "url": "https://arxiv.org/abs/2602.23762",
+    "source": "arXiv q-fin.TR (2026/02)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "【R8-02の発見を、R9ではトークンローンチ・注意ショックとの連動という新角度で分析】ETH/SOL/BSC/Arbitrum/Avalanche（2022-2025）。一方のチェーンでTXN急増時に他チェーン資産が下落（株式市場の正の共動と逆）。メカニズム: 注意駆動の資本再配分（ゼロサム的注目争い）。トークンローンチイベントがクロスチェーン資本逃避をトリガー。グローバル株式・金利・BTC統制後も有意。",
+    "why_matters": "R8-02で発見した「負のスピルオーバー」に対し、R9ではトークンローンチ（Pump.funやSolana新規上場）というトリガーを特定した点が新規。Solana上でのミームコインブームが始まった日（Pump.fun日次新規立ち上げ急増）はETH/AVAX資産の短期下落リスクが高まる。K254でSOL-ETH間の資本フロー監視を実装できる。",
+    "actionable": "Y",
+    "action_reason": "Pump.funの日次新規コイン立ち上げ数をAPIで監視。1日に1,000コイン超の急増（前週比+200%）はSOL注意ショックとして、ETH/AVAX関連ポジションの一時縮小フラグをK254に追加。SOL-ETH資金フロー逆転が48時間以内に確認されたら元に戻す。"
+  },
+  {
+    "id": "R9-11",
+    "title": "Deribit IV Term Structure: Backwardation発生時のBTC-ETH乖離と95日以内解消パターン",
+    "url": "https://insights.deribit.com/industry/bitcoin-options-finding-edge-in-four-years-of-volatility-regimes/",
+    "source": "Deribit Insights / Glassnode Studio (2026)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "DeribitのIV term structureはContango 77.5%の時間。Backwardation発生時は平均85時間で解消（mean TTL）。2026年2月時点: BTC term structureが下向き（short-end IV>long-end）でput高値（crash risk priced-in）。7日IV~82%（深OTM put）vs 180日ATM 59%。BTC-ETH間の乖離: BTC ATHを受けてBTC前端が下落する一方、ETHは全限月でIV急騰（逆転強化）。",
+    "why_matters": "K246aはDeribitのIV term structure形状（Contango/Backwardation/slope）を特徴として持たない。Backwardation時の85時間解消パターンはFRスパイク（ボラ上昇環境）との相関が強く、K254のボラレジームフィルタとして直接使用可能。BTC-ETH IV乖離は相対値取引（BTC弱め/ETH強め）の根拠にもなる。R8-04のGEXとは異なる次元（term structure形状）のオプション信号。",
+    "actionable": "Y",
+    "action_reason": "GlassnodeのBTC/ETH IV Term Structureメトリクス（1W vs 3M vs 6M IV比）を日次取得。Backwardation（short IV > long IV）に転換した時点でBTC/ETHの高レバレッジロングを回避するK254フィルタを追加。BTC-ETH IV差分が+20%超乖離したらBTC弱気・ETH強気の相対バイアスを短期設定。"
+  },
+  {
+    "id": "R9-12",
+    "title": "Crypto Hidden Factor Model: DeFiLlama TVL/MktCap比とFear&Greed+Altcoin Season Indexの3因子モデル (arxiv:2601.07664)",
+    "url": "https://arxiv.org/abs/2601.07664",
+    "source": "arXiv q-fin.PM (Brigida, 2026/01)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Giglio-Xiu 3パスアプローチで暗号資産リターンのクロスセクションを説明するlatent factorを推定。発見: (1)TVL/MktCap比（DefiLlama製）、(2)Fear&Greed指数（投資家センチメント）、(3)Altcoin Season Index（投機的回転）の3変数が暗号固有の潜在因子に対応。加えてハック被害額/MktCap（DeFiLlama）が有意なネガティブファクターとして機能。テック/収益性の株式産業因子との統合も進行。",
+    "why_matters": "K246aはTVL絶対値を特徴として持つが、TVL/MktCap比（Tobin's Q的指標）は持たない。またFear&Greed指数やAltcoin Season Indexはクロスセクション的なセンチメントと回転サイクルを表し、K246aが銘柄間の相対的なリターン予測に活用できる新次元。ハック/MktCap比は固有のリスクファクターとして直交。",
+    "actionable": "Y",
+    "action_reason": "DefiLlamaからTVL/MktCap比を全ユニバース銘柄で日次計算。Altcoin Season Index>75（投機回転期）にはアルトコインのロング傾斜を高める、Fear&Greed<20（極度恐怖）には逆張りロング傾斜を追加するレジームフィルタをK254に組み込む。ハック被害急増銘柄は除外リストへ。"
+  },
+  {
+    "id": "R9-13",
+    "title": "Polymarketの5分BTC二値オプション: AI増強裁定でShort-Duration予測市場に実装可能なエッジ (Medium, 2026)",
+    "url": "https://medium.com/@gwrx2005/ai-augmented-arbitrage-in-short-duration-prediction-markets-live-trading-analysis-of-polymarkets-5-minute-bitcoin-binary-options-8ce1b8c5f362",
+    "source": "Medium / Polymarket 2026",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Polymarketの5分BTC価格予測市場（バイナリーオプション）でAI増強裁定を実施。市場確率vs実際価格変動の乖離を活用。短期予測市場で「規制市場の集合知×リアルタイム価格データ」の組み合わせによる裁定が可能。予測市場に実際資本を賭けた参加者の情報集約効果（ミスプライシング検知）を活用。Polymarket全体の4月出来高$1.99Bで実使用可能な流動性を確認。",
+    "why_matters": "R8-12（Polymarketマイクロストラクチャー）から発展し、R9では「5分二値オプション」という超短期予測市場に特化した実装例として新規。K246aはポリマーケット二値オプション価格を特徴として持たない。BTCのrealizedボラが5分予測市場確率に織り込まれているかどうかのズレが、K254の超短期エントリーシグナルに使える。",
+    "actionable": "Y",
+    "action_reason": "Polymarket CLOBのWSフィードで5分BTC二値市場確率をリアルタイム取得。市場確率が現在BTCボラ（過去5分ATR）から乖離した場合（理論vs市場>5%差）にエッジを計算。期待値>0であれば二値市場で対応ポジションを持ちつつ、HL現物でヘッジする複合裁定をK254に追加。"
+  },
+  {
+    "id": "R9-14",
+    "title": "Pump.fun収益の36%シェア: SOLネットワーク収益先行指標としてのMemecoin活動モニタリング",
+    "url": "https://blockchain.news/news/pump-fun-solana-revenue-q1-2026",
+    "source": "Blockchain News / DeFiLlama (2026/05)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Pump.funはQ1 2026に$124.7M収益（Solana全アプリ収益$342.2Mの36%）。累積$1B突破（2026年3月）でSolana最大収益源。Q1 2026の新規コイン立ち上げ数と日次収益の乖離（収益+17%QoQながらSOL-30%）はSOL価格とミームコインエコシステム収益の一時的デカップリングを示す。73.3%トレーダーが4月に利益（過去最高）。Goldman Sachs/Intesa SanpaoloがSOL ETFポジションを大幅削減。",
+    "why_matters": "K246aはSolanaアプリ収益データ（Pump.fun起動数・手数料収益）を持たない。Pump.fun日次収益の急増はSOLの短期ボラと正相関（Jito MEVチップ-R8-09と類似）しており独自シグナル。さらに機関投資家のSOL離脱（Goldman撤退）とリテールの投機活発化の乖離は、SOL関連戦略の中期センチメントリスクとして重要な文脈を提供。",
+    "actionable": "Y",
+    "action_reason": "DeFiLlamaのPump.fun日次手数料収益APIを取得。前7日平均比+150%超急増→SOLの短期ボラ上昇先行シグナルとしてK254のSOL関連ポジションサイズ縮小トリガーに使用。同時にAltcoin Season Index（R9-12）と組み合わせてSOL-リスク複合フィルタを設計。"
+  },
+  {
+    "id": "R9-15",
+    "title": "BTCスポットETFフロー: 機関フローサイクルが4年ハービングサイクルを代替（Amberdata, 2026）",
+    "url": "https://blog.amberdata.io/2026-outlook-the-end-of-the-four-year-cycle-clone",
+    "source": "Amberdata Blog (2026/01)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "「2026年展望: 4年サイクルの終焉」。ETFは1ヶ月に4年分のマイナー供給以上を動かす（$500M/日vs$40M/日マイナー供給）。2025年ATH $126,296（10月6日）後に46.7%下落という初の「ハービング翌年のマイナス」が確認。フローサイクル（Fed政策・リスクアペタイト・規制催化）が4年ハービングサイクルに代替。スポットETF日次フローがBTCの限界価格ドライバーとして確立（5日連続流入後に+12%上昇を3回確認）。",
+    "why_matters": "R8-17でETFフローシグナルを発見したが、R9では「ハービングサイクルの崩壊とフローサイクルへの移行」という構造的変化の理解を追加。K246aはBTCサイクルフェーズを特徴として使っていないが、フローサイクル管理（機関フロー+Fed政策連動）がK254のBTC長期レジーム設定に直接影響する。R8-17とは補完だが「サイクル思想の転換」として独自価値あり。",
+    "actionable": "Y",
+    "action_reason": "CoinGlass/GlassnodeのBTC ETF 7日累積ネットフローを週次チェック。+$3B超（強い機関流入）→Bull Regimeフラグ、連続3週間マイナス（$-1B/週以上）→Bear Regimeフラグとして、K254の銘柄間リスク配分比率（BTC heavy vs. altcoin heavy）を自動調整するマクロレジームレイヤーを追加。"
+  },
+  {
+    "id": "R9-16",
+    "title": "ドルニュートラル暗号モメンタム: 上位/下位クォータイル長短戦略でBTCを上回るSharpe (SSRN:6300843)",
+    "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6300843",
+    "source": "SSRN (Chen, Chen, 2026/02)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Binance上位50銘柄（日次）でクロスセクション回帰: 将来リターン = f(過去リターン)。上位クォータイルロング+下位クォータイルショートのドルニュートラル戦略はBTC単純保有よりSharpe比・最大DD共に改善。2026年2月公開。出発点: 暗号市場のモメンタム効果（過去リターンの持続性）の実証。従来は株式市場で確立済みだが暗号市場での検証が近年進行中。",
+    "why_matters": "K246aはクロスセクション・モメンタム（銘柄間の相対強弱）を特徴として持たない。K208/K226はFR/TVLの時系列シグナルであり、各銘柄の「市場内相対強弱」は使用していない。ドルニュートラル構造は市場全体のベータリスクを除去するため、FR戦略と相関の低い追加リターンソースとなりえる。銘柄幅50+フィードバックと直接整合。",
+    "actionable": "Y",
+    "action_reason": "全ユニバース50+銘柄の過去1日・5日・20日リターンを日次ランキング。上位20%をロング+下位20%をショートするドルニュートラルポートフォリオをK254追加モジュールとして実装。既存のFR戦略との相関を確認し、相関<0.3なら組み合わせてSharpe向上を検証。"
+  },
+  {
+    "id": "R9-17",
+    "title": "Nansen Smart Money 500万ウォレットラベル: ドーマントウォレット活性化が価格先行指標として機能",
+    "url": "https://www.nansen.ai/post/top-smart-money-indicators-in-crypto-how-to-identify-and-track-whale-activity",
+    "source": "Nansen AI (2026)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "Nansen AI: 3億+アドレスから10,000高パフォーマンスウォレットを特定（Smart Money）。30チェーン対応。特定シグナル: (1)ドーマントウォレット活性化（休眠後の突然の大口移動）、(2)取引所への大口ステーブルコイン流入（買い準備）、(3)既知エンティティからの新規ウォレット資金供給。AIによる異常ウォレット動作の自動検知。BTCドーマントウォレット($250M相当)が2026年に複数回活性化し、各回7-14日以内に価格急変動。",
+    "why_matters": "ArkhamはエンティティIDに強み、NansenはSmart Moneyランキングと行動スコアに強み。K246aはどちらも参照しない。ドーマントウォレット活性化（長期間動いていなかった巨額残高）はオンチェーンの最も強力な「情報優位」シグナルの一つ。R9-02のArkhamとは相補的だが、アルゴリズム的なスマートマネー特定方法論が異なる。",
+    "actionable": "Y",
+    "action_reason": "Nansen Smart Money APIでドーマントウォレット活性化アラートを設定（休眠365日+・$1M相当以上の移動）。BTC/ETH関連のドーマントウォレット活性化検知→K254でBTC/ETHの方向バイアス（移動先が取引所=売り圧、プライベートウォレット=HODL継続）を設定。週次でTop10 Smart Moneyの累積ポジション変化を確認。"
+  },
+  {
+    "id": "R9-18",
+    "title": "BTCハッシュリボン+難易度急騰: 4年サイクル崩壊後の新しい底シグナル校正 (CoinDesk, 2026/02更新)",
+    "url": "https://www.coindesk.com/markets/2026/02/25/one-of-longest-mining-capitulations-nears-end-signaling-potential-btc-price-bottom",
+    "source": "CoinDesk / VanEck (2026/02)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "【R8-08のHash Ribbonを、R9では「4年サイクル崩壊後の再校正」視点で深掘り】2026年2月の難易度14.73%急騰（史上最大）はマイナー降参終了の逆説的シグナル。Hash Ribbonリカバリー（30日MA>60日MA再クロス）後の2-4ヶ月BTCリターンが正の確率77%（VanEck）。ただし2025年でハービングサイクルが崩壊（初の翌年マイナス）したため、Hash Ribbonシグナルの信頼性もフローサイクル存在下で要再検証。",
+    "why_matters": "R8-08でHash Ribbonを発見したが、R9では「サイクル崩壊後における信頼性再評価」という新視点を追加。フローサイクル（ETFフロー主導）とHash Ribbonシグナルが矛盾する場合（マイナー降参終了でもETF大量流出中）はどちらを優先するかの判断基準が重要。K254の複数信号統合ロジックを設計する上での必要情報。",
+    "actionable": "Y",
+    "action_reason": "CryptoQuant APIでHash Ribbon（30/60日hashrate MA）とETFフロー（R9-15）を同時監視。Hash RibbonリカバリーかつETF 7日フローがプラスの場合のみBTC強気シグナルとして扱う（AND条件）。どちらか一方のみの場合は中立。2つの信号の論理積がK254のBTC directional biasを決定するルールを設計。"
+  },
+  {
+    "id": "R9-19",
+    "title": "EigenLayer TVL $8.9B安定化: LRT ecosystem stressとETH価格の関係（Kelp DAO $300M損失教訓）",
+    "url": "https://fensory.com/intelligence/defi/eigenlayer-tvl-restaking-market-analysis-2026",
+    "source": "Fensory Intelligence / DeFiLlama (2026/03)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "EigenLayerのTVL $8.9B（2026年3月）、市場シェア93.9%。ただしKelp DAO（主要エコシステム参加者）のセキュリティ侵害で$300M損失、Aaveなどから$5.4Bの引き出しが発生。LRT(Liquid Restaking Token)エコシステムのストレステスト実績: eETH/RSETH/ezETHのETHペグ乖離が$5B+の流動性喪失の先行指標となった。ETH staking APY（2.85%）は年利2桁を目指す機関にとって代替になりきれていない。",
+    "why_matters": "K246aはEigenLayerやLRTのシステミックリスクを監視しない。KelpDAO事例が示すようにLRTペグ乖離→Aave引き出し連鎖→ETH価格下落という伝播経路が実証済み。R8-20のstETH discountと類似した「LRT stressがETH price stressの先行指標」という独自シグナル。さらにEigenLayerへのTVL変化速度はETHの流動性圧力を反映する。",
+    "actionable": "Y",
+    "action_reason": "DeFiLlamaからEigenLayer TVL（週次変化率）とeETH/RSETH/ezETHのETHペグ比率を日次取得。LRT合計ペグ乖離が-0.5%超または週次TVL変化-15%以上をETH市場ストレス先行シグナルとして、K254のETH関連ポジション縮小トリガーに追加。R8-20のstETH discountとOR条件で組み合わせてカバレッジ拡大。"
+  },
+  {
+    "id": "R9-20",
+    "title": "Amberdata AD Derivatives: Deribitティック別テイカーフロー+プレミアム分析で機関センチメント測定",
+    "url": "https://www.amberdata.io/deribit-market-data",
+    "source": "Amberdata AD Derivatives (2026)",
+    "date_collected": "2026-05-25",
+    "summary_ja": "AmberdataのDeribit履歴データ（2021年5月〜、ティック別）はテイカー方向が正規化済み。AmberLens Options Trading dashboardでBTC/ETH/SOL/XRPの出来高・OI・プレミアムフローを可視化。テイカーがコールを買い越しているか（強気確信）、プット買いが急増しているか（ヘッジ需要）をリアルタイムで把握可能。早期2026データではDeribit OI+9.7%増のタイミングでスポット在庫管理とオプションヘッジ増加が同時確認。",
+    "why_matters": "R8-04のGEX（Glassnode）とは異なり、Amberdataはティック別の取引方向（Buy Call/Sell Put etc）を提供するため、機関の具体的なポジション方向の即時確認が可能。GEXは集計レベルだが、Amberdataは個別取引のconvictionを推定できる。プレミアムの絶対額変化も追跡可能で、大口機関がいつオプションヘッジを開始したかを検知できる点がK254設計で重要。",
+    "actionable": "Y",
+    "action_reason": "Amberdata APIからBTC/ETHのDeribit日次テイカーフロー（買いコール vs 売りプット: 強気確信、買いプット vs 売りコール: ヘッジ需要）を取得。買いコール優勢（Net Call Buy Ratio>1.5）が3日連続→BTCブルシグナル、買いプット急増（Net Put Buy Ratio>2.0）→K254ポジション縮小トリガーに設定。"
+  }
+]
