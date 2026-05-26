@@ -876,6 +876,74 @@ window.__renderWhenReady = function(fn, label) {
       </div>
     </div>
 
+    <!-- K357 Emergency Exit Status Indicator (2026-05-25) -->
+    <div class="lm-card" style="margin-bottom:14px;" id="emergency-exit-card">
+      <h3 style="display:flex;align-items:center;gap:8px;">
+        Emergency Exit Status
+        <span id="emergency-exit-badge" class="lm-badge lm-badge-active" style="font-size:0.78rem;">
+          STANDBY
+        </span>
+        <span style="font-size:0.7rem;font-weight:400;color:var(--text-secondary);margin-left:auto;" id="emergency-exit-ts">読み込み中...</span>
+      </h3>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:4px;">
+            HyperLiquid exposure: <strong style="color:var(--accent-orange);">57.5% of AUM</strong>
+            (K280 37.5% + K297' 20%)
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-secondary);">
+            Script: <code style="color:var(--accent-cyan);">scripts/emergency_hl_exit.py</code>
+            &nbsp;|&nbsp;
+            <a href="docs/k302a_runbook.md" style="color:#79c0ff;" target="_blank">Runbook §14</a>
+          </div>
+          <div id="emergency-exit-detail" style="font-size:0.78rem;color:var(--text-secondary);margin-top:4px;"></div>
+        </div>
+        <div style="text-align:right;min-width:140px;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);">Expected loss if HL fails</div>
+          <div style="font-size:1.2rem;font-weight:700;color:var(--accent-orange);">1.7–4.0% / yr</div>
+          <div style="font-size:0.7rem;color:var(--text-secondary);">(P=3–7%, K355 estimate)</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;padding:8px 10px;background:var(--bg-tertiary);border-radius:5px;font-size:0.78rem;">
+        <strong>Triggers:</strong> CFTC enforcement · HL exploit signal · ADL cascade · HYPE −40% 7d · operator discretion
+        &nbsp;|&nbsp;
+        <strong>Command:</strong> <code style="color:var(--accent-green);">python3 scripts/emergency_hl_exit.py --dry-run</code>
+      </div>
+    </div>
+    <script>
+    (function() {
+      // Load emergency exit status from cache/emergency_exit_status.json
+      fetch('cache/emergency_exit_status.json?t=' + Date.now())
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+          if (!d) return;
+          const badge = document.getElementById('emergency-exit-badge');
+          const ts    = document.getElementById('emergency-exit-ts');
+          const detail = document.getElementById('emergency-exit-detail');
+          const card   = document.getElementById('emergency-exit-card');
+          const tsStr = d.timestamp_utc ? new Date(d.timestamp_utc).toLocaleString('ja-JP', {timeZone:'Asia/Tokyo'}) : '—';
+          ts.textContent = tsStr + ' JST';
+          if (d.triggered) {
+            badge.textContent = 'EMERGENCY EXIT TRIGGERED';
+            badge.className   = 'lm-badge lm-badge-critical';
+            card.style.borderColor = '#f85149';
+            detail.innerHTML = `<span style="color:#f85149;font-weight:700;">EMERGENCY EXIT WAS EXECUTED.</span>
+              Positions: ${d.position_count || 0} | Notional: $${(d.total_notional||0).toFixed(0)}
+              | Flag file: EMERGENCY_EXIT_TRIGGERED.flag (daemons halted)`;
+          } else {
+            badge.textContent = 'STANDBY — No Emergency';
+            badge.className   = 'lm-badge lm-badge-active';
+            card.style.borderColor = '';
+            detail.textContent = 'Status: STANDBY. No exit triggered. Script scaffold ready.';
+          }
+        })
+        .catch(() => {
+          const detail = document.getElementById('emergency-exit-detail');
+          if (detail) detail.textContent = 'Status JSON not loaded (run dry-run to generate).';
+        });
+    })();
+    </script>
+
     <!-- K310 Activation Notice (2026-05-25 14:14 JST) -->
     <div class="lm-card" style="margin-bottom:14px;border-color:#388bfd;">
       <h3 style="color:#79c0ff;">K310 Plist Scaffold Status — Awaiting Manual Activation</h3>

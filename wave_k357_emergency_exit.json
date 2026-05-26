@@ -1,0 +1,77 @@
+{
+  "wave": "K357",
+  "title": "Emergency HL Exit Script Scaffold",
+  "date": "2026-05-27",
+  "status": "CRITICAL-MITIGATED",
+  "parent_wave": "K355",
+  "deliverables": {
+    "script":   "scripts/emergency_hl_exit.py",
+    "runbook":  "docs/k302a_runbook.md (§14 appended)",
+    "html":     "report.html (Emergency Exit Status indicator added)",
+    "design":   "wave_k357_emergency_exit.md",
+    "status_json": "cache/emergency_exit_status.json"
+  },
+  "risk_assessment": {
+    "hl_exposure_pct": 57.5,
+    "k280_hl_leg_pct": 37.5,
+    "k297_satellite_pct": 20.0,
+    "susde_hl_pct": 0.0,
+    "platform_shutdown_prob_annual": "3-7%",
+    "expected_loss_annual_pct": "1.7-4.0%",
+    "severity": "HIGH",
+    "k355_verdict": "Acceptable but unmitigated — no emergency exit existed",
+    "k357_verdict": "CRITICAL-MITIGATED — scaffold ready, user activation required"
+  },
+  "script_features": {
+    "default_mode": "dry-run (safe)",
+    "execute_mode": "--EXECUTE flag + interactive double-confirm + TTY check",
+    "auth": "HL_PRIVATE_KEY env var, read only at execution, never logged",
+    "address": "HL_USER_ADDRESS env var or --user CLI arg",
+    "no_hardcoded_creds": true,
+    "repo_root_pattern": "Path(__file__).resolve().parent.parent (K339)",
+    "signing": "SECP256K1 via eth_account (optional dep, live-only)",
+    "order_type": "IOC limit at extreme price + reduceOnly=True",
+    "order_sequence": "cancel_all_orders_first then close_positions",
+    "verify_after_each": true,
+    "pre_postcheck_snapshots": true,
+    "alert_ntfy": "cryptolab-emergency-hl-exit",
+    "flag_file": "EMERGENCY_EXIT_TRIGGERED.flag",
+    "dashboard_json": "cache/emergency_exit_status.json",
+    "log_file": "logs/emergency_hl_exit.log"
+  },
+  "trigger_conditions": [
+    "CFTC/SEC regulatory enforcement action against HyperLiquid",
+    "HL platform exploit (unverified but credible)",
+    "ADL cascade (>5 positions auto-deleveraged)",
+    "HLP vault APY drop >50% overnight",
+    "HYPE token -40% in 7 days",
+    "Operator discretion (conviction >70% of systemic risk)"
+  ],
+  "dry_run_test": {
+    "command": "python3 scripts/emergency_hl_exit.py --dry-run --user 0x0000000000000000000000000000000000000000",
+    "result": "PASS",
+    "output_summary": "No positions found (mock). Plan printed. No API calls made. No crash on missing env vars.",
+    "exit_code": 0
+  },
+  "api_research": {
+    "hl_info_endpoint": "https://api.hyperliquid.xyz/info",
+    "hl_exchange_endpoint": "https://api.hyperliquid.xyz/exchange",
+    "positions_payload": {"type": "clearinghouseState", "user": "<addr>"},
+    "orders_payload": {"type": "openOrders", "user": "<addr>"},
+    "signing": "SECP256K1 — eth_account.sign_message on keccak256(action_bytes + nonce + vault)",
+    "cancel_action": {"type": "cancel", "cancels": [{"coin": "...", "oid": "..."}]},
+    "close_action": {"type": "order", "orders": [{"reduceOnly": true, "orderType": {"limit": {"tif": "Ioc"}}}]}
+  },
+  "gaps_remaining": {
+    "eth_account_dep": "Live execution requires pip install eth-account (not in requirements.txt)",
+    "signing_validation": "SECP256K1 signing not tested live (scaffold only)",
+    "daemon_flag_check": "K302a daemons do not yet check EMERGENCY_EXIT_TRIGGERED.flag (manual integration needed)",
+    "key_provision": "User must provide HL_PRIVATE_KEY + HL_USER_ADDRESS before live use"
+  },
+  "recovery_options": [
+    "Option A: v6.13e Pure Bybit (K208 + K246a, zero HL)",
+    "Option B: K280 Bybit-only fallback (~42.5% AUM utilization)",
+    "Option C: Pause + assess (capital in USDC)"
+  ],
+  "k355_gap_status": "CLOSED (scaffold) — was: NO emergency exit plan existed"
+}

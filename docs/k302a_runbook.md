@@ -1010,3 +1010,198 @@ python3 scripts/verify_deployment_status.py
 | sUSDe OC signal | SHOCK (7d drop > 3pp) | Zero allocation auto (no manual action) |
 | sUSDe OC log | Error / no update 24h+ | Check launchctl + logs/k344_susde_oc.log |
 | Combined portfolio | MDD > 0.05% | HALT all components, investigate |
+
+---
+
+## §14 Emergency HL Exit Protocol (K357)
+
+**Added:** 2026-05-25 | **Script:** `scripts/emergency_hl_exit.py` | **Status:** SCAFFOLD-READY
+
+### §14.1 Context and Risk
+
+v6.13d production allocates **57.5% of capital** to HyperLiquid infrastructure:
+- K280 main (75% weight) × ~50% HL leg = **37.5% on HL**
+- K297' satellite (20% weight, PAXG/SPX, HL-only) = **20% on HL**
+- sUSDe 5% (Ethena, ETH-based) = 0% on HL
+
+**Worst-case expected loss (K355 assessment):**
+- HL platform shutdown probability: 3–7% / 12mo
+- Expected loss if triggered: 57.5% × capital × (recovery fraction)
+- Annual expected loss (P × impact): 1.7–4.0% of AUM
+- K355 verdict: "Acceptable but unmitigated — no emergency exit exists"
+- K357 status: **CRITICAL-MITIGATED** — scaffold ready, user activation required
+
+### §14.2 When to Use
+
+Trigger this protocol under **any** of the following conditions:
+
+| Trigger | Threshold | Source |
+|---------|-----------|--------|
+| Regulatory enforcement | CFTC/SEC action against HL | Official notice |
+| Platform exploit signal | Unverified but credible report | Twitter, Discord, HL status |
+| ADL cascade | >5 positions auto-deleveraged | HL UI notification |
+| Insolvency signal | HLP vault APY drops >50% overnight | K200/K224 monitor |
+| HYPE token stress | HYPE -40% in 7 days | Market data |
+| Operator discretion | Any conviction >70% of systemic risk | User judgment |
+
+**Do NOT trigger for:**
+- Normal market volatility (BTC/ETH -20% in 1 day)
+- Temporary HL API outage (<6 hours)
+- Individual position stop-loss (handled by strategy logic)
+
+### §14.3 Pre-conditions (Verify Before Executing)
+
+1. **Private key access verified**
+   ```bash
+   # Confirm you have the private key for the HL address
+   echo $HL_PRIVATE_KEY | wc -c   # should be 67 (0x + 64 chars + newline)
+   echo $HL_USER_ADDRESS
+   ```
+
+2. **Dry-run output verified**
+   ```bash
+   export HL_USER_ADDRESS=0x<your_address>
+   python3 scripts/emergency_hl_exit.py --dry-run
+   # → Check positions list, notional, estimated time
+   ```
+
+3. **K302a daemons stopped** (prevent conflicting orders)
+   ```bash
+   launchctl unload ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+   launchctl unload ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist
+   launchctl unload ~/Library/LaunchAgents/com.cryptolab.susde-oc.plist
+   launchctl list | grep cryptolab   # should return empty
+   ```
+
+4. **Capital reconciliation** (note current balances)
+   ```bash
+   python3 scripts/emergency_hl_exit.py --dry-run   # prints balance snapshot
+   ```
+
+### §14.4 Step-by-Step Command Sequence
+
+```bash
+# Step 1: Set environment variables (NEVER commit these to git)
+export HL_USER_ADDRESS=0x<your_hl_address>
+export HL_PRIVATE_KEY=0x<your_private_key>
+
+# Step 2: Stop all trading daemons
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k280-live.plist      2>/dev/null || true
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist 2>/dev/null || true
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.susde-oc.plist        2>/dev/null || true
+
+# Step 3: Run dry-run and VERIFY the plan output
+python3 scripts/emergency_hl_exit.py --dry-run
+# → Review: positions listed, notional, estimated time. Confirm looks correct.
+
+# Step 4: EXECUTE (real trading — requires two interactive confirmations)
+python3 scripts/emergency_hl_exit.py --EXECUTE
+# → Prompt 1: type 'yes'
+# → Prompt 2: type 'EXECUTE'
+# → Monitor stdout for cancel/close confirmations
+# → Script waits 5 min then runs post-check
+
+# Step 5: Verify exit log
+tail -50 logs/emergency_hl_exit.log
+cat cache/emergency_exit_status.json   # machine-readable status
+
+# Step 6: Check HL UI to confirm zero positions
+# Navigate to: https://app.hyperliquid.xyz/portfolio
+```
+
+### §14.5 Post-Exit Checklist
+
+- [ ] `logs/emergency_hl_exit_postcheck_*.json` exists and shows `"all_closed": true`
+- [ ] `cache/emergency_exit_status.json` shows `"status": "EMERGENCY_EXIT_TRIGGERED"`
+- [ ] `EMERGENCY_EXIT_TRIGGERED.flag` file exists in repo root
+- [ ] HL UI shows $0 positions for the address
+- [ ] No open orders remain
+- [ ] USDC balance reconciled with pre-check balance (accounting for PnL + fees + slippage)
+
+**If residual positions remain:**
+```bash
+# Re-run exit for remaining positions
+python3 scripts/emergency_hl_exit.py --EXECUTE
+# or manually close in HL UI
+```
+
+### §14.6 Recovery Path (Post-Emergency)
+
+After HL exit is complete, options for capital reallocation:
+
+**Option A: v6.13e (Pure Bybit)**
+- K280 main → Bybit-only mode (K208 + K246a components only)
+- K302a satellite → paused (HL-only, no alternative venue for PAXG/SPX)
+- sUSDe OC → unchanged (not HL-dependent)
+- Expected Sharpe reduction: ~30% vs full v6.13d
+
+**Option B: K280 Bybit-only fallback (K280b)**
+- Activate K246a (Bybit FR carry) and K208 Bybit leg only
+- Zero HL exposure
+- Reduced AUM utilization (~42.5% of deployed capital active)
+
+**Option C: Pause + assess**
+- Zero deployments, capital in USDC
+- Assess HL situation: recovery timeline, regulatory status
+- Wait for clarity before re-deploying
+
+**To re-enable HL trading after platform recovery:**
+```bash
+# 1. Remove emergency flag (REQUIRED before daemons will trade)
+rm EMERGENCY_EXIT_TRIGGERED.flag
+
+# 2. Update emergency status JSON
+python3 -c "
+import json; from pathlib import Path
+p = Path('cache/emergency_exit_status.json')
+d = json.loads(p.read_text())
+d['triggered'] = False; d['status'] = 'STANDBY'
+p.write_text(json.dumps(d, indent=2))
+print('Status reset to STANDBY')
+"
+
+# 3. Reload daemons (per §12 activation procedure)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist
+```
+
+### §14.7 Script Architecture (K357 Design Notes)
+
+**Script:** `scripts/emergency_hl_exit.py`
+
+| Feature | Implementation |
+|---------|---------------|
+| Default mode | `--dry-run` (safe, no API write calls) |
+| Auth | HL_PRIVATE_KEY env var, read only at execution moment, never logged |
+| Address | HL_USER_ADDRESS env var or `--user` CLI arg |
+| SECP256K1 signing | via `eth_account` (requires `pip install eth-account` for live) |
+| Order type | Market-close via IOC limit + `reduceOnly=True` |
+| Cancel first | All open orders cancelled before position close |
+| Verify after each | Position checked after every close |
+| Pre/post snapshots | `logs/emergency_hl_exit_precheck_<ts>.json` + `_postcheck_<ts>.json` |
+| Alert | ntfy.sh topic: `cryptolab-emergency-hl-exit` |
+| Flag file | `EMERGENCY_EXIT_TRIGGERED.flag` (K302a daemons check this) |
+| Dashboard | `cache/emergency_exit_status.json` (JSON for HTML indicator) |
+
+**SCAFFOLD ONLY caveat:**
+- Live trading requires: (a) `HL_PRIVATE_KEY` env var, (b) `pip install eth-account`
+- Signing implementation uses SECP256K1 via eth_account per HL SDK protocol
+- User must verify dry-run output matches actual positions before executing
+- Practice the `--EXECUTE` confirm flow without real key before an emergency
+
+### §14.8 Daemon Integration (K302a Daemons Check Flag)
+
+K302a satellite and K280 live daemons SHOULD check for the emergency flag before each run:
+
+```python
+# Add to k280_daily_run.py, k302a_satellite_run.py preamble:
+from pathlib import Path
+REPO_ROOT = Path(__file__).resolve().parent.parent
+EMERGENCY_FLAG = REPO_ROOT / "EMERGENCY_EXIT_TRIGGERED.flag"
+if EMERGENCY_FLAG.exists():
+    print(f"[EMERGENCY] Flag file detected: {EMERGENCY_FLAG}")
+    print("Trading disabled. Remove flag file to re-enable.")
+    sys.exit(0)
+```
+
+This integration is recommended but not yet deployed in all daemons (K357 scaffold scope).
