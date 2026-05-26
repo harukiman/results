@@ -1,23 +1,27 @@
 """
 k302a_satellite_run.py — K302a Satellite Daily Paper-Trade Execution
 ======================================================================
-Satellite portfolio: K297 [PAXG 60% + SPX 40%] — HyperLiquid only.
+Satellite portfolio: K297' [PAXG 60% + SPX 40%] — HyperLiquid only.
+K297' = K297 + SPX fake-out filter (K343 integration, v6.13d).
 
 Strategy:
   - PAXG component: Always-on long perp, collect HL funding income
-  - SPX component:  Always-on long perp, collect HL funding income
+  - SPX component:  Conditional long perp (K297' SPX filter: 5d trend > 0 AND FR > 0)
   - Allocation:     PAXG 60% + SPX 40% (fixed, per K297 recommendation)
   - Cost:           7 bp/side maker (paper-trade conservative; real HL maker = 1.5 bp)
   - Settlement:     HL hourly; daily PnL = daily_mean_fr × 24 − cost_amortized
 
-Backtest reference (K297 always-on carry):
+Backtest reference (K297' filtered carry, v6.13d):
   PAXG: Sharpe 16.91, MaxDD -0.36%, Win Days 88%, Ann Return 8.03%
-  SPX:  Sharpe  5.87, MaxDD -1.74%, Win Days 78%, Ann Return 6.80%
-  Portfolio EW: Sharpe 10.17, MaxDD -1.41%, Ann Return ~7.3%
+  SPX:  Sharpe 12.20, MaxDD -1.74%, Win Days 78%, Ann Return 6.80%  (K297' post-filter)
+  Portfolio EW: Sharpe 18.48, MaxDD -1.41%, Ann Return ~7.3%
   Correlation PAXG vs SPX: 0.18 (low — genuine diversification)
 
-Portfolio architecture:
-  K280 main (80%) + K302a satellite (20%) = K302a v6.12 combined
+Portfolio architecture (v6.13d K348):
+  K280 main (75%) + K302a satellite K297' (20%) + sUSDe OC sleeve (5%) = K302a v6.13d combined
+  Combined Sharpe: 25.47, MDD 0.0189%, all §6 gates pass, WF min 22.3
+
+Rollback: set SPX_FILTER_ENABLED = False to revert to K297 always-on (v6.12 behaviour).
 
 Usage:
   python3 scripts/k302a_satellite_run.py
@@ -39,8 +43,13 @@ import pandas as pd
 
 warnings.filterwarnings("ignore")
 
+# ── K297' SPX Filter Config (K343 K297→K297' integration, v6.13d) ──────────────
+SPX_FILTER_ENABLED    = True   # K343 K297→K297' integration (v6.13d); set False to rollback
+SPX_TREND_WINDOW_D    = 5      # 5d price-trend window (CV robust: 3/5/7/10/14/21d ≈ same)
+SPX_FR_THRESHOLD      = 0.0    # FR > 0 condition (long only when carry positive)
+
 # ── Paths ──────────────────────────────────────────────────────────────────────
-BASE  = Path("/Users/nekonaomichi/crypto-lab")
+BASE  = Path(__file__).resolve().parent.parent  # K339 security rule: no absolute /Users/ paths
 CACHE = BASE / "cache"
 DATA  = BASE / "data"
 DATA.mkdir(exist_ok=True)
@@ -63,18 +72,19 @@ HL_MAKER_COST_RATE  = 0.00015   # 1.5 bp/side (actual HL maker, K296 finding)
 # Amortize maker cost over ~30d holding period = cost per day ≈ PAPER_COST / 30
 COST_AMORT_DAYS     = 30
 
-# ── Portfolio Weights ──────────────────────────────────────────────────────────
-K302A_MAIN_WEIGHT      = 0.80   # K280 main daemon (80%)
-K302A_SATELLITE_WEIGHT = 0.20   # K302a satellite (20%)
+# ── Portfolio Weights (v6.13d K348: K280 75% + K297' 20% + sUSDe 5%) ──────────
+K302A_MAIN_WEIGHT      = 0.75   # K280 main daemon (75%; was 80% in v6.12)
+K302A_SATELLITE_WEIGHT = 0.20   # K302a satellite K297' (20%)
+K302A_SUSDE_WEIGHT     = 0.05   # sUSDe OC sleeve (5%; new in v6.13d)
 
-# ── Backtest Reference (K297 always-on carry) ──────────────────────────────────
+# ── Backtest Reference (K297' filtered carry, v6.13d) ─────────────────────────
 BT_PAXG_SH     = 16.91
-BT_SPX_SH      = 5.87
-BT_PORT_SH     = 10.17      # EW portfolio (K297)
+BT_SPX_SH      = 12.20     # K297' post-filter (was 5.87 in K297 always-on)
+BT_PORT_SH     = 18.48     # EW portfolio K297' (was 10.17 in K297)
 BT_PAXG_DD     = -0.0036    # -0.36%
 BT_SPX_DD      = -0.0174    # -1.74%
 BT_PORT_DD     = -0.0141    # -1.41%
-BT_COMBINED_SH = 32.59      # K302a combined (K280 80% + satellite 20%), K303 decision
+BT_COMBINED_SH = 25.47      # K302a v6.13d combined (K280 75% + K297' 20% + sUSDe 5%), K346 winner
 
 # ── Alert Thresholds ──────────────────────────────────────────────────────────
 ALERT_SAT_30D_DD_MAX  = 0.005    # satellite 30d DD > 0.5% → HALT (K303: half of full-period MaxDD)
@@ -173,9 +183,9 @@ def load_dashboard() -> Dict:
         with open(DASHBOARD_JSON) as f:
             return json.load(f)
     return {
-        "architecture":          "K302a Satellite (PAXG 60% + SPX 40%) — HyperLiquid only",
-        "version":               "v6.12",
-        "replaces":              "K289 (K287d Satellite: K270 dYdX + K275 OKX)",
+        "architecture":          "K302a Satellite K297' (PAXG 60% + SPX 40% filtered) — HyperLiquid only",
+        "version":               "v6.13d",
+        "replaces":              "v6.12 K297 always-on (K348 production patch)",
         "satellite_weights":     COIN_WEIGHTS,
         "main_weight":           K302A_MAIN_WEIGHT,
         "satellite_weight":      K302A_SATELLITE_WEIGHT,
@@ -280,6 +290,19 @@ def compute_spx_daily_pnl(panel: pd.DataFrame) -> Tuple[pd.Series, Dict]:
     daily_cost  = PAPER_COST_RATE / COST_AMORT_DAYS
 
     pnl = (gross_daily - daily_cost).rename("SPX")
+
+    # K297' SPX filter (K343 integration, v6.13d):
+    # Enter/stay long only when 5d price-trend > 0 AND FR > 0.
+    # When filter is OFF, zero out that day's PnL (flat position).
+    # Rollback: set SPX_FILTER_ENABLED = False at module level.
+    if SPX_FILTER_ENABLED:
+        spx_equity  = (1 + gross_daily).cumprod()
+        trend_5d    = spx_equity.pct_change(SPX_TREND_WINDOW_D)
+        spx_fr      = spx   # hourly FR series already daily-resampled
+        filter_mask = (trend_5d > 0) & (spx_fr > SPX_FR_THRESHOLD)
+        pnl         = pnl.where(filter_mask, 0.0)
+        n_filtered  = int((~filter_mask).sum())
+        print(f"  [SPX]  K297' filter active: {n_filtered}/{len(filter_mask)} days zeroed out")
 
     last_fr  = float(spx.iloc[-1]) if not spx.empty else 0.0
     mean_7d  = float(spx.tail(7).mean())
@@ -473,11 +496,13 @@ def update_dashboard(
         if pnl_list:
             k280_total_eq = float(np.prod([1 + p for p in pnl_list]))
 
-    # Combined K302a v6.12 equity estimate
+    # Combined K302a v6.13d equity estimate
     combined_note = (
-        "K302a v6.12 combined = 80% K280 main + 20% K302a satellite. "
-        "K280 equity from k280_live_dashboard.json. "
-        "Exchanges: Bybit (K280 Bybit component) + HyperLiquid (K280 HL + K302a satellite)."
+        "K302a v6.13d combined = 75% K280 main + 20% K302a satellite K297' + 5% sUSDe OC sleeve. "
+        "K280 equity from k280_live_dashboard.json. sUSDe from k344_susde_dashboard.json. "
+        "Exchanges: Bybit (K280 Bybit component) + HyperLiquid (K280 HL + K302a satellite). "
+        "K346 winner: Sh 25.47, MDD 0.0189%, all gates pass, WF min 22.3. "
+        "Rollback: set SPX_FILTER_ENABLED=False + revert K302A_MAIN_WEIGHT to 0.80."
     )
 
     today_record = {
@@ -561,7 +586,7 @@ def update_dashboard(
 # ─────────────────────────────────────────────────────────────────────────────
 
 def run_daily(date_str: str):
-    print(f"\n=== K302a Satellite Daily Paper-Trade Run — {date_str} ===\n")
+    print(f"\n=== K302a Satellite Daily Paper-Trade Run (v6.13d K297') — {date_str} ===\n")
     t0 = time.time()
 
     # Load today's fetch snapshot
@@ -607,7 +632,7 @@ def run_daily(date_str: str):
     sat_sh_all = sharpe_d(sat_pnl.values)
     if sat_sh30 is not None:
         print(f"  Satellite 30d Sharpe:  {sat_sh30:.2f}")
-    print(f"  Satellite all-time Sh: {sat_sh_all:.2f}  (backtest target: {BT_PORT_SH})")
+    print(f"  Satellite all-time Sh: {sat_sh_all:.2f}  (K297' backtest target: {BT_PORT_SH}, SPX_FILTER={'ON' if SPX_FILTER_ENABLED else 'OFF'})")
 
     # ── K280 main reference ────────────────────────────────────────────────────
     k280_dash = load_k280_dashboard()

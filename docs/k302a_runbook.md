@@ -886,3 +886,127 @@ was **not scaffolded** in K310. If required, a corresponding script must be crea
 ---
 
 *K307 Runbook — K302a v6.12 — 2026-05-25*
+
+---
+
+## §13 v6.13d Activation Steps (K348 Production Patch)
+
+**Wave:** K348 | **Date:** 2026-05-27 | **Status:** SCAFFOLD-READY (K297' LIVE; sUSDe awaiting launchctl)
+
+### §13.1 Architecture Change Summary
+
+```
+v6.12 (previous):
+  K280 Core (80%) + K297 Satellite (20%)
+  BT Combined Sh: 32.59
+
+v6.13d (K346 winner, K348 deployed):
+  K280 Core (75%) + K297' Satellite (20%) + sUSDe OC sleeve (5%)
+  BT Combined Sh: 25.47 / MDD 0.0189% / all §6 gates / WF min 22.3
+
+Fallback (v6.13e, regulatory-conservative):
+  K280 Core (85%) + K297' Satellite (10%) + sUSDe OC sleeve (5%)
+```
+
+### §13.2 Diff Summary (Phase 1–4)
+
+**Phase 1 — K297' SPX filter (scripts/k302a_satellite_run.py)**
+- Added module-level config:
+  ```python
+  SPX_FILTER_ENABLED    = True   # K343 K297→K297' integration (v6.13d)
+  SPX_TREND_WINDOW_D    = 5
+  SPX_FR_THRESHOLD      = 0.0
+  ```
+- In `compute_spx_daily_pnl()`, after raw PnL computed:
+  ```python
+  if SPX_FILTER_ENABLED:
+      spx_equity  = (1 + gross_daily).cumprod()
+      trend_5d    = spx_equity.pct_change(SPX_TREND_WINDOW_D)
+      filter_mask = (trend_5d > 0) & (spx_fr > SPX_FR_THRESHOLD)
+      pnl         = pnl.where(filter_mask, 0.0)
+  ```
+- Updated backtest constants: BT_SPX_SH 5.87 → 12.20, BT_PORT_SH 10.17 → 18.48
+
+**Phase 2 — Weight change (scripts/k302a_satellite_run.py)**
+- `K302A_MAIN_WEIGHT`: 0.80 → 0.75
+- `K302A_SATELLITE_WEIGHT`: 0.20 (unchanged)
+- `K302A_SUSDE_WEIGHT`: 0.05 (new)
+- `BT_COMBINED_SH`: 32.59 → 25.47
+
+**Phase 3 — sUSDe OC daemon (scripts/k344_susde_oc_daily_run.py)**
+- New script: fetches DeFiLlama sUSDe APY, computes OC signal, writes dashboard JSON + parquet history
+- K339 compliant: uses `Path(__file__).resolve().parent.parent`
+- OC rules: FULL (APY > EMA+50bps) / HALF (band) / ZERO (below) / SHOCK (7d drop > 3pp)
+
+**Phase 4 — plist (com.cryptolab.susde-oc.plist)**
+- Repo root (gitignored per `com.cryptolab.*.plist` rule)
+- Label: `com.cryptolab.susde-oc`
+- RunAtLoad: false — user must activate manually
+
+### §13.3 Activation Order
+
+1. Verify K280 daemon running:
+   ```bash
+   launchctl list | grep com.cryptolab.k280
+   ```
+2. Verify K302a satellite daemon running:
+   ```bash
+   launchctl list | grep com.cryptolab.k302a
+   ```
+3. Test sUSDe OC script manually before loading plist:
+   ```bash
+   python3 scripts/k344_susde_oc_daily_run.py --dry-run
+   # Verify: prints signal, no file writes
+   python3 scripts/k344_susde_oc_daily_run.py
+   # Verify: data/k344_susde_dashboard.json created
+   ```
+4. Copy and load sUSDe OC plist (LAST — after K280/K302a confirmed):
+   ```bash
+   cp com.cryptolab.susde-oc.plist ~/Library/LaunchAgents/
+   launchctl load ~/Library/LaunchAgents/com.cryptolab.susde-oc.plist
+   launchctl list | grep susde-oc   # confirm loaded
+   ```
+5. Run verification:
+   ```bash
+   python3 scripts/verify_deployment_status.py
+   # Expected: susde-oc PENDING ACTIVATION, NO mismatches
+   python3 scripts/audit_cache_integrity.py
+   # Expected: all pass
+   ```
+
+### §13.4 Rollback Procedure
+
+**Step 1 — Revert SPX filter (immediate, no restart needed)**
+```python
+# In scripts/k302a_satellite_run.py, set:
+SPX_FILTER_ENABLED = False
+```
+This reverts to K297 always-on behaviour (v6.12).
+
+**Step 2 — Revert weight allocation**
+```python
+# In scripts/k302a_satellite_run.py:
+K302A_MAIN_WEIGHT  = 0.80   # back to 80%
+# Remove or zero-out K302A_SUSDE_WEIGHT line
+```
+
+**Step 3 — Disable sUSDe OC daemon**
+```bash
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.susde-oc.plist
+rm ~/Library/LaunchAgents/com.cryptolab.susde-oc.plist
+```
+
+**Step 4 — Verify rollback**
+```bash
+python3 scripts/verify_deployment_status.py
+```
+
+### §13.5 Monitoring Checkpoints (Post-Activation)
+
+| Checkpoint | Threshold | Action |
+|------------|-----------|--------|
+| K302a satellite 30d Sharpe | < 25 | Re-evaluate (K303 trigger) |
+| SPX 30d Sharpe (K297') | < 2.0 | Review filter; consider SPX_FILTER_ENABLED=False |
+| sUSDe OC signal | SHOCK (7d drop > 3pp) | Zero allocation auto (no manual action) |
+| sUSDe OC log | Error / no update 24h+ | Check launchctl + logs/k344_susde_oc.log |
+| Combined portfolio | MDD > 0.05% | HALT all components, investigate |

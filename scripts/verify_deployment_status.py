@@ -84,6 +84,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k287_satellite",
         expected_html_status="SCAFFOLD-READY",  # K310 acknowledged plist never created
     ),
+    DaemonSpec(
+        label="com.cryptolab.susde-oc",
+        purpose="K344 sUSDe Optimal Control sleeve (v6.13d 5%)",
+        scripts=["scripts/k344_susde_oc_daily_run.py"],
+        log_basename="k344_susde_oc",
+        expected_html_status="SCAFFOLD-READY",  # K348: plist in repo root (gitignored); cp to LaunchAgents then launchctl load to activate
+    ),
 ]
 
 

@@ -1,0 +1,112 @@
+{
+  "wave": "K348",
+  "date": "2026-05-27",
+  "timestamp_jst": "2026-05-27 06:49 JST",
+  "type": "PRODUCTION_PATCH",
+  "title": "K348 v6.13d production patch — K297' SPX filter + sUSDe OC sleeve scaffold",
+  "decision_wave": "K346",
+  "winner": "v6.13d",
+  "composition": {
+    "K280_core_weight": 0.75,
+    "K297_prime_satellite_weight": 0.20,
+    "sUSDe_OC_sleeve_weight": 0.05
+  },
+  "backtest_combined": {
+    "sharpe": 25.47,
+    "mdd_pct": 0.0189,
+    "wf_min": 22.3,
+    "all_gates_pass": true
+  },
+  "fallback": {
+    "label": "v6.13e",
+    "composition": "K280 85% + K297' 10% + sUSDe 5%",
+    "trigger": "regulatory_conservative"
+  },
+  "phases": {
+    "phase1_k297_prime_spx_filter": {
+      "status": "LIVE",
+      "file": "scripts/k302a_satellite_run.py",
+      "changes": [
+        "SPX_FILTER_ENABLED = True",
+        "SPX_TREND_WINDOW_D = 5",
+        "SPX_FR_THRESHOLD = 0.0",
+        "filter_mask in compute_spx_daily_pnl()",
+        "BT_SPX_SH: 5.87 -> 12.20",
+        "BT_PORT_SH: 10.17 -> 18.48"
+      ],
+      "rollback": "set SPX_FILTER_ENABLED = False"
+    },
+    "phase2_weight_change": {
+      "status": "LIVE",
+      "file": "scripts/k302a_satellite_run.py",
+      "changes": [
+        "K302A_MAIN_WEIGHT: 0.80 -> 0.75",
+        "K302A_SUSDE_WEIGHT = 0.05 (new)",
+        "BT_COMBINED_SH: 32.59 -> 25.47"
+      ],
+      "rollback": "revert K302A_MAIN_WEIGHT to 0.80, remove K302A_SUSDE_WEIGHT"
+    },
+    "phase3_susde_oc_daemon": {
+      "status": "SCAFFOLD-READY",
+      "file": "scripts/k344_susde_oc_daily_run.py",
+      "features": [
+        "DeFiLlama yields API fetch (pool 66985a81 = ethena-usde / SUSDE symbol, 831d history)",
+        "OC signal: FULL/HALF/ZERO/SHOCK",
+        "30d EMA + 50bps band",
+        "7d shock guard (3pp drop -> ZERO)",
+        "data/k344_susde_dashboard.json output",
+        "cache/k344_susde_oc_state.parquet history"
+      ],
+      "k339_compliant": true
+    },
+    "phase4_susde_oc_plist": {
+      "status": "SCAFFOLD-READY",
+      "file": "com.cryptolab.susde-oc.plist",
+      "label": "com.cryptolab.susde-oc",
+      "schedule_utc": "15:30 daily",
+      "schedule_jst": "00:30 daily",
+      "run_at_load": false,
+      "gitignored": true,
+      "activation": "cp com.cryptolab.susde-oc.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.susde-oc.plist"
+    },
+    "phase5_html_banner": {
+      "status": "DONE",
+      "file": "report.html",
+      "changes": [
+        "Banner: PRODUCTION v6.12 -> v6.13d K302a",
+        "Removed yellow v6.13 CANDIDATE PENDING warning",
+        "Added K346 ACCEPT + K348 production patch line",
+        "Footer: v6.12 -> v6.13d",
+        "Tips log: K348 details open entry added"
+      ]
+    },
+    "phase6_runbook": {
+      "status": "DONE",
+      "file": "docs/k302a_runbook.md",
+      "section": "§13 v6.13d Activation Steps"
+    },
+    "phase7_verify_registry": {
+      "status": "DONE",
+      "file": "scripts/verify_deployment_status.py",
+      "added": "com.cryptolab.susde-oc DaemonSpec (PENDING ACTIVATION)"
+    }
+  },
+  "deployed_files": [
+    "scripts/k302a_satellite_run.py",
+    "scripts/k344_susde_oc_daily_run.py",
+    "scripts/verify_deployment_status.py",
+    "report.html",
+    "docs/k302a_runbook.md",
+    "com.cryptolab.susde-oc.plist"
+  ],
+  "live_components": [
+    "K297' SPX filter (SPX_FILTER_ENABLED=True)",
+    "Weight allocation (K280 75% + K297' 20% + sUSDe 5%)"
+  ],
+  "scaffold_ready": [
+    "sUSDe OC daemon script",
+    "sUSDe OC plist (awaiting: manual launchctl load)"
+  ],
+  "k339_security_compliant": true,
+  "launchctl_loaded": false
+}

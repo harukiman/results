@@ -753,17 +753,17 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-27 06:43 JST</span> &nbsp;|&nbsp;
-    <strong>試行数:</strong> 738,388+ (+8 K340-K347) &nbsp;|&nbsp;
-    <strong>🏆 PRODUCTION v6.12 FINAL (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K302a 2-EXCHANGE (K280 80% + K297 RWA [PAXG 60% / SPX 40%] 20%) combined 55d Sh +32.59 / 98.7% K287d retention / 2 exchanges</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">K303 decision: K302a +1.275 winner score (16.30 Sh/exchange)</span> &nbsp;|&nbsp; <span style="color:var(--accent-yellow);font-weight:700;">⚠️ v6.13 CANDIDATE PENDING K346 (K297' SPX filter +49.5% Sh + sUSDe OC sleeve)</span> &nbsp;|&nbsp;
-    <strong>12 ACCEPT base + 21 ensembles + K302a v6.12 / 78 REJECT / 7 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K297 PAXG 504d + SPX 415d (vs K275 96d), K275 risk eliminated, HL infrastructure single ops</span>
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-27 06:49 JST</span> &nbsp;|&nbsp;
+    <strong>試行数:</strong> 738,388+ (+9 K340-K348) &nbsp;|&nbsp;
+    <strong>🏆 PRODUCTION v6.13d K302a:</strong> <span style="color:var(--accent-green);font-weight:700;">K280 75% + K297' 20% (SPX filter +49.5% Sh) + sUSDe OC 5% — combined Sh 25.47 / MDD 0.0189% / all §6 gates pass / WF min 22.3</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">★ K346 ACCEPT v6.13d、K348 production patch、deploy: SCAFFOLD-READY (manual launchctl activation)</span> &nbsp;|&nbsp;
+    <strong>12 ACCEPT base + 21 ensembles + K302a v6.13d / 78 REJECT / 7 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K297' PAXG 504d + SPX 415d filtered, K348 patch LIVE — SPX_FILTER_ENABLED=True, sUSDe OC scaffold ready</span>
   </div>
 
   <header class="report-header">
     <h1 style="font-family:Georgia,serif;letter-spacing:-0.01em;">Systematic Alpha Discovery in MEXC Perpetual Futures</h1>
     <div class="subtitle" style="font-style:italic;font-family:Georgia,serif;">A Bias-Controlled Empirical Study of Multi-Axis Portfolio Construction with §6 Audit Validation</div>
     <div class="meta">
-      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-27 06:43 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
+      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-27 06:49 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
       Methodology: §6 strict-gate audit (Bailey-LdP CPCV, Hansen SPA, White RC, Bootstrap CI, Block Permutation)
     </div>
   </header>
@@ -772,7 +772,7 @@ window.__renderWhenReady = function(fn, label) {
   <section class="section" id="live-monitoring" style="margin-bottom:0;">
     <h2 style="color:#f85149;border-bottom:2px solid #f85149;padding-bottom:6px;display:flex;align-items:center;gap:8px;">
       <span style="animation:blink 1.2s step-end infinite;display:inline-block;">🔴</span>
-      Live Monitoring v6.12 (K302a)
+      Live Monitoring v6.13d (K302a)
       <span style="font-size:0.7rem;font-weight:400;color:var(--text-secondary);margin-left:auto;" id="lm-fetch-ts">読み込み中...</span>
     </h2>
     <style>
@@ -8272,6 +8272,46 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
           </ul>
         </details>
         <details open>
+          <summary><strong>★★★★★ 2026-05-27 06:49 JST — K348 production patch: v6.13d DEPLOYED (K346 winner)</strong></summary>
+          <ul>
+            <li><strong>【K346 winner確定 → K348 production patch完了】</strong>
+              v6.13d = K280 75% + K297' 20% + sUSDe OC 5%。Sh 25.47、MDD 0.0189%、全§6 gates pass、WF min 22.3。
+              Fallback: v6.13e = K280 85% + K297' 10% + sUSDe 5% (regulatory-conservative)。
+            </li>
+            <li><strong>【Phase 1 LIVE: K297' SPX filter統合】</strong>
+              <code>scripts/k302a_satellite_run.py</code> に <code>SPX_FILTER_ENABLED = True</code>、<code>SPX_TREND_WINDOW_D = 5</code>、<code>SPX_FR_THRESHOLD = 0.0</code> 追加。
+              <code>compute_spx_daily_pnl()</code> 内で filter_mask適用 (5d trend &gt; 0 AND FR &gt; 0)。
+              BT_SPX_SH: 5.87 → 12.20、BT_PORT_SH: 10.17 → 18.48。
+              Rollback: <code>SPX_FILTER_ENABLED = False</code>。
+            </li>
+            <li><strong>【Phase 2 LIVE: Portfolio weight変更】</strong>
+              K302A_MAIN_WEIGHT: 0.80 → 0.75 (K280 main 80% → 75%)。
+              K302A_SATELLITE_WEIGHT: 0.20 (K297' 20%、変更なし)。
+              K302A_SUSDE_WEIGHT: 0.05 新規追加 (sUSDe OC 5%)。
+              BT_COMBINED_SH: 32.59 → 25.47 (v6.13d combined実績値)。
+            </li>
+            <li><strong>【Phase 3 SCAFFOLD-READY: sUSDe OC daemon新規作成】</strong>
+              <code>scripts/k344_susde_oc_daily_run.py</code> 作成。DeFiLlama yields API (pool 65457d63) からsUSDe APY取得。
+              OC signal: APY &gt; 30d EMA+50bps → FULL、band内 → HALF、below → ZERO、7d drop &gt; 3pp → SHOCK。
+              出力: <code>data/k344_susde_dashboard.json</code>、<code>cache/k344_susde_oc_state.parquet</code>。
+              K339 security rule準拠: <code>Path(__file__).resolve().parent.parent</code> 使用。
+            </li>
+            <li><strong>【Phase 4 SCAFFOLD-READY: sUSDe OC plist】</strong>
+              <code>com.cryptolab.susde-oc.plist</code> (repo root、gitignored)。
+              00:30 JST daily (= UTC 15:30 前日)。RunAtLoad=false。
+              Activation: <code>cp com.cryptolab.susde-oc.plist ~/Library/LaunchAgents/ &amp;&amp; launchctl load ~/Library/LaunchAgents/com.cryptolab.susde-oc.plist</code>
+            </li>
+            <li><strong>【verify_deployment_status.py更新】</strong>
+              REGISTRY に <code>com.cryptolab.susde-oc</code> DaemonSpec 追加 (expected: PENDING ACTIVATION)。
+            </li>
+            <li><strong>【Rollback手順】</strong>
+              (1) <code>SPX_FILTER_ENABLED = False</code> in k302a_satellite_run.py
+              (2) <code>K302A_MAIN_WEIGHT = 0.80</code>、<code>K302A_SUSDE_WEIGHT</code> 削除
+              (3) sUSDe OC plist unload + remove from LaunchAgents
+            </li>
+          </ul>
+        </details>
+        <details open>
           <summary><strong>★★★★★ 2026-05-27 06:43 JST — K340-K346 8-wave breakthrough chronicle</strong></summary>
           <ul>
             <li><strong>【K340 USDT on-chain → BTC 1h CONDITIONAL (R11-17)】</strong>
@@ -9106,8 +9146,8 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
-    <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; Research Baseline v4.1 / Production v6.12 K302a (K280 80% + K297 RWA 20%) (K297'/sUSDe v6.13 candidate pending K346)</p>
-    <p style="margin-top:4px;">更新: 2026-05-27 06:43 JST &nbsp;|&nbsp; K340-K346 chronicle: Regime/ML allocator line CLOSED、K297' SPX filter ACCEPT (+49.5% Sh)、sUSDe OC ACCEPT (orthogonal ρ=0.05)、v6.13 weighting K346 継続中 &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
+    <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; Research Baseline v4.1 / Production v6.13d K302a (K280 75% + K297' SPX-filtered 20% + sUSDe OC 5%)</p>
+    <p style="margin-top:4px;">更新: 2026-05-27 06:49 JST &nbsp;|&nbsp; K346 winner v6.13d DEPLOYED (K348): K297' SPX filter LIVE (SPX_FILTER_ENABLED=True)、sUSDe OC SCAFFOLD-READY (manual launchctl activation required)、combined Sh 25.47 &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 
