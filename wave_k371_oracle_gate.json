@@ -1,0 +1,71 @@
+{
+  "wave": "K371",
+  "task": "G9 oracle deviation gate analysis + production patch",
+  "timestamp_utc": "2026-05-26T23:30:53.933245+00:00",
+  "oracle_gate_enabled": true,
+  "deviation_threshold": 0.01,
+  "live_deviations": {
+    "SPX": {
+      "coin_index": 171,
+      "markPx": 0.35185,
+      "oraclePx": 0.35236,
+      "midPx": 0.35178,
+      "funding": -5.76452e-05,
+      "deviation": -0.00144738335792942,
+      "deviation_pct": -0.144738335792942,
+      "abs_dev_pct": 0.144738335792942,
+      "gate_would_fire": false,
+      "threshold_pct": 1.0
+    },
+    "PAXG": {
+      "coin_index": 187,
+      "markPx": 4511.2,
+      "oraclePx": 4513.7,
+      "midPx": 4511.25,
+      "funding": -2.0626e-06,
+      "deviation": -0.0005538693311473958,
+      "deviation_pct": -0.05538693311473958,
+      "abs_dev_pct": 0.05538693311473958,
+      "gate_would_fire": false,
+      "threshold_pct": 1.0
+    }
+  },
+  "gate_fires_today": false,
+  "backtest_neutrality": {
+    "historical_oracle_recorded": false,
+    "rationale": "HL does not provide historical per-bar markPx/oraclePx in FR panel. G9 gate is production-only (runtime API fetch). Historical backtest (504d) is unaffected \u2014 gate is transparent. K297' Sharpe 18.48 unchanged.",
+    "k369_worst_case_simulation": {
+      "scenario": "zero-FR days (simulated, more disruptive than G9)",
+      "sharpe_degradation": -0.228,
+      "conclusion": "G9 impact near-zero (current dev << 1%)"
+    },
+    "g9_expected_fires_current_regime": 0,
+    "g9_expected_sharpe_impact": "~0.00"
+  },
+  "patch_summary": {
+    "file": "scripts/k302a_satellite_run.py",
+    "constants_added": [
+      "ORACLE_GATE_ENABLED",
+      "ORACLE_DEVIATION_THRESHOLD"
+    ],
+    "function_added": "fetch_oracle_health(coins)",
+    "gate_location": "compute_spx_daily_pnl() after K297' filter",
+    "dashboard_fields": [
+      "oracle_gate_enabled",
+      "oracle_deviation_threshold",
+      "current_spx_deviation",
+      "current_paxg_deviation",
+      "oracle_gate_fired"
+    ],
+    "lines_added": "~35 total (constants: 6, fetch_oracle_health: 30, gate: 13, dashboard: 7)"
+  },
+  "k369_reference": {
+    "finding": "LOW production risk",
+    "paxg_dev_live": -0.05538693311473958,
+    "spx_dev_live": -0.144738335792942,
+    "k369_paxg_dev": 0.062,
+    "k369_spx_dev": 0.125,
+    "threshold": 1.0
+  },
+  "elapsed_s": 0.23
+}

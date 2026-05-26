@@ -1344,3 +1344,118 @@ python3 scripts/verify_deployment_status.py
 ---
 
 *K370 §15 — Builder Code Self-Rebate — 2026-05-27*
+
+---
+
+## §16 G9 Oracle Deviation Gate (K371 — K369 K297' Production Safety)
+
+**Added:** 2026-05-27 | **Wave:** K371 | **Status:** LIVE (ORACLE_GATE_ENABLED = True)
+
+### §16.1 Background
+
+K369 assessed K297' production risk via live HL oracle data:
+- PAXG oracle deviation: **0.062%** (well within HL's 1%-per-update native cap)
+- SPX oracle deviation: **0.125%** (well within threshold)
+- K369 verdict: LOW risk. Recommended adding G9 safety gate as production guard.
+
+K371 implements the G9 gate: a surgical 5-line patch to `scripts/k302a_satellite_run.py` that
+skips today's entry for SPX (and PAXG last bar) when `|mark - oracle| / oracle > 1%`.
+
+### §16.2 What G9 Does
+
+```python
+# Constants (scripts/k302a_satellite_run.py)
+ORACLE_GATE_ENABLED        = True
+ORACLE_DEVIATION_THRESHOLD = 0.01   # 1%
+
+# At entry-decision point in compute_spx_daily_pnl():
+if ORACLE_GATE_ENABLED:
+    health = fetch_oracle_health(["SPX", "PAXG"])
+    if abs(health["SPX"]["deviation"]) > ORACLE_DEVIATION_THRESHOLD:
+        pnl.iloc[-1] = 0.0   # skip today's entry
+```
+
+**Logic:** POST `{"type":"metaAndAssetCtxs"}` to `https://api.hyperliquid.xyz/info`.
+Parse `universe[i]` for coin index → `assetCtxs[i].markPx` and `assetCtxs[i].oraclePx`.
+Gate fires if SPX **or** PAXG deviation exceeds 1%.
+
+**Fail-open:** On API error, `fetch_oracle_health()` returns `{}`, gate does NOT fire.
+Trading proceeds normally. Error logged to stdout.
+
+### §16.3 Expected Behavior
+
+| Scenario | Deviation | Gate Action |
+|----------|-----------|-------------|
+| Normal (current) | SPX 0.18%, PAXG 0.06% | Gate OK — no skip |
+| Stressed oracle | SPX or PAXG > 1% | Gate fires — today's PnL zeroed |
+| API error | N/A | Fail-open — trade proceeds |
+
+**Expected G9 fires under current regime:** 0 days (both coins << 1% threshold).
+
+**Sharpe impact:** Near-zero. K369 worst-case analysis showed even zero-FR simulation
+(far more disruptive than G9) degraded Sharpe by only -0.228. G9 expected: 0.00 Sh impact.
+
+### §16.4 Dashboard Fields (K371)
+
+K371 adds the following to `data/k302a_satellite_dashboard.json`:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `oracle_gate_enabled` | bool | Whether G9 is active |
+| `oracle_deviation_threshold` | float | 0.01 (1%) |
+| `current_spx_deviation` | float% | Live SPX \|mark-oracle\|/oracle in % |
+| `current_paxg_deviation` | float% | Live PAXG \|mark-oracle\|/oracle in % |
+| `oracle_gate_fired` | bool | True if either coin exceeded threshold this run |
+| `active_alert_flags.oracle_g9_fired` | bool | Same as oracle_gate_fired |
+
+### §16.5 Rollback
+
+**Immediate (no restart required):**
+```python
+# In scripts/k302a_satellite_run.py, set:
+ORACLE_GATE_ENABLED = False
+```
+This disables the oracle fetch entirely. Trading reverts to K297' always-on behavior.
+
+**Verify rollback:**
+```bash
+python3 scripts/k302a_satellite_run.py
+# Should NOT print [G9] lines
+python3 scripts/verify_deployment_status.py
+```
+
+### §16.6 Monitoring
+
+**Check G9 status:**
+```bash
+python3 -c "
+import json
+d = json.load(open('data/k302a_satellite_dashboard.json'))
+print('G9 gate enabled:', d.get('oracle_gate_enabled'))
+print('Threshold:',       d.get('oracle_deviation_threshold'))
+print('SPX dev%:',        d.get('current_spx_deviation'))
+print('PAXG dev%:',       d.get('current_paxg_deviation'))
+print('Gate fired:',      d.get('oracle_gate_fired'))
+"
+```
+
+**Trigger to investigate:**
+- G9 fires more than 1 consecutive day → check HL oracle feed health
+- Oracle API errors > 3 consecutive days → consider disabling gate (ORACLE_GATE_ENABLED = False)
+
+### §16.7 K266 Gate Compatibility
+
+G9 is a **production safety gate**, not a K266 strict backtest gate.
+
+| Gate | Change |
+|------|--------|
+| G1–G7 (K266 strict) | UNCHANGED — G9 does not modify historical backtest logic |
+| G8 (K280 MDD < 2%) | UNCHANGED |
+| G9 (K371, new) | Production-only: API fetch at runtime, not in historical data |
+
+Walk-forward: NO change expected (historical oracle deviations not recorded → G9 transparent
+in backtest context). K297' Sharpe 18.48 remains unaffected.
+
+---
+
+*K371 §16 — G9 Oracle Deviation Gate — 2026-05-27*

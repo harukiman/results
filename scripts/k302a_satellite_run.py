@@ -48,6 +48,13 @@ SPX_FILTER_ENABLED    = True   # K343 K297→K297' integration (v6.13d); set Fal
 SPX_TREND_WINDOW_D    = 5      # 5d price-trend window (CV robust: 3/5/7/10/14/21d ≈ same)
 SPX_FR_THRESHOLD      = 0.0    # FR > 0 condition (long only when carry positive)
 
+# ── K371: G9 Oracle Deviation Gate (K369 K297' production safety) ─────────────
+# Skip SPX/PAXG entry when |mark - oracle| / oracle > 1%.
+# K369 live measurement: PAXG 0.062%, SPX 0.125% — both << 1% threshold.
+# Expected behavior: 0 skipped days currently. Rollback: ORACLE_GATE_ENABLED = False.
+ORACLE_GATE_ENABLED          = True
+ORACLE_DEVIATION_THRESHOLD   = 0.01   # 1% per K369 (HL native 1% per-update cap)
+
 # ── K370: Builder Code Self-Rebate (AX-01 from K368) ─────────────────────────
 # K302a satellite trades on HyperLiquid (PAXG, SPX). When live, include builder
 # code in every order action to accumulate referral-pool rewards on own volume.
@@ -132,6 +139,43 @@ def rolling_sharpe(r: np.ndarray, window: int = 30, ann: int = TRADING_DAYS) -> 
         return None
     tail = r[-window:]
     return sharpe_d(tail, ann)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# K371: Oracle Health (G9 Gate)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def fetch_oracle_health(coins: list) -> dict:
+    """Fetch (markPx, oraclePx) for each coin from HL metaAndAssetCtxs.
+
+    Returns {coin: {"markPx": float, "oraclePx": float, "deviation": float}}
+    where deviation = (markPx - oraclePx) / oraclePx (signed; use abs() for gate).
+    On API error returns empty dict (fail-open: trade proceeds normally).
+    """
+    import urllib.request as _urllib_req
+    try:
+        req = _urllib_req.Request(
+            "https://api.hyperliquid.xyz/info",
+            data=json.dumps({"type": "metaAndAssetCtxs"}).encode(),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with _urllib_req.urlopen(req, timeout=8) as r:
+            meta, ctxs = json.loads(r.read())
+        universe = meta.get("universe", [])
+        result: dict = {}
+        for i, entry in enumerate(universe):
+            name = entry.get("name")
+            if name in coins and i < len(ctxs):
+                ctx = ctxs[i]
+                mark   = float(ctx.get("markPx",   0) or 0)
+                oracle = float(ctx.get("oraclePx", 0) or 0)
+                dev    = (mark - oracle) / oracle if oracle != 0 else 0.0
+                result[name] = {"markPx": mark, "oraclePx": oracle, "deviation": dev}
+        return result
+    except Exception as exc:
+        print(f"  [G9] Oracle health fetch error (fail-open): {exc}")
+        return {}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -318,6 +362,24 @@ def compute_spx_daily_pnl(panel: pd.DataFrame) -> Tuple[pd.Series, Dict]:
         n_filtered  = int((~filter_mask).sum())
         print(f"  [SPX]  K297' filter active: {n_filtered}/{len(filter_mask)} days zeroed out")
 
+    # ── K371 G9: Oracle deviation gate (production safety, K369 recommendation) ──
+    # Skip today's entry when |mark - oracle| / oracle > 1% on SPX or PAXG.
+    if ORACLE_GATE_ENABLED:
+        health = fetch_oracle_health(["SPX", "PAXG"])
+        spx_info  = health.get("SPX",  {})
+        paxg_info = health.get("PAXG", {})
+        spx_dev   = spx_info.get("deviation",  0.0)
+        paxg_dev  = paxg_info.get("deviation", 0.0)
+        print(f"  [G9]   SPX  mark={spx_info.get('markPx','N/A')}  oracle={spx_info.get('oraclePx','N/A')}  dev={spx_dev*100:.4f}%")
+        print(f"  [G9]   PAXG mark={paxg_info.get('markPx','N/A')}  oracle={paxg_info.get('oraclePx','N/A')}  dev={paxg_dev*100:.4f}%")
+        if abs(spx_dev) > ORACLE_DEVIATION_THRESHOLD or abs(paxg_dev) > ORACLE_DEVIATION_THRESHOLD:
+            print(f"  [G9]   GATE FIRED — oracle deviation exceeds {ORACLE_DEVIATION_THRESHOLD*100:.0f}% threshold. "
+                  f"Zeroing today's SPX PnL entry.")
+            if not pnl.empty:
+                pnl.iloc[-1] = 0.0
+        else:
+            print(f"  [G9]   Gate OK — deviations within threshold ({ORACLE_DEVIATION_THRESHOLD*100:.0f}%)")
+
     last_fr  = float(spx.iloc[-1]) if not spx.empty else 0.0
     mean_7d  = float(spx.tail(7).mean())
     mean_30d = float(spx.tail(30).mean()) if len(spx) >= 30 else float(spx.mean())
@@ -479,14 +541,15 @@ def generate_alerts(
 # ─────────────────────────────────────────────────────────────────────────────
 
 def update_dashboard(
-    date_str:   str,
-    paxg_pnl:   pd.Series,
-    spx_pnl:    pd.Series,
-    sat_pnl:    pd.Series,
-    signals:    Dict[str, Dict],
-    alerts:     List[Dict],
-    snapshot:   Optional[Dict],
-    k280_dash:  Optional[Dict],
+    date_str:     str,
+    paxg_pnl:     pd.Series,
+    spx_pnl:      pd.Series,
+    sat_pnl:      pd.Series,
+    signals:      Dict[str, Dict],
+    alerts:       List[Dict],
+    snapshot:     Optional[Dict],
+    k280_dash:    Optional[Dict],
+    oracle_health: Optional[Dict] = None,
 ):
     """Write updated K302a satellite dashboard JSON."""
     dash    = load_dashboard()
@@ -558,6 +621,17 @@ def update_dashboard(
     dash["rolling_30d_sharpe"]  = rolling.get("sh_30d")   # top-level for quick access
     dash["combined_equity_note"] = combined_note
 
+    # K371 G9 oracle gate fields
+    oh = oracle_health or {}
+    dash["oracle_gate_enabled"]       = ORACLE_GATE_ENABLED
+    dash["oracle_deviation_threshold"] = ORACLE_DEVIATION_THRESHOLD
+    dash["current_spx_deviation"]     = round(oh.get("SPX",  {}).get("deviation", 0.0) * 100, 6)  # in %
+    dash["current_paxg_deviation"]    = round(oh.get("PAXG", {}).get("deviation", 0.0) * 100, 6)  # in %
+    dash["oracle_gate_fired"]         = (
+        abs(oh.get("SPX",  {}).get("deviation", 0.0)) > ORACLE_DEVIATION_THRESHOLD or
+        abs(oh.get("PAXG", {}).get("deviation", 0.0)) > ORACLE_DEVIATION_THRESHOLD
+    )
+
     # Append daily record (dedup by date)
     records = dash.get("daily_records", [])
     records = [r for r in records if r.get("date") != date_str]
@@ -578,6 +652,7 @@ def update_dashboard(
         "hl_exchange_err":    any(a["code"] == "HL_EXCHANGE_ERROR"  for a in alerts),
         "no_snapshot":        any(a["code"] == "NO_SNAPSHOT"        for a in alerts),
         "sat_sh_low":         any(a["code"] == "SAT_SH_LOW"         for a in alerts),
+        "oracle_g9_fired":    dash.get("oracle_gate_fired", False),  # K371 G9
     }
 
     class NaNSafe(json.JSONEncoder):
@@ -656,6 +731,9 @@ def run_daily(date_str: str):
     else:
         print("  K280 main dashboard: not available (run k280_daily_run.py)")
 
+    # ── K371 G9 Oracle Health (fetch once for dashboard; gate also fetches inside compute_spx_daily_pnl) ──
+    oracle_health_dash = fetch_oracle_health(["SPX", "PAXG"]) if ORACLE_GATE_ENABLED else {}
+
     # ── Alerts ─────────────────────────────────────────────────────────────────
     alerts = generate_alerts(sat_pnl, paxg_pnl, spx_pnl, snapshot, date_str)
     if alerts:
@@ -667,14 +745,15 @@ def run_daily(date_str: str):
 
     # ── Dashboard update ───────────────────────────────────────────────────────
     update_dashboard(
-        date_str  = date_str,
-        paxg_pnl  = paxg_pnl,
-        spx_pnl   = spx_pnl,
-        sat_pnl   = sat_pnl,
-        signals   = {"PAXG": paxg_sig, "SPX": spx_sig},
-        alerts    = alerts,
-        snapshot  = snapshot,
-        k280_dash = k280_dash,
+        date_str      = date_str,
+        paxg_pnl      = paxg_pnl,
+        spx_pnl       = spx_pnl,
+        sat_pnl       = sat_pnl,
+        signals       = {"PAXG": paxg_sig, "SPX": spx_sig},
+        alerts        = alerts,
+        snapshot      = snapshot,
+        k280_dash     = k280_dash,
+        oracle_health = oracle_health_dash,
     )
 
     # ── Paper trade log ────────────────────────────────────────────────────────

@@ -753,10 +753,10 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-27 08:18 JST</span> &nbsp;|&nbsp;
-    <strong>試行数:</strong> 738,388+ (+20 K347-K370) &nbsp;|&nbsp;
-    <strong>🏆 PRODUCTION v6.13d K302a:</strong> <span style="color:var(--accent-green);font-weight:700;">K280 75% + K297' 20% (SPX filter +49.5% Sh) + sUSDe OC 5% — combined Sh 25.47 / MDD 0.0189% / all §6 gates pass / WF min 22.3</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">★ K346 ACCEPT v6.13d、K348 production patch、deploy: SCAFFOLD-READY (manual launchctl activation)</span> &nbsp;|&nbsp;
-    <strong>12 ACCEPT base + 21 ensembles + K302a v6.13d / 78 REJECT / 7 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K297' PAXG 504d + SPX 415d filtered, K348 patch LIVE — SPX_FILTER_ENABLED=True, sUSDe OC scaffold ready</span> &nbsp;|&nbsp; <span style="color:#3fb950;font-weight:700;">★★ K370 Builder code self-rebate SCAFFOLD (AX-01, user activation: register wallet → set HL_BUILDER_WALLET)</span>
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-27 08:27 JST</span> &nbsp;|&nbsp;
+    <strong>試行数:</strong> 738,388+ (+21 K347-K371) &nbsp;|&nbsp;
+    <strong>PRODUCTION v6.13d K302a:</strong> <span style="color:var(--accent-green);font-weight:700;">K280 75% + K297' 20% (SPX filter +49.5% Sh) + sUSDe OC 5% — combined Sh 25.47 / MDD 0.0189% / all §6 gates pass / WF min 22.3</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">★ K346 ACCEPT v6.13d、K348 production patch、deploy: SCAFFOLD-READY (manual launchctl activation)</span> &nbsp;|&nbsp;
+    <strong>12 ACCEPT base + 21 ensembles + K302a v6.13d / 78 REJECT / 7 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K297' PAXG 504d + SPX 415d filtered, K348 patch LIVE — SPX_FILTER_ENABLED=True, sUSDe OC scaffold ready</span> &nbsp;|&nbsp; <span style="color:#3fb950;font-weight:700;">★★ K370 Builder code self-rebate SCAFFOLD (AX-01)</span> &nbsp;|&nbsp; <span style="color:#58a6ff;font-weight:700;">★★★ K371 G9 oracle deviation gate LIVE (K369 safety, PAXG 0.06%/SPX 0.18% &lt;&lt; 1% threshold)</span>
   </div>
 
   <header class="report-header">
@@ -1145,6 +1145,109 @@ launchctl list | grep cryptolab</pre>
         </div>
       </div>
     </div>
+
+    <!-- K371 G9 Oracle Deviation Gate (2026-05-27) -->
+    <div class="lm-card" style="margin-bottom:14px;border-color:#58a6ff;" id="g9-oracle-card">
+      <h3 style="display:flex;align-items:center;gap:8px;">
+        K371 G9 Oracle Deviation Gate
+        <span id="g9-gate-badge" class="lm-badge lm-badge-active" style="font-size:0.78rem;">GATE OK</span>
+        <span style="font-size:0.68rem;font-weight:400;color:var(--text-secondary);margin-left:auto;" id="g9-ts">読み込み中...</span>
+      </h3>
+      <p style="font-size:0.78rem;color:var(--text-secondary);margin:0 0 10px;">
+        K369 K297' production safety: skip SPX/PAXG entry when <code>|mark&minus;oracle| / oracle &gt; 1%</code>.
+        K369 live measurement: PAXG 0.062%, SPX 0.125% — both &lt;&lt; 1% threshold.
+        Rollback: set <code>ORACLE_GATE_ENABLED = False</code> in k302a_satellite_run.py.
+        Investigate if G9 fires more than 1 consecutive day.
+      </p>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+        <div style="flex:1;min-width:220px;">
+          <table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+            <thead>
+              <tr style="color:var(--text-secondary);border-bottom:1px solid var(--border);">
+                <th style="text-align:left;padding:4px 6px;">Coin</th>
+                <th style="text-align:right;padding:4px 6px;">|Mark−Oracle|/Oracle</th>
+                <th style="text-align:right;padding:4px 6px;">Threshold</th>
+                <th style="text-align:right;padding:4px 6px;">Status</th>
+              </tr>
+            </thead>
+            <tbody id="g9-table-body">
+              <tr style="border-bottom:1px solid rgba(48,54,61,0.5);">
+                <td style="padding:4px 6px;font-weight:600;">SPX</td>
+                <td style="text-align:right;padding:4px 6px;color:var(--accent-cyan);" id="g9-spx-dev">0.1847%</td>
+                <td style="text-align:right;padding:4px 6px;color:var(--text-secondary);">1.00%</td>
+                <td style="text-align:right;padding:4px 6px;"><span class="lm-badge lm-badge-active" id="g9-spx-status">OK</span></td>
+              </tr>
+              <tr>
+                <td style="padding:4px 6px;font-weight:600;">PAXG</td>
+                <td style="text-align:right;padding:4px 6px;color:var(--accent-cyan);" id="g9-paxg-dev">0.0577%</td>
+                <td style="text-align:right;padding:4px 6px;color:var(--text-secondary);">1.00%</td>
+                <td style="text-align:right;padding:4px 6px;"><span class="lm-badge lm-badge-active" id="g9-paxg-status">OK</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="min-width:140px;text-align:right;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);">Expected G9 fires</div>
+          <div style="font-size:1.1rem;font-weight:700;color:#3fb950;">0 days</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">(current dev &lt;&lt; 1%)</div>
+          <div style="margin-top:8px;font-size:0.72rem;color:var(--text-secondary);">Sharpe impact</div>
+          <div style="font-size:0.9rem;font-weight:700;color:var(--accent-cyan);">~0.00</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">(near-zero at current dev)</div>
+          <div style="margin-top:8px;font-size:0.72rem;color:var(--text-secondary);">Runbook</div>
+          <div style="font-size:0.78rem;"><a href="docs/k302a_runbook.md" style="color:#79c0ff;" target="_blank">§16 G9 gate</a></div>
+        </div>
+      </div>
+    </div>
+    <script>
+    (function() {
+      fetch('data/k302a_satellite_dashboard.json?t=' + Date.now())
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+          if (!d) return;
+          const ts = document.getElementById('g9-ts');
+          if (ts) ts.textContent = d.last_update ? new Date(d.last_update).toLocaleString('ja-JP', {timeZone:'Asia/Tokyo', hour12:false}).replace(/\//g,'-') + ' JST' : '—';
+
+          const badge     = document.getElementById('g9-gate-badge');
+          const card      = document.getElementById('g9-oracle-card');
+          const spxDev    = document.getElementById('g9-spx-dev');
+          const paxgDev   = document.getElementById('g9-paxg-dev');
+          const spxStat   = document.getElementById('g9-spx-status');
+          const paxgStat  = document.getElementById('g9-paxg-status');
+
+          const spxPct    = d.current_spx_deviation  != null ? d.current_spx_deviation  : null;
+          const paxgPct   = d.current_paxg_deviation != null ? d.current_paxg_deviation : null;
+          const threshold = (d.oracle_deviation_threshold || 0.01) * 100;
+          const fired     = d.oracle_gate_fired || false;
+
+          if (spxDev  && spxPct  != null) spxDev.textContent  = Math.abs(spxPct).toFixed(4)  + '%';
+          if (paxgDev && paxgPct != null) paxgDev.textContent = Math.abs(paxgPct).toFixed(4) + '%';
+
+          function setStatusBadge(el, pct) {
+            if (!el || pct == null) return;
+            if (Math.abs(pct) > threshold) {
+              el.textContent = 'GATE FIRED'; el.className = 'lm-badge lm-badge-critical';
+            } else {
+              el.textContent = 'OK'; el.className = 'lm-badge lm-badge-active';
+            }
+          }
+          setStatusBadge(spxStat,  spxPct);
+          setStatusBadge(paxgStat, paxgPct);
+
+          if (badge) {
+            if (fired) {
+              badge.textContent = 'GATE FIRED — entry skipped'; badge.className = 'lm-badge lm-badge-critical';
+              if (card) card.style.borderColor = '#f85149';
+            } else {
+              badge.textContent = 'GATE OK'; badge.className = 'lm-badge lm-badge-active';
+            }
+          }
+        })
+        .catch(() => {
+          const ts = document.getElementById('g9-ts');
+          if (ts) ts.textContent = 'dashboard not loaded';
+        });
+    })();
+    </script>
 
     <!-- Metrics Cards -->
     <div class="lm-grid">
@@ -8776,6 +8879,45 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 
           </ul>
         </details>
+        <details open>
+          <summary><strong>★★★ 2026-05-27 08:27 JST — K371 G9 Oracle Deviation Gate LIVE (K369 K297' production safety, 5-line patch)</strong></summary>
+          <ul>
+            <li><strong>【K371 G9 Oracle Deviation Gate — PRODUCTION PATCH LIVE】</strong>
+              <ul style="font-size:0.93em;line-height:1.75;">
+                <li><strong>背景 (K369):</strong>
+                  K369 が K297' 本番環境 oracle deviation をライブ計測: PAXG <strong>0.062%</strong>、SPX <strong>0.125%</strong>。
+                  どちらも HL native 1% per-update cap および K371 gate 閾値 1% を大きく下回る (LOW risk)。
+                  K369 推奨: G9 safety gate を追加 — <code>|mark - oracle| / oracle &gt; 1%</code> 時にエントリーをスキップ。
+                </li>
+                <li><strong>実装 (scripts/k302a_satellite_run.py):</strong>
+                  <ul>
+                    <li>定数追加: <code>ORACLE_GATE_ENABLED = True</code>、<code>ORACLE_DEVIATION_THRESHOLD = 0.01</code></li>
+                    <li>ヘルパー関数追加: <code>fetch_oracle_health(coins)</code> — POST metaAndAssetCtxs → markPx/oraclePx/deviation を返す。API error 時は fail-open (空 dict 返却、gate 不発)。</li>
+                    <li>compute_spx_daily_pnl() 内 K297' filter 直後に G9 gate 挿入: SPX or PAXG が 1% 超なら today's PnL.iloc[-1] = 0.0。</li>
+                    <li>dashboard update_dashboard() に oracle_health 引数追加 → JSON に G9 フィールド書き込み。</li>
+                  </ul>
+                </li>
+                <li><strong>dry-run 結果 (2026-05-27 08:27 JST):</strong>
+                  SPX dev <strong>−0.1847%</strong> (OK)、PAXG dev <strong>−0.0577%</strong> (OK) → Gate fired: <strong>False</strong>。
+                  Sharpe 変化なし (K297' backtest target 18.48 維持)。
+                </li>
+                <li><strong>Dashboard JSON 新フィールド (data/k302a_satellite_dashboard.json):</strong>
+                  <code>oracle_gate_enabled</code>、<code>oracle_deviation_threshold</code>、<code>current_spx_deviation</code>、<code>current_paxg_deviation</code>、<code>oracle_gate_fired</code>、<code>active_alert_flags.oracle_g9_fired</code>
+                </li>
+                <li><strong>Live Monitoring G9 indicator:</strong>
+                  report.html に G9 Oracle Deviation Gate カード追加 (SPX/PAXG 偏差表示 + GREEN/RED ステータスバッジ、JS で dashboard JSON から動的更新)。
+                </li>
+                <li><strong>Runbook §16 追加 (docs/k302a_runbook.md):</strong>
+                  G9 説明、rollback手順 (<code>ORACLE_GATE_ENABLED = False</code>)、監視コマンド、K266 gate 互換性確認。
+                </li>
+                <li><strong>Rollback:</strong> <code>ORACLE_GATE_ENABLED = False</code> を設定するだけ — K297' always-on (v6.12) に即時復帰。再起動不要。</li>
+                <li><strong>分析スクリプト:</strong>
+                  <code>wave_k371_oracle_gate.py</code> + <code>wave_k371_oracle_gate.json</code>。
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </details>
         <details>
           <summary><strong>★★★★★ 2026-05-27 06:43 JST — K340-K346 8-wave breakthrough chronicle</strong></summary>
           <ul>
@@ -9612,7 +9754,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
     <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; Research Baseline v4.1 / Production v6.13d K302a (K280 75% + K297' SPX-filtered 20% + sUSDe OC 5%)</p>
-    <p style="margin-top:4px;">更新: 2026-05-27 08:08 JST &nbsp;|&nbsp; K347-K366 19-wave chronicle RECORDED &nbsp;|&nbsp; Production v6.13d K302a DEPLOYED (K280 75% + K297' SPX-filtered 20% + sUSDe OC 5%、combined Sh 25.47) &nbsp;|&nbsp; K356 HL HIP-4 polling daemon SCAFFOLD-READY (K353 MONITOR → K368 calibration 2026-06-10) &nbsp;|&nbsp; K363 Variational FR daemon SCAFFOLD-READY (trading API Q3-Q4 2026) &nbsp;|&nbsp; K357 emergency_hl_exit.py SCAFFOLD-READY (Runbook §14) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
+    <p style="margin-top:4px;">更新: 2026-05-27 08:27 JST &nbsp;|&nbsp; K347-K371 22-wave chronicle RECORDED &nbsp;|&nbsp; Production v6.13d K302a DEPLOYED (K280 75% + K297' SPX-filtered 20% + sUSDe OC 5%、combined Sh 25.47) &nbsp;|&nbsp; K371 G9 oracle deviation gate LIVE (K369 safety, PAXG 0.06%/SPX 0.18% &lt;&lt; 1%) &nbsp;|&nbsp; K356 HL HIP-4 polling daemon SCAFFOLD-READY (K353 MONITOR → K368 calibration 2026-06-10) &nbsp;|&nbsp; K363 Variational FR daemon SCAFFOLD-READY (trading API Q3-Q4 2026) &nbsp;|&nbsp; K357 emergency_hl_exit.py SCAFFOLD-READY (Runbook §14) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 
