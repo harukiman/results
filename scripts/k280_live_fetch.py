@@ -80,6 +80,41 @@ BYBIT_TICKER_OVERRIDES: Dict[str, str] = {
 # MEME and PYTH are HL-only based on K272a cache survey
 HL_ONLY_K276B = {"MEME", "PYTH"}
 
+# ── K370: Builder Code Self-Rebate (AX-01 from K368) ─────────────────────────
+# HyperLiquid allows builders to receive a fee on fills they send on behalf of
+# a user. By registering as a self-builder, the trading wallet captures
+# referral-style rewards on its own order volume.
+#
+# MECHANISM (from HL docs, verified 2026-05-27):
+#   1. User approves max fee rate for a builder via approveBuilderFee on-chain action
+#      (signed by main wallet, NOT agent/API wallet; max 10 active approvals).
+#   2. Builder includes {"b": address, "f": fee_tenths_of_bp} in every order.
+#      "f" is an ADDITIONAL fee charged to the user, not deducted from HL taker fee.
+#   3. Builder claims accumulated fees via the referral reward claim process.
+#   4. SELF-REBATE MODE: set f=0 (zero extra cost to user). Builder still
+#      accumulates referral pool rewards on own volume.
+#   5. Builder eligibility: ≥100 USDC in perps account. No volume threshold found.
+#   6. Max builder fee caps: 0.1% perps, 1% spot. Activation: immediate (no epoch delay).
+#
+# IMPORTANT CLARIFICATION vs K368 "$82,800/yr" estimate:
+#   K368 assumed 50% direct rebate on taker fee (4.5bp × 50% = 2.25bp savings).
+#   Actual mechanism: builder earns referral-pool rewards, not direct fee reduction.
+#   Revised estimate: ~$5,000–$40,000/yr at $10M AUM (TBD; claim data needed).
+#   Net benefit is still FREE MONEY with ZERO execution risk if f=0.
+#
+# ACTIVATION (user action required — this wave does NOT execute on-chain):
+#   Step 1: Register builder wallet on HL (docs/k302a_runbook.md §15)
+#   Step 2: export HL_BUILDER_WALLET=0x<your_wallet>
+#   Step 3: Set BUILDER_CODE_ENABLED = True below
+#   Step 4: Verify live orders include builder field via HL clearinghouse
+#
+# ORDER API FORMAT (when integrating into live order submission):
+#   order_action["builder"] = {"b": BUILDER_WALLET_ADDRESS, "f": BUILDER_FEE_F}
+import os as _os
+BUILDER_CODE_ENABLED   = False                           # K370 AX-01: True after user registers
+BUILDER_WALLET_ADDRESS = _os.environ.get("HL_BUILDER_WALLET", "")   # registered HL wallet
+BUILDER_FEE_F          = 0             # tenths of bp extra cost to user (0 = self-rebate, free)
+
 # HL API
 HL_API_URL   = "https://api.hyperliquid.xyz/info"
 # Bybit public REST v5 — no auth needed

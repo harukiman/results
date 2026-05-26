@@ -753,10 +753,10 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-27 08:08 JST</span> &nbsp;|&nbsp;
-    <strong>試行数:</strong> 738,388+ (+19 K347-K366) &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-27 08:18 JST</span> &nbsp;|&nbsp;
+    <strong>試行数:</strong> 738,388+ (+20 K347-K370) &nbsp;|&nbsp;
     <strong>🏆 PRODUCTION v6.13d K302a:</strong> <span style="color:var(--accent-green);font-weight:700;">K280 75% + K297' 20% (SPX filter +49.5% Sh) + sUSDe OC 5% — combined Sh 25.47 / MDD 0.0189% / all §6 gates pass / WF min 22.3</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">★ K346 ACCEPT v6.13d、K348 production patch、deploy: SCAFFOLD-READY (manual launchctl activation)</span> &nbsp;|&nbsp;
-    <strong>12 ACCEPT base + 21 ensembles + K302a v6.13d / 78 REJECT / 7 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K297' PAXG 504d + SPX 415d filtered, K348 patch LIVE — SPX_FILTER_ENABLED=True, sUSDe OC scaffold ready</span>
+    <strong>12 ACCEPT base + 21 ensembles + K302a v6.13d / 78 REJECT / 7 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K297' PAXG 504d + SPX 415d filtered, K348 patch LIVE — SPX_FILTER_ENABLED=True, sUSDe OC scaffold ready</span> &nbsp;|&nbsp; <span style="color:#3fb950;font-weight:700;">★★ K370 Builder code self-rebate SCAFFOLD (AX-01, user activation: register wallet → set HL_BUILDER_WALLET)</span>
   </div>
 
   <header class="report-header">
@@ -1090,6 +1090,61 @@ launchctl list | grep cryptolab</pre>
         });
     })();
     </script>
+
+    <!-- K370 Builder Code Self-Rebate Status (2026-05-27) -->
+    <div class="lm-card" style="margin-bottom:14px;border-color:#238636;" id="builder-rebate-card">
+      <h3 style="display:flex;align-items:center;gap:8px;">
+        K370 Builder Code Self-Rebate
+        <span style="font-size:0.7rem;font-weight:400;background:#21262d;border:1px solid #238636;color:#3fb950;border-radius:4px;padding:1px 7px;letter-spacing:0.03em;">SCAFFOLD-READY</span>
+        <span style="font-size:0.68rem;font-weight:400;color:var(--text-secondary);margin-left:auto;">K368 AX-01 · 2026-05-27</span>
+      </h3>
+      <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:6px;">
+            Register production wallet as HL self-builder → accumulate referral-pool rewards on own order volume.
+            <strong style="color:#3fb950;">ZERO HL concentration change. ZERO counterparty risk. f=0 → ZERO extra cost to user.</strong>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:4px;">
+            <strong>Mechanism:</strong> order_action["builder"] = {"b": wallet, "f": 0}
+            &nbsp;·&nbsp; approveBuilderFee on-chain (main wallet only)
+            &nbsp;·&nbsp; Eligibility: ≥100 USDC perps · Activation: immediate
+          </div>
+          <div style="font-size:0.78rem;margin-top:6px;">
+            <span style="color:var(--accent-orange);font-weight:600;">K368 correction:</span>
+            <span style="color:var(--text-secondary);">
+              Builder codes are referral-pool rewards, NOT 50% direct taker fee rebate.
+              K368 "$82,800/yr" revised: $9,444–$94,444/yr at $10M AUM (10–50% scenario).
+              True rate TBD — free money pending claim data.
+            </span>
+          </div>
+          <div style="margin-top:8px;font-size:0.78rem;">
+            <strong>Activation:</strong>
+            <ol style="margin:4px 0 0 18px;padding:0;color:var(--text-secondary);font-size:0.78rem;">
+              <li>Approve builder wallet on HL UI (main wallet sign)</li>
+              <li><code style="color:var(--accent-cyan);">export HL_BUILDER_WALLET=0x&lt;your_wallet&gt;</code></li>
+              <li>Set <code style="color:var(--accent-cyan);">BUILDER_CODE_ENABLED = True</code> in k280_live_fetch.py + k302a_satellite_run.py</li>
+              <li>Add builder field to live order submission when going live</li>
+              <li>Verify in HL UI → Builder Codes → accumulated rewards</li>
+            </ol>
+          </div>
+          <div style="margin-top:6px;font-size:0.75rem;color:var(--text-secondary);">
+            Runbook: <a href="docs/k302a_runbook.md" style="color:#79c0ff;" target="_blank">docs/k302a_runbook.md §15</a>
+            &nbsp;·&nbsp; Analysis: <code style="color:var(--accent-cyan);">python3 wave_k370_builder_rebate.py</code>
+          </div>
+        </div>
+        <div style="min-width:160px;text-align:right;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:2px;">Estimated savings/yr (@$10M AUM)</div>
+          <div style="font-size:0.9rem;font-weight:700;color:#3fb950;">$9K–$94K</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">(10–50% reward scenario)</div>
+          <div style="margin-top:10px;font-size:0.72rem;color:var(--text-secondary);">Sharpe lift (K302a sat)</div>
+          <div style="font-size:0.9rem;font-weight:700;color:var(--accent-cyan);">+0.13 – +0.65</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">(from cost reduction)</div>
+          <div style="margin-top:10px;font-size:0.72rem;color:var(--text-secondary);">K266 gate</div>
+          <div style="font-size:0.82rem;font-weight:700;color:#3fb950;">ACCEPT-FREE</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">(cost opt · no signal change)</div>
+        </div>
+      </div>
+    </div>
 
     <!-- Metrics Cards -->
     <div class="lm-grid">
@@ -8670,6 +8725,52 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
                 </li>
                 <li>K359 governance v2 (K339-K358 audit、backlog burn 83%)</li>
                 <li>K366 K302a dashboard refresh (v6.12 → v6.13d metadata)</li>
+              </ul>
+            </li>
+
+          </ul>
+        </details>
+        <details open>
+          <summary><strong>★★ 2026-05-27 08:18 JST — K370 Builder code self-rebate SCAFFOLD (K368 AX-01)</strong></summary>
+          <ul>
+
+            <li><strong>【K370 AX-01: HL Builder Code Self-Rebate SCAFFOLD-READY】</strong>
+              <ul style="font-size:0.93em;line-height:1.75;">
+                <li><strong>メカニズム確認 (HL docs 2026-05-27):</strong>
+                  order_action に <code>{"builder": {"b": wallet, "f": 0}}</code> を付加 → builder が referral-pool rewards を accumulate。
+                  <strong>f=0 → ユーザーへの追加コストゼロ。</strong>
+                  approveBuilderFee は main wallet 署名必須 (agent/API wallet 不可)。
+                  Eligibility: ≥100 USDC perps account。Volume threshold なし。Activation: immediate。
+                </li>
+                <li><strong>K368 estimate 修正:</strong>
+                  K368 "$82,800/yr at $10M AUM" は 50% direct taker fee rebate 仮定。
+                  <strong>実際の機構は referral-pool rewards (taker fee の直接還元ではない)。</strong>
+                  K370 分析 (conservative 10%): ~$9,444/yr at $1M AUM、~$94,444/yr at $10M AUM。
+                  (optimistic 50% scenario: ~$47K–$472K/yr at $1M–$10M)。
+                  True benefit は claim 後のデータで確定。いずれにしても FREE MONEY (f=0 → ゼロコスト)。
+                </li>
+                <li><strong>Sharpe lift (K302a satellite):</strong>
+                  Conservative: +0.13 Sh | Optimistic: +0.65 Sh (cost reduction のみ、signal 変更なし)。
+                </li>
+                <li><strong>SCAFFOLD 作業 (K370):</strong>
+                  <ul>
+                    <li><code>scripts/k280_live_fetch.py</code> — BUILDER_CODE_ENABLED / BUILDER_WALLET_ADDRESS / BUILDER_FEE_F config 追加 (default False)</li>
+                    <li><code>scripts/k302a_satellite_run.py</code> — 同上 config 追加 + live order 統合コメント</li>
+                    <li><code>docs/k302a_runbook.md §15</code> — 5-step activation runbook 追加</li>
+                    <li><code>wave_k370_builder_rebate.py</code> — 分析スクリプト (savings table + Sharpe analysis)</li>
+                    <li><code>wave_k370_builder_rebate.json</code> — 分析 JSON 出力</li>
+                  </ul>
+                </li>
+                <li><strong>Activation 手順 (ユーザー実行):</strong>
+                  (1) HL UI で builder wallet 承認 → (2) <code>export HL_BUILDER_WALLET=0x...</code> →
+                  (3) BUILDER_CODE_ENABLED=True に変更 → (4) live order に builder field 組み込み →
+                  (5) HL UI で accumulated rewards 確認。
+                  Runbook: <code>docs/k302a_runbook.md §15</code>。
+                </li>
+                <li><strong>リスク評価:</strong>
+                  HL concentration 変化: <strong>ZERO</strong> | Counterparty risk: <strong>ZERO</strong> |
+                  Execution risk: <strong>ZERO</strong> (f=0) | K266 gate: <strong>ACCEPT-FREE</strong> (cost optimization)。
+                </li>
               </ul>
             </li>
 

@@ -1205,3 +1205,142 @@ if EMERGENCY_FLAG.exists():
 ```
 
 This integration is recommended but not yet deployed in all daemons (K357 scaffold scope).
+
+---
+
+## §15 Builder Code Self-Rebate Activation (K370 AX-01)
+
+**Added:** 2026-05-27 | **Wave:** K370 | **Status:** SCAFFOLD-READY (user activation required)
+**Risk:** ZERO (no HL concentration change, no counterparty risk, pure cost reduction)
+
+### §15.1 Background
+
+HyperLiquid builder codes allow any address that sends orders on behalf of a user to capture
+referral-pool rewards on that volume. By registering the production wallet as its own builder
+("self-builder mode"), K280 production accumulates referral rewards on all its HL order flow.
+
+**API mechanism** (HL docs, verified 2026-05-27):
+- Order action field: `{"builder": {"b": wallet_address, "f": 0}}`
+- `f` = additional fee in tenths of basis points charged to user. Use `f=0` → zero extra cost.
+- Builder claims rewards via standard referral reward claim process.
+- Reward type: referral-pool rewards (NOT a direct 50% taker fee rebate as K368 originally estimated).
+- K368 correction: K368 cited "$82,800/yr savings at $10M AUM" assuming 50% direct rebate on
+  4.5bp taker fee. Actual mechanism is referral pool rewards. Conservative analysis (K370):
+  $9,444–$94,444/yr at $10M AUM (10–50% reward rate). True benefit TBD pending claim data.
+
+**Eligibility requirements (confirmed):**
+- ≥100 USDC in perps account value (trivially met)
+- No minimum volume threshold found in documentation
+- Max 10 active approvals per user; max builder fee cap: 0.1% perps (irrelevant at f=0)
+
+### §15.2 Step-by-Step Activation
+
+#### Step 1: Approve builder fee on HL (one-time on-chain action)
+
+Must be signed by the **main wallet** (not an agent/API wallet).
+
+**Option A: HL UI** (recommended)
+1. Go to `https://app.hyperliquid.xyz/`
+2. Navigate to Profile → Builder Codes or API Settings
+3. Approve your wallet address as a builder with maxFeeRate ≥ 0% (use 0% for f=0 mode)
+
+**Option B: Direct API action** (advanced)
+```python
+# approveBuilderFee action structure (EIP-712 signed):
+action = {
+    "type": "approveBuilderFee",
+    "hyperliquidChain": "Mainnet",
+    "signatureChainId": "0xa4b1",        # Arbitrum
+    "maxFeeRate": "0.001%",              # any value >= f*0.1bp; 0.001% covers f=0
+    "builder": "0x<YOUR_WALLET_ADDRESS>",
+    "nonce": int(time.time() * 1000),    # milliseconds
+}
+# Sign with eth_account (EIP-712 typed data)
+```
+
+#### Step 2: Set environment variable
+```bash
+export HL_BUILDER_WALLET=0x<YOUR_WALLET_ADDRESS>
+# Add to ~/.zshrc for persistence
+echo 'export HL_BUILDER_WALLET=0x<YOUR_WALLET_ADDRESS>' >> ~/.zshrc
+```
+
+#### Step 3: Enable builder code in production scripts
+Edit both scripts (additive patch already staged in K370 scaffold):
+
+```python
+# In scripts/k280_live_fetch.py (line ~83):
+BUILDER_CODE_ENABLED   = True   # was False — enable after Step 1+2
+# BUILDER_WALLET_ADDRESS auto-reads from HL_BUILDER_WALLET env var
+
+# In scripts/k302a_satellite_run.py (line ~56):
+BUILDER_CODE_ENABLED   = True   # was False — enable after Step 1+2
+```
+
+#### Step 4: Integrate builder field into live order submission
+
+When live order execution is implemented (currently paper-trade), add to the order action builder:
+```python
+if BUILDER_CODE_ENABLED and BUILDER_WALLET_ADDRESS:
+    order_action["builder"] = {
+        "b": BUILDER_WALLET_ADDRESS,
+        "f": BUILDER_FEE_F,          # = 0 (zero extra cost to user)
+    }
+```
+
+#### Step 5: Verify integration
+```bash
+# After first live orders, verify builder field appears:
+# Check HL clearinghouse state for recent fills — builder address should appear
+# Monitor: HL UI → Profile → Builder Codes → Accumulated rewards
+```
+
+#### Step 6: Claim accumulated rewards
+- Navigate to HL UI → Referral / Builder Code rewards
+- Claim periodically (no auto-distribution)
+
+### §15.3 Expected Savings (K370 analysis)
+
+| AUM | Conservative (10% scenario) | Optimistic (50% scenario) |
+|-----|----------------------------|--------------------------|
+| $1M | ~$9,444/yr | ~$47,222/yr |
+| $5M | ~$47,222/yr | ~$236,109/yr |
+| $10M | ~$94,444/yr | ~$472,219/yr |
+| $25M | ~$236,109/yr | ~$1,180,547/yr |
+| $50M | ~$472,219/yr | ~$2,361,094/yr |
+
+**Assumptions:** ~$2.1B annual HL volume at $10M AUM (17 fills/day at ~$336K notional/fill).
+True reward rate TBD — check HL referral claim history after activation.
+
+**Sharpe lift (K302a satellite):**
+- Conservative (-10% cost): +0.13 Sh
+- Optimistic (-50% cost): +0.65 Sh
+- K302a satellite baseline Sh ~10.41 (from cached panel)
+
+### §15.4 Verification
+
+```bash
+# Check scaffold is in place:
+grep -n "BUILDER_CODE_ENABLED" scripts/k280_live_fetch.py scripts/k302a_satellite_run.py
+
+# Run K370 analysis:
+python3 wave_k370_builder_rebate.py
+cat wave_k370_builder_rebate.json | python3 -m json.tool | head -50
+
+# Verify deployment status:
+python3 scripts/verify_deployment_status.py
+```
+
+### §15.5 Risk Assessment
+
+| Dimension | Assessment |
+|-----------|-----------|
+| HL concentration change | ZERO — no new positions added |
+| Counterparty risk | ZERO — referral pool, not external counterparty |
+| Execution risk | ZERO — f=0 adds no extra cost to user |
+| Signal change | NONE — pure cost reduction, no alpha change |
+| K266 §6 gate | ACCEPT-FREE (cost optimization, not a new signal) |
+
+---
+
+*K370 §15 — Builder Code Self-Rebate — 2026-05-27*

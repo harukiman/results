@@ -48,6 +48,20 @@ SPX_FILTER_ENABLED    = True   # K343 K297→K297' integration (v6.13d); set Fal
 SPX_TREND_WINDOW_D    = 5      # 5d price-trend window (CV robust: 3/5/7/10/14/21d ≈ same)
 SPX_FR_THRESHOLD      = 0.0    # FR > 0 condition (long only when carry positive)
 
+# ── K370: Builder Code Self-Rebate (AX-01 from K368) ─────────────────────────
+# K302a satellite trades on HyperLiquid (PAXG, SPX). When live, include builder
+# code in every order action to accumulate referral-pool rewards on own volume.
+# SELF-REBATE MODE: BUILDER_FEE_F = 0 adds zero extra cost to orders.
+# ACTIVATION: user must approveBuilderFee on-chain, then set BUILDER_CODE_ENABLED=True.
+# See docs/k302a_runbook.md §15 for full activation runbook.
+import os as _os_k302a
+BUILDER_CODE_ENABLED   = False                                  # K370: True after wallet registered
+BUILDER_WALLET_ADDRESS = _os_k302a.environ.get("HL_BUILDER_WALLET", "")  # registered HL wallet
+BUILDER_FEE_F          = 0          # tenths of bp extra cost (0 = self-rebate, no user impact)
+# When live order submission is implemented, add to order action:
+#   if BUILDER_CODE_ENABLED and BUILDER_WALLET_ADDRESS:
+#       order_action["builder"] = {"b": BUILDER_WALLET_ADDRESS, "f": BUILDER_FEE_F}
+
 # ── Paths ──────────────────────────────────────────────────────────────────────
 BASE  = Path(__file__).resolve().parent.parent  # K339 security rule: no absolute /Users/ paths
 CACHE = BASE / "cache"

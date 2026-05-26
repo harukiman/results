@@ -1,0 +1,103 @@
+{
+  "wave": "K370",
+  "task": "AX-01 builder code self-rebate scaffold",
+  "generated_utc": "2026-05-26T23:21:42.954907+00:00",
+  "status": "SCAFFOLD-READY (user activation required)",
+  "mechanism_summary": {
+    "api_field": "order_action[\"builder\"] = {\"b\": wallet_address, \"f\": fee_tenths_bp}",
+    "self_rebate_mode": "f=0 (zero extra cost to user)",
+    "registration": "approveBuilderFee on-chain action, signed by main wallet",
+    "activation": "Immediate (no epoch delay documented)",
+    "eligibility": ">=100 USDC perps account value; no volume threshold found",
+    "fee_caps": "0.1% perps, 1% spot; f=0 \u2192 no cap concern",
+    "reward_mechanism": "Referral-pool rewards (not direct taker fee rebate)",
+    "k368_correction": "K368 '$82,800/yr' assumed 50% taker rebate \u2014 not confirmed by docs. Builder earns referral pool rewards. True benefit TBD."
+  },
+  "cost_model_baseline": {
+    "hl_taker_bp": 4.5,
+    "hl_maker_bp": 1.5,
+    "paper_cost_bp": 7.0,
+    "cost_amort_days": 30
+  },
+  "hl_exposure": {
+    "k280_main_wt": 0.75,
+    "k280_hl_fraction": 0.5,
+    "k302a_sat_wt": 0.2,
+    "total_hl_fraction": 0.575
+  },
+  "scenarios": {
+    "optimistic_rebate_pct": 0.5,
+    "conservative_rebate_pct": 0.1
+  },
+  "sharpe_analysis": {
+    "baseline": 10.4083,
+    "conservative_10pct": 10.5387,
+    "optimistic_50pct": 11.0593,
+    "delta_conservative": 0.1304,
+    "delta_optimistic": 0.651,
+    "note": "Cost-reduction Sharpe lift is small in absolute; primary benefit is annual $"
+  },
+  "savings_table": [
+    {
+      "aum_usd": 1000000,
+      "aum_label": "$1M",
+      "optimistic_50pct_usd": 47222.0,
+      "conservative_10pct_usd": 9444.0,
+      "savings_pct_of_aum_opt": 4.7222,
+      "savings_pct_of_aum_con": 0.9444
+    },
+    {
+      "aum_usd": 5000000,
+      "aum_label": "$5M",
+      "optimistic_50pct_usd": 236109.0,
+      "conservative_10pct_usd": 47222.0,
+      "savings_pct_of_aum_opt": 4.7222,
+      "savings_pct_of_aum_con": 0.9444
+    },
+    {
+      "aum_usd": 10000000,
+      "aum_label": "$10M",
+      "optimistic_50pct_usd": 472219.0,
+      "conservative_10pct_usd": 94444.0,
+      "savings_pct_of_aum_opt": 4.7222,
+      "savings_pct_of_aum_con": 0.9444
+    },
+    {
+      "aum_usd": 25000000,
+      "aum_label": "$25M",
+      "optimistic_50pct_usd": 1180547.0,
+      "conservative_10pct_usd": 236109.0,
+      "savings_pct_of_aum_opt": 4.7222,
+      "savings_pct_of_aum_con": 0.9444
+    },
+    {
+      "aum_usd": 50000000,
+      "aum_label": "$50M",
+      "optimistic_50pct_usd": 2361094.0,
+      "conservative_10pct_usd": 472219.0,
+      "savings_pct_of_aum_opt": 4.7222,
+      "savings_pct_of_aum_con": 0.9444
+    }
+  ],
+  "activation_steps": [
+    "Step 1: Register builder wallet on HL (approveBuilderFee on-chain, main wallet sign)",
+    "Step 2: export HL_BUILDER_WALLET=0x<your_wallet_address>",
+    "Step 3: Set BUILDER_CODE_ENABLED = True in scripts/k280_live_fetch.py AND scripts/k302a_satellite_run.py",
+    "Step 4: Integrate order_action[\"builder\"] = {\"b\": BUILDER_WALLET_ADDRESS, \"f\": 0} in live order submission",
+    "Step 5: Verify first live orders include builder field via HL clearinghouse state",
+    "Step 6: Monitor cumulative builder rewards via HL dashboard / referral claim UI"
+  ],
+  "risk_assessment": {
+    "hl_concentration_change": "ZERO",
+    "counterparty_risk": "ZERO (referral pool rewards, not external counterparty)",
+    "execution_risk": "ZERO (f=0 \u2192 no extra cost to user)",
+    "signal_change": "NONE (pure cost reduction)",
+    "k266_gate": "ACCEPT-FREE (cost optimization, not a new signal)"
+  },
+  "concentration_impact": {
+    "new_hl_exposure_added": false,
+    "current_hl_pct": 57.5,
+    "after_builder_code": 57.5,
+    "delta": 0.0
+  }
+}
