@@ -1,0 +1,729 @@
+{
+  "wave": "K374",
+  "task": "K276b Spot+Perp Restructure Feasibility (K373 highest-value option)",
+  "generated_at_jst": "2026-05-27T08:51:38+09:00",
+  "generated_at_utc": "2026-05-26T23:51:38Z",
+  "runtime_note": "analysis-only; no production modifications",
+  "phase1_spot_universe": {
+    "source": "POST https://api.hyperliquid.xyz/info {type:spotMetaAndAssetCtxs}",
+    "fetch_time_utc": "2026-05-26T23:51:38Z",
+    "stats": {
+      "total_usdc_pairs": 283,
+      "nonzero_vol_pairs": 107,
+      "tier_ge1m": 9,
+      "tier_100k_1m": 14,
+      "tier_10k_100k": 14,
+      "tier_lt10k": 70,
+      "tier_zero": 176
+    },
+    "top10_by_volume": [
+      {
+        "base": "WOW",
+        "vol_24h_usd": 178318334.1399101,
+        "mark_px": 59.317,
+        "mid_px": 59.3175,
+        "pair_index": 109
+      },
+      {
+        "base": "NEKO",
+        "vol_24h_usd": 32975457.02679999,
+        "mark_px": 75817.0,
+        "mid_px": 75816.5,
+        "pair_index": 144
+      },
+      {
+        "base": "QQQ",
+        "vol_24h_usd": 9374189.193111995,
+        "mark_px": 569.46,
+        "mid_px": 569.425,
+        "pair_index": 288
+      },
+      {
+        "base": "QUANT",
+        "vol_24h_usd": 5835703.561820002,
+        "mark_px": 2072.1,
+        "mid_px": 2072.05,
+        "pair_index": 155
+      },
+      {
+        "base": "NBT",
+        "vol_24h_usd": 4573468.541442101,
+        "mark_px": 1.0,
+        "mid_px": 1.00005,
+        "pair_index": 245
+      },
+      {
+        "base": "BUDDY",
+        "vol_24h_usd": 3527935.718944001,
+        "mark_px": 83.595,
+        "mid_px": 83.5885,
+        "pair_index": 160
+      },
+      {
+        "base": "PURR",
+        "vol_24h_usd": 3238335.1911770003,
+        "mark_px": 0.095799,
+        "mid_px": 0.0960075,
+        "pair_index": 0
+      },
+      {
+        "base": "RUB",
+        "vol_24h_usd": 3110700.4742842,
+        "mark_px": 0.99913,
+        "mid_px": 0.998995,
+        "pair_index": 173
+      },
+      {
+        "base": "GLD",
+        "vol_24h_usd": 1009750.9993,
+        "mark_px": 379.28,
+        "mid_px": 380.115,
+        "pair_index": 276
+      },
+      {
+        "base": "FI",
+        "vol_24h_usd": 786669.2765800001,
+        "mark_px": 63.129,
+        "mid_px": 0.0,
+        "pair_index": 247
+      }
+    ]
+  },
+  "phase2_k276b_universe_alignment": {
+    "k276b_symbols": [
+      "ENA",
+      "ONDO",
+      "ATOM",
+      "TIA",
+      "SEI",
+      "WLD",
+      "RNDR",
+      "TAO",
+      "MEME",
+      "AAVE",
+      "PYTH",
+      "LDO",
+      "FET",
+      "PEPE",
+      "MKR",
+      "JUP",
+      "UNI",
+      "BOME",
+      "DOT",
+      "BONK"
+    ],
+    "k276b_perp_names": {
+      "ENA": "ENA",
+      "ONDO": "ONDO",
+      "ATOM": "ATOM",
+      "TIA": "TIA",
+      "SEI": "SEI",
+      "WLD": "WLD",
+      "RNDR": "RNDR",
+      "TAO": "TAO",
+      "MEME": "MEME",
+      "AAVE": "AAVE",
+      "PYTH": "PYTH",
+      "LDO": "LDO",
+      "FET": "FET",
+      "PEPE": "kPEPE",
+      "MKR": "MKR",
+      "JUP": "JUP",
+      "UNI": "UNI",
+      "BOME": "BOME",
+      "DOT": "DOT",
+      "BONK": "kBONK"
+    },
+    "spot_perp_map": {
+      "ENA": {
+        "spot": "UENA",
+        "note": "U-prefix wrapper; ratio UENA/ENA ~0.000257 (NOT 1:1)"
+      },
+      "ONDO": {
+        "spot": null,
+        "note": "no HL spot found"
+      },
+      "ATOM": {
+        "spot": null,
+        "note": "no HL spot found"
+      },
+      "TIA": {
+        "spot": null,
+        "note": "no HL spot found"
+      },
+      "SEI": {
+        "spot": "HSEI",
+        "note": "H-prefix wrapper; ratio HSEI/SEI ~2.57 (NOT 1:1)"
+      },
+      "WLD": {
+        "spot": "UWLD",
+        "note": "U-prefix wrapper; ratio UWLD/WLD ~0.000793 (NOT 1:1)"
+      },
+      "RNDR": {
+        "spot": null,
+        "note": "no HL spot found; RNDR perp vol=0 (dead)"
+      },
+      "TAO": {
+        "spot": "HTAO",
+        "note": "H-prefix fractional; HTAO=0.80 vs TAO=279 (1:348 ratio)"
+      },
+      "MEME": {
+        "spot": null,
+        "note": "no HL spot found"
+      },
+      "AAVE": {
+        "spot": "AAVE0",
+        "note": "0-suffix spot; ratio AAVE0/AAVE ~0.0074 (NOT 1:1)"
+      },
+      "PYTH": {
+        "spot": null,
+        "note": "no HL spot found"
+      },
+      "LDO": {
+        "spot": null,
+        "note": "no HL spot found"
+      },
+      "FET": {
+        "spot": null,
+        "note": "no HL spot found"
+      },
+      "PEPE": {
+        "spot": "PEPE",
+        "note": "direct PEPE spot exists; kPEPE perp is 1000x scaled (NOT same asset)"
+      },
+      "MKR": {
+        "spot": null,
+        "note": "no HL spot found; MKR perp vol=0 (dead)"
+      },
+      "JUP": {
+        "spot": null,
+        "note": "no HL spot found"
+      },
+      "UNI": {
+        "spot": null,
+        "note": "no HL spot found"
+      },
+      "BOME": {
+        "spot": null,
+        "note": "no HL spot found"
+      },
+      "DOT": {
+        "spot": null,
+        "note": "no HL spot found"
+      },
+      "BONK": {
+        "spot": "UBONK",
+        "note": "U-prefix wrapper; kBONK perp is 1000x scaled (NOT same asset)"
+      }
+    }
+  },
+  "phase3_liquidity_assessment": {
+    "coverage_table": [
+      {
+        "symbol": "ENA",
+        "spot_token": "UENA",
+        "perp_token": "ENA",
+        "spot_status": "MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 2.5e-05,
+        "perp_vol_24h_usd": 3888604.7,
+        "perp_mark_px": 0.096911,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 185827766.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": 0.000258,
+          "spot_mark_px": 2.5e-05,
+          "perp_mark_px": 0.096911,
+          "delta_neutral_viable": false,
+          "reason": "NOT 1:1 — fractional/scaled wrapper; hedge ratio computation required, portfolio margin may not recognize offset"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "U-prefix wrapper; ratio UENA/ENA ~0.000257 (NOT 1:1)"
+      },
+      {
+        "symbol": "ONDO",
+        "spot_token": null,
+        "perp_token": "ONDO",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 14666458.09,
+        "perp_mark_px": 0.4057,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 29821520.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found"
+      },
+      {
+        "symbol": "ATOM",
+        "spot_token": null,
+        "perp_token": "ATOM",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 844498.09,
+        "perp_mark_px": 2.2105,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 1460017.86,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found"
+      },
+      {
+        "symbol": "TIA",
+        "spot_token": null,
+        "perp_token": "TIA",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 4061454.62,
+        "perp_mark_px": 0.46874,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 9535407.8,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found"
+      },
+      {
+        "symbol": "SEI",
+        "spot_token": "HSEI",
+        "perp_token": "SEI",
+        "spot_status": "MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.16962,
+        "perp_vol_24h_usd": 2328662.31,
+        "perp_mark_px": 0.06586,
+        "perp_funding_rate_8h": -4.1755e-05,
+        "perp_open_interest": 34979382.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": 2.575463,
+          "spot_mark_px": 0.16962,
+          "perp_mark_px": 0.06586,
+          "delta_neutral_viable": false,
+          "reason": "NOT 1:1 — fractional/scaled wrapper; hedge ratio computation required, portfolio margin may not recognize offset"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "H-prefix wrapper; ratio HSEI/SEI ~2.57 (NOT 1:1)"
+      },
+      {
+        "symbol": "WLD",
+        "spot_token": "UWLD",
+        "perp_token": "WLD",
+        "spot_status": "MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0003,
+        "perp_vol_24h_usd": 65559656.31,
+        "perp_mark_px": 0.37783,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 95328833.40000002,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": 0.000794,
+          "spot_mark_px": 0.0003,
+          "perp_mark_px": 0.37783,
+          "delta_neutral_viable": false,
+          "reason": "NOT 1:1 — fractional/scaled wrapper; hedge ratio computation required, portfolio margin may not recognize offset"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "U-prefix wrapper; ratio UWLD/WLD ~0.000793 (NOT 1:1)"
+      },
+      {
+        "symbol": "RNDR",
+        "spot_token": null,
+        "perp_token": "RNDR",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 0.0,
+        "perp_mark_px": 6.8952,
+        "perp_funding_rate_8h": 0.0,
+        "perp_open_interest": 0.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found; RNDR perp vol=0 (dead)"
+      },
+      {
+        "symbol": "TAO",
+        "spot_token": "HTAO",
+        "perp_token": "TAO",
+        "spot_status": "MATCH",
+        "spot_vol_24h_usd": 78273.16,
+        "spot_mark_px": 0.79925,
+        "perp_vol_24h_usd": 24823297.35,
+        "perp_mark_px": 278.42,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 150430.4100000001,
+        "liquidity_tier": "UNVIABLE (<100K/day)",
+        "wrapper_ratio_check": {
+          "ratio": 0.002871,
+          "spot_mark_px": 0.79925,
+          "perp_mark_px": 278.42,
+          "delta_neutral_viable": false,
+          "reason": "NOT 1:1 — fractional/scaled wrapper; hedge ratio computation required, portfolio margin may not recognize offset"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "H-prefix fractional; HTAO=0.80 vs TAO=279 (1:348 ratio)"
+      },
+      {
+        "symbol": "MEME",
+        "spot_token": null,
+        "perp_token": "MEME",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 115086.39,
+        "perp_mark_px": 0.0005,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 733009360.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found"
+      },
+      {
+        "symbol": "AAVE",
+        "spot_token": "AAVE0",
+        "perp_token": "AAVE",
+        "spot_status": "MATCH",
+        "spot_vol_24h_usd": 719.26,
+        "spot_mark_px": 0.637,
+        "perp_vol_24h_usd": 9502866.14,
+        "perp_mark_px": 85.8,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 611652.3,
+        "liquidity_tier": "UNVIABLE (<100K/day)",
+        "wrapper_ratio_check": {
+          "ratio": 0.007424,
+          "spot_mark_px": 0.637,
+          "perp_mark_px": 85.8,
+          "delta_neutral_viable": false,
+          "reason": "NOT 1:1 — fractional/scaled wrapper; hedge ratio computation required, portfolio margin may not recognize offset"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "0-suffix spot; ratio AAVE0/AAVE ~0.0074 (NOT 1:1)"
+      },
+      {
+        "symbol": "PYTH",
+        "spot_token": null,
+        "perp_token": "PYTH",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 426848.12,
+        "perp_mark_px": 0.040239,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 28476200.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found"
+      },
+      {
+        "symbol": "LDO",
+        "spot_token": null,
+        "perp_token": "LDO",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 968525.97,
+        "perp_mark_px": 0.34237,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 18777078.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found"
+      },
+      {
+        "symbol": "FET",
+        "spot_token": null,
+        "perp_token": "FET",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 9838092.6,
+        "perp_mark_px": 0.2528,
+        "perp_funding_rate_8h": 1.27163e-05,
+        "perp_open_interest": 48682914.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found"
+      },
+      {
+        "symbol": "PEPE",
+        "spot_token": "PEPE",
+        "perp_token": "kPEPE",
+        "spot_status": "MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.000541,
+        "perp_vol_24h_usd": 2076871.34,
+        "perp_mark_px": 0.003513,
+        "perp_funding_rate_8h": -6.2934e-06,
+        "perp_open_interest": 5101785174.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": 0.153999,
+          "spot_mark_px": 0.000541,
+          "perp_mark_px": 0.003513,
+          "delta_neutral_viable": false,
+          "reason": "NOT 1:1 — fractional/scaled wrapper; hedge ratio computation required, portfolio margin may not recognize offset"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "direct PEPE spot exists; kPEPE perp is 1000x scaled (NOT same asset)"
+      },
+      {
+        "symbol": "MKR",
+        "spot_token": null,
+        "perp_token": "MKR",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 0.0,
+        "perp_mark_px": 1831.5,
+        "perp_funding_rate_8h": 0.0,
+        "perp_open_interest": 0.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found; MKR perp vol=0 (dead)"
+      },
+      {
+        "symbol": "JUP",
+        "spot_token": null,
+        "perp_token": "JUP",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 2624273.38,
+        "perp_mark_px": 0.19821,
+        "perp_funding_rate_8h": -1.19678e-05,
+        "perp_open_interest": 31222692.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found"
+      },
+      {
+        "symbol": "UNI",
+        "spot_token": null,
+        "perp_token": "UNI",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 2153153.85,
+        "perp_mark_px": 3.2476,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 2477845.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found"
+      },
+      {
+        "symbol": "BOME",
+        "spot_token": null,
+        "perp_token": "BOME",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 58901.7,
+        "perp_mark_px": 0.000518,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 481293096.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found"
+      },
+      {
+        "symbol": "DOT",
+        "spot_token": null,
+        "perp_token": "DOT",
+        "spot_status": "NO_MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.0,
+        "perp_vol_24h_usd": 1462655.24,
+        "perp_mark_px": 1.2485,
+        "perp_funding_rate_8h": -9.4905e-06,
+        "perp_open_interest": 3377340.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": null,
+          "delta_neutral_viable": false,
+          "reason": "zero price"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "no HL spot found"
+      },
+      {
+        "symbol": "BONK",
+        "spot_token": "UBONK",
+        "perp_token": "kBONK",
+        "spot_status": "MATCH",
+        "spot_vol_24h_usd": 0.0,
+        "spot_mark_px": 0.002748,
+        "perp_vol_24h_usd": 1490774.0,
+        "perp_mark_px": 0.005958,
+        "perp_funding_rate_8h": 1.25e-05,
+        "perp_open_interest": 853033722.0,
+        "liquidity_tier": "UNVIABLE (zero vol)",
+        "wrapper_ratio_check": {
+          "ratio": 0.461229,
+          "spot_mark_px": 0.002748,
+          "perp_mark_px": 0.005958,
+          "delta_neutral_viable": false,
+          "reason": "NOT 1:1 — fractional/scaled wrapper; hedge ratio computation required, portfolio margin may not recognize offset"
+        },
+        "pair_construction_viable": false,
+        "wrapper_note": "U-prefix wrapper; kBONK perp is 1000x scaled (NOT same asset)"
+      }
+    ],
+    "coverage_summary": {
+      "n_symbols": 20,
+      "n_spot_match": 7,
+      "n_liquidity_good": 0,
+      "n_liquidity_marginal": 0,
+      "n_ratio_viable": 0,
+      "n_pair_construction_viable": 0,
+      "coverage_rate_pct": 35.0,
+      "viable_rate_pct": 0.0,
+      "accept_threshold_pct": 50.0,
+      "coverage_passes_threshold": false,
+      "viable_passes_threshold": false
+    }
+  },
+  "phase4_pair_construction_logic": {
+    "current_k276b": "Cross-sectional FR: long top-10 FR perps, short bottom-10 FR perps (all HL perps)",
+    "restructured_k276b": "Per-symbol: long spot + short perp when FR > 0 (pure FR collection, delta-neutral)",
+    "long_only_carry_limitation": "Cannot short spot on HL (no borrow market) — short-side carry lost; ~50% alpha reduction",
+    "wrapper_token_problem": "ALL matched spot tokens are wrappers with non-1:1 price ratios vs perps — delta-neutral pairing is not straightforward",
+    "viable_pairs": []
+  },
+  "phase5_portfolio_margin_offset": {
+    "k373_claimed_estimate": "+1.3 to +1.9 (Sharpe lift)",
+    "k374_actual_estimate": "+0.0 (zero viable pairs today)",
+    "k374_hypothetical_scenario_b": {
+      "description": "10 clean K276b spot pairs, 40% margin offset, 50% alpha retention",
+      "estimated_sharpe_lift": 0.312
+    },
+    "k374_hypothetical_scenario_c": {
+      "description": "15 clean K276b spot pairs, 50% margin offset, 60% alpha retention",
+      "estimated_sharpe_lift": 1.17
+    },
+    "k373_estimate_was_wrong_because": [
+      "K373 assumed clean same-asset spot+perp pairs (e.g. ENA spot + ENA perp)",
+      "Reality: HL spot only has wrapper tokens (UENA, HSEI, UWLD, HTAO) with non-1:1 ratios",
+      "Reality: kPEPE and kBONK perps are 1000x scaled — PEPE/UBONK spot cannot hedge them",
+      "Reality: 0 K276b symbols have adequate spot liquidity (>$100K/day)",
+      "Reality: long-only-carry restructure loses ~50% of K276b alpha (no short-side)"
+    ]
+  },
+  "phase6_k266_gates_qualitative": {
+    "G1_oos_sharpe_ge_1": {
+      "feasible": false,
+      "reason": "Zero viable pairs means no restructured strategy to test; hypothetical long-only-carry loses ~50% alpha vs K276b"
+    },
+    "G5_orthogonal_vs_K208": {
+      "feasible": true,
+      "reason": "K208 is cross-venue (HL short + Bybit long); restructured K276b would be intra-HL same-asset — still orthogonal"
+    },
+    "G7_ann_return_gt_5pct": {
+      "feasible": "UNKNOWN",
+      "reason": "Cannot evaluate without viable pairs; long-only-carry has lower expected return than cross-sectional"
+    },
+    "G10_new_spot_liquidity_gt_1M": {
+      "feasible": false,
+      "reason": "HTAO is best with $78K/day; 0/20 K276b symbols meet $1M/day threshold"
+    }
+  },
+  "phase7_decision": {
+    "verdict": "REJECT",
+    "verdict_rationale": "Restructuring K276b to same-asset spot+perp pairs on HL is not feasible at this time. The primary blockers are: (1) HL spot market does not list direct equivalents of K276b perp symbols — all 'matches' are wrapper tokens with divergent price ratios that cannot trivially form delta-neutral pairs; (2) zero K276b symbols have spot liquidity >= $100K/day; (3) wrapper basis risk undermines the delta-neutral assumption that justifies portfolio margin offset; (4) long-only-carry restructure loses ~50% of K276b alpha. The Sharpe lift estimate from K373 (+1.3 to +1.9) was based on clean same-asset spot+perp pairing — that assumption does not hold for K276b symbols on HL today. REJECT is preferred over DEFER because the structural issue (HL spot market composition) is unlikely to change materially in 6 months; K276b symbols are primarily DeFi/L1 tokens that HL spot does not natively list.",
+    "multi_wave_investment_warranted": false,
+    "multi_wave_rationale": "Not worth multi-wave investment. The spot liquidity gap and wrapper token basis problem would require: (a) HL to natively list major DeFi tokens as spot (not wrapper-only); (b) adequate spot liquidity to build $50K-$500K spot legs per symbol; (c) HL portfolio margin to exit alpha-mode and recognize wrapper-to-perp offsets. None of these are within CT Lab's control or likely within 6-month horizon.",
+    "blocking_reasons": [
+      "Coverage FAILS: only 7/20 K276b symbols have HL spot counterpart (35% < 50% threshold)",
+      "ALL spot matches are wrapper tokens with non-1:1 price ratios — delta-neutral pairing is NOT straightforward; HL portfolio margin may not recognize offsets without custom hedge ratio",
+      "No K276b symbol meets GOOD liquidity threshold (>=$1M/day spot vol) — only HTAO has $78K/day (UNVIABLE tier)",
+      "Wrapper token basis risk: UENA/ENA ratio=0.000257, HSEI/SEI ratio=2.57, HTAO/TAO ratio=0.003 — basis can drift, creating unhedged delta",
+      "kPEPE perp is 1000x scaled vs PEPE spot; kBONK perp is 1000x scaled vs UBONK spot — these are NOT equivalent hedges",
+      "LONG-ONLY-CARRY limitation: restructured K276b can only run long spot + short perp (when FR>0) — cannot replicate short-side of current K276b without spot shorting (no borrow market on HL); net alpha approximately halved",
+      "HL portfolio margin eligibility still requires >$5M weighted trading volume (K373 finding) — currently in paper-trade stage"
+    ],
+    "k375_triggered": false,
+    "k376_triggered": false,
+    "recommended_action": "Keep K276b as-is (cross-sectional perp-only). Revisit only if HL natively lists K276b symbols as USDC spot with >$1M/day volume.",
+    "revisit_triggers": [
+      "HL natively lists ENA, ONDO, ATOM, TIA, SEI, WLD, AAVE, LDO, FET, DOT, UNI as spot/USDC",
+      "Any 10+ K276b symbols achieve >$1M/day spot vol on HL",
+      "HL portfolio margin moves to general availability (removes $5M volume gate)"
+    ]
+  },
+  "phase8_concentration_impact": {
+    "hl_concentration_change": "ZERO new HL concentration — restructure stays within HL",
+    "ecosystem_dependency_shift": "From perp-only HL to spot+perp HL — more HL ecosystem dependency",
+    "operational_risk": "2 legs per pair (HL perp + HL spot) — more state to manage; wrapper token conversions add complexity",
+    "verdict": "Concentration impact is manageable IF feasibility were there, but feasibility is blocked by prior issues"
+  },
+  "phase9_k357_emergency_exit": {
+    "impact_if_accepted": "K357 would need --portfolio-margin flag for all-or-nothing liquidation handling",
+    "impact_since_rejected": "No K357 changes required — REJECT verdict means PM not activated",
+    "note": "K357 enhancement scope: K374+/K376 (deferred unless PM accepted)"
+  }
+}
