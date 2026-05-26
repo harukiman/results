@@ -1,0 +1,398 @@
+{
+  "wave": "K360",
+  "generated_at_jst": "2026-05-27 07:45 JST",
+  "generated_at_utc": "2026-05-26T22:45:00Z",
+  "purpose": "v6.13d daemon manual one-shot + end-to-end scaffolding verification",
+  "overall_result": "PASS",
+  "blocking_issues": [],
+
+  "phase1_daemon_results": {
+    "k280_live_fetch": {
+      "result": "PASS",
+      "exit_code": 0,
+      "runtime_s": 15.0,
+      "output_files": [
+        "cache/k280_live_20260526.parquet",
+        "cache/k280_live_20260526.json"
+      ],
+      "panel_shape": [734, 20],
+      "k276b_long": ["SEI", "WLD", "RNDR", "PYTH", "MKR"],
+      "k276b_short": ["TAO", "MEME", "AAVE", "LDO", "BONK"],
+      "hlp_alert": "OK",
+      "fallback_symbols": ["MEME", "BOME"],
+      "notes": "MEME+BOME HL API 500 errors, fell back to cache — expected intermittent"
+    },
+    "k280_daily_run": {
+      "result": "PASS",
+      "exit_code": 0,
+      "runtime_s": 2.4,
+      "output_files": [
+        "data/k280_live_dashboard.json",
+        "data/k280_paper_trades.jsonl"
+      ],
+      "today_pnl": 0.00002468,
+      "portfolio_equity": 1.37697703,
+      "sh_30d": 27.3659,
+      "sh_all": 21.0452,
+      "drift_z": 2.715,
+      "drift_status": "CRITICAL_POSITIVE_REGIME",
+      "alerts_count": 5,
+      "alert_codes": ["SPREAD_COMPRESSED_SOL", "SPREAD_COMPRESSED_OP", "SPREAD_COMPRESSED_APT", "SPREAD_COMPRESSED_ADA", "DRIFT_SCORE"]
+    },
+    "k302a_satellite_fetch": {
+      "result": "PASS",
+      "exit_code": 0,
+      "runtime_s": 1.5,
+      "output_files": [
+        "cache/k302a_fr_daily.parquet",
+        "cache/k302a_satellite_20260526.parquet",
+        "cache/k302a_satellite_20260526.json"
+      ],
+      "panel_shape": [505, 2],
+      "paxg_days": 416,
+      "spx_days": 505,
+      "paxg_7d_ann_pct": 6.64,
+      "spx_7d_ann_pct": 5.56,
+      "hl_status": "OK",
+      "hl_markets": 230
+    },
+    "k302a_satellite_run": {
+      "result": "PASS",
+      "exit_code": 0,
+      "runtime_s": 0.1,
+      "output_files": [
+        "data/k302a_satellite_dashboard.json",
+        "data/k302a_satellite_paper_trades.jsonl"
+      ],
+      "spx_filter_enabled": true,
+      "spx_days_zeroed": 160,
+      "spx_total_days": 505,
+      "spx_active_pct": 68.3,
+      "k343_estimate_pct": 68.0,
+      "today_sat_pnl": -0.00007016,
+      "sat_equity": 1.10748277,
+      "sh_30d": 23.6648,
+      "sh_all": 15.8343,
+      "alerts_count": 0
+    },
+    "k344_susde_oc_daily_run": {
+      "result": "PASS",
+      "exit_code": 0,
+      "runtime_s": 0.3,
+      "output_files": [
+        "data/k344_susde_dashboard.json",
+        "cache/k344_susde_oc_state.parquet"
+      ],
+      "signal": "HALF",
+      "allocation_fraction": 0.5,
+      "effective_weight_pct": 2.5,
+      "current_apy_pct": 3.7165,
+      "ema_30d_pct": 4.0249,
+      "band_lo_pct": 3.5249,
+      "band_hi_pct": 4.5249,
+      "shock_active": false,
+      "apy_data_points": 831,
+      "reason": "APY 3.72% within EMA±50bps band (3.52%–4.52%)"
+    },
+    "hl_predicted_fr_monitor": {
+      "result": "PASS",
+      "exit_code": 0,
+      "output_files": [
+        "cache/hl_predicted_fr_202605262243.parquet",
+        "data/hl_predicted_fr_dashboard.json"
+      ],
+      "coins_captured": 230,
+      "snapshot_size_kb": 10,
+      "purged_old_snapshots": 2,
+      "k208_extreme_alerts": 0,
+      "paxg_status": "SHORT_CARRY_LIVE",
+      "spx_status": "FLAT_OR_REVERSE"
+    },
+    "hl_hip4_monitor": {
+      "result": "PASS",
+      "exit_code": 0,
+      "output_files": [
+        "cache/hl_hip4_snapshots/hip4_20260526_2243.parquet"
+      ],
+      "snapshot_rows": 22,
+      "snapshot_size_kb": 13,
+      "outcomes": 11,
+      "questions": 2,
+      "btc_mark": 75759.5,
+      "l2book_gap": "no l2Book data for #1000, #1001, #1060 — non-critical, mid prices captured",
+      "sample_prices": {
+        "Fallback_1000": 0.500,
+        "Fallback_1001": 0.500,
+        "Below_4.3pct_1010": 0.368
+      }
+    },
+    "emergency_hl_exit_dry_run": {
+      "result": "PASS",
+      "exit_code": 0,
+      "mode": "DRY-RUN",
+      "user_address": "0x0000000000000000000000000000000000000000",
+      "output_files": [
+        "cache/emergency_exit_status.json"
+      ],
+      "status": "STANDBY",
+      "triggered": false,
+      "positions_found": 0,
+      "total_notional": 0,
+      "execution_gate": "--EXECUTE flag + HL_PRIVATE_KEY env var + 2 interactive confirmations",
+      "safety_verified": true
+    }
+  },
+
+  "phase2_dashboard_integrity": {
+    "k280_live_dashboard": {
+      "path": "data/k280_live_dashboard.json",
+      "size_bytes": 15552,
+      "last_update_utc": "2026-05-26T22:42:48Z",
+      "fresh": true,
+      "key_metrics": {
+        "architecture": "K280 v6.10.2 (K198+K208+K276b_top20)",
+        "sh_30d": 27.3659,
+        "sh_all": 21.0452,
+        "mdd_30d": -5e-05,
+        "drift_z": 2.715,
+        "n_days": 734,
+        "equity_cumulative": 1.37697703
+      }
+    },
+    "k302a_satellite_dashboard": {
+      "path": "data/k302a_satellite_dashboard.json",
+      "size_bytes": 7683,
+      "last_update_utc": "2026-05-26T22:42:56Z",
+      "fresh": true,
+      "spx_filter_status": "ENABLED",
+      "key_metrics": {
+        "architecture": "K302a Satellite (PAXG 60% + SPX 40%)",
+        "version": "v6.12",
+        "sh_30d": 23.6648,
+        "sh_all": 15.8343,
+        "mdd_30d": -0.000241,
+        "drift_z": 1.296,
+        "sat_equity": 1.107483
+      }
+    },
+    "k344_susde_dashboard": {
+      "path": "data/k344_susde_dashboard.json",
+      "size_bytes": 2035,
+      "last_update_utc": "2026-05-26T22:43:01Z",
+      "fresh": true,
+      "key_metrics": {
+        "signal": "HALF",
+        "allocation_fraction": 0.5,
+        "effective_weight_pct": 2.5,
+        "current_apy_pct": 3.7165,
+        "backtest_sh": 8.39
+      }
+    },
+    "hl_predicted_fr_dashboard": {
+      "path": "data/hl_predicted_fr_dashboard.json",
+      "size_bytes": 7672,
+      "last_update_utc": "2026-05-26T22:43:05Z",
+      "fresh": true,
+      "key_metrics": {
+        "total_coins": 230,
+        "k208_extreme_alerts": 0,
+        "paxg_status": "SHORT_CARRY_LIVE",
+        "spx_status": "FLAT_OR_REVERSE"
+      }
+    },
+    "emergency_exit_status": {
+      "path": "cache/emergency_exit_status.json",
+      "size_bytes": 143,
+      "last_update_utc": "2026-05-26T22:43:14Z",
+      "fresh": true,
+      "key_metrics": {
+        "triggered": false,
+        "status": "STANDBY",
+        "total_notional": 0,
+        "position_count": 0
+      }
+    }
+  },
+
+  "phase3_k348_verification": {
+    "spx_filter_enabled": {
+      "file": "scripts/k302a_satellite_run.py",
+      "line": 47,
+      "value": true,
+      "expected": true,
+      "result": "PASS"
+    },
+    "k302a_main_weight": {
+      "file": "scripts/k302a_satellite_run.py",
+      "line": 76,
+      "value": 0.75,
+      "expected": 0.75,
+      "result": "PASS"
+    },
+    "k302a_satellite_weight": {
+      "file": "scripts/k302a_satellite_run.py",
+      "line": 77,
+      "value": 0.20,
+      "expected": 0.20,
+      "result": "PASS"
+    },
+    "k302a_susde_weight": {
+      "file": "scripts/k302a_satellite_run.py",
+      "line": 78,
+      "value": 0.05,
+      "expected": 0.05,
+      "result": "PASS"
+    },
+    "spx_active_pct_runtime": {
+      "days_zeroed": 160,
+      "total_days": 505,
+      "active_pct": 68.3,
+      "k343_estimate_pct": 68.0,
+      "match": true,
+      "result": "PASS"
+    }
+  },
+
+  "phase4_compound_simulation": {
+    "date": "2026-05-26",
+    "weights": {
+      "K280": 0.75,
+      "K297_prime": 0.20,
+      "sUSDe": 0.05
+    },
+    "components": {
+      "K280": {
+        "daily_pnl": 0.00002468,
+        "equity_cumulative": 1.37697703,
+        "sh_30d": 27.3659,
+        "contribution_daily": 0.0000185
+      },
+      "K297_prime": {
+        "daily_pnl": -0.00007016,
+        "equity_cumulative": 1.10748277,
+        "sh_30d": 23.6648,
+        "contribution_daily": -0.0000140
+      },
+      "sUSDe": {
+        "daily_pnl_equiv": 0.00010183,
+        "signal": "HALF",
+        "effective_weight": 0.025,
+        "sh_backtest": 8.39,
+        "contribution_daily": 0.0000051
+      }
+    },
+    "compound_daily_pnl": 0.0000096,
+    "compound_sh_weighted": 25.68,
+    "k346_target_sh": 25.47,
+    "delta_vs_target": 0.21,
+    "exceeds_target": true,
+    "notes": "Live compound Sh 25.68 > K346 target 25.47. K280 positive drift regime dominant. sUSDe HALF signal provides stable low-vol floor."
+  },
+
+  "phase5_activation_playbook": {
+    "section": "docs/k302a_runbook.md §13",
+    "step_ordering": "CORRECT",
+    "fetch_before_run": true,
+    "susde_last": true,
+    "rollback_reverse_order": true,
+    "all_paths_reachable": true,
+    "dry_run_flag_exists": true,
+    "findings": [
+      {
+        "severity": "COSMETIC",
+        "item": "Runbook header version",
+        "detail": "Header reads 'K302a v6.12 Operational Runbook' but §13 documents v6.13d. Content correct, header outdated.",
+        "action": "Update header in K361+"
+      }
+    ]
+  },
+
+  "phase6_verify_scripts": {
+    "verify_deployment_status": {
+      "exit_code": 0,
+      "mismatches_with_html": 0,
+      "result": "PASS",
+      "summary": {
+        "active": 0,
+        "loaded": 0,
+        "pending_activation": 3,
+        "scaffold_ready": 3,
+        "unknown": 1
+      },
+      "daemons": {
+        "com.cryptolab.k280-live": "PENDING_ACTIVATION",
+        "com.cryptolab.k302a-satellite": "PENDING_ACTIVATION",
+        "com.cryptolab.hl-predicted-monitor": "PENDING_ACTIVATION",
+        "com.cryptolab.susde-oc": "SCAFFOLD_READY",
+        "com.cryptolab.hl-hip4-monitor": "SCAFFOLD_READY",
+        "com.cryptolab.k287-satellite": "SCAFFOLD_READY",
+        "com.cryptolab.hlp-monitor": "UNKNOWN"
+      }
+    },
+    "audit_cache_integrity": {
+      "exit_code": 0,
+      "result": "PASS",
+      "ok_count": 6,
+      "missing": 0,
+      "stale": 0,
+      "sanity_fail": 0,
+      "files": {
+        "cache/hl_longtail_fr_daily.parquet": {"rows": 733, "stale_d": 2, "ok": true},
+        "cache/hl_hip3_fr_daily.parquet": {"rows": 22080, "stale_d": 1, "ok": true},
+        "cache/okx_fr_daily.parquet": {"rows": 96, "stale_d": 2, "ok": true},
+        "cache/alt_exchange_fr_daily.parquet": {"rows": 731, "stale_d": 2, "ok": true},
+        "cache/hlp_balance_daily.parquet": {"rows": 1112, "stale_d": 1, "ok": true},
+        "cache/ethena_tvl_daily.parquet": {"rows": 895, "stale_d": 1, "ok": true}
+      }
+    }
+  },
+
+  "non_blocking_observations": [
+    {
+      "id": "OBS-1",
+      "component": "K280",
+      "item": "DRIFT_SCORE CRITICAL",
+      "detail": "drift_z=2.715, live 30d Sh=27.37 vs OOS 18.46. Positive regime anomaly — alpha exceeds backtest expectation. K303 Day 31 gate (≥25 30d Sh) currently met.",
+      "action": "Monitor daily. If drift_z > 3.0, reduce K276b allocation per K303 protocol."
+    },
+    {
+      "id": "OBS-2",
+      "component": "hl_hip4_monitor",
+      "item": "l2Book no data for #1000, #1001, #1060",
+      "detail": "HL HIP-4 prediction markets do not have order book data available. Mid prices still captured correctly.",
+      "action": "Non-critical. Log level INFO is adequate."
+    },
+    {
+      "id": "OBS-3",
+      "component": "k280_live_fetch",
+      "item": "MEME + BOME HL API 500 errors",
+      "detail": "Intermittent HL /info 500 responses for kMEME and kBOME. Cache fallback worked correctly (1d stale).",
+      "action": "Monitor. If > 3 consecutive days, check HL symbol listing status."
+    },
+    {
+      "id": "OBS-4",
+      "component": "k302a_satellite_dashboard",
+      "item": "Legacy main_weight=0.8 field",
+      "detail": "Top-level main_weight field shows 0.8 (v6.12 era). Runtime constant K302A_MAIN_WEIGHT=0.75 governs actual computation. Cosmetic inconsistency only.",
+      "action": "Add combined_architecture_version field in K361+."
+    },
+    {
+      "id": "OBS-5",
+      "component": "k302a_runbook.md",
+      "item": "Version header not updated",
+      "detail": "Header says 'K302a v6.12 Operational Runbook'. §13 content correctly documents v6.13d.",
+      "action": "Update header string in K361+ maintenance."
+    }
+  ],
+
+  "k361_recommendations": [
+    "Activate plists per §13.3 sequence: k280-live -> k302a-satellite -> hl-predicted-monitor -> susde-oc (last)",
+    "Monitor DRIFT_SCORE daily; if drift_z > 3.0 trigger K276b weight reduction",
+    "Add compound v6.13d portfolio equity time series: data/v6_13d_compound_dashboard.json",
+    "Fix k302a_satellite_dashboard.json main_weight field to reflect 0.75",
+    "Update k302a_runbook.md header from v6.12 to v6.13d",
+    "Track l2Book availability for HIP-4 markets, add explicit INFO log if unavailable"
+  ],
+
+  "final_verdict": "v6.13d is READY for user to activate"
+}
