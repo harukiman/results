@@ -1,0 +1,285 @@
+{
+  "wave": "K362",
+  "task": "Coinbase x HL USDC deal yield investigation (K354 follow-up, USDH-sunset replacement scan)",
+  "generated_at": "2026-05-27T07:57:32+09:00",
+  "decision": "REJECT",
+  "deal_facts": {
+    "announced": "2026-05-14",
+    "parties": [
+      "Hyperliquid",
+      "Coinbase",
+      "Circle"
+    ],
+    "framework": "Aligned Quote Asset v2 (AQAv2)",
+    "usdc_supply_on_hl_bn": 5.1,
+    "yield_share_to_hl_pct_max": 90,
+    "yield_share_note": "exact % undisclosed; 'vast majority' per Coinbase blog; 90% upper bound per analysts",
+    "annual_gross_coinbase_circle_bn": 0.18,
+    "annual_routed_to_hl_mm_range": [
+      135,
+      160
+    ],
+    "repurchase_authorization_mm": 30,
+    "routing_vehicle": "Hyperliquid Assistance Fund",
+    "routing_mechanism": "HYPE_buyback_only",
+    "circle_commitment": "stake 500k HYPE",
+    "coinbase_commitment": "increase staked HYPE position",
+    "additional_revenue_streams": [
+      "Trading fee buybacks (97% of fees → Assistance Fund → HYPE buyback)",
+      "Bitwise BHYP ETF (10% of management fee → HYPE purchases)"
+    ],
+    "sources": [
+      "https://www.coinbase.com/blog/coinbase-and-hyperliquid-aligning-markets-on-hyperliquid-to-usdc",
+      "https://www.theblock.co/post/401233/coinbase-hyperliquid-official-deployer-usdc",
+      "https://www.coindesk.com/markets/2026/05/18/hyperliquid-s-usdc-deal-could-supercharge-hype-pressure-circle-coinbase-margins-analysts-say",
+      "https://cryptobriefing.com/hyperliquid-usdc-yield-hype-buybacks/",
+      "https://tokenomics.com/articles/hyperliquid-tokenomics-how-hype-captures-65m-monthly-in-holder-revenue"
+    ]
+  },
+  "hype_staking": {
+    "reward_formula": "inversely proportional to sqrt(total_staked)",
+    "apy_at_400m_staked_pct": 2.37,
+    "apy_range_pct": [
+      1.8,
+      4.5
+    ],
+    "reward_accrual": "every minute",
+    "reward_distribution": "daily",
+    "compounding": "auto-redelegation (compound, not manual claim)",
+    "unstaking_queue_days": 7,
+    "aqav2_yield_feeds_staking": false,
+    "note": "Staking rewards derive from network emissions (inflationary), not from AQAv2 USDC reserve yield"
+  },
+  "hlp_vault": {
+    "type": "market_making_vault",
+    "yield_sources": [
+      "trading fees",
+      "funding rates",
+      "liquidations"
+    ],
+    "aqav2_yield_feeds_hlp": false,
+    "monthly_revenue_jan2026_mm": 0.651,
+    "note": "HLP vault earns from MM activity, NOT from AQAv2 USDC reserve yield",
+    "user_claimable": true,
+    "risk": "directional MM risk, potential drawdown in trending markets"
+  },
+  "hypurrfi": {
+    "protocol": "HypurrFi (hypurrfi.com)",
+    "product": "USDC lending pool (Aave-style)",
+    "apy_pct_range": [
+      8,
+      20
+    ],
+    "apy_source": "organic borrowing demand, not AQAv2 yield",
+    "tvl_mm": 16.6,
+    "user_claimable": true,
+    "risk": "smart_contract + platform_risk (HyperEVM, domain compromise incident noted)",
+    "note": "K337 reference: $16.6M pooled, ~9% APY — yield is organic, not AQAv2-derived"
+  },
+  "yield_mechanisms": [
+    {
+      "id": "aqav2_buyback",
+      "name": "AQAv2 USDC Reserve Yield → HYPE Buyback",
+      "category": "INDIRECT_BENEFIT",
+      "description": "90% of USDC reserve yield flows to Assistance Fund → open-market HYPE buybacks",
+      "user_claimable": false,
+      "requires_hype_exposure": true,
+      "estimated_apy_pct": null,
+      "notes": "Benefit is capital appreciation of HYPE token, not a claimable yield stream. No passthrough to USDC holders.",
+      "k344_sleeve_candidate": false,
+      "reason": "Not a claimable yield product. Requires HYPE token ownership. Indirect benefit only."
+    },
+    {
+      "id": "hype_staking",
+      "name": "HYPE Native Staking (2.37% APY)",
+      "category": "INDIRECT_BENEFIT",
+      "description": "PoS-style HYPE staking with auto-compound rewards, funded by network emissions",
+      "user_claimable": false,
+      "requires_hype_exposure": true,
+      "estimated_apy_pct": 2.37,
+      "notes": "AQAv2 yield does NOT feed into staking rewards. Rewards are inflationary emissions. Auto-compound, not claimable in the sUSDe sense. Unstaking requires 7-day queue.",
+      "k344_sleeve_candidate": false,
+      "reason": "Below K344 sUSDe 5% APY. Requires HYPE price exposure. Not orthogonal to existing trading strategies. 7-day liquidity lockup."
+    },
+    {
+      "id": "hlp_vault",
+      "name": "HLP Market-Making Vault",
+      "category": "INDIRECT_BENEFIT",
+      "description": "LP shares in HL's automated market-making vault, earning trading fees + funding",
+      "user_claimable": true,
+      "requires_hype_exposure": false,
+      "estimated_apy_pct": null,
+      "notes": "AQAv2 yield does NOT feed into HLP. Jan 2026 HLP revenue was $651K/month. Directional MM risk in trending markets (MDD risk non-trivial).",
+      "k344_sleeve_candidate": false,
+      "reason": "AQAv2 yield does not flow here. MM risk means non-negligible MDD — incompatible with K344 sleeve target (MDD < 0.2%). Increases HL ecosystem concentration."
+    },
+    {
+      "id": "hypurrfi_usdc",
+      "name": "HypurrFi USDC Lending Pool (8-20% APY)",
+      "category": "INDIRECT_BENEFIT",
+      "description": "USDC deposited into HypurrFi earns borrowing demand yield on HyperEVM",
+      "user_claimable": true,
+      "requires_hype_exposure": false,
+      "estimated_apy_pct": 9.0,
+      "notes": "Yield is organic borrowing demand on HyperEVM — NOT derived from AQAv2 Coinbase deal. K337 reference. Domain compromise incident (migrated to hypurrfi.com). HyperEVM smart contract risk.",
+      "k344_sleeve_candidate": false,
+      "reason": "Not connected to Coinbase deal. High smart-contract risk on HyperEVM. Domain compromise incident. HL ecosystem concentration risk (v6.13d HL exposure already 57.5%)."
+    },
+    {
+      "id": "aqav2_direct_usdc_yield",
+      "name": "Direct USDC Reserve Yield Passthrough (NOT FOUND)",
+      "category": "TBD_NOT_LAUNCHED",
+      "description": "A product where USDC holders on HL receive direct yield from the AQAv2 reserve deal (sUSDe-style)",
+      "user_claimable": false,
+      "requires_hype_exposure": false,
+      "estimated_apy_pct": null,
+      "notes": "This product does NOT currently exist. All AQAv2 reserve yield routes exclusively to HYPE buybacks via Assistance Fund. No 'HL native sUSDe equivalent' exists as of 2026-05-27.",
+      "k344_sleeve_candidate": false,
+      "reason": "Product does not exist. If launched, would require re-evaluation. Trigger: HL governance proposal for USDC yield passthrough token."
+    }
+  ],
+  "k344_comparison": {
+    "k344_susde_benchmark": {
+      "apy_pct": 5.0,
+      "sharpe": 8.39,
+      "mdd_pct": 0.11,
+      "corr_vs_trading": 0.05,
+      "allocation_pct": 5.0,
+      "chain": "Ethereum",
+      "custody": "Ethena Labs (centralized off-chain hedging)",
+      "audit": "multiple independent audits",
+      "smart_contract_risk": "medium (complex delta-neutral hedging)",
+      "ecosystem": "Ethereum / ETH-native"
+    },
+    "hl_concentration_risk": {
+      "current_hl_exposure_pct": 57.5,
+      "max_allowed_pct": 65.0,
+      "headroom_pct": 7.5,
+      "susde_is_inside_hl": false,
+      "hl_products_would_be_inside_hl": true,
+      "note": "Any HL-native yield product would add to existing 57.5% HL exposure. Only 7.5% headroom before hitting 65% cap (feedback_concentration_risk_HL.md)."
+    },
+    "comparison_matrix": [
+      {
+        "metric": "Annual yield APY",
+        "susde": "4.01% (Q1 2026 mean, K361)",
+        "hl_hype_staking": "2.37%",
+        "hlp_vault": "variable (MM-dependent)",
+        "hypurrfi_usdc": "~9% (organic demand, volatile)",
+        "aqav2_direct": "N/A (product does not exist)"
+      },
+      {
+        "metric": "User claimable",
+        "susde": "YES (sUSDe redeem anytime)",
+        "hl_hype_staking": "NO (auto-compound, 7d unstake)",
+        "hlp_vault": "YES (with withdrawal lag)",
+        "hypurrfi_usdc": "YES",
+        "aqav2_direct": "N/A"
+      },
+      {
+        "metric": "MDD risk",
+        "susde": "0.11% (K344 live)",
+        "hl_hype_staking": "HYPE price exposure (high vol)",
+        "hlp_vault": "non-trivial (trending mkt risk)",
+        "hypurrfi_usdc": "stablecoin; liquidation risk",
+        "aqav2_direct": "N/A"
+      },
+      {
+        "metric": "Orthogonal to trading (rho)",
+        "susde": "0.05 (near-zero, K344)",
+        "hl_hype_staking": "likely high (corr with crypto mkt)",
+        "hlp_vault": "medium (corr with vol regime)",
+        "hypurrfi_usdc": "low-medium (HyperEVM rate-driven)",
+        "aqav2_direct": "N/A"
+      },
+      {
+        "metric": "Smart contract risk",
+        "susde": "medium (audited, complex hedging)",
+        "hl_hype_staking": "low (native HL L1)",
+        "hlp_vault": "low-medium (native HL L1)",
+        "hypurrfi_usdc": "HIGH (HyperEVM + domain incident)",
+        "aqav2_direct": "N/A"
+      },
+      {
+        "metric": "HL concentration impact",
+        "susde": "ZERO (Ethereum-native, outside HL)",
+        "hl_hype_staking": "+X% (adds HL exposure)",
+        "hlp_vault": "+X% (adds HL exposure)",
+        "hypurrfi_usdc": "+X% (adds HyperEVM exposure)",
+        "aqav2_direct": "+X% (would add HL exposure)"
+      },
+      {
+        "metric": "Tied to Coinbase AQAv2 deal",
+        "susde": "NO",
+        "hl_hype_staking": "NO (inflationary emissions)",
+        "hlp_vault": "NO (trading fees only)",
+        "hypurrfi_usdc": "NO (organic borrow demand)",
+        "aqav2_direct": "YES (hypothetical only)"
+      }
+    ]
+  },
+  "concentration_analysis": {
+    "current_portfolio_hl_exposure_pct": 57.5,
+    "max_allowed_pct": 65.0,
+    "headroom_pct": 7.5,
+    "susde_is_outside_hl": true,
+    "susde_replacement_vs_addition": {
+      "replace_susde_with_hl_product": {
+        "hl_exposure_delta": 0,
+        "net_result": "HL exposure unchanged at 57.5%, but lose Ethereum-native orthogonality of sUSDe",
+        "verdict": "INFERIOR: lose diversification, gain nothing"
+      },
+      "add_hl_product_to_susde": {
+        "hl_exposure_delta": "+allocation_size",
+        "net_result": "HL exposure rises. Even 5% HL product → 57.5+5=62.5% (within 65% cap, but close)",
+        "verdict": "RISKY: approaches concentration cap; only viable if product is materially better than sUSDe"
+      }
+    },
+    "conclusion": "No discovered HL-native product justifies either replacing or adding to sUSDe sleeve. sUSDe's outside-HL positioning is a structural advantage, not a bug."
+  },
+  "full_decision": {
+    "verdict": "REJECT",
+    "rationale": [
+      "AQAv2 USDC reserve yield (90%) flows exclusively to HYPE buybacks via Assistance Fund. Zero passthrough to USDC depositors.",
+      "No sUSDe-equivalent direct USDC yield product exists on HL as of 2026-05-27.",
+      "HYPE staking (2.37% APY) is below K344 sUSDe benchmark (5% APY) and requires HYPE price exposure.",
+      "HLP vault yield does not derive from AQAv2 deal; carries MM directional risk incompatible with K344 sleeve targets.",
+      "HypurrFi USDC lending is organic/unconnected to Coinbase deal; carries HyperEVM smart-contract risk + prior domain compromise.",
+      "All HL-native products add to existing 57.5% HL concentration (cap: 65%), while sUSDe (Ethereum-native) provides zero HL concentration impact."
+    ],
+    "monitor_trigger": "HL governance proposal published for USDC yield passthrough token (direct yield product for USDC holders). Watch: hyperliquid.gitbook.io, HL Discord governance channel.",
+    "defer_conditions": [
+      "HL governance vote on USDC yield product passes",
+      "Protocol launches sUSDC-style rebasing token backed by AQAv2 reserve yield",
+      "AQAv2 yield split % is formally disclosed (currently 'vast majority' only)"
+    ],
+    "k344_sleeve_status": "UNCHANGED — sUSDe remains K344 sleeve. No replacement or addition warranted.",
+    "next_wave_recommendation": "K363+ — sUSDe sleeve monitoring continues as scheduled. No new scaffold required."
+  },
+  "phases_completed": [
+    "Phase 1: Deal mechanism research (5 URLs fetched)",
+    "Phase 2: Claimable products discovery (HL API + web research)",
+    "Phase 3: Mechanism categorization (5 mechanisms evaluated)",
+    "Phase 4: K344 sleeve comparison (6-metric matrix)",
+    "Phase 5: HL ecosystem yield assessment (staking + HLP + HypurrFi)",
+    "Phase 6: Decision matrix",
+    "Phase 7: Concentration risk note"
+  ],
+  "urls_fetched": [
+    "https://www.coinbase.com/blog/coinbase-and-hyperliquid-aligning-markets-on-hyperliquid-to-usdc",
+    "https://www.theblock.co/post/401233/coinbase-hyperliquid-official-deployer-usdc",
+    "https://www.coindesk.com/markets/2026/05/18/hyperliquid-s-usdc-deal-could-supercharge-hype-pressure-circle-coinbase-margins-analysts-say",
+    "https://beincrypto.com/coinbase-usdh-hyperliquid-shifts-to-usdc/",
+    "https://cryptobriefing.com/hyperliquid-usdc-yield-hype-buybacks/",
+    "https://coincentral.com/hyperliquid-usdc-yield-deal-could-route-up-to-90-to-hype-buybacks/",
+    "https://tokenomics.com/articles/hyperliquid-tokenomics-how-hype-captures-65m-monthly-in-holder-revenue",
+    "https://hyperliquid.gitbook.io/hyperliquid-docs/hypercore/staking"
+  ],
+  "api_endpoints_queried": [
+    "POST https://api.hyperliquid.xyz/info {type:meta} — confirmed 230 perp markets live",
+    "POST https://api.hyperliquid.xyz/info {type:validatorSummaries} — 31 validators (stakeData requires non-zero user)",
+    "POST https://api.hyperliquid.xyz/info {type:delegatorSummary} — confirmed endpoint exists",
+    "POST https://api.hyperliquid.xyz/info {type:allVaults} — endpoint exists (empty response)",
+    "POST https://api.hyperliquid.xyz/info {type:spotMetaAndAssetCtxs} — USDC confirmed index 0, canonical"
+  ]
+}
