@@ -98,6 +98,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="hl_hip4_monitor",
         expected_html_status="SCAFFOLD-READY",  # plist in repo root (gitignored), cp to LaunchAgents to activate
     ),
+    DaemonSpec(
+        label="com.cryptolab.variational-fr-monitor",
+        purpose="K363/K365 Variational RWA FR data accumulation (trading API target Q3-Q4 2026)",
+        scripts=["scripts/variational_fr_monitor.py"],
+        log_basename="variational_fr_monitor",
+        expected_html_status="SCAFFOLD-READY",
+    ),
 ]
 
 

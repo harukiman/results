@@ -871,6 +871,13 @@ window.__renderWhenReady = function(fn, label) {
               <td style="color:var(--text-secondary);">—</td>
               <td style="color:var(--text-secondary);">—</td>
             </tr>
+            <tr>
+              <td><strong>K363/K365 Variational FR</strong><br><span style="font-size:0.72rem;color:var(--text-secondary);">RWA FR accumulation (XAUT/XAU/PAXG/CL/XAG/COPPER) · 4h · Trading API Q3-Q4 2026 → K366</span></td>
+              <td><span class="lm-badge lm-badge-scaffold" title="plist in repo root (gitignored). Activation: cp com.cryptolab.variational-fr-monitor.plist ~/Library/LaunchAgents/ &amp;&amp; launchctl load ~/Library/LaunchAgents/com.cryptolab.variational-fr-monitor.plist">SCAFFOLD-READY</span></td>
+              <td style="color:var(--text-secondary);">—</td>
+              <td style="color:var(--text-secondary);">—</td>
+              <td style="color:var(--text-secondary);">—</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -962,6 +969,127 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.hl-predicted-monitor.plist
 # Verify:
 launchctl list | grep cryptolab</pre>
     </div>
+
+    <!-- K363/K365 Variational RWA Watch Widget (2026-05-27) -->
+    <div class="lm-card" style="margin-bottom:14px;border-color:#58a6ff;" id="variational-rwa-card">
+      <h3 style="display:flex;align-items:center;gap:8px;color:#79c0ff;">
+        Variational RWA Watch
+        <span style="font-size:0.7rem;font-weight:400;background:#21262d;border:1px solid #388bfd;color:#79c0ff;border-radius:4px;padding:1px 7px;letter-spacing:0.03em;">SCAFFOLD-READY</span>
+        <span style="font-size:0.68rem;font-weight:400;color:var(--text-secondary);margin-left:auto;" id="var-rwa-ts">読み込み中...</span>
+      </h3>
+      <p style="font-size:0.78rem;color:var(--text-secondary);margin:0 0 10px;">
+        K363/K365: Variational.io RWA perp FR monitoring (XAUT/XAU/PAXG/CL/XAG/COPPER). 4h settlement cadence.
+        Public API (<code>GET /metadata/stats</code>, no auth). Data accumulates until trading API live.
+        <strong style="color:#f0883e;">Trading API public release will trigger K366 production integration</strong> (Q3-Q4 2026 expected).
+      </p>
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.78rem;" id="var-rwa-table">
+          <thead>
+            <tr style="color:var(--text-secondary);border-bottom:1px solid var(--border);">
+              <th style="text-align:left;padding:4px 8px;">Symbol</th>
+              <th style="text-align:right;padding:4px 8px;">FR Ann%</th>
+              <th style="text-align:right;padding:4px 8px;">OI</th>
+              <th style="text-align:right;padding:4px 8px;">Δ vs K365</th>
+              <th style="text-align:right;padding:4px 8px;">Mark</th>
+            </tr>
+          </thead>
+          <tbody id="var-rwa-tbody">
+            <!-- K365 baseline (2026-05-27) — static fallback before dashboard JSON loads -->
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:4px 8px;font-weight:600;">XAUT</td>
+              <td style="text-align:right;padding:4px 8px;color:#f85149;">−71.1%</td>
+              <td style="text-align:right;padding:4px 8px;">$26.6M</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">K365 baseline</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">—</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:4px 8px;font-weight:600;">XAU</td>
+              <td style="text-align:right;padding:4px 8px;color:#3fb950;">+560%</td>
+              <td style="text-align:right;padding:4px 8px;">$21.9M</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">K365 baseline</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">—</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:4px 8px;font-weight:600;">PAXG</td>
+              <td style="text-align:right;padding:4px 8px;color:#3fb950;">+239.8%</td>
+              <td style="text-align:right;padding:4px 8px;">$15.0M</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">K365 baseline</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">—</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:4px 8px;font-weight:600;">CL</td>
+              <td style="text-align:right;padding:4px 8px;color:#f85149;">−247%</td>
+              <td style="text-align:right;padding:4px 8px;">$4.9M</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">K365 baseline</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">—</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:4px 8px;font-weight:600;">XAG</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">0%</td>
+              <td style="text-align:right;padding:4px 8px;">$4.1M</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">K365 baseline</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">—</td>
+            </tr>
+            <tr>
+              <td style="padding:4px 8px;font-weight:600;">COPPER</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">0%</td>
+              <td style="text-align:right;padding:4px 8px;">$1.6M</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">K365 baseline</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:10px;padding:8px 10px;background:var(--bg-tertiary);border-radius:5px;font-size:0.76rem;">
+        <strong style="color:#79c0ff;">Trigger Conditions (K363):</strong>
+        <span style="color:var(--text-secondary);">
+          A: Trading API release → K366 integration &nbsp;|&nbsp;
+          B: XAG FR &gt;5% ann sustained 7d → K297'' satellite eval &nbsp;|&nbsp;
+          C: HL CFTC enforcement → K297' partial migration &nbsp;|&nbsp;
+          D: Any RWA OI &gt;$50M → competitive significance check
+        </span>
+      </div>
+    </div>
+    <script>
+    (function() {
+      fetch('data/variational_fr_dashboard.json?t=' + Date.now())
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+          if (!d) return;
+          const ts = document.getElementById('var-rwa-ts');
+          if (ts) ts.textContent = d.updated_at_jst || '';
+          const tbody = document.getElementById('var-rwa-tbody');
+          if (!tbody || !d.rwa_instruments || !d.rwa_instruments.length) return;
+          tbody.innerHTML = '';
+          d.rwa_instruments.forEach(inst => {
+            const fr = inst.fr_ann_pct;
+            const frStr = fr !== null && fr !== undefined ? (fr >= 0 ? '+' : '') + fr.toFixed(1) + '%' : '—';
+            const frColor = fr === null || fr === undefined ? 'var(--text-secondary)' : fr > 5 ? '#3fb950' : fr < -5 ? '#f85149' : '#e3b341';
+            const oi = inst.oi_usd;
+            const oiStr = oi !== null && oi !== undefined ? '$' + (oi / 1e6).toFixed(1) + 'M' : '—';
+            const delta = inst.fr_delta_vs_k365;
+            const deltaStr = delta !== null && delta !== undefined ? (delta >= 0 ? '+' : '') + delta.toFixed(1) + '%' : 'no data';
+            const deltaColor = delta === null || delta === undefined ? 'var(--text-secondary)' : Math.abs(delta) > 50 ? '#f0883e' : 'var(--text-secondary)';
+            const mark = inst.mark_price;
+            const markStr = mark !== null && mark !== undefined ? mark.toFixed(2) : '—';
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid var(--border)';
+            tr.innerHTML = `
+              <td style="padding:4px 8px;font-weight:600;">${inst.symbol}</td>
+              <td style="text-align:right;padding:4px 8px;color:${frColor};">${frStr}</td>
+              <td style="text-align:right;padding:4px 8px;">${oiStr}</td>
+              <td style="text-align:right;padding:4px 8px;color:${deltaColor};">${deltaStr}</td>
+              <td style="text-align:right;padding:4px 8px;color:var(--text-secondary);">${markStr}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        })
+        .catch(() => {
+          const ts = document.getElementById('var-rwa-ts');
+          if (ts) ts.textContent = 'dashboard JSON not yet available';
+        });
+    })();
+    </script>
 
     <!-- Metrics Cards -->
     <div class="lm-grid">
@@ -9293,7 +9421,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
     <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; Research Baseline v4.1 / Production v6.13d K302a (K280 75% + K297' SPX-filtered 20% + sUSDe OC 5%)</p>
-    <p style="margin-top:4px;">更新: 2026-05-27 07:20 JST &nbsp;|&nbsp; K346 winner v6.13d DEPLOYED (K348): K297' SPX filter LIVE (SPX_FILTER_ENABLED=True)、sUSDe OC SCAFFOLD-READY (manual launchctl activation required)、combined Sh 25.47 &nbsp;|&nbsp; K356 HL HIP-4 polling daemon SCAFFOLD-READY (K353 MONITOR → 2-week collection → K368 calibration 2026-06-10) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
+    <p style="margin-top:4px;">更新: 2026-05-27 08:03 JST &nbsp;|&nbsp; K346 winner v6.13d DEPLOYED (K348): K297' SPX filter LIVE (SPX_FILTER_ENABLED=True)、sUSDe OC SCAFFOLD-READY (manual launchctl activation required)、combined Sh 25.47 &nbsp;|&nbsp; K356 HL HIP-4 polling daemon SCAFFOLD-READY (K353 MONITOR → 2-week collection → K368 calibration 2026-06-10) &nbsp;|&nbsp; K363 Variational RWA FR monitor SCAFFOLD-READY (trading API Q3-Q4 2026 → K366) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 

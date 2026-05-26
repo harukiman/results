@@ -1,0 +1,51 @@
+{
+  "wave": "K363",
+  "title": "Variational FR Polling Daemon Scaffold (K365 immediate action)",
+  "generated_at_jst": "2026-05-27 08:04 JST",
+  "status": "SCAFFOLD-READY",
+  "phases_completed": ["Phase1", "Phase2", "Phase3", "Phase4", "Phase5"],
+  "deliverables": {
+    "script": "scripts/variational_fr_monitor.py",
+    "plist": "com.cryptolab.variational-fr-monitor.plist",
+    "registry_update": "scripts/verify_deployment_status.py",
+    "dashboard_json": "data/variational_fr_dashboard.json",
+    "snapshot_dir": "cache/variational_fr_snapshots/",
+    "html_widget": "report.html (Variational RWA Watch widget + daemon table row)"
+  },
+  "api": {
+    "url": "https://api.variational.io/metadata/stats",
+    "auth": "none (public read)",
+    "rate_limit": "10 req/10s per IP",
+    "trading_api_status": "not yet live (Q3-Q4 2026 expected)"
+  },
+  "daemon": {
+    "label": "com.cryptolab.variational-fr-monitor",
+    "start_interval_seconds": 14400,
+    "run_at_load": false,
+    "settlement_cadence": "4h"
+  },
+  "k365_baseline_snapshot": {
+    "date": "2026-05-27",
+    "instruments": {
+      "XAUT":   {"oi_usd": 26600000, "fr_ann_pct": -71.1},
+      "XAU":    {"oi_usd": 21900000, "fr_ann_pct": 560.0},
+      "PAXG":   {"oi_usd": 15000000, "fr_ann_pct": 239.8},
+      "CL":     {"oi_usd":  4900000, "fr_ann_pct": -247.0},
+      "XAG":    {"oi_usd":  4100000, "fr_ann_pct": 0.0},
+      "COPPER": {"oi_usd":  1600000, "fr_ann_pct": 0.0}
+    }
+  },
+  "trigger_conditions": {
+    "A": "Variational announces trading API → K366 wave (integration scaffold)",
+    "B": "XAG/Silver FR sustained >5% ann for 7 days → K297'' satellite candidate evaluation",
+    "C": "HL CFTC enforcement → consider K297' partial migration (Scenario B)",
+    "D": "Any RWA listing OI > $50M → check competitive significance"
+  },
+  "constraints": [
+    "Free API only (no auth)",
+    "Did not modify production scripts (K280/K302a/K344)",
+    "No new packages (urllib + pandas only)",
+    "K339 security: no /Users/ literals in new Python files (REPO_ROOT = Path(__file__).resolve().parent.parent)"
+  ],
+  "activation_command": "cp com.cryptolab.variational-fr-monitor.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.variational-fr-monitor.plist"
+}
