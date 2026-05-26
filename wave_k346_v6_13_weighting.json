@@ -1,0 +1,759 @@
+{
+  "wave": "K346",
+  "task": "v6.13 Weighting Decision (K297' + sUSDe OC compound, R12-16 regulatory cap)",
+  "generated_at": "2026-05-26T21:46:40.916930+00:00",
+  "runtime_s": 0.98,
+  "data_info": {
+    "date_start": "2025-04-07",
+    "date_end": "2026-04-14",
+    "n_common_days": 373,
+    "k280_orig_days": 447,
+    "k297p_orig_days": 414,
+    "susde_orig_days": 800,
+    "wf_feasible": true,
+    "k297p_filter_note": "5d rolling return > 0 (approximates K342 fake-out filter active_pct=68.5%). FR positive assumed always-on for HIP-3 RWA (PAXG/SPX yield carry)."
+  },
+  "v612_baseline": {
+    "label": "v6.12_baseline",
+    "n_days": 373,
+    "ann_ret_pct": 10.2309,
+    "ann_vol_pct": 0.4204,
+    "sharpe": 24.3348,
+    "sortino": 87.4441,
+    "calmar": 536.8376,
+    "max_dd_pct": 0.0191,
+    "max_consec_dd_days": 4,
+    "oos_sharpe": 27.7114,
+    "walk_forward": {
+      "folds": [
+        {
+          "fold": 1,
+          "n": 93,
+          "sharpe": 23.5251,
+          "ann_ret_pct": 8.0126,
+          "positive": true
+        },
+        {
+          "fold": 2,
+          "n": 93,
+          "sharpe": 21.5866,
+          "ann_ret_pct": 7.2355,
+          "positive": true
+        },
+        {
+          "fold": 3,
+          "n": 93,
+          "sharpe": 34.2522,
+          "ann_ret_pct": 11.8033,
+          "positive": true
+        },
+        {
+          "fold": 4,
+          "n": 94,
+          "sharpe": 26.0098,
+          "ann_ret_pct": 13.8336,
+          "positive": true
+        }
+      ],
+      "all_positive": true,
+      "mean_sharpe": 26.3434
+    },
+    "comment": "K280 80% + K297 unfiltered 20% (pre-K342 baseline)"
+  },
+  "variants": {
+    "v6.13a": {
+      "stats": {
+        "label": "v6.13a",
+        "n_days": 373,
+        "ann_ret_pct": 10.4672,
+        "ann_vol_pct": 0.4205,
+        "sharpe": 24.8938,
+        "sortino": 89.8089,
+        "calmar": 517.4819,
+        "max_dd_pct": 0.0202,
+        "max_consec_dd_days": 4,
+        "oos_n_days": 74,
+        "oos_sharpe": 27.3657,
+        "walk_forward": {
+          "folds": [
+            {
+              "fold": 1,
+              "n": 93,
+              "sharpe": 27.5695,
+              "ann_ret_pct": 8.944,
+              "positive": true
+            },
+            {
+              "fold": 2,
+              "n": 93,
+              "sharpe": 21.5339,
+              "ann_ret_pct": 6.9915,
+              "positive": true
+            },
+            {
+              "fold": 3,
+              "n": 93,
+              "sharpe": 34.2017,
+              "ann_ret_pct": 11.7407,
+              "positive": true
+            },
+            {
+              "fold": 4,
+              "n": 94,
+              "sharpe": 25.8089,
+              "ann_ret_pct": 14.1529,
+              "positive": true
+            }
+          ],
+          "all_positive": true,
+          "mean_sharpe": 27.2785
+        },
+        "corr_with_k280": 0.9657,
+        "total_weight": 1.0,
+        "comment": "Current K302a + SPX filter only"
+      },
+      "gates": {
+        "G1_oos_sh": {
+          "value": 27.3657,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "G3_dsr": {
+          "value": 1.0,
+          "n_variants": 6,
+          "threshold": 0.95,
+          "pass": true
+        },
+        "G4_wf_all_pos": {
+          "all_positive": true,
+          "fold_sharpes": [
+            27.5695,
+            21.5339,
+            34.2017,
+            25.8089
+          ],
+          "pass": true
+        },
+        "R12_16_cap": {
+          "k297p_weight": 0.2,
+          "cap": 0.2,
+          "cap_utilization_pct": 100.0,
+          "pass": true
+        },
+        "margin_required": false,
+        "total_weight": 1.0,
+        "n_gates_pass": 4,
+        "n_gates_total": 4,
+        "all_gates_pass": true
+      }
+    },
+    "v6.13b": {
+      "stats": {
+        "label": "v6.13b",
+        "n_days": 373,
+        "ann_ret_pct": 10.1283,
+        "ann_vol_pct": 0.419,
+        "sharpe": 24.1727,
+        "sortino": 83.6633,
+        "calmar": 496.1736,
+        "max_dd_pct": 0.0204,
+        "max_consec_dd_days": 4,
+        "oos_n_days": 74,
+        "oos_sharpe": 27.3977,
+        "walk_forward": {
+          "folds": [
+            {
+              "fold": 1,
+              "n": 93,
+              "sharpe": 26.4208,
+              "ann_ret_pct": 8.5174,
+              "positive": true
+            },
+            {
+              "fold": 2,
+              "n": 93,
+              "sharpe": 20.9737,
+              "ann_ret_pct": 6.418,
+              "positive": true
+            },
+            {
+              "fold": 3,
+              "n": 93,
+              "sharpe": 33.6115,
+              "ann_ret_pct": 11.4816,
+              "positive": true
+            },
+            {
+              "fold": 4,
+              "n": 94,
+              "sharpe": 25.7088,
+              "ann_ret_pct": 14.0541,
+              "positive": true
+            }
+          ],
+          "all_positive": true,
+          "mean_sharpe": 26.6787
+        },
+        "corr_with_k280": 0.9798,
+        "total_weight": 1.0,
+        "comment": "Slight K297' cut for sUSDe"
+      },
+      "gates": {
+        "G1_oos_sh": {
+          "value": 27.3977,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "G3_dsr": {
+          "value": 1.0,
+          "n_variants": 6,
+          "threshold": 0.95,
+          "pass": true
+        },
+        "G4_wf_all_pos": {
+          "all_positive": true,
+          "fold_sharpes": [
+            26.4208,
+            20.9737,
+            33.6115,
+            25.7088
+          ],
+          "pass": true
+        },
+        "R12_16_cap": {
+          "k297p_weight": 0.15,
+          "cap": 0.2,
+          "cap_utilization_pct": 75.0,
+          "pass": true
+        },
+        "margin_required": false,
+        "total_weight": 1.0,
+        "n_gates_pass": 4,
+        "n_gates_total": 4,
+        "all_gates_pass": true
+      }
+    },
+    "v6.13c": {
+      "stats": {
+        "label": "v6.13c",
+        "n_days": 373,
+        "ann_ret_pct": 9.7895,
+        "ann_vol_pct": 0.4194,
+        "sharpe": 23.3407,
+        "sortino": 77.2177,
+        "calmar": 387.5294,
+        "max_dd_pct": 0.0253,
+        "max_consec_dd_days": 4,
+        "oos_n_days": 74,
+        "oos_sharpe": 27.395,
+        "walk_forward": {
+          "folds": [
+            {
+              "fold": 1,
+              "n": 93,
+              "sharpe": 25.1033,
+              "ann_ret_pct": 8.0908,
+              "positive": true
+            },
+            {
+              "fold": 2,
+              "n": 93,
+              "sharpe": 20.0997,
+              "ann_ret_pct": 5.8446,
+              "positive": true
+            },
+            {
+              "fold": 3,
+              "n": 93,
+              "sharpe": 32.8772,
+              "ann_ret_pct": 11.2224,
+              "positive": true
+            },
+            {
+              "fold": 4,
+              "n": 94,
+              "sharpe": 25.5749,
+              "ann_ret_pct": 13.9554,
+              "positive": true
+            }
+          ],
+          "all_positive": true,
+          "mean_sharpe": 25.9138
+        },
+        "corr_with_k280": 0.9895,
+        "total_weight": 1.0,
+        "comment": "K344 paper proposal"
+      },
+      "gates": {
+        "G1_oos_sh": {
+          "value": 27.395,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "G3_dsr": {
+          "value": 1.0,
+          "n_variants": 6,
+          "threshold": 0.95,
+          "pass": true
+        },
+        "G4_wf_all_pos": {
+          "all_positive": true,
+          "fold_sharpes": [
+            25.1033,
+            20.0997,
+            32.8772,
+            25.5749
+          ],
+          "pass": true
+        },
+        "R12_16_cap": {
+          "k297p_weight": 0.1,
+          "cap": 0.2,
+          "cap_utilization_pct": 50.0,
+          "pass": true
+        },
+        "margin_required": false,
+        "total_weight": 1.0,
+        "n_gates_pass": 4,
+        "n_gates_total": 4,
+        "all_gates_pass": true
+      }
+    },
+    "v6.13d": {
+      "stats": {
+        "label": "v6.13d",
+        "n_days": 373,
+        "ann_ret_pct": 10.009,
+        "ann_vol_pct": 0.3929,
+        "sharpe": 25.4722,
+        "sortino": 93.4953,
+        "calmar": 529.1166,
+        "max_dd_pct": 0.0189,
+        "max_consec_dd_days": 4,
+        "oos_n_days": 74,
+        "oos_sharpe": 27.7074,
+        "walk_forward": {
+          "folds": [
+            {
+              "fold": 1,
+              "n": 93,
+              "sharpe": 28.1351,
+              "ann_ret_pct": 8.5669,
+              "positive": true
+            },
+            {
+              "fold": 2,
+              "n": 93,
+              "sharpe": 22.3443,
+              "ann_ret_pct": 6.9156,
+              "positive": true
+            },
+            {
+              "fold": 3,
+              "n": 93,
+              "sharpe": 34.4794,
+              "ann_ret_pct": 11.1542,
+              "positive": true
+            },
+            {
+              "fold": 4,
+              "n": 94,
+              "sharpe": 26.1609,
+              "ann_ret_pct": 13.3634,
+              "positive": true
+            }
+          ],
+          "all_positive": true,
+          "mean_sharpe": 27.7799
+        },
+        "corr_with_k280": 0.9593,
+        "total_weight": 1.0,
+        "comment": "K280 reduction"
+      },
+      "gates": {
+        "G1_oos_sh": {
+          "value": 27.7074,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "G3_dsr": {
+          "value": 1.0,
+          "n_variants": 6,
+          "threshold": 0.95,
+          "pass": true
+        },
+        "G4_wf_all_pos": {
+          "all_positive": true,
+          "fold_sharpes": [
+            28.1351,
+            22.3443,
+            34.4794,
+            26.1609
+          ],
+          "pass": true
+        },
+        "R12_16_cap": {
+          "k297p_weight": 0.2,
+          "cap": 0.2,
+          "cap_utilization_pct": 100.0,
+          "pass": true
+        },
+        "margin_required": false,
+        "total_weight": 1.0,
+        "n_gates_pass": 4,
+        "n_gates_total": 4,
+        "all_gates_pass": true
+      }
+    },
+    "v6.13e": {
+      "stats": {
+        "label": "v6.13e",
+        "n_days": 373,
+        "ann_ret_pct": 10.2476,
+        "ann_vol_pct": 0.4477,
+        "sharpe": 22.8879,
+        "sortino": 74.6586,
+        "calmar": 356.7502,
+        "max_dd_pct": 0.0287,
+        "max_consec_dd_days": 4,
+        "oos_n_days": 74,
+        "oos_sharpe": 27.0787,
+        "walk_forward": {
+          "folds": [
+            {
+              "fold": 1,
+              "n": 93,
+              "sharpe": 24.6635,
+              "ann_ret_pct": 8.468,
+              "positive": true
+            },
+            {
+              "fold": 2,
+              "n": 93,
+              "sharpe": 19.3353,
+              "ann_ret_pct": 5.9204,
+              "positive": true
+            },
+            {
+              "fold": 3,
+              "n": 93,
+              "sharpe": 32.6449,
+              "ann_ret_pct": 11.809,
+              "positive": true
+            },
+            {
+              "fold": 4,
+              "n": 94,
+              "sharpe": 25.2731,
+              "ann_ret_pct": 14.7448,
+              "positive": true
+            }
+          ],
+          "all_positive": true,
+          "mean_sharpe": 25.4792
+        },
+        "corr_with_k280": 0.9919,
+        "total_weight": 1.0,
+        "comment": "K280 boost, regulatory-safer"
+      },
+      "gates": {
+        "G1_oos_sh": {
+          "value": 27.0787,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "G3_dsr": {
+          "value": 1.0,
+          "n_variants": 6,
+          "threshold": 0.95,
+          "pass": true
+        },
+        "G4_wf_all_pos": {
+          "all_positive": true,
+          "fold_sharpes": [
+            24.6635,
+            19.3353,
+            32.6449,
+            25.2731
+          ],
+          "pass": true
+        },
+        "R12_16_cap": {
+          "k297p_weight": 0.1,
+          "cap": 0.2,
+          "cap_utilization_pct": 50.0,
+          "pass": true
+        },
+        "margin_required": false,
+        "total_weight": 1.0,
+        "n_gates_pass": 4,
+        "n_gates_total": 4,
+        "all_gates_pass": true
+      }
+    },
+    "v6.13f": {
+      "stats": {
+        "label": "v6.13f",
+        "n_days": 373,
+        "ann_ret_pct": 10.5563,
+        "ann_vol_pct": 0.4189,
+        "sharpe": 25.1982,
+        "sortino": 92.1552,
+        "calmar": 521.8858,
+        "max_dd_pct": 0.0202,
+        "max_consec_dd_days": 4,
+        "oos_n_days": 74,
+        "oos_sharpe": 27.6328,
+        "walk_forward": {
+          "folds": [
+            {
+              "fold": 1,
+              "n": 93,
+              "sharpe": 27.7899,
+              "ann_ret_pct": 9.0042,
+              "positive": true
+            },
+            {
+              "fold": 2,
+              "n": 93,
+              "sharpe": 22.0668,
+              "ann_ret_pct": 7.1657,
+              "positive": true
+            },
+            {
+              "fold": 3,
+              "n": 93,
+              "sharpe": 34.3119,
+              "ann_ret_pct": 11.8067,
+              "positive": true
+            },
+            {
+              "fold": 4,
+              "n": 94,
+              "sharpe": 26.0565,
+              "ann_ret_pct": 14.2092,
+              "positive": true
+            }
+          ],
+          "all_positive": true,
+          "mean_sharpe": 27.5563
+        },
+        "corr_with_k280": 0.9643,
+        "total_weight": 1.05,
+        "comment": "Additive over-allocation (105%, margin req.)"
+      },
+      "gates": {
+        "G1_oos_sh": {
+          "value": 27.6328,
+          "threshold": 1.0,
+          "pass": true
+        },
+        "G3_dsr": {
+          "value": 1.0,
+          "n_variants": 6,
+          "threshold": 0.95,
+          "pass": true
+        },
+        "G4_wf_all_pos": {
+          "all_positive": true,
+          "fold_sharpes": [
+            27.7899,
+            22.0668,
+            34.3119,
+            26.0565
+          ],
+          "pass": true
+        },
+        "R12_16_cap": {
+          "k297p_weight": 0.2,
+          "cap": 0.2,
+          "cap_utilization_pct": 100.0,
+          "pass": true
+        },
+        "margin_required": true,
+        "total_weight": 1.05,
+        "n_gates_pass": 4,
+        "n_gates_total": 4,
+        "all_gates_pass": true
+      }
+    }
+  },
+  "comparison_table": [
+    {
+      "variant": "v6.13a",
+      "K280_pct": 80,
+      "K297p_pct": 20,
+      "sUSDe_pct": 0,
+      "total_pct": 100,
+      "sharpe": 24.8938,
+      "oos_sharpe": 27.3657,
+      "ann_ret_pct": 10.4672,
+      "ann_vol_pct": 0.4205,
+      "sortino": 89.8089,
+      "calmar": 517.4819,
+      "max_dd_pct": 0.0202,
+      "max_consec_dd_d": 4,
+      "G1_oos_sh": true,
+      "G3_dsr": true,
+      "G4_wf_all_pos": true,
+      "R12_16_ok": true,
+      "reg_cap_util_pct": 100.0,
+      "margin_req": false,
+      "all_gates_pass": true,
+      "comment": "Current K302a + SPX filter only"
+    },
+    {
+      "variant": "v6.13b",
+      "K280_pct": 80,
+      "K297p_pct": 15,
+      "sUSDe_pct": 5,
+      "total_pct": 100,
+      "sharpe": 24.1727,
+      "oos_sharpe": 27.3977,
+      "ann_ret_pct": 10.1283,
+      "ann_vol_pct": 0.419,
+      "sortino": 83.6633,
+      "calmar": 496.1736,
+      "max_dd_pct": 0.0204,
+      "max_consec_dd_d": 4,
+      "G1_oos_sh": true,
+      "G3_dsr": true,
+      "G4_wf_all_pos": true,
+      "R12_16_ok": true,
+      "reg_cap_util_pct": 75.0,
+      "margin_req": false,
+      "all_gates_pass": true,
+      "comment": "Slight K297' cut for sUSDe"
+    },
+    {
+      "variant": "v6.13c",
+      "K280_pct": 80,
+      "K297p_pct": 10,
+      "sUSDe_pct": 10,
+      "total_pct": 100,
+      "sharpe": 23.3407,
+      "oos_sharpe": 27.395,
+      "ann_ret_pct": 9.7895,
+      "ann_vol_pct": 0.4194,
+      "sortino": 77.2177,
+      "calmar": 387.5294,
+      "max_dd_pct": 0.0253,
+      "max_consec_dd_d": 4,
+      "G1_oos_sh": true,
+      "G3_dsr": true,
+      "G4_wf_all_pos": true,
+      "R12_16_ok": true,
+      "reg_cap_util_pct": 50.0,
+      "margin_req": false,
+      "all_gates_pass": true,
+      "comment": "K344 paper proposal"
+    },
+    {
+      "variant": "v6.13d",
+      "K280_pct": 75,
+      "K297p_pct": 20,
+      "sUSDe_pct": 5,
+      "total_pct": 100,
+      "sharpe": 25.4722,
+      "oos_sharpe": 27.7074,
+      "ann_ret_pct": 10.009,
+      "ann_vol_pct": 0.3929,
+      "sortino": 93.4953,
+      "calmar": 529.1166,
+      "max_dd_pct": 0.0189,
+      "max_consec_dd_d": 4,
+      "G1_oos_sh": true,
+      "G3_dsr": true,
+      "G4_wf_all_pos": true,
+      "R12_16_ok": true,
+      "reg_cap_util_pct": 100.0,
+      "margin_req": false,
+      "all_gates_pass": true,
+      "comment": "K280 reduction"
+    },
+    {
+      "variant": "v6.13e",
+      "K280_pct": 85,
+      "K297p_pct": 10,
+      "sUSDe_pct": 5,
+      "total_pct": 100,
+      "sharpe": 22.8879,
+      "oos_sharpe": 27.0787,
+      "ann_ret_pct": 10.2476,
+      "ann_vol_pct": 0.4477,
+      "sortino": 74.6586,
+      "calmar": 356.7502,
+      "max_dd_pct": 0.0287,
+      "max_consec_dd_d": 4,
+      "G1_oos_sh": true,
+      "G3_dsr": true,
+      "G4_wf_all_pos": true,
+      "R12_16_ok": true,
+      "reg_cap_util_pct": 50.0,
+      "margin_req": false,
+      "all_gates_pass": true,
+      "comment": "K280 boost, regulatory-safer"
+    },
+    {
+      "variant": "v6.13f",
+      "K280_pct": 80,
+      "K297p_pct": 20,
+      "sUSDe_pct": 5,
+      "total_pct": 105,
+      "sharpe": 25.1982,
+      "oos_sharpe": 27.6328,
+      "ann_ret_pct": 10.5563,
+      "ann_vol_pct": 0.4189,
+      "sortino": 92.1552,
+      "calmar": 521.8858,
+      "max_dd_pct": 0.0202,
+      "max_consec_dd_d": 4,
+      "G1_oos_sh": true,
+      "G3_dsr": true,
+      "G4_wf_all_pos": true,
+      "R12_16_ok": true,
+      "reg_cap_util_pct": 100.0,
+      "margin_req": true,
+      "all_gates_pass": true,
+      "comment": "Additive over-allocation (105%, margin req.)"
+    }
+  ],
+  "decision": {
+    "winner": "v6.13d",
+    "winner_sharpe": 25.4722,
+    "winner_oos_sharpe": 27.7074,
+    "winner_weights": {
+      "K280": 0.75,
+      "K297p": 0.2,
+      "sUSDe": 0.05
+    },
+    "margin_required": false,
+    "n_qualifying_variants": 6,
+    "all_qualifying": [
+      "v6.13d",
+      "v6.13f",
+      "v6.13a",
+      "v6.13b",
+      "v6.13c",
+      "v6.13e"
+    ],
+    "baseline_sharpe": 24.3348,
+    "lift_vs_v612_baseline_pct": 4.67,
+    "reasoning": "Winner v6.13d maximizes Sharpe (25.4722) among 6 variants passing all K266+R12-16 gates. K297' weight=20% (R12-16 cap utilization=100%). sUSDe OC=5% (orthogonal diversification). Total capital=100% (no margin).",
+    "regulatory_note": "R12-16 (CME/ICE HL scrutiny) hard cap 20% on K297'. Winner at 20% = 100% cap utilization.",
+    "deploy_plan": {
+      "architecture": "K302a v6.13d: K280 (75%) + K297' (20%) + sUSDe OC (5%)",
+      "exchange_venues": {
+        "K280": "Bybit + HyperLiquid (unchanged from v6.12)",
+        "K297p": "HyperLiquid HIP-3 (PAXG/SPX FR carry with fake-out filter)",
+        "sUSDe": "Ethena app or DeFi aggregator (sUSDe Optimal Control strategy)"
+      },
+      "monitoring_triggers": {
+        "K297p_maxdd_stop": "Halt K297' if rolling 7d MaxDD > -0.5%",
+        "susde_apy_stop": "Divest sUSDe if 30d EMA APY < 2%",
+        "combined_sh_floor": "Re-evaluate if rolling 30d combined Sh < 20.0",
+        "hl_concentration_alert": "Alert if HL capital share > 65%"
+      }
+    }
+  }
+}
