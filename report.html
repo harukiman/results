@@ -753,9 +753,9 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-25 20:04 JST</span> &nbsp;|&nbsp;
-    <strong>試行数:</strong> 738,388+ &nbsp;|&nbsp;
-    <strong>🏆 PRODUCTION v6.12 FINAL (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K302a 2-EXCHANGE (K280 80% + K297 RWA [PAXG 60% / SPX 40%] 20%) combined 55d Sh +32.59 / 98.7% K287d retention / 2 exchanges</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">K303 decision: K302a +1.275 winner score (16.30 Sh/exchange)</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-27 06:43 JST</span> &nbsp;|&nbsp;
+    <strong>試行数:</strong> 738,388+ (+8 K340-K347) &nbsp;|&nbsp;
+    <strong>🏆 PRODUCTION v6.12 FINAL (NEW):</strong> <span style="color:var(--accent-green);font-weight:700;">K302a 2-EXCHANGE (K280 80% + K297 RWA [PAXG 60% / SPX 40%] 20%) combined 55d Sh +32.59 / 98.7% K287d retention / 2 exchanges</span> &nbsp;|&nbsp; <span style="color:var(--accent-cyan);font-weight:700;">K303 decision: K302a +1.275 winner score (16.30 Sh/exchange)</span> &nbsp;|&nbsp; <span style="color:var(--accent-yellow);font-weight:700;">⚠️ v6.13 CANDIDATE PENDING K346 (K297' SPX filter +49.5% Sh + sUSDe OC sleeve)</span> &nbsp;|&nbsp;
     <strong>12 ACCEPT base + 21 ensembles + K302a v6.12 / 78 REJECT / 7 CONDITIONAL / 3 FRAMEWORK</strong> &nbsp;|&nbsp; <span style="color:var(--accent-green);font-weight:700;">K297 PAXG 504d + SPX 415d (vs K275 96d), K275 risk eliminated, HL infrastructure single ops</span>
   </div>
 
@@ -763,7 +763,7 @@ window.__renderWhenReady = function(fn, label) {
     <h1 style="font-family:Georgia,serif;letter-spacing:-0.01em;">Systematic Alpha Discovery in MEXC Perpetual Futures</h1>
     <div class="subtitle" style="font-style:italic;font-family:Georgia,serif;">A Bias-Controlled Empirical Study of Multi-Axis Portfolio Construction with §6 Audit Validation</div>
     <div class="meta">
-      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-25 20:04 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
+      v4.1 (Sh +4.08) &nbsp;|&nbsp; Updated: 2026-05-27 06:43 JST &nbsp;|&nbsp; Project: crypto-lab &nbsp;|&nbsp; Exchange: MEXC Perpetual &nbsp;|&nbsp; 100+ strategies tested<br>
       Methodology: §6 strict-gate audit (Bailey-LdP CPCV, Hansen SPA, White RC, Bootstrap CI, Block Permutation)
     </div>
   </header>
@@ -8235,6 +8235,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
                 <li>→ K280 v6.10.2 K276b (<strong>18.46</strong>)</li>
                 <li>→ K287d SATELLITE combined v6.11 (<strong>33.00</strong>, ZERO MaxDD)</li>
                 <li>→ <strong style="color:var(--accent-green);">K302a v6.12 FINAL PRODUCTION (<strong>32.59</strong>, 2 exchanges, K275 risk eliminated) ← 現在</strong></li>
+                <li>→ <span style="color:var(--accent-yellow);">v6.13 candidate (K297' SPX filter ACCEPT +49.5% Sh + sUSDe OC ACCEPT orthogonal ρ=0.05、weighting K346 で決定中 → K348 production patch)</span></li>
               </ul>
             </li>
           </ul>
@@ -8268,6 +8269,75 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
             <li><strong>【K322 audit_cache_integrity.py 拡張】</strong> K316-K319 教訓を恒久化: (a) consumer_strategies フィールド (各 parquet がどの戦略の input か明示); (b) zero_fraction_recent_30d メトリック; (c) INTERMITTENT status (zero_frac > 0.30)。現在 alt_exchange 25.33% 境界直下、他は < 6%。</li>
 
             <li><strong>【インフライト】</strong> K320 (HMM on K297 satellite, K315 follow-up), K323 (FR-regime filter for K280, K315 alt) は並列 sonnet agent 実行中。R11 (累計 242 findings) + 上記 K306-K322 lessons を統合した次フェーズへ。</li>
+          </ul>
+        </details>
+        <details open>
+          <summary><strong>★★★★★ 2026-05-27 06:43 JST — K340-K346 8-wave breakthrough chronicle</strong></summary>
+          <ul>
+            <li><strong>【K340 USDT on-chain → BTC 1h CONDITIONAL (R11-17)】</strong>
+              DeFiLlama proxy (831d stablecoin supply) を活用した BTC 1h 条件付き戦略。CEX-specific データは Etherscan free key 必要。
+              §6 ゲート結果: G1 Sh <strong>0.995</strong> (1.0 直下), G2 perm <strong>p=0.000</strong>, G3 DSR <strong>0.787</strong>, G4 WF <strong>2/4</strong> folds positive, G5 max ρ <strong>0.18</strong> vs K198 — <strong>直交軸確認済み</strong>。
+              続行 trigger: Etherscan free key 取得後 retest。
+            </li>
+
+            <li><strong>【★★ K341 BOCPD Switch-Off REJECT — Regime-filter line CLOSED (R12-10, 5-wave chain)】</strong>
+              Adams-MacKay BOCPD (numpy + scipy.special only、log-space 実装)。BTC rolling 30d Sh series で検証、max P(CP)=0.01 = prior hazard rate。
+              K280 alpha は実際には <strong>改善中</strong> (H2 Sh 22.7 vs H1 20.2、ratio 1.13x)。
+              <strong>5-wave chain (K315→K320→K323→K327→K341 全 REJECT) で regime/state filter line 永続封鎖。</strong>
+              Reopen trigger: K280 rolling 30d Sh &lt; 8 が 15+ consecutive days。
+              K341 結論 (root cause): <em>「regime switching overlay on alpha-stable strategy is a category error」</em>
+            </li>
+
+            <li><strong>【★★ K342 K297 RWA validation ACCEPT (R12-12 + K297' filter discovered)】</strong>
+              内部 benchmark: PAXG <strong>86.7%</strong> accuracy (vs Crypto.com Gold 69.2%)、SPX <strong>82.4%</strong> (vs NVDA 78.9%) — 外部 benchmark を上回り。
+              SPX fake-out filter (<code>5d trend &gt; 0 AND FR &gt; 0</code>): Sh <strong>5.87 → 12.20</strong> (+108%)。
+              K297 portfolio Sh <strong>12.35 → 18.48</strong> (+49.5%)、3/3 WF folds 全改善。
+              全 K266 gates passes。
+              R12-16 regulatory: K297 20% cap 維持 (CFTC HL scrutiny)。
+            </li>
+
+            <li><strong>【★★ K343 K297→K297' integration test CONDITIONAL ACCEPT (rigor pass)】</strong>
+              Hyperparameter robust: 5d window CV=<strong>0.033</strong> (3/5/7/10/14/21d ほぼ同性能、structural feature)。
+              DSR=<strong>1.0</strong> after 20-trial Bonferroni correction。
+              K266 <strong>6/6 gates</strong> (perm p=0.0000、WF folds 15/22.6/28.7/13.4 all positive)。
+              結合 K302a <strong>+3.8%</strong> lift (vs +5% aspirational target、conservative additive 推定、K266 gate ではない)。
+              deploy diff documented (~25 LOC to k302a_satellite_run.py、SPX_FILTER_ENABLED flag、rollback 容易)。
+            </li>
+
+            <li><strong>【★★ K344 sUSDe Optimal Control ACCEPT — NEW orthogonal yield axis (R12-05)】</strong>
+              arXiv 2605.11263 framework (u* ∝ (APY-r_f)/(2γ)) 実装。
+              DeFiLlama 831d sUSDe APY (mean <strong>10.30%</strong>、current 3.72%、7d MA 4.04% recovering trough)。
+              OC Sh <strong>8.39</strong> vs passive 100% Sh <strong>23.52</strong> (低 APY 期 2025-2026 の optionality を保存)。
+              4/4 K266 gates、MDD <strong>0.11%</strong>、<strong>orthogonal ρ 0.05 vs K280</strong>。
+              提案: K302a v6.13 sleeve <strong>5-10%</strong>、stablecoin yield 新規軸追加。
+            </li>
+
+            <li><strong>【K345 Transformer A-C REJECT — ML allocator line CLOSED (R11-16, 6-wave chain)】</strong>
+              RandomForest 500 trees + GradientBoosting 100 trees (Transformer-proxy、declared)。
+              1/4 folds positive、total Sh delta <strong>-0.198</strong>、compute cost <strong>1426x</strong> vs Ridge。
+              K198 has only 4.4% weight in K280 → improvement cap &lt;0.044 Sh regardless of model quality。
+              <strong>K198 Ridge 凍結 = optimal、ML allocator alternative の探索終了。</strong>
+            </li>
+
+            <li><strong>【K346 v6.13 weighting decision (in flight)】</strong>
+              6 architecture variants: 80/20/0 baseline → 85/10/5、80/15/5、80/10/10、75/20/5、80/20/5+margin。
+              K297' (+49.5% Sh) と sUSDe (orthogonal 5-10%) を統合。
+              R12-16 regulatory cap (K297' ≤ 20%) 制約下で最適 weighting 選択中。
+              Decision → <strong>K348</strong> で actual production patch + HTML banner v6.12 → v6.13。
+            </li>
+
+            <li><strong>【LINE CLOSURES サマリー】</strong>
+              <ul style="font-size:0.92em;">
+                <li><strong style="color:var(--accent-red);">Regime/state filter line 永続封鎖</strong>: K315→K320→K323→K327→K341 (5-wave chain 全 REJECT)。Root cause: carry alpha は regime に orthogonal、overlay は alpha を消す。Reopen trigger: rolling 30d Sh &lt; 8 が 15日継続。</li>
+                <li><strong style="color:var(--accent-red);">ML allocator line 終了</strong>: K198 Ridge 凍結。RandomForest/GradientBoosting (K345) 含む 6-wave chain 全 REJECT。K198 weight 4.4% → 最大改善効果 cap &lt;0.044 Sh。</li>
+              </ul>
+            </li>
+
+            <li><strong>【v6.13 CANDIDATE ステータス (K346 継続中)】</strong>
+              現行 PRODUCTION v6.12 K302a を維持しつつ v6.13 架構を確定中。
+              候補構成: K280 CORE + K297' (SPX filter ACCEPT、Sh +49.5%) + sUSDe OC sleeve (orthogonal ρ=0.05)。
+              Weighting 決定 → K348 production patch + banner 更新。
+            </li>
           </ul>
         </details>
         <details>
@@ -9036,8 +9106,8 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
-    <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; Research Baseline v4.1 / Production v6.12 K302a (K280 80% + K297 RWA 20%)</p>
-    <p style="margin-top:4px;">更新: 2026-05-25 14:52 JST &nbsp;|&nbsp; K315/K320/K323/K327 全 regime filter REJECT/DEFER (K280 K198 ML self-adaptive) &nbsp;|&nbsp; K329 HTML audit #6 完了 &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
+    <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; Research Baseline v4.1 / Production v6.12 K302a (K280 80% + K297 RWA 20%) (K297'/sUSDe v6.13 candidate pending K346)</p>
+    <p style="margin-top:4px;">更新: 2026-05-27 06:43 JST &nbsp;|&nbsp; K340-K346 chronicle: Regime/ML allocator line CLOSED、K297' SPX filter ACCEPT (+49.5% Sh)、sUSDe OC ACCEPT (orthogonal ρ=0.05)、v6.13 weighting K346 継続中 &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 
