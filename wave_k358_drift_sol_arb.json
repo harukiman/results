@@ -1,0 +1,143 @@
+{
+  "wave": "K358",
+  "generated_at": "2026-05-26T23:02:02.209941+00:00",
+  "runtime_sec": 399.6,
+  "strategy": "HL SOL-PERP vs Drift SOL-PERP cross-venue FR arb",
+  "data_sources": {
+    "drift_s3": "2024-01-01 to 2025-01-08 (gzip CSV, S3 stopped Jan 2025)",
+    "drift_live": "Live API ~21 days (2026-04-01 18:00:00+00:00)",
+    "drift_combined_range": "2024-01-01 00:00:00+00:00 to 2026-04-01 18:00:00+00:00",
+    "drift_hourly_rows": 9364,
+    "hl_sol_fr_rows": 17512,
+    "merged_range": "2024-05-23 16:00:00+00:00 to 2026-04-01 18:00:00+00:00",
+    "merged_rows": 5915
+  },
+  "drift_api": {
+    "s3_bucket": "drift-historical-data-v2.s3.eu-west-1.amazonaws.com",
+    "s3_path_template": "/program/dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH/market/SOL-PERP/fundingRateRecords/{year}/{YYYYMMDD}",
+    "live_api": "https://data.api.drift.trade/market/SOL-PERP/fundingRates",
+    "market_index": 0,
+    "fr_cadence": "hourly (lazy settlement, ~every 1h per Drift docs)",
+    "fr_formula": "1/24 * (mark_twap - oracle_twap) / oracle_twap",
+    "s3_format": "gzip CSV (Content-Encoding: gzip, Content-Type: text/csv)",
+    "s3_coverage_note": "S3 stopped Jan 8, 2025. Gap Jan 2025\u2013Feb 2026 inaccessible via free API."
+  },
+  "fee_model": {
+    "hl_maker_bps": 1.5,
+    "drift_taker_bps": 5.0,
+    "slippage_bps": 1.0,
+    "roundtrip_bps": 15.0,
+    "note": "Drift taker 5bps estimated; HL maker 1.5bps from docs; 1bps slippage round-trip"
+  },
+  "spread_statistics": {
+    "n_hours_total": 5915,
+    "spread_mean_daily_bps": 0.8783,
+    "spread_std_daily_bps": 6.7624,
+    "spread_p25_daily_bps": -2.3941,
+    "spread_p50_daily_bps": 0.6619,
+    "spread_p75_daily_bps": 3.5015,
+    "spread_p5_daily_bps": -9.6048,
+    "spread_p95_daily_bps": 12.965,
+    "frac_above_entry_thresh": 0.1779,
+    "frac_below_neg_thresh": 0.1346,
+    "hl_mean_daily_bps": 4.613,
+    "drift_mean_daily_bps": 3.7347
+  },
+  "backtest_metrics": {
+    "total_rows": 5915,
+    "total_days": 246.5,
+    "total_years": 0.675,
+    "final_equity": -0.409492,
+    "ann_return_pct": -60.645,
+    "oos_sharpe": -20.6684,
+    "max_dd_frac": -0.408863,
+    "max_dd_pct": -40.89,
+    "trade_count": 333,
+    "win_rate_pct": 2.7,
+    "avg_hold_hours": 9.4,
+    "entry_thresh_daily_bps": 5.0,
+    "exit_thresh_daily_bps": 1.0,
+    "fee_roundtrip_bps": 15.0
+  },
+  "walk_forward": [
+    {
+      "fold": 1,
+      "rows": 1478,
+      "days": 61.6,
+      "ann_return_pct": -61.1704,
+      "sharpe": -23.8887,
+      "trades": 79,
+      "positive": "False"
+    },
+    {
+      "fold": 2,
+      "rows": 1478,
+      "days": 61.6,
+      "ann_return_pct": -45.9408,
+      "sharpe": -15.6558,
+      "trades": 70,
+      "positive": "False"
+    },
+    {
+      "fold": 3,
+      "rows": 1478,
+      "days": 61.6,
+      "ann_return_pct": -71.4267,
+      "sharpe": -21.9694,
+      "trades": 100,
+      "positive": "False"
+    }
+  ],
+  "k266_gates": {
+    "g1_oos_sharpe": {
+      "value": -20.6684,
+      "threshold": 1.0,
+      "pass": false
+    },
+    "g2_perm_p": {
+      "value": 0.774,
+      "threshold": 0.05,
+      "pass": false
+    },
+    "g3_dsr_proxy": {
+      "value": 0.0,
+      "threshold": 1.0,
+      "pass": false
+    },
+    "g4_wf_all_positive": {
+      "value": "0/3",
+      "pass": false
+    },
+    "g5_k208_corr": {
+      "value": 0.15,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "estimated (shared HL leg, different counterparty)"
+    },
+    "g6_trade_count_yr": {
+      "value": 493.3,
+      "threshold": 50,
+      "pass": true
+    },
+    "g7_ann_return_pct": {
+      "value": -60.645,
+      "threshold": 5.0,
+      "pass": "False"
+    },
+    "gates_pass": "2",
+    "gates_total": 7,
+    "decision": "REJECT"
+  },
+  "diversification": {
+    "k208_bilateral": "HL-Bybit (CEX-CEX bilateral)",
+    "k358_bilateral": "HL-Drift (CEX-DEX Solana bilateral)",
+    "counterparty_type": "Drift = decentralized on-chain (Solana), no CEX custody risk",
+    "settlement_currency": "Drift settles in USDC on Solana, HL settles in USDC on HL L1",
+    "regulatory_profile": "Drift = permissionless DEX, non-US accessible",
+    "estimated_corr_k208": "~0.15 (shared HL leg, different counterparty FR dynamics)",
+    "concentration_impact": "Reduces HL-only risk; adds Solana ecosystem exposure",
+    "capacity_est_usd": "~$500K-2M notional per side (Drift SOL-PERP avg OI ~$50-100M)"
+  },
+  "decision": "REJECT",
+  "k359_proposal": "REJECT: Document Drift fee structure as limiting factor. Monitor for Drift fee reduction or improved spread regime."
+}
