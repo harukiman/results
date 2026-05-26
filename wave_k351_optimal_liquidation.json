@@ -1,0 +1,292 @@
+{
+  "wave": "K351",
+  "task": "R12-08",
+  "timestamp_utc": "2026-05-26T22:04:18.536450+00:00",
+  "paper": {
+    "arxiv_id": "2601.10812",
+    "title": "Optimal Liquidation of Perpetual Contracts",
+    "framework": "Stochastic optimal control (HJB) \u2014 Almgren-Chriss extension for perps",
+    "key_params": {
+      "lambda": "risk-aversion coefficient (urgency)",
+      "kappa": "sqrt(lambda * sigma^2 / eta) \u2014 urgency parameter",
+      "eta": "temporary market impact coefficient",
+      "gamma": "permanent market impact coefficient",
+      "r": "funding rate (perpetual-specific term)",
+      "kappa_perp": "sqrt((lambda*sigma^2 + r) / eta) > kappa_AC when r>0"
+    },
+    "closed_form": "q*(t) = q0 * sinh(kappa*(T-t)) / sinh(kappa*T)  [linear payoff case]. Exponential decay schedule. Faster than TWAP when lambda*sigma^2 dominates. Perpetual: higher kappa when funding rate > 0 \u2192 more front-loaded execution.",
+    "key_insight": "Positive funding rate (long pays short) creates urgency to exit early. Optimal schedule is more aggressive than classical AC when holding cost > 0. For K302a PAXG/SPX: FR typically positive \u2192 optimal = exit at open, not spread \u2014 contradicting naive TWAP intuition.",
+    "access_note": "Abstract + intro accessed. Full 36-page PDF framework inferred from AC literature."
+  },
+  "component_analysis": [
+    {
+      "component": "K280_K208",
+      "weight": 0.5685,
+      "daily_turnover": 0.06,
+      "maker_bp": 1.5,
+      "current_cost_day_bp": 0.09,
+      "ac_market_impact_bp": 1.1e-05,
+      "twap_market_impact_bp": 1.1e-05,
+      "ac_savings_day_bp": -0.0,
+      "ac_savings_annual_bp": -0.0,
+      "sharpe_delta_est": -0.0,
+      "kappa_std": 0.06,
+      "kappa_perp": 20.00009,
+      "funding_acceleration": 333.3348,
+      "q_path_AC": [
+        0.06,
+        0.05249261927011712,
+        0.04498819126390903,
+        0.037486293855321685,
+        0.029986505060647803,
+        0.02248840301479019,
+        0.01499156594753173,
+        0.007495572159810684,
+        0.0
+      ],
+      "note": "Market-impact model on top of maker fee. AC savings = temp-impact reduction from time-spreading. At HL illiquidity levels (eta=2.5e-7) and turnover<10%, impact is below maker-fee noise floor."
+    },
+    {
+      "component": "K280_K276b",
+      "weight": 0.162,
+      "daily_turnover": 0.08,
+      "maker_bp": 1.5,
+      "current_cost_day_bp": 0.12,
+      "ac_market_impact_bp": 2e-05,
+      "twap_market_impact_bp": 2e-05,
+      "ac_savings_day_bp": -0.0,
+      "ac_savings_annual_bp": -0.0,
+      "sharpe_delta_est": -0.0,
+      "kappa_std": 0.06,
+      "kappa_perp": 20.00009,
+      "funding_acceleration": 333.3348,
+      "q_path_AC": [
+        0.08,
+        0.06999015902682285,
+        0.05998425501854538,
+        0.04998172514042892,
+        0.039982006747530406,
+        0.029984537353053585,
+        0.01998875459670898,
+        0.009994096213080911,
+        0.0
+      ],
+      "note": "Market-impact model on top of maker fee. AC savings = temp-impact reduction from time-spreading. At HL illiquidity levels (eta=2.5e-7) and turnover<10%, impact is below maker-fee noise floor."
+    },
+    {
+      "component": "K280_K198",
+      "weight": 0.0195,
+      "daily_turnover": 0.01,
+      "maker_bp": 1.5,
+      "current_cost_day_bp": 0.015,
+      "ac_market_impact_bp": 0.0,
+      "twap_market_impact_bp": 0.0,
+      "ac_savings_day_bp": -0.0,
+      "ac_savings_annual_bp": -0.0,
+      "sharpe_delta_est": -0.0,
+      "kappa_std": 0.06,
+      "kappa_perp": 20.00009,
+      "funding_acceleration": 333.3348,
+      "q_path_AC": [
+        0.01,
+        0.008748769878352856,
+        0.007498031877318173,
+        0.006247715642553615,
+        0.004997750843441301,
+        0.003748067169131698,
+        0.0024985943245886223,
+        0.001249262026635114,
+        0.0
+      ],
+      "note": "Market-impact model on top of maker fee. AC savings = temp-impact reduction from time-spreading. At HL illiquidity levels (eta=2.5e-7) and turnover<10%, impact is below maker-fee noise floor."
+    },
+    {
+      "component": "K302a_sat",
+      "weight": 0.2,
+      "daily_turnover": 0.01,
+      "maker_bp": 1.5,
+      "current_cost_day_bp": 0.015,
+      "ac_market_impact_bp": 0.0,
+      "twap_market_impact_bp": 0.0,
+      "ac_savings_day_bp": -0.0,
+      "ac_savings_annual_bp": -0.0,
+      "sharpe_delta_est": -0.0,
+      "kappa_std": 0.06,
+      "kappa_perp": 20.00009,
+      "funding_acceleration": 333.3348,
+      "q_path_AC": [
+        0.01,
+        0.008748769878352856,
+        0.007498031877318173,
+        0.006247715642553615,
+        0.004997750843441301,
+        0.003748067169131698,
+        0.0024985943245886223,
+        0.001249262026635114,
+        0.0
+      ],
+      "note": "Market-impact model on top of maker fee. AC savings = temp-impact reduction from time-spreading. At HL illiquidity levels (eta=2.5e-7) and turnover<10%, impact is below maker-fee noise floor."
+    },
+    {
+      "component": "sUSDe",
+      "weight": 0.05,
+      "daily_turnover": 0.03,
+      "maker_bp": 0.0,
+      "current_cost_day_bp": 0.0,
+      "ac_market_impact_bp": 3e-06,
+      "twap_market_impact_bp": 3e-06,
+      "ac_savings_day_bp": -0.0,
+      "ac_savings_annual_bp": -0.0,
+      "sharpe_delta_est": -0.0,
+      "kappa_std": 0.06,
+      "kappa_perp": 20.00009,
+      "funding_acceleration": 333.3348,
+      "q_path_AC": [
+        0.03,
+        0.02624630963505856,
+        0.022494095631954515,
+        0.018743146927660843,
+        0.014993252530323901,
+        0.011244201507395095,
+        0.007495782973765865,
+        0.003747786079905342,
+        0.0
+      ],
+      "note": "Market-impact model on top of maker fee. AC savings = temp-impact reduction from time-spreading. At HL illiquidity levels (eta=2.5e-7) and turnover<10%, impact is below maker-fee noise floor."
+    }
+  ],
+  "gate_evaluation": {
+    "verdict": "REJECT",
+    "total_sharpe_delta": 0.0,
+    "max_component_sharpe_delta": -0.0,
+    "total_annual_savings_bp": 0.0,
+    "rationale": "Sharpe lift < 0.1. AC/TWAP execution not material for K280/K302a. Primary reason: daily turnover < 10% \u2192 market impact negligible vs maker fee. AC framework relevant only if position size exceeds ~$5M notional on HL or if turnover jumps to 50%+ (e.g. K297' sudden SPX filter flip).",
+    "gate_threshold_accept": 0.5,
+    "gate_threshold_conditional": 0.1
+  },
+  "sensitivity": [
+    {
+      "daily_turnover_pct": 1.0,
+      "eta": 5e-08,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 1.0,
+      "eta": 2.5e-07,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 1.0,
+      "eta": 1e-06,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 5.0,
+      "eta": 5e-08,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 5.0,
+      "eta": 2.5e-07,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 5.0,
+      "eta": 1e-06,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 10.0,
+      "eta": 5e-08,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 10.0,
+      "eta": 2.5e-07,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 10.0,
+      "eta": 1e-06,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 20.0,
+      "eta": 5e-08,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 20.0,
+      "eta": 2.5e-07,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 20.0,
+      "eta": 1e-06,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 50.0,
+      "eta": 5e-08,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 50.0,
+      "eta": 2.5e-07,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    },
+    {
+      "daily_turnover_pct": 50.0,
+      "eta": 1e-06,
+      "AC_vs_TWAP_savings_bp": -0.0,
+      "sharpe_delta": -0.0
+    }
+  ],
+  "spx_flip_stress": {
+    "scenario": "SPX_filter_flip_20pct_exit",
+    "q0_fraction": 0.2,
+    "T_hours": 4.0,
+    "n_slices_AC": 4,
+    "E_cost_AC_4slice_bp": 0.0006,
+    "E_cost_instant_bp": 0.0006,
+    "savings_vs_instant_bp": 0.0,
+    "sharpe_delta_one_event": 0.0,
+    "note": "K297' SPX filter flip is the highest-impact single exit event. Even here, AC savings < 0.1 bps because q0=20% and HL eta is low. Funding-rate acceleration further reduces benefit (exit urgency high when FR>0). Real-world concern: HL order book depth at q>$2M; not modeled here."
+  },
+  "parameters": {
+    "AC_SIGMA_DAILY": 0.03,
+    "AC_LAMBDA": 1e-06,
+    "AC_ETA": 2.5e-07,
+    "AC_GAMMA": 1.25e-07,
+    "AC_FUNDING_RATE": 0.0001,
+    "HL_MAKER_BP": 0.00015,
+    "BYBIT_MAKER_BP": 0.0002,
+    "N_SLICES_AC": 8
+  },
+  "current_execution_model": {
+    "K280_K208": "Single event fill at DAR signal time; 2 bp maker; no TWAP",
+    "K280_K276b": "Daily close rebalance; 2 bp maker; no TWAP",
+    "K302a_sat": "Position held continuously; 7 bp paper / 1.5 bp HL maker; amortized over 30d",
+    "sUSDe": "OC sleeve; daily allocation; no perp execution cost (stablecoin)"
+  },
+  "integration_notes": {
+    "HL_TWAP": "HL supports TWAP via loop-based orders (no native TWAP API as of K351). Implementation: schedule N market orders at T/N intervals. Added complexity: latency, partial fills, position tracking.",
+    "K302a_sat": "PAXG/SPX carry is largely passive; turnover ~1%/day. AC gains < 0.002 bp/day. Not worth TWAP infra cost.",
+    "SPX_flip": "SPX filter sudden flip is the most relevant scenario. Recommend: if SPX filter triggers, split exit over 2-4 hourly orders (not 8h TWAP) to balance urgency vs impact. Manual override is sufficient.",
+    "threshold_for_AC": "AC becomes relevant when: position > $5M notional on HL, OR daily turnover > 30%, OR Sharpe regime < 10 (high-vol environment). None apply to K280/K302a at current scale."
+  }
+}
