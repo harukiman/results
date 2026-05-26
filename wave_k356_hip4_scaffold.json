@@ -1,0 +1,65 @@
+{
+  "wave": "K356",
+  "date": "2026-05-27",
+  "status": "SCAFFOLD-READY",
+  "title": "HL HIP-4 Prediction Market Polling Daemon Scaffold",
+  "k353_verdict": "MONITOR",
+  "k368_target": "2026-06-10",
+  "daemon": {
+    "label": "com.cryptolab.hl-hip4-monitor",
+    "script": "scripts/hl_hip4_monitor.py",
+    "plist": "com.cryptolab.hl-hip4-monitor.plist",
+    "schedule_seconds": 300,
+    "run_at_load": false,
+    "snapshot_dir": "cache/hl_hip4_snapshots",
+    "log": "logs/hl_hip4_monitor.log",
+    "err": "logs/hl_hip4_monitor.err"
+  },
+  "parquet_schema": {
+    "columns": [
+      "ts_ms", "coin", "outcome_id", "side", "side_name",
+      "outcome_name", "question_name", "description",
+      "mid_price", "resolved", "resolved_outcome",
+      "best_bid", "best_ask", "spread", "spread_pct",
+      "bid_depth_1pct", "ask_depth_1pct", "btc_mark"
+    ],
+    "rows_per_snapshot": 22,
+    "key_insight": "coin key '#XXXX' = '#(outcome_id * 10 + side_index)'; side 0=Yes, 1=No"
+  },
+  "market_snapshot_at_scaffold": {
+    "timestamp_jst": "2026-05-27T07:20 JST",
+    "btc_mark": 75757.5,
+    "n_outcomes": 11,
+    "n_hip4_mids": 22,
+    "markets": {
+      "May_CPI_yoy": {
+        "Below_4.3pct": 0.368,
+        "Exactly_4.3pct": 0.436575,
+        "Above_4.3pct": 0.228505
+      },
+      "June_FOMC": {
+        "Change": 0.0315,
+        "No_Change": 0.9685
+      },
+      "BTC_daily_binary": {
+        "Yes": 0.048565,
+        "No": 0.951435
+      },
+      "UCL_Final": {
+        "PSG": 0.578265,
+        "Arsenal": 0.421735
+      }
+    }
+  },
+  "k368_calibration_gates": {
+    "bias_trigger_pct": 3.0,
+    "cross_venue_trigger_pct": 2.0,
+    "metrics": ["brier_score", "log_loss", "calibration_plot"],
+    "if_bias_found": "K369 trade prototype",
+    "if_well_calibrated": "MONITOR continues, no edge",
+    "cpi_resolution_date": "2026-06-10T08:30:00-04:00"
+  },
+  "activation_command": "cp com.cryptolab.hl-hip4-monitor.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.hl-hip4-monitor.plist",
+  "security_note": "K339: REPO_ROOT via Path(__file__).resolve().parent.parent, no /Users/ literals in script",
+  "plist_note": "launchd does not expand $HOME in <string> tags; absolute paths used in plist; file is gitignored by com.cryptolab.*.plist rule"
+}

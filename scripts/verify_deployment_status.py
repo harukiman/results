@@ -91,6 +91,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k344_susde_oc",
         expected_html_status="SCAFFOLD-READY",  # K348: plist in repo root (gitignored); cp to LaunchAgents then launchctl load to activate
     ),
+    DaemonSpec(
+        label="com.cryptolab.hl-hip4-monitor",
+        purpose="K353/K356 HIP-4 prediction market polling (2-week calibration to K368)",
+        scripts=["scripts/hl_hip4_monitor.py"],
+        log_basename="hl_hip4_monitor",
+        expected_html_status="SCAFFOLD-READY",  # plist in repo root (gitignored), cp to LaunchAgents to activate
+    ),
 ]
 
 
