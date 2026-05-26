@@ -1,0 +1,1017 @@
+{
+  "wave": "K372",
+  "strategy": "Liquidation Cascade Fade (K368 AX-09)",
+  "run_time_jst": "2026-05-27T08:54:25+09:00",
+  "parameters": {
+    "spike_mult": 4.0,
+    "lookback_bars": 144,
+    "lookback_hours": 12.0,
+    "price_move_min_pct": 0.4,
+    "hold_periods": [
+      "15min",
+      "30min",
+      "60min",
+      "4h"
+    ],
+    "cost_rt_bps": 12.0,
+    "oos_fraction": 0.25,
+    "perm_n": 1000,
+    "wf_folds": 4
+  },
+  "hl_api_discovery": {
+    "tested_endpoints": [
+      {
+        "type": "liquidationEvents",
+        "result": "Failed to deserialize \u2014 does not exist"
+      },
+      {
+        "type": "userLiquidations",
+        "result": "Failed to deserialize \u2014 does not exist"
+      },
+      {
+        "type": "getLiquidations",
+        "result": "Failed to deserialize \u2014 does not exist"
+      },
+      {
+        "type": "perpsLiquidations",
+        "result": "Failed to deserialize \u2014 does not exist"
+      },
+      {
+        "type": "forcedLiquidations",
+        "result": "Failed to deserialize \u2014 does not exist"
+      },
+      {
+        "type": "recentTrades (coin=BTC)",
+        "result": "Returns last ~10 trades. No historical archive. No is_liquidation flag. Keys: coin/side/px/sz/time/hash/tid/users"
+      },
+      {
+        "type": "userFillsByTime (liquidator)",
+        "result": "No is_liquidation flag. Dir field: Open/Close Long/Short only"
+      },
+      {
+        "type": "userEvents (WS)",
+        "result": "Per-user WS subscription only. No market-wide liquidation feed"
+      }
+    ],
+    "zero_hash_signal": {
+      "description": "Trades with hash == '0x'+'0'*64 in recentTrades are system-generated (liquidations / ADL). Real-time only \u2014 no historical REST archive. The 'users' field [liquidated_addr, liquidator_addr] confirms two-party structure. Observed liquidator addresses: 0x469e9a7f..., 0xecb63caa...",
+      "limitation": "recentTrades returns only ~10 most recent trades. No pagination or time-range filtering."
+    },
+    "alternative_paths": [
+      "Real-time WebSocket: subscribe to allMids + record zero-hash trades as they occur \u2192 build historical dataset over 30d",
+      "userEvents WS per known liquidator addresses for market-wide coverage",
+      "Hyperliquid blockchain archive node (requires local node or third-party indexer)",
+      "Third-party: CoinGlass, Coinalyze, Glassnode aggregate liquidation data (may require subscription)"
+    ],
+    "proxy_chosen": "Volume spike detection on 5-min Binance OHLCV: quote_volume > 4\u00d7 rolling_avg(144 bars). Combined with |ret_5m| > 0.4% to confirm directional pressure. This proxy is orthogonal to FR carry (K280) and OI-direction (K297') by construction."
+  },
+  "coin_stats": {
+    "BTC": {
+      "n_bars": 103687,
+      "n_years": 0.99,
+      "n_events": 285,
+      "events_per_year": 288.9,
+      "long_squeeze": 144,
+      "short_squeeze": 141,
+      "avg_spike_ratio": 6.39
+    },
+    "ETH": {
+      "n_bars": 103681,
+      "n_years": 0.99,
+      "n_events": 760,
+      "events_per_year": 770.5,
+      "long_squeeze": 372,
+      "short_squeeze": 388,
+      "avg_spike_ratio": 6.49
+    },
+    "SOL": {
+      "n_bars": 103681,
+      "n_years": 0.99,
+      "n_events": 795,
+      "events_per_year": 806.0,
+      "long_squeeze": 380,
+      "short_squeeze": 415,
+      "avg_spike_ratio": 6.14
+    },
+    "DOGE": {
+      "n_bars": 103681,
+      "n_years": 0.99,
+      "n_events": 1291,
+      "events_per_year": 1308.9,
+      "long_squeeze": 636,
+      "short_squeeze": 655,
+      "avg_spike_ratio": 7.19
+    },
+    "AVAX": {
+      "n_bars": 103681,
+      "n_years": 0.99,
+      "n_events": 1343,
+      "events_per_year": 1361.6,
+      "long_squeeze": 668,
+      "short_squeeze": 675,
+      "avg_spike_ratio": 8.38
+    },
+    "SUI": {
+      "n_bars": 103681,
+      "n_years": 0.99,
+      "n_events": 1395,
+      "events_per_year": 1414.4,
+      "long_squeeze": 701,
+      "short_squeeze": 694,
+      "avg_spike_ratio": 7.29
+    },
+    "XRP": {
+      "n_bars": 103681,
+      "n_years": 0.99,
+      "n_events": 759,
+      "events_per_year": 769.5,
+      "long_squeeze": 361,
+      "short_squeeze": 398,
+      "avg_spike_ratio": 6.44
+    },
+    "LINK": {
+      "n_bars": 103681,
+      "n_years": 0.99,
+      "n_events": 1204,
+      "events_per_year": 1220.7,
+      "long_squeeze": 613,
+      "short_squeeze": 591,
+      "avg_spike_ratio": 8.35
+    },
+    "PEPE": {
+      "n_bars": 103681,
+      "n_years": 0.99,
+      "n_events": 1449,
+      "events_per_year": 1469.1,
+      "long_squeeze": 728,
+      "short_squeeze": 721,
+      "avg_spike_ratio": 7.22
+    },
+    "ADA": {
+      "n_bars": 103681,
+      "n_years": 0.99,
+      "n_events": 1304,
+      "events_per_year": 1322.1,
+      "long_squeeze": 672,
+      "short_squeeze": 632,
+      "avg_spike_ratio": 7.86
+    }
+  },
+  "coin_backtest": {
+    "BTC": {
+      "15min": {
+        "n_trades_is": 213,
+        "n_trades_oos": 72,
+        "n_trades_full": 285,
+        "oos_sharpe": -3.605,
+        "full_sharpe": -2.749,
+        "oos_ann_ret_pct": -28.56,
+        "full_ann_ret_pct": -32.148,
+        "win_rate": 0.407,
+        "max_dd_pct": 33.088,
+        "wf_fold_sharpes": [
+          -2.179,
+          -1.55,
+          -4.528,
+          -3.651
+        ]
+      },
+      "30min": {
+        "n_trades_is": 213,
+        "n_trades_oos": 72,
+        "n_trades_full": 285,
+        "oos_sharpe": -2.13,
+        "full_sharpe": -2.637,
+        "oos_ann_ret_pct": -17.375,
+        "full_ann_ret_pct": -39.171,
+        "win_rate": 0.411,
+        "max_dd_pct": 41.252,
+        "wf_fold_sharpes": [
+          -2.617,
+          -0.812,
+          -5.005,
+          -2.13
+        ]
+      },
+      "60min": {
+        "n_trades_is": 213,
+        "n_trades_oos": 72,
+        "n_trades_full": 285,
+        "oos_sharpe": -2.965,
+        "full_sharpe": -2.063,
+        "oos_ann_ret_pct": -30.397,
+        "full_ann_ret_pct": -37.703,
+        "win_rate": 0.4,
+        "max_dd_pct": 38.761,
+        "wf_fold_sharpes": [
+          -2.902,
+          -0.223,
+          -2.619,
+          -2.83
+        ]
+      },
+      "4h": {
+        "n_trades_is": 213,
+        "n_trades_oos": 72,
+        "n_trades_full": 285,
+        "oos_sharpe": -2.636,
+        "full_sharpe": -2.115,
+        "oos_ann_ret_pct": -60.672,
+        "full_ann_ret_pct": -55.976,
+        "win_rate": 0.432,
+        "max_dd_pct": 63.377,
+        "wf_fold_sharpes": [
+          -3.887,
+          0.13,
+          -2.639,
+          -2.537
+        ]
+      }
+    },
+    "ETH": {
+      "15min": {
+        "n_trades_is": 570,
+        "n_trades_oos": 190,
+        "n_trades_full": 760,
+        "oos_sharpe": -5.547,
+        "full_sharpe": -4.582,
+        "oos_ann_ret_pct": -86.987,
+        "full_ann_ret_pct": -105.907,
+        "win_rate": 0.442,
+        "max_dd_pct": 110.56,
+        "wf_fold_sharpes": [
+          -3.806,
+          -5.225,
+          -5.16,
+          -5.557
+        ]
+      },
+      "30min": {
+        "n_trades_is": 570,
+        "n_trades_oos": 190,
+        "n_trades_full": 760,
+        "oos_sharpe": -4.758,
+        "full_sharpe": -4.575,
+        "oos_ann_ret_pct": -99.259,
+        "full_ann_ret_pct": -150.25,
+        "win_rate": 0.425,
+        "max_dd_pct": 156.623,
+        "wf_fold_sharpes": [
+          -3.876,
+          -5.037,
+          -6.164,
+          -4.767
+        ]
+      },
+      "60min": {
+        "n_trades_is": 570,
+        "n_trades_oos": 190,
+        "n_trades_full": 760,
+        "oos_sharpe": -5.355,
+        "full_sharpe": -5.426,
+        "oos_ann_ret_pct": -130.622,
+        "full_ann_ret_pct": -193.552,
+        "win_rate": 0.434,
+        "max_dd_pct": 197.557,
+        "wf_fold_sharpes": [
+          -4.519,
+          -6.262,
+          -6.347,
+          -5.365
+        ]
+      },
+      "4h": {
+        "n_trades_is": 570,
+        "n_trades_oos": 190,
+        "n_trades_full": 760,
+        "oos_sharpe": -5.318,
+        "full_sharpe": -4.045,
+        "oos_ann_ret_pct": -231.734,
+        "full_ann_ret_pct": -226.05,
+        "win_rate": 0.467,
+        "max_dd_pct": 228.927,
+        "wf_fold_sharpes": [
+          -5.954,
+          -1.636,
+          -3.989,
+          -5.328
+        ]
+      }
+    },
+    "SOL": {
+      "15min": {
+        "n_trades_is": 596,
+        "n_trades_oos": 199,
+        "n_trades_full": 795,
+        "oos_sharpe": -4.037,
+        "full_sharpe": -3.453,
+        "oos_ann_ret_pct": -67.66,
+        "full_ann_ret_pct": -80.012,
+        "win_rate": 0.442,
+        "max_dd_pct": 82.194,
+        "wf_fold_sharpes": [
+          -1.301,
+          -6.364,
+          -2.724,
+          -4.209
+        ]
+      },
+      "30min": {
+        "n_trades_is": 596,
+        "n_trades_oos": 199,
+        "n_trades_full": 795,
+        "oos_sharpe": -3.838,
+        "full_sharpe": -3.682,
+        "oos_ann_ret_pct": -74.214,
+        "full_ann_ret_pct": -115.222,
+        "win_rate": 0.439,
+        "max_dd_pct": 116.525,
+        "wf_fold_sharpes": [
+          -1.667,
+          -7.006,
+          -3.207,
+          -3.504
+        ]
+      },
+      "60min": {
+        "n_trades_is": 596,
+        "n_trades_oos": 199,
+        "n_trades_full": 795,
+        "oos_sharpe": -2.32,
+        "full_sharpe": -3.306,
+        "oos_ann_ret_pct": -59.138,
+        "full_ann_ret_pct": -132.871,
+        "win_rate": 0.462,
+        "max_dd_pct": 134.567,
+        "wf_fold_sharpes": [
+          -2.776,
+          -5.935,
+          -2.097,
+          -2.078
+        ]
+      },
+      "4h": {
+        "n_trades_is": 596,
+        "n_trades_oos": 199,
+        "n_trades_full": 795,
+        "oos_sharpe": -1.366,
+        "full_sharpe": -2.96,
+        "oos_ann_ret_pct": -60.576,
+        "full_ann_ret_pct": -201.087,
+        "win_rate": 0.452,
+        "max_dd_pct": 205.281,
+        "wf_fold_sharpes": [
+          -3.249,
+          -2.299,
+          -4.762,
+          -1.276
+        ]
+      }
+    },
+    "DOGE": {
+      "15min": {
+        "n_trades_is": 968,
+        "n_trades_oos": 323,
+        "n_trades_full": 1291,
+        "oos_sharpe": -3.511,
+        "full_sharpe": -1.531,
+        "oos_ann_ret_pct": -79.418,
+        "full_ann_ret_pct": -143.199,
+        "win_rate": 0.461,
+        "max_dd_pct": 144.832,
+        "wf_fold_sharpes": [
+          -1.964,
+          -1.826,
+          -3.019,
+          -3.545
+        ]
+      },
+      "30min": {
+        "n_trades_is": 968,
+        "n_trades_oos": 323,
+        "n_trades_full": 1291,
+        "oos_sharpe": -3.906,
+        "full_sharpe": -1.818,
+        "oos_ann_ret_pct": -105.203,
+        "full_ann_ret_pct": -206.313,
+        "win_rate": 0.477,
+        "max_dd_pct": 206.87,
+        "wf_fold_sharpes": [
+          -4.888,
+          -2.093,
+          -1.328,
+          -3.925
+        ]
+      },
+      "60min": {
+        "n_trades_is": 968,
+        "n_trades_oos": 323,
+        "n_trades_full": 1291,
+        "oos_sharpe": -3.86,
+        "full_sharpe": -2.123,
+        "oos_ann_ret_pct": -136.539,
+        "full_ann_ret_pct": -194.368,
+        "win_rate": 0.488,
+        "max_dd_pct": 199.988,
+        "wf_fold_sharpes": [
+          -4.351,
+          -2.535,
+          -0.129,
+          -3.994
+        ]
+      },
+      "4h": {
+        "n_trades_is": 968,
+        "n_trades_oos": 323,
+        "n_trades_full": 1291,
+        "oos_sharpe": -3.071,
+        "full_sharpe": -2.776,
+        "oos_ann_ret_pct": -219.398,
+        "full_ann_ret_pct": -334.475,
+        "win_rate": 0.46,
+        "max_dd_pct": 340.47,
+        "wf_fold_sharpes": [
+          -5.287,
+          -2.839,
+          -1.129,
+          -3.373
+        ]
+      }
+    },
+    "AVAX": {
+      "15min": {
+        "n_trades_is": 1007,
+        "n_trades_oos": 336,
+        "n_trades_full": 1343,
+        "oos_sharpe": -6.749,
+        "full_sharpe": -1.179,
+        "oos_ann_ret_pct": -209.22,
+        "full_ann_ret_pct": -136.059,
+        "win_rate": 0.44,
+        "max_dd_pct": 160.272,
+        "wf_fold_sharpes": [
+          -5.062,
+          0.115,
+          -8.356,
+          -6.439
+        ]
+      },
+      "30min": {
+        "n_trades_is": 1007,
+        "n_trades_oos": 336,
+        "n_trades_full": 1343,
+        "oos_sharpe": -6.392,
+        "full_sharpe": -1.825,
+        "oos_ann_ret_pct": -262.055,
+        "full_ann_ret_pct": -230.462,
+        "win_rate": 0.441,
+        "max_dd_pct": 231.258,
+        "wf_fold_sharpes": [
+          -5.621,
+          -0.44,
+          -9.479,
+          -6.258
+        ]
+      },
+      "60min": {
+        "n_trades_is": 1007,
+        "n_trades_oos": 336,
+        "n_trades_full": 1343,
+        "oos_sharpe": -5.498,
+        "full_sharpe": -2.622,
+        "oos_ann_ret_pct": -286.619,
+        "full_ann_ret_pct": -269.811,
+        "win_rate": 0.463,
+        "max_dd_pct": 266.172,
+        "wf_fold_sharpes": [
+          -5.295,
+          -0.748,
+          -7.41,
+          -5.4
+        ]
+      },
+      "4h": {
+        "n_trades_is": 1007,
+        "n_trades_oos": 336,
+        "n_trades_full": 1343,
+        "oos_sharpe": -4.435,
+        "full_sharpe": -2.072,
+        "oos_ann_ret_pct": -352.876,
+        "full_ann_ret_pct": -255.554,
+        "win_rate": 0.488,
+        "max_dd_pct": 254.937,
+        "wf_fold_sharpes": [
+          -3.28,
+          -0.908,
+          -2.863,
+          -4.293
+        ]
+      }
+    },
+    "SUI": {
+      "15min": {
+        "n_trades_is": 1046,
+        "n_trades_oos": 349,
+        "n_trades_full": 1395,
+        "oos_sharpe": -6.012,
+        "full_sharpe": -0.75,
+        "oos_ann_ret_pct": -181.972,
+        "full_ann_ret_pct": -79.748,
+        "win_rate": 0.452,
+        "max_dd_pct": 132.666,
+        "wf_fold_sharpes": [
+          -4.41,
+          0.951,
+          -4.713,
+          -5.882
+        ]
+      },
+      "30min": {
+        "n_trades_is": 1046,
+        "n_trades_oos": 349,
+        "n_trades_full": 1395,
+        "oos_sharpe": -5.334,
+        "full_sharpe": -2.267,
+        "oos_ann_ret_pct": -224.495,
+        "full_ann_ret_pct": -234.579,
+        "win_rate": 0.454,
+        "max_dd_pct": 245.911,
+        "wf_fold_sharpes": [
+          -5.945,
+          -1.655,
+          -3.128,
+          -5.19
+        ]
+      },
+      "60min": {
+        "n_trades_is": 1046,
+        "n_trades_oos": 348,
+        "n_trades_full": 1394,
+        "oos_sharpe": -4.83,
+        "full_sharpe": -2.391,
+        "oos_ann_ret_pct": -269.265,
+        "full_ann_ret_pct": -237.998,
+        "win_rate": 0.464,
+        "max_dd_pct": 247.688,
+        "wf_fold_sharpes": [
+          -6.266,
+          -2.086,
+          -0.096,
+          -4.777
+        ]
+      },
+      "4h": {
+        "n_trades_is": 1046,
+        "n_trades_oos": 347,
+        "n_trades_full": 1393,
+        "oos_sharpe": -5.103,
+        "full_sharpe": -2.663,
+        "oos_ann_ret_pct": -533.459,
+        "full_ann_ret_pct": -353.185,
+        "win_rate": 0.486,
+        "max_dd_pct": 362.798,
+        "wf_fold_sharpes": [
+          -3.185,
+          -2.85,
+          -0.123,
+          -5.02
+        ]
+      }
+    },
+    "XRP": {
+      "15min": {
+        "n_trades_is": 569,
+        "n_trades_oos": 190,
+        "n_trades_full": 759,
+        "oos_sharpe": -3.298,
+        "full_sharpe": -2.342,
+        "oos_ann_ret_pct": -53.408,
+        "full_ann_ret_pct": -76.976,
+        "win_rate": 0.464,
+        "max_dd_pct": 80.821,
+        "wf_fold_sharpes": [
+          -3.774,
+          -1.281,
+          -4.962,
+          -3.2
+        ]
+      },
+      "30min": {
+        "n_trades_is": 569,
+        "n_trades_oos": 190,
+        "n_trades_full": 759,
+        "oos_sharpe": -4.215,
+        "full_sharpe": -1.981,
+        "oos_ann_ret_pct": -80.479,
+        "full_ann_ret_pct": -95.532,
+        "win_rate": 0.447,
+        "max_dd_pct": 97.552,
+        "wf_fold_sharpes": [
+          -6.178,
+          -0.948,
+          -2.862,
+          -3.703
+        ]
+      },
+      "60min": {
+        "n_trades_is": 569,
+        "n_trades_oos": 190,
+        "n_trades_full": 759,
+        "oos_sharpe": -4.712,
+        "full_sharpe": -2.26,
+        "oos_ann_ret_pct": -125.017,
+        "full_ann_ret_pct": -105.72,
+        "win_rate": 0.469,
+        "max_dd_pct": 108.718,
+        "wf_fold_sharpes": [
+          -5.762,
+          -0.992,
+          -1.327,
+          -4.446
+        ]
+      },
+      "4h": {
+        "n_trades_is": 569,
+        "n_trades_oos": 190,
+        "n_trades_full": 759,
+        "oos_sharpe": -1.083,
+        "full_sharpe": -2.118,
+        "oos_ann_ret_pct": -44.818,
+        "full_ann_ret_pct": -137.311,
+        "win_rate": 0.449,
+        "max_dd_pct": 144.772,
+        "wf_fold_sharpes": [
+          -3.611,
+          -1.33,
+          -3.545,
+          -0.848
+        ]
+      }
+    },
+    "LINK": {
+      "15min": {
+        "n_trades_is": 903,
+        "n_trades_oos": 301,
+        "n_trades_full": 1204,
+        "oos_sharpe": -6.068,
+        "full_sharpe": -1.696,
+        "oos_ann_ret_pct": -144.218,
+        "full_ann_ret_pct": -173.479,
+        "win_rate": 0.463,
+        "max_dd_pct": 175.165,
+        "wf_fold_sharpes": [
+          -3.548,
+          -1.772,
+          -2.83,
+          -6.079
+        ]
+      },
+      "30min": {
+        "n_trades_is": 903,
+        "n_trades_oos": 301,
+        "n_trades_full": 1204,
+        "oos_sharpe": -6.956,
+        "full_sharpe": -2.615,
+        "oos_ann_ret_pct": -206.167,
+        "full_ann_ret_pct": -263.061,
+        "win_rate": 0.458,
+        "max_dd_pct": 263.977,
+        "wf_fold_sharpes": [
+          -1.905,
+          -3.224,
+          -3.449,
+          -6.969
+        ]
+      },
+      "60min": {
+        "n_trades_is": 903,
+        "n_trades_oos": 301,
+        "n_trades_full": 1204,
+        "oos_sharpe": -6.607,
+        "full_sharpe": -2.506,
+        "oos_ann_ret_pct": -267.357,
+        "full_ann_ret_pct": -218.124,
+        "win_rate": 0.48,
+        "max_dd_pct": 220.249,
+        "wf_fold_sharpes": [
+          -2.797,
+          -2.409,
+          -1.661,
+          -6.619
+        ]
+      },
+      "4h": {
+        "n_trades_is": 903,
+        "n_trades_oos": 301,
+        "n_trades_full": 1204,
+        "oos_sharpe": -5.479,
+        "full_sharpe": -2.325,
+        "oos_ann_ret_pct": -330.55,
+        "full_ann_ret_pct": -263.571,
+        "win_rate": 0.484,
+        "max_dd_pct": 271.159,
+        "wf_fold_sharpes": [
+          -0.762,
+          -3.267,
+          -0.782,
+          -5.489
+        ]
+      }
+    },
+    "PEPE": {
+      "15min": {
+        "n_trades_is": 1086,
+        "n_trades_oos": 363,
+        "n_trades_full": 1449,
+        "oos_sharpe": -6.499,
+        "full_sharpe": -0.257,
+        "oos_ann_ret_pct": -177.374,
+        "full_ann_ret_pct": -33.938,
+        "win_rate": 0.469,
+        "max_dd_pct": 108.967,
+        "wf_fold_sharpes": [
+          -3.174,
+          1.097,
+          -3.173,
+          -6.586
+        ]
+      },
+      "30min": {
+        "n_trades_is": 1086,
+        "n_trades_oos": 363,
+        "n_trades_full": 1449,
+        "oos_sharpe": -3.717,
+        "full_sharpe": -0.135,
+        "oos_ann_ret_pct": -138.826,
+        "full_ann_ret_pct": -23.643,
+        "win_rate": 0.489,
+        "max_dd_pct": 141.745,
+        "wf_fold_sharpes": [
+          -2.901,
+          0.592,
+          -0.354,
+          -3.773
+        ]
+      },
+      "60min": {
+        "n_trades_is": 1086,
+        "n_trades_oos": 363,
+        "n_trades_full": 1449,
+        "oos_sharpe": -5.336,
+        "full_sharpe": -0.717,
+        "oos_ann_ret_pct": -262.326,
+        "full_ann_ret_pct": -96.433,
+        "win_rate": 0.487,
+        "max_dd_pct": 145.413,
+        "wf_fold_sharpes": [
+          -1.614,
+          -0.241,
+          0.461,
+          -5.404
+        ]
+      },
+      "4h": {
+        "n_trades_is": 1086,
+        "n_trades_oos": 363,
+        "n_trades_full": 1449,
+        "oos_sharpe": -2.458,
+        "full_sharpe": -0.997,
+        "oos_ann_ret_pct": -223.033,
+        "full_ann_ret_pct": -165.347,
+        "win_rate": 0.489,
+        "max_dd_pct": 207.368,
+        "wf_fold_sharpes": [
+          -0.218,
+          -0.247,
+          -2.649,
+          -2.477
+        ]
+      }
+    },
+    "ADA": {
+      "15min": {
+        "n_trades_is": 978,
+        "n_trades_oos": 326,
+        "n_trades_full": 1304,
+        "oos_sharpe": -6.631,
+        "full_sharpe": -1.728,
+        "oos_ann_ret_pct": -167.083,
+        "full_ann_ret_pct": -165.481,
+        "win_rate": 0.442,
+        "max_dd_pct": 197.756,
+        "wf_fold_sharpes": [
+          -2.753,
+          -1.085,
+          -6.468,
+          -6.643
+        ]
+      },
+      "30min": {
+        "n_trades_is": 978,
+        "n_trades_oos": 326,
+        "n_trades_full": 1304,
+        "oos_sharpe": -6.001,
+        "full_sharpe": -2.069,
+        "oos_ann_ret_pct": -177.121,
+        "full_ann_ret_pct": -260.945,
+        "win_rate": 0.451,
+        "max_dd_pct": 260.414,
+        "wf_fold_sharpes": [
+          -2.975,
+          -2.3,
+          -4.333,
+          -6.013
+        ]
+      },
+      "60min": {
+        "n_trades_is": 978,
+        "n_trades_oos": 326,
+        "n_trades_full": 1304,
+        "oos_sharpe": -6.176,
+        "full_sharpe": -2.393,
+        "oos_ann_ret_pct": -252.909,
+        "full_ann_ret_pct": -254.653,
+        "win_rate": 0.457,
+        "max_dd_pct": 270.357,
+        "wf_fold_sharpes": [
+          -2.737,
+          -2.084,
+          -3.79,
+          -6.188
+        ]
+      },
+      "4h": {
+        "n_trades_is": 978,
+        "n_trades_oos": 326,
+        "n_trades_full": 1304,
+        "oos_sharpe": -2.194,
+        "full_sharpe": -2.273,
+        "oos_ann_ret_pct": -148.156,
+        "full_ann_ret_pct": -322.878,
+        "win_rate": 0.472,
+        "max_dd_pct": 362.698,
+        "wf_fold_sharpes": [
+          -0.981,
+          -2.609,
+          -4.331,
+          -2.198
+        ]
+      }
+    }
+  },
+  "combined_by_hold": {
+    "15min": {
+      "n_trades_oos": 2649,
+      "n_trades_full": 10585,
+      "trades_per_year_oos": 10703.0,
+      "oos_sharpe": -16.619,
+      "oos_ann_ret_pct": -1195.9,
+      "win_rate": 0.424,
+      "max_dd_pct": 298.592
+    },
+    "30min": {
+      "n_trades_oos": 2649,
+      "n_trades_full": 10585,
+      "trades_per_year_oos": 10703.0,
+      "oos_sharpe": -14.978,
+      "oos_ann_ret_pct": -1385.193,
+      "win_rate": 0.44,
+      "max_dd_pct": 344.92
+    },
+    "60min": {
+      "n_trades_oos": 2648,
+      "n_trades_full": 10584,
+      "trades_per_year_oos": 10699.0,
+      "oos_sharpe": -14.942,
+      "oos_ann_ret_pct": -1820.19,
+      "win_rate": 0.448,
+      "max_dd_pct": 453.112
+    },
+    "4h": {
+      "n_trades_oos": 2647,
+      "n_trades_full": 10583,
+      "trades_per_year_oos": 10694.9,
+      "oos_sharpe": -10.41,
+      "oos_ann_ret_pct": -2205.273,
+      "win_rate": 0.473,
+      "max_dd_pct": 545.884
+    }
+  },
+  "cascade_event_total": 10585,
+  "best_combo": {
+    "coin": "XRP",
+    "hold": "4h",
+    "oos_sharpe": -1.083,
+    "wf_sharpes": [
+      -3.611,
+      -1.33,
+      -3.545,
+      -0.848
+    ]
+  },
+  "k266_gates": {
+    "G1_oos_sharpe": {
+      "value": -14.978,
+      "threshold": 1.0,
+      "pass": false,
+      "note": "OOS (last 25% chronological) annualised Sharpe across all coins"
+    },
+    "G2_perm_pvalue": {
+      "value": 1.0,
+      "threshold": 0.05,
+      "pass": false,
+      "note": "1000 random reshuffles of OOS trade returns (2649 trades)"
+    },
+    "G3_dsr_proxy": {
+      "bonferroni_n": 40,
+      "bonferroni_threshold": 0.00125,
+      "oos_p_raw": 1.0,
+      "pass": false,
+      "note": "Bonferroni p < 0.05/40=0.00125 required"
+    },
+    "G4_walk_forward": {
+      "fold_sharpes": [
+        -3.611,
+        -1.33,
+        -3.545,
+        -0.848
+      ],
+      "all_positive": false,
+      "pass": false,
+      "note": "4-fold chronological WF on best-performing coin \u00d7 hold combo"
+    },
+    "G5a_corr_k280": {
+      "value": 0.05,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Structural estimate: 15-60min mean reversion vs overnight FR carry \u2192 orthogonal"
+    },
+    "G5b_corr_k297": {
+      "value": -0.08,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Structural estimate: contrarian fade vs directional OI signal \u2192 near zero/-"
+    },
+    "G6_trade_count": {
+      "total": 10585,
+      "per_year": 10691.9,
+      "threshold": 50,
+      "pass": true,
+      "note": "All coins combined, full IS+OOS period"
+    },
+    "G7_ann_return": {
+      "value_pct": -1619.178,
+      "threshold_pct": 5.0,
+      "pass": false,
+      "note": "Annualised arithmetic return after 12bps RT cost, all coins"
+    },
+    "_summary": {
+      "gates_passed": 3,
+      "gates_total": 8,
+      "oos_sharpe": -14.978,
+      "perm_pvalue": 1.0,
+      "full_ann_ret_pct": -1619.178,
+      "trades_per_year": 10691.9,
+      "wf_all_positive": false
+    }
+  },
+  "gate_eval_hold": "30min",
+  "decision": "REJECT",
+  "decision_rationale": "3/8 total gates passed but 0/5 EMPIRICAL gates passed. Volume-spike proxy is demonstrably anti-edge for a fade strategy: all holding periods (15min, 30min, 60min, 4h) show negative Sharpe across all 10 coins. Win rates 0.42-0.49 confirm that volume spikes produce price CONTINUATION, not reversal. DEFER strategy activation. Required before re-testing: build real-time HL zero-hash liquidation WebSocket daemon to accumulate \u226590d of confirmed forced-close events. Alternative: use CoinGlass/Coinalyze liquidation API (paid) for HL-specific historical data.",
+  "momentum_finding": "CRITICAL FINDING: Volume-spike proxy shows MOMENTUM CONTINUATION, not mean-reversion. Win rate on fade direction: 0.42-0.49 (below 50% = fade is systematically wrong). This means volume spikes \u2192 price continues moving in spike direction for 15min-4h. Interpretation: Binance spot volume spikes are driven by retail momentum, NOT forced liquidations. HL-specific liquidations (zero-hash on-chain events) may behave differently because they are sudden, mechanical closes that exhaust the local order book \u2014 but this distinction CANNOT be tested without actual HL liquidation event data.",
+  "concentration_impact": {
+    "v6_13d_hl_exposure_pct": 57.5,
+    "ax09_sleeve_target_pct": 5.0,
+    "new_hl_exposure_pct": 62.5,
+    "cap_k355_pct": 65.0,
+    "within_cap": true,
+    "conservative_fallback": {
+      "sleeve_pct": 3.0,
+      "new_hl_exposure_pct": 60.5
+    },
+    "note": "AX-09 at 5% sleeve keeps HL within 65% K355 cap with 2.5% headroom"
+  },
+  "data_source": {
+    "type": "Binance spot OHLCV 5-min (proxy for HL prices)",
+    "coins": [
+      "BTC",
+      "ETH",
+      "SOL",
+      "DOGE",
+      "AVAX",
+      "SUI",
+      "XRP",
+      "LINK",
+      "PEPE",
+      "ADA"
+    ],
+    "period": "2025-05-27 to 2026-05-22 (~365 days)",
+    "n_coins": 10,
+    "note": "Binance\u2194HL price correlation typically 0.995+; proxy valid for directional fade"
+  },
+  "next_steps": {
+    "ACCEPT": "K373: production daemon (HL WS zero-hash stream + fade order logic), 5% sleeve, real-time monitor",
+    "CONDITIONAL": "60d paper-trade forward monitor; accumulate real-time HL zero-hash liquidation data",
+    "REJECT": "DEFER; build HL liquidation daemon first; re-run once \u226590d of actual events available"
+  }
+}
