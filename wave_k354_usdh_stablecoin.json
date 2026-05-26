@@ -1,0 +1,276 @@
+{
+  "wave": "K354",
+  "task": "R11-8 \u2014 USDH stablecoin yield arb exploration",
+  "generated_at": "2026-05-27T07:11:42+09:00",
+  "decision": "REJECT",
+  "protocol": {
+    "name": "USDH",
+    "issuer": "Native Markets / Bridge Building Inc.",
+    "chain": "HyperEVM (Hyperliquid L1 sidechain)",
+    "launch_date": "2024-09",
+    "type": "fiat_backed_stablecoin",
+    "peg": "1:1 USD",
+    "reserve_assets": [
+      "cash",
+      "short_term_US_Treasuries",
+      "repo_agreements"
+    ],
+    "reserve_managers": [
+      "BlackRock (BUIDL)",
+      "Superstate (USTB)"
+    ],
+    "custody": [
+      "JPMorgan Chase",
+      "Fireblocks"
+    ],
+    "issuance_platform": "Stripe Bridge",
+    "genius_act_compliant": true,
+    "audit": {
+      "type": "monthly_reserve_attestation",
+      "cadence": "monthly",
+      "attestor": "independent_third_party",
+      "status": "ACTIVE_ONGOING",
+      "note": "Reserve composition + custodian details public at all times"
+    }
+  },
+  "market_data": {
+    "as_of": "2026-05-27T07:11:42+09:00",
+    "source": "CoinMarketCap 2026-05-27",
+    "price_usd": 0.9874,
+    "market_cap_usd": 62440000,
+    "circulating_supply": 63240000,
+    "total_supply": 65870000,
+    "ath_usd": 1.01,
+    "atl_usd": 0.9845,
+    "max_peg_deviation_high_pct": 1.0,
+    "max_peg_deviation_low_pct": -1.55,
+    "current_deviation_pct": -1.26,
+    "volume_24h_usd": 6410000,
+    "vol_to_mcap_ratio": 0.1027,
+    "peak_supply_note": "Was ~$90.7M at search snapshot (earlier date); declining due to sunset",
+    "sunset_trigger": "Coinbase acquisition of USDH brand assets, May 2026"
+  },
+  "sunset_event": {
+    "event": "Coinbase acquires USDH brand assets; USDH sunsets",
+    "announced": "2026-05 (mid-May)",
+    "deal_summary": "Coinbase becomes Hyperliquid's official USDC treasury deployer under the Aligned Quote Asset framework. Native Markets granted Coinbase right to purchase USDH brand assets. USDH transitions from primary HL stablecoin to deprecated status.",
+    "transition_details": {
+      "USDH_redemption": "Feeless USDH\u2192USDC or fiat via Native Markets USDH Dashboard (ongoing)",
+      "timeline": "Gradual; no hard deadline published as of 2026-05-27",
+      "market_alignment": "Hyperliquid migrating spot + perp markets from USDH to USDC",
+      "revenue_sharing": "Coinbase shares 'vast majority' of USDC reserve yield with HL protocol",
+      "hyperliquid_usdc_rev_share_pct": 90,
+      "hype_buyback_mechanism": "USDC yield \u2192 HL Assistance Fund \u2192 HYPE buyback (replaces USDH 50% mechanism)"
+    },
+    "impact_on_usdh_holders": [
+      "Full par redemption guaranteed (1 USDH = $1 USDC or fiat)",
+      "No forced conversion deadline announced",
+      "Secondary market liquidity thinning (MCap declined ~$28M in days)",
+      "Current spot price $0.9874 = slight discount to par (arb exists but thinning)"
+    ],
+    "impact_on_hypurrfi_usdh_pools": {
+      "isolated_pool_cap": "Supply cap 5M, borrow cap 3M \u2014 likely to be wound down",
+      "tvl_at_k337": 854375,
+      "note": "HypurrFi USDH pool survival unlikely post-sunset; redemption arb window closing"
+    }
+  },
+  "yield_analysis": {
+    "native_yield_to_holder": false,
+    "yield_distribution": {
+      "model": "50/50 split (historical, pre-sunset)",
+      "tranche_1": "50% \u2192 HL Assistance Fund \u2192 HYPE buyback",
+      "tranche_2": "50% \u2192 USDH Growth & Builders grants / incentives",
+      "holder_direct_apy_pct": 0.0,
+      "note": "Unlike sUSDe, USDH has NO pass-through yield to token holders"
+    },
+    "hypurrfi_lending_apy": {
+      "source": "K337 wave + HypurrFi DeFiLlama 2026-05-27",
+      "usdh_isolated_pool_est_apy_pct": {
+        "min": 9.0,
+        "max": 15.0
+      },
+      "hypurrfi_pooled_avg_apy_pct": 8.24,
+      "hypurrfi_tvl_current_usd": 15630000,
+      "note": "USDH isolated pool is tiny; HypurrFi pooled is USDC/HYPE dominated"
+    },
+    "ecosystem_trading_benefits": {
+      "taker_fee_discount": "0% lower taker fees on USDH-quoted markets",
+      "maker_rebate_boost": "50% higher maker rebates",
+      "volume_amplification": "20% amplified volume for fee tier",
+      "note": "These benefits are TRADING perks, not yield. Not applicable to passive holders."
+    },
+    "comparison_to_alternatives": {
+      "plain_USDC_no_yield_pct": 0.0,
+      "USDC_Aave_Compound_est_pct": 3.5,
+      "sUSDe_current_apy_pct": 3.72,
+      "sUSDe_7d_ma_pct": 4.04,
+      "sUSDe_hist_mean_pct": 10.3,
+      "USDH_direct_holder_yield_pct": 0.0,
+      "USDH_HypurrFi_lending_est_pct": 9.0
+    }
+  },
+  "peg_analysis": {
+    "data_source": "CMC snapshot + ATH/ATL metadata (granular 30d data unavailable, API 404/403)",
+    "price_history": {
+      "launch": "2024-09",
+      "atl_date": "2025-10-10",
+      "atl_usd": 0.9845,
+      "atl_deviation_pct": -1.55,
+      "ath_date": "2026-02-06",
+      "ath_usd": 1.01,
+      "ath_deviation_pct": 1.0,
+      "current_price_usd": 0.9874,
+      "current_deviation_pct": -1.26
+    },
+    "depeg_incidents_formal": 0,
+    "peg_stability_assessment": {
+      "max_observed_deviation_pct": 1.55,
+      "g2_threshold_pct": 5.0,
+      "g2_cleared": true,
+      "note": "Max deviation 1.55% well within 5% G2 gate. However current -1.26% discount is NOT arb opportunity \u2014 it reflects SUNSET RISK (rational discount for redemption friction + counterparty risk during wind-down). This is NOT a clean peg arb."
+    },
+    "arb_opportunity_assessment": {
+      "discount_arb_available": true,
+      "entry_price_usd": 0.9874,
+      "par_redemption_usd": 1.0,
+      "gross_spread_pct": 1.26,
+      "estimated_costs": {
+        "slippage_pct": 0.2,
+        "gas_hyperevm_pct": 0.01,
+        "redemption_delay_risk_pct": 0.5
+      },
+      "net_spread_pct": 0.55,
+      "arb_type": "ONE_TIME_SUNSET_ARB",
+      "risk_classification": "MEDIUM_HIGH",
+      "note": "Potential one-time gain of ~0.55% net. NOT a systematic yield strategy. Redemption timeline unspecified. Not suitable as a portfolio sleeve."
+    }
+  },
+  "correlation_k344": {
+    "method": "qualitative_mechanistic + point-in-time_comparison",
+    "note": "30d tick price data unavailable for correlation computation (API blocked)",
+    "susde_yield_driver": "ETH liquid staking + Ethena delta-neutral perp funding",
+    "usdh_yield_driver": "US Treasury yield distributed as ecosystem grants (NOT to holders)",
+    "yield_orthogonality": {
+      "mechanistic_score": "ORTHOGONAL",
+      "rho_estimated_qualitative": "< 0.2",
+      "g5_threshold": 0.4,
+      "g5_cleared_qualitative": true,
+      "caveat": "Cannot compute actual \u03c1 \u2014 USDH direct yield = 0% to holders; comparison meaningless"
+    },
+    "combined_sleeve_rationale": {
+      "conclusion": "INVALID \u2014 USDH offers no direct yield to holders",
+      "sUSDe_apy": 3.72,
+      "USDH_direct_apy": 0.0,
+      "combined_sleeve_weighted_apy": "Undefined (USDH = 0%)"
+    }
+  },
+  "gate_results": [
+    {
+      "gate": "G1",
+      "name": "net_apy_ge_5pct",
+      "threshold": 5.0,
+      "actual": 0.0,
+      "pass": false,
+      "note": "USDH holders earn 0% yield. HypurrFi lending theoretical 9%+ but pool is winding down with sunset."
+    },
+    {
+      "gate": "G2",
+      "name": "max_peg_deviation_lt_5pct",
+      "threshold": 5.0,
+      "actual": 1.55,
+      "pass": true,
+      "note": "Historical ATL deviation 1.55% \u2014 technically within gate. But current -1.26% reflects sunset discount, not normal operation."
+    },
+    {
+      "gate": "G3",
+      "name": "audit_verified",
+      "threshold": "monthly_attestation",
+      "actual": "monthly_independent_attestation_ongoing",
+      "pass": true,
+      "note": "Monthly reserve attestations confirmed. Reserve composition public."
+    },
+    {
+      "gate": "G4",
+      "name": "tvl_gt_20m_and_institutional_backing",
+      "threshold": 20000000,
+      "actual_market_cap": 62440000,
+      "pass_market_cap": true,
+      "coinbase_backing": true,
+      "circle_backing": false,
+      "note": "MCap $62.4M > $20M threshold at snapshot. BUT: declining rapidly post-sunset announcement (was ~$90.7M days prior). Coinbase is ACQUIRING brand (not backing). Effective operational TVL is rapidly zeroing. Gate technically passes but economically FAIL.",
+      "effective_pass": false
+    },
+    {
+      "gate": "G5",
+      "name": "orthogonal_to_k344_rho_lt_04",
+      "threshold": 0.4,
+      "actual_rho_computed": null,
+      "pass": false,
+      "note": "Cannot be tested: USDH yield to holders = 0%. No yield series to correlate with sUSDe."
+    }
+  ],
+  "final_decision": {
+    "verdict": "REJECT",
+    "rationale": [
+      "CRITICAL: USDH is being SUNSET (May 2026). Coinbase acquired brand assets; Hyperliquid migrating to USDC as primary quote asset.",
+      "G1 FAIL: USDH offers 0% yield to holders. Reserve yield is fully recycled to HL Assistance Fund and builder grants \u2014 none passes through to token holders.",
+      "K344 complement premise is INVALID: sUSDe yields 3.72% to holders; USDH yields 0%. There is no orthogonal yield axis \u2014 just orthogonal nothingness.",
+      "HypurrFi USDH isolated pool TVL was $854K (K337) \u2014 already tiny. With sunset, this pool will be wound down entirely.",
+      "Current -1.26% peg discount is a SUNSET RISK DISCOUNT, not a systematic arb opportunity.",
+      "One-time arb: buy at $0.9874 \u2192 redeem at $1.00 = ~0.55% net after costs. Trivial, one-directional, not a yield strategy.",
+      "Gates passed: 2/5 (G2 peg deviation, G3 audit). G1, G4-effective, G5 all fail."
+    ],
+    "complementarity_to_k344": "INVALID \u2014 no yield mechanism for token holders",
+    "v6_14_sleeve_status": "REJECTED \u2014 do not add to portfolio",
+    "alternative_recommendation": "USDC-on-Hyperliquid via Coinbase deal: 90% USDC reserve yield \u2192 HL protocol. Monitor whether HL passes any USDC yield share to HYPE stakers or LP providers as a potential future sleeve (K355+ wave if mechanism clarified).",
+    "gates_cleared": "2/5"
+  },
+  "data_sources": [
+    {
+      "name": "USDH Official",
+      "url": "https://usdh.com/",
+      "quality": "FETCHED"
+    },
+    {
+      "name": "CoinMarketCap USDH",
+      "url": "https://coinmarketcap.com/currencies/hyperliquid-usd/",
+      "quality": "FETCHED"
+    },
+    {
+      "name": "The Block \u2014 Coinbase/HL deal",
+      "url": "https://www.theblock.co/post/401233/coinbase-hyperliquid-official-deployer-usdc",
+      "quality": "SEARCHED"
+    },
+    {
+      "name": "Unchained Crypto \u2014 USDH sunset",
+      "url": "https://unchainedcrypto.com/coinbase-becomes-hyperliquids-official-usdc-treasury-deployer-as-usdh-sunsets/",
+      "quality": "SEARCHED"
+    },
+    {
+      "name": "BeinCrypto \u2014 Coinbase USDH",
+      "url": "https://beincrypto.com/coinbase-usdh-hyperliquid-shifts-to-usdc/",
+      "quality": "FETCHED"
+    },
+    {
+      "name": "DefiLlama HypurrFi",
+      "url": "https://defillama.com/protocol/hypurrfi",
+      "quality": "FETCHED"
+    },
+    {
+      "name": "wave_k337_hypurrfi_euler.json",
+      "url": "local",
+      "quality": "EXACT"
+    },
+    {
+      "name": "wave_k344_ethena_optimal_control.json",
+      "url": "local",
+      "quality": "EXACT"
+    }
+  ],
+  "research_gaps": [
+    "CoinGecko USDH price tick data (30d) \u2014 API 404 (token not indexed or endpoint changed)",
+    "DefiLlama USDH stablecoin page \u2014 403 Forbidden",
+    "HypurrFi USDH isolated pool current APY (requires app.hypurrfi.com)",
+    "Exact Coinbase USDC revenue share pass-through mechanism (90% to HL protocol; recipient TBD)"
+  ]
+}
