@@ -1,0 +1,387 @@
+{
+  "wave": "K365",
+  "task": "Variational API Scouting + K297' Migration Feasibility",
+  "generated_at": "2026-05-26T22:57:30.684625+00:00",
+  "phase1_api_discovery": {
+    "base_url": "https://omni-client-api.prod.ap-northeast-1.variational.io/metadata/stats",
+    "docs_url": "https://docs.variational.io/technical-documentation/api",
+    "auth_required_read": false,
+    "auth_required_trading": "UNKNOWN — trading API not yet live",
+    "public_endpoints": [
+      "/metadata/stats"
+    ],
+    "trading_api_status": "IN DEVELOPMENT — not available to any users (confirmed May 2026)",
+    "rate_limits": {
+      "per_ip": "10 req/10s",
+      "global": "1000 req/min"
+    },
+    "response_format": "JSON, numeric values as strings",
+    "funding_rate_observable": true,
+    "funding_rate_formula": "F = P + clamp(r - P, -0.0005, 0.0005); r=0.00125%/h fixed; P=premium index (60s samples)",
+    "settlement_frequency_h": 4,
+    "settlement_frequency_note": "4h default for RWA instruments (variable 1-8h, aligns with Bybit/Binance)"
+  },
+  "phase2_platform_stats": {
+    "total_volume_24h_usd": 936862494.835723,
+    "cumulative_volume_usd": 227151390469.33408,
+    "tvl_usd": 108264450.900836,
+    "open_interest_usd": 995519913.901467,
+    "num_markets": 462
+  },
+  "phase2_rwa_instrument_catalog": [
+    {
+      "ticker": "XAUT",
+      "name": "Tether Gold",
+      "mark_price_usd": 4492.865098669916,
+      "volume_24h_usd": 3567056.158038,
+      "oi_total_usd": 26627607.997337833,
+      "oi_long_usd": 20900142.681477826,
+      "oi_short_usd": 5727465.315860009,
+      "long_bias_pct": 78.5,
+      "spread_base_bps": 6.41,
+      "spread_100k_bps": 7.66,
+      "funding_rate_pct_per_interval": -0.032457,
+      "funding_interval_h": 4.0,
+      "funding_rate_ann_pct": -71.08,
+      "funding_rate_observable": true,
+      "carry_friendly": "GOOD",
+      "carry_notes": "FR -71.1% ann — viable carry target; OI $26.6M — passes G6 liquidity gate for <$5M positions; Spread 6.4bps tight — acceptable transaction cost",
+      "quote_base": {
+        "bid": "4495.52",
+        "ask": "4498.4"
+      },
+      "quote_1k": {
+        "bid": "4495.52",
+        "ask": "4498.4"
+      },
+      "quote_100k": {
+        "bid": "4495.4",
+        "ask": "4498.84"
+      }
+    },
+    {
+      "ticker": "XAU",
+      "name": "Gold",
+      "mark_price_usd": 4504.50769930025,
+      "volume_24h_usd": 26381652.684535,
+      "oi_total_usd": 21894470.756220266,
+      "oi_long_usd": 11474366.777377319,
+      "oi_short_usd": 10420103.978842946,
+      "long_bias_pct": 52.4,
+      "spread_base_bps": 3.02,
+      "spread_100k_bps": 4.24,
+      "funding_rate_pct_per_interval": 0.255706,
+      "funding_interval_h": 4.0,
+      "funding_rate_ann_pct": 560.0,
+      "funding_rate_observable": true,
+      "carry_friendly": "CAUTION",
+      "carry_notes": "Very high FR (560.0% ann) — likely unsustainable, snapshot artifact; OI $21.9M — passes G6 liquidity gate for <$5M positions; Spread 3.0bps tight — acceptable transaction cost; XAU: native gold perp — direct RWA (not wrapped token); primary HL PAXG analogue for carry arb",
+      "quote_base": {
+        "bid": "4507.94",
+        "ask": "4509.3"
+      },
+      "quote_1k": {
+        "bid": "4507.94",
+        "ask": "4509.3"
+      },
+      "quote_100k": {
+        "bid": "4507.94",
+        "ask": "4509.85"
+      }
+    },
+    {
+      "ticker": "PAXG",
+      "name": "PAX Gold",
+      "mark_price_usd": 4499.458077147837,
+      "volume_24h_usd": 560939.613934,
+      "oi_total_usd": 15038953.919357385,
+      "oi_long_usd": 3227513.219086173,
+      "oi_short_usd": 11811440.700271212,
+      "long_bias_pct": 21.5,
+      "spread_base_bps": 6.42,
+      "spread_100k_bps": 15.6,
+      "funding_rate_pct_per_interval": 0.1095,
+      "funding_interval_h": 4.0,
+      "funding_rate_ann_pct": 239.81,
+      "funding_rate_observable": true,
+      "carry_friendly": "CAUTION",
+      "carry_notes": "Very high FR (239.8% ann) — likely unsustainable, snapshot artifact; OI $15.0M — passes G6 liquidity gate for <$5M positions; Spread 6.4bps tight — acceptable transaction cost; PAXG on Variational: tokenized gold (PAX) — differs from native XAU contract; cross-venue arb complex",
+      "quote_base": {
+        "bid": "4501.71",
+        "ask": "4504.6"
+      },
+      "quote_1k": {
+        "bid": "4501.71",
+        "ask": "4504.6"
+      },
+      "quote_100k": {
+        "bid": "4501",
+        "ask": "4508.02"
+      }
+    },
+    {
+      "ticker": "CL",
+      "name": "WTI Crude Oil",
+      "mark_price_usd": 93.3955337565493,
+      "volume_24h_usd": 10091076.27038,
+      "oi_total_usd": 4855283.029392625,
+      "oi_long_usd": 3754909.449402216,
+      "oi_short_usd": 1100373.5799904095,
+      "long_bias_pct": 77.3,
+      "spread_base_bps": 4.42,
+      "spread_100k_bps": 7.21,
+      "funding_rate_pct_per_interval": -0.112767,
+      "funding_interval_h": 4.0,
+      "funding_rate_ann_pct": -246.96,
+      "funding_rate_observable": true,
+      "carry_friendly": "CAUTION",
+      "carry_notes": "Very high FR (-247.0% ann) — likely unsustainable, snapshot artifact; OI $4.9M — passes G6 liquidity gate for <$5M positions; Spread 4.4bps tight — acceptable transaction cost; CL WTI: HL does NOT list crude oil — pure expansion instrument; negative FR = shorts earn",
+      "quote_base": {
+        "bid": "93.4287",
+        "ask": "93.47"
+      },
+      "quote_1k": {
+        "bid": "93.4287",
+        "ask": "93.47"
+      },
+      "quote_100k": {
+        "bid": "93.4208",
+        "ask": "93.4881"
+      }
+    },
+    {
+      "ticker": "XAG",
+      "name": "Silver",
+      "mark_price_usd": 77.1228641496806,
+      "volume_24h_usd": 7042068.192285,
+      "oi_total_usd": 4117284.5640901458,
+      "oi_long_usd": 2262171.6669664816,
+      "oi_short_usd": 1855112.8971236642,
+      "long_bias_pct": 54.9,
+      "spread_base_bps": 4.73,
+      "spread_100k_bps": 5.96,
+      "funding_rate_pct_per_interval": 0.0,
+      "funding_interval_h": 4.0,
+      "funding_rate_ann_pct": 0.0,
+      "funding_rate_observable": true,
+      "carry_friendly": "MARGINAL",
+      "carry_notes": "Near-zero FR (< 2% ann) — minimal carry income on snapshot; OI $4.1M — passes G6 liquidity gate for <$5M positions; Spread 4.7bps tight — acceptable transaction cost; XAG Silver: HL does NOT list silver — pure expansion instrument, not migration",
+      "quote_base": {
+        "bid": "77.1945",
+        "ask": "77.231"
+      },
+      "quote_1k": {
+        "bid": "77.1945",
+        "ask": "77.231"
+      },
+      "quote_100k": {
+        "bid": "77.186",
+        "ask": "77.232"
+      }
+    },
+    {
+      "ticker": "COPPER",
+      "name": "Copper",
+      "mark_price_usd": 6.42765454790648,
+      "volume_24h_usd": 1742962.610433,
+      "oi_total_usd": 1610718.5589934718,
+      "oi_long_usd": 1020051.302436505,
+      "oi_short_usd": 590667.2565569668,
+      "long_bias_pct": 63.3,
+      "spread_base_bps": 5.07,
+      "spread_100k_bps": 46.98,
+      "funding_rate_pct_per_interval": 0.0,
+      "funding_interval_h": 4.0,
+      "funding_rate_ann_pct": 0.0,
+      "funding_rate_observable": true,
+      "carry_friendly": "REJECT",
+      "carry_notes": "Near-zero FR (< 2% ann) — minimal carry income on snapshot; OI $1,610,719 < G6 min $2,000,000 — liquidity thin; Spread 5.1bps tight — acceptable transaction cost; COPPER: HL does NOT list copper — pure expansion; zero FR on snapshot = no carry signal today",
+      "quote_base": {
+        "bid": "6.42555",
+        "ask": "6.42881"
+      },
+      "quote_1k": {
+        "bid": "6.42515",
+        "ask": "6.42973"
+      },
+      "quote_100k": {
+        "bid": "6.41234",
+        "ask": "6.44254"
+      }
+    }
+  ],
+  "phase3_carry_feasibility": {
+    "fr_observable": true,
+    "fr_mechanism": "Standard funding transfer (longs pay shorts if F>0)",
+    "fr_differs_from_hl": "HL: 1h intervals (8h computed); Variational: 4h intervals — settlement cadence differs",
+    "olp_embedded_carry_claim_k355": {
+      "claim": "K355 noted 'OLP-embedded carry model obscures FR signal'",
+      "verification": "INCORRECT per live data — FR is returned directly by public API as numeric value; no OLP obfuscation observed",
+      "note": "OLP aggregates liquidity sources but FR calculation and reporting is transparent"
+    },
+    "instrument_carry_grades": {
+      "XAUT": {
+        "grade": "GOOD",
+        "notes": "FR -71.1% ann — viable carry target; OI $26.6M — passes G6 liquidity gate for <$5M positions; Spread 6.4bps tight — acceptable transaction cost"
+      },
+      "XAU": {
+        "grade": "CAUTION",
+        "notes": "Very high FR (560.0% ann) — likely unsustainable, snapshot artifact; OI $21.9M — passes G6 liquidity gate for <$5M positions; Spread 3.0bps tight — acceptable transaction cost; XAU: native gold perp — direct RWA (not wrapped token); primary HL PAXG analogue for carry arb"
+      },
+      "PAXG": {
+        "grade": "CAUTION",
+        "notes": "Very high FR (239.8% ann) — likely unsustainable, snapshot artifact; OI $15.0M — passes G6 liquidity gate for <$5M positions; Spread 6.4bps tight — acceptable transaction cost; PAXG on Variational: tokenized gold (PAX) — differs from native XAU contract; cross-venue arb complex"
+      },
+      "CL": {
+        "grade": "CAUTION",
+        "notes": "Very high FR (-247.0% ann) — likely unsustainable, snapshot artifact; OI $4.9M — passes G6 liquidity gate for <$5M positions; Spread 4.4bps tight — acceptable transaction cost; CL WTI: HL does NOT list crude oil — pure expansion instrument; negative FR = shorts earn"
+      },
+      "XAG": {
+        "grade": "MARGINAL",
+        "notes": "Near-zero FR (< 2% ann) — minimal carry income on snapshot; OI $4.1M — passes G6 liquidity gate for <$5M positions; Spread 4.7bps tight — acceptable transaction cost; XAG Silver: HL does NOT list silver — pure expansion instrument, not migration"
+      },
+      "COPPER": {
+        "grade": "REJECT",
+        "notes": "Near-zero FR (< 2% ann) — minimal carry income on snapshot; OI $1,610,719 < G6 min $2,000,000 — liquidity thin; Spread 5.1bps tight — acceptable transaction cost; COPPER: HL does NOT list copper — pure expansion; zero FR on snapshot = no carry signal today"
+      }
+    }
+  },
+  "phase4_cross_venue_arb": {
+    "var_xau_vs_var_paxg": {
+      "xau_mark": 4504.50769930025,
+      "paxg_mark": 4499.458077147837,
+      "price_diff_pct": 0.1122,
+      "xau_fr_ann_pct": 560.0,
+      "paxg_fr_ann_pct": 239.81,
+      "fr_spread_ann_pct": 320.19,
+      "arb_note": "XAU (native gold) vs PAXG (PAX token) on same venue: FR spread 320.2% ann. Intra-Variational arb: long cheaper FR, short pricier FR. Requires trading API + sufficient margin isolation."
+    },
+    "hl_paxg_vs_var_xau": {
+      "hl_paxg_fr_ann_est_pct": 8.0,
+      "var_xau_fr_ann_pct": 560.0,
+      "estimated_cross_venue_fr_spread_ann_pct": 552.0,
+      "settlement_currency": "USD (Arbitrum USDC) vs USD (HL USDC)",
+      "bridge_risk": "Arbitrum → HL bridge required; ~10min finality, gas cost ~$1-3",
+      "arb_feasibility": "LOW — FR is snapshot only; cross-venue arb requires persistent FR tracking pipeline (cf. K358 for Drift)",
+      "infrastructure_needed": [
+        "Variational FR polling daemon (similar to K358 drift_fr_monitor.py)",
+        "HL PAXG FR baseline from live HL API (exists in data/funding_* cache)",
+        "Position sizing logic across two chains",
+        "Arbitrum USDC bridge/withdrawal module"
+      ],
+      "estimated_effort_waves": "2-3 waves (K366-K368) if Variational trading API ships"
+    }
+  },
+  "phase5_migration_scenarios": {
+    "A_full_migration": {
+      "description": "K297' moves 100% from HL PAXG/SPX → Variational XAU",
+      "hl_exposure_after_pct": 37.5,
+      "concentration_reduction_pp": 20.0,
+      "variational_alloc_pct": 20.0,
+      "estimated_ann_return_pct": 168.0,
+      "operational_complexity": "HIGH",
+      "risks": [
+        "Variational trading API NOT YET LIVE (confirmed May 2026)",
+        "XAU FR mechanism (4h intervals) differs from HL 1h intervals",
+        "RFQ model: no persistent order book → execution latency unknown",
+        "Smart contract settlement on Arbitrum: gas cost + bridge delay",
+        "SINGLE new venue dependency replaces single old dependency — zero diversification gain"
+      ],
+      "verdict": "DEFER — trading API unavailable; venue swap does not diversify",
+      "fr_snapshot_ann_pct": 560.0,
+      "fr_haircut_pct": 70.0,
+      "fr_basis": "XAU snapshot FR * 30% haircut (single-day snapshot; short history)"
+    },
+    "B_split_10_10": {
+      "description": "K297' splits: 10% HL PAXG/SPX + 10% Variational XAU",
+      "hl_exposure_after_pct": 47.5,
+      "concentration_reduction_pp": 10.0,
+      "variational_alloc_pct": 10.0,
+      "estimated_ann_return_pct": 168.0,
+      "operational_complexity": "VERY HIGH",
+      "risks": [
+        "Requires two simultaneous live deployments on different chains/venues",
+        "Variational trading API not available — cannot automate entries/exits",
+        "Correlation of carry streams: XAU vs PAXG very high (both gold) — limited diversification benefit from carry stream itself",
+        "Hedging complexity: two gold long positions with different FR mechanics"
+      ],
+      "verdict": "DEFER — trading API blocker; monitor when API ships",
+      "fr_snapshot_ann_pct": 560.0,
+      "fr_haircut_pct": 70.0,
+      "fr_basis": "XAU snapshot FR * 30% haircut (single-day snapshot; short history)"
+    },
+    "C_expansion_k297_prime": {
+      "description": "K297' stays 20% HL; ADD K297'' = 10% Variational (XAG + CL focus)",
+      "hl_exposure_after_pct": 57.5,
+      "concentration_reduction_pp": 0.0,
+      "variational_alloc_pct": 10.0,
+      "estimated_ann_return_pct": 37.04,
+      "operational_complexity": "VERY HIGH",
+      "risks": [
+        "Does NOT reduce HL concentration (does not address K355 goal)",
+        "Variational trading API unavailable",
+        "XAG FR = 0% on snapshot — no carry signal today",
+        "CL FR = -26.7% ann (shorts earn) — inverted carry, different strategy logic needed"
+      ],
+      "verdict": "LOW VALUE NOW — XAG/CL expansion interesting but FR signals weak; revisit when XAG/CL FR normalizes and trading API ships",
+      "fr_note": "XAG: 0.0% ann (≈0, no signal); CL: -247.0% ann (shorts earn)"
+    }
+  },
+  "phase6_k266_gates": {
+    "G3_orthogonality": {
+      "threshold": 0.85,
+      "estimated_price_corr": 0.99,
+      "estimated_fr_corr": 0.6,
+      "pass": false,
+      "notes": "HL PAXG vs Variational XAU: both track gold spot (~0.99 price correlation). Carry streams may decorrelate due to different FR mechanisms (HL: 1h discrete; VAR: 4h RFQ-aggregated). Cross-venue carry arb = same underlying, different FR → G3 PARTIAL PASS for arb strategy. For standalone K297': no diversification — G3 FAIL."
+    },
+    "G6_trade_execution": {
+      "min_oi_required_usd": 2000000,
+      "xau_oi_usd": 21894470.756220266,
+      "xau_spread_bps": 3.02,
+      "market_depth_ok": true,
+      "rfq_model_note": "RFQ = no persistent book; fill certainty depends on LP availability at time of request",
+      "trading_api_status": "NOT YET LIVE (confirmed docs.variational.io, May 2026)",
+      "pass": false,
+      "notes": "XAU OI $21.9M passes minimum; spread 3.02bps tight. BLOCKER: trading API unavailable → execution automation impossible → G6 FAIL. Market depth would pass when API ships."
+    },
+    "G7_ann_return": {
+      "min_return_required_pct": 5.0,
+      "xau_fr_snapshot_ann_pct": 560.0,
+      "haircut_pct": 70.0,
+      "xau_fr_sustainable_est_pct": 168.0,
+      "pass": true,
+      "notes": "Snapshot XAU FR = 560.0% ann (4h interval). Single-day snapshot; Variational launched 2025, short FR history. 30% haircut → 168.0% sustainable est. PASS vs 5.0% gate."
+    },
+    "overall": {
+      "pass": false,
+      "blocking_gates": [
+        "G3_orthogonality",
+        "G6_trade_execution"
+      ],
+      "decision": "DEFER — G6 blocked by trading API unavailability; G3 fails for standalone carry"
+    }
+  },
+  "phase7_decision": {
+    "verdict": "DEFER",
+    "trigger_condition": "Variational trading API becomes publicly available",
+    "estimated_activation_timeline": "Q3-Q4 2026 (Dragonfly $50M raise May 2026, 100+ RWA markets planned summer 2026)",
+    "value_if_activated": {
+      "primary_use": "XAU/PAXG cross-venue FR arb (HL PAXG long, Variational XAU short if FR inverts)",
+      "secondary_use": "XAG + WTI expansion (K297'' new instruments, not HL migration)",
+      "estimated_incremental_return_pct": "3-8% ann (conservative; based on FR spread observable today)",
+      "concentration_reduction": "Scenario B split achieves 10pp HL reduction when trading API live"
+    },
+    "immediate_actions": [
+      "Build Variational FR polling daemon (reuse K358 drift_fr_monitor.py pattern) — 0.5 wave",
+      "Add XAU + PAXG FR to report.html live dashboard",
+      "Monitor for trading API announcement from Variational"
+    ],
+    "reject_conditions": [
+      "FR becomes non-observable (API structure changes to opaque OLP model)",
+      "XAU/CL liquidity (OI) drops below $2M",
+      "Regulatory action against Variational (Cayman incorporation; monitor)"
+    ]
+  },
+  "k339_security_note": "No production scripts modified. No new packages used. Scouting only."
+}
