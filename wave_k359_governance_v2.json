@@ -1,0 +1,300 @@
+{
+  "_meta": {
+    "description": "K359 Full Governance v2 — machine-readable snapshot of K339-K358 audit",
+    "governance_wave": "K359",
+    "generated_at_jst": "2026-05-27 07:35 JST",
+    "previous_governance_wave": "K338",
+    "next_governance_wave": "K379",
+    "cadence": "every 20 waves"
+  },
+  "snapshot_v2": {
+    "snapshot_v2_jst": "2026-05-27 07:35 JST",
+    "wave_range": "K339-K358",
+    "waves_completed": 19,
+    "waves_in_flight": 1,
+    "waves_total": 20,
+    "in_flight_wave": "K358",
+    "decisions": {
+      "ACCEPT": 4,
+      "ACCEPT_FINAL": 1,
+      "CONDITIONAL": 1,
+      "CONDITIONAL_ACCEPT": 1,
+      "REJECT": 7,
+      "MONITOR": 1,
+      "CRITICAL": 1,
+      "CRITICAL_MITIGATED": 1,
+      "DONE": 3,
+      "UNCHANGED": 1
+    },
+    "lines_closed": [
+      {
+        "name": "regime_filter",
+        "wave_chain": ["K315", "K320", "K323", "K327", "K341"],
+        "closure_wave": "K341",
+        "closure_reason": "BOCPD found zero change-points across 447-day K280 window. Alpha structurally stable.",
+        "reopen_trigger": "K280 rolling 30d Sharpe < 8.0 sustained for 15+ consecutive days",
+        "status": "DO_NOT_REVISIT"
+      },
+      {
+        "name": "ml_allocator",
+        "wave_chain": ["K198", "K323", "K327", "K331", "K345"],
+        "closure_wave": "K345",
+        "closure_reason": "Transformer Actor-Critic: 1/4 positive folds, 1426x compute vs Ridge. No architecture beats K198.",
+        "reopen_trigger": "New K280 component added that fundamentally changes feature space",
+        "status": "DO_NOT_REVISIT"
+      },
+      {
+        "name": "usdh_stablecoin",
+        "wave_chain": ["K354"],
+        "closure_wave": "K354",
+        "closure_reason": "USDH platform sunset confirmed. No trigger.",
+        "reopen_trigger": "NONE — permanently closed",
+        "status": "PERMANENTLY_CLOSED"
+      }
+    ],
+    "deferred_active_count": 7,
+    "backlog_surviving_count": 7,
+    "production_version": "v6.13d",
+    "production_allocation": {
+      "K280": 0.75,
+      "K297_prime": 0.20,
+      "sUSDe_OC": 0.05
+    },
+    "production_sharpe": 25.47,
+    "production_oos_sharpe": 27.71,
+    "production_ann_return_pct": 10.01,
+    "production_max_dd_pct": 0.019,
+    "production_lift_vs_v612_pct": 4.67,
+    "concentration_risk": {
+      "hl_exposure_pct": 57.5,
+      "shutdown_risk_estimate_pct": "3-7 per 12 months",
+      "worst_case_annual_loss_pct": "1.7-4.0",
+      "fallback": "v6.13e (K280 85% + K297' 10% + sUSDe 5%)",
+      "emergency_exit_status": "SCAFFOLD-READY (dry-run default, requires user key)"
+    },
+    "backlog_burn_this_cycle": {
+      "burned": 10,
+      "deferred": 2,
+      "total_started": 12,
+      "burn_rate_pct": 83.3
+    },
+    "discard_proposals": []
+  },
+  "wip_limits": {
+    "in_progress": 3,
+    "pending": 5,
+    "deferred": 8,
+    "backlog_med_plus": 15
+  },
+  "current_counts": {
+    "in_progress": 1,
+    "pending": 2,
+    "deferred": 7,
+    "backlog_surviving": 7
+  },
+  "in_progress": [
+    {
+      "id": "K358",
+      "topic": "Drift SOL-PERP vs HL SOL-PERP cross-venue FR arb",
+      "status": "IN_FLIGHT",
+      "note": "wave_k358_drift_sol_arb.py written but not yet executed (no .md/.json output committed)"
+    }
+  ],
+  "pending": [
+    {
+      "id": "K360",
+      "topic": "v6.13d forward verification — 1-week paper-trade result check",
+      "priority": "HIGH",
+      "dependency": "User loads plists via launchctl",
+      "order": 1
+    },
+    {
+      "id": "K361",
+      "topic": "ADL Online Learning retry (K349 retry with HL ADL API)",
+      "source": "K349 REJECT + R12-06",
+      "priority": "MED",
+      "trigger": "HL ADL API availability confirmed",
+      "order": 2
+    }
+  ],
+  "deferred": [
+    {
+      "id": "K353",
+      "topic": "HIP-4 calibration analysis (BTC daily binary bias)",
+      "trigger": "Calibration bias >3% OR cross-venue arb >2%",
+      "target_date": "2026-06-10",
+      "drop": "2026-08-01"
+    },
+    {
+      "id": "K340",
+      "topic": "USDT on-chain CEX-specific flow (Glassnode/Etherscan)",
+      "trigger": "Paid data key obtained (Etherscan v2 or Glassnode trial)",
+      "drop": "2026-10-01"
+    },
+    {
+      "id": "K337",
+      "topic": "HypurrFi isolated TVL re-eval",
+      "trigger": "Isolated TVL > $20M",
+      "drop": "2026-10-01"
+    },
+    {
+      "id": "K341-regime",
+      "topic": "Regime filter reopen",
+      "trigger": "K280 rolling 30d Sharpe < 8.0 for 15 consecutive days",
+      "drop": "2027-01-01"
+    },
+    {
+      "id": "K345-ML",
+      "topic": "ML allocator reopen",
+      "trigger": "New K280 component added (changes feature space fundamentally)",
+      "drop": "2027-01-01"
+    },
+    {
+      "id": "K349-ADL",
+      "topic": "ADL Online Learning retry",
+      "trigger": "HL ADL API confirmed available",
+      "drop": "2026-09-01"
+    },
+    {
+      "id": "K342-wgt",
+      "topic": "K280/K297 weight retest at 600d joint window",
+      "trigger": "Joint window crosses 600 days",
+      "drop": "2027-01-01"
+    }
+  ],
+  "backlog_surviving": [
+    {
+      "id": "R10-016",
+      "topic": "Binance-OKX BTC FR mean reversion 2% spread",
+      "priority": "MED",
+      "target_wave": "K363"
+    },
+    {
+      "id": "R10-004",
+      "topic": "Solana DEX 40min price discovery lead over CEX",
+      "priority": "MED",
+      "target_wave": "K364"
+    },
+    {
+      "id": "R10-003",
+      "topic": "BitMEX weekend FR premium 3x weekday",
+      "priority": "MED",
+      "target_wave": "K364"
+    },
+    {
+      "id": "R10-012",
+      "topic": "Chainstack HL spot-perp FR arb technical impl",
+      "priority": "MED",
+      "target_wave": "K365"
+    },
+    {
+      "id": "R10-017",
+      "topic": "HL Portfolio Margin unified spot+perp 30%+ capital efficiency",
+      "priority": "MED",
+      "target_wave": "K366"
+    },
+    {
+      "id": "R10-020",
+      "topic": "HyperEVM DeFi delta-neutral vault via Liminal",
+      "priority": "MED",
+      "target_wave": "K367"
+    },
+    {
+      "id": "R11-03",
+      "topic": "HL Portfolio Margin $5M vol, BTC collateral, USDH borrow alpha",
+      "priority": "MED",
+      "target_wave": "K366"
+    }
+  ],
+  "k360_plus_wave_plan": [
+    {
+      "wave": "K360",
+      "topic": "v6.13d forward verification (1-week paper-trade)",
+      "priority": "HIGH",
+      "effort_h": 3
+    },
+    {
+      "wave": "K361",
+      "topic": "ADL Online Learning retry (HL ADL API)",
+      "priority": "MED",
+      "effort_h": 5,
+      "trigger_gated": true
+    },
+    {
+      "wave": "K362",
+      "topic": "K358 Drift continuation (if ACCEPT/CONDITIONAL)",
+      "priority": "MED-HIGH",
+      "effort_h": 5,
+      "dependency": "K358 result"
+    },
+    {
+      "wave": "K363",
+      "topic": "R10-016 Binance-OKX FR spread (CEX-CEX complement)",
+      "priority": "MED",
+      "effort_h": 4
+    },
+    {
+      "wave": "K364",
+      "topic": "R10-004 Solana DEX 40min lead-lag",
+      "priority": "MED",
+      "effort_h": 5
+    },
+    {
+      "wave": "K365",
+      "topic": "Variational API scouting (K355 P2, Gold/Silver/WTI RFQ)",
+      "priority": "MED-HIGH",
+      "effort_h": 3,
+      "time_sensitive": true,
+      "rationale": "K355 CFTC pressure on HL makes K297 carry substitute time-sensitive"
+    },
+    {
+      "wave": "K366",
+      "topic": "HL Portfolio Margin capital efficiency design (R10-017 + R11-03)",
+      "priority": "MED",
+      "effort_h": 3
+    },
+    {
+      "wave": "K367",
+      "topic": "HyperEVM DeFi delta-neutral vault via Liminal (R10-020)",
+      "priority": "MED-LOW",
+      "effort_h": 4
+    },
+    {
+      "wave": "K368",
+      "topic": "HIP-4 calibration analysis (K353 target, 2-week data)",
+      "priority": "MED",
+      "effort_h": 4,
+      "target_date": "2026-06-10"
+    },
+    {
+      "wave": "K369",
+      "topic": "R12 untapped findings review (or R13 if available)",
+      "priority": "MED-LOW",
+      "effort_h": 3
+    },
+    {
+      "wave": "K370",
+      "topic": "kkdemian HL 2026 report deep-dive (R12-19)",
+      "priority": "MED",
+      "effort_h": 4
+    },
+    {
+      "wave": "K375",
+      "topic": "CEX/DEX priority fees execution layer (R12-04)",
+      "priority": "MED-LOW",
+      "effort_h": 4
+    },
+    {
+      "wave": "K379",
+      "topic": "Full Governance v3 (K360-K378 audit)",
+      "priority": "MANDATORY",
+      "effort_h": 45
+    }
+  ],
+  "immediate_recommendation": {
+    "next_wave": "K360",
+    "topic": "v6.13d forward verification",
+    "rationale": "Production deployed since K348 but not forward-verified. Highest-value gap. K358 still in-flight so K360 is independent and should not wait.",
+    "secondary_recommendation": "K365 Variational API scouting (time-sensitive given HL CFTC pressure)"
+  }
+}

@@ -1318,7 +1318,7 @@ launchctl list | grep cryptolab</pre>
   </section>
   <!-- ==================== END LIVE MONITORING v6.12 ==================== -->
 
-  <!-- ==================== TASK PIPELINE K338 GOVERNANCE ==================== -->
+  <!-- ==================== TASK PIPELINE K359 GOVERNANCE v2 ==================== -->
   <section class="section" id="task-pipeline" style="margin-top:0;">
     <style>
       .tp-header { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
@@ -1340,7 +1340,11 @@ launchctl list | grep cryptolab</pre>
       .tp-badge-medh { background:rgba(210,153,34,0.15); color:#d2993a; border:1px solid #d2993a; }
       .tp-badge-med { background:rgba(56,139,253,0.12); color:#79c0ff; border:1px solid #388bfd; }
       .tp-badge-next { background:rgba(63,185,80,0.15); color:#3fb950; border:1px solid #3fb950; }
+      .tp-badge-closed { background:rgba(139,148,158,0.12); color:#8b949e; border:1px solid #8b949e; }
+      .tp-badge-deploy { background:rgba(63,185,80,0.2); color:#3fb950; border:2px solid #3fb950; font-size:0.75rem; padding:2px 8px; }
       .tp-discard-box { background:rgba(248,81,73,0.06); border:1px solid rgba(248,81,73,0.25); border-radius:6px; padding:10px 14px; font-size:0.82rem; margin-top:10px; }
+      .tp-closed-box { background:rgba(139,148,158,0.06); border:1px solid rgba(139,148,158,0.3); border-radius:6px; padding:10px 14px; font-size:0.82rem; margin-top:10px; }
+      .tp-deploy-box { background:rgba(63,185,80,0.06); border:2px solid rgba(63,185,80,0.4); border-radius:6px; padding:10px 14px; font-size:0.82rem; margin-top:10px; }
       @media (max-width:600px) {
         .tp-grid { grid-template-columns:repeat(2,1fr); }
         .tp-keep-table { font-size:0.75rem; }
@@ -1349,45 +1353,74 @@ launchctl list | grep cryptolab</pre>
     </style>
     <h2 style="color:#d2993a;border-bottom:2px solid #d2993a;padding-bottom:6px;">
       <span class="tp-header">
-        🛂 Task Pipeline (K338 Governance)
-        <span class="tp-updated" id="tp-ts">最終更新: 2026-05-25 20:12 JST</span>
+        🛂 Task Pipeline (K359 Governance v2 — K339–K358 Audit)
+        <span class="tp-updated" id="tp-ts">最終更新: 2026-05-27 07:35 JST</span>
       </span>
     </h2>
 
+    <!-- Production DEPLOY badge -->
+    <div class="tp-deploy-box">
+      <span class="tp-badge tp-badge-deploy">PRODUCTION DEPLOYED</span>
+      &nbsp;<strong style="color:#3fb950;">v6.13d</strong> — K280 75% + K297' 20% + sUSDe OC 5%
+      &nbsp;|&nbsp; Combined Sharpe: <strong>25.47</strong> &nbsp;|&nbsp; OOS Sharpe: <strong>27.71</strong>
+      &nbsp;|&nbsp; Ann Return: <strong>10.0%</strong> &nbsp;|&nbsp; MaxDD: <strong>0.019%</strong>
+      &nbsp;|&nbsp; Lift vs v6.12: <strong>+4.67%</strong>
+      &nbsp;|&nbsp; All K266 gates: PASS
+      &nbsp;|&nbsp; <span style="color:#d2993a;">HL exposure: 57.5% AUM</span> (K355 concentration risk documented)
+    </div>
+
     <!-- WIP Counters -->
-    <div class="tp-grid">
+    <div class="tp-grid" style="margin-top:12px;">
       <div class="tp-card">
-        <div class="tp-val tp-ok">3/3</div>
+        <div class="tp-val tp-ok">1/3</div>
         <div class="tp-label">In Progress</div>
-        <div class="tp-limit">limit: 3</div>
+        <div class="tp-limit">K358 in-flight</div>
       </div>
       <div class="tp-card">
         <div class="tp-val tp-ok">2/5</div>
         <div class="tp-label">Pending</div>
-        <div class="tp-limit">limit: 5</div>
+        <div class="tp-limit">K360, K361</div>
       </div>
       <div class="tp-card">
-        <div class="tp-val tp-ok">6/8</div>
+        <div class="tp-val tp-warn">7/8</div>
         <div class="tp-label">Deferred</div>
-        <div class="tp-limit">limit: 8</div>
+        <div class="tp-limit">at limit</div>
       </div>
       <div class="tp-card">
-        <div class="tp-val tp-ok">12/15</div>
+        <div class="tp-val tp-ok">7/15</div>
         <div class="tp-label">Backlog (MED+)</div>
-        <div class="tp-limit">after prune (was 112)</div>
+        <div class="tp-limit">83% burn this cycle</div>
       </div>
     </div>
 
-    <!-- Discard summary -->
-    <div class="tp-discard-box">
-      <strong style="color:#f85149;">117 items discarded</strong> this wave —
-      R6 (18) + R7 (20) + R8 (20) + R9 (20) bulk as 2025-era superseded findings +
-      19 specific R10/R11 LOW/INFO/theoretical items.
-      This is conscious focus, not abandonment.
+    <!-- K339-K358 cycle summary -->
+    <div style="background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-top:12px;font-size:0.82rem;">
+      <strong>K339–K358 cycle (20 waves):</strong>
+      &nbsp;<span style="color:#3fb950;">ACCEPT ×5</span>
+      &nbsp;|&nbsp;<span style="color:#f85149;">REJECT ×7</span>
+      &nbsp;|&nbsp;<span style="color:#d2993a;">CONDITIONAL ×2</span>
+      &nbsp;|&nbsp;<span style="color:#79c0ff;">MONITOR ×1</span>
+      &nbsp;|&nbsp;<span style="color:#ff7b72;">CRITICAL ×2</span>
+      &nbsp;|&nbsp;DONE ×3 &nbsp;|&nbsp;IN-FLIGHT ×1 (K358)
     </div>
 
-    <!-- Top 5 KEEP items -->
-    <h3 style="font-size:0.9rem;color:var(--text-secondary);margin:14px 0 6px;text-transform:uppercase;letter-spacing:0.04em;">Top KEEP items (ordered by priority × ROI)</h3>
+    <!-- Lines CLOSED -->
+    <div class="tp-closed-box" style="margin-top:10px;">
+      <strong style="color:#8b949e;">&#128683; 2 Hypothesis Lines PERMANENTLY CLOSED (DO NOT REVISIT)</strong><br>
+      <div style="margin-top:6px;">
+        <strong>1. Regime Filter</strong> (K315→K320→K323→K327→K341, 5-wave chain):
+        BOCPD found <em>zero</em> change-points on 447-day K280 window. Alpha structurally stable.
+        Reopen trigger: K280 30d Sh &lt; 8 for 15 consecutive days.
+      </div>
+      <div style="margin-top:6px;">
+        <strong>2. ML Allocator</strong> (K198→K323→K327→K331→K345, 6-wave chain):
+        Transformer Actor-Critic: 1/4 positive folds, compute 1426× vs K198 Ridge. K198 frozen as optimal.
+        Reopen trigger: New K280 component added (feature space change).
+      </div>
+    </div>
+
+    <!-- Top KEEP items -->
+    <h3 style="font-size:0.9rem;color:var(--text-secondary);margin:14px 0 6px;text-transform:uppercase;letter-spacing:0.04em;">Top KEEP items — K360+ wave plan</h3>
     <table class="tp-keep-table">
       <thead>
         <tr>
@@ -1400,46 +1433,84 @@ launchctl list | grep cryptolab</pre>
       </thead>
       <tbody>
         <tr>
-          <td><strong>K339</strong></td>
-          <td>Transformer A-C perp rebalancer (R11-16)</td>
-          <td><span class="tp-badge tp-badge-medh">MED-HIGH</span></td>
-          <td>~6h</td>
+          <td><strong>K360</strong></td>
+          <td>v6.13d forward verification — 1-week paper-trade check</td>
+          <td><span class="tp-badge tp-badge-high">HIGH</span></td>
+          <td>~3h</td>
           <td><span class="tp-badge tp-badge-next">NEXT</span></td>
         </tr>
         <tr>
-          <td><strong>K340</strong></td>
-          <td>On-chain USDT flow → BTC 1h predictor (R11-17)</td>
+          <td><strong>K362</strong></td>
+          <td>K358 Drift SOL arb continuation (if ACCEPT/CONDITIONAL)</td>
           <td><span class="tp-badge tp-badge-medh">MED-HIGH</span></td>
           <td>~5h</td>
-          <td>After K339</td>
+          <td>After K358 result</td>
         </tr>
         <tr>
-          <td><strong>R10-016</strong></td>
-          <td>Binance-OKX BTC FR mean reversion (2% spread)</td>
+          <td><strong>K365</strong></td>
+          <td>Variational API scouting (Gold/Silver/WTI RFQ perps — K297' substitute)</td>
+          <td><span class="tp-badge tp-badge-medh">MED-HIGH</span></td>
+          <td>~3h</td>
+          <td>K365 (time-sensitive)</td>
+        </tr>
+        <tr>
+          <td><strong>K363</strong></td>
+          <td>R10-016 Binance-OKX FR mean reversion (2% spread)</td>
           <td><span class="tp-badge tp-badge-med">MED</span></td>
           <td>~4h</td>
-          <td>K341b</td>
+          <td>K363</td>
         </tr>
         <tr>
-          <td><strong>R10-004</strong></td>
-          <td>Solana DEX 40min price discovery lead over CEX</td>
+          <td><strong>K368</strong></td>
+          <td>HIP-4 calibration analysis (K353/K356 follow-up, 2-week data target)</td>
           <td><span class="tp-badge tp-badge-med">MED</span></td>
-          <td>~5h</td>
-          <td>K342 range</td>
+          <td>~4h</td>
+          <td>2026-06-10</td>
         </tr>
         <tr>
-          <td><strong>R11-03</strong></td>
-          <td>HL Portfolio Margin capital efficiency design</td>
+          <td><strong>K366</strong></td>
+          <td>HL Portfolio Margin capital efficiency design (R10-017 + R11-03)</td>
           <td><span class="tp-badge tp-badge-med">MED</span></td>
           <td>~3h</td>
-          <td>K342 range</td>
+          <td>K366</td>
+        </tr>
+        <tr>
+          <td><strong>K379</strong></td>
+          <td>Full Governance v3 (K360–K378 audit)</td>
+          <td><span class="tp-badge tp-badge-closed">MANDATORY</span></td>
+          <td>~45h</td>
+          <td>After K378</td>
         </tr>
       </tbody>
     </table>
 
+    <!-- Active DEFER list -->
+    <h3 style="font-size:0.9rem;color:var(--text-secondary);margin:14px 0 6px;text-transform:uppercase;letter-spacing:0.04em;">Active DEFER (7/8) — trigger-gated</h3>
+    <table class="tp-keep-table" style="font-size:0.78rem;">
+      <thead><tr><th>ID</th><th>Topic</th><th>Trigger</th><th>Drop</th></tr></thead>
+      <tbody>
+        <tr><td>K353</td><td>HIP-4 BTC daily calibration</td><td>Bias &gt;3% OR cross-venue arb &gt;2%</td><td>2026-08-01</td></tr>
+        <tr><td>K340</td><td>USDT on-chain CEX-specific flow</td><td>Paid data key (Glassnode/Etherscan)</td><td>2026-10-01</td></tr>
+        <tr><td>K337</td><td>HypurrFi isolated TVL re-eval</td><td>Isolated TVL &gt; $20M</td><td>2026-10-01</td></tr>
+        <tr><td>K349</td><td>ADL Online Learning retry</td><td>HL ADL API confirmed available</td><td>2026-09-01</td></tr>
+        <tr><td>K342-wgt</td><td>K280/K297 weight retest</td><td>Joint window ≥ 600d</td><td>2027-01-01</td></tr>
+        <tr><td>K341-regime</td><td>Regime filter reopen</td><td>K280 30d Sh &lt; 8 for 15d</td><td>2027-01-01</td></tr>
+        <tr><td>K345-ML</td><td>ML allocator reopen</td><td>New K280 component added</td><td>2027-01-01</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Discard summary -->
+    <div class="tp-discard-box" style="margin-top:10px;">
+      <strong style="color:#f85149;">10 of 12 backlog items burned this cycle</strong> (83% burn rate) —
+      K341 (regime), K342/K343 (K297'), K344 (sUSDe), K345 (ML allocator), K349 (ADL), K350 (Monarq),
+      K351 (Optimal Liq), K354 (USDH sunset), K355 (perp DEX landscape).
+      Prior K338 prune: 117 legacy items discarded.
+    </div>
+
     <p style="font-size:0.75rem;color:var(--text-secondary);margin-top:10px;">
-      Governance cadence: Quick check every 5 waves · Full audit every 20 waves · Next full mode: K358 (~2026-06-15)
-      · Source: <a href="wave_k338_task_governance.md" style="color:var(--accent-blue);">wave_k338_task_governance.md</a>
+      Governance cadence: Quick check every 5 waves · Full audit every 20 waves · Next full mode: <strong>K379</strong>
+      · Source: <a href="wave_k359_governance_v2.md" style="color:var(--accent-blue);">wave_k359_governance_v2.md</a>
+      · JSON: <a href="wave_k359_governance_v2.json" style="color:var(--accent-blue);">wave_k359_governance_v2.json</a>
     </p>
   </section>
   <!-- ==================== END TASK PIPELINE ==================== -->
@@ -1451,7 +1522,7 @@ launchctl list | grep cryptolab</pre>
       <ol style="list-style:none;padding-left:0;margin:0;line-height:1.45;">
         <li><a href="#tldr" style="color:#c9d1d9;text-decoration:none;display:block;padding:3px 4px;">TL;DR (v4.1)</a></li>
         <li><a href="#live-monitoring" style="color:#f85149;text-decoration:none;display:block;padding:3px 4px;font-weight:700;">🔴 K302a v6.12 ライブ監視</a></li>
-        <li><a href="#task-pipeline" style="color:#d2993a;text-decoration:none;display:block;padding:3px 4px;font-weight:700;">🛂 Task Pipeline (K338)</a></li>
+        <li><a href="#task-pipeline" style="color:#d2993a;text-decoration:none;display:block;padding:3px 4px;font-weight:700;">🛂 Task Pipeline (K359 v2)</a></li>
         <li><a href="#strategy-leaderboard" style="color:#c9d1d9;text-decoration:none;display:block;padding:3px 4px;">戦略 Leaderboard</a></li>
         <li><a href="#comparison-chart" style="color:#c9d1d9;text-decoration:none;display:block;padding:3px 4px;">vs HODL 視覚化</a></li>
         <li><a href="#four-way-detail" style="color:#c9d1d9;text-decoration:none;display:block;padding:3px 4px;">4-way 詳細</a></li>
@@ -1501,7 +1572,7 @@ launchctl list | grep cryptolab</pre>
     <ol>
       <li><a href="#tldr">TL;DR (v4.1)</a></li>
       <li><a href="#live-monitoring" style="color:#f85149;font-weight:700;">🔴 K302a v6.12 ライブ監視</a></li>
-      <li><a href="#task-pipeline" style="color:#d2993a;font-weight:700;">🛂 Task Pipeline (K338)</a></li>
+      <li><a href="#task-pipeline" style="color:#d2993a;font-weight:700;">🛂 Task Pipeline (K359 v2)</a></li>
       <li><a href="#strategy-leaderboard">戦略 Leaderboard</a></li>
       <li><a href="#comparison-chart">vs HODL 視覚化</a></li>
       <li><a href="#four-way-detail">4-way 詳細</a></li>
