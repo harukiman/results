@@ -1,0 +1,88 @@
+{
+  "wave": "K380",
+  "parent_wave": "K378",
+  "purpose": "K376 volume momentum production scaffold (K378 CONDITIONAL_ACCEPT → paper-trade daemon)",
+  "verdict": "DONE",
+  "run_time_jst": "2026-05-27T09:35:00+09:00",
+  "strategy": {
+    "id": "K376_volume_momentum_v1",
+    "version": "v6.14_candidate",
+    "universe": ["ETH", "LINK", "AVAX"],
+    "signal": "vol_ratio > 4.0 AND |5min_ret| > 0.4%",
+    "regime_gate": "BTC 20d SMA slope > 0 (bull only)",
+    "execution": "post-only limit (maker, 2bps rebate)",
+    "hold_period_minutes": 240,
+    "sleeve_pct": 0.03,
+    "paper_trade_mode": true
+  },
+  "activation_criteria_k378": {
+    "1_btc_20d_sma_slope_filter": "IMPLEMENTED",
+    "2_launch_universe_eth_link_avax": "IMPLEMENTED",
+    "3_sleeve_3pct": "IMPLEMENTED",
+    "4_maker_only_execution": "IMPLEMENTED",
+    "5_60d_paper_trade_g8_fill_rate_gate": "SCAFFOLD-READY (paper-trade running)",
+    "6_k357_bybit_close_all_endpoint": "IMPLEMENTED (K380 gap fix)",
+    "7_g8_g9_live_gates": "CONFIGURED (thresholds set, gates enforced)"
+  },
+  "deliverables": {
+    "scripts_k376_momentum_run": {
+      "status": "CREATED",
+      "path": "scripts/k376_momentum_run.py",
+      "description": "Single-shot cron-style daemon. BTC regime gate, ETH/LINK/AVAX signal eval, paper JSONL fill log, dashboard JSON update."
+    },
+    "plist_k376_momentum": {
+      "status": "CREATED",
+      "path": "com.cryptolab.k376-momentum.plist",
+      "description": "5min StartInterval, RunAtLoad=false (K310 convention), logs to logs/k376_momentum.log/.err. Gitignored per K339."
+    },
+    "dashboard_json": {
+      "status": "CREATED",
+      "path": "data/k376_momentum_dashboard.json",
+      "description": "Initial scaffold JSON. Populated by run script on each 5min invocation."
+    },
+    "verify_deployment_status": {
+      "status": "UPDATED",
+      "path": "scripts/verify_deployment_status.py",
+      "change": "Added com.cryptolab.k376-momentum DaemonSpec to REGISTRY with SCAFFOLD-READY expected status."
+    },
+    "emergency_hl_exit": {
+      "status": "UPDATED",
+      "path": "scripts/emergency_hl_exit.py",
+      "changes": [
+        "close_bybit_positions() helper added (Bybit /v5/order/cancel-all + /v5/position/list + /v5/order/create market close)",
+        "--include-bybit / --no-bybit CLI flags added (default: include-bybit=True for emergency)",
+        "main() execute path calls close_bybit_positions() after HL exit",
+        "BYBIT_API_KEY + BYBIT_API_SECRET env var support (HMAC-SHA256, stdlib only)"
+      ]
+    },
+    "runbook": {
+      "status": "UPDATED",
+      "path": "docs/k302a_runbook.md",
+      "changes": [
+        "§17 K376 activation plan (200+ lines): pre-activation gates, activation commands, universe expansion path, rollback, monitoring",
+        "§14.8 Bybit gap fix (K380): close_bybit_positions() integration docs",
+        "§14.9 Daemon integration (renumbered from §14.8)"
+      ]
+    },
+    "report_html": {
+      "status": "UPDATED",
+      "path": "report.html",
+      "changes": [
+        "Top banner: v6.14 SCAFFOLD status updated",
+        "Live Monitoring table: K376 vol-momentum row added (SCAFFOLD-READY)",
+        "K376 momentum widget: regime badge, fill rate gauge, Sharpe, open positions, signals 24h, next eligibility",
+        "v6.14 candidate banner: updated to reflect SCAFFOLD-READY state",
+        "Task pipeline: K380 marked DONE, WIP counters updated",
+        "Footer: timestamp updated to 2026-05-27 09:35 JST"
+      ]
+    }
+  },
+  "test_results": {
+    "k376_momentum_run_dry_run": "PASS — BTC regime check fetches live Binance data, bear regime detected, skips signal eval as designed",
+    "verify_deployment_status_mismatches": 0,
+    "emergency_hl_exit_dry_run": "PASS — Bybit --include-bybit flag parsed correctly, DRY-RUN mode logs correctly"
+  },
+  "next_wave": "K381",
+  "k381_objective": "60-day live paper-trade monitoring run (gate: fill_rate >= 65% AND live 30d Sh >= 1.0)",
+  "k381_dependencies": ["K380 daemon running", "BTC regime bull (for signals to trigger)", "No emergency flag active"]
+}

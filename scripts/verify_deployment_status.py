@@ -105,6 +105,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="variational_fr_monitor",
         expected_html_status="SCAFFOLD-READY",
     ),
+    DaemonSpec(
+        label="com.cryptolab.k376-momentum",
+        purpose="K376 volume momentum paper-trade (v6.14 candidate, ETH/LINK/AVAX, BTC regime filter)",
+        scripts=["scripts/k376_momentum_run.py"],
+        log_basename="k376_momentum",
+        expected_html_status="SCAFFOLD-READY",
+    ),
 ]
 
 

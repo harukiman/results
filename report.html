@@ -753,10 +753,10 @@ window.__renderWhenReady = function(fn, label) {
 
   <!-- ==================== HEADER ==================== -->
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
-    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-27 09:31 JST</span> &nbsp;|&nbsp;
+    <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-27 09:32 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ (+42 K347-K380) &nbsp;|&nbsp;
-    <strong>PRODUCTION v6.13d + G9:</strong> <span style="color:var(--accent-green);font-weight:700;">K280 75% + K297' 20% (SPX filter+G9 oracle gate) + sUSDe OC 5% — K360 verified Sh 25.68 / MDD 0.019% / all §6 gates pass</span> &nbsp;|&nbsp; <span style="color:#d2993a;font-weight:700;">★★ v6.14 CONDITIONAL: K376 3% vol-spike momentum (K378 CONDITIONAL_ACCEPT — 60d paper-trade gate, fill_rate≥65%, BTC trend filter, ETH/LINK/AVAX launch)</span> &nbsp;|&nbsp;
-    <strong>9 hypothesis lines CLOSED (cumulative)</strong> &nbsp;|&nbsp; <span style="color:#3fb950;font-weight:700;">★★ K370 Builder rebate SCAFFOLD ($94K-472K/yr at $10M)</span> &nbsp;|&nbsp; <span style="color:#58a6ff;font-weight:700;">★★★ K371 G9 oracle gate LIVE (PAXG 0.06%/SPX 0.13% &lt;&lt; 1%)</span> &nbsp;|&nbsp; <span style="color:#d2993a;font-weight:700;">K379 Governance v3 COMPLETE — next K399</span>
+    <strong>PRODUCTION v6.13d + G9:</strong> <span style="color:var(--accent-green);font-weight:700;">K280 75% + K297' 20% (SPX filter+G9 oracle gate) + sUSDe OC 5% — K360 verified Sh 25.68 / MDD 0.019% / all §6 gates pass</span> &nbsp;|&nbsp; <span style="color:#d2993a;font-weight:700;">★★ v6.14 SCAFFOLD: K376 3% vol-spike momentum (K380 paper-trade daemon LIVE — 60d gate, fill_rate≥65%, BTC slope filter, ETH/LINK/AVAX)</span> &nbsp;|&nbsp;
+    <strong>9 hypothesis lines CLOSED (cumulative)</strong> &nbsp;|&nbsp; <span style="color:#3fb950;font-weight:700;">★★ K370 Builder rebate SCAFFOLD ($94K-472K/yr at $10M)</span> &nbsp;|&nbsp; <span style="color:#58a6ff;font-weight:700;">★★★ K371 G9 oracle gate LIVE (PAXG 0.06%/SPX 0.13% &lt;&lt; 1%)</span> &nbsp;|&nbsp; <span style="color:#d2993a;font-weight:700;">K380 K376 paper-trade SCAFFOLD-READY — next: 60d run → K381 gate check</span>
   </div>
 
   <header class="report-header">
@@ -877,6 +877,14 @@ window.__renderWhenReady = function(fn, label) {
               <td style="color:var(--text-secondary);">—</td>
               <td style="color:var(--text-secondary);">—</td>
               <td style="color:var(--text-secondary);">—</td>
+            </tr>
+            <!-- K380: K376 volume momentum paper-trade daemon (2026-05-27) -->
+            <tr>
+              <td><strong>K376 vol-momentum</strong><br><span style="font-size:0.72rem;color:var(--text-secondary);">ETH/LINK/AVAX · 5min signal · 4h hold · BTC 20d SMA slope filter · 3% sleeve · v6.14 candidate</span></td>
+              <td><span class="lm-badge lm-badge-scaffold" title="K380 scaffold. Activation after 60d paper-trade + G8 fill_rate≥65%. plist in repo root (gitignored). Script: scripts/k376_momentum_run.py. Runbook: §17">SCAFFOLD-READY</span></td>
+              <td id="lm-k376-ts" style="color:var(--text-secondary);">—</td>
+              <td id="lm-k376-regime" style="color:var(--text-secondary);">—</td>
+              <td id="lm-k376-sh30" style="color:var(--text-secondary);">—</td>
             </tr>
           </tbody>
         </table>
@@ -1086,6 +1094,129 @@ launchctl list | grep cryptolab</pre>
         })
         .catch(() => {
           const ts = document.getElementById('var-rwa-ts');
+          if (ts) ts.textContent = 'dashboard JSON not yet available';
+        });
+    })();
+    </script>
+
+    <!-- K380: K376 Volume-Spike Momentum Status Widget (2026-05-27) -->
+    <div class="lm-card" style="margin-bottom:14px;border-color:#d2993a;" id="k376-momentum-card">
+      <h3 style="display:flex;align-items:center;gap:8px;color:#d2993a;">
+        K376 Volume-Spike Momentum
+        <span style="font-size:0.7rem;font-weight:400;background:#21262d;border:1px solid #d2993a;color:#d2993a;border-radius:4px;padding:1px 7px;letter-spacing:0.03em;">SCAFFOLD-READY</span>
+        <span id="k376-regime-badge" style="font-size:0.7rem;font-weight:600;border-radius:4px;padding:1px 8px;margin-left:4px;background:#30363d;color:#8b949e;">regime: —</span>
+        <span style="font-size:0.68rem;font-weight:400;color:var(--text-secondary);margin-left:auto;" id="k376-ts">読み込み中...</span>
+      </h3>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px;">
+        <div style="flex:2;min-width:220px;">
+          <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:4px;">
+            Universe: <strong style="color:#e6edf3;">ETH / LINK / AVAX</strong>
+            &nbsp;·&nbsp; Signal: <strong style="color:#e6edf3;">vol_ratio &gt;4× AND |ret| &gt;0.4%</strong>
+            &nbsp;·&nbsp; Hold: <strong style="color:#e6edf3;">4h</strong>
+            &nbsp;·&nbsp; Execution: <strong style="color:#3fb950;">Post-only limit (maker)</strong>
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:4px;">
+            Regime gate: <strong style="color:#e6edf3;">BTC 20d SMA slope &gt; 0</strong> (bear skips all signals)
+            &nbsp;·&nbsp; Sleeve: <strong style="color:#d2993a;">3% AUM</strong> (v6.14 candidate)
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);">
+            Script: <code style="color:var(--accent-cyan);">scripts/k376_momentum_run.py</code>
+            &nbsp;|&nbsp; Daemon: <code style="color:var(--accent-cyan);">com.cryptolab.k376-momentum</code> (5min)
+            &nbsp;|&nbsp; <a href="docs/k302a_runbook.md" style="color:#79c0ff;" target="_blank">Runbook §17</a>
+          </div>
+        </div>
+        <div style="min-width:180px;background:var(--bg-tertiary);border-radius:6px;padding:8px 12px;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:2px;">Paper Fill Rate (60d)</div>
+          <div id="k376-fill-rate" style="font-size:1.4rem;font-weight:700;color:#d2993a;">—</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">G8 gate: ≥ 65%</div>
+          <div style="margin-top:6px;font-size:0.72rem;color:var(--text-secondary);">30d Sharpe</div>
+          <div id="k376-sharpe" style="font-size:1.1rem;font-weight:600;color:#e6edf3;">—</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">G9 gate: ≥ 1.0</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;">
+        <div style="flex:1;min-width:120px;background:var(--bg-tertiary);border-radius:5px;padding:6px 10px;text-align:center;">
+          <div style="font-size:0.7rem;color:var(--text-secondary);">Open Positions</div>
+          <div id="k376-open-pos" style="font-size:1.2rem;font-weight:700;color:#e6edf3;">—</div>
+        </div>
+        <div style="flex:1;min-width:120px;background:var(--bg-tertiary);border-radius:5px;padding:6px 10px;text-align:center;">
+          <div style="font-size:0.7rem;color:var(--text-secondary);">Signals (24h)</div>
+          <div id="k376-signals-24h" style="font-size:1.2rem;font-weight:700;color:#e6edf3;">—</div>
+        </div>
+        <div style="flex:1;min-width:120px;background:var(--bg-tertiary);border-radius:5px;padding:6px 10px;text-align:center;">
+          <div style="font-size:0.7rem;color:var(--text-secondary);">Ann Return (paper)</div>
+          <div id="k376-ann-ret" style="font-size:1.2rem;font-weight:700;color:#e6edf3;">—</div>
+        </div>
+        <div style="flex:2;min-width:200px;background:var(--bg-tertiary);border-radius:5px;padding:6px 10px;">
+          <div style="font-size:0.7rem;color:var(--text-secondary);margin-bottom:3px;">Next Eligibility</div>
+          <div id="k376-next-eligibility" style="font-size:0.78rem;color:#d2993a;font-weight:600;">
+            After 60d paper-trade + G8 fill rate ≥65% confirmation
+          </div>
+        </div>
+      </div>
+      <div style="padding:8px 10px;background:var(--bg-tertiary);border-radius:5px;font-size:0.76rem;">
+        <strong style="color:#d2993a;">K378 Activation Criteria:</strong>
+        <span style="color:var(--text-secondary);">
+          BTC 20d SMA slope gate ✓ &nbsp;|&nbsp; ETH/LINK/AVAX universe ✓ &nbsp;|&nbsp;
+          3% sleeve ✓ &nbsp;|&nbsp; Maker-only execution ✓ &nbsp;|&nbsp;
+          60d paper-trade <span style="color:#f85149;">PENDING</span> &nbsp;|&nbsp;
+          K357 Bybit gap fix ✓ (K380) &nbsp;|&nbsp; G8+G9 gates required pre-activation
+        </span>
+      </div>
+    </div>
+    <script>
+    (function() {
+      fetch('data/k376_momentum_dashboard.json?t=' + Date.now())
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+          if (!d) return;
+          const ts = document.getElementById('k376-ts');
+          if (ts && d.last_updated_utc) {
+            try {
+              ts.textContent = new Date(d.last_updated_utc).toLocaleString('ja-JP', {timeZone:'Asia/Tokyo'}) + ' JST';
+            } catch(e) { ts.textContent = d.last_updated_utc; }
+          }
+          // Regime badge
+          const regimeBadge = document.getElementById('k376-regime-badge');
+          if (regimeBadge && d.current_regime) {
+            const r = d.current_regime;
+            regimeBadge.textContent = 'regime: ' + r;
+            regimeBadge.style.background = r === 'bull' ? 'rgba(63,185,80,0.15)' : r === 'bear' ? 'rgba(248,81,73,0.15)' : '#30363d';
+            regimeBadge.style.color      = r === 'bull' ? '#3fb950' : r === 'bear' ? '#f85149' : '#8b949e';
+          }
+          // Live Monitoring table: regime as "Today's PnL" column
+          const lmTs = document.getElementById('lm-k376-ts');
+          if (lmTs && d.last_updated_utc) lmTs.textContent = '—';
+          const lmRegime = document.getElementById('lm-k376-regime');
+          if (lmRegime && d.current_regime) lmRegime.textContent = d.current_regime.toUpperCase();
+          const lmSh30 = document.getElementById('lm-k376-sh30');
+          if (lmSh30 && d.live_sharpe_30d !== undefined) lmSh30.textContent = d.live_sharpe_30d.toFixed(2);
+          // Fill rate
+          const fillRate = document.getElementById('k376-fill-rate');
+          if (fillRate && d.fill_rate_60d !== undefined) {
+            const pct = (d.fill_rate_60d * 100).toFixed(1) + '%';
+            fillRate.textContent = pct;
+            fillRate.style.color = d.g8_gate_passed ? '#3fb950' : d.fill_rate_60d > 0 ? '#d2993a' : '#8b949e';
+          }
+          const sharpeEl = document.getElementById('k376-sharpe');
+          if (sharpeEl && d.live_sharpe_30d !== undefined) {
+            sharpeEl.textContent = d.live_sharpe_30d.toFixed(3);
+            sharpeEl.style.color = d.live_sharpe_30d >= 1.0 ? '#3fb950' : d.live_sharpe_30d > 0 ? '#d2993a' : '#f85149';
+          }
+          const openPos = document.getElementById('k376-open-pos');
+          if (openPos && d.open_positions !== undefined) openPos.textContent = d.open_positions.length;
+          const sig24h = document.getElementById('k376-signals-24h');
+          if (sig24h && d.recent_signals_24h !== undefined) sig24h.textContent = d.recent_signals_24h;
+          const annRet = document.getElementById('k376-ann-ret');
+          if (annRet && d.ann_return_paper !== undefined) {
+            annRet.textContent = (d.ann_return_paper * 100).toFixed(1) + '%';
+            annRet.style.color = d.ann_return_paper > 0 ? '#3fb950' : '#f85149';
+          }
+          const nextEl = document.getElementById('k376-next-eligibility');
+          if (nextEl && d.next_eligibility) nextEl.textContent = d.next_eligibility;
+        })
+        .catch(() => {
+          const ts = document.getElementById('k376-ts');
           if (ts) ts.textContent = 'dashboard JSON not yet available';
         });
     })();
@@ -1640,17 +1771,21 @@ launchctl list | grep cryptolab</pre>
     <h2 style="color:#d2993a;border-bottom:2px solid #d2993a;padding-bottom:6px;">
       <span class="tp-header">
         Task Pipeline (K379 Governance v3 — K359–K378 Audit)
-        <span class="tp-updated" id="tp-ts">最終更新: 2026-05-27 09:15 JST</span>
+        <span class="tp-updated" id="tp-ts">最終更新: 2026-05-27 09:35 JST</span>
       </span>
     </h2>
 
-    <!-- v6.14 conditional candidate banner -->
-    <div style="background:rgba(210,153,58,0.08);border:1px solid #d2993a;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:0.82rem;">
-      <strong style="color:#d2993a;">v6.14 CONDITIONAL CANDIDATE (K378 = CONDITIONAL_ACCEPT):</strong>
-      K376 Volume-Spike Momentum — ETH/LINK/AVAX (stable 3) · 4h hold · maker 2bps RT · OOS Sh +3.35 · DSR=0.9957 · BTC trend filter
-      &nbsp;|&nbsp; Launch: K280 <strong>73%</strong> + K297' <strong>18.5%</strong> + sUSDe <strong>5%</strong> + K376 <strong>3.5%</strong> &nbsp;|&nbsp; HL exposure: <strong>58.5%</strong> (cap 65%)
-      &nbsp;|&nbsp; <span style="color:#f85149;">60-day paper-trade gate required before capital: fill_rate ≥ 65% AND live 30d Sh ≥ 1.0</span>
-      &nbsp;|&nbsp; <span style="color:#8b949e;">Fold 3 failure explained: BTC bear -19.7% (Nov25-Feb26) → systemic, not noise. BTC trend filter added.</span>
+    <!-- v6.14 conditional candidate banner (K380 update: SCAFFOLD-READY) -->
+    <div style="background:rgba(210,153,58,0.08);border:2px solid #d2993a;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:0.82rem;">
+      <strong style="color:#d2993a;">★★ v6.14 CANDIDATE — K380 SCAFFOLD-READY</strong>
+      <span style="font-size:0.72rem;background:#d2993a;color:#0d1117;border-radius:3px;padding:1px 7px;font-weight:700;margin-left:6px;">v6.14_candidate</span>
+      <br style="margin-bottom:4px;">
+      K376 Volume-Spike Momentum — ETH/LINK/AVAX · 5min signal · 4h hold · maker 2bps RT · OOS Sh +3.35 · DSR=0.9957 · BTC 20d SMA slope filter
+      &nbsp;|&nbsp; Target allocation: K280 <strong>73%</strong> + K297' <strong>18.5%</strong> + sUSDe <strong>5%</strong> + K376 <strong>3%</strong> &nbsp;|&nbsp; HL exposure: <strong>58.5%</strong> (cap 65%)
+      &nbsp;|&nbsp; <span style="color:#f85149;font-weight:600;">60d paper-trade gate required: fill_rate ≥ 65% (G8) AND live 30d Sh ≥ 1.0 (G9)</span>
+      &nbsp;|&nbsp; <span style="color:#3fb950;font-weight:600;">K380 daemon: SCAFFOLD-READY → paper-trade running</span>
+      &nbsp;|&nbsp; <span style="color:#8b949e;">Fold 3: BTC bear -19.7% was systemic → BTC slope gate filters bear regimes. ETH/LINK/AVAX survived fold 4 (BTC +14.1%).</span>
+      &nbsp;|&nbsp; Next eligibility: After 60d run + G8/G9 gate confirmation → runbook <a href="docs/k302a_runbook.md" style="color:#79c0ff;" target="_blank">§17</a>
     </div>
 
     <!-- Production DEPLOY badge -->
@@ -1670,12 +1805,12 @@ launchctl list | grep cryptolab</pre>
     <!-- WIP Counters -->
     <div class="tp-grid" style="margin-top:12px;">
       <div class="tp-card">
-        <div class="tp-val tp-ok">1/3</div>
+        <div class="tp-val tp-ok">0/3</div>
         <div class="tp-label">In Progress</div>
-        <div class="tp-limit">K380 paper-trade</div>
+        <div class="tp-limit">K380 DONE → K381 next</div>
       </div>
       <div class="tp-card">
-        <div class="tp-val tp-ok">2/5</div>
+        <div class="tp-val tp-ok">3/5</div>
         <div class="tp-label">Pending</div>
         <div class="tp-limit">K381 60d monitor, K384</div>
       </div>
@@ -1698,7 +1833,7 @@ launchctl list | grep cryptolab</pre>
       &nbsp;|&nbsp;<span style="color:#d2993a;font-weight:700;">CONDITIONAL_ACCEPT ×1</span> (K378 — 60d paper-trade gate)
       &nbsp;|&nbsp;<span style="color:#f85149;">REJECT ×7</span> (K362/K365/K372/K374/K375/K377)
       &nbsp;|&nbsp;<span style="color:#79c0ff;">DEFER ×2</span> (K365/K373)
-      &nbsp;|&nbsp;DONE ×4 (K359/K363/K366/K367)
+      &nbsp;|&nbsp;DONE ×5 (K359/K363/K366/K367/<strong>K380</strong>)
       &nbsp;|&nbsp;<span style="color:#ff7b72;font-weight:700;">+6 hypothesis lines CLOSED (total 9 cumulative)</span>
     </div>
 
@@ -1749,10 +1884,10 @@ launchctl list | grep cryptolab</pre>
       <tbody>
         <tr>
           <td><strong>K380</strong></td>
-          <td>K376 paper-trade daemon — ETH/LINK/AVAX, 4h, BTC trend filter, 3% sleeve, fill rate tracker</td>
-          <td><span class="tp-badge tp-badge-next">NEXT (NOW)</span></td>
-          <td>~5h</td>
-          <td>K378 CONDITIONAL_ACCEPT ✓</td>
+          <td>K376 paper-trade daemon — ETH/LINK/AVAX, 4h, BTC trend filter, 3% sleeve, fill rate tracker &nbsp;|&nbsp; <span style="color:#3fb950;">SCAFFOLD-READY: k376_momentum_run.py + plist + dashboard + §17 runbook + Bybit gap fix</span></td>
+          <td><span class="tp-badge tp-badge-deploy">DONE</span></td>
+          <td>K380 ✓</td>
+          <td>K378 CONDITIONAL_ACCEPT ✓ → K381 60d run</td>
         </tr>
         <tr>
           <td><strong>K381</strong></td>
@@ -9885,7 +10020,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
     <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; Research Baseline v4.1 / Production v6.13d K302a (K280 75% + K297' SPX-filtered 20% + sUSDe OC 5%)</p>
-    <p style="margin-top:4px;">更新: 2026-05-27 09:31 JST &nbsp;|&nbsp; K381 HTML chronicle K367-K380 (13 waves, 4 ACCEPTs, 9 lines closed, v6.14 candidate path) &nbsp;|&nbsp; Production v6.13d + G9 gate DEPLOYED (K280 75% + K297' G9 20% + sUSDe OC 5%、K360 verified Sh 25.68) &nbsp;|&nbsp; v6.14 CANDIDATE: K376 3.5% vol-spike momentum SCAFFOLD-READY (K280 73% + K297' 18.5% + sUSDe 5% + K376 3.5%、60d paper-trade pending K383+) &nbsp;|&nbsp; K370 Builder rebate SCAFFOLD-READY ($94K-472K/yr at $10M) &nbsp;|&nbsp; K371 G9 oracle deviation gate LIVE (PAXG 0.06%/SPX 0.13% &lt;&lt; 1%) &nbsp;|&nbsp; 次 governance: K399 (20波後) &nbsp;|&nbsp; 手法: flearn.pdf &sect;5 + §6厳密ゲート &nbsp;|&nbsp; K367-K380 chronicle: §A v6.14 path, §B production gates, §C-9 lines, §D infra, §E kkdemian</p>
+    <p style="margin-top:4px;">更新: 2026-05-27 09:35 JST &nbsp;|&nbsp; K380 K376 volume momentum SCAFFOLD COMPLETE (BTC regime gate, ETH/LINK/AVAX, 3% sleeve, 60d paper-trade daemon + §17 runbook + Bybit emergency gap fix) &nbsp;|&nbsp; Production v6.13d + G9 gate DEPLOYED (K280 75% + K297' G9 20% + sUSDe OC 5%、K360 verified Sh 25.68) &nbsp;|&nbsp; v6.14 CANDIDATE: K376 3% vol-spike momentum SCAFFOLD-READY (K378 CONDITIONAL_ACCEPT、60d paper-trade gate → K381) &nbsp;|&nbsp; K370 Builder rebate SCAFFOLD-READY ($94K-472K/yr at $10M) &nbsp;|&nbsp; K371 G9 oracle deviation gate LIVE (PAXG 0.06%/SPX 0.13% &lt;&lt; 1%) &nbsp;|&nbsp; 次 governance: K399 (20波後) &nbsp;|&nbsp; 手法: flearn.pdf §5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 

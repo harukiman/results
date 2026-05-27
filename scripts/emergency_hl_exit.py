@@ -605,6 +605,181 @@ def send_ntfy_alert(message: str, title: str, priority: str = "urgent",
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# 7b. Bybit Close-All (K378/K380 gap fix — Phase 6)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Bybit API v5 endpoints (public testable, auth required for trading)
+BYBIT_API_URL       = "https://api.bybit.com"
+BYBIT_CANCEL_ALL    = "/v5/order/cancel-all"
+BYBIT_POSITION_LIST = "/v5/position/list"
+BYBIT_CLOSE_ROUTE   = "/v5/order/create"     # market order to close
+
+def _bybit_signed_request(
+    method: str,
+    endpoint: str,
+    params: Dict,
+    api_key: str,
+    api_secret: str,
+    logger: logging.Logger,
+) -> Dict:
+    """
+    Submit authenticated Bybit v5 API request using HMAC-SHA256.
+    Returns response JSON dict; raises RuntimeError on failure.
+    """
+    try:
+        import requests
+        import hmac
+        import hashlib
+    except ImportError:
+        raise RuntimeError("requests + hmac/hashlib required (stdlib + requests).")
+
+    ts_ms  = str(int(time.time() * 1000))
+    recv_window = "5000"
+
+    if method.upper() == "GET":
+        query = "&".join(f"{k}={v}" for k, v in sorted(params.items()))
+        sign_payload = ts_ms + api_key + recv_window + query
+    else:
+        body_str = json.dumps(params, separators=(",", ":"))
+        sign_payload = ts_ms + api_key + recv_window + body_str
+
+    signature = hmac.new(
+        api_secret.encode("utf-8"),
+        sign_payload.encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
+
+    headers = {
+        "X-BAPI-API-KEY":     api_key,
+        "X-BAPI-TIMESTAMP":   ts_ms,
+        "X-BAPI-SIGN":        signature,
+        "X-BAPI-RECV-WINDOW": recv_window,
+        "Content-Type":       "application/json",
+        "User-Agent":         "ct-emergency-exit/1.0",
+    }
+
+    url = BYBIT_API_URL + endpoint
+    try:
+        if method.upper() == "GET":
+            resp = requests.get(url, params=params, headers=headers, timeout=20)
+        else:
+            resp = requests.post(url, data=body_str, headers=headers, timeout=20)
+        resp.raise_for_status()
+        result = resp.json()
+        if result.get("retCode", 0) != 0:
+            logger.warning(f"Bybit API non-zero retCode: {result.get('retCode')} — {result.get('retMsg')}")
+        return result
+    except Exception as exc:
+        raise RuntimeError(f"Bybit API request failed ({endpoint}): {exc}")
+
+
+def close_bybit_positions(
+    api_key: str,
+    api_secret: str,
+    dry_run: bool,
+    logger: logging.Logger,
+    category: str = "linear",
+) -> bool:
+    """
+    K378 Phase 6 gap fix: close all Bybit positions + cancel all orders.
+    Uses Bybit v5 API:
+      1. POST /v5/order/cancel-all  (cancel all open orders)
+      2. GET  /v5/position/list     (fetch all open positions)
+      3. POST /v5/order/create × N  (market close each position)
+
+    category: "linear" (USDT perps, default) | "inverse" | "spot"
+    api_key + api_secret: read from BYBIT_API_KEY / BYBIT_API_SECRET env vars at call time.
+    Returns True on success (all positions attempted), False if any error.
+
+    PAPER-TRADE SAFE: in dry_run=True returns without calling Bybit API.
+    """
+    if dry_run:
+        logger.info("  [DRY-RUN] close_bybit_positions — skipping API calls (dry-run mode).")
+        return True
+
+    if not api_key or not api_secret:
+        logger.error("Bybit credentials not provided. Set BYBIT_API_KEY + BYBIT_API_SECRET.")
+        return False
+
+    success = True
+
+    # Step 1: Cancel all open orders
+    logger.info("Bybit Step 1: Cancelling all open orders...")
+    try:
+        cancel_payload = {"category": category, "settleCoin": "USDT"}
+        result = _bybit_signed_request(
+            "POST", BYBIT_CANCEL_ALL, cancel_payload, api_key, api_secret, logger
+        )
+        cancelled_count = len(result.get("result", {}).get("list", []))
+        logger.info(f"  Bybit cancel-all complete: {cancelled_count} orders cancelled "
+                    f"(retCode={result.get('retCode')})")
+        time.sleep(1.5)
+    except Exception as exc:
+        logger.error(f"  Bybit cancel-all FAILED: {exc}")
+        success = False
+
+    # Step 2: Fetch open positions
+    logger.info("Bybit Step 2: Fetching open positions...")
+    positions = []
+    try:
+        pos_params = {"category": category, "settleCoin": "USDT"}
+        pos_result = _bybit_signed_request(
+            "GET", BYBIT_POSITION_LIST, pos_params, api_key, api_secret, logger
+        )
+        raw_positions = pos_result.get("result", {}).get("list", [])
+        for p in raw_positions:
+            size = float(p.get("size", "0") or "0")
+            if size < 1e-9:
+                continue  # skip zero positions
+            positions.append({
+                "symbol":     p.get("symbol", ""),
+                "size":       size,
+                "side":       p.get("side", ""),          # "Buy" or "Sell"
+                "value_usd":  float(p.get("positionValue", "0") or "0"),
+            })
+        logger.info(f"  Bybit open positions: {len(positions)}")
+    except Exception as exc:
+        logger.error(f"  Bybit position fetch FAILED: {exc}")
+        return False
+
+    if not positions:
+        logger.info("  No Bybit positions to close.")
+        return success
+
+    # Step 3: Market-close each position
+    logger.info(f"Bybit Step 3: Market-closing {len(positions)} positions...")
+    for pos in positions:
+        symbol     = pos["symbol"]
+        size       = str(pos["size"])
+        # Opposite side to close: if position is "Buy" → close with "Sell"
+        close_side = "Sell" if pos["side"] == "Buy" else "Buy"
+        try:
+            close_payload = {
+                "category":    category,
+                "symbol":      symbol,
+                "side":        close_side,
+                "orderType":   "Market",
+                "qty":         size,
+                "reduceOnly":  True,
+                "timeInForce": "IOC",
+            }
+            result = _bybit_signed_request(
+                "POST", BYBIT_CLOSE_ROUTE, close_payload, api_key, api_secret, logger
+            )
+            order_id = result.get("result", {}).get("orderId", "N/A")
+            logger.info(
+                f"  Closed {symbol} {close_side} qty={size} "
+                f"(orderId={order_id}, retCode={result.get('retCode')})"
+            )
+            time.sleep(CLOSE_WAIT_SECONDS)
+        except Exception as exc:
+            logger.error(f"  Bybit close FAILED {symbol}: {exc}")
+            success = False
+
+    return success
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # 8. Interactive Confirm (--EXECUTE guard)
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -659,7 +834,10 @@ def double_confirm(plan: Dict, user: str) -> bool:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="K357 Emergency HyperLiquid Exit Script (K355 critical gap mitigation)",
+        description=(
+            "K357 Emergency HyperLiquid Exit Script (K355 critical gap mitigation)\n"
+            "K380: --include-bybit flag added (K378 Phase 6 Bybit gap fix)"
+        ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -670,16 +848,31 @@ Examples:
   export HL_USER_ADDRESS=0x...
   python3 scripts/emergency_hl_exit.py --dry-run
 
-  # LIVE EXECUTION (requires HL_PRIVATE_KEY + interactive confirm):
+  # LIVE EXECUTION — HL only (requires HL_PRIVATE_KEY + interactive confirm):
   export HL_USER_ADDRESS=0x...
   export HL_PRIVATE_KEY=0x...
   python3 scripts/emergency_hl_exit.py --EXECUTE
+
+  # LIVE EXECUTION — HL + Bybit (K380 gap fix, default --include-bybit=True):
+  export HL_USER_ADDRESS=0x...
+  export HL_PRIVATE_KEY=0x...
+  export BYBIT_API_KEY=...
+  export BYBIT_API_SECRET=...
+  python3 scripts/emergency_hl_exit.py --EXECUTE --include-bybit
+
+  # HL only (skip Bybit):
+  python3 scripts/emergency_hl_exit.py --EXECUTE --no-bybit
 
 Trigger conditions (per §14 runbook):
   - CFTC/regulatory enforcement action against HL
   - HL platform alert (exploit, insolvency signal, ADL cascade)
   - HYPE token -40% in 7 days
   - Custom user trigger (operator discretion)
+
+Bybit emergency exit (§14 update, K380):
+  - Requires BYBIT_API_KEY + BYBIT_API_SECRET env vars
+  - Cancels all open Bybit orders, then market-closes all linear positions
+  - See: docs/k302a_runbook.md §14.7 (Bybit gap fix)
         """,
     )
     mode_group = parser.add_mutually_exclusive_group()
@@ -691,6 +884,13 @@ Trigger conditions (per §14 runbook):
                         help="HL user address (0x...); fallback: HL_USER_ADDRESS env var")
     parser.add_argument("--skip-postcheck", action="store_true",
                         help="Skip post-execution verification (not recommended)")
+    # K380: Bybit emergency exit flag (default True per K378 Phase 6)
+    bybit_group = parser.add_mutually_exclusive_group()
+    bybit_group.add_argument("--include-bybit", dest="include_bybit", action="store_true",
+                             default=True,
+                             help="(default) Include Bybit close-all in emergency exit (K380 gap fix)")
+    bybit_group.add_argument("--no-bybit",      dest="include_bybit", action="store_false",
+                             help="Skip Bybit close-all (HL only)")
 
     args = parser.parse_args()
 
@@ -771,45 +971,84 @@ Trigger conditions (per §14 runbook):
         # Write emergency status (triggered)
         write_emergency_status(triggered=True, plan=plan, logger=logger)
 
-        # Execute
+        # Execute HL exit
         success = execute_exit(plan, pk_clean, user, logger)
 
-        # Clear private key from memory (best-effort in Python)
+        # Clear HL private key from memory (best-effort in Python)
         pk_clean = "0" * len(pk_clean)
         del private_key, pk_clean
 
         if success:
-            logger.info("EXIT EXECUTION COMPLETED — verifying positions...")
+            logger.info("HL EXIT EXECUTION COMPLETED — verifying positions...")
         else:
-            logger.error("EXIT EXECUTION HAD ERRORS — check logs and verify manually")
+            logger.error("HL EXIT EXECUTION HAD ERRORS — check logs and verify manually")
 
-        # Post-check
+        # K380 Phase 6: Bybit close-all (gap fix per K378 activation criteria #6)
+        bybit_success = True
+        if args.include_bybit:
+            logger.info("=== BYBIT EMERGENCY CLOSE-ALL (K380 gap fix) ===")
+            bybit_api_key    = os.environ.get("BYBIT_API_KEY", "")
+            bybit_api_secret = os.environ.get("BYBIT_API_SECRET", "")
+            if not bybit_api_key or not bybit_api_secret:
+                logger.warning(
+                    "BYBIT_API_KEY or BYBIT_API_SECRET not set — skipping Bybit close. "
+                    "Set env vars to enable: export BYBIT_API_KEY=... BYBIT_API_SECRET=..."
+                )
+                bybit_success = False
+            else:
+                bybit_success = close_bybit_positions(
+                    api_key=bybit_api_key,
+                    api_secret=bybit_api_secret,
+                    dry_run=False,
+                    logger=logger,
+                )
+                if bybit_success:
+                    logger.info("Bybit close-all COMPLETE.")
+                else:
+                    logger.error("Bybit close-all HAD ERRORS — verify Bybit positions manually.")
+                # Clear Bybit secrets from memory
+                bybit_api_key    = "0" * len(bybit_api_key)
+                bybit_api_secret = "0" * len(bybit_api_secret)
+                del bybit_api_key, bybit_api_secret
+        else:
+            logger.info("Bybit close-all skipped (--no-bybit flag).")
+
+        # Post-check (HL only — Bybit has no equivalent read-back in this scaffold)
         if not args.skip_postcheck:
             postcheck = run_postcheck(user, logger)
             status    = postcheck.get("status", "UNKNOWN")
             logger.info(f"Post-check status: {status}")
 
-            # Send completion alert
+            # Send completion alert (include Bybit status)
+            bybit_status_str = "OK" if bybit_success else "ERRORS (check logs)"
             send_ntfy_alert(
-                message=(f"HL EXIT COMPLETE\nStatus: {status}\n"
-                         f"Residual positions: {len(postcheck.get('residual_positions', []))}"),
-                title="HL EXIT COMPLETE",
+                message=(f"EMERGENCY EXIT COMPLETE\n"
+                         f"HL status: {status}\n"
+                         f"Bybit close-all: {bybit_status_str}\n"
+                         f"Residual HL positions: {len(postcheck.get('residual_positions', []))}"),
+                title="EMERGENCY EXIT COMPLETE",
                 priority="high",
                 logger=logger,
             )
         else:
             logger.warning("Post-check skipped by --skip-postcheck flag")
 
-        return 0 if success else 1
+        overall_success = success and bybit_success
+        return 0 if overall_success else 1
 
     # Dry-run success
     logger.info("")
     logger.info("DRY-RUN COMPLETE. No trades executed.")
     logger.info("When ready to execute:")
     logger.info("  1. Verify the plan above is correct")
-    logger.info("  2. Export HL_USER_ADDRESS and HL_PRIVATE_KEY env vars")
+    logger.info("  2. Export HL_USER_ADDRESS, HL_PRIVATE_KEY, BYBIT_API_KEY, BYBIT_API_SECRET env vars")
     logger.info("  3. Run: python3 scripts/emergency_hl_exit.py --EXECUTE")
+    logger.info("     (adds Bybit close-all by default; use --no-bybit to skip)")
     logger.info("  4. Confirm both interactive prompts")
+    if args.include_bybit:
+        logger.info("  [DRY-RUN] Bybit close-all would be attempted (--include-bybit=True)")
+    else:
+        logger.info("  [DRY-RUN] Bybit close-all would be skipped (--no-bybit)")
 
     return 0
 

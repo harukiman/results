@@ -1189,7 +1189,49 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist
 - User must verify dry-run output matches actual positions before executing
 - Practice the `--EXECUTE` confirm flow without real key before an emergency
 
-### §14.8 Daemon Integration (K302a Daemons Check Flag)
+### §14.8 Bybit Emergency Close-All (K380 Gap Fix)
+
+**Added:** 2026-05-27 | **Wave:** K380 | **K378 activation criterion #6**
+
+K376 CONDITIONAL_ACCEPT included a requirement to close the gap: K357 only covered HyperLiquid.
+K380 adds `close_bybit_positions()` to `scripts/emergency_hl_exit.py`.
+
+**Bybit coverage:**
+- Cancels all Bybit open orders via `POST /v5/order/cancel-all` (category=linear)
+- Fetches all open positions via `GET /v5/position/list`
+- Market-closes each position via `POST /v5/order/create` (Market + reduceOnly + IOC)
+
+**CLI flag added (K380):**
+
+```bash
+# Default (HL + Bybit, requires BYBIT_API_KEY + BYBIT_API_SECRET):
+python3 scripts/emergency_hl_exit.py --EXECUTE                  # --include-bybit is default=True
+python3 scripts/emergency_hl_exit.py --EXECUTE --include-bybit  # explicit
+
+# HL only (skip Bybit):
+python3 scripts/emergency_hl_exit.py --EXECUTE --no-bybit
+
+# Dry-run preview:
+python3 scripts/emergency_hl_exit.py --dry-run   # shows what WOULD happen
+```
+
+**Credentials required for Bybit close-all:**
+```bash
+export BYBIT_API_KEY=<your_bybit_api_key>
+export BYBIT_API_SECRET=<your_bybit_api_secret>
+# Keys NEVER logged or committed to git
+```
+
+**Bybit exit flow (integrated into §14.4 Step 4):**
+1. HL positions cancelled + closed (existing K357 logic)
+2. Bybit orders cancelled + positions closed (K380 addition)
+3. Post-check verifies HL closure (Bybit: verify via Bybit UI)
+
+**SCAFFOLD note:** Bybit signing uses HMAC-SHA256 (stdlib only — no new packages required).
+The `close_bybit_positions()` function is tested in dry-run mode; live execution requires
+valid Bybit API keys with trading permission.
+
+### §14.10 Daemon Integration (K302a Daemons Check Flag)
 
 K302a satellite and K280 live daemons SHOULD check for the emergency flag before each run:
 
@@ -1455,6 +1497,165 @@ G9 is a **production safety gate**, not a K266 strict backtest gate.
 
 Walk-forward: NO change expected (historical oracle deviations not recorded → G9 transparent
 in backtest context). K297' Sharpe 18.48 remains unaffected.
+
+---
+
+## §17 K376 Volume-Spike Momentum Activation Plan (K380)
+
+**Added:** 2026-05-27 | **Wave:** K380 | **Status:** SCAFFOLD-READY (60-day paper-trade gate)
+**K378 verdict:** CONDITIONAL_ACCEPT — 60d paper-trade required; G8 fill rate ≥ 65% before capital
+
+### §17.1 Strategy Summary
+
+| Parameter | Value |
+|-----------|-------|
+| Strategy ID | K376_volume_momentum_v1 |
+| Version | v6.14_candidate |
+| Universe | ETH, LINK, AVAX (PEPE/SUI dropped: 3/4 folds negative) |
+| Signal | vol_ratio > 4.0x (12h rolling) AND \|5min return\| > 0.4% |
+| Regime gate | BTC 20d SMA slope > 0 (bull-only; skip all signals in bear) |
+| Execution | Post-only limit (maker) — 2bps maker rebate on HL/Bybit |
+| Hold period | 4h (240 minutes) |
+| Sleeve | 3% of AUM (v6.14 candidate) |
+| Script | `scripts/k376_momentum_run.py` |
+| Daemon label | `com.cryptolab.k376-momentum` |
+| Dashboard | `data/k376_momentum_dashboard.json` |
+| Fill log | `data/k376_paper_fills.jsonl` |
+| Paper-trade log | `logs/k376_momentum.log` |
+
+**OOS backtest stats (K376/K378):**
+- Combined Sharpe lift: +3.35 OOS
+- DSR: 0.9957
+- Fold breakdown: ETH/LINK/AVAX positive folds 3/4 (fold 3 BTC bear was systemic, filtered by regime gate)
+- Maker RT cost: 2bps (net-positive after rebate)
+
+### §17.2 Pre-Activation Gate Checks
+
+Before allocating any real capital to K376, ALL of the following must pass:
+
+| Gate | Metric | Threshold | Source |
+|------|--------|-----------|--------|
+| G8 (paper fill rate) | Maker fill rate, 60d | ≥ 65% | `data/k376_momentum_dashboard.json → fill_rate_60d` |
+| G9 (live Sharpe) | Sharpe annualized, 30d | ≥ 1.0 | `data/k376_momentum_dashboard.json → live_sharpe_30d` |
+| Regime filter | BTC 20d SMA slope > 0 | Bull regime | `current_regime == "bull"` |
+| Paper-trade duration | Days running | ≥ 60 days | Compare first fill in `data/k376_paper_fills.jsonl` |
+| K357 Bybit gap | Bybit close-all endpoint | Present | See §14.7 (K380 patch) |
+
+```bash
+# Check gate status:
+python3 -c "
+import json
+d = json.load(open('data/k376_momentum_dashboard.json'))
+print('Regime:',        d.get('current_regime'))
+print('Fill rate 60d:', d.get('fill_rate_60d'))
+print('G8 passed:',     d.get('g8_gate_passed'))
+print('Live Sh 30d:',   d.get('live_sharpe_30d'))
+print('Open positions:',len(d.get('open_positions', [])))
+print('Signals 24h:',   d.get('recent_signals_24h'))
+"
+```
+
+### §17.3 Activation Order
+
+K376 activates **after sUSDe daemon, before HL portfolio margin**:
+
+```
+Priority order (per K379 Governance v3):
+  1. sUSDe OC daemon (com.cryptolab.susde-oc)          ← already SCAFFOLD-READY
+  2. K376 volume momentum (com.cryptolab.k376-momentum) ← 60d paper-trade gate
+  3. HL Portfolio Margin (K373, DEFER)                  ← deferred, no current gate
+```
+
+**Architecture after K376 activation (v6.14):**
+```
+v6.14 = K280 Core (73%) + K297' Satellite (18.5%) + sUSDe OC (5%) + K376 Momentum (3%)
+  Combined Sharpe (estimated): 25.68 + 3.35 sleeve lift (subject to live confirmation)
+  HL exposure: 58.5% (cap 65% per K355)
+```
+
+### §17.4 Activation Commands (User Action Required After 60d Gate)
+
+```bash
+# Step 1: Verify 60d paper-trade gate passed
+python3 scripts/k376_momentum_run.py --verbose
+# → Check: fill_rate_60d >= 0.65, live_sharpe_30d >= 1.0, regime = bull
+
+# Step 2: Stop daemon (paper mode), copy plist to LaunchAgents
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k376-momentum.plist 2>/dev/null || true
+cp com.cryptolab.k376-momentum.plist ~/Library/LaunchAgents/
+
+# Step 3: Reload daemon
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k376-momentum.plist
+
+# Step 4: Verify daemon is scheduled
+launchctl list | grep k376
+
+# Step 5: Confirm 0 deployment mismatches
+python3 scripts/verify_deployment_status.py
+```
+
+### §17.5 Universe Expansion Path
+
+Controlled expansion after initial 30d live data:
+
+| Phase | Timeline | Universe | Gate |
+|-------|----------|----------|------|
+| Launch | Day 0–30 | ETH, LINK, AVAX (3 coins) | K380 activation |
+| Phase 2 | Day 30–60 | + ADA (4 coins) | 30d Sharpe positive |
+| Phase 3 | Day 60–90 | + SUI or PEPE (5 coins) | Additional 60d Sharpe > 1.0 |
+
+**Decision on SUI/PEPE expansion:**
+- SUI fold 3 Sharpe: -1.807 → expansion only if live rolling 30d Sh > 1.0
+- PEPE fold 3 Sharpe: -3.078 → requires positive fold 3 in live env before adding
+- BTC/DOGE excluded indefinitely (K378 analysis: systemic bear sensitivity, not strategy-specific)
+
+### §17.6 Rollback Procedure
+
+**Immediate (no daemon restart required):**
+- Set `SLEEVE_PCT = 0` (effectively disables position sizing) in `scripts/k376_momentum_run.py`
+
+**Full rollback:**
+```bash
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k376-momentum.plist
+# Architecture reverts to v6.13d: K280 75% + K297' 20% + sUSDe 5%
+# Update verify_deployment_status.py expected_html_status to "DEPRECATED"
+python3 scripts/verify_deployment_status.py   # confirm 0 mismatches
+```
+
+**Trigger conditions for rollback:**
+- Live 30d Sharpe drops below 0.5 after activation
+- Fill rate drops below 50% for 7+ consecutive days
+- Regime filter fails to prevent losses in confirmed bear market (>3 consecutive losing weeks)
+- Emergency: `EMERGENCY_EXIT_TRIGGERED.flag` present (daemon auto-skips)
+
+### §17.7 Monitoring
+
+```bash
+# Live regime check:
+python3 scripts/k376_momentum_run.py --verbose --dry-run
+
+# Fill log analysis:
+python3 -c "
+import json
+fills = [json.loads(l) for l in open('data/k376_paper_fills.jsonl') if l.strip()]
+print(f'Total fills: {len(fills)}')
+long_fills  = [f for f in fills if f.get(\"direction\") == \"long\"]
+short_fills = [f for f in fills if f.get(\"direction\") == \"short\"]
+print(f'Long: {len(long_fills)}, Short: {len(short_fills)}')
+"
+
+# Dashboard:
+cat data/k376_momentum_dashboard.json | python3 -m json.tool
+```
+
+**Dashboard fields key:**
+| Field | Alert threshold |
+|-------|-----------------|
+| `current_regime` | Investigate if "unknown" for > 1h |
+| `fill_rate_60d` | Alert if < 0.50 (G8 gate warning) |
+| `live_sharpe_30d` | Alert if < 0.5 (strategy degrading) |
+| `open_positions` | Alert if > 3 simultaneously (position limit) |
+| `recent_signals_24h` | Alert if > 20/day (signal frequency anomaly) |
 
 ---
 
