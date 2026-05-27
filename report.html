@@ -755,7 +755,7 @@ window.__renderWhenReady = function(fn, label) {
   <div style="background:var(--bg-tertiary);border-bottom:2px solid var(--accent-blue);padding:8px 20px;text-align:center;font-size:0.85rem;color:var(--text-secondary);">
     <strong style="color:var(--accent-blue);">最終更新:</strong> <span id="last-update">2026-05-27 09:32 JST</span> &nbsp;|&nbsp;
     <strong>試行数:</strong> 738,388+ (+42 K347-K380) &nbsp;|&nbsp;
-    <strong>PRODUCTION v6.13d + G9:</strong> <span style="color:var(--accent-green);font-weight:700;">K280 75% + K297' 20% (SPX filter+G9 oracle gate) + sUSDe OC 5% — K360 verified Sh 25.68 / MDD 0.019% / all §6 gates pass</span> &nbsp;|&nbsp; <span style="color:#d2993a;font-weight:700;">★★ v6.14 SCAFFOLD: K376 3% vol-spike momentum (K380 paper-trade daemon LIVE — 60d gate, fill_rate≥65%, BTC slope filter, ETH/LINK/AVAX)</span> &nbsp;|&nbsp;
+    <strong>PRODUCTION v6.13d + G9:</strong> <span style="color:var(--accent-green);font-weight:700;">K280 75% + K297' 20% (SPX filter+G9 oracle gate) + sUSDe OC 5% — K360 verified Sh 25.68 / MDD 0.019% / all §6 gates pass</span> &nbsp;|&nbsp; <span style="color:#a78bfa;font-weight:700;">★ K386 v6.13e BEAR_1 fallback STANDBY (K385 P=15% CFTC risk: K280 85% + BTC/ETH spot 10% + sUSDe 5% → HL 52.5% — 3-day activation, §18 runbook)</span> &nbsp;|&nbsp; <span style="color:#d2993a;font-weight:700;">★★ v6.14 SCAFFOLD: K376 3% vol-spike momentum (K380 paper-trade daemon LIVE — 60d gate, fill_rate≥65%, BTC slope filter, ETH/LINK/AVAX)</span> &nbsp;|&nbsp;
     <strong>9 hypothesis lines CLOSED (cumulative)</strong> &nbsp;|&nbsp; <span style="color:#3fb950;font-weight:700;">★★ K370 Builder rebate SCAFFOLD ($94K-472K/yr at $10M)</span> &nbsp;|&nbsp; <span style="color:#58a6ff;font-weight:700;">★★★ K371 G9 oracle gate LIVE (PAXG 0.06%/SPX 0.13% &lt;&lt; 1%)</span> &nbsp;|&nbsp; <span style="color:#d2993a;font-weight:700;">K380 K376 paper-trade SCAFFOLD-READY — next: 60d run → K381 gate check</span>
   </div>
 
@@ -885,6 +885,14 @@ window.__renderWhenReady = function(fn, label) {
               <td id="lm-k376-ts" style="color:var(--text-secondary);">—</td>
               <td id="lm-k376-regime" style="color:var(--text-secondary);">—</td>
               <td id="lm-k376-sh30" style="color:var(--text-secondary);">—</td>
+            </tr>
+            <!-- K386: v6.13e BEAR_1 fallback daemon (2026-05-27) -->
+            <tr id="lm-k386-row">
+              <td><strong>K386 v6.13e BEAR_1 fallback</strong><br><span style="font-size:0.72rem;color:var(--text-secondary);">K280 85% + BTC/ETH spot 10% + sUSDe 5% · HL 52.5% · CFTC/HIP-3 trigger · 4h interval</span></td>
+              <td><span id="lm-k386-badge" class="lm-badge lm-badge-scaffold" title="K386 BEAR_1 prototype. STANDBY unless BEAR_1_FALLBACK_ACTIVE.flag present. plist in repo root (gitignored). Script: scripts/k386_v613e_fallback_run.py. Runbook: §18">STANDBY</span></td>
+              <td id="lm-k386-ts" style="color:var(--text-secondary);">—</td>
+              <td id="lm-k386-arch" style="color:var(--text-secondary);">v6.13d</td>
+              <td id="lm-k386-sharpe" style="color:var(--text-secondary);">22.89 est.</td>
             </tr>
           </tbody>
         </table>
@@ -1217,6 +1225,151 @@ launchctl list | grep cryptolab</pre>
         })
         .catch(() => {
           const ts = document.getElementById('k376-ts');
+          if (ts) ts.textContent = 'dashboard JSON not yet available';
+        });
+    })();
+    </script>
+
+    <!-- K386: BEAR_1 v6.13e Fallback Status Widget (2026-05-27) -->
+    <div class="lm-card" style="margin-bottom:14px;border-color:#8b5cf6;" id="bear1-fallback-card">
+      <h3 style="display:flex;align-items:center;gap:8px;color:#a78bfa;">
+        K386 BEAR_1 Fallback — v6.13e
+        <span id="bear1-status-badge" style="font-size:0.7rem;font-weight:400;background:#21262d;border:1px solid #8b5cf6;color:#a78bfa;border-radius:4px;padding:1px 7px;letter-spacing:0.03em;">STANDBY</span>
+        <span style="font-size:0.68rem;font-weight:400;color:var(--text-secondary);margin-left:auto;" id="bear1-ts">読み込み中...</span>
+      </h3>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px;">
+        <div style="flex:2;min-width:220px;">
+          <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:4px;">
+            <strong style="color:#e6edf3;">Current architecture:</strong>
+            <span id="bear1-arch" style="color:#a78bfa;font-weight:600;">v6.13d</span>
+            &nbsp;·&nbsp;
+            <strong style="color:#e6edf3;">Last regulatory check:</strong>
+            <span id="bear1-last-check" style="color:var(--text-secondary);">—</span>
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:4px;">
+            <strong>Trigger conditions:</strong> CFTC enforcement filing vs HL &nbsp;|&nbsp; HL voluntary HIP-3 suspension
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);">
+            Script: <code style="color:var(--accent-cyan);">scripts/k386_v613e_fallback_run.py</code>
+            &nbsp;|&nbsp; Daemon: <code style="color:var(--accent-cyan);">com.cryptolab.k386-v613e-fallback</code> (4h)
+            &nbsp;|&nbsp; <a href="docs/k302a_runbook.md" style="color:#79c0ff;" target="_blank">Runbook §18</a>
+          </div>
+        </div>
+        <div style="min-width:180px;background:var(--bg-tertiary);border-radius:6px;padding:8px 12px;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:2px;">v6.13e Architecture</div>
+          <div style="font-size:0.78rem;color:#e6edf3;line-height:1.7;">
+            K280 main: <strong style="color:#3fb950;">85%</strong><br>
+            K297' HIP-3: <strong style="color:#f85149;">0%</strong> (suspended)<br>
+            BTC/ETH spot: <strong style="color:#58a6ff;">10%</strong><br>
+            sUSDe OC: <strong style="color:#e6edf3;">5%</strong>
+          </div>
+          <div style="margin-top:6px;font-size:0.68rem;color:var(--text-secondary);">
+            HL exposure: <strong style="color:#a78bfa;">52.5%</strong> (−5pp vs v6.13d)
+          </div>
+        </div>
+        <div style="min-width:120px;background:var(--bg-tertiary);border-radius:6px;padding:8px 12px;text-align:center;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:2px;">Est. Sharpe (v6.13e)</div>
+          <div style="font-size:1.4rem;font-weight:700;color:#a78bfa;">22.89</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">K346 baseline</div>
+          <div style="margin-top:6px;font-size:0.72rem;color:var(--text-secondary);">vs v6.13d</div>
+          <div style="font-size:0.9rem;font-weight:600;color:#f85149;">−2.58 Sh</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">(accepted: HL risk −5pp)</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;">
+        <div style="flex:1;min-width:160px;background:var(--bg-tertiary);border-radius:5px;padding:6px 10px;">
+          <div style="font-size:0.7rem;color:var(--text-secondary);margin-bottom:2px;">Activation Steps</div>
+          <div style="font-size:0.72rem;color:#e6edf3;line-height:1.7;">
+            Day 1 AM: Close K297' HIP-3 via K357<br>
+            Day 1 PM: <code style="color:#3fb950;">touch BEAR_1_FALLBACK_ACTIVE.flag</code><br>
+            Day 2: Verify K280 at 85% weight<br>
+            Day 3: Confirm 0 deploy mismatches
+          </div>
+        </div>
+        <div style="flex:1;min-width:160px;background:var(--bg-tertiary);border-radius:5px;padding:6px 10px;">
+          <div style="font-size:0.7rem;color:var(--text-secondary);margin-bottom:2px;">BTC/ETH Spot Sleeve</div>
+          <div style="font-size:0.72rem;color:#e6edf3;line-height:1.7;">
+            <span id="bear1-btc-price">BTC: —</span><br>
+            <span id="bear1-eth-price">ETH: —</span><br>
+            <span id="bear1-sleeve-7d">7d sleeve return: —</span>
+          </div>
+        </div>
+        <div style="flex:1;min-width:160px;background:var(--bg-tertiary);border-radius:5px;padding:6px 10px;">
+          <div style="font-size:0.7rem;color:var(--text-secondary);margin-bottom:2px;">Deactivation</div>
+          <div style="font-size:0.72rem;color:#e6edf3;line-height:1.7;">
+            <code style="color:#f85149;">rm BEAR_1_FALLBACK_ACTIVE.flag</code><br>
+            K297' restarts with K348+G9<br>
+            K386 daemon → unload
+          </div>
+        </div>
+      </div>
+      <div style="padding:8px 10px;background:var(--bg-tertiary);border-radius:5px;font-size:0.76rem;" id="bear1-detail-bar">
+        <strong style="color:#a78bfa;">K385 risk (P=15%):</strong>
+        <span style="color:var(--text-secondary);">
+          CFTC enforcement vs HL &nbsp;|&nbsp; 3 trading day activation window &nbsp;|&nbsp;
+          Expected HL loss (BEAR_1): HL 52.5% × recovery fraction &nbsp;|&nbsp;
+          Deactivation: <code style="color:#3fb950;">rm BEAR_1_FALLBACK_ACTIVE.flag</code>
+        </span>
+      </div>
+    </div>
+    <script>
+    (function() {
+      fetch('data/v6_13e_fallback_dashboard.json?t=' + Date.now())
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+          if (!d) return;
+          const badge    = document.getElementById('bear1-status-badge');
+          const ts       = document.getElementById('bear1-ts');
+          const archEl   = document.getElementById('bear1-arch');
+          const lastCheck = document.getElementById('bear1-last-check');
+          const card     = document.getElementById('bear1-fallback-card');
+          const lmBadge  = document.getElementById('lm-k386-badge');
+          const lmArch   = document.getElementById('lm-k386-arch');
+          const lmTs     = document.getElementById('lm-k386-ts');
+
+          // Timestamp
+          const tsRaw = d.last_update_utc || d.last_check_utc;
+          const tsStr = tsRaw ? new Date(tsRaw).toLocaleString('ja-JP', {timeZone:'Asia/Tokyo'}) : '—';
+          if (ts) ts.textContent = tsStr + ' JST';
+          if (lastCheck) lastCheck.textContent = tsStr;
+          if (lmTs) lmTs.textContent = tsStr;
+
+          // Architecture
+          if (archEl) archEl.textContent = d.current_architecture || 'v6.13d';
+          if (lmArch) lmArch.textContent = d.current_architecture || 'v6.13d';
+
+          // Status badge
+          const isActive = d.fallback_status === 'ACTIVE';
+          if (badge) {
+            badge.textContent = isActive ? 'ACTIVE — v6.13e' : 'STANDBY';
+            badge.style.border = isActive ? '1px solid #f85149' : '1px solid #8b5cf6';
+            badge.style.color  = isActive ? '#f85149' : '#a78bfa';
+            badge.style.background = isActive ? 'rgba(248,81,73,0.15)' : '#21262d';
+          }
+          if (lmBadge) {
+            lmBadge.textContent = isActive ? 'ACTIVE' : 'STANDBY';
+            lmBadge.className   = isActive ? 'lm-badge lm-badge-critical' : 'lm-badge lm-badge-scaffold';
+          }
+          if (isActive && card) {
+            card.style.borderColor = '#f85149';
+          }
+
+          // Spot sleeve prices (only when ACTIVE)
+          const sl = d.pnl_summary && d.pnl_summary.spot_sleeve;
+          if (sl) {
+            const btcEl = document.getElementById('bear1-btc-price');
+            const ethEl = document.getElementById('bear1-eth-price');
+            const slEl  = document.getElementById('bear1-sleeve-7d');
+            if (btcEl && sl.btc_latest_price) btcEl.textContent = 'BTC: $' + sl.btc_latest_price.toLocaleString();
+            if (ethEl && sl.eth_latest_price) ethEl.textContent = 'ETH: $' + sl.eth_latest_price.toLocaleString();
+            if (slEl  && sl.sleeve_7d_cumret !== null && sl.sleeve_7d_cumret !== undefined) {
+              slEl.textContent = '7d sleeve: ' + sl.sleeve_7d_cumret.toFixed(2) + '%';
+              slEl.style.color = sl.sleeve_7d_cumret >= 0 ? '#3fb950' : '#f85149';
+            }
+          }
+        })
+        .catch(() => {
+          const ts = document.getElementById('bear1-ts');
           if (ts) ts.textContent = 'dashboard JSON not yet available';
         });
     })();

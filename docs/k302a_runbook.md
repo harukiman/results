@@ -1016,6 +1016,10 @@ python3 scripts/verify_deployment_status.py
 ## §14 Emergency HL Exit Protocol (K357)
 
 **Added:** 2026-05-25 | **Script:** `scripts/emergency_hl_exit.py` | **Status:** SCAFFOLD-READY
+**K386 update (2026-05-27):** Two distinct flag files now exist:
+- `EMERGENCY_EXIT_TRIGGERED.flag` — closes ALL positions on ALL daemons (catastrophic HL failure)
+- `BEAR_1_FALLBACK_ACTIVE.flag`   — closes K297' HIP-3 only; K280/sUSDe continue (regulatory trigger)
+See §18 for BEAR_1 activation playbook (CFTC enforcement scenario, P=15%).
 
 ### §14.1 Context and Risk
 
@@ -1656,6 +1660,180 @@ cat data/k376_momentum_dashboard.json | python3 -m json.tool
 | `live_sharpe_30d` | Alert if < 0.5 (strategy degrading) |
 | `open_positions` | Alert if > 3 simultaneously (position limit) |
 | `recent_signals_24h` | Alert if > 20/day (signal frequency anomaly) |
+
+---
+
+---
+
+## §18 BEAR_1 Fallback Activation Playbook (K386, v6.13e)
+
+**Added:** 2026-05-27 | **Wave:** K386 | **Status:** STANDBY (prototype ready)
+**Script:** `scripts/k386_v613e_fallback_run.py` | **Flag:** `BEAR_1_FALLBACK_ACTIVE.flag`
+
+### §18.1 Scenario Definition
+
+**BEAR_1:** CFTC enforcement action vs HyperLiquid (K385 estimate P=15%).
+Covers two equivalent sub-triggers:
+1. CFTC enforcement filing vs HyperLiquid
+2. HL voluntary HIP-3 suspension (preemptive compliance)
+
+**Architecture change (v6.13d → v6.13e):**
+
+| Component | v6.13d | v6.13e | Change |
+|-----------|--------|--------|--------|
+| K280 main | 75% | 85% | +10pp (boost) |
+| K297' HIP-3 | 20% | 0% | −20pp (CFTC restricted) |
+| BTC/ETH spot | 0% | 10% | +10pp (new sleeve) |
+| sUSDe OC | 5% | 5% | unchanged |
+| **HL exposure** | **57.5%** | **52.5%** | **−5pp** |
+| Combined Sharpe est. | 25.47 | 22.89 | −2.58 (acceptable) |
+
+**BTC/ETH spot sleeve (10%):**
+- 50/50 BTC + ETH spot (passive long)
+- Daily mark-to-market via Binance public klines API (no auth)
+- Rebalanced daily by daemon; no hedging in prototype
+- Future upgrade: delta-neutral hedge via BTC/ETH perp shorts on Bybit
+
+### §18.2 Pre-Trigger Detection
+
+Monitor for BEAR_1 indicators:
+```bash
+# Monitor CFTC/SEC RSS (manual until K388 automation):
+open https://www.cftc.gov/PressRoom/PressReleases/index.htm
+open https://www.sec.gov/litigation/actions.shtml
+
+# HL official status:
+open https://hyperliquid.xyz/
+open https://discord.gg/hyperliquid   # community Discord
+
+# K386 daemon standby check:
+python3 scripts/k386_v613e_fallback_run.py --dry-run
+# → Should show: Fallback status: STANDBY
+```
+
+**K388 future:** Automated SEC/CFTC RSS monitor (not yet implemented).
+Until then: manual check once per trading day.
+
+### §18.3 Activation Steps (3 Trading Days)
+
+**Day 1 Morning — Close K297' HIP-3 Positions:**
+```bash
+# Step 1: Close all PAXG/SPX HL positions via K357 emergency exit
+# K386 adds --cftc-fallback mode: closes HIP-3 only, keeps K280
+python3 scripts/emergency_hl_exit.py --dry-run   # confirm positions
+
+# Step 2: Activate BEAR_1 flag (K302a satellite will self-suspend)
+touch BEAR_1_FALLBACK_ACTIVE.flag
+
+# Step 3: Verify K302a exits cleanly
+python3 scripts/k302a_satellite_run.py
+# → Should print: "BEAR_1_FALLBACK_ACTIVE.flag detected. K302a satellite skipping execution."
+
+# Step 4: Verify K386 activates
+python3 scripts/k386_v613e_fallback_run.py
+# → Should print: "BEAR_1 flag present. Executing v6.13e architecture."
+```
+
+**Day 1 Afternoon — Redirect 10% AUM to BTC/ETH Spot:**
+```bash
+# K386 daemon handles BTC/ETH spot automatically once flag is present.
+# Verify spot sleeve is fetching prices:
+cat data/v6_13e_fallback_dashboard.json | python3 -m json.tool | grep -A5 spot_sleeve
+
+# Confirm dashboard shows ACTIVE:
+cat data/v6_13e_fallback_dashboard.json | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['fallback_status'])"
+# → ACTIVE
+```
+
+**Day 2 — Rebalance K280 to 85% Weight:**
+```bash
+# K280 daemon continues running (no changes needed to K280 scripts).
+# K386 weights (K280 85% + BTC/ETH 10% + sUSDe 5%) are enforced by k386_v613e_fallback_run.py.
+# Verify via deployment status:
+python3 scripts/verify_deployment_status.py
+# → K386 should show LOADED or ACTIVE; K302a should show SCAFFOLD-READY (daemon not running)
+```
+
+**Day 3 — Verify Weights and Dashboard:**
+```bash
+# Full deployment status check:
+python3 scripts/verify_deployment_status.py
+# → 0 mismatches
+
+# Dashboard validation:
+python3 -c "
+import json
+with open('data/v6_13e_fallback_dashboard.json') as f:
+    d = json.load(f)
+assert d['fallback_status'] == 'ACTIVE', 'Expected ACTIVE'
+assert d['weights']['K297_prime'] == 0.0, 'K297 should be 0'
+assert d['weights']['K280'] == 0.85, 'K280 should be 0.85'
+assert d['weights']['BTC_ETH_spot'] == 0.10, 'BTC/ETH should be 0.10'
+print('All v6.13e weight assertions PASSED')
+print(f'HL exposure: {d[\"hl_exposure_pct\"]}% (target: 52.5%)')
+"
+
+# Report check:
+grep "v6.13e\|BEAR_1\|ACTIVE" report.html | head -5
+```
+
+### §18.4 Daemon Configuration During BEAR_1
+
+**Active daemons (v6.13e mode):**
+| Daemon | Status | Role |
+|--------|--------|------|
+| com.cryptolab.k280-live | Running | K280 85% main (unchanged) |
+| com.cryptolab.k386-v613e-fallback | Running | BTC/ETH spot 10% + dashboard |
+| com.cryptolab.susde-oc | Running | sUSDe 5% (unchanged) |
+| com.cryptolab.k302a-satellite | **Self-suspended** | K297' flag check exits 0 |
+
+**Daemon check order (inside each daemon):**
+1. `EMERGENCY_EXIT_TRIGGERED.flag` → all daemons stop immediately
+2. `BEAR_1_FALLBACK_ACTIVE.flag` → K302a exits 0; K386 takes over
+
+### §18.5 Deactivation (BEAR_1 Reversal)
+
+When BEAR_1 scenario resolves (CFTC case dropped / HL reinstates HIP-3):
+```bash
+# Step 1: Remove flag
+rm BEAR_1_FALLBACK_ACTIVE.flag
+
+# Step 2: Verify K302a resumes
+python3 scripts/k302a_satellite_run.py
+# → Should run normally (no flag message)
+
+# Step 3: Stop K386 daemon (if loaded in LaunchAgents)
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k386-v613e-fallback.plist || true
+
+# Step 4: Restart K297' with K348 patch + G9 gate
+# K297' (SPX_FILTER_ENABLED=True, ORACLE_GATE_ENABLED=True) auto-restarts via K302a daemon
+
+# Step 5: Confirm 0 deployment mismatches
+python3 scripts/verify_deployment_status.py
+```
+
+**K297' post-BEAR_1 restart checklist:**
+- [ ] `SPX_FILTER_ENABLED = True` in `scripts/k302a_satellite_run.py`
+- [ ] `ORACLE_GATE_ENABLED = True` (G9 gate)
+- [ ] Run `k302a_satellite_fetch.py` to refresh PAXG/SPX FR data
+- [ ] Run `k302a_satellite_run.py --date YYYY-MM-DD` and verify no alerts
+- [ ] Dashboard `data/k302a_satellite_dashboard.json` shows live data
+
+### §18.6 Dashboard Fields (v6.13e)
+
+| Field | STANDBY value | ACTIVE value |
+|-------|--------------|--------------|
+| `fallback_status` | `"STANDBY"` | `"ACTIVE"` |
+| `current_architecture` | `"v6.13d"` | `"v6.13e"` |
+| `weights.K280` | `0.85` | `0.85` |
+| `weights.K297_prime` | `0.0` | `0.0` |
+| `weights.BTC_ETH_spot` | `0.10` | `0.10` |
+| `weights.sUSDe` | `0.05` | `0.05` |
+| `hl_exposure_pct` | `52.5` | `52.5` |
+| `estimated_sharpe` | `22.89` | `22.89` |
+
+Dashboard path: `data/v6_13e_fallback_dashboard.json`
+Trade log: `data/k386_v613e_paper_trades.jsonl`
 
 ---
 

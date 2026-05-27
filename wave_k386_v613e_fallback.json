@@ -1,0 +1,70 @@
+{
+  "wave": "K386",
+  "title": "v6.13e BEAR_1 Fallback Prototype",
+  "date": "2026-05-27",
+  "status": "COMPLETE",
+  "trigger": "K385 identified BEAR_1 scenario (CFTC enforcement vs HyperLiquid, P=15%)",
+  "architecture": {
+    "name": "v6.13e",
+    "weights": {
+      "K280_main": 0.85,
+      "K297_prime_HIP3": 0.00,
+      "BTC_ETH_spot": 0.10,
+      "sUSDe_OC": 0.05
+    },
+    "hl_exposure_pct": 52.5,
+    "hl_exposure_delta_pp": -5.0,
+    "estimated_sharpe": 22.89,
+    "source": "K346 v6.13e baseline"
+  },
+  "vs_v613d": {
+    "K280": "+10pp (75% → 85%)",
+    "K297_prime": "-20pp (20% → 0%, CFTC restricted)",
+    "BTC_ETH_spot": "+10pp (new sleeve, 50/50 BTC+ETH)",
+    "sUSDe": "unchanged 5%",
+    "HL_exposure": "-5pp (57.5% → 52.5%)",
+    "Sharpe_loss": "-2.58 (25.47 → 22.89)"
+  },
+  "interpretation": "Interpretation B: K297' replaced by BTC/ETH spot carry (same 20% sleeve, but K297' → 0% and new 10% BTC/ETH spot + 10% K280 boost = total 100%)",
+  "deliverables": {
+    "new_script": "scripts/k386_v613e_fallback_run.py",
+    "new_plist": "com.cryptolab.k386-v613e-fallback.plist",
+    "new_dashboard": "data/v6_13e_fallback_dashboard.json",
+    "modified_k302a": "scripts/k302a_satellite_run.py (BEAR_1 flag gate added)",
+    "modified_verify": "scripts/verify_deployment_status.py (K386 registry entry)",
+    "modified_runbook": "docs/k302a_runbook.md (§14 update + §18 BEAR_1 playbook)",
+    "modified_report": "report.html (BEAR_1 status card + daemon row + ticker)"
+  },
+  "flag_files": {
+    "emergency_all_stop": "EMERGENCY_EXIT_TRIGGERED.flag",
+    "bear1_k297_suspend": "BEAR_1_FALLBACK_ACTIVE.flag"
+  },
+  "daemon_priority_order": [
+    "EMERGENCY_EXIT_TRIGGERED.flag → ALL daemons stop",
+    "BEAR_1_FALLBACK_ACTIVE.flag → K302a exits 0; K386 takes over",
+    "normal ops → v6.13d production"
+  ],
+  "activation_window": "3 trading days",
+  "runbook_section": "docs/k302a_runbook.md §18",
+  "dry_run_command": "python3 scripts/k386_v613e_fallback_run.py --dry-run",
+  "test_active_command": "touch BEAR_1_FALLBACK_ACTIVE.flag && python3 scripts/k386_v613e_fallback_run.py && rm BEAR_1_FALLBACK_ACTIVE.flag",
+  "btc_eth_spot_sleeve": {
+    "split": "50/50 BTC + ETH",
+    "source": "Binance public klines API (no auth required)",
+    "rebalance": "daily mark-to-market",
+    "future_upgrade": "delta-neutral hedge via BTC/ETH perp shorts on Bybit"
+  },
+  "constraints_respected": [
+    "NO BEAR_1 flag committed (no accidental activation)",
+    "K280/K302a/K344 production logic unchanged (only flag-check gates added)",
+    "NO new packages (urllib.request stdlib only)",
+    "K339 REPO_ROOT from __file__ (no /Users/ literals in new script)"
+  ],
+  "gates_passed": {
+    "weights_sum_to_1": true,
+    "hl_exposure_reduced": true,
+    "k280_not_modified": true,
+    "no_new_packages": true,
+    "k339_security": true
+  }
+}

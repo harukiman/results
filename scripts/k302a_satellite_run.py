@@ -75,6 +75,22 @@ CACHE = BASE / "cache"
 DATA  = BASE / "data"
 DATA.mkdir(exist_ok=True)
 
+# ── K386 BEAR_1 Gate ───────────────────────────────────────────────────────────
+# If BEAR_1_FALLBACK_ACTIVE.flag is present, K297' (HIP-3) is CFTC-restricted.
+# K302a satellite skips execution; K386 k386_v613e_fallback_run.py takes over.
+# Daemon priority: EMERGENCY_EXIT_TRIGGERED > BEAR_1_FALLBACK_ACTIVE > normal ops.
+_BEAR1_FLAG     = BASE / "BEAR_1_FALLBACK_ACTIVE.flag"
+_EMERGENCY_FLAG = BASE / "EMERGENCY_EXIT_TRIGGERED.flag"
+if _EMERGENCY_FLAG.exists():
+    print("[K302a] EMERGENCY_EXIT_TRIGGERED.flag present. All daemons halted. Exiting.")
+    import sys as _sys_exit; _sys_exit.exit(0)
+if _BEAR1_FLAG.exists():
+    print("[K302a] BEAR_1_FALLBACK_ACTIVE.flag detected.")
+    print("  K297' HIP-3 satellite is CFTC-restricted in v6.13e fallback mode.")
+    print("  K302a satellite skipping execution — K386 v6.13e daemon takes over.")
+    print("  See: docs/k302a_runbook.md §18 for deactivation procedure.")
+    import sys as _sys_exit; _sys_exit.exit(0)
+
 DASHBOARD_JSON = DATA / "k302a_satellite_dashboard.json"
 TRADES_LOG     = DATA / "k302a_satellite_paper_trades.jsonl"
 K280_DASHBOARD = DATA / "k280_live_dashboard.json"

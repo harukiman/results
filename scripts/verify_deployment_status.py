@@ -112,6 +112,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k376_momentum",
         expected_html_status="SCAFFOLD-READY",
     ),
+    DaemonSpec(
+        label="com.cryptolab.k386-v613e-fallback",
+        purpose="K386 v6.13e BEAR_1 fallback (K385 conditional: CFTC/HL, K280 85%+BTC/ETH spot 10%+sUSDe 5%, HL 52.5%)",
+        scripts=["scripts/k386_v613e_fallback_run.py"],
+        log_basename="k386_v613e_fallback",
+        expected_html_status="SCAFFOLD-READY",  # plist in repo root (gitignored); activate only on BEAR_1 trigger
+    ),
 ]
 
 
