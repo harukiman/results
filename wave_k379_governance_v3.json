@@ -1,0 +1,182 @@
+{
+  "_meta": {
+    "description": "Governance v3 snapshot — K379 full audit of K359-K378 cycle",
+    "governance_wave": "K379",
+    "generated_at_jst": "2026-05-27 09:15 JST",
+    "previous_governance_wave": "K359",
+    "next_governance_wave": "K399",
+    "next_quick_check_after_wave": "K384"
+  },
+  "cycle": {
+    "wave_range": "K359-K378",
+    "waves_committed": 19,
+    "waves_gap": 1,
+    "waves_in_flight": 0,
+    "total_positions": 20,
+    "decisions": {
+      "ACCEPT": 4,
+      "CONDITIONAL_ACCEPT": 1,
+      "REJECT": 7,
+      "DEFER": 2,
+      "CONFIRM": 1,
+      "DONE": 4,
+      "DEPLOYED": 1
+    }
+  },
+  "lines_closed": {
+    "cumulative_count": 9,
+    "v2_carried_forward": [
+      {
+        "id": "regime_filter",
+        "waves": "K315-K341",
+        "closure": "BOCPD 0 change-points on 447-day K280 window",
+        "reopen_trigger": "K280 30d Sharpe < 8 for 15 consecutive days"
+      },
+      {
+        "id": "ml_allocator",
+        "waves": "K198-K345",
+        "closure": "Transformer AC: 1/4 positive folds, 1426x compute vs Ridge",
+        "reopen_trigger": "New K280 component added (feature space change)"
+      },
+      {
+        "id": "usdh_stablecoin",
+        "waves": "K354",
+        "closure": "Platform sunset confirmed",
+        "reopen_trigger": "N/A (permanent)"
+      }
+    ],
+    "v3_new": [
+      {
+        "id": "drift_sol_arb",
+        "waves": "K358-K375",
+        "closure": "Priority fees reduce 5bps not 15bps gap; 15bps RT vs 0.88bps spread irrecoverable",
+        "reopen_trigger": "Drift maker fee <= 2bps OR cross-venue spread >= 20bps"
+      },
+      {
+        "id": "monarq_timing_windows",
+        "waves": "K350",
+        "closure": "K297' SPX filter already captures optimal RWA timing. No additional edge.",
+        "reopen_trigger": "New RWA asset class with different settlement structure"
+      },
+      {
+        "id": "stable_clustering_universe",
+        "waves": "K377",
+        "closure": "K276b_v2 Sharpe 9.73 vs 22.87 baseline (0.426x). ARI=0 (unstable). K276 LOO implicitly diversifies.",
+        "reopen_trigger": "Universe expands to 50+ symbols"
+      },
+      {
+        "id": "coinbase_usdc_hl_yield",
+        "waves": "K362",
+        "closure": "HYPE buybacks only — no claimable USD yield product. HYPE staking 2.37% dominated by sUSDe.",
+        "reopen_trigger": "HL launches explicit USDC/USD yield product >= 5% APY"
+      },
+      {
+        "id": "hl_spot_perp_k276b_restructure",
+        "waves": "K374",
+        "closure": "HL spot missing 13/20 K276b coins. Wrapper adds 3-5bps slippage per leg (kills carry margin).",
+        "reopen_trigger": "HL spot lists >= 18/20 K276b coins AND spreads <= 0.5bps"
+      },
+      {
+        "id": "hypurrfi_yield_arb",
+        "waves": "K337",
+        "closure_pending": true,
+        "note": "Still in DEFER — TVL trigger not met. Auto-close 2026-10-01 if not triggered.",
+        "reopen_trigger": "Isolated TVL > $20M",
+        "drop_date": "2026-10-01"
+      }
+    ]
+  },
+  "production_state": {
+    "version": "v6.13d",
+    "allocation": {
+      "K280_bilateral_FR_carry": 0.75,
+      "K297_prime_RWA_FR_spx_filter_g9_gate": 0.20,
+      "sUSDe_OC_sleeve": 0.05
+    },
+    "sharpe_k360_verified": 25.68,
+    "sharpe_k346_target": 25.47,
+    "oos_sharpe": 27.71,
+    "ann_return_pct": 10.01,
+    "ann_vol_pct": 0.39,
+    "max_dd_pct": 0.019,
+    "all_k266_gates": "PASS",
+    "hl_exposure_pct": 57.5,
+    "hl_cap_pct": 65.0,
+    "g9_oracle_gate": "DEPLOYED (K371, 35 LOC, PAXG 0.06%/SPX 0.13% << 1% threshold)",
+    "builder_rebate": "SCAFFOLD-READY (K370, user activation needed, $94K-$472K/yr at $10M)"
+  },
+  "v6_14_candidate": {
+    "status": "CONDITIONAL_ACCEPT_K378_paper_trade_60d_required",
+    "k378_decision": "CONDITIONAL_ACCEPT",
+    "k378_dsr": 0.9957,
+    "k378_cv": 0.0775,
+    "k378_fold3_explanation": "BTC -19.7% bear trend (Nov 2025 - Feb 2026) → reversals not continuation",
+    "strategy": "K376 volume-spike momentum",
+    "oos_sharpe": 3.349,
+    "best_coin_hold": "SUI x 4h, OOS Sh 3.232",
+    "gates_passed": "9/9 (K378 re-evaluation, G4 conditional pass)",
+    "universe_at_launch": ["ETH", "LINK", "AVAX"],
+    "universe_expansion": ["SUI", "ADA", "PEPE"],
+    "hold": "4h",
+    "cost_model_bps_rt": 2.0,
+    "entry": "HL maker limit order (postOnly)",
+    "maker_fill_rate_central_pct": 62,
+    "maker_fill_rate_gate_pct": 65,
+    "sleeve_launch_pct": 3.0,
+    "sleeve_after_gate_pct": 5.0,
+    "btc_trend_filter": "BTC 20d SMA slope > 0 for longs, < 0 for shorts",
+    "activation_gate": "60d paper-trade: fill_rate >= 65% AND live_sharpe_30d >= 1.0 AND mdd_30d < 20%",
+    "hl_exposure_at_3pct_sleeve_pct": 58.5,
+    "hl_exposure_at_5pct_sleeve_pct": 62.5,
+    "bybit_emergency_exit_gap": "OPEN (moderate severity)",
+    "allocation_at_launch": {"K280": 0.73, "K297_prime_G9": 0.185, "sUSDe_OC": 0.05, "K376_momentum": 0.035}
+  },
+  "wip_snapshot": {
+    "as_of_jst": "2026-05-27 09:15 JST",
+    "in_progress": {"count": 1, "limit": 3, "items": ["K380_paper_trade_daemon"]},
+    "pending": {"count": 2, "limit": 5, "items": ["K381_60d_monitoring_run", "K384_R13_scraper"]},
+    "deferred": {
+      "count": 7,
+      "limit": 8,
+      "items": [
+        {"id": "K353_K356", "topic": "HIP-4 calibration", "trigger": "K356 daemon 2+ weeks data", "drop": "2026-08-01"},
+        {"id": "K340", "topic": "USDT on-chain flow", "trigger": "Glassnode/Etherscan paid key", "drop": "2026-10-01"},
+        {"id": "K337", "topic": "HypurrFi isolated TVL", "trigger": "TVL > $20M", "drop": "2026-10-01"},
+        {"id": "K349", "topic": "ADL online learning", "trigger": "HL ADL API confirmed", "drop": "2026-09-01"},
+        {"id": "K342-wgt", "topic": "K280/K297 weight retest", "trigger": "Joint window >= 600d", "drop": "2027-01-01"},
+        {"id": "K341-regime", "topic": "Regime filter reopen", "trigger": "K280 30d Sh < 8 x 15d", "drop": "2027-01-01"},
+        {"id": "K345-ML", "topic": "ML allocator reopen", "trigger": "New K280 component", "drop": "2027-01-01"}
+      ]
+    },
+    "backlog_med_plus": {
+      "count": 6,
+      "limit": 15,
+      "items": [
+        {"id": "R10-016", "topic": "Binance-OKX BTC FR mean reversion 2% spread", "priority": "MED", "target": "K385"},
+        {"id": "R10-003", "topic": "BitMEX weekend FR premium 3x weekday", "priority": "MED", "target": "K386"},
+        {"id": "R10-012", "topic": "Chainstack HL spot-perp FR arb technical impl", "priority": "MED", "target": "K387"},
+        {"id": "R10-020", "topic": "HyperEVM DeFi delta-neutral vault via Liminal", "priority": "MED-LOW", "target": "K388"},
+        {"id": "R10-004", "topic": "Solana DEX 40min price discovery lead", "priority": "MED", "target": "K389"},
+        {"id": "R11-05", "topic": "Tokenized gold weekend 100% price discovery PAXG/XAUt", "priority": "MED-LOW", "target": "K389"}
+      ]
+    }
+  },
+  "k380_plan": {
+    "K380": "K376 production patch (v6.14) — contingent K378 ACCEPT-FINAL",
+    "K381": "K376 paper-trade scaffold (6-coin live monitor)",
+    "K382": "G4 instability root cause (SUI x 4h fold 3 -1.807)",
+    "K383": "HTML chronicle K367-K382 + periodic refactoring",
+    "K384": "R13 external research scraper (independent, can launch NOW)",
+    "K385-K387": "R13 actionable items + R12 surviving backlog",
+    "K388-K389": "HyperEVM vault + tokenized gold weekend lead",
+    "K390": "HL HIP-4 calibration (K356 daemon 90d data)",
+    "K391": "HL CFTC formal action response (trigger-based, v6.13e)",
+    "K392": "Variational trading API integration (Q3-Q4 2026 trigger)",
+    "K393": "K276b restructure revival (HL spot >= 18/20 coins trigger)",
+    "K394": "Drift maker access revival (Drift maker <= 2bps trigger)",
+    "K395": "HypurrFi isolated TVL re-eval (TVL > $20M trigger)",
+    "K399": "Full governance v4 (mandatory 20-wave cadence)"
+  },
+  "immediate_recommendation": "K378=CONDITIONAL_ACCEPT. Launch K380 paper-trade daemon (ETH/LINK/AVAX, 3% sleeve, BTC trend filter, fill rate tracker). K383 HTML chronicle in parallel. K384 R13 scraper independently. Activate K370 builder rebate (zero risk). Capital deployment (v6.14) only after 60d paper-trade gate: fill_rate >= 65% AND live_sharpe_30d >= 1.0.",
+  "snapshot_v3_jst": "2026-05-27 09:15 JST"
+}
