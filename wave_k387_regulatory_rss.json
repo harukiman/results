@@ -1,0 +1,111 @@
+{
+  "wave": "K387",
+  "title": "SEC/CFTC RSS Regulatory Monitor Daemon Scaffold",
+  "date": "2026-05-27",
+  "status": "COMPLETE",
+  "scope": ["K385 regulatory-conservative", "K386 BEAR_1 trigger support"],
+  "summary": "Lightweight RSS polling daemon for monitoring SEC/CFTC feeds (HyperLiquid/HIP-3/perpetual/manipulation keywords). Manual review only, no auto-trigger. SCAFFOLD-READY for activation.",
+  "deliverables": {
+    "scripts": [
+      {
+        "file": "scripts/regulatory_rss_monitor.py",
+        "lines": 280,
+        "purpose": "Single-shot RSS polling daemon (30min via launchd)",
+        "features": ["SEC + CFTC feed fetch", "Keyword matching", "JSONL logging", "Dashboard JSON update", "Error handling (catch all, exit 0)"],
+        "dependencies": ["stdlib only: xml.etree, urllib, json, datetime, pathlib"]
+      }
+    ],
+    "plists": [
+      {
+        "file": "com.cryptolab.regulatory-rss.plist",
+        "label": "com.cryptolab.regulatory-rss",
+        "interval_sec": 1800,
+        "run_at_load": false,
+        "status": "gitignored, ready for manual activation"
+      }
+    ],
+    "updates": [
+      {
+        "file": "scripts/verify_deployment_status.py",
+        "change": "Add DaemonSpec for K387",
+        "label": "com.cryptolab.regulatory-rss",
+        "expected_status": "SCAFFOLD-READY"
+      },
+      {
+        "file": "report.html",
+        "change": "Add K387 daemon status row + Regulatory Alerts Monitor card",
+        "features": ["24h alert counts", "Recent 5 alerts display", "Live fetch timestamp", "Mobile responsive"]
+      },
+      {
+        "file": "docs/k302a_runbook.md",
+        "change": "Add §19 K387 Regulatory Alerts — Manual Review & BEAR_1 Trigger",
+        "lines": 1200,
+        "sections": ["Overview", "Daemon status & activation", "Feed keywords & structure", "Manual review workflow", "BEAR_1 activation", "Dashboard access", "No auto-trigger policy", "Deactivation"]
+      }
+    ],
+    "wave_docs": [
+      "wave_k387_regulatory_rss.md",
+      "wave_k387_regulatory_rss.json"
+    ]
+  },
+  "outputs": {
+    "cache": [
+      "cache/regulatory_alerts_seen.txt (GUID deduplication)",
+      "cache/regulatory_alerts.jsonl (timestamped alert log)"
+    ],
+    "data": [
+      "data/regulatory_dashboard.json (24h counts, recent alerts, next_action)"
+    ],
+    "logs": [
+      "logs/regulatory_rss_monitor.log",
+      "logs/regulatory_rss_monitor.err"
+    ]
+  },
+  "feeds": {
+    "SEC": "https://www.sec.gov/news/pressreleases.rss",
+    "CFTC": "https://www.cftc.gov/PressRoom/PressReleases.xml"
+  },
+  "keywords": [
+    "hyperliquid",
+    "hip-3",
+    "perpetual",
+    "tokenized",
+    "manipulation",
+    "defi dex"
+  ],
+  "verification": {
+    "dry_run": "OK (0 alerts on first run)",
+    "feeds_fetched": 2,
+    "cache_files_created": 2,
+    "dashboard_json_valid": true,
+    "verify_deployment_status": "0 mismatches",
+    "plist_exists": true,
+    "plist_loaded": false
+  },
+  "constraints": {
+    "no_auto_trigger": "K387 does NOT create BEAR_1_FALLBACK_ACTIVE.flag",
+    "manual_review_mandatory": true,
+    "stdlib_only": true,
+    "error_handling": "catch all, exit 0",
+    "security_pattern": "K339 REPO_ROOT",
+    "status": "SCAFFOLD-READY, awaiting manual plist activation"
+  },
+  "integration": {
+    "K385": "Regulatory-conservative strategy — K387 feeds manual BEAR_1 decisions",
+    "K386": "BEAR_1 v6.13e fallback — triggered by operator after K387 alert review",
+    "K357": "Emergency exit — separate from K387 (emergency_hl_exit.py independent)",
+    "K310": "Plist scaffold pattern — com.cryptolab.regulatory-rss.plist in repo root, gitignored"
+  },
+  "deployment": {
+    "activation": "cp com.cryptolab.regulatory-rss.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.regulatory-rss.plist",
+    "verify": "launchctl list | grep regulatory-rss",
+    "deactivation": "launchctl unload ~/Library/LaunchAgents/com.cryptolab.regulatory-rss.plist"
+  },
+  "next_waves": [
+    "K388: Live feed polling test (7 days)",
+    "K389: ntfy.sh push alert integration",
+    "K390: Operator UI for BEAR_1 trigger acknowledgment",
+    "K391: Alert analytics & pattern detection",
+    "K392: Additional regulatory data sources"
+  ]
+}

@@ -894,6 +894,14 @@ window.__renderWhenReady = function(fn, label) {
               <td id="lm-k386-arch" style="color:var(--text-secondary);">v6.13d</td>
               <td id="lm-k386-sharpe" style="color:var(--text-secondary);">22.89 est.</td>
             </tr>
+            <!-- K387: SEC/CFTC RSS regulatory monitor daemon (2026-05-27) -->
+            <tr id="lm-k387-row">
+              <td><strong>K387 SEC/CFTC RSS</strong><br><span style="font-size:0.72rem;color:var(--text-secondary);">HyperLiquid/HIP-3/perpetual/manipulation keywords · 30min polling · manual review only</span></td>
+              <td><span class="lm-badge lm-badge-scaffold" title="K387 regulatory monitoring. 30min StartInterval via launchd. Script: scripts/regulatory_rss_monitor.py. plist in repo root (gitignored). Activation: cp com.cryptolab.regulatory-rss.plist ~/Library/LaunchAgents/ &amp;&amp; launchctl load ~/Library/LaunchAgents/com.cryptolab.regulatory-rss.plist">SCAFFOLD-READY</span></td>
+              <td id="lm-k387-ts" style="color:var(--text-secondary);">—</td>
+              <td id="lm-k387-24h" style="color:var(--text-secondary);">—</td>
+              <td id="lm-k387-alert" style="color:var(--text-secondary);">—</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -963,6 +971,79 @@ window.__renderWhenReady = function(fn, label) {
         .catch(() => {
           const detail = document.getElementById('emergency-exit-detail');
           if (detail) detail.textContent = 'Status JSON not loaded (run dry-run to generate).';
+        });
+    })();
+    </script>
+
+    <!-- K387 Regulatory Alerts Widget (2026-05-27) -->
+    <div class="lm-card" style="margin-bottom:14px;border-color:#d2993a;" id="regulatory-alerts-card">
+      <h3 style="display:flex;align-items:center;gap:8px;">
+        Regulatory Alerts Monitor
+        <span class="lm-badge lm-badge-scaffold" style="font-size:0.76rem;">K387 RSS</span>
+        <span style="font-size:0.7rem;font-weight:400;color:var(--text-secondary);margin-left:auto;" id="reg-alerts-ts">読み込み中...</span>
+      </h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:14px;">
+        <div style="background:var(--bg-tertiary);border-radius:6px;padding:10px;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:4px;">SEC (24h)</div>
+          <div style="font-size:1.3rem;font-weight:700;color:var(--accent-cyan);" id="reg-sec-24h">—</div>
+        </div>
+        <div style="background:var(--bg-tertiary);border-radius:6px;padding:10px;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:4px;">CFTC (24h)</div>
+          <div style="font-size:1.3rem;font-weight:700;color:var(--accent-cyan);" id="reg-cftc-24h">—</div>
+        </div>
+        <div style="background:var(--bg-tertiary);border-radius:6px;padding:10px;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:4px;">New This Poll</div>
+          <div style="font-size:1.3rem;font-weight:700;color:var(--accent-green);" id="reg-new-alerts">—</div>
+        </div>
+      </div>
+      <div style="background:var(--bg-tertiary);border-radius:6px;padding:10px;font-size:0.78rem;margin-bottom:10px;">
+        <div style="color:var(--text-secondary);margin-bottom:6px;"><strong>Keywords:</strong> HyperLiquid · HIP-3 · perpetual · tokenized · manipulation · DeFi DEX</div>
+        <div style="color:var(--text-secondary);">
+          <strong>Feeds:</strong> SEC (news.pressreleases.rss) · CFTC (PressReleases.xml)
+          <br><strong>Polling:</strong> 30min interval · Manual review only (no auto-trigger)
+        </div>
+      </div>
+      <div style="max-height:200px;overflow-y:auto;border-top:1px solid var(--border);padding-top:10px;">
+        <div id="reg-alerts-list" style="font-size:0.76rem;color:var(--text-secondary);">
+          <em style="color:var(--text-muted);">No alerts loaded yet. Awaiting first poll.</em>
+        </div>
+      </div>
+    </div>
+    <script>
+    (function() {
+      // Load regulatory dashboard from data/regulatory_dashboard.json
+      fetch('data/regulatory_dashboard.json?t=' + Date.now())
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+          if (!d) return;
+          const tsEl = document.getElementById('reg-alerts-ts');
+          const secEl = document.getElementById('reg-sec-24h');
+          const cftcEl = document.getElementById('reg-cftc-24h');
+          const newEl = document.getElementById('reg-new-alerts');
+          const listEl = document.getElementById('reg-alerts-list');
+
+          tsEl.textContent = d.last_poll_jst ? new Date(d.last_poll_jst).toLocaleString('ja-JP', {timeZone:'Asia/Tokyo'}) : '—';
+          secEl.textContent = d.sec_alerts_24h || '0';
+          cftcEl.textContent = d.cftc_alerts_24h || '0';
+          newEl.textContent = d.new_alerts_this_poll || '0';
+
+          if (d.recent_alerts && d.recent_alerts.length > 0) {
+            listEl.innerHTML = d.recent_alerts.slice(0, 5).map(a =>
+              `<div style="padding:6px 0;border-bottom:1px solid rgba(48,54,61,0.5);">
+                 <div style="color:var(--accent-orange);font-weight:600;font-size:0.75rem;">${a.source}</div>
+                 <div style="color:var(--text-primary);margin:2px 0;word-break:break-word;line-height:1.3;">${a.title.substring(0,80)}</div>
+                 <div style="color:var(--text-muted);font-size:0.7rem;margin-top:2px;">
+                   KW: <strong style="color:var(--accent-yellow);">${a.keyword_matched}</strong>
+                 </div>
+               </div>`
+            ).join('');
+          } else {
+            listEl.innerHTML = '<em style="color:var(--text-muted);">No keyword matches in last 24h.</em>';
+          }
+        })
+        .catch(e => {
+          const listEl = document.getElementById('reg-alerts-list');
+          listEl.innerHTML = `<em style="color:var(--text-muted);">Dashboard JSON not loaded (run manual poll to generate).</em>`;
         });
     })();
     </script>

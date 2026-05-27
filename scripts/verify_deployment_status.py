@@ -119,6 +119,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k386_v613e_fallback",
         expected_html_status="SCAFFOLD-READY",  # plist in repo root (gitignored); activate only on BEAR_1 trigger
     ),
+    DaemonSpec(
+        label="com.cryptolab.regulatory-rss",
+        purpose="K387 SEC/CFTC RSS monitor (30min polling, HyperLiquid/HIP-3/manipulation keyword alerts, manual review only)",
+        scripts=["scripts/regulatory_rss_monitor.py"],
+        log_basename="regulatory_rss_monitor",
+        expected_html_status="SCAFFOLD-READY",  # plist in repo root (gitignored); 30min StartInterval via launchd
+    ),
 ]
 
 

@@ -1837,4 +1837,200 @@ Trade log: `data/k386_v613e_paper_trades.jsonl`
 
 ---
 
+## §19 K387 Regulatory Alerts — Manual Review & BEAR_1 Trigger
+
+**Wave:** K387 (2026-05-27) | **Scope:** SEC/CFTC RSS feed monitoring, manual review only
+
+### 19.1 Overview
+
+K387 runs a lightweight RSS daemon that polls SEC and CFTC official feeds every 30 minutes, searching for keywords related to HyperLiquid, HIP-3, perpetuals, and market manipulation concerns. This is a **monitoring scaffold only**—no automatic action is taken. All alerts require manual operator review before triggering K386 BEAR_1 fallback.
+
+**Key constraint:** K387 does NOT auto-flag `BEAR_1_FALLBACK_ACTIVE.flag`. Only user intervention sets this flag (see §19.5).
+
+### 19.2 Daemon Status
+
+| Component | Status | Command |
+|-----------|--------|---------|
+| Script | `scripts/regulatory_rss_monitor.py` | Stdlib only, ~200 LOC |
+| Polling | 30min interval via launchd | `StartInterval=1800` |
+| Feeds | SEC + CFTC RSS | 2 XML feeds, fallback on parse fail |
+| Cache | `cache/regulatory_alerts_seen.txt` | Avoid duplicate alerts |
+| Alerts log | `cache/regulatory_alerts.jsonl` | Timestamped JSONL, one per line |
+| Dashboard | `data/regulatory_dashboard.json` | Live JSON (24h counts, recent alerts) |
+| Logs | `logs/regulatory_rss_monitor.log/.err` | Standard plist output |
+| Status | **SCAFFOLD-READY** | Plist in repo root (gitignored); manual activation required |
+
+**Activation (after manual verification):**
+```bash
+cp com.cryptolab.regulatory-rss.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.regulatory-rss.plist
+# Verify:
+launchctl list | grep regulatory-rss
+```
+
+### 19.3 Alert Keywords & Feed Structure
+
+**Keywords (case-insensitive):**
+- `hyperliquid` — Direct HL mention
+- `hip-3` — HIP-3 proposal/action
+- `perpetual` — Perpetual futures context
+- `tokenized` — Tokenized instruments (compliance angle)
+- `manipulation` — Market manipulation (CFTC focus)
+- `defi dex` — Decentralized exchange context
+
+**Feed sources:**
+1. **SEC**: `https://www.sec.gov/news/pressreleases.rss`
+   - Focus: Innovation exemptions, token classification, custody rules
+2. **CFTC**: `https://www.cftc.gov/PressRoom/PressReleases.xml`
+   - Focus: Enforcement, DCO approval, HL/perpetual regulation
+
+**Alert JSON structure (in `regulatory_alerts.jsonl`):**
+```json
+{
+  "timestamp_jst": "2026-05-27T10:09:57.748539+09:00",
+  "source": "SEC|CFTC",
+  "title": "SEC Regulation... Tokenized Assets Rule Clarification",
+  "link": "https://www.sec.gov/news/press-release/...",
+  "pubDate": "2026-05-27T10:00:00Z",
+  "guid": "https://www.sec.gov/news/press-release/...",
+  "keyword_matched": "tokenized|perpetual|hip-3|..."
+}
+```
+
+### 19.4 Manual Review Workflow (User Responsibility)
+
+**Trigger:** Dashboard shows `new_alerts_this_poll > 0` OR email notification from monitoring system.
+
+**Step 1: Check dashboard**
+```bash
+# View current alert status in Live Monitoring widget
+cat data/regulatory_dashboard.json | jq .
+
+# Example output:
+{
+  "last_poll_jst": "2026-05-27T10:30:00+09:00",
+  "sec_alerts_24h": 0,
+  "cftc_alerts_24h": 2,
+  "new_alerts_this_poll": 1,
+  "recent_alerts": [
+    {
+      "timestamp_jst": "2026-05-27T10:29:00+09:00",
+      "source": "CFTC",
+      "title": "CFTC Enforcement Action: HyperLiquid Perpetual Leverage Mandate",
+      "link": "https://cftc.gov/...",
+      "keyword_matched": "hyperliquid|perpetual"
+    }
+  ],
+  "next_action": "monitor"
+}
+```
+
+**Step 2: Read full alert**
+1. Click alert link in Live Monitoring widget (HTML dashboard)
+2. OR run: `cat cache/regulatory_alerts.jsonl | tail -1 | jq .`
+3. Read full SEC/CFTC press release
+
+**Step 3: Assess BEAR_1 trigger candidacy**
+
+Use this decision matrix:
+
+| Alert signal | BEAR_1 probability | Action |
+|--------------|------------------|--------|
+| "SEC innovation exemption for HL" | Low (<10%) | MONITOR — flag as "BULL" in comments |
+| "CFTC begins HIP-3 review" (early stages) | Medium (30–50%) | MONITOR + prepare K386 activation |
+| "CFTC enforcement action: HL manipulation case" | High (70%+) | **→ Proceed to §19.5** |
+| "CFTC HL leverage cap finalized" (affects viability) | High (70%+) | **→ Proceed to §19.5** |
+
+### 19.5 BEAR_1 Fallback Activation (Manual Only)
+
+If alert confirms BEAR_1 scenario (CFTC enforcement / HL viability threat):
+
+**Step 1: Create BEAR_1 trigger flag**
+```bash
+touch BEAR_1_FALLBACK_ACTIVE.flag
+```
+
+**What this does:**
+- K302a daemon checks for this flag on each run; if present, it exits silently (0)
+- K386 daemon (`scripts/k386_v613e_fallback_run.py`) checks for flag; if present, begins running immediately
+- All K280/K297' allocations pause; K386 v6.13e architecture takes over (K280 85% + BTC/ETH spot 10% + sUSDe 5%)
+- K386 writes trades to `data/k386_v613e_paper_trades.jsonl` + dashboard `data/v6_13e_fallback_dashboard.json`
+
+**Step 2: Verify flag is honored**
+```bash
+# Check that K302a recognizes flag
+python3 scripts/k302a_satellite_run.py --dry-run
+# Should see: "[BEAR_1_FALLBACK_ACTIVE.flag detected] Exiting (K386 active)"
+
+# Check that K386 is ready
+python3 scripts/k386_v613e_fallback_run.py --dry-run
+# Should begin paper-trading under fallback allocation
+```
+
+**Step 3: Activate K386 plist (if not already loaded)**
+```bash
+cp com.cryptolab.k386-v613e-fallback.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k386-v613e-fallback.plist
+# Verify:
+launchctl list | grep k386
+```
+
+**Step 4: Update regulatory dashboard manually**
+```bash
+# Edit data/regulatory_dashboard.json:
+# Set "next_action": "trigger_BEAR_1" or "bear_1_active"
+# Add comment field documenting alert title + CFTC action date
+```
+
+**Step 5: Notify stakeholders**
+- Email or Slack: "BEAR_1 fallback activated due to [alert title]. K386 v6.13e now live. Monitor for 4h reversion."
+- Document in `logs/bear_1_activation_log.txt` (optional)
+
+### 19.6 Dashboard & Monitoring
+
+**Live Monitoring widget (report.html) shows:**
+- K387 row with status: `SCAFFOLD-READY` → `ACTIVE` (after manual load)
+- 24h alert counts (SEC, CFTC)
+- Recent 5 alerts with title preview + matched keyword
+- Fetch timestamp (JST)
+
+**Access patterns:**
+1. **HTML dashboard**: Open `report.html` → scroll to "Live Monitoring" → K387 row + "Regulatory Alerts Monitor" card
+2. **JSON programmatic**: `curl file://$(pwd)/data/regulatory_dashboard.json | jq .`
+3. **Raw JSONL log**: `tail -20 cache/regulatory_alerts.jsonl` (unfiltered, all seen alerts)
+
+### 19.7 No Auto-Trigger Policy (Compliance)
+
+**Critical rule:** K387 makes NO autonomous decisions. The daemon:
+- ✅ Fetches RSS, parses XML, matches keywords
+- ✅ Logs to JSONL, updates dashboard
+- ✅ Can POST to ntfy.sh (optional future feature)
+- ❌ Does NOT create any flag file
+- ❌ Does NOT execute K386 trigger
+- ❌ Does NOT modify any daemon state
+
+All trigger decisions are **operator-initiated**. This is mandatory per K385 (regulatory-conservative strategy design).
+
+### 19.8 Deactivation (Regulatory All-Clear)
+
+When CFTC case is dropped or SEC approves innovation exemption:
+
+```bash
+# Step 1: Remove flag
+rm BEAR_1_FALLBACK_ACTIVE.flag
+
+# Step 2: K302a will auto-resume on next scheduled run
+# (Or manually restart)
+python3 scripts/k302a_satellite_run.py
+
+# Step 3: Stop K386 daemon
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k386-v613e-fallback.plist || true
+
+# Step 4: Verify deployment state
+python3 scripts/verify_deployment_status.py
+# Should show 0 mismatches and K302a ACTIVE again
+```
+
+---
+
 *K371 §16 — G9 Oracle Deviation Gate — 2026-05-27*
