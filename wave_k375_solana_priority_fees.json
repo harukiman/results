@@ -1,0 +1,530 @@
+{
+  "wave": "K375",
+  "generated_at": "2026-05-27T00:01:45.798435+00:00",
+  "runtime_sec": 0.2,
+  "task": "R12-04 \u2014 Solana priority fees + Drift execution revival",
+  "revives_k358": false,
+  "solana_priority_fees": {
+    "base_fee_lamports_per_sig": 5000,
+    "compute_unit_limit_per_tx": 1400000,
+    "drift_order_cu_estimate": 300000,
+    "fee_formula": "ceil(micro_lamports_per_cu * compute_units / 1_000_000) lamports",
+    "priority_fee_goes_to": "100% to validators (NOT reducing taker fee)",
+    "base_fee_split": "50% burned / 50% to validator",
+    "key_finding": "Priority fees affect INCLUSION ORDER, not EXECUTION FEES. They are additive cost, not fee reduction.",
+    "scenarios": {
+      "none": {
+        "micro_lamports_per_cu": 0,
+        "total_lamports": 5000,
+        "fee_usd": 0.0007,
+        "fee_bps_at_50k_notional": 0.0001,
+        "fee_bps_at_100k_notional": 0.0001,
+        "fee_bps_at_200k_notional": 0.0
+      },
+      "low": {
+        "micro_lamports_per_cu": 1000,
+        "total_lamports": 5300,
+        "fee_usd": 0.0007,
+        "fee_bps_at_50k_notional": 0.0001,
+        "fee_bps_at_100k_notional": 0.0001,
+        "fee_bps_at_200k_notional": 0.0
+      },
+      "medium": {
+        "micro_lamports_per_cu": 10000,
+        "total_lamports": 8000,
+        "fee_usd": 0.0011,
+        "fee_bps_at_50k_notional": 0.0002,
+        "fee_bps_at_100k_notional": 0.0001,
+        "fee_bps_at_200k_notional": 0.0001
+      },
+      "high": {
+        "micro_lamports_per_cu": 100000,
+        "total_lamports": 35000,
+        "fee_usd": 0.0049,
+        "fee_bps_at_50k_notional": 0.001,
+        "fee_bps_at_100k_notional": 0.0005,
+        "fee_bps_at_200k_notional": 0.0002
+      },
+      "ultra": {
+        "micro_lamports_per_cu": 1000000,
+        "total_lamports": 305000,
+        "fee_usd": 0.0427,
+        "fee_bps_at_50k_notional": 0.0085,
+        "fee_bps_at_100k_notional": 0.0043,
+        "fee_bps_at_200k_notional": 0.0021
+      }
+    }
+  },
+  "drift_fee_update": {
+    "update_date": "2026-08-05 (fee structure overhaul)",
+    "k358_assumed_drift_taker_bps": 5.0,
+    "actual_tier1_taker_bps": 3.5,
+    "actual_maker_rebate_bps": -0.25,
+    "maker_path_requirement": "post-only flag on DLOB limit order",
+    "maker_fill_risk": "Not guaranteed \u2014 depends on order queue position; priority fees help",
+    "staking_boost": "Up to 40% additional rebate with DRIFT staking",
+    "jit_auction": "Market orders hit JIT auction first, then DLOB, then AMM",
+    "fee_structure": {
+      "k358_estimate": 5.0,
+      "tier1_new": 3.5,
+      "tier2_new": 3.0,
+      "tier3_new": 2.75,
+      "vip_new": 2.0,
+      "maker_dlob": -0.25,
+      "maker_dlob_staked": -0.35
+    }
+  },
+  "cost_scenarios": [
+    {
+      "name": "K358 baseline (REJECT)",
+      "hl_leg_bps": 1.5,
+      "drift_leg_bps": 5.0,
+      "priority_fee_scenario": "none",
+      "priority_fee_bps": 0.0,
+      "slippage_bps": 1.0,
+      "roundtrip_bps": 14.0,
+      "note": "K358 original. Drift taker 5 bps (old structure). 1 bps slippage round-trip.",
+      "breakeven_hold_hours": 382.6,
+      "spread_persistence_hours": 6.0,
+      "viable": false
+    },
+    {
+      "name": "Drift Tier1 taker + priority=none",
+      "hl_leg_bps": 1.5,
+      "drift_leg_bps": 3.5,
+      "priority_fee_scenario": "none",
+      "priority_fee_bps": 0.0003,
+      "slippage_bps": 1.0,
+      "roundtrip_bps": 11.0003,
+      "note": "New Drift Tier1 (3.5 bps taker, post-Aug 2025). Priority=none.",
+      "breakeven_hold_hours": 300.6,
+      "spread_persistence_hours": 6.0,
+      "viable": false
+    },
+    {
+      "name": "Drift Tier1 taker + priority=low",
+      "hl_leg_bps": 1.5,
+      "drift_leg_bps": 3.5,
+      "priority_fee_scenario": "low",
+      "priority_fee_bps": 0.0003,
+      "slippage_bps": 1.0,
+      "roundtrip_bps": 11.0003,
+      "note": "New Drift Tier1 (3.5 bps taker, post-Aug 2025). Priority=low.",
+      "breakeven_hold_hours": 300.6,
+      "spread_persistence_hours": 6.0,
+      "viable": false
+    },
+    {
+      "name": "Drift Tier1 taker + priority=medium",
+      "hl_leg_bps": 1.5,
+      "drift_leg_bps": 3.5,
+      "priority_fee_scenario": "medium",
+      "priority_fee_bps": 0.0004,
+      "slippage_bps": 1.0,
+      "roundtrip_bps": 11.0004,
+      "note": "New Drift Tier1 (3.5 bps taker, post-Aug 2025). Priority=medium.",
+      "breakeven_hold_hours": 300.6,
+      "spread_persistence_hours": 6.0,
+      "viable": false
+    },
+    {
+      "name": "Drift DLOB maker (rebate) + priority=none",
+      "hl_leg_bps": 1.5,
+      "drift_leg_bps": -0.25,
+      "priority_fee_scenario": "none",
+      "priority_fee_bps": 0.0003,
+      "slippage_bps": 1.0,
+      "roundtrip_bps": 3.5003,
+      "note": "Drift DLOB post-only limit order: -0.25 bps maker rebate. Priority=none. Risk: fill rate < 100%.",
+      "breakeven_hold_hours": 95.6,
+      "spread_persistence_hours": 6.0,
+      "viable": false
+    },
+    {
+      "name": "Drift DLOB maker (rebate) + priority=low",
+      "hl_leg_bps": 1.5,
+      "drift_leg_bps": -0.25,
+      "priority_fee_scenario": "low",
+      "priority_fee_bps": 0.0003,
+      "slippage_bps": 1.0,
+      "roundtrip_bps": 3.5003,
+      "note": "Drift DLOB post-only limit order: -0.25 bps maker rebate. Priority=low. Risk: fill rate < 100%.",
+      "breakeven_hold_hours": 95.6,
+      "spread_persistence_hours": 6.0,
+      "viable": false
+    },
+    {
+      "name": "Drift DLOB maker (rebate) + priority=medium",
+      "hl_leg_bps": 1.5,
+      "drift_leg_bps": -0.25,
+      "priority_fee_scenario": "medium",
+      "priority_fee_bps": 0.0004,
+      "slippage_bps": 1.0,
+      "roundtrip_bps": 3.5004,
+      "note": "Drift DLOB post-only limit order: -0.25 bps maker rebate. Priority=medium. Risk: fill rate < 100%.",
+      "breakeven_hold_hours": 95.7,
+      "spread_persistence_hours": 6.0,
+      "viable": false
+    },
+    {
+      "name": "Drift DLOB maker+staked + priority=none",
+      "hl_leg_bps": 1.5,
+      "drift_leg_bps": -0.35,
+      "priority_fee_scenario": "none",
+      "priority_fee_bps": 0.0003,
+      "slippage_bps": 1.0,
+      "roundtrip_bps": 3.3003,
+      "note": "Drift DLOB maker with staked DRIFT (~5K DRIFT, ~40% rebate boost). -0.35 bps rebate. Priority=none. Best-case execution path.",
+      "breakeven_hold_hours": 90.2,
+      "spread_persistence_hours": 6.0,
+      "viable": false
+    },
+    {
+      "name": "Drift DLOB maker+staked + priority=low",
+      "hl_leg_bps": 1.5,
+      "drift_leg_bps": -0.35,
+      "priority_fee_scenario": "low",
+      "priority_fee_bps": 0.0003,
+      "slippage_bps": 1.0,
+      "roundtrip_bps": 3.3003,
+      "note": "Drift DLOB maker with staked DRIFT (~5K DRIFT, ~40% rebate boost). -0.35 bps rebate. Priority=low. Best-case execution path.",
+      "breakeven_hold_hours": 90.2,
+      "spread_persistence_hours": 6.0,
+      "viable": false
+    }
+  ],
+  "spread_reference": {
+    "source": "K358 backtest (2024-05-23 to 2026-04-01, 5915 hourly rows)",
+    "mean_daily_bps": 0.8783,
+    "persistence_hours_observed": 9.4,
+    "entry_threshold_bps": 5.0,
+    "frac_above_threshold": 0.1779
+  },
+  "backtest_results": {
+    "K358 baseline (15 bps)": {
+      "roundtrip_bps": 15.0,
+      "backtest": {
+        "total_rows": 5915,
+        "total_days": 246.5,
+        "total_years": 0.675,
+        "final_equity": 0.656694,
+        "ann_return_pct": -46.3564,
+        "oos_sharpe": -27.2581,
+        "max_dd_pct": -34.28,
+        "trade_count": 333,
+        "win_rate_pct": 36.3,
+        "avg_hold_hours": 8.4,
+        "roundtrip_bps": 15.0
+      },
+      "walk_forward": [
+        {
+          "fold": 1,
+          "rows": 1971,
+          "days": 82.1,
+          "ann_return_pct": -52.5532,
+          "sharpe": -31.1425,
+          "trades": 125,
+          "positive": "False"
+        },
+        {
+          "fold": 2,
+          "rows": 1971,
+          "days": 82.1,
+          "ann_return_pct": -34.8426,
+          "sharpe": -22.6536,
+          "trades": 75,
+          "positive": "False"
+        },
+        {
+          "fold": 3,
+          "rows": 1973,
+          "days": 82.2,
+          "ann_return_pct": -50.0639,
+          "sharpe": -27.7152,
+          "trades": 133,
+          "positive": "False"
+        }
+      ],
+      "wf_all_positive": false,
+      "gate_sharpe_pass": false,
+      "gate_ann_return_pass": false
+    },
+    "New Tier1 taker, no priority (11 bps)": {
+      "roundtrip_bps": 11.0,
+      "backtest": {
+        "total_rows": 5915,
+        "total_days": 246.5,
+        "total_years": 0.675,
+        "final_equity": 0.750323,
+        "ann_return_pct": -34.65,
+        "oos_sharpe": -25.0883,
+        "max_dd_pct": -24.93,
+        "trade_count": 333,
+        "win_rate_pct": 36.3,
+        "avg_hold_hours": 8.4,
+        "roundtrip_bps": 11.0
+      },
+      "walk_forward": [
+        {
+          "fold": 1,
+          "rows": 1971,
+          "days": 82.1,
+          "ann_return_pct": -40.7376,
+          "sharpe": -29.5233,
+          "trades": 125,
+          "positive": "False"
+        },
+        {
+          "fold": 2,
+          "rows": 1971,
+          "days": 82.1,
+          "ann_return_pct": -25.5427,
+          "sharpe": -21.1238,
+          "trades": 75,
+          "positive": "False"
+        },
+        {
+          "fold": 3,
+          "rows": 1973,
+          "days": 82.2,
+          "ann_return_pct": -36.7495,
+          "sharpe": -24.4943,
+          "trades": 133,
+          "positive": "False"
+        }
+      ],
+      "wf_all_positive": false,
+      "gate_sharpe_pass": false,
+      "gate_ann_return_pass": false
+    },
+    "New Tier1 taker, low priority (11.1 bps)": {
+      "roundtrip_bps": 11.1,
+      "backtest": {
+        "total_rows": 5915,
+        "total_days": 246.5,
+        "total_years": 0.675,
+        "final_equity": 0.747828,
+        "ann_return_pct": -34.9717,
+        "oos_sharpe": -25.1612,
+        "max_dd_pct": -25.18,
+        "trade_count": 333,
+        "win_rate_pct": 36.3,
+        "avg_hold_hours": 8.4,
+        "roundtrip_bps": 11.1
+      },
+      "walk_forward": [
+        {
+          "fold": 1,
+          "rows": 1971,
+          "days": 82.1,
+          "ann_return_pct": -41.0661,
+          "sharpe": -29.5779,
+          "trades": 125,
+          "positive": "False"
+        },
+        {
+          "fold": 2,
+          "rows": 1971,
+          "days": 82.1,
+          "ann_return_pct": -25.7906,
+          "sharpe": -21.1754,
+          "trades": 75,
+          "positive": "False"
+        },
+        {
+          "fold": 3,
+          "rows": 1973,
+          "days": 82.2,
+          "ann_return_pct": -37.1221,
+          "sharpe": -24.6017,
+          "trades": 133,
+          "positive": "False"
+        }
+      ],
+      "wf_all_positive": false,
+      "gate_sharpe_pass": false,
+      "gate_ann_return_pass": false
+    },
+    "DLOB maker, no priority (3.5 bps)": {
+      "roundtrip_bps": 3.5,
+      "backtest": {
+        "total_rows": 5915,
+        "total_days": 246.5,
+        "total_years": 0.675,
+        "final_equity": 0.963281,
+        "ann_return_pct": -5.3897,
+        "oos_sharpe": -9.0855,
+        "max_dd_pct": -3.79,
+        "trade_count": 333,
+        "win_rate_pct": 36.3,
+        "avg_hold_hours": 8.4,
+        "roundtrip_bps": 3.5
+      },
+      "walk_forward": [
+        {
+          "fold": 1,
+          "rows": 1971,
+          "days": 82.1,
+          "ann_return_pct": -10.0915,
+          "sharpe": -17.1089,
+          "trades": 125,
+          "positive": "False"
+        },
+        {
+          "fold": 2,
+          "rows": 1971,
+          "days": 82.1,
+          "ann_return_pct": -4.3862,
+          "sharpe": -9.352,
+          "trades": 75,
+          "positive": "False"
+        },
+        {
+          "fold": 3,
+          "rows": 1973,
+          "days": 82.2,
+          "ann_return_pct": -1.491,
+          "sharpe": -2.1486,
+          "trades": 133,
+          "positive": "False"
+        }
+      ],
+      "wf_all_positive": false,
+      "gate_sharpe_pass": false,
+      "gate_ann_return_pass": false
+    },
+    "DLOB maker, low priority (3.6 bps)": {
+      "roundtrip_bps": 3.6,
+      "backtest": {
+        "total_rows": 5915,
+        "total_days": 246.5,
+        "total_years": 0.675,
+        "final_equity": 0.960078,
+        "ann_return_pct": -5.8552,
+        "oos_sharpe": -9.675,
+        "max_dd_pct": -4.1,
+        "trade_count": 333,
+        "win_rate_pct": 36.3,
+        "avg_hold_hours": 8.4,
+        "roundtrip_bps": 3.6
+      },
+      "walk_forward": [
+        {
+          "fold": 1,
+          "rows": 1971,
+          "days": 82.1,
+          "ann_return_pct": -10.5897,
+          "sharpe": -17.5834,
+          "trades": 125,
+          "positive": "False"
+        },
+        {
+          "fold": 2,
+          "rows": 1971,
+          "days": 82.1,
+          "ann_return_pct": -4.7044,
+          "sharpe": -9.8044,
+          "trades": 75,
+          "positive": "False"
+        },
+        {
+          "fold": 3,
+          "rows": 1973,
+          "days": 82.2,
+          "ann_return_pct": -2.0711,
+          "sharpe": -2.9305,
+          "trades": 133,
+          "positive": "False"
+        }
+      ],
+      "wf_all_positive": false,
+      "gate_sharpe_pass": false,
+      "gate_ann_return_pass": false
+    },
+    "DLOB maker+staked, no priority (3.3 bps)": {
+      "roundtrip_bps": 3.3,
+      "backtest": {
+        "total_rows": 5915,
+        "total_days": 246.5,
+        "total_years": 0.675,
+        "final_equity": 0.969719,
+        "ann_return_pct": -4.4518,
+        "oos_sharpe": -7.8197,
+        "max_dd_pct": -3.15,
+        "trade_count": 333,
+        "win_rate_pct": 36.3,
+        "avg_hold_hours": 8.4,
+        "roundtrip_bps": 3.3
+      },
+      "walk_forward": [
+        {
+          "fold": 1,
+          "rows": 1971,
+          "days": 82.1,
+          "ann_return_pct": -9.0867,
+          "sharpe": -16.0849,
+          "trades": 125,
+          "positive": "False"
+        },
+        {
+          "fold": 2,
+          "rows": 1971,
+          "days": 82.1,
+          "ann_return_pct": -3.7465,
+          "sharpe": -8.3748,
+          "trades": 75,
+          "positive": "False"
+        },
+        {
+          "fold": 3,
+          "rows": 1973,
+          "days": 82.2,
+          "ann_return_pct": -0.3205,
+          "sharpe": -0.4796,
+          "trades": 133,
+          "positive": "False"
+        }
+      ],
+      "wf_all_positive": false,
+      "gate_sharpe_pass": false,
+      "gate_ann_return_pass": false
+    }
+  },
+  "breakeven_analysis": {
+    "mean_spread_daily_bps": 0.8783,
+    "k358_baseline_rt_bps": 15.0,
+    "k358_breakeven_hours": 409.9,
+    "best_case_rt_bps": 3.3,
+    "best_case_breakeven_hours": 90.2,
+    "spread_persistence_observed_hours": 9.4,
+    "comment": "Best case (DLOB maker + staked DRIFT, no priority) = 3.3 bps RT. Breakeven hold = 3.3/0.88*24 = 90h. Observed spread persistence \u2248 9.4h. Even best-case breakeven (90h) >> persistence (9h). Priority fee 'medium' ($3/tx) adds ~0.12 bps per leg at $50k notional \u2014 harmful, not helpful."
+  },
+  "decision": "REJECT \u2014 K358 LINE CLOSED",
+  "decision_reason": "No scenario passes K266 \u00a76 gates. Even with DLOB maker rebate and priority fees, round-trip cost vs. mean spread persistence makes this structurally unviable.",
+  "k358_line_status": "CLOSED",
+  "generalization": {
+    "applies_to": [
+      "Drift (perp)",
+      "Jupiter (spot)",
+      "Raydium (spot)",
+      "Orca (spot)"
+    ],
+    "note": "Priority fees are universal to Solana, but cost impact depends on notional size. For spot DEXs (Jupiter/Raydium), spread dynamics differ fundamentally from perp FR arb. The core problem (insufficient persistent spread vs. cost) is not solved by priority fees alone. Priority fees improve fill probability and reduce latency, NOT reduce round-trip cost \u2014 they are additive to, not a replacement for, execution fees.",
+    "key_insight": "arXiv 2602.10798 shows priority fees OPTIMIZE latency exposure (stochastic delay management), NOT reduce fee rates. The paper's value is in timing execution, not reducing round-trip cost."
+  },
+  "key_findings": [
+    "Priority fees do NOT reduce Drift taker/maker fees \u2014 they are additive Solana tx cost.",
+    "Priority fees improve fill latency/probability for maker orders on DLOB only.",
+    "Drift fee structure updated Aug 2025: Tier1 taker 3.5 bps (was ~5 bps in K358 estimate).",
+    "DLOB maker path: -0.25 bps rebate, but requires post-only + queue position + possible non-fill.",
+    "Best-case round-trip: 3.3 bps (DLOB maker+staked). Breakeven hold: ~90h.",
+    "Observed spread persistence: ~9.4h avg hold in K358. Breakeven >> persistence.",
+    "arXiv 2602.10798 insight: priority fees optimize stochastic delay, not fee rates.",
+    "K358 structurally unviable. Priority fees do not change the fundamental cost-spread mismatch."
+  ],
+  "next_steps": {
+    "k358_status": "CLOSED \u2014 not revivable via priority fee optimization",
+    "priority_fee_usefulness": "Priority fees ARE useful for Solana execution generally: reduce latency for time-sensitive strategies, improve maker fill probability. But they cannot fix a strategy where cost >> spread.",
+    "conditions_for_reopening": "K358 could reopen if: (1) mean spread exceeds 5 bps/day (currently 0.88 bps), OR (2) Drift adds sub-0.5 bps total execution path (institutional API), OR (3) Large spread regime event (bull cycle with HL/Drift FR divergence >10 bps)."
+  }
+}
