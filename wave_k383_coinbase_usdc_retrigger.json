@@ -1,0 +1,274 @@
+{
+  "wave": "K383",
+  "task": "K362 Coinbase USDC Retrigger (R13 Finding 1 — Governance Realized)",
+  "generated_at": "2026-05-27T09:48:03.452648+09:00",
+  "k362_original_verdict": "REJECT",
+  "k383_verdict": "CONFIRM_REJECT",
+  "k383_rationale": [
+    "R13-01 described 'governance realized' = AQAv2 framework activated (Coinbase as treasury deployer confirmed).",
+    "However, 'governance realized' does NOT mean a claimable USDC yield product was launched.",
+    "All $135-160M annual AQAv2 revenue routes exclusively to Hyperliquid Assistance Fund → HYPE buybacks.",
+    "No sUSDC, yield-bearing USDC token, or direct USDC holder yield product exists or was announced.",
+    "HYPE staking APY (2.37%) unchanged — AQAv2 yield does NOT feed staking rewards.",
+    "HLP vault yield unchanged — AQAv2 yield does NOT feed HLP.",
+    "No governance vote found to redirect AQAv2 yield toward USDC holder distribution.",
+    "G5 (claimability) fails — buyback-only mechanism is NOT a sleeve candidate.",
+    "K362 REJECT logic stands unchanged: mechanism mismatch, not product deprecation."
+  ],
+  "evidence": {
+    "sources_fetched": [
+      "https://www.coindesk.com/markets/2026/05/18/hyperliquid-s-usdc-deal-could-supercharge-hype-pressure-circle-coinbase-margins-analysts-say",
+      "https://www.coinbase.com/blog/coinbase-and-hyperliquid-aligning-markets-on-hyperliquid-to-usdc",
+      "https://www.kucoin.com/blog/coinbase-and-circle-partner-with-hyperliquid-usdc-treasury-role-hype-staking-and-usdh-transition-explained",
+      "https://coincentral.com/hyperliquid-usdc-yield-deal-could-route-up-to-90-to-hype-buybacks/",
+      "https://stabledash.com/news/everything-you-need-to-know-about-hyperliquid-s-usdh"
+    ],
+    "r13_finding": {
+      "id": "R13-01",
+      "wave": "K382",
+      "title": "Coinbase/Circle USDC Yield Sharing on Hyperliquid (May 2026) — 90% Revenue to HL Protocol",
+      "note": "R13 micro-scraper flagged as K362 retrigger. actionable_for_k383=True."
+    },
+    "governance_facts": {
+      "aqav2_announced": "2026-05-14",
+      "parties": [
+        "Hyperliquid",
+        "Coinbase",
+        "Circle"
+      ],
+      "usdc_supply_on_hl_b": 5.1,
+      "yield_share_pct_upper_bound": 90,
+      "yield_share_disclosure": "undisclosed exact; 'vast majority' per Coinbase; 90% per CoinDesk analyst",
+      "annual_estimated_mm": {
+        "low": 135,
+        "high": 160
+      },
+      "routing_vehicle": "Hyperliquid Assistance Fund",
+      "routing_mechanism_confirmed": "HYPE_buyback_only",
+      "claimable_usdc_yield_product_found": false,
+      "sUSDC_equivalent_launched": false,
+      "hype_staking_apy_change": "NO — AQAv2 yield does NOT feed HYPE staking rewards",
+      "hlp_vault_apy_change": "NO — AQAv2 yield does NOT feed HLP vault",
+      "rollout_timeline": "phases through Q3 2026",
+      "governance_vote_for_passthrough": "NOT FOUND — no governance vote to redirect yield to USDC holders",
+      "kucoin_additional_detail": "Yield from USDC reserves flows to Hyperliquid Assistance Fund for: HYPE buybacks, market-maker rebates, protocol insurance. No individual depositor yield distribution mentioned.",
+      "coincentral_confirmation": "Revenue routed through Assistance Fund → HYPE buybacks confirmed. No proposals for USDC holder yield found."
+    }
+  },
+  "product_evaluations": {
+    "aqav2_direct_usdc_yield": {
+      "product": {
+        "name": "AQAv2 Direct USDC Reserve Yield Passthrough (Hypothetical)",
+        "status": "NOT_LAUNCHED",
+        "net_apy_pct": null,
+        "counterparty": "Coinbase + Hyperliquid",
+        "audit": null,
+        "audit_pass": false,
+        "audit_note": "Product does not exist — no audit possible",
+        "peg_asset": "USDC",
+        "peg_grade": "N/A",
+        "peg_pass": false,
+        "peg_note": "Product does not exist",
+        "corr_vs_hl": null,
+        "orthogonal_note": "If launched: HL-native → correlated with HL ecosystem risk",
+        "holder_claimable": false,
+        "claimable_note": "AQAv2 yield routes exclusively to Assistance Fund → HYPE buybacks. Zero passthrough to USDC holders.",
+        "k344_candidate": false
+      },
+      "gates": {
+        "G1_apy": {
+          "threshold_pct": 5.0,
+          "actual_pct": null,
+          "pass": false,
+          "note": "N/A — product does not exist"
+        },
+        "G2_audit": {
+          "counterparty": "Coinbase + Hyperliquid",
+          "audit": null,
+          "pass": false,
+          "note": "Product does not exist — no audit possible"
+        },
+        "G3_peg": {
+          "asset": "USDC",
+          "stability_grade": "N/A",
+          "pass": false,
+          "note": "Product does not exist"
+        },
+        "G4_orthogonal": {
+          "threshold_rho": 0.3,
+          "actual_rho": null,
+          "pass": false,
+          "note": "If launched: HL-native → correlated with HL ecosystem risk"
+        },
+        "G5_claimable": {
+          "holder_claimable": false,
+          "pass": false,
+          "note": "AQAv2 yield routes exclusively to Assistance Fund → HYPE buybacks. Zero passthrough to USDC holders."
+        },
+        "all_pass": false,
+        "gates_passed": 0,
+        "gates_total": 5
+      }
+    },
+    "hype_staking": {
+      "product": {
+        "name": "HYPE Native Staking (AQAv2 boosted? — REJECTED)",
+        "status": "EXISTS_NOT_BOOSTED",
+        "net_apy_pct": 2.37,
+        "counterparty": "Hyperliquid PoS validators",
+        "audit": "Native L1 (low risk)",
+        "audit_pass": true,
+        "audit_note": "Native HL L1 staking — low smart contract risk",
+        "peg_asset": "HYPE (volatile token)",
+        "peg_grade": "FAIL — HYPE is not a stablecoin",
+        "peg_pass": false,
+        "peg_note": "HYPE carries full price exposure. Not a capital-stable sleeve.",
+        "corr_vs_hl": 0.85,
+        "orthogonal_note": "HYPE staking is highly correlated with HL ecosystem performance (rho ~0.85)",
+        "holder_claimable": false,
+        "claimable_note": "Auto-compound, no manual claim. 7-day unstake queue. AQAv2 yield does NOT boost staking rewards.",
+        "k344_candidate": false
+      },
+      "gates": {
+        "G1_apy": {
+          "threshold_pct": 5.0,
+          "actual_pct": 2.37,
+          "pass": false,
+          "note": "2.37% vs 5.0% threshold"
+        },
+        "G2_audit": {
+          "counterparty": "Hyperliquid PoS validators",
+          "audit": "Native L1 (low risk)",
+          "pass": true,
+          "note": "Native HL L1 staking — low smart contract risk"
+        },
+        "G3_peg": {
+          "asset": "HYPE (volatile token)",
+          "stability_grade": "FAIL — HYPE is not a stablecoin",
+          "pass": false,
+          "note": "HYPE carries full price exposure. Not a capital-stable sleeve."
+        },
+        "G4_orthogonal": {
+          "threshold_rho": 0.3,
+          "actual_rho": 0.85,
+          "pass": false,
+          "note": "HYPE staking is highly correlated with HL ecosystem performance (rho ~0.85)"
+        },
+        "G5_claimable": {
+          "holder_claimable": false,
+          "pass": false,
+          "note": "Auto-compound, no manual claim. 7-day unstake queue. AQAv2 yield does NOT boost staking rewards."
+        },
+        "all_pass": false,
+        "gates_passed": 1,
+        "gates_total": 5
+      }
+    },
+    "susde_k344_baseline": {
+      "product": {
+        "name": "Ethena sUSDe (K344 active sleeve)",
+        "status": "ACTIVE_BASELINE",
+        "net_apy_pct": 4.01,
+        "counterparty": "Ethena Labs",
+        "audit": "Multiple independent audits",
+        "audit_pass": true,
+        "audit_note": "Audited. Delta-neutral hedging complexity acknowledged.",
+        "peg_asset": "USDC (synthetic, delta-neutral)",
+        "peg_grade": "GOOD — historically stable peg",
+        "peg_pass": true,
+        "peg_note": "MDD 0.11% (K344 live). Near-perfect peg historically.",
+        "corr_vs_hl": 0.05,
+        "orthogonal_note": "Ethereum-native. Near-zero correlation with HL ecosystem (rho 0.05, K344).",
+        "holder_claimable": true,
+        "claimable_note": "sUSDe redeemable anytime. Standard 7d cooldown.",
+        "k344_candidate": true
+      },
+      "gates": {
+        "G1_apy": {
+          "threshold_pct": 5.0,
+          "actual_pct": 4.01,
+          "pass": false,
+          "note": "4.01% vs 5.0% threshold"
+        },
+        "G2_audit": {
+          "counterparty": "Ethena Labs",
+          "audit": "Multiple independent audits",
+          "pass": true,
+          "note": "Audited. Delta-neutral hedging complexity acknowledged."
+        },
+        "G3_peg": {
+          "asset": "USDC (synthetic, delta-neutral)",
+          "stability_grade": "GOOD — historically stable peg",
+          "pass": true,
+          "note": "MDD 0.11% (K344 live). Near-perfect peg historically."
+        },
+        "G4_orthogonal": {
+          "threshold_rho": 0.3,
+          "actual_rho": 0.05,
+          "pass": true,
+          "note": "Ethereum-native. Near-zero correlation with HL ecosystem (rho 0.05, K344)."
+        },
+        "G5_claimable": {
+          "holder_claimable": true,
+          "pass": true,
+          "note": "sUSDe redeemable anytime. Standard 7d cooldown."
+        },
+        "all_pass": false,
+        "gates_passed": 4,
+        "gates_total": 5
+      }
+    }
+  },
+  "architecture_candidates": {
+    "v6.14a": {
+      "description": "Keep sUSDe 5% sleeve (K344 confirmed). No USDC HL sleeve. HYPE buyback benefit captured passively via existing HYPE exposure in HL trading strategies.",
+      "susde_alloc_pct": 5.0,
+      "usdc_hl_alloc_pct": 0.0,
+      "hl_concentration_delta_pp": 0.0,
+      "total_hl_exposure_pct": 57.5,
+      "rationale": "No actionable claimable yield from AQAv2. sUSDe remains best available stablecoin sleeve. HYPE buyback benefit is passive and already captured.",
+      "verdict": "RECOMMENDED"
+    },
+    "v6.14b": {
+      "description": "Split sleeve: sUSDe 3% + USDC HL 2% (only if claimable yield >= 3%).",
+      "susde_alloc_pct": 3.0,
+      "usdc_hl_alloc_pct": 2.0,
+      "hl_concentration_delta_pp": 2.0,
+      "total_hl_exposure_pct": 59.5,
+      "rationale": "Gate condition NOT MET — no USDC HL claimable yield product exists. Architecture candidate remains theoretical.",
+      "verdict": "BLOCKED — G5 claimability gate fails"
+    },
+    "v6.14c": {
+      "description": "Full replace: sUSDe 0% + USDC HL 5% (only if claimable yield > sUSDe + advantages).",
+      "susde_alloc_pct": 0.0,
+      "usdc_hl_alloc_pct": 5.0,
+      "hl_concentration_delta_pp": 5.0,
+      "total_hl_exposure_pct": 62.5,
+      "rationale": "Multiple gate failures. No product. G1/G4/G5 all fail. Additionally loses sUSDe Ethereum-native orthogonality.",
+      "verdict": "BLOCKED — G1/G4/G5 fail"
+    }
+  },
+  "concentration_analysis": {
+    "current_hl_exposure_pct": 57.5,
+    "cap_pct": 65.0,
+    "headroom_pct": 7.5,
+    "v6_14a_impact_pp": 0.0,
+    "v6_14b_impact_pp": 2.0,
+    "v6_14c_impact_pp": 5.0,
+    "note": "sUSDe (Ethereum-native) adds ZERO HL concentration. Any HL-native yield product would consume HL headroom. v6.14a preserves full 7.5pp headroom buffer."
+  },
+  "k344_sleeve_status": "UNCHANGED — sUSDe remains K344 active sleeve. No replacement or addition warranted.",
+  "monitor_trigger": "HL governance proposal published that explicitly routes a portion of AQAv2 reserve yield to a claimable USDC yield token (sUSDC-equivalent). Watch: hyperliquid.gitbook.io governance, HL Discord #governance, Hyper Foundation Twitter. Re-trigger K384 on such event.",
+  "recheck_days": 30,
+  "implementation_note": "K383 verdict is CONFIRM_REJECT. No implementation required. If future K384 re-triggers on governance proposal, implementation would include: (1) USDC HL yield monitoring daemon similar to k344_susde_oc_daily_run.py, (2) Architecture re-balance K386 v6.14 weighting update, (3) HTML/runbook updates. Estimated effort: 4-6h.",
+  "phases_completed": [
+    "Phase 1: R13-01 evidence extraction + governance proposal investigation (WebSearch + WebFetch 3 URLs)",
+    "Phase 2: Revenue distribution channel analysis (AQAv2 → HYPE buyback confirmed, no new mechanisms)",
+    "Phase 3: K344 sUSDe comparison refreshed (sUSDe 4.01% APY current, Sh 8.39, MDD 0.11%)",
+    "Phase 4: v6.14a/b/c architecture candidate evaluation",
+    "Phase 5: K266 strict gate evaluation (G1-G5) for all candidates",
+    "Phase 6: HL concentration impact (v6.14a = 0pp delta, recommended)",
+    "Phase 7: Decision matrix → CONFIRM_REJECT",
+    "Phase 8: Monitor trigger definition for future K384 retrigger"
+  ]
+}
