@@ -1,0 +1,160 @@
+{
+  "wave": "K409",
+  "generated_at_jst": "2026-05-29T07:30 JST",
+  "title": "K368 Target Date Adjustment: 2026-06-10 → 2026-06-22",
+  "triggered_by": "K408 math feasibility check: N=14 not achievable at 2026-06-10 (only 12 days remain, daemon not loaded)",
+  "today": "2026-05-29",
+  "old_target": "2026-06-10",
+  "new_target": "2026-06-22",
+  "decision": "C — Push to 2026-06-22",
+  "decision_matrix": {
+    "A_extend_jun12": {
+      "date": "2026-06-12",
+      "days_from_today": 14,
+      "n_btc_outcomes_if_loaded_today": 13,
+      "buffer_over_min14": -1,
+      "verdict": "FEASIBLE_DIRECTIONAL",
+      "pros": [
+        "Hits N=14 minimum exactly",
+        "Only 2-day extension"
+      ],
+      "cons": [
+        "Zero buffer for daemon downtime or missed days",
+        "Single skipped day drops to INCONCLUSIVE",
+        "Daemon still not loaded — unlikely to collect even 12 days cleanly"
+      ],
+      "recommendation": "REJECT — no buffer, high risk of INCONCLUSIVE anyway"
+    },
+    "B_accept_inconclusive_jun10": {
+      "date": "2026-06-10",
+      "days_from_today": 12,
+      "n_btc_outcomes_if_loaded_today": 11,
+      "buffer_over_min14": -3,
+      "verdict": "FEASIBLE_DIRECTIONAL",
+      "pros": [
+        "No schedule change",
+        "CPI resolution on 2026-06-10 still captured"
+      ],
+      "cons": [
+        "N=11 is below the 14-minimum for ACCEPT/WATCH/MONITOR gates",
+        "Forces INCONCLUSIVE outcome regardless of calibration quality",
+        "Wastes daemon collection opportunity"
+      ],
+      "recommendation": "REJECT — unnecessarily forces INCONCLUSIVE, wastes data potential"
+    },
+    "C_push_jun22": {
+      "date": "2026-06-22",
+      "days_from_today": 24,
+      "n_btc_outcomes_if_loaded_today": 23,
+      "buffer_over_min14": 9,
+      "snapshots_daemon": 6912,
+      "snapshots_manual_fallback": 24,
+      "verdict": "FEASIBLE_FULL",
+      "pros": [
+        "N=23 outcomes — 9 days buffer over N=14 minimum",
+        "Absorbs weekend/holiday gaps, daemon downtime, manual fetch misses",
+        "CPI (2026-06-10) still captured as secondary market",
+        "FOMC (2026-06-18) captured 4 days before K368 — cross-venue recheck available",
+        "Daemon path: 6,912 snapshots (24 days × 288/day)",
+        "Still within 2026-Q2 frame — no Q3 drift"
+      ],
+      "cons": [
+        "12-day push to K368 schedule",
+        "FOMC market will be near resolution by 2026-06-22 — spread may be compressed"
+      ],
+      "recommendation": "ACCEPT — recommended option (K409 formal decision)"
+    }
+  },
+  "updated_decision_criteria": {
+    "ACCEPT": {
+      "calibration_gap_pct_gt": 3.0,
+      "min_N": 14,
+      "next": "K369 — HIP-4 BTC recurring daily trade prototype"
+    },
+    "WATCH": {
+      "calibration_gap_pct_range": [
+        1.0,
+        3.0
+      ],
+      "min_N": 14,
+      "next": "Extend daemon +14 days, recheck at K380"
+    },
+    "MONITOR": {
+      "calibration_gap_pct_lt": 1.0,
+      "min_N": 14,
+      "next": "Market well-calibrated, no exploitable edge, continue collecting"
+    },
+    "INCONCLUSIVE_DIRECTIONAL": {
+      "N_range": [
+        10,
+        13
+      ],
+      "next": "Document trend hypothesis. Full calibration deferred to K380+ with extended window.",
+      "added_by": "K409"
+    },
+    "INCONCLUSIVE": {
+      "N_lt": 10,
+      "next": "Push to K450+ monthly recheck. Daemon activation mandatory prerequisite.",
+      "updated_by": "K409 (previously: N < 14 → INCONCLUSIVE)"
+    }
+  },
+  "inconclusive_directional_gate": {
+    "label": "INCONCLUSIVE_DIRECTIONAL",
+    "description": "New sub-category added by K409. If 10 ≤ N < 14 by 2026-06-22, the calibration gap is computed but confidence intervals are wide. Not enough for ACCEPT/WATCH/MONITOR full gates, but directional signal is meaningful enough to document a trend hypothesis for K380+ recheck.",
+    "min_N": 10,
+    "max_N": 13,
+    "next_action": "Document trend (gap direction, magnitude estimate). Push full calibration to K380+ with extended daemon window.",
+    "rationale": "10 BTC daily outcomes yields ~95% CI on mean resolution rate ≈ ±6pp (binomial). Directional signal visible if gap > 4pp. Cannot confirm ACCEPT/WATCH but differentiates 'trending exploitable' from 'trending efficient'."
+  },
+  "pure_inconclusive_gate": {
+    "label": "INCONCLUSIVE",
+    "description": "If N < 10 by 2026-06-22 despite adjusted target, the calibration window is too short for any meaningful signal. Push to next monthly recheck.",
+    "max_N": 9,
+    "next_action": "Push to K450+ (next monthly recheck). Mandatory daemon activation before recheck.",
+    "cause": "Daemon never loaded despite 3 activation reminders (K395, K409, K368-prewave)."
+  },
+  "activation_reminder": {
+    "priority": "CRITICAL",
+    "message": "USER ACTIVATION NEEDED — daemon NOT loaded. K368 will be INCONCLUSIVE without prompt activation.",
+    "recommended_action": "ACTIVATE DAEMON NOW",
+    "command": "cp com.cryptolab.hl-hip4-monitor.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.hl-hip4-monitor.plist",
+    "verify": "launchctl list | grep hip4",
+    "verify_health_7d_before": "python3 scripts/verify_deployment_status.py | grep hip4",
+    "fallback_if_daemon_unavailable": "python3 scripts/hl_hip4_monitor.py  # run once daily",
+    "days_until_new_target": 24,
+    "n_btc_outcomes_if_loaded_today": 23,
+    "current_snapshot_count": 4,
+    "snapshots_if_loaded_now": 6912,
+    "target_date_old": "2026-06-10",
+    "target_date_new": "2026-06-22"
+  },
+  "key_math": {
+    "option_B_jun10": {
+      "days_from_today": 12,
+      "n_btc_outcomes": 11,
+      "meets_n14_minimum": false,
+      "verdict": "FEASIBLE_DIRECTIONAL"
+    },
+    "option_A_jun12": {
+      "days_from_today": 14,
+      "n_btc_outcomes": 13,
+      "meets_n14_minimum": false,
+      "verdict": "FEASIBLE_DIRECTIONAL"
+    },
+    "option_C_jun22": {
+      "days_from_today": 24,
+      "n_btc_outcomes": 23,
+      "buffer_days": 9,
+      "meets_n14_minimum": true,
+      "verdict": "FEASIBLE_FULL",
+      "snapshots_daemon": 6912,
+      "snapshots_manual": 24
+    }
+  },
+  "files_updated": [
+    "wave_k395_hip4_calibration_prep.md (§ K409 Target Date Adjustment added)",
+    "docs/k302a_runbook.md (§20 K368 calibration adjusted added)",
+    "report.html (HIP-4 row + activation warning updated)"
+  ],
+  "wave_reserved": "wave_k368_calibration_RESERVED.md (placeholder for 2026-06-22 analysis)"
+}

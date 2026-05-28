@@ -398,3 +398,39 @@ With daemon active from 2026-05-29 (12 days):
 | 6. K368 preview | COMPLETE | 5-phase structure, code sketches, output format defined |
 | Live HL fetch | PASS | 22 HIP-4 mids live, BTC=73,844.5 (−1,913 from K356) |
 | User action | **REQUIRED** | Load daemon NOW for 12-day data collection |
+
+---
+
+## K409 Target Date Adjustment *(appended 2026-05-29)*
+
+**Triggered by:** K408 math feasibility check  
+**Decision:** Option C — Push K368 target from **2026-06-10** to **2026-06-22**
+
+### Summary
+
+K408 confirmed that N=14 BTC daily resolution events cannot be reached at the original 2026-06-10 target (only 11 achievable if daemon loaded today). K409 formalizes the push to 2026-06-22 (N=23, +9-day buffer over N=14 minimum).
+
+| Option | Target | N outcomes | Buffer | Selected |
+|--------|--------|------------|--------|----------|
+| A — Extend to 2026-06-12 | 2026-06-12 | 13 | −1 | REJECTED |
+| B — Accept INCONCLUSIVE at 2026-06-10 | 2026-06-10 | 11 | −3 | REJECTED |
+| **C — Push to 2026-06-22** | **2026-06-22** | **23** | **+9** | **SELECTED** |
+
+### Updated decision criteria
+
+| Gate | Condition | Next Action |
+|------|-----------|-------------|
+| ACCEPT | calibration_gap > 3% AND N ≥ 14 | K369 trade prototype |
+| WATCH | 1% ≤ gap ≤ 3% AND N ≥ 14 | Extend +14 days, K380 |
+| MONITOR | gap < 1% AND N ≥ 14 | No edge, continue collecting |
+| **INCONCLUSIVE_DIRECTIONAL** *(K409 new)* | 10 ≤ N < 14 | Document trend, K380+ |
+| INCONCLUSIVE | N < 10 by 2026-06-22 | K450+ monthly recheck |
+
+### User activation (still MOST CRITICAL)
+
+```bash
+cp com.cryptolab.hl-hip4-monitor.plist ~/Library/LaunchAgents/ && \
+launchctl load ~/Library/LaunchAgents/com.cryptolab.hl-hip4-monitor.plist
+```
+
+If loaded today: N=23 outcomes by 2026-06-22, 6,912 daemon snapshots.

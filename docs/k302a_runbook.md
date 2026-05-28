@@ -2040,4 +2040,98 @@ python3 scripts/verify_deployment_status.py
 
 ---
 
-*K371 §16 — G9 Oracle Deviation Gate — 2026-05-27*
+## §20 K368 HIP-4 Calibration — Adjusted Target (K409)
+
+**Adjusted by:** K409 (2026-05-29)  
+**Old K368 target:** 2026-06-10 (K356 scaffold + K395 prep)  
+**New K368 target:** **2026-06-22** (K409 — Option C selected)  
+**Reason:** K408 math: N=14 BTC daily resolution minimum not achievable by 2026-06-10 (only N=11 possible even if daemon loaded immediately).
+
+---
+
+### §20.1 Background
+
+HIP-4 (Hyperliquid Incentive Program 4) hosts binary prediction markets including a BTC recurring daily market that settles at 06:00 UTC. K353 identified a potential calibration bias edge; K356 scaffolded a data collection daemon (`com.cryptolab.hl-hip4-monitor`). As of K409, the daemon has **not been activated** by the user — it remains at `SCAFFOLD_READY`.
+
+K368 is reserved for the calibration analysis. The original 2026-06-10 target was infeasible (N=11 outcomes < N=14 minimum). K409 pushes to 2026-06-22, providing a 24-day collection window (N=23 possible, 9-day buffer).
+
+### §20.2 User Activation — MOST CRITICAL
+
+**Run this command immediately. Every day of delay reduces collection window.**
+
+```bash
+# Step 1: Install and load daemon
+cp com.cryptolab.hl-hip4-monitor.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.hl-hip4-monitor.plist
+
+# Step 2: Verify loaded
+launchctl list | grep hip4
+# Expected output line: ... com.cryptolab.hl-hip4-monitor
+
+# Step 3: Check first snapshot appears (wait ~5 minutes after load)
+ls -la cache/hl_hip4_snapshots/
+# Should see new parquet files appearing every 5 minutes
+
+# Step 4: Health check (run on 2026-06-15, 7 days before K368)
+python3 scripts/verify_deployment_status.py | grep hip4
+ls cache/hl_hip4_snapshots/ | wc -l
+# Expected at 2026-06-15 (17 days active): ~4,896 snapshots
+```
+
+**If daemon unavailable (manual fallback):**
+```bash
+# Run once daily from 2026-05-29 to 2026-06-21 (morning preferred):
+python3 scripts/hl_hip4_monitor.py
+```
+
+### §20.3 K368 Execution Timeline
+
+| Date | Event | Data Capture |
+|------|-------|--------------|
+| 2026-05-29 | K409: target adjusted | Baseline (4 snapshots) |
+| 2026-05-29+ | Daemon active (if activated) | 288 snapshots/day |
+| 2026-06-10 | May CPI YoY BLS release (12:30 UTC) | Secondary market: single-event Brier |
+| 2026-06-18 | FOMC June decision | Cross-venue: HL vs Polymarket final |
+| **2026-06-22** | **K368 executes** | Full calibration analysis |
+
+### §20.4 Decision Gates (Revised by K409)
+
+| Gate | Condition | Action |
+|------|-----------|--------|
+| **ACCEPT** | calibration_gap > 3% AND N ≥ 14 | → K369 BTC recurring trade prototype |
+| **WATCH** | 1% ≤ gap ≤ 3% AND N ≥ 14 | Extend daemon +14 days, recheck K380 |
+| **MONITOR** | gap < 1% AND N ≥ 14 | No edge, continue collecting |
+| **INCONCLUSIVE_DIRECTIONAL** | 10 ≤ N < 14 | Document trend hypothesis, push to K380+ |
+| **INCONCLUSIVE** | N < 10 by 2026-06-22 | Push to K450+ monthly recheck |
+
+### §20.5 Data Projections
+
+| Scenario | N outcomes by 2026-06-22 | Snapshots | K368 Gate Eligible |
+|----------|--------------------------|-----------|-------------------|
+| Daemon active from 2026-05-29 | 23 | ~6,912 | Any gate |
+| Manual daily fetch | 23 | ~24 | Any gate |
+| Daemon active from 2026-06-05 | 16 | ~2,016 | Any gate (marginal) |
+| Daemon active from 2026-06-09 | 12 | ~864 | INCONCLUSIVE_DIRECTIONAL |
+| No activation, no manual | 0 | 4 (historical) | INCONCLUSIVE |
+
+### §20.6 K368 Deliverables (to create 2026-06-22)
+
+- `wave_k368_hip4_calibration.py` — computation script
+- `wave_k368_hip4_calibration.json` — Brier score, calibration_gap_pct, decision
+- `wave_k368_hip4_calibration.md` — 200–300 line structured report
+
+**Placeholder:** `wave_k368_calibration_RESERVED.md` (created by K409)
+
+### §20.7 References
+
+| Wave | Content |
+|------|---------|
+| K353 | HIP-4 prediction market initial scouting (MONITOR) |
+| K356 | Daemon scaffold, plist created |
+| K395 | Calibration prep, K368 design, fallback plan |
+| K408 | Math feasibility: N=11 at 2026-06-10 → INCONCLUSIVE |
+| K409 | Target adjusted to 2026-06-22 (this section) |
+
+---
+
+*K409 §20 — K368 HIP-4 Calibration Adjusted Target — 2026-05-29*
