@@ -1,0 +1,467 @@
+{
+  "wave": "K395",
+  "generated_at_jst": "2026-05-29T06:43 JST",
+  "k368_target_date": "2026-06-10",
+  "days_to_k368": 12,
+  "phase1_cache_state": {
+    "snapshot_count": 3,
+    "snapshots": [
+      {
+        "file": "hip4_20260526_2218.parquet",
+        "rows": 11,
+        "cols": 12,
+        "ts_utc": "2026-05-26T22:18 UTC",
+        "ts_jst": "2026-05-27T07:18 JST"
+      },
+      {
+        "file": "hip4_20260526_2220.parquet",
+        "rows": 22,
+        "cols": 18,
+        "ts_utc": "2026-05-26T22:20 UTC",
+        "ts_jst": "2026-05-27T07:20 JST"
+      },
+      {
+        "file": "hip4_20260526_2243.parquet",
+        "rows": 22,
+        "cols": 18,
+        "ts_utc": "2026-05-26T22:43 UTC",
+        "ts_jst": "2026-05-27T07:43 JST"
+      }
+    ],
+    "schema_columns": [
+      "ts_ms",
+      "coin",
+      "outcome_id",
+      "side",
+      "side_name",
+      "outcome_name",
+      "question_name",
+      "description",
+      "mid_price",
+      "resolved",
+      "resolved_outcome",
+      "best_bid",
+      "best_ask",
+      "spread",
+      "spread_pct",
+      "bid_depth_1pct",
+      "ask_depth_1pct",
+      "btc_mark"
+    ],
+    "price_stability_22min": {
+      "delta_minutes": 22.7,
+      "coins_with_price_change": 10,
+      "total_coins": 22,
+      "max_abs_delta": 0.00899,
+      "movers": [
+        {
+          "coin": "#1040",
+          "outcome": "June Fed rate change",
+          "side": "Change",
+          "p_first": 0.0315,
+          "p_last": 0.032,
+          "delta": 0.0005
+        },
+        {
+          "coin": "#1041",
+          "outcome": "June Fed rate change",
+          "side": "No Change",
+          "p_first": 0.9685,
+          "p_last": 0.968,
+          "delta": -0.0005
+        },
+        {
+          "coin": "#1050",
+          "outcome": "Recurring",
+          "side": "Yes",
+          "p_first": 0.048565,
+          "p_last": 0.041275,
+          "delta": -0.00729
+        },
+        {
+          "coin": "#1051",
+          "outcome": "Recurring",
+          "side": "No",
+          "p_first": 0.951435,
+          "p_last": 0.958725,
+          "delta": 0.00729
+        },
+        {
+          "coin": "#1070",
+          "outcome": "Recurring Named Outcome",
+          "side": "Yes",
+          "p_first": 0.211,
+          "p_last": 0.207805,
+          "delta": -0.003195
+        },
+        {
+          "coin": "#1071",
+          "outcome": "Recurring Named Outcome",
+          "side": "No",
+          "p_first": 0.789,
+          "p_last": 0.792195,
+          "delta": 0.003195
+        },
+        {
+          "coin": "#1080",
+          "outcome": "Recurring Named Outcome",
+          "side": "Yes",
+          "p_first": 0.7793,
+          "p_last": 0.78829,
+          "delta": 0.00899
+        },
+        {
+          "coin": "#1081",
+          "outcome": "Recurring Named Outcome",
+          "side": "No",
+          "p_first": 0.2207,
+          "p_last": 0.21171,
+          "delta": -0.00899
+        },
+        {
+          "coin": "#1100",
+          "outcome": "Champions League Winner",
+          "side": "PSG",
+          "p_first": 0.578265,
+          "p_last": 0.57826,
+          "delta": -5e-06
+        },
+        {
+          "coin": "#1101",
+          "outcome": "Champions League Winner",
+          "side": "Arsenal",
+          "p_first": 0.421735,
+          "p_last": 0.42174,
+          "delta": 5e-06
+        }
+      ]
+    },
+    "daemon_status_assessment": "PARTIAL_DATA \u2014 3 snapshots found. Daemon may have been briefly active. Calibration window still short.",
+    "rows_per_snapshot_expected": 22
+  },
+  "phase2_calibration_framework": {
+    "target_market": {
+      "coin_yes": "#1050",
+      "coin_no": "#1051",
+      "description": "BTC recurring daily binary \u2014 settles 06:00 UTC vs BTC mark price",
+      "target_price_at_k356": 76877.0,
+      "btc_mark_at_k356": 75757.5,
+      "implied_prob_yes_at_k356": 0.048565,
+      "note": "Target price resets daily. K356 snapshot shows 4.9% prob of BTC reaching 76877 by next 06:00 UTC."
+    },
+    "metrics": {
+      "brier_score": {
+        "formula": "mean((P_predicted - outcome_binary)^2)",
+        "perfect": 0.0,
+        "random_baseline": 0.25,
+        "interpretation": "Lower = better calibration. HL well-calibrated \u2248 0.02-0.05 for near-tail events."
+      },
+      "log_loss": {
+        "formula": "mean(-outcome * log(P) - (1-outcome) * log(1-P))",
+        "perfect": 0.0,
+        "binary_entropy_baseline": "depends on base rate",
+        "clipping": "P clipped to [0.001, 0.999] to avoid -inf"
+      },
+      "calibration_bins": {
+        "n_bins": 10,
+        "bin_edges": [
+          0.0,
+          0.1,
+          0.2,
+          0.3,
+          0.4,
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          0.9,
+          1.0
+        ],
+        "per_bin": "mean(P_predicted) vs mean(outcome) within bin",
+        "calibration_gap": "max(|bin_mean_P - bin_mean_outcome|) * 100  [in percentage points]"
+      }
+    },
+    "decision_criteria": {
+      "ACCEPT": {
+        "calibration_gap_pct_gt": 3.0,
+        "min_N": 14,
+        "next": "K369 trade prototype on BTC recurring daily"
+      },
+      "WATCH": {
+        "calibration_gap_pct_range": [
+          1.0,
+          3.0
+        ],
+        "min_N": 14,
+        "next": "Extend daemon collection window +14 days"
+      },
+      "MONITOR": {
+        "calibration_gap_pct_lt": 1.0,
+        "min_N": 14,
+        "next": "No exploitable edge, continue MONITOR status"
+      },
+      "INCONCLUSIVE": {
+        "N_lt": 14,
+        "next": "Fallback to one-shot analysis or extend window"
+      }
+    },
+    "minimum_data_requirements": {
+      "daily_outcomes_needed": 14,
+      "snapshots_per_day_daemon": 288,
+      "snapshots_per_day_manual": 1,
+      "resolution_events_at_06UTC": "One per calendar day"
+    },
+    "secondary_markets": {
+      "May_CPI_yoy": {
+        "coins": [
+          "#1010",
+          "#1011",
+          "#1020",
+          "#1021",
+          "#1030",
+          "#1031"
+        ],
+        "resolution_date": "2026-06-10T12:30:00Z",
+        "metric": "single-event Brier (N=1, directional check only)",
+        "k356_prices": {
+          "Below_4.3pct_Yes": 0.368,
+          "Exactly_4.3pct_Yes": 0.437,
+          "Above_4.3pct_Yes": 0.229
+        },
+        "note": "Single resolution event. Not enough for calibration curve; useful for directional accuracy check."
+      },
+      "FOMC_June": {
+        "coins": [
+          "#1040",
+          "#1041"
+        ],
+        "resolution_date": "2026-06-18T18:00:00Z",
+        "metric": "single-event Brier",
+        "k356_prices": {
+          "Change": 0.0315,
+          "No_Change": 0.9685
+        }
+      },
+      "UCL_Final": {
+        "coins": [
+          "#1100",
+          "#1101"
+        ],
+        "resolution_date": "2026-05-31",
+        "metric": "single-event Brier",
+        "k356_prices": {
+          "PSG": 0.578,
+          "Arsenal": 0.422
+        },
+        "note": "Already resolved by K368 target date. Historical check only."
+      }
+    }
+  },
+  "phase3_decision_criteria": {
+    "ACCEPT": {
+      "calibration_gap_pct_gt": 3.0,
+      "min_N": 14,
+      "next": "K369 trade prototype on BTC recurring daily"
+    },
+    "WATCH": {
+      "calibration_gap_pct_range": [
+        1.0,
+        3.0
+      ],
+      "min_N": 14,
+      "next": "Extend daemon collection window +14 days"
+    },
+    "MONITOR": {
+      "calibration_gap_pct_lt": 1.0,
+      "min_N": 14,
+      "next": "No exploitable edge, continue MONITOR status"
+    },
+    "INCONCLUSIVE": {
+      "N_lt": 14,
+      "next": "Fallback to one-shot analysis or extend window"
+    }
+  },
+  "phase4_cross_venue_design": {
+    "overlapping_markets": [
+      {
+        "name": "FOMC June 2026 \u2014 No Change",
+        "hl_coin": "#1041",
+        "polymarket_slug": "fomc-june-2026-no-rate-change",
+        "k353_hl": 0.9685,
+        "k353_poly": 0.972,
+        "k353_abs_spread": 0.0035,
+        "arb_threshold_abs": 0.02,
+        "status": "BELOW_THRESHOLD"
+      },
+      {
+        "name": "UCL 2026 \u2014 PSG",
+        "hl_coin": "#1100",
+        "polymarket_slug": "ucl-2026-winner-psg",
+        "k353_hl": 0.5783,
+        "k353_poly": 0.57,
+        "k353_abs_spread": 0.0083,
+        "arb_threshold_abs": 0.02,
+        "status": "BELOW_THRESHOLD"
+      },
+      {
+        "name": "UCL 2026 \u2014 Arsenal",
+        "hl_coin": "#1101",
+        "polymarket_slug": "ucl-2026-winner-arsenal",
+        "k353_hl": 0.4217,
+        "k353_poly": 0.43,
+        "k353_abs_spread": 0.0083,
+        "arb_threshold_abs": 0.02,
+        "status": "BELOW_THRESHOLD"
+      }
+    ],
+    "persistence_criteria": {
+      "min_spread_pct_abs": 0.02,
+      "min_persistence_minutes": 30,
+      "arb_candidate_trigger": "spread > 2% for > 30min in >= 3 separate windows",
+      "k208_arb_comparison": "K208-style: detect regime, size Kelly, hold until convergence"
+    },
+    "k353_conclusion": "No >2% absolute spread on any liquid HL vs Polymarket market. UCL resolved by K368 date.",
+    "k368_retest": "Recheck FOMC (#1041) vs Polymarket on 2026-06-10 (8 days before FOMC decision).",
+    "structural_barriers": [
+      "Polymarket geo-restricted (US accounts blocked)",
+      "USDC bridge friction between HL and Polymarket",
+      "Same underlying data sources \u2192 pre-resolution convergence",
+      "Settlement timing: both use BLS/FOMC official releases"
+    ]
+  },
+  "phase5_fallback_plan": {
+    "daemon_was_loaded": false,
+    "current_snapshot_count": 3,
+    "calibration_feasibility": "LIKELY_INCONCLUSIVE",
+    "fallback_options": [
+      {
+        "option": "A \u2014 Manual batch fetch (recommended if daemon not loaded)",
+        "description": "Run scripts/hl_hip4_monitor.py once daily from 2026-05-29 to 2026-06-09 (12 days). Each run captures one snapshot per day. At K368 (2026-06-10) CPI resolves \u2192 1 resolution event (May CPI YoY). BTC recurring: 12 daily settlements from 2026-05-28 to 2026-06-09.",
+        "data_yield": "12 BTC daily outcomes, 1 CPI outcome \u2014 marginal but usable",
+        "command": "python3 scripts/hl_hip4_monitor.py",
+        "effort": "LOW \u2014 one command per day"
+      },
+      {
+        "option": "B \u2014 One-shot live fetch at K368",
+        "description": "Fetch a single live snapshot on 2026-06-10. Compare CPI implied prob against BLS release. N=1: directional accuracy only, no calibration curve.",
+        "data_yield": "1 CPI outcome \u2014 directional accuracy check, not calibration",
+        "effort": "ZERO \u2014 auto-runs in K368 wave script"
+      },
+      {
+        "option": "C \u2014 Daemon activation NOW (most valuable)",
+        "description": "User activates launchd daemon immediately. 12 days \u00d7 288 snapshots/day = 3456 snapshots, 12 BTC daily outcomes. Full calibration curve feasible.",
+        "data_yield": "12 BTC daily outcomes, dense intraday price path, 1 CPI outcome",
+        "command": "cp com.cryptolab.hl-hip4-monitor.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.hl-hip4-monitor.plist",
+        "verify": "python3 scripts/verify_deployment_status.py | grep hip4",
+        "effort": "ONE-TIME \u2014 30 seconds"
+      }
+    ],
+    "k368_alternative_if_no_daemon": {
+      "title": "K368 One-Shot Calibration (Fallback Mode)",
+      "steps": [
+        "Load all cache/hl_hip4_snapshots/*.parquet (3 manual snapshots)",
+        "Fetch live snapshot on 2026-06-10 at CPI release time (08:30 EDT / 12:30 UTC)",
+        "Compare P_predicted vs resolved outcome for CPI outcomes (N=1 per bucket)",
+        "Compute single-event Brier for CPI: below/above/exactly 4.3%",
+        "Document as 'directional accuracy check' \u2014 not full calibration",
+        "BTC recurring: if no daemon, rely on K356 baseline P \u2248 4.9% (1 reference point)",
+        "Decision: INCONCLUSIVE \u2192 extend to K380+ with daemon activated"
+      ],
+      "value": "Even 1 CPI resolution event provides directional accuracy data. Not waste."
+    },
+    "activation_reminder": {
+      "plist": "com.cryptolab.hl-hip4-monitor.plist",
+      "load_command": "cp com.cryptolab.hl-hip4-monitor.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.hl-hip4-monitor.plist",
+      "verify_loaded": "launchctl list | grep hip4",
+      "verify_health": "python3 scripts/verify_deployment_status.py | grep hip4",
+      "days_remaining_to_k368": 12,
+      "snapshots_if_loaded_now": 3456
+    }
+  },
+  "phase5_live_snapshot": {
+    "ts_ms": 1780004588485,
+    "ts_jst": "2026-05-29T06:43 JST",
+    "btc_mark": 73844.5,
+    "n_outcomes": 11,
+    "n_questions": 2,
+    "hip4_mids": {
+      "#1000": 0.5,
+      "#1001": 0.5,
+      "#1010": 0.4215,
+      "#1011": 0.5785,
+      "#1020": 0.4175,
+      "#1021": 0.5825,
+      "#1030": 0.14997,
+      "#1031": 0.85003,
+      "#1040": 0.02699,
+      "#1041": 0.97301,
+      "#1100": 0.58357,
+      "#1101": 0.41643,
+      "#1160": 0.90535,
+      "#1161": 0.09465,
+      "#1170": 0.5,
+      "#1171": 0.5,
+      "#1180": 0.0175,
+      "#1181": 0.9825,
+      "#1190": 0.870085,
+      "#1191": 0.129915,
+      "#1200": 0.16302,
+      "#1201": 0.83698
+    },
+    "n_hip4_mids": 22
+  },
+  "phase6_k368_preview": {
+    "wave": "K368",
+    "target_date": "2026-06-10",
+    "trigger": "CPI May YoY resolution at 08:30 EDT (12:30 UTC)",
+    "phases": [
+      {
+        "phase": 1,
+        "name": "Data load",
+        "action": "glob cache/hl_hip4_snapshots/*.parquet \u2192 concat \u2192 sort by ts_ms",
+        "output": "Single DataFrame with all snapshots"
+      },
+      {
+        "phase": 2,
+        "name": "BTC recurring calibration",
+        "action": "For each 06:00 UTC window: extract last mid_price (#1050 Yes) before settlement. Mark resolved_outcome=1/0. Compute Brier, log loss, 10-bin calibration curve.",
+        "output": "brier_score, log_loss, calibration_bins, calibration_gap_pct",
+        "decision_gate": "gap > 3% \u2192 ACCEPT | 1-3% \u2192 WATCH | <1% \u2192 MONITOR | N<14 \u2192 INCONCLUSIVE"
+      },
+      {
+        "phase": 3,
+        "name": "CPI single-event accuracy",
+        "action": "Fetch BLS CPI release (web scrape or manual input). Compare K356 implied probs (Below 0.368, Exactly 0.437, Above 0.229) against actual May 2026 CPI YoY value.",
+        "output": "Single-event Brier per CPI bucket, directional accuracy"
+      },
+      {
+        "phase": 4,
+        "name": "FOMC cross-venue check",
+        "action": "Fetch live #1041 price, compare to Polymarket FOMC. Spread vs K353 baseline.",
+        "output": "Current HL/Poly spread, trend since K353"
+      },
+      {
+        "phase": 5,
+        "name": "Decision",
+        "action": "Apply decision criteria from Phase 2",
+        "outputs": {
+          "ACCEPT": "Proceed to K369 \u2014 HIP-4 BTC recurring trade prototype",
+          "WATCH": "Extend daemon +14 days, recheck at K380",
+          "MONITOR": "Keep daemon running, no active trading",
+          "INCONCLUSIVE": "Fallback one-shot mode, evaluate with N=1 CPI data"
+        }
+      }
+    ],
+    "deliverables": [
+      "wave_k368_hip4_calibration.py",
+      "wave_k368_hip4_calibration.json (metrics + decision)",
+      "wave_k368_hip4_calibration.md (200-300 lines)"
+    ]
+  },
+  "user_action_required": {
+    "priority": "HIGH",
+    "action": "Activate launchd daemon NOW to collect 12 days of BTC recurring daily data before 2026-06-10 K368 calibration target.",
+    "command": "cp com.cryptolab.hl-hip4-monitor.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.hl-hip4-monitor.plist",
+    "verify": "launchctl list | grep hip4"
+  }
+}
