@@ -1,0 +1,128 @@
+{
+  "wave": "K394",
+  "parent_wave": "K390",
+  "run_time_jst": "2026-05-29T06:44:14+09:00",
+  "purpose": "DOT 5m re-validation of K390 GRADUATE_NOW (15m) before K376 production add",
+  "decision": "REJECT",
+  "decision_reason": "OOS Sh=-0.088 < 1.0 OR WF 2/4 < 2. Edge is 15m-specific \u2014 noise at 5m granularity.",
+  "data_coverage": {
+    "start_date": "2025-05-28",
+    "end_date": "2026-05-28",
+    "n_bars": 105120,
+    "n_years": 1.0,
+    "timeframe": "5m",
+    "source": "Binance public API"
+  },
+  "signal_params": {
+    "vol_ratio_threshold": 4.0,
+    "lookback_bars_12h": 144,
+    "return_threshold": 0.004,
+    "hold_bars_4h": 48,
+    "cost_rt_bps": 2.0,
+    "direction": "continuation"
+  },
+  "full_5m": {
+    "n_trades": 1447,
+    "events_per_year": 1452.0,
+    "oos_sharpe": 0.656,
+    "oos_ann_ret_pct": 113.19,
+    "max_dd_pct": 94.265,
+    "win_rate": 0.4831,
+    "avg_vol_ratio": 8.41,
+    "avg_abs_ret_5m": 0.9249
+  },
+  "oos_5m": {
+    "n_trades": 362,
+    "events_per_year": 1453.0,
+    "oos_sharpe": -0.088,
+    "oos_ann_ret_pct": -9.09,
+    "max_dd_pct": 36.547,
+    "win_rate": 0.4669,
+    "avg_vol_ratio": 8.64,
+    "avg_abs_ret_5m": 0.7874
+  },
+  "k390_15m": {
+    "oos_sharpe": 4.382,
+    "oos_ann_ret_pct": 313.39,
+    "max_dd_oos_pct": 13.615,
+    "events_per_year": 421.8,
+    "n_wf_positive": 4,
+    "wf_fold_sharpes": [
+      0.236,
+      0.771,
+      2.072,
+      4.382
+    ],
+    "avg_spike_ratio": 6.37,
+    "avg_abs_ret_pct": 1.624,
+    "tier": "GRADUATE_NOW"
+  },
+  "comparison_table": {
+    "metric": [
+      "OOS Sharpe",
+      "OOS Ann Return %",
+      "Max DD (OOS) %",
+      "Events/yr",
+      "WF folds positive",
+      "Avg spike ratio",
+      "Avg abs ret 5m %"
+    ],
+    "5m_result": [
+      -0.088,
+      -9.09,
+      36.547,
+      1452.0,
+      2,
+      8.41,
+      0.9249
+    ],
+    "15m_k390_result": [
+      4.382,
+      313.39,
+      13.615,
+      421.8,
+      4,
+      6.37,
+      1.624
+    ]
+  },
+  "wf_fold_sharpes_5m": [
+    -2.581,
+    1.859,
+    0.974,
+    -0.114
+  ],
+  "n_wf_positive_5m": 2,
+  "perm_p_value_5m": 0.252,
+  "k266_gates": {
+    "G1_oos_sharpe_ge_1": false,
+    "G2_perm_p_le_005": false,
+    "G3_dsr_proxy": false,
+    "G4_wf_all_positive": false,
+    "G4_cond_3of4_positive": false,
+    "G5a_corr_k280_lt_04": true,
+    "G5a_corr_estimate": 0.12,
+    "G6_trade_count_gt_50": true,
+    "G7_ann_ret_gt_5pct": false,
+    "n_gates_pass": 2,
+    "n_gates_total": 7,
+    "n_empirical_pass": 0,
+    "perm_p_value": 0.252
+  },
+  "edge_story": "DOT 5m edge is weak (Sh=-0.088 vs 15m Sh=4.382). 15m bars smooth microstructure noise that dominates 5m signal. At 5m granularity, false positives from liquidity thin periods dilute the edge. Maker fill difficulty at 5m also increases effective cost above the 2bps model. Recommendation: DOT remains monitored for 15m-native strategy design in a future wave.",
+  "k376_impact": {
+    "universe_before": [
+      "ETH",
+      "LINK",
+      "AVAX"
+    ],
+    "universe_after": [
+      "ETH",
+      "LINK",
+      "AVAX"
+    ],
+    "allocation_per_coin_pct": 1.0,
+    "sleeve_pct_total": 3.5,
+    "files_modified": []
+  }
+}
