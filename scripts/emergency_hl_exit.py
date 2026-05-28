@@ -748,33 +748,45 @@ def close_bybit_positions(
 
     # Step 3: Market-close each position
     logger.info(f"Bybit Step 3: Market-closing {len(positions)} positions...")
+    import urllib.error as _urllib_error
     for pos in positions:
         symbol     = pos["symbol"]
         size       = str(pos["size"])
         # Opposite side to close: if position is "Buy" → close with "Sell"
         close_side = "Sell" if pos["side"] == "Buy" else "Buy"
-        try:
-            close_payload = {
-                "category":    category,
-                "symbol":      symbol,
-                "side":        close_side,
-                "orderType":   "Market",
-                "qty":         size,
-                "reduceOnly":  True,
-                "timeInForce": "IOC",
-            }
-            result = _bybit_signed_request(
-                "POST", BYBIT_CLOSE_ROUTE, close_payload, api_key, api_secret, logger
-            )
-            order_id = result.get("result", {}).get("orderId", "N/A")
-            logger.info(
-                f"  Closed {symbol} {close_side} qty={size} "
-                f"(orderId={order_id}, retCode={result.get('retCode')})"
-            )
-            time.sleep(CLOSE_WAIT_SECONDS)
-        except Exception as exc:
-            logger.error(f"  Bybit close FAILED {symbol}: {exc}")
-            success = False
+        close_payload = {
+            "category":    category,
+            "symbol":      symbol,
+            "side":        close_side,
+            "orderType":   "Market",
+            "qty":         size,
+            "reduceOnly":  True,
+            "timeInForce": "IOC",
+        }
+        _attempts = 0
+        while _attempts < 2:
+            try:
+                result = _bybit_signed_request(
+                    "POST", BYBIT_CLOSE_ROUTE, close_payload, api_key, api_secret, logger
+                )
+                order_id = result.get("result", {}).get("orderId", "N/A")
+                logger.info(
+                    f"  Closed {symbol} {close_side} qty={size} "
+                    f"(orderId={order_id}, retCode={result.get('retCode')})"
+                )
+                time.sleep(CLOSE_WAIT_SECONDS)
+                break  # success — exit retry loop
+            except Exception as exc:
+                import requests as _req_mod
+                _transient = isinstance(exc, (_req_mod.exceptions.Timeout, _urllib_error.URLError))
+                if _transient and _attempts == 0:
+                    logger.warning(f"  Bybit close {symbol} transient error (attempt 1): {exc} — retrying in 2s")
+                    time.sleep(2)
+                    _attempts += 1
+                    continue
+                logger.error(f"  Bybit close FAILED {symbol}: {exc}")
+                success = False
+                break
 
     return success
 

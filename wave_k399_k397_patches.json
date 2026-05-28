@@ -1,0 +1,53 @@
+{
+  "wave": "K399",
+  "parent_wave": "K397",
+  "date_jst": "2026-05-29 06:57 JST",
+  "description": "K397 small patches: K344 EMERGENCY guard + K280 K339 fix + Bybit 1-retry",
+  "k339_compliant": true,
+  "patches": [
+    {
+      "id": "patch1",
+      "severity": "MED",
+      "file": "scripts/k344_susde_oc_daily_run.py",
+      "description": "Add EMERGENCY_EXIT_TRIGGERED.flag guard at top of main()",
+      "lines_added": 6,
+      "before": "def main():\n    parser = argparse.ArgumentParser(...)",
+      "after": "def main():\n    EMERGENCY_FLAG = REPO_ROOT / \"EMERGENCY_EXIT_TRIGGERED.flag\"\n    if EMERGENCY_FLAG.exists():\n        print(\"[K344] EMERGENCY_EXIT_TRIGGERED.flag detected — skipping signal computation and dashboard write\")\n        sys.exit(0)\n\n    parser = argparse.ArgumentParser(...)"
+    },
+    {
+      "id": "patch2",
+      "severity": "LOW",
+      "file": "scripts/k280_live_fetch.py",
+      "line": 53,
+      "description": "Replace absolute /Users/ path with Path(__file__).resolve().parent.parent",
+      "lines_changed": 1,
+      "before": "BASE     = Path(\"/Users/nekonaomichi/crypto-lab\")",
+      "after": "BASE     = Path(__file__).resolve().parent.parent"
+    },
+    {
+      "id": "patch3",
+      "severity": "LOW",
+      "file": "scripts/emergency_hl_exit.py",
+      "function": "close_bybit_positions",
+      "description": "Add 1-retry on Timeout/URLError in Step 3 per-position close loop",
+      "lines_added": 18,
+      "retry_exceptions": ["requests.exceptions.Timeout", "urllib.error.URLError"],
+      "retry_sleep_seconds": 2,
+      "retry_count": 1,
+      "on_failure": "log error, continue to next position (no crash)"
+    }
+  ],
+  "tests": {
+    "k344_normal_run": {"result": "PASS", "detail": "Signal=HALF, runs normally without flag"},
+    "k344_emergency_flag": {"result": "PASS", "detail": "Exits 0 with K344 EMERGENCY message when flag present"},
+    "flag_cleanup": {"result": "PASS", "detail": "rm EMERGENCY_EXIT_TRIGGERED.flag"},
+    "k280_normal_run": {"result": "PASS", "detail": "K276b panel refreshed, no absolute path errors"},
+    "emergency_dry_run": {"result": "PASS", "detail": "DRY-RUN COMPLETE, no trades executed"},
+    "verify_deployment": {"result": "PASS", "detail": "mismatches_with_html: 0"}
+  },
+  "summary": {
+    "files_patched": 3,
+    "total_lines_added": 25,
+    "mismatches_with_html": 0
+  }
+}

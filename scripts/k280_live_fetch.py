@@ -50,7 +50,7 @@ import requests
 warnings.filterwarnings("ignore")
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
-BASE     = Path("/Users/nekonaomichi/crypto-lab")
+BASE     = Path(__file__).resolve().parent.parent
 CACHE    = BASE / "cache"
 HL_CACHE = CACHE / "k163_hl"
 LOGS     = BASE / "logs"

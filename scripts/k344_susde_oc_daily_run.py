@@ -31,6 +31,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import sys
 import time
 import warnings
 from datetime import datetime, timezone, timedelta
@@ -344,6 +345,11 @@ def run_daily(date_str: str, dry_run: bool = False):
 # ─────────────────────────────────────────────────────────────────────────────
 
 def main():
+    EMERGENCY_FLAG = REPO_ROOT / "EMERGENCY_EXIT_TRIGGERED.flag"
+    if EMERGENCY_FLAG.exists():
+        print("[K344] EMERGENCY_EXIT_TRIGGERED.flag detected — skipping signal computation and dashboard write")
+        sys.exit(0)
+
     parser = argparse.ArgumentParser(description="K344 sUSDe Optimal Control Daily Daemon")
     parser.add_argument("--date", default=None,
                         help="Date YYYY-MM-DD (default: today UTC)")
