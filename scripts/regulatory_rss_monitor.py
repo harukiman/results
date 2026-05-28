@@ -4,7 +4,7 @@
 Single-shot 30min cron (launchd StartInterval=1800).
 - Fetch SEC + CFTC official RSS feeds
 - Track seen alerts via JSONL + seen.txt cache
-- Match keywords: HyperLiquid, HIP-3, perpetual, tokenized, manipulation, DeFi DEX
+- Match keywords: HyperLiquid, HIP-3, perpetual, tokenized, manipulation, DeFi DEX, Clarity Act, etc.
 - Output alerts to ntfy.sh + HTML dashboard (no auto-trigger)
 - Error handling: catch all, write to .err, exit 0
 
@@ -53,6 +53,13 @@ KEYWORDS = [
     "tokenized",
     "manipulation",
     "defi dex",
+    "clarity act",
+    "digital asset market clarity act",
+    "h.r.3633",
+    "senate floor",
+    "crypto market structure",
+    "defi exemption",
+    "cftc market authority",
 ]
 
 

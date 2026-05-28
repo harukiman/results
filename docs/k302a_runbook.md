@@ -1877,6 +1877,13 @@ launchctl list | grep regulatory-rss
 - `tokenized` — Tokenized instruments (compliance angle)
 - `manipulation` — Market manipulation (CFTC focus)
 - `defi dex` — Decentralized exchange context
+- `clarity act` — Digital Asset Market Clarity Act (Senate bill tracking) *(Added K404)*
+- `digital asset market clarity act` — Full bill name *(Added K404)*
+- `h.r.3633` — House version of Clarity Act *(Added K404)*
+- `senate floor` — Senate floor vote context (regulatory inflection) *(Added K404)*
+- `crypto market structure` — Market structure legislation *(Added K404)*
+- `defi exemption` — DeFi regulatory exemption discussions *(Added K404)*
+- `cftc market authority` — CFTC market authority expansion *(Added K404)*
 
 **Feed sources:**
 1. **SEC**: `https://www.sec.gov/news/pressreleases.rss`
