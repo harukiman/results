@@ -1,0 +1,390 @@
+{
+  "meta": {
+    "wave": "K417",
+    "generated_jst": "2026-05-29T08:13:36+09:00",
+    "horizon": "K417-K500",
+    "total_waves": 83,
+    "context": "Post-24h-push (K389-K416) roadmap. 4 architectures live, 14 daemons scaffolded."
+  },
+  "architectures": {
+    "v6_13d": {"status": "LIVE", "daemon_primary": "com.cryptolab.k246a-live"},
+    "v6_13e": {"status": "BEAR_1_STANDBY", "daemon": "com.cryptolab.k386-v613e-fallback"},
+    "v6_14": {"status": "PAPER", "daemon": "com.cryptolab.paper-trade-4way", "day60_gate": "2026-07-28"},
+    "v6_15": {"status": "USDY_CANDIDATE", "daemon": "com.cryptolab.k415-usdy", "trigger": "T13_user_usdy_purchased"}
+  },
+  "scheduled_waves": [
+    {
+      "id": "S1",
+      "slot": "K418-K420_range",
+      "trigger_date": "2026-06-05",
+      "days_away": 7,
+      "action": "R-scraper R15 external research round",
+      "output": ["external_findings_round15.html", "external_findings_round15.json", "external_findings_round15.md"],
+      "priority": "MED",
+      "model": "haiku"
+    },
+    {
+      "id": "S2",
+      "slot": "K439",
+      "trigger_date": null,
+      "trigger_wave": "K439",
+      "waves_away": 20,
+      "action": "Full governance audit mode (every 20w cadence)",
+      "priority": "HIGH",
+      "model": "sonnet"
+    },
+    {
+      "id": "S3",
+      "slot": "K368-cal",
+      "trigger_date": "2026-06-22",
+      "days_away": 24,
+      "action": "HIP-4 calibration analysis",
+      "notes": "Pre-empted by T11 if user loads HIP-4 daemon before this date",
+      "priority": "HIGH",
+      "model": "sonnet"
+    },
+    {
+      "id": "S4",
+      "slot": "K-USDC-recheck",
+      "trigger_date": "2026-06-27",
+      "days_away": 29,
+      "action": "K362/K383 USDC HL recheck — Coinbase governance USDC product check",
+      "priority": "MED",
+      "model": "sonnet"
+    },
+    {
+      "id": "S5",
+      "slot": "K-REG-review",
+      "trigger_date": "2026-06-27",
+      "days_away": 29,
+      "action": "K385 dual-track regulatory probability update",
+      "priority": "HIGH",
+      "model": "sonnet"
+    },
+    {
+      "id": "S6",
+      "slot": "K-HYPURRFI",
+      "trigger_date": "2026-06-29",
+      "days_away": 31,
+      "action": "HypurrFi monthly TVL trajectory recheck",
+      "priority": "MED",
+      "model": "haiku"
+    },
+    {
+      "id": "S7",
+      "slot": "K376-day60",
+      "trigger_date": "2026-07-28",
+      "days_away": 60,
+      "action": "K376 paper-trade Day 60 decision gate: graduate/extend/terminate",
+      "gate_criteria": {
+        "graduate_to_live": {"sharpe_min": 1.2, "max_drawdown_max": 0.08, "win_rate_min": 0.52},
+        "extend_paper": {"sharpe_range": [0.8, 1.2]},
+        "terminate": {"sharpe_max": 0.8, "drawdown_min": 0.12}
+      },
+      "priority": "CRITICAL",
+      "model": "sonnet"
+    },
+    {
+      "id": "S8",
+      "slot": "K-HYPURRFI-DROP",
+      "trigger_date": "2027-04-01",
+      "days_away": 340,
+      "action": "HypurrFi DROP date — reopen consideration if reversed",
+      "priority": "LOW",
+      "model": "haiku"
+    }
+  ],
+  "trigger_waves": [
+    {
+      "id": "T1",
+      "event": "RSS: BULL_1 NPRM detected",
+      "daemon": "com.cryptolab.regulatory-rss",
+      "wave_slot": "K420+",
+      "priority": "HIGH",
+      "action": "HIP-3 expansion analysis, v6.13d parameter loosening consideration",
+      "model": "sonnet"
+    },
+    {
+      "id": "T2",
+      "event": "RSS: BEAR_1 CFTC filing detected",
+      "daemon": "com.cryptolab.regulatory-rss",
+      "wave_slot": "K421+",
+      "priority": "CRITICAL",
+      "action": "Activate v6.13e, review all crypto exposure, emergency hedge",
+      "model": "opus"
+    },
+    {
+      "id": "T3",
+      "event": "RSS: Clarity Act floor vote detected",
+      "daemon": "com.cryptolab.regulatory-rss",
+      "wave_slot": "K420",
+      "priority": "HIGH",
+      "action": "PREPARE_EXPANSION mode — stage parameters for post-clarity regime",
+      "model": "sonnet"
+    },
+    {
+      "id": "T4",
+      "event": "RSS: any HOSTILE regulatory event",
+      "daemon": "com.cryptolab.regulatory-rss",
+      "wave_slot": "K423+",
+      "priority": "CRITICAL",
+      "action": "Full portfolio review, risk-off cascade",
+      "model": "opus"
+    },
+    {
+      "id": "T5",
+      "event": "HypurrFi TVL > $20M",
+      "daemon": "com.cryptolab.protocol-tvl-monitor",
+      "wave_slot": "K422",
+      "priority": "MED",
+      "action": "Reopen K337 HypurrFi position consideration",
+      "model": "haiku"
+    },
+    {
+      "id": "T6",
+      "event": "HypurrFi any DROP alert",
+      "daemon": "com.cryptolab.protocol-tvl-monitor",
+      "wave_slot": "K423",
+      "priority": "LOW",
+      "action": "Review K337 closure decision, no action expected",
+      "model": "haiku"
+    },
+    {
+      "id": "T7",
+      "event": "Any protocol TVL flash-crash > 30%",
+      "daemon": "com.cryptolab.protocol-tvl-monitor",
+      "wave_slot": "K424",
+      "priority": "HIGH",
+      "action": "Tail-risk review, liquidity check",
+      "model": "sonnet"
+    },
+    {
+      "id": "T8",
+      "event": "sUSDe: LOW_APY alert",
+      "daemon": "com.cryptolab.susde-apy-monitor",
+      "wave_slot": "K424",
+      "priority": "HIGH",
+      "action": "K344 sleeve reduce — run K424 reduction wave",
+      "model": "haiku"
+    },
+    {
+      "id": "T9",
+      "event": "sUSDe: HIGH_APY alert",
+      "daemon": "com.cryptolab.susde-apy-monitor",
+      "wave_slot": "K425",
+      "priority": "HIGH",
+      "action": "K344 sleeve expand — run K425 expansion wave",
+      "model": "haiku"
+    },
+    {
+      "id": "T10",
+      "event": "sUSDe: CRASH alert (>50% APY drop)",
+      "daemon": "com.cryptolab.susde-apy-monitor",
+      "wave_slot": "K426",
+      "priority": "CRITICAL",
+      "action": "Full tail-risk review, K344 emergency exit check",
+      "model": "sonnet"
+    },
+    {
+      "id": "T11",
+      "event": "User: HIP-4 daemon loaded",
+      "daemon": null,
+      "wave_slot": "K427",
+      "priority": "MED",
+      "action": "Fire K368 calibration earlier than scheduled (pre-empts S3)",
+      "model": "sonnet"
+    },
+    {
+      "id": "T12",
+      "event": "User: builder rebate activated on HL",
+      "daemon": null,
+      "wave_slot": "K428",
+      "priority": "LOW",
+      "action": "Activate rebate tracker, update K246a/K272a rebate accounting",
+      "model": "haiku"
+    },
+    {
+      "id": "T13",
+      "event": "User: USDY confirmed + purchased",
+      "daemon": null,
+      "wave_slot": "K429",
+      "priority": "HIGH",
+      "action": "v6.15 actual deploy — transition from CANDIDATE to LIVE, activate 40-day lock plan",
+      "model": "sonnet"
+    },
+    {
+      "id": "T14",
+      "event": "User: inbox instruction (strategy-only)",
+      "daemon": "com.cryptolab.inbox-poll",
+      "wave_slot": "K430+",
+      "priority": "VARIES",
+      "action": "Per inbox protocol — strategy-only filter active, attack detection/lock active",
+      "model": "haiku"
+    },
+    {
+      "id": "T15",
+      "event": "Variational trading API available",
+      "daemon": "com.cryptolab.variational-fr-monitor",
+      "wave_slot": "K430",
+      "priority": "MED",
+      "action": "K365 integration analysis, variational FR monitor upgrade",
+      "model": "sonnet"
+    },
+    {
+      "id": "T16",
+      "event": "Drift Protocol maker access granted",
+      "daemon": null,
+      "wave_slot": "K431",
+      "priority": "MED",
+      "action": "K358 revival — Drift maker rebate strategy reactivation",
+      "model": "sonnet"
+    },
+    {
+      "id": "T17",
+      "event": "ntfy notification test succeeds",
+      "daemon": null,
+      "wave_slot": "K432",
+      "priority": "LOW",
+      "action": "K357 emergency exit integration complete",
+      "model": "haiku"
+    }
+  ],
+  "maintenance_cadence": {
+    "html_chronicle": {
+      "next": "K426",
+      "subsequent": ["K438", "K450", "K462", "K474", "K486", "K498"],
+      "interval_waves": "10-12",
+      "action": "Chronicle recent wave batch, equity overlay, badge updates",
+      "model": "haiku"
+    },
+    "quick_governance": {
+      "next": "K422",
+      "subsequent": ["K427", "K432", "K437", "K442", "K447", "K452", "K457", "K462", "K467", "K472", "K477", "K482", "K487", "K492", "K497"],
+      "interval_waves": 5,
+      "action": "15-min governance spot-check, 3-rule memory check",
+      "model": "haiku"
+    },
+    "full_governance": {
+      "next": "K439",
+      "subsequent": ["K459", "K479", "K499"],
+      "interval_waves": 20,
+      "action": "Full audit mode, all-line review, memory consolidation",
+      "model": "sonnet"
+    },
+    "r_scraper": {
+      "next_date": "2026-06-05",
+      "interval_days": 7,
+      "target_round": "R15",
+      "action": "External research: botter/Qiita/note/arxiv",
+      "model": "haiku"
+    },
+    "memory_consolidation": {
+      "next": "K440",
+      "interval": "monthly",
+      "action": "MERGE-3/4/5/6 from K411 proposals, prune dead rules",
+      "target_rule_count": 42,
+      "model": "sonnet"
+    },
+    "html_refactor": {
+      "next": "K442",
+      "interval_waves": "10-15",
+      "action": "Per feedback_periodic_refactoring — dead code, dedup, dataclass",
+      "model": "haiku"
+    },
+    "consistency_check": {
+      "next": "K445",
+      "interval_waves": "5-10",
+      "action": "Per feedback_consistency_watch — code/JSON vs HTML parity",
+      "model": "haiku"
+    },
+    "html_audit": {
+      "next": "K450",
+      "interval_waves": "30-40",
+      "action": "Per feedback_html_audit_periodic — deep structural audit",
+      "model": "sonnet"
+    }
+  },
+  "wave_theme_budget": [
+    {"theme": "Forward-looking infrastructure", "wave_budget": [10, 15], "primary_range": "K418-K435"},
+    {"theme": "R-finding cleanup (R10/R11/R12/R14)", "wave_budget": [10, 15], "primary_range": "distributed"},
+    {"theme": "K376 paper-trade refinement", "wave_budget": [5, 10], "primary_range": "K420-K450"},
+    {"theme": "HIP-4 calibration setup + execute", "wave_budget": [3, 5], "primary_range": "K427 or K368-range"},
+    {"theme": "K357 emergency exit live tests", "wave_budget": [2, 3], "primary_range": "K432 range"},
+    {"theme": "HTML refactoring", "wave_budget": [3, 5], "primary_range": "K442, K455"},
+    {"theme": "Memory consolidation", "wave_budget": [1, 3], "primary_range": "K440"},
+    {"theme": "Contingency reserve", "wave_budget": [10, 15], "primary_range": "any — for T1-T17"},
+    {"theme": "Governance (quick + full)", "wave_budget": [8, 10], "primary_range": "K422,K427,K432,K439,K459"},
+    {"theme": "External research (R15-R18)", "wave_budget": [4, 6], "primary_range": "monthly"},
+    {"theme": "sUSDe/USDY management", "wave_budget": [3, 6], "primary_range": "as triggered"},
+    {"theme": "Regulatory response", "wave_budget": [0, 10], "primary_range": "as triggered (T1-T4)"}
+  ],
+  "token_budget_pacing": {
+    "status": "post_24h_push_high_usage",
+    "saturday_reset_date": "2026-05-30",
+    "target_80pct_remaining_by": "2026-06-06",
+    "today_recommendation": {
+      "max_waves": 10,
+      "model_preference": "haiku"
+    },
+    "normal_cadence": {
+      "waves_per_day": [8, 12],
+      "model_mix": "sonnet_analysis_haiku_monitors"
+    }
+  },
+  "k418_recommendation": {
+    "action": "R10/R11 untouched +1 cleanup",
+    "rationale": "Fulfills 3+1+1 cadence rule for R14, Haiku-compatible, low cost, no production script changes",
+    "model": "haiku",
+    "scope": [
+      "Open external_findings_round10.{html,json,md} and external_findings_round11.{html,json,md}",
+      "Identify all untouched/unassigned items",
+      "Close with rationale OR assign to future wave OR escalate",
+      "Update R10/R11 status markers",
+      "Append findings summary to HTML chronicle"
+    ],
+    "priority": "LOW",
+    "cost_estimate": "low"
+  },
+  "daemons": {
+    "total": 14,
+    "active": 11,
+    "standby": 1,
+    "scaffold": 1,
+    "automated": 1,
+    "list": [
+      {"plist": "com.cryptolab.k246a-live", "function": "v6.13d live trading", "status": "ACTIVE"},
+      {"plist": "com.cryptolab.k272a-live", "function": "v6.13d satellite", "status": "ACTIVE"},
+      {"plist": "com.cryptolab.k280-live", "function": "v6.13d component", "status": "ACTIVE"},
+      {"plist": "com.cryptolab.k287-satellite", "function": "Satellite monitor", "status": "ACTIVE"},
+      {"plist": "com.cryptolab.k302a-satellite", "function": "Satellite 2", "status": "ACTIVE"},
+      {"plist": "com.cryptolab.k376-momentum", "function": "K376 momentum paper", "status": "ACTIVE"},
+      {"plist": "com.cryptolab.k386-v613e-fallback", "function": "v6.13e BEAR_1 standby", "status": "STANDBY"},
+      {"plist": "com.cryptolab.k415-usdy", "function": "v6.15 USDY scaffold", "status": "SCAFFOLD"},
+      {"plist": "com.cryptolab.paper-trade-4way", "function": "v6.14 paper trade", "status": "ACTIVE"},
+      {"plist": "com.cryptolab.paper-trade", "function": "Paper trade (legacy)", "status": "ACTIVE"},
+      {"plist": "com.cryptolab.protocol-tvl-monitor", "function": "K407 TVL daemon", "status": "ACTIVE"},
+      {"plist": "com.cryptolab.regulatory-rss", "function": "K387 RSS daemon", "status": "ACTIVE"},
+      {"plist": "com.cryptolab.susde-apy-monitor", "function": "K412 sUSDe APY", "status": "ACTIVE"},
+      {"plist": "com.cryptolab.inbox-poll", "function": "Inbox poll daemon", "status": "ACTIVE"}
+    ]
+  },
+  "open_debt": [
+    {"item": "MERGE-3/4/5/6", "source": "K411", "target_wave": "K440"},
+    {"item": "R10/R11/R12/R14 residuals", "target_wave": "K418-K435"},
+    {"item": "ntfy integration K357 emergency exit", "target_wave": "K432"},
+    {"item": "K376 paper-trade Day 30 interim check", "target_wave": "K430"},
+    {"item": "HTML consistency audit", "target_wave": "K450"},
+    {"item": "Builder rebate tracker", "target_wave": "T12_dependent"}
+  ],
+  "key_dates": {
+    "today": "2026-05-29",
+    "token_reset": "2026-05-30",
+    "r15_research": "2026-06-05",
+    "hip4_calibration": "2026-06-22",
+    "usdc_recheck": "2026-06-27",
+    "regulatory_review": "2026-06-27",
+    "hypurrfi_recheck": "2026-06-29",
+    "k376_day60_gate": "2026-07-28",
+    "hypurrfi_drop_expiry": "2027-04-01"
+  }
+}
