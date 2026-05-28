@@ -140,6 +140,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k412_susde_apy",
         expected_html_status="SCAFFOLD-READY",  # plist in repo root (gitignored); weekly StartInterval (604800) via launchd
     ),
+    DaemonSpec(
+        label="com.cryptolab.k415-usdy",
+        purpose="K415 USDY sleeve paper-trade scaffold (v6.15a/b activation pathway, 4.5% APY T-bill yield, 40-day lock monitor, DefiLlama+Ondo API, daily 06:00 JST)",
+        scripts=["scripts/k415_usdy_sleeve_run.py"],
+        log_basename="k415_usdy_sleeve",
+        expected_html_status="SCAFFOLD-READY",  # K415: plist in repo root (gitignored); activate only after user non-US confirm + USDY purchase
+    ),
 ]
 
 

@@ -1235,6 +1235,41 @@ export BYBIT_API_SECRET=<your_bybit_api_secret>
 The `close_bybit_positions()` function is tested in dry-run mode; live execution requires
 valid Bybit API keys with trading permission.
 
+### §14.9 USDY Sleeve Emergency Guidance (K415 Addition)
+
+**Added:** 2026-05-25 | **Wave:** K415 | **v6.15 activation pathway**
+
+**USDY is NOT part of the standard emergency exit. Hold through crisis.**
+
+When v6.15a/b is active (USDY sleeve of 5–10%), USDY requires special treatment during emergency:
+
+| Property | USDY | HL/Bybit positions |
+|---|---|---|
+| Backing | US T-bills (safe) | HL perpetuals (at-risk) |
+| Emergency action | HOLD (do NOT redeem) | EXIT IMMEDIATELY |
+| Redemption speed | 1 business day (post lock) | Seconds (market close) |
+| Emergency cancel | NOT POSSIBLE | Possible |
+| Crisis correlation | Low (T-bill, uncorrelated) | High (HL/Bybit platform risk) |
+
+**Recommended emergency sequence when v6.15 is active:**
+1. Execute HL emergency exit (§14.4) — close all HL positions
+2. Execute Bybit close-all (§14.8) — close all Bybit positions
+3. **HOLD USDY** — do NOT redeem during crisis
+4. After crisis resolves: redeem USDY at ondo.finance if capital needed (1 business day)
+
+**CLI flag (--include-usdy):**
+```bash
+# Print USDY guidance notes during emergency exit (does NOT submit redemption):
+python3 scripts/emergency_hl_exit.py --EXECUTE --include-usdy
+
+# Dry-run with USDY guidance:
+python3 scripts/emergency_hl_exit.py --dry-run   # USDY note printed by default
+```
+
+**Limitation:** `scripts/emergency_hl_exit.py` does NOT submit USDY redemption to Ondo.
+Redemption is intentionally a manual user action via ondo.finance portal.
+See §21.6 for full USDY redemption procedure.
+
 ### §14.10 Daemon Integration (K302a Daemons Check Flag)
 
 K302a satellite and K280 live daemons SHOULD check for the emergency flag before each run:
@@ -2135,3 +2170,214 @@ python3 scripts/hl_hip4_monitor.py
 ---
 
 *K409 §20 — K368 HIP-4 Calibration Adjusted Target — 2026-05-29*
+
+---
+
+## §21 v6.15a/b Activation Playbook — Ondo USDY Sleeve (K415)
+
+**Added:** 2026-05-25 | **Wave:** K415 | **Status:** SCAFFOLD-READY (user activation required)
+**Prerequisite:** User must confirm non-US residency (Ondo USDY is US-person restricted)
+**K400 decision:** CONDITIONAL_ACCEPT — awaiting non-US residency confirmation
+
+### §21.1 v6.15a vs v6.15b Selection Guide
+
+| Criterion | v6.15a (5% USDY) | v6.15b (10% USDY) |
+|---|---|---|
+| HL exposure | 52.5% | **47.5% (< 50% first time ever)** |
+| K297' weight | 15% | 10% |
+| USDY sleeve | 5% | 10% |
+| Yield cost (vs v6.13d) | ~−0.25pp/yr ann | ~−0.50pp/yr ann |
+| Concentration risk reduction | Medium | **LARGE** |
+| Capital off-HL | 5% | 10% |
+
+**Default recommendation: v6.15b**
+
+Rationale (K355/K415): Concentration risk from 57.5% HL exposure outweighs yield cost.
+v6.15b is the first time HL exposure drops below 50%, a structural milestone.
+v6.15a is appropriate if user prioritizes preserving K297' carry exposure over risk reduction.
+
+**Portfolio composition by variant:**
+
+```
+v6.15a:  K280 75% + K297' 15% + sUSDe 5% + USDY 5%  → HL 52.5%
+v6.15b:  K280 75% + K297' 10% + sUSDe 5% + USDY 10% → HL 47.5%
+current: K280 75% + K297' 20% + sUSDe 5%             → HL 57.5%  (v6.13d)
+```
+
+### §21.2 USDY Procurement Steps (User Action Required)
+
+1. **Non-US residency confirm**: Ondo USDY is restricted to non-US persons.
+   Verify eligibility before proceeding.
+
+2. **Ondo onboarding**: https://ondo.finance/
+   - Create account → start KYC process
+   - Required: passport or government-issued ID
+   - Non-US residency confirmation required by Ondo compliance
+
+3. **KYC verification**: Submit ID documents via Ondo portal.
+   Typical approval: 1–3 business days.
+
+4. **Funding**: Bank wire or stablecoin deposit (USDC/USDT recommended).
+   Minimum investment: **$500 USD** (Ethereum network).
+
+5. **Purchase**: Convert to USDY via Ondo portal.
+   USDY appears in connected wallet after confirmation.
+
+6. **40-day initial lock begins immediately** on first purchase.
+   See §21.3 for lock-phase handling.
+
+### §21.3 40-Day Lock Bridge Plan
+
+The first USDY purchase is subject to a **40-calendar-day initial lock period**.
+During this time:
+
+**DO:**
+- Record USDY position size + purchase date + expected unlock date
+- Continue v6.13d full operation in parallel (K280 + K297' + sUSDe unchanged)
+- Log position to `data/k415_usdy_dashboard.json` (set `usdy_purchase_date` field)
+- USDY earns ~4.5% APY during lock (accretes daily)
+
+**DO NOT:**
+- Treat USDY as emergency reserve until lock expires
+- Attempt redemption during lock period (not possible)
+- Count USDY toward liquid capital allocation
+
+**After day 40:**
+- USDY becomes fully liquid: redemption via Ondo portal within 1 business day
+- v6.15 architecture enters full operational status
+- Update `data/k415_usdy_dashboard.json`: USDY is now emergency-redeemable
+
+### §21.4 3-Day Activation Playbook
+
+#### Day 0 — Activation Decision
+
+1. User confirms non-US residency status
+2. User selects v6.15a (5% USDY) or v6.15b (10% USDY) — see §21.1 for guidance
+3. User registers on Ondo Finance (https://ondo.finance/)
+4. User initiates USDY purchase order (sleeve_pct × AUM)
+5. Record purchase date in `data/k415_usdy_dashboard.json`:
+   ```json
+   {
+     "usdy_purchase_date": "YYYY-MM-DD",
+     "variant": "v6.15b",
+     "user_confirmed_non_us": true,
+     "ondo_kyc_complete": true
+   }
+   ```
+
+#### Day 1 — Capital Allocation
+
+1. Receive USDY in wallet (sleeve_pct × AUM in USD value)
+2. **Reduce K297' satellite** from 20% → 15% (v6.15a) or 10% (v6.15b)
+   - This frees capital equivalent to the USDY sleeve
+   - K280 weight: **unchanged at 75%**
+   - sUSDe weight: **unchanged at 5%**
+3. Confirm new portfolio composition matches §21.1 table
+4. K415 daemon begins tracking virtual USDY PnL
+
+#### Day 2 — Verification
+
+1. Confirm HL exposure: 52.5% (v6.15a) or 47.5% (v6.15b)
+2. Confirm USDY balance matches allocation target
+3. Check `data/k415_usdy_dashboard.json` for correct composition values
+4. Update Live Monitoring dashboard if needed
+
+#### Day 3–40 — Lock Phase
+
+- v6.15 architecture is LIVE (positions set, USDY earning ~4.5% APY)
+- USDY locked: do NOT treat as emergency reserve
+- v6.13d monitoring continues (K412 sUSDe, K407 TVL, K387 regulatory)
+- K415 daemon runs daily at 06:00 JST (paper-trade scaffold)
+- No other action required during lock phase
+
+#### Day 41+ — Full Operational
+
+- USDY redeemable (1 business day via ondo.finance)
+- v6.15 fully operational with USDY as liquid sleeve
+- Emergency reserve now includes USDY if lock has expired (see §21.6)
+
+### §21.5 K415 Daemon Configuration
+
+**Daemon:** `com.cryptolab.k415-usdy`
+**Script:** `scripts/k415_usdy_sleeve_run.py`
+**Schedule:** Daily at 06:00 JST (StartCalendarInterval: Hour=21 UTC)
+**Status:** SCAFFOLD-READY (plist in repo root, gitignored)
+
+Daemon tracks:
+- USDY APY from DefiLlama (fallback: 4.5% constant)
+- USDY price from Ondo API (fallback: computed from APY)
+- Virtual daily PnL (sleeve_pct × AUM × daily_apy/365)
+- Lock status (LOCKED / LIQUID / NOT_PURCHASED)
+- Opportunity cost vs HL strategies
+
+**Activation commands** (after USDY purchase):
+```bash
+cp /Users/nekonaomichi/crypto-lab/com.cryptolab.k415-usdy.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k415-usdy.plist
+```
+
+**Update dashboard with purchase date:**
+```python
+# Edit data/k415_usdy_dashboard.json:
+{
+  "usdy_purchase_date": "YYYY-MM-DD",   # actual purchase date
+  "variant": "v6.15b",                  # or "v6.15a"
+  "aum_usd": 10000.0,                   # actual AUM
+  "sleeve_pct_decimal": 0.10,           # 0.05 for v6.15a
+  "user_confirmed_non_us": true,
+  "ondo_kyc_complete": true
+}
+```
+
+### §21.6 USDY Redemption Procedure
+
+**Normal redemption** (after 40-day lock):
+1. Log into Ondo Finance portal (https://ondo.finance/)
+2. Select USDY → Redeem
+3. Receive proceeds in ~1 business day (USD or stablecoin)
+4. No penalty for redemption after lock period
+
+**Emergency guidance (during HL/Bybit crisis):**
+- **HOLD USDY through crisis** — T-bill yield = safe harbor
+- USDY is NOT correlated with HL/Bybit failure scenarios
+- Redemption: 1 business day AFTER 40-day lock — CANNOT be expedited
+- No emergency cancel mechanism exists
+- Recommended: exit HL/Bybit positions (§14), HOLD USDY, redeem post-crisis
+- `emergency_hl_exit.py`: use `--include-usdy` for USDY guidance notes
+
+**Limitation of K415 scaffold:**
+- USDY redemption is a USER action via ondo.finance portal
+- `scripts/emergency_hl_exit.py` does NOT submit redemption to Ondo (no API)
+- This is intentional: emergency redemption is NOT recommended anyway
+
+### §21.7 Rollback to v6.13d
+
+If v6.15 needs to be rolled back (e.g. USDY yield drops below 2%, regulatory concern):
+
+1. Redeem USDY via Ondo portal (1 business day, lock must have expired)
+2. Restore K297' satellite weight to 20% (from 15% or 10%)
+3. Confirm HL exposure returns to 57.5%
+4. Update `data/k415_usdy_dashboard.json`: set `variant` to null, `usdy_purchase_date` to null
+5. Unload K415 daemon:
+   ```bash
+   launchctl unload ~/Library/LaunchAgents/com.cryptolab.k415-usdy.plist
+   ```
+6. v6.13d fully restored
+
+**Rollback triggers:**
+- USDY APY sustained < 2% for 30d (K415 dashboard alert)
+- Ondo Finance regulatory action or platform risk
+- User residency status change (US person restriction applies)
+
+### §21.8 References
+
+| Wave | Content |
+|------|---------|
+| K355 | HL concentration risk identified: 57.5% AUM on HL, no emergency exit |
+| K357 | Emergency HL exit scaffold created (§14) |
+| K400 | USDY CONDITIONAL_ACCEPT: 4.5% APY, $500 min, non-US only, 40-day lock |
+| K415 | v6.15a/b activation pathway documented (this section) |
+
+---
+
+*K415 §21 — v6.15a/b USDY Sleeve Activation Playbook — 2026-05-25*

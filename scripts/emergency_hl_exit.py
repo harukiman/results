@@ -885,6 +885,14 @@ Bybit emergency exit (§14 update, K380):
   - Requires BYBIT_API_KEY + BYBIT_API_SECRET env vars
   - Cancels all open Bybit orders, then market-closes all linear positions
   - See: docs/k302a_runbook.md §14.7 (Bybit gap fix)
+
+USDY sleeve emergency guidance (K415 §21.6):
+  - USDY (Ondo Finance) is T-bill backed — safe to HOLD through HL/Bybit crisis
+  - Redemption: 1 business day AFTER 40-day initial lock expires (cannot be rushed)
+  - Recommended: DO NOT redeem during emergency — HOLD USDY and exit HL/Bybit only
+  - If capital needed post-crisis: redeem at ondo.finance (takes 1 business day)
+  - See: docs/k302a_runbook.md §21.6
+  - Use --include-usdy flag to print USDY guidance during emergency exit
         """,
     )
     mode_group = parser.add_mutually_exclusive_group()
@@ -903,6 +911,25 @@ Bybit emergency exit (§14 update, K380):
                              help="(default) Include Bybit close-all in emergency exit (K380 gap fix)")
     bybit_group.add_argument("--no-bybit",      dest="include_bybit", action="store_false",
                              help="Skip Bybit close-all (HL only)")
+    # K415: USDY emergency exit documentation flag
+    # IMPORTANT: USDY is NOT part of the standard emergency exit.
+    #   - USDY is T-bill backed; hold through HL/Bybit crisis (see §21.6)
+    #   - Redemption: 1 business day AFTER 40-day initial lock (no emergency cancel)
+    #   - Emergency redemption is SLOWER than HL/Bybit (cannot be rushed)
+    #   - Default recommendation: hold USDY through crisis — do NOT redeem
+    #   - Only redeem if user needs capital after HL+Bybit exit AND 40-day lock has expired
+    parser.add_argument(
+        "--include-usdy",
+        dest="include_usdy",
+        action="store_true",
+        default=False,
+        help=(
+            "K415: Document USDY redemption note during emergency exit. "
+            "WARNING: USDY is T-bill backed — safer to HOLD through HL/Bybit crisis. "
+            "Redemption: 1 business day (post 40-day lock only). Cannot be rushed. "
+            "Only flag if you explicitly want to redeem USDY after HL/Bybit exit."
+        ),
+    )
 
     args = parser.parse_args()
 
@@ -1025,6 +1052,27 @@ Bybit emergency exit (§14 update, K380):
         else:
             logger.info("Bybit close-all skipped (--no-bybit flag).")
 
+        # K415: USDY emergency documentation (NOT a redemption execution)
+        # USDY redemption is intentionally NOT automated here.
+        # Rationale: T-bill yield = safe harbor during HL/Bybit crisis. Hold is optimal.
+        if args.include_usdy:
+            logger.info("=== USDY SLEEVE NOTE (K415 §21.6) ===")
+            logger.info("  USDY is T-bill backed — safe to HOLD through HL/Bybit crisis.")
+            logger.info("  Redemption: 1 business day AFTER 40-day initial lock expires.")
+            logger.info("  Emergency redemption CANNOT be expedited (no cancel mechanism).")
+            logger.info("  Recommended action: HOLD USDY through crisis.")
+            logger.info("  Rationale: HL/Bybit positions are time-sensitive; USDY is not.")
+            logger.info("  If capital needed post-crisis: redeem via ondo.finance (1bd).")
+            logger.info("  See: docs/k302a_runbook.md §21.6 (USDY redemption procedure)")
+            logger.info("  LIMITATION: This script does NOT submit redemption to Ondo —")
+            logger.info("    USDY redemption is a user action via ondo.finance portal.")
+        else:
+            logger.info(
+                "USDY: not flagged for redemption. "
+                "Recommend HOLD through crisis (T-bill safe, see §21.6). "
+                "Use --include-usdy to print USDY guidance."
+            )
+
         # Post-check (HL only — Bybit has no equivalent read-back in this scaffold)
         if not args.skip_postcheck:
             postcheck = run_postcheck(user, logger)
@@ -1061,6 +1109,14 @@ Bybit emergency exit (§14 update, K380):
         logger.info("  [DRY-RUN] Bybit close-all would be attempted (--include-bybit=True)")
     else:
         logger.info("  [DRY-RUN] Bybit close-all would be skipped (--no-bybit)")
+
+    # K415: USDY dry-run note
+    logger.info("")
+    logger.info("  [USDY — K415 §21.6] USDY sleeve emergency guidance:")
+    logger.info("    USDY is T-bill backed → HOLD through HL/Bybit crisis (do NOT redeem).")
+    logger.info("    Redemption: 1 business day post 40-day lock. Cannot be rushed.")
+    logger.info("    Redeem at ondo.finance only if capital needed after HL+Bybit exit.")
+    logger.info("    Use --include-usdy to see USDY guidance during --EXECUTE mode.")
 
     return 0
 

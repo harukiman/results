@@ -1,0 +1,92 @@
+{
+  "wave": "K415",
+  "title": "v6.15a/b activation pathway scaffold (USDY sleeve, 14th daemon, 40-day lock plan)",
+  "timestamp_utc": "2026-05-28T23:06:38Z",
+  "timestamp_jst": "2026-05-29 08:06 JST",
+  "status": "COMPLETE",
+  "k400_decision": "CONDITIONAL_ACCEPT",
+  "activation_prerequisite": "User non-US residency confirmation (Ondo KYC)",
+
+  "deliverables": {
+    "scripts/k415_usdy_sleeve_run.py": {
+      "status": "CREATED",
+      "description": "Paper-trade scaffold — USDY virtual sleeve PnL, APY from DefiLlama/Ondo, lock status, 40-day lock monitor, dashboard writer",
+      "dashboard": "data/k415_usdy_dashboard.json"
+    },
+    "com.cryptolab.k415-usdy.plist": {
+      "status": "CREATED",
+      "description": "launchd plist — daily 06:00 JST (StartCalendarInterval Hour=21 UTC), RunAtLoad=false, gitignored"
+    },
+    "scripts/verify_deployment_status.py": {
+      "status": "UPDATED",
+      "description": "14th daemon added (com.cryptolab.k415-usdy, expected_html_status=SCAFFOLD-READY)"
+    },
+    "scripts/emergency_hl_exit.py": {
+      "status": "UPDATED",
+      "description": "--include-usdy flag added; USDY hold guidance in dry-run and execute paths; epilog updated"
+    },
+    "docs/k302a_runbook.md": {
+      "status": "UPDATED",
+      "sections": {
+        "§14.9": "USDY sleeve emergency guidance (K415 addition) — hold through HL/Bybit crisis",
+        "§21": "Full v6.15a/b activation playbook (8 subsections: selection guide, procurement, 40d lock, 3-day playbook, daemon config, redemption, rollback, references)"
+      }
+    },
+    "report.html": {
+      "status": "UPDATED",
+      "changes": [
+        "K415 USDY row added to Live Monitoring table (14th daemon, SCAFFOLD-READY)",
+        "Ticker banner: v6.15 badge updated to 'K415 activation pathway documented'",
+        "Footer: timestamp updated 07:38→08:06 JST, 12→14 daemons, K415 summary added"
+      ]
+    }
+  },
+
+  "v615_comparison": {
+    "v6.15a": {
+      "sleeve_pct": 5,
+      "k297_pct": 15,
+      "hl_exposure_pct": 52.5,
+      "yield_cost_pp_ann": -0.275,
+      "note": "Gradual transition, preserves K297' carry"
+    },
+    "v6.15b": {
+      "sleeve_pct": 10,
+      "k297_pct": 10,
+      "hl_exposure_pct": 47.5,
+      "yield_cost_pp_ann": -0.55,
+      "note": "DEFAULT — first time HL < 50%, large concentration reduction",
+      "recommended": true
+    },
+    "v6.13d_current": {
+      "k297_pct": 20,
+      "hl_exposure_pct": 57.5
+    }
+  },
+
+  "usdy_specs": {
+    "apy_pct": 4.5,
+    "minimum_usd": 500,
+    "lock_days": 40,
+    "redemption_days_post_lock": 1,
+    "eligibility": "non-US persons only",
+    "onboarding_url": "https://ondo.finance/",
+    "emergency_action": "HOLD through HL/Bybit crisis — do NOT redeem"
+  },
+
+  "daemon_count": {
+    "total": 14,
+    "k415_is": "14th daemon"
+  },
+
+  "activation_pathway": {
+    "day_0": "User confirms non-US + selects variant + registers Ondo + places USDY order",
+    "day_1": "Receive USDY + reduce K297' weight + K415 daemon begins tracking",
+    "day_2": "Verify composition + HL exposure + dashboard update",
+    "day_3_to_40": "v6.15 LIVE but USDY locked — v6.13d continues in parallel",
+    "day_41_plus": "USDY liquid — v6.15 fully operational"
+  },
+
+  "mismatches_with_html": 0,
+  "daemons_in_registry": 14
+}
