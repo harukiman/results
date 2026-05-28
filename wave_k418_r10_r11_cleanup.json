@@ -1,0 +1,83 @@
+{
+  "wave_id": "K418",
+  "cycle": "R14 round 3+1+1",
+  "date_jst": "2026-05-25",
+  "phase": "backlog_cleanup_r10_r11",
+  "summary": "1 untouched R10/R11 item formal evaluation, decision: DEFER with explicit trigger",
+  "inventory_scan": {
+    "r10_total": 20,
+    "r11_total": 20,
+    "scheduled_for_other_waves": 3,
+    "deferred_with_gates": 7,
+    "backlog_surviving": 12,
+    "untouched_high_value": 8
+  },
+  "selected_item": {
+    "id": "R10-010",
+    "title": "BTC Funding Rates Turn Most Negative Since 2023: Crowded Shorts Signal Tactical Bottom",
+    "url": "https://www.coindesk.com/markets/2026/04/16/bitcoin-funding-rates-hit-most-negative-since-2023-history-suggests-bottom-is-in",
+    "category": "okx-specific",
+    "why_orthogonal": "R1-R9 analyzed positive-carry environments. Q1-Q2 2026 sustained negative funding regime is structural regime shift that inverts K275 carry logic entirely.",
+    "original_deferral_reason": "Discovered April 2026 late in R10 cycle; required regime gate design while K275 still in-flight (K303)",
+    "updated_relevance": "HIGH",
+    "relevance_rationale": "ROOT CAUSE of K275 -3.55 Sharpe underperformance. March 2026 flip to negative carry is not temporary compression but regime shift requiring architectural decision. 30-day BTC FR avg <-0.001% most negative since 2023. K275 architected for positive carry; negative carry inverts logic entirely (shorts collect instead of longs pay)."
+  },
+  "decision": "DEFER with explicit trigger + conditional ACT window",
+  "decision_rationale": [
+    "Root cause identified but regime change is recent (March 2026)",
+    "K275 already live with -3.55 Sh; immediate redesign during negative regime carries whipsaw risk",
+    "Better to observe trigger: if carry normalizes, gate never activates; if persists, gate saves capital",
+    "Conditional ACT window provides clear decision point"
+  ],
+  "trigger": {
+    "primary": "30-day BTC funding rate average > +0.001% for 3 consecutive days",
+    "secondary_1": "K275 live Sharpe recovers to > 20 (regime may self-correct)",
+    "secondary_2": "BTC/Binance-OKX spread remains < 1% mean for 14 days (cross-venue dominance)",
+    "if_triggered": "K419 wave proposal"
+  },
+  "implementation_scope_if_triggered": {
+    "task": "Add regime gate to K275 production config",
+    "gate_logic": "Disable K275 long-short when 30-day FR avg < -0.001%",
+    "fallback": "Switch to short-long (reverse carry, collect negative FR) when regime flips",
+    "validation": "14-day paper-trade window on opposite position",
+    "estimated_effort": "~1 sonnet wave (config + paper-trade + gate logic)"
+  },
+  "deferral_metadata": {
+    "deferred_list_entry": {
+      "id": "R10-010",
+      "topic": "BTC negative FR regime gate for K275",
+      "trigger": "30-day BTC FR avg > +0.001% for 3d OR K275 Sharpe > 20",
+      "drop": "2026-08-15",
+      "wave_if_triggered": "K419"
+    },
+    "monitoring_signal": "BTC 30-day funding rate average on Binance + OKX (daily check)",
+    "escalation_criteria": "Any trigger fires → immediate K419 proposal"
+  },
+  "runner_up_candidates": [
+    {
+      "rank": 2,
+      "id": "R10-014",
+      "title": "ICE OKX $25B valuation: K275 sunset roadmap",
+      "reason_not_selected": "Higher complexity, overlaps with K303 OKX monitoring, decision can be deferred to K420+"
+    },
+    {
+      "rank": 3,
+      "id": "R11-04",
+      "title": "Ripple Prime + HL RWA commodities (institutional flow)",
+      "reason_not_selected": "High actionability but complements K297 expansion (secondary priority)"
+    },
+    {
+      "rank": 4,
+      "id": "R10-013",
+      "title": "dYdX v4 MEV Cosmos: K270 robustness validation",
+      "reason_not_selected": "MED actionability, K270 validation only, can defer to K420+"
+    }
+  ],
+  "discarded_items_post_review": [],
+  "coordination": {
+    "wave_order": "K400 (Ondo MED) → K418 (R10/R11 cleanup this wave) → K419 (if R10-010 trigger fires)",
+    "governance_impact": "Adds high-priority deferred item to task_pipeline; does not create new pending wave unless trigger fires",
+    "html_logging": "R10-010 trigger monitoring added to external_research daemons"
+  },
+  "brief_summary": "R10-010 selected: BTC negative FR regime (root cause K275 -3.55 Sh). Decision: DEFER with 3-condition trigger firing K419. Primary trigger: 30-day BTC FR avg > +0.001% for 3 days. Rationale: regime shift identified, design risk if acted immediately, better to wait for normalization signal. Effort if triggered: 1 sonnet wave."
+}
