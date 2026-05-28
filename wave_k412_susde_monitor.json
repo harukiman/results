@@ -1,0 +1,169 @@
+{
+  "wave": "K412",
+  "title": "sUSDe APY Weekly Monitor — K344 Sleeve Re-eval Automation",
+  "status": "COMPLETE",
+  "generated_at_jst": "2026-05-29 07:54:51 JST",
+  "generated_at_utc": "2026-05-28T22:54:51Z",
+  "daemon_label": "com.cryptolab.susde-apy-monitor",
+  "daemon_count": 13,
+  "summary": {
+    "purpose": "Automated weekly APY monitoring for K344 sUSDe sleeve (5% allocation), tracking against K361 Q1 2026 baseline (4.01%)",
+    "pattern": "Generic K344 sleeve re-evaluation automation (DefiLlama yields API)",
+    "status_level": "SCAFFOLD-READY"
+  },
+  "metrics_first_run": {
+    "timestamp_jst": "2026-05-29 07:54:39 JST",
+    "current_apy_pct": 3.75296,
+    "apy_7d_mean_pct": 3.9290337500000003,
+    "apy_14d_mean_pct": 4.071666,
+    "apy_30d_mean_pct": 3.955648387096774,
+    "apy_60d_mean_pct": 3.9796465573770496,
+    "apy_7d_min_pct": 3.71304,
+    "apy_7d_max_pct": 4.29227,
+    "volatility_30d_pct": 0.6002779937936109,
+    "slope_30d_pct_per_day": -0.00339981189382727,
+    "data_points": 833,
+    "data_range": "2024-02-16 to 2026-05-28"
+  },
+  "baselines": {
+    "k361_q1_2026_mean": 4.01,
+    "k384_current_7d": 4.04,
+    "k384_current_30d": 4.02,
+    "low_apy_threshold": 3.0,
+    "high_apy_threshold": 8.0,
+    "crash_threshold_pp": 3.0
+  },
+  "alert_first_run": {
+    "alert_type": "NO_ALERT",
+    "severity": "INFO",
+    "message": "sUSDe APY stable: current 3.75%, 7d 3.93%, 30d 3.96% (vs baseline 4.01%) — K344 5% unchanged",
+    "recommended_action": "K344 5% unchanged"
+  },
+  "deliverables": {
+    "scripts": [
+      {
+        "file": "scripts/susde_apy_monitor.py",
+        "status": "NEW",
+        "lines": 366,
+        "description": "K412 sUSDe APY weekly monitor (single-shot, cron via launchd)"
+      }
+    ],
+    "plists": [
+      {
+        "file": "com.cryptolab.susde-apy-monitor.plist",
+        "status": "NEW",
+        "start_interval_sec": 604800,
+        "gitignored": true,
+        "description": "Weekly launchd trigger (7 days)"
+      }
+    ],
+    "modifications": [
+      {
+        "file": "scripts/verify_deployment_status.py",
+        "status": "MODIFIED",
+        "lines_added": 8,
+        "description": "Added DaemonSpec for K412"
+      }
+    ],
+    "outputs": [
+      {
+        "file": "data/k412_susde_dashboard.json",
+        "status": "NEW",
+        "description": "Latest metrics + alerts + recommended action"
+      },
+      {
+        "file": "cache/k412_susde_alerts.jsonl",
+        "status": "NEW",
+        "description": "Alert audit log (append-only)"
+      },
+      {
+        "file": "logs/k412_susde_apy.log",
+        "status": "NEW",
+        "description": "Execution trace"
+      },
+      {
+        "file": "logs/k412_susde_apy.err",
+        "status": "NEW",
+        "description": "Error log"
+      }
+    ]
+  },
+  "test_results": {
+    "manual_test_date": "2026-05-29 07:54:39 JST",
+    "script_execution": "PASS",
+    "api_fetch": "PASS (833 datapoints)",
+    "metrics_computation": "PASS",
+    "alert_logic": "PASS",
+    "baseline_tracking": "PASS",
+    "file_outputs": "PASS",
+    "deployment_verification": "PASS (0 mismatches)",
+    "exit_code": 0
+  },
+  "implementation_checklist": {
+    "phase_1_script": true,
+    "phase_2_plist": true,
+    "phase_3_registry": true,
+    "phase_4_manual_test": true,
+    "phase_5_html_monitoring": false,
+    "phase_6_output_schema": true
+  },
+  "k344_decision_framework": {
+    "low_apy_sustained_14d": {
+      "condition": "14d mean APY < 3%",
+      "action": "reduce candidate",
+      "current": "NO_ALERT (4.07% > 3%)"
+    },
+    "high_apy_sustained_14d": {
+      "condition": "14d mean APY > 8%",
+      "action": "expand candidate",
+      "current": "NO_ALERT (4.07% < 8%)"
+    },
+    "crash_event": {
+      "condition": "30d→7d drop > 3pp",
+      "action": "review tail risk",
+      "current": "NO_ALERT (drop = −0.03pp)"
+    },
+    "stable_state": {
+      "condition": "3% < 14d APY < 8%",
+      "action": "K344 unchanged (5%)",
+      "current": "ACTIVE"
+    }
+  },
+  "api_details": {
+    "provider": "DefiLlama",
+    "endpoint": "https://yields.llama.fi/chart/{pool_id}",
+    "pool_id": "66985a81-9c51-46ca-9977-42b4fe7bc6df",
+    "pool_name": "sUSDe (Ethena sUSDe, Ethereum)",
+    "authentication": "none (public API)",
+    "rate_limit": "none enforced",
+    "fallback": "cached dashboard + synthetic series"
+  },
+  "constraints_met": {
+    "haiku_friendly": true,
+    "stdlib_only": true,
+    "no_new_packages": true,
+    "defilama_free_api": true,
+    "no_production_modifications": true
+  },
+  "deployment": {
+    "activation_required": true,
+    "commands": [
+      "cp /Users/nekonaomichi/crypto-lab/com.cryptolab.susde-apy-monitor.plist ~/Library/LaunchAgents/",
+      "launchctl load ~/Library/LaunchAgents/com.cryptolab.susde-apy-monitor.plist"
+    ],
+    "verification_command": "launchctl list | grep susde-apy-monitor",
+    "log_tail_command": "tail -f /Users/nekonaomichi/crypto-lab/logs/k412_susde_apy.log"
+  },
+  "commit_message": "★ K412 sUSDe APY weekly monitor (13th daemon, K344 sleeve re-eval automation, K361 baseline tracking)\n\nCo-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>",
+  "files_for_commit": [
+    "scripts/susde_apy_monitor.py",
+    "scripts/verify_deployment_status.py"
+  ],
+  "notes": [
+    "Plist file (com.cryptolab.susde-apy-monitor.plist) is gitignored, copy to LaunchAgents manually",
+    "Weekly cadence sufficient for APY changes (intra-week volatility << 1pp)",
+    "All exceptions caught and logged, exit code always 0 (no crash notifications)",
+    "Future enhancement: ntfy.sh email alerts for LOW_APY/HIGH_APY/CRASH events",
+    "K361 baseline values embedded as constants for quick reference in alert messages"
+  ]
+}

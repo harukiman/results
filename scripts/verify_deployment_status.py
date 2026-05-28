@@ -133,6 +133,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="protocol_tvl_monitor",
         expected_html_status="SCAFFOLD-READY",  # plist in repo root (gitignored); weekly StartInterval (604800) via launchd
     ),
+    DaemonSpec(
+        label="com.cryptolab.susde-apy-monitor",
+        purpose="K412 sUSDe APY weekly monitor (K344 sleeve re-eval automation, K361 baseline tracking, DefiLlama yields API)",
+        scripts=["scripts/susde_apy_monitor.py"],
+        log_basename="k412_susde_apy",
+        expected_html_status="SCAFFOLD-READY",  # plist in repo root (gitignored); weekly StartInterval (604800) via launchd
+    ),
 ]
 
 
