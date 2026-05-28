@@ -126,6 +126,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="regulatory_rss_monitor",
         expected_html_status="SCAFFOLD-READY",  # plist in repo root (gitignored); 30min StartInterval via launchd
     ),
+    DaemonSpec(
+        label="com.cryptolab.protocol-tvl-monitor",
+        purpose="K407 Generic TVL trajectory monitor (HypurrFi + Variational + future protocols, weekly polling, DefiLlama API)",
+        scripts=["scripts/protocol_tvl_trajectory_monitor.py"],
+        log_basename="protocol_tvl_monitor",
+        expected_html_status="SCAFFOLD-READY",  # plist in repo root (gitignored); weekly StartInterval (604800) via launchd
+    ),
 ]
 
 
