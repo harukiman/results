@@ -1,0 +1,211 @@
+{
+  "wave": "K397",
+  "generated_utc": "2026-05-28 21:52:38 UTC",
+  "total_pass": 40,
+  "total_fail": 0,
+  "bugs": [],
+  "ok": [
+    "No leftover flag files in REPO_ROOT",
+    "2a: --dry-run exits 0, prints DRY-RUN plan",
+    "2b: --include-bybit exits 0, reports Bybit would run",
+    "2c: --no-bybit exits 0, Bybit skip confirmed",
+    "k302a_satellite_run: honors EMERGENCY flag (expected)",
+    "k376_momentum_run: honors EMERGENCY flag (expected)",
+    "k386_v613e_fallback_run: honors EMERGENCY flag (expected)",
+    "Phase 3 cleanup: EMERGENCY flag removed cleanly",
+    "k280_live_fetch: runs_normally (expected=runs_normally)",
+    "k302a_satellite_run: self_suspends (expected=self_suspends)",
+    "k344_susde_oc_daily_run: runs_normally (expected=runs_normally)",
+    "k376_momentum_run: runs_normally (expected=runs_normally)",
+    "k386_v613e_fallback_run: activates (expected=activates)",
+    "Phase 4 cleanup: BEAR_1 flag removed cleanly",
+    "k386_v613e_fallback_run: EMERGENCY takes precedence over BEAR_1 (correct hierarchy)",
+    "k302a_satellite_run: EMERGENCY takes precedence over BEAR_1 (correct hierarchy)",
+    "Phase 5 cleanup: all flags removed cleanly",
+    "All required fields present in emergency_exit_status.json",
+    "Status value valid: STANDBY",
+    "triggered field is bool: False",
+    "HTML widget can read: triggered=False, status=STANDBY, ts=2026-05-28T21:52:38.069131Z",
+    "Bybit inspection: cancel_all_endpoint",
+    "Bybit inspection: position_list_endpoint",
+    "Bybit inspection: close_route_endpoint",
+    "Bybit inspection: hmac_sha256",
+    "Bybit inspection: reduce_only_flag",
+    "Bybit inspection: ioc_time_in_force",
+    "Bybit inspection: dry_run_guard",
+    "Bybit inspection: stdlib_only",
+    "Bybit inspection: api_key_env_only",
+    "Bybit inspection: timeout_in_requests",
+    "Bybit inspection: retry_not_present",
+    "Bybit inspection: error_handling_try",
+    "Bybit inspection: keys_cleared_memory",
+    "Bybit HMAC: uses hmac.new() correctly",
+    "Timeout adequate: min=10s (all timeouts: [20, 30, 10, 20, 20])",
+    "Bybit cancel-all uses POST (correct)",
+    "Bybit position/list uses GET (correct)",
+    "No flag files in REPO_ROOT \u2014 clean state confirmed",
+    "No flag files staged/committed in git"
+  ],
+  "phases": {
+    "phase1": {
+      "no_flags": true,
+      "status_json_exists": true
+    },
+    "phase2": {
+      "dryrun_basic": {
+        "rc": 0,
+        "ok": true
+      },
+      "dryrun_include_bybit": {
+        "rc": 0,
+        "ok": true
+      },
+      "dryrun_no_bybit": {
+        "rc": 0,
+        "ok": true
+      }
+    },
+    "phase3": {
+      "daemon_matrix": {
+        "k280_live_fetch": {
+          "rc": 0,
+          "honored": false,
+          "expected": false,
+          "status": "IGNORES_FLAG",
+          "verdict": "INFO_BY_DESIGN",
+          "stdout_snippet": "Already fetched for 2026-05-25. Use --force to re-fetch.\n"
+        },
+        "k302a_satellite_run": {
+          "rc": 0,
+          "honored": true,
+          "expected": true,
+          "status": "HONORS_FLAG",
+          "verdict": "PASS",
+          "stdout_snippet": "[K302a] EMERGENCY_EXIT_TRIGGERED.flag present. All daemons halted. Exiting.\n"
+        },
+        "k344_susde_oc_daily_run": {
+          "rc": 0,
+          "honored": false,
+          "expected": false,
+          "status": "IGNORES_FLAG",
+          "verdict": "INFO_BY_DESIGN",
+          "stdout_snippet": "\n=== K344 sUSDe OC Daemon \u2014 2026-05-28 (dry_run=True) ===\n\n  [sUSDe] Fetching APY from DeFiLlama: https://yields.llama.fi/chart/66985a81-9c51-46ca-9977-42b4fe7bc6df\n  [sUSDe] Fetched 833 APY data points (2024-02-16 \u2192 2026-05-28)\n  [sUSDe] APY=3.75% | EMA30d=3.99% | Signal=HALF | alloc=50% of sleeve "
+        },
+        "k376_momentum_run": {
+          "rc": 0,
+          "honored": true,
+          "expected": true,
+          "status": "HONORS_FLAG",
+          "verdict": "PASS",
+          "stdout_snippet": "2026-05-29 06:52:33 UTC [INFO] K376 momentum run starting | REPO_ROOT=/Users/nekonaomichi/crypto-lab | dry_run=False\n2026-05-29 06:52:33 UTC [INFO] Universe: ['ETH', 'LINK', 'AVAX'] | Sleeve: 3% | Hold: 240min\n2026-05-29 06:52:33 UTC [CRITICAL] EMERGENCY_EXIT_TRIGGERED.flag present at /Users/nekonao"
+        },
+        "k386_v613e_fallback_run": {
+          "rc": 0,
+          "honored": true,
+          "expected": true,
+          "status": "HONORS_FLAG",
+          "verdict": "PASS",
+          "stdout_snippet": "\n=== K386 v6.13e Fallback Daemon (2026-05-28 21:52 UTC) ===\n\n  [CRITICAL] EMERGENCY_EXIT_TRIGGERED.flag present at /Users/nekonaomichi/crypto-lab/EMERGENCY_EXIT_TRIGGERED.flag.\n  All daemons halted. K386 exiting immediately.\n"
+        }
+      },
+      "cleanup_ok": true
+    },
+    "phase4": {
+      "daemon_matrix": {
+        "k280_live_fetch": {
+          "rc": 0,
+          "actual": "runs_normally",
+          "expected": "runs_normally",
+          "verdict": "PASS",
+          "stdout_snippet": "Already fetched for 2026-05-25. Use --force to re-fetch.\n"
+        },
+        "k302a_satellite_run": {
+          "rc": 0,
+          "actual": "self_suspends",
+          "expected": "self_suspends",
+          "verdict": "PASS",
+          "stdout_snippet": "[K302a] BEAR_1_FALLBACK_ACTIVE.flag detected.\n  K297' HIP-3 satellite is CFTC-restricted in v6.13e fallback mode.\n  K302a satellite skipping execution \u2014 K386 v6.13e daemon takes over.\n  See: docs/k302a_runbook.md \u00a718 for deactivation procedure.\n"
+        },
+        "k344_susde_oc_daily_run": {
+          "rc": 0,
+          "actual": "runs_normally",
+          "expected": "runs_normally",
+          "verdict": "PASS",
+          "stdout_snippet": "\n=== K344 sUSDe OC Daemon \u2014 2026-05-28 (dry_run=True) ===\n\n  [sUSDe] Fetching APY from DeFiLlama: https://yields.llama.fi/chart/66985a81-9c51-46ca-9977-42b4fe7bc6df\n  [sUSDe] Fetched 833 APY data points (2024-02-16 \u2192 2026-05-28)\n  [sUSDe] APY=3.75% | EMA30d=3.99% | Signal=HALF | alloc=50% of sleeve "
+        },
+        "k376_momentum_run": {
+          "rc": 0,
+          "actual": "runs_normally",
+          "expected": "runs_normally",
+          "verdict": "PASS",
+          "stdout_snippet": "2026-05-29 06:52:36 UTC [INFO] K376 momentum run starting | REPO_ROOT=/Users/nekonaomichi/crypto-lab | dry_run=False\n2026-05-29 06:52:36 UTC [INFO] Universe: ['ETH', 'LINK', 'AVAX'] | Sleeve: 3% | Hold: 240min\n2026-05-29 06:52:36 UTC [INFO] BTC 20d SMA slope: -3369.61 (BEAR regime) [early_avg=79800,"
+        },
+        "k386_v613e_fallback_run": {
+          "rc": 0,
+          "actual": "activates",
+          "expected": "activates",
+          "verdict": "PASS",
+          "stdout_snippet": "\n=== K386 v6.13e Fallback Daemon (2026-05-28 21:52 UTC) ===\n\n  BEAR_1_FALLBACK_ACTIVE.flag: PRESENT \u2014 ACTIVATING v6.13e\n  Flag path: /Users/nekonaomichi/crypto-lab/BEAR_1_FALLBACK_ACTIVE.flag\n\n  [ACTIVE] BEAR_1 flag present. Executing v6.13e architecture.\n  Weights: K280 85% | K297' 0% (SUSPENDED) |"
+        }
+      },
+      "cleanup_ok": true
+    },
+    "phase5": {
+      "results": {
+        "k386_v613e_fallback_run": {
+          "rc": 0,
+          "emergency_honored": true,
+          "bear1_spurious": false,
+          "verdict": "PASS",
+          "stdout_snippet": "\n=== K386 v6.13e Fallback Daemon (2026-05-28 21:52 UTC) ===\n\n  [CRITICAL] EMERGENCY_EXIT_TRIGGERED.flag present at /Users/nekonaomichi/crypto-lab/EMERGENCY_EXIT_TRIGGERED.flag.\n  All daemons halted. K386 exiting immediately.\n"
+        },
+        "k302a_satellite_run": {
+          "rc": 0,
+          "emergency_honored": true,
+          "bear1_spurious": false,
+          "verdict": "PASS",
+          "stdout_snippet": "[K302a] EMERGENCY_EXIT_TRIGGERED.flag present. All daemons halted. Exiting.\n"
+        }
+      },
+      "cleanup_ok": true
+    },
+    "phase6": {
+      "html_readable": true,
+      "exists": true,
+      "schema_ok": true,
+      "fields": {
+        "triggered": false,
+        "timestamp_utc": "2026-05-28T21:52:38.069131Z",
+        "total_notional": 0,
+        "position_count": 0,
+        "status": "STANDBY"
+      },
+      "missing_fields": []
+    },
+    "phase7": {
+      "checks": {
+        "cancel_all_endpoint": true,
+        "position_list_endpoint": true,
+        "close_route_endpoint": true,
+        "hmac_sha256": true,
+        "reduce_only_flag": true,
+        "ioc_time_in_force": true,
+        "dry_run_guard": true,
+        "stdlib_only": true,
+        "api_key_env_only": true,
+        "timeout_in_requests": true,
+        "retry_not_present": true,
+        "error_handling_try": true,
+        "keys_cleared_memory": true
+      },
+      "hmac_new_correct": true,
+      "min_timeout_s": 10,
+      "cancel_all_uses_post": true,
+      "position_list_uses_get": true
+    },
+    "phase9": {
+      "no_flags": true,
+      "flag_in_git": false
+    }
+  }
+}
