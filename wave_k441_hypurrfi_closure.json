@@ -1,0 +1,112 @@
+{
+  "metadata": {
+    "wave_id": "K441",
+    "task": "HypurrFi Line Formal Closure",
+    "timestamp_jst": "2026-05-29 23:55 JST",
+    "timestamp_utc": "2026-05-29 14:55 UTC",
+    "decision_type": "CLOSED",
+    "related_waves": ["K337", "K393", "K407"]
+  },
+  "closure_rationale": {
+    "original_line": "HypurrFi Yield Arbitrage (K337)",
+    "original_status": "MONITOR",
+    "original_trigger": "Isolated TVL > $20M",
+    "original_trigger_date": "2026-10-01",
+    "k393_decision": "DROP_LINE",
+    "closure_reason": "TVL trajectory negative; $20M trigger mathematically unreachable"
+  },
+  "k393_evidence": {
+    "current_tvl_usd": 14913782,
+    "current_tvl_formatted": "$14.9M",
+    "growth_7d_pct": -15.86,
+    "growth_14d_pct": -49.21,
+    "growth_30d_pct": -51.73,
+    "growth_60d_pct": -54.53,
+    "slope_30d_usd_per_day": -757595.0,
+    "volatility_14d_pct": 5.55,
+    "projection_target_tvl": 20000000,
+    "projection_reached": false,
+    "projection_confidence": "Low (declining trend)"
+  },
+  "k407_monitor_baseline": {
+    "tool": "K407 Generic TVL Trajectory Monitor",
+    "deployed_wave": "K407",
+    "update_frequency": "Weekly (604800 seconds)",
+    "data_source": "DefiLlama API (protocol/hypurrfi, Hyperliquid L1 chain)",
+    "first_run_date": "2026-05-29",
+    "metrics_confirmed": true,
+    "alerts_generated": 2,
+    "alert_types": ["DROP_LINE (% basis)", "DROP_LINE (slope basis)"],
+    "output_files": [
+      "cache/protocol_tvl_alerts.jsonl",
+      "data/protocol_tvl_dashboard.json"
+    ]
+  },
+  "reopen_conditions": {
+    "reopen_date_default": "2027-04-01",
+    "trigger_a_label": "Slope Reversal (Primary)",
+    "trigger_a_condition": "14d TVL slope positive AND sustains 2+ consecutive weeks",
+    "trigger_a_monitoring": "K407 automatic alert via INFLECTION pattern",
+    "trigger_a_action": "Escalate to SHORTEN",
+    "trigger_b_label": "Velocity Gains (Secondary)",
+    "trigger_b_condition": "2+ consecutive weeks of +20% TVL gains week-over-week",
+    "trigger_b_monitoring": "Manual check via dashboard.json growth_7d_pct field",
+    "trigger_b_action": "Escalate to EVALUATE",
+    "trigger_c_label": "Catalyst Event (Tertiary)",
+    "trigger_c_condition": "Competitor protocol announcement / new launch / strategic reversal",
+    "trigger_c_monitoring": "Governance decision at any wave (manual escalation)",
+    "trigger_c_action": "Accelerate to CONDITIONAL_ACCEPT"
+  },
+  "cumulative_closed_lines": {
+    "total_count": 9,
+    "this_wave_new": 0,
+    "this_wave_escalated": 1,
+    "lines_list": [
+      "regime_filter_K315-K341",
+      "ml_allocator_K198-K345",
+      "usdh_stablecoin_K354",
+      "drift_sol_arb_K358-K375",
+      "monarq_timing_K350",
+      "stable_clustering_K377",
+      "coinbase_usdc_hl_K362",
+      "hl_spot_perp_K276b_K374",
+      "hypurrfi_yield_arb_K337_K441"
+    ]
+  },
+  "task_pipeline_updates": {
+    "affected_sections": ["deferred", "discarded_specific"],
+    "deferred_delta": -1,
+    "discarded_delta": 1,
+    "entry_hypurrfi": {
+      "id": "K337",
+      "topic": "HypurrFi Yield Arb (Closed K441)",
+      "decision": "CLOSED",
+      "closure_wave": "K441",
+      "closure_date": "2026-05-29",
+      "rationale": "DROP_LINE K393: 14d -49.2%, 30d -51.7%, slope -$757k/day. $20M trigger unreachable.",
+      "monitor_tool": "K407 weekly TVL monitor (deployed, weekly alerts via protocol_tvl_alerts.jsonl)",
+      "reopen_date": "2027-04-01",
+      "reopen_triggers": [
+        "14d TVL slope positive AND 2+ weeks sustained",
+        "2+ consecutive +20% week-over-week TVL gains",
+        "Competitor/catalyst event (manual escalation)"
+      ]
+    }
+  },
+  "html_updates": {
+    "sections": ["report_header", "live_monitoring_table"],
+    "header_badge": "K441 HypurrFi closure badge (closure rationale + reopen date)",
+    "monitoring_row": "K441 row in Live Monitoring daemon table (CLOSED status, K407 integration)"
+  },
+  "phase_summary": {
+    "phase_1_closed_lines_history": "COMPLETE",
+    "phase_2_closure_rationale": "COMPLETE",
+    "phase_3_reopen_triggers": "COMPLETE",
+    "phase_4_task_pipeline_updates": "READY",
+    "phase_5_html_banner_update": "READY",
+    "phase_6_wave_documentation": "COMPLETE"
+  },
+  "git_commit_message": "★ K441 HypurrFi line formal closure (K393 DROP_LINE confirmed, reopen 2027-04-01)",
+  "status": "READY_FOR_COMMIT",
+  "confidence": "HIGH"
+}
