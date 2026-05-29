@@ -1,0 +1,333 @@
+{
+  "wave": "K470",
+  "date": "2026-05-25",
+  "strategy_class": "MEV Liquidator",
+  "decision": "DEFER",
+  "gas_cost_per_liquidation_usd": 15.0,
+  "aave_v3_params": {
+    "default_close_factor_pct": 50.0,
+    "max_close_factor_pct": 100.0,
+    "close_factor_hf_threshold": 0.95,
+    "liquidation_trigger_hf": 1.0,
+    "liquidation_bonus_pct_by_asset": {
+      "WBTC": 5.0,
+      "WETH": 5.0,
+      "USDC": 4.5,
+      "DAI": 4.5,
+      "LINK": 7.5,
+      "UNI": 8.5,
+      "AAVE": 10.0,
+      "eMode_stablecoins": 1.0
+    },
+    "protocol_fee_pct_of_bonus": 10.0,
+    "net_bonus_example_weth_pct": 4.5,
+    "flashloan_fee_pct": 0.09,
+    "gas_units_per_liquidation": 400000,
+    "eth_gas_price_gwei_typical": 15.0,
+    "eth_price_usd_approx": 2500.0
+  },
+  "market_size": {
+    "aave_v3_tvl_usd": 15000000000,
+    "aave_v3_annual_liquidation_vol_usd": 500000000,
+    "aave_v3_annual_liquidation_vol_bear_usd": 100000000,
+    "aave_v3_annual_liquidation_vol_bull_crash_usd": 2000000000,
+    "aave_v3_avg_bonus_pct": 5.5,
+    "aave_v3_gross_annual_profit_usd": 27500000.0,
+    "aave_num_active_liquidator_bots": 30,
+    "aave_top10_bots_market_share_pct": 85.0,
+    "aave_top3_bots_market_share_pct": 60.0,
+    "compound_v3_tvl_usd": 3000000000,
+    "compound_v3_annual_liq_vol_usd": 80000000,
+    "compound_v3_bonus_pct": 5.0,
+    "compound_v3_gross_annual_profit_usd": 4000000.0,
+    "hl_hlp_tvl_usd": 400000000,
+    "hl_hlp_annual_liq_profit_usd": 20000000,
+    "hl_hlp_structure": "community_vault",
+    "dydx_v4_annual_liq_vol_usd": 50000000,
+    "dydx_v4_bonus_pct": 2.5,
+    "dydx_v4_gross_annual_profit_usd": 1250000.0,
+    "drift_annual_liq_vol_usd": 30000000,
+    "drift_insurance_fund_buffer_usd": 10000000,
+    "drift_accessible_to_external_bots": true
+  },
+  "aave_v3_scenarios": {
+    "pessimistic_1pct_share": {
+      "gross_pool_usd": 27500000.0,
+      "market_share_pct": 1.0,
+      "gross_revenue_usd": 275000,
+      "gas_cost_usd": 750,
+      "infra_cost_usd": 60000,
+      "net_revenue_usd": 214250
+    },
+    "base_2pct_share": {
+      "gross_pool_usd": 27500000.0,
+      "market_share_pct": 2.0,
+      "gross_revenue_usd": 550000,
+      "gas_cost_usd": 1500,
+      "infra_cost_usd": 60000,
+      "net_revenue_usd": 488500
+    },
+    "optimistic_5pct_share": {
+      "gross_pool_usd": 27500000.0,
+      "market_share_pct": 5.0,
+      "gross_revenue_usd": 1375000,
+      "gas_cost_usd": 3750,
+      "infra_cost_usd": 60000,
+      "net_revenue_usd": 1311250
+    }
+  },
+  "infrastructure": {
+    "dedicated_ethereum_node": {
+      "provider": "e.g. Blastapi/Alchemy dedicated or self-hosted",
+      "monthly_cost_usd": 500,
+      "latency_ms": "<20ms to mempool",
+      "required": true,
+      "note": "Archive node preferred for complex state queries"
+    },
+    "private_mempool_relay": {
+      "provider": "Flashbots MEV-Share or Eden Network",
+      "monthly_cost_usd": 0,
+      "bundle_tip_pct_of_profit": 70,
+      "required": true,
+      "note": "Without MEV-Share, liquidations are front-run by sandwich bots"
+    },
+    "oracle_price_feeds": {
+      "provider": "Chainlink + Pyth Network",
+      "monthly_cost_usd": 50,
+      "latency_ms": "<1000ms price update",
+      "required": true
+    },
+    "health_factor_monitor": {
+      "description": "On-chain account scanner \u2014 track HF for all Aave positions",
+      "events_per_second": 100,
+      "required": true,
+      "monthly_cost_usd": 200
+    },
+    "flashloan_smart_contract": {
+      "description": "Custom liquidator contract using Aave flash loans",
+      "one_time_dev_cost_usd": 20000,
+      "audit_cost_usd": 30000,
+      "required": true
+    },
+    "gas_bidding_engine": {
+      "description": "Dynamic priority fee optimizer (EIP-1559)",
+      "required": true,
+      "monthly_cost_usd": 0
+    },
+    "monitoring_alerting": {
+      "provider": "Grafana + Prometheus or Datadog",
+      "monthly_cost_usd": 100,
+      "required": true
+    },
+    "total_monthly_infra_usd": 5000,
+    "total_initial_dev_usd": 80000,
+    "ongoing_maintenance_hrs_per_month": 20,
+    "time_to_production_months": 4
+  },
+  "venue_comparison": {
+    "Aave_V3_Ethereum": {
+      "gross_pool_usd": 27500000.0,
+      "competition_level": "EXTREME",
+      "num_active_bots": 30,
+      "infrastructure_barrier": "HIGH",
+      "flash_loan_available": true,
+      "accessibility": "Open \u2014 anyone can call liquidationCall()",
+      "realistic_share_boutique_pct": 1.0,
+      "estimated_net_revenue_usd": 214250
+    },
+    "Aave_V3_L2_chains": {
+      "gross_pool_usd": 5000000,
+      "competition_level": "MEDIUM",
+      "num_active_bots": 5,
+      "infrastructure_barrier": "MEDIUM",
+      "flash_loan_available": true,
+      "accessibility": "Open",
+      "realistic_share_boutique_pct": 10.0,
+      "estimated_net_revenue_usd": 440000.0
+    },
+    "Compound_V3": {
+      "gross_pool_usd": 4000000.0,
+      "competition_level": "HIGH",
+      "num_active_bots": 15,
+      "realistic_share_boutique_pct": 3.0,
+      "estimated_net_revenue_usd": 60000.0
+    },
+    "HyperLiquid_HLP": {
+      "accessible_to_external_bots": false,
+      "note": "HLP is community vault \u2014 backstop liquidations democratized through HLP shares, not external bots",
+      "alternative": "Participate in HLP as LP; indirect liquidation exposure",
+      "hlp_apy_est_pct": 5.0
+    },
+    "dYdX_v4": {
+      "gross_pool_usd": 1250000.0,
+      "competition_level": "LOW",
+      "infrastructure_barrier": "HIGH",
+      "realistic_share_boutique_pct": 15.0,
+      "estimated_net_revenue_usd": 127500.0
+    },
+    "Drift_Solana": {
+      "accessible_to_external_bots": true,
+      "competition_level": "MEDIUM",
+      "infrastructure_barrier": "MEDIUM",
+      "gross_pool_usd": 750000.0,
+      "realistic_share_boutique_pct": 8.0,
+      "estimated_net_revenue_usd": 0.0
+    }
+  },
+  "orthogonality": {
+    "mechanism": "event_driven_forced_liquidation",
+    "signal_source": "on-chain_health_factor",
+    "comparison_to_existing": {
+      "K208_FR_carry": {
+        "correlation_expected": 0.05,
+        "reason": "MEV profits uncorrelated with funding rate levels"
+      },
+      "K376_momentum": {
+        "correlation_expected": 0.1,
+        "reason": "Liquidation cascades CAUSE momentum spikes but profits occur before/during",
+        "positive_note": "HL cascade signal (K372 concept) could enhance K376"
+      },
+      "K449_ETH_BTC_differential": {
+        "correlation_expected": 0.05
+      },
+      "K457_basket": {
+        "correlation_expected": 0.05
+      }
+    },
+    "true_alpha_orthogonal": true,
+    "note": "MEV liquidation is structurally uncorrelated \u2014 profits driven by collateral shortfalls, not market direction"
+  },
+  "capital_structure": {
+    "flash_loan_based": {
+      "capital_required_usd": 0,
+      "advantage": "No locked capital",
+      "max_liquidation_size": "Unlimited (constrained by Aave flash loan pool)",
+      "flash_loan_fee_on_profit_pct": 0.09
+    },
+    "pre_funded_based": {
+      "capital_required_usd": 500000,
+      "advantage": "Faster execution (no flash loan callback overhead)",
+      "note": "Used by top-tier bots for speed advantage"
+    },
+    "recommended_approach": "flash_loan_based",
+    "sleeve_weight_if_accepted": "0.5-1% of AUM (separate capital bucket)",
+    "capacity_limit": "Revenue limited by liquidation event count, not AUM"
+  },
+  "k266_gates": {
+    "G1_oos_sharpe": {
+      "applicable": false,
+      "reason": "Event-driven strategy: no continuous daily PnL stream to compute Sharpe",
+      "alternative_metric": "avg_profit_per_event_usd > gas_cost * 3x",
+      "status": "NOT APPLICABLE \u2014 event count needed for meaningful Sharpe"
+    },
+    "G3_dsr": {
+      "applicable": "PARTIAL",
+      "estimated_events_per_month": 30,
+      "profit_per_event_usd_net": 2700,
+      "monthly_dsr_equivalent": "N/A",
+      "note": "DSR framework does not map to episodic MEV revenue cleanly"
+    },
+    "G6_trade_count": {
+      "applicable": true,
+      "estimated_liquidations_per_day": 1,
+      "passes": true,
+      "note": "Frequency is event-limited, not signal-driven"
+    },
+    "G7_ann_return_pct": {
+      "gross_on_deployed_capital_pct": "N/A",
+      "net_revenue_usd_base": 488500,
+      "passes_if_compared_to_v620": false,
+      "note": "Revenue absolute, not percentage \u2014 capacity-limited by event count"
+    },
+    "overall_gate_status": "INCOMPLETE \u2014 event-driven model incompatible with G1/G3 continuous Sharpe gates"
+  },
+  "annual_revenue_summary": {
+    "single_venue_pessimistic_usd": 214250,
+    "single_venue_base_usd": 488500,
+    "single_venue_optimistic_usd": 1311250,
+    "multi_venue_boutique_est_usd": 567500,
+    "mev_as_pct_of_v620_baseline_pessimistic": 21.4,
+    "mev_as_pct_of_v620_baseline_base": 48.9,
+    "mev_as_pct_of_v620_baseline_optimistic": 131.1,
+    "v620_baseline_usd": 1000000,
+    "note": "MEV liquidator contributes 1-20% of v6.20 baseline at $10M AUM. Even optimistic estimates lag v6.20 by 5x for 5-10x more implementation effort."
+  },
+  "effort_reward": {
+    "strategies": {
+      "v6.20_carry_momentum": {
+        "annual_revenue_est_usd": 1000000,
+        "implementation_effort_months": 0,
+        "status": "PRODUCTION",
+        "complexity": "LOW (existing)"
+      },
+      "MEV_liquidator_Aave_V3_mainnet": {
+        "annual_revenue_est_usd": 200000,
+        "implementation_effort_months": 6,
+        "initial_capex_usd": 80000,
+        "status": "RESEARCH",
+        "complexity": "EXTREME",
+        "risk": "Smart contract bugs, gas wars, MEV competition"
+      },
+      "MEV_liquidator_Aave_V3_L2": {
+        "annual_revenue_est_usd": 440000,
+        "implementation_effort_months": 4,
+        "initial_capex_usd": 60000,
+        "status": "RESEARCH",
+        "complexity": "HIGH"
+      },
+      "MEV_liquidator_dYdX_v4": {
+        "annual_revenue_est_usd": 127000,
+        "implementation_effort_months": 5,
+        "initial_capex_usd": 70000,
+        "status": "RESEARCH",
+        "complexity": "HIGH (Cosmos SDK)"
+      },
+      "HL_cascade_signal_K376_enhancement": {
+        "annual_revenue_est_usd": 50000,
+        "implementation_effort_months": 0.25,
+        "initial_capex_usd": 0,
+        "status": "RECOMMENDED_NEXT",
+        "complexity": "LOW",
+        "note": "Reactivates K372 concept as signal enhancer, no smart contracts"
+      }
+    }
+  },
+  "hl_cascade_signal": {
+    "concept": "K372 reactivated as SIGNAL (not as liquidator)",
+    "mechanism": "Monitor HL liquidation cascade events (position close volume spike) as a directional signal to ENHANCE K376 momentum or K208 FR filter. Liquidation cascades create momentum (directional) and FR spikes (carry opportunity). Signal: cascade_volume_t > 2x avg \u2192 increase K376 position size OR add FR carry for 4-8h post-cascade window.",
+    "implementation_effort": "LOW",
+    "dev_time_days": 5,
+    "expected_alpha_bps_per_trade": 15,
+    "signal_source": "HL public API \u2014 open interest + mark price delta per 15min",
+    "k266_compatible": true,
+    "recommendation": "PURSUE THIS FIRST \u2014 low effort, no smart contracts, uses existing HL infra"
+  },
+  "decision_matrix": {
+    "recommendation": "DEFER",
+    "rationale": [
+      "MEV liquidator generates $50K-$440K/yr for boutique operator \u2014 5-44% of v6.20 baseline",
+      "Implementation requires 4-6 months dev, $60-80K capex, smart contract audits",
+      "Competition from 30+ active sophisticated bots on Aave mainnet",
+      "Revenue is capacity-limited by event count, not scalable with AUM",
+      "v6.20 baseline already strong; scaling AUM from $10M to $100M is higher ROI",
+      "Smart contract risk introduces catastrophic loss potential not present in v6.20"
+    ],
+    "defer_trigger": [
+      "$100M+ AUM achieved (MEV becomes meaningful diversifier)",
+      "Dedicated MEV engineer hired (not founder time)",
+      "v6.20 production stable for 6+ months"
+    ],
+    "defer_review_date": "2027-12-31",
+    "immediate_action": "PURSUE HL cascade signal enhancement (K372 reactivation as signal)",
+    "immediate_action_effort_days": 5,
+    "reject_full_mev_bot": false
+  },
+  "mev_relay_economics": {
+    "mev_share_searcher_share_pct": 30,
+    "mev_share_user_refund_pct": 70,
+    "public_mempool_sandwich_risk": "HIGH",
+    "expected_loss_from_sandwich_pct": 80,
+    "flashbots_protect_inclusion_rate_pct": 95,
+    "flashbots_tip_pct_of_profit": 10
+  }
+}
