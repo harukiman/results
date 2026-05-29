@@ -1,0 +1,253 @@
+{
+  "wave": "K436",
+  "title": "Master Deployment Playbook — Single Source of Truth",
+  "generated": "2026-05-29T22:59:00+09:00",
+  "status": "COMPLETE",
+  "mandate": "Maximize live profit — consolidate all pending user activations into one sequential guide",
+  "deliverables": [
+    "docs/k302a_master_deployment.md",
+    "wave_k436_master_deployment.md",
+    "wave_k436_master_deployment.json",
+    "report.html (banner badge + deployment progress widget)"
+  ],
+  "projection": {
+    "base_case_5y_terminal_usd": 25470000,
+    "start_aum_usd": 10000000,
+    "cagr_pct": 20.56,
+    "sharpe": 13.43,
+    "source": "K433 combined simulation"
+  },
+  "actions": [
+    {
+      "rank": 1,
+      "id": "builder_rebate",
+      "label": "K370 Builder rebate — approveBuilderFee on main HL wallet",
+      "source_wave": "K370",
+      "cost_usd": 0,
+      "time_min": 30,
+      "roi_annual_usd_low": 94000,
+      "roi_annual_usd_high": 472000,
+      "risk": "ZERO",
+      "status": "NOT_STARTED",
+      "runbook_section": "§19"
+    },
+    {
+      "rank": 2,
+      "id": "hip4_daemon",
+      "label": "K356 HIP-4 calibration daemon load",
+      "source_wave": "K356/K368/K409",
+      "cost_usd": 0,
+      "time_min": 5,
+      "roi_annual_usd_low": null,
+      "roi_annual_usd_high": null,
+      "roi_note": "Unlocks 2026-06-22 calibration gate",
+      "risk": "NONE",
+      "status": "NOT_STARTED",
+      "deadline": "2026-06-22",
+      "runbook_section": "§20",
+      "plist": "com.cryptolab.hl-hip4-monitor.plist"
+    },
+    {
+      "rank": 3,
+      "id": "rss_monitor",
+      "label": "K387 RSS regulatory monitor daemon load",
+      "source_wave": "K387/K404",
+      "cost_usd": 0,
+      "time_min": 5,
+      "risk": "NONE",
+      "status": "NOT_STARTED",
+      "runbook_section": "§18",
+      "plist": "com.cryptolab.regulatory-rss.plist"
+    },
+    {
+      "rank": 4,
+      "id": "tvl_monitor",
+      "label": "K407 TVL trajectory monitor daemon load",
+      "source_wave": "K407",
+      "cost_usd": 0,
+      "time_min": 5,
+      "risk": "NONE",
+      "status": "NOT_STARTED",
+      "plist": "com.cryptolab.protocol-tvl-monitor.plist"
+    },
+    {
+      "rank": 5,
+      "id": "susde_monitor",
+      "label": "K412 sUSDe APY monitor daemon load",
+      "source_wave": "K412",
+      "cost_usd": 0,
+      "time_min": 5,
+      "risk": "NONE",
+      "status": "NOT_STARTED",
+      "plist": "com.cryptolab.susde-apy-monitor.plist"
+    },
+    {
+      "rank": 6,
+      "id": "smart_router",
+      "label": "K434 smart router daemon load",
+      "source_wave": "K434",
+      "cost_usd": 0,
+      "time_min": 5,
+      "roi_annual_usd": 175000,
+      "risk": "LOW",
+      "status": "NOT_STARTED",
+      "runbook_section": "§24",
+      "plist": "com.cryptolab.smart-router.plist"
+    },
+    {
+      "rank": 7,
+      "id": "emergency_exit_creds",
+      "label": "K357 emergency exit — set HL_PRIVATE_KEY env",
+      "source_wave": "K357",
+      "cost_usd": 0,
+      "time_min": 30,
+      "risk": "NONE",
+      "status": "NOT_STARTED",
+      "script": "emergency_hl_exit.py"
+    },
+    {
+      "rank": 8,
+      "id": "hype_gold_stake",
+      "label": "HL HYPE Gold stake (10K HYPE ≈ $13K)",
+      "source_wave": "K432",
+      "cost_usd": 13000,
+      "time_min": 30,
+      "roi_annual_usd": 2534,
+      "roi_pct": 19.5,
+      "risk": "LOW",
+      "status": "NOT_STARTED"
+    },
+    {
+      "rank": 9,
+      "id": "bybit_vip5",
+      "label": "Fund Bybit account ($2M+) for VIP5 instant activation",
+      "source_wave": "K432",
+      "cost_usd": 0,
+      "time_hours": 24,
+      "roi_annual_usd": 154000,
+      "risk": "NONE",
+      "status": "NOT_STARTED"
+    },
+    {
+      "rank": 10,
+      "id": "aum_tracking",
+      "label": "K429 AUM tracking enable (AUM_TRACKING_ENABLED=true)",
+      "source_wave": "K429",
+      "cost_usd": 0,
+      "time_min": 5,
+      "roi_5y_usd": 3600000,
+      "risk": "LOW",
+      "status": "NOT_STARTED",
+      "runbook_section": "§22",
+      "script": "scripts/portfolio_aum_manager.py"
+    }
+  ],
+  "timeline": {
+    "week1": {
+      "days": "1-7",
+      "label": "Zero-Cost Foundation",
+      "actions": ["hip4_daemon", "rss_monitor", "tvl_monitor", "susde_monitor", "smart_router", "builder_rebate", "emergency_exit_creds", "aum_tracking"],
+      "cost_total_usd": 0,
+      "time_total_min": 65
+    },
+    "week2": {
+      "days": "8-14",
+      "label": "Capital Deployment",
+      "actions": ["bybit_vip5"],
+      "note": "Fund Bybit $2M+ for VIP5, continue PAPER_TRADE leverage monitoring"
+    },
+    "week3": {
+      "days": "15-21",
+      "label": "Leverage Go-Live (1.5x)",
+      "actions": ["leverage_advance_1.5x"],
+      "gate_checks": [
+        "margin_used_pct < 60%",
+        "K429 AUM tracking active > 7 days",
+        "No CB fires in past 7 days",
+        "sUSDe APY above 5%"
+      ]
+    },
+    "week4": {
+      "days": "22-28",
+      "label": "Full 3x Leverage",
+      "actions": ["leverage_advance_3x", "hype_gold_stake"],
+      "gate_checks": [
+        "margin_used_pct < 65% during LIVE_1.5X week",
+        "No CB fires during LIVE_1.5X phase",
+        "7d rolling return positive",
+        "Bybit VIP5 confirmed"
+      ]
+    },
+    "month6": {
+      "label": "Bybit Live Integration",
+      "trigger": "AUM >= $15M",
+      "expected": "Month 4 at K433 base-case CAGR",
+      "incremental_roi_annual_usd": 2200000
+    },
+    "month12": {
+      "label": "Decision: Drift or continue",
+      "trigger_high": "AUM >= $30M → Drift integration",
+      "trigger_low": "AUM $15M-$30M → continue HL+Bybit"
+    }
+  },
+  "expected_outcomes_by_phase": {
+    "day7":   { "aum_usd": 10000000, "milestone": "4 daemons live + builder rebate active" },
+    "day14":  { "aum_usd": 10000000, "milestone": "Bybit VIP5 + smart router verified" },
+    "day21":  { "aum_usd": 10100000, "milestone": "+$1.1M/yr incremental at 1.5x" },
+    "day28":  { "aum_usd": 10200000, "milestone": "+$2.2M/yr fully active at 3x" },
+    "day60":  { "aum_usd": 10350000, "milestone": "Full compounding visible" },
+    "day180": { "aum_usd": 11880000, "milestone": "Bybit live integration" },
+    "day365": { "aum_usd": 14200000, "milestone": "Decision: Drift or hold" },
+    "day1825":{ "aum_usd": 25470000, "milestone": "Base case terminal (CAGR 20.56%)" }
+  },
+  "checklists": {
+    "daily": [
+      "K412 sUSDe APY status: NORMAL?",
+      "K407 HypurrFi DROP_LINE pattern?",
+      "K387 RSS new SEC/CFTC items?",
+      "K434 smart router routing decisions",
+      "K429 cumulative_pnl_pct vs prior day",
+      "K430 circuit breaker margin_used < 70%?"
+    ],
+    "weekly": [
+      "K368 HIP-4 calibration N snapshots count",
+      "K412 sUSDe APY 7d trend",
+      "K407 TVL monitor digest",
+      "K429 AUM weekly delta vs base-case",
+      "K431 venue allocation (HL < 65%?)",
+      "K370 builder rebate amount in HL dashboard"
+    ],
+    "monthly": [
+      "K411 memory rules recheck",
+      "K359/K379/K399 governance schedule",
+      "K414 HL universe diff (new RWA?)",
+      "K393 HypurrFi monthly trajectory",
+      "K412 sUSDe 30d mean > 5%?",
+      "K427 sleeve rebalance (75/20/5)",
+      "K429 surplus redeployment"
+    ]
+  },
+  "source_waves": {
+    "K356": "HIP-4 calibration daemon",
+    "K357": "Emergency HL exit credentials",
+    "K368": "HIP-4 calibration gate 2026-06-22",
+    "K370": "Builder rebate registration",
+    "K386": "BEAR_1 fallback scaffold",
+    "K387": "RSS regulatory monitor",
+    "K400": "USDY procurement pathway",
+    "K404": "RSS monitor keywords deployed",
+    "K407": "TVL trajectory monitor",
+    "K409": "K368 deadline adjusted to 2026-06-22",
+    "K412": "sUSDe APY monitor",
+    "K415": "v6.15a/b USDY activation pathway",
+    "K426": "Leverage amplifier analysis",
+    "K427": "Sleeve weight confirmation 75/20/5",
+    "K428": "Daily reinvestment S1",
+    "K429": "Portfolio AUM manager deployment",
+    "K430": "3x leverage scaffold + circuit breaker",
+    "K431": "Multi-venue Bybit integration",
+    "K432": "Bybit VIP5 + HYPE Gold stake",
+    "K433": "$10M → $25.47M 5y simulation",
+    "K434": "Smart router daemon scaffold"
+  }
+}
