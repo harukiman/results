@@ -1,0 +1,209 @@
+{
+  "wave": "K467",
+  "date": "2026-05-30",
+  "timestamp_jst": "2026-05-30 01:40:41 JST",
+  "defillama_live": {
+    "tvl_usd": 634810000,
+    "annualized_fees_usd": 85350000,
+    "fees_30d_usd": 7000000,
+    "fees_7d_usd": 1680000,
+    "fees_24h_usd": 358117,
+    "cumulative_fees_usd": 807710000,
+    "revenue_annualized_usd": 21340000,
+    "volume_30d_usd": 5252000000,
+    "volume_cumulative_usd": 480930000000,
+    "open_interest_usd": 88800000,
+    "fee_split_lp_pct": 75,
+    "fee_split_lp_pct_post_feb2025": 50,
+    "holders_revenue_annualized": 10670000,
+    "holders_revenue_30d": 874471
+  },
+  "jlp_basket": {
+    "SOL": 0.44,
+    "ETH": 0.09,
+    "BTC": 0.11,
+    "USDC": 0.27,
+    "USDT": 0.09
+  },
+  "jlp_apy_history": {
+    "pre_june2024_fee_change": 0.574,
+    "post_june2024_fee_change": 0.695,
+    "current_marketed": 0.0877,
+    "note": "APY highly volatile: 20-30% steady-state, 50-70%+ during high volatility periods",
+    "current_from_defillama": 0.016808178825160284
+  },
+  "current_apy_defillama": 1.68,
+  "hedge_construction_per_1m_jlp": {
+    "notional_jlp": 1000000,
+    "short_SOL_usd": 440000.0,
+    "short_ETH_usd": 90000.0,
+    "short_BTC_usd": 110000.0,
+    "stable_passthrough_usd": 360000.0,
+    "total_hedge_notional": 640000.0,
+    "hedged_fraction": 0.64,
+    "unhedged_stable_fraction": 0.36
+  },
+  "net_carry_scenarios": {
+    "low_apy_high_funding": {
+      "gross_apy": 0.12,
+      "hedge_cost_ann": 0.0768,
+      "rebalance_cost_ann": 0.06,
+      "sc_risk_premium": 0.05,
+      "mgmt_fee_drag": 0,
+      "net_apy": -0.0668,
+      "net_apy_pct": -6.68
+    },
+    "base_case": {
+      "gross_apy": 0.2,
+      "hedge_cost_ann": 0.0512,
+      "rebalance_cost_ann": 0.06,
+      "sc_risk_premium": 0.05,
+      "mgmt_fee_drag": 0,
+      "net_apy": 0.038800000000000015,
+      "net_apy_pct": 3.88
+    },
+    "high_apy_low_funding": {
+      "gross_apy": 0.4,
+      "hedge_cost_ann": 0.032,
+      "rebalance_cost_ann": 0.06,
+      "sc_risk_premium": 0.05,
+      "mgmt_fee_drag": 0,
+      "net_apy": 0.258,
+      "net_apy_pct": 25.8
+    },
+    "defillama_current": {
+      "gross_apy": 0.016808178825160284,
+      "hedge_cost_ann": 0.0512,
+      "rebalance_cost_ann": 0.06,
+      "sc_risk_premium": 0.05,
+      "mgmt_fee_drag": 0,
+      "net_apy": -0.14439182117483973,
+      "net_apy_pct": -14.44
+    }
+  },
+  "capacity_analysis": [
+    {
+      "aum_usd": 1000000,
+      "sleeve_5pct_usd": 50000.0,
+      "pct_jlp_tvl": 0.01,
+      "feasible": true,
+      "note": "OK"
+    },
+    {
+      "aum_usd": 10000000,
+      "sleeve_5pct_usd": 500000.0,
+      "pct_jlp_tvl": 0.08,
+      "feasible": true,
+      "note": "OK"
+    },
+    {
+      "aum_usd": 50000000,
+      "sleeve_5pct_usd": 2500000.0,
+      "pct_jlp_tvl": 0.39,
+      "feasible": true,
+      "note": "OK"
+    },
+    {
+      "aum_usd": 100000000,
+      "sleeve_5pct_usd": 5000000.0,
+      "pct_jlp_tvl": 0.79,
+      "feasible": true,
+      "note": "OK"
+    },
+    {
+      "aum_usd": 500000000,
+      "sleeve_5pct_usd": 25000000.0,
+      "pct_jlp_tvl": 3.94,
+      "feasible": true,
+      "note": "OK"
+    }
+  ],
+  "section6_gates": {
+    "gates": {
+      "G1_net_apy_gte_5pct": {
+        "pass": false,
+        "value": "3.9%",
+        "threshold": "5%"
+      },
+      "G2_perm_p_na": {
+        "pass": true,
+        "value": "N/A (yield strategy)",
+        "threshold": "N/A"
+      },
+      "G3_audit_counterparty": {
+        "pass": null,
+        "value": "Jupiter audited; Solana SC risk remains",
+        "threshold": "CONDITIONAL"
+      },
+      "G4_delta_neutral_60d": {
+        "pass": null,
+        "value": "Forward test required",
+        "threshold": "60d paper"
+      },
+      "G5_corr_vs_k280_lt_04": {
+        "pass": true,
+        "value": "0.25",
+        "threshold": "< 0.40"
+      },
+      "G6_max_single_event_loss_5pct": {
+        "pass": null,
+        "value": "SC bug / basket depeg < 5%?",
+        "threshold": "< 5% of portfolio"
+      },
+      "G7_ann_return_gt_5pct": {
+        "pass": false,
+        "value": "3.9%",
+        "threshold": "5% net"
+      }
+    },
+    "passed": 2,
+    "conditional": 3,
+    "failed": 2,
+    "verdict": "CONDITIONAL_ACCEPT_TRIGGER_BASED",
+    "note": "G1/G7 fail only at current APY trough (1.68%). Pass at gross APY >= 25%. Entry is trigger-based."
+  },
+  "comparison_vs_susde": {
+    "sleeves": [
+      {
+        "name": "sUSDe (K344)",
+        "gross_apy": 0.037,
+        "net_apy": 0.037,
+        "mechanism": "Ethena delta-neutral perp hedge + ETH staking yield",
+        "custody_risk": "Centralized (Ethena, LST)",
+        "ecosystem": "Ethereum",
+        "complexity": "Low",
+        "current_status": "Active in v6.20"
+      },
+      {
+        "name": "JLP delta-neutral (K467)",
+        "gross_apy": 0.2,
+        "net_apy": 0.038800000000000015,
+        "mechanism": "Jupiter perp LP fees + HL short hedge (delta-neutral)",
+        "custody_risk": "Solana smart contract (Jupiter) + Hyperliquid",
+        "ecosystem": "Solana + HL",
+        "complexity": "Medium-High",
+        "current_status": "Proposed v6.21"
+      }
+    ],
+    "jlp_vs_susde_multiple": 1.0,
+    "assessment": "JLP ~5-10x higher yield but materially higher smart contract + execution risk"
+  },
+  "decision": {
+    "verdict": "CONDITIONAL_ACCEPT",
+    "proposed_version": "v6.21",
+    "sleeve_size": "5% of AUM (2% start recommended)",
+    "key_risks": [
+      "Solana smart contract bug (Jupiter exploitable)",
+      "Basket weight drift causing temporary delta exposure",
+      "JLP APY currently low (~1.68%) \u2014 must confirm re-acceleration",
+      "HL funding can turn negative (shorts pay) reducing net yield"
+    ],
+    "action_items": [
+      "1. Monitor JLP APY recovery: target > 15% annualized before entry",
+      "2. Forward-test delta-neutral construction for 60 days (G4)",
+      "3. Solana Phantom wallet + HL hedge account setup",
+      "4. Monthly rebalance hedge as basket weights drift",
+      "5. Max position: 5% of JLP TVL = ~$31.7M at current TVL"
+    ]
+  }
+}
