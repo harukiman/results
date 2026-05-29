@@ -1,0 +1,150 @@
+{
+  "wave": "K495",
+  "signal": "DEX-CEX Flow Divergence (ratio z-score, 30d window, 7d fwd)",
+  "decision": "CONDITIONAL",
+  "gates_pass": 7,
+  "gates_total": 9,
+  "is": {
+    "n": 486,
+    "start": "2024-06-22",
+    "end": "2025-10-20",
+    "sharpe": 0.913
+  },
+  "oos": {
+    "n": 209,
+    "start": "2025-10-21",
+    "end": "2026-05-17",
+    "sharpe_btc": 2.34,
+    "sharpe_eth": 2.238,
+    "sharpe_sol": 1.92,
+    "sharpe_avg": 2.166,
+    "ann_return_1x_pct": 36.0,
+    "cum_return_pct": 22.0,
+    "max_dd_pct": -10.04,
+    "trades_yr": 107.0
+  },
+  "perm_p": 0.007,
+  "corr": {
+    "vs_k208": -0.017,
+    "vs_k280": 0.008,
+    "vs_k449": 0.107
+  },
+  "walk_forward": [
+    {
+      "fold": 1,
+      "start": "2024-10-21",
+      "end": "2024-12-11",
+      "sharpe": -4.71,
+      "positive": false
+    },
+    {
+      "fold": 2,
+      "start": "2025-04-12",
+      "end": "2025-06-02",
+      "sharpe": -2.642,
+      "positive": false
+    },
+    {
+      "fold": 3,
+      "start": "2025-10-02",
+      "end": "2025-11-22",
+      "sharpe": 1.105,
+      "positive": true
+    },
+    {
+      "fold": 4,
+      "start": "2026-03-24",
+      "end": "2026-05-14",
+      "sharpe": 4.795,
+      "positive": true
+    }
+  ],
+  "gates": {
+    "G1": {
+      "label": "OOS Sharpe >= 1.0",
+      "value": 2.34,
+      "threshold": 1.0,
+      "pass": true
+    },
+    "G2": {
+      "label": "Perm p-value <= 0.05",
+      "value": 0.007,
+      "threshold": 0.05,
+      "pass": true
+    },
+    "G3": {
+      "label": "DSR Bonferroni p<=0.0042",
+      "value": 0.007,
+      "threshold": 0.004166666666666667,
+      "pass": false
+    },
+    "G4": {
+      "label": "Walk-fwd 3/4+ folds positive",
+      "value": 2,
+      "threshold": 3,
+      "pass": false
+    },
+    "G5a": {
+      "label": "Corr vs K208 < 0.40",
+      "value": 0.017,
+      "threshold": 0.4,
+      "pass": true
+    },
+    "G5b": {
+      "label": "Corr vs K280 < 0.40",
+      "value": 0.008,
+      "threshold": 0.4,
+      "pass": true
+    },
+    "G5c": {
+      "label": "Corr vs K449 < 0.40",
+      "value": 0.107,
+      "threshold": 0.4,
+      "pass": true
+    },
+    "G6": {
+      "label": "Trades/yr >= 30",
+      "value": 107.0,
+      "threshold": 30,
+      "pass": true
+    },
+    "G7": {
+      "label": "OOS Ann Return > 5%",
+      "value": 36.0,
+      "threshold": 5.0,
+      "pass": true
+    }
+  },
+  "profit": {
+    "leverage": 3.0,
+    "sleeve_pct": 0.03,
+    "annual_return_1x": 36.0,
+    "annual_return_leveraged": 107.9,
+    "profit_10m_usd_yr": 323809,
+    "profit_100m_usd_yr": 3238090,
+    "terminal_5y_10m_usd": 11727348
+  },
+  "regime_analysis": {
+    "bear_oos_sharpe": 4.591,
+    "bull_oos_sharpe": -1.238,
+    "bear_fraction": 0.494,
+    "note": "Signal strongest in BEAR regime (90d BTC return < 0); flips in strong BULL"
+  },
+  "data_limitation": {
+    "status": "PARTIAL",
+    "achieved": "Aggregate DEX vol (DefiLlama), CEX vol proxy (Binance 1h)",
+    "missing_for_full_signal": [
+      "Per-wallet DEX flow (Nansen Pro $15K/yr): estimated Spearman r +0.15-0.20",
+      "MEV mempool signal (Flashbots/Blocknative): 5-min latency, 10x more trades",
+      "Chain-specific flow (Ethereum vs Solana separate): ~2x signal quality"
+    ],
+    "free_tier_spearman_r": 0.107,
+    "paid_tier_estimated_r": 0.25
+  },
+  "next_axis": [
+    "K496: Bear-regime conditioned DEX/CEX scaffold (same signal + regime filter)",
+    "K497: Social sentiment (LunarCrush free tier) + DEX flow composite",
+    "K498: MVRV / on-chain valuation ratio (Glassnode free tier)"
+  ],
+  "elapsed_sec": 0.3
+}
