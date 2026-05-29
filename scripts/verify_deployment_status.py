@@ -273,6 +273,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k493_atom_btc",
         expected_html_status="SCAFFOLD-READY",  # K499: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=5.0 paper + fill_rate >=60% + maxDD <15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k495-dex-cex-flow",
+        purpose="K495 DEX-CEX flow divergence bear-conditional (LONG BTC+ETH+SOL, 3x leverage, daily cron 86400s, HL-only, bear-regime gate 90d BTC<0, OOS Sh bear-cond 4.59, $323K/yr @$10M, corr K208=-0.017 K280=0.008 fully orthogonal to FR-carry family, v6.25 candidate 3% sleeve, 33rd daemon)",
+        scripts=["scripts/k495_dex_cex_flow_run.py"],
+        log_basename="k495_dex_cex_flow",
+        expected_html_status="SCAFFOLD-READY",  # K502: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=3.0 + >=2 bear-regime hits + maxDD <15%)
+    ),
 ]
 
 

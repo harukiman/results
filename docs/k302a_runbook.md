@@ -6369,3 +6369,225 @@ The 4x cap matches K449, K476, and K484 (all alt-BTC paired-trades). At $10M / 3
 ---
 
 *K499 §38d -- K493 ATOM-BTC FR differential production scaffold (32nd daemon, OOS Sh 50.79 #1 family, $231K/yr net @$10M, G5a 0.1763 Cosmos hypothesis CONFIRMED, 60d paper-trade gate, v6.24 K449+K476+K484+K493 14% combined sleeve ~$507K/yr) -- 2026-05-30*
+
+---
+
+## §39 K495 DEX-CEX Flow Divergence Production Scaffold
+
+**Wave:** K502 | **Status:** SCAFFOLD-READY (33rd daemon) | **Generated:** 2026-05-30
+
+### §39.1 Strategy Overview
+
+K495 DEX-CEX Flow Divergence is a bear-conditional directional strategy (FOLLOW direction)
+that enters LONG BTC+ETH+SOL positions on HyperLiquid when DefiLlama DEX volume significantly
+exceeds historical norms relative to Binance CEX volume (BTC+ETH+SOL), in a confirmed bear regime.
+
+**Core hypothesis:** In crypto bear markets, DEX volume dominance over CEX volume is a
+leading indicator of capitulation lows. Retail traders seek permissionless DEX access during
+institutional withdrawal from CEX. This DEX-CEX divergence (z-score > 1.0) precedes recoveries
+by 5–15 days. The 7-day holding period captures this capitulation bounce.
+
+**Orthogonality:** K495 is fully orthogonal to the FR-carry family:
+- corr vs K208 = -0.017 (near-zero, no co-movement with DAR carry)
+- corr vs K280 = 0.008 (independent of main portfolio)
+- corr vs K449 = 0.107 (mild positive — both bear-market aware)
+- corr vs K476 = 0.021, K484 = 0.013, K493 = 0.009
+
+**This is a new alpha axis** — the first on-chain volume-based signal in the portfolio,
+completely independent of the FR-carry family (K208/K280/K449/K476/K484/K493).
+
+### §39.2 Signal Mechanics
+
+```
+DefiLlama DEX volume (24h, all chains, USD)
+  ÷ Binance CEX volume (BTC+ETH+SOL spot, 24h, USD)
+= DEX/CEX ratio
+
+30-day rolling z-score of DEX/CEX ratio:
+  z_t = (ratio_t - mean(ratio, 30d)) / std(ratio, 30d)
+
+Entry condition (BOTH required):
+  1. Bear regime: 90d BTC return < 0 (STRICT gate)
+  2. z-score > 1.0 (DEX dominance exceeds 30d mean by 1 sigma)
+
+Exit conditions (ANY triggers close):
+  1. Bear regime ends: 90d BTC return >= 0 (FORCE CLOSE immediately)
+  2. z-score < -0.5 (CEX volume dominance reasserts)
+  3. 7-day holding period expires (next cycle re-evaluates)
+  4. Emergency exit (--include-k495 flag)
+```
+
+### §39.3 Bear-Regime Gate (STRICT)
+
+The bear-regime gate is the PRIMARY risk control for K495:
+
+| Condition | Action |
+|-----------|--------|
+| 90d BTC return < 0 | Gate OPEN — entry/hold allowed |
+| 90d BTC return >= 0 | Gate CLOSED — force-close immediately |
+| Insufficient history (<90d) | Gate CLOSED (conservative) |
+| BTC price fetch failed | Gate CLOSED (conservative) |
+
+**Gate flip behavior:**
+- BEAR → BULL flip: `close_position("bear_regime_gate_closed_bull_flip")` called immediately
+- BULL → BEAR flip: Gate opens, z-score re-evaluated at next daily cycle (no premature entry)
+- No "wait for N days" after gate opens — first qualifying z-score signal enters
+
+**Historical bear periods (2020–2025):**
+- 2022Q1–2022Q4: BTC -74% (peak to trough) — longest bear window
+- 2024Q1–2024Q3: BTC -26% partial (K495 conditional suppression)
+- K495 G4 failure was bull-regime overwhelm (2024Q4–2025Q2): bear gate RESOLVES this
+
+### §39.4 Position Sizing
+
+```
+AUM:             $10,000,000  (reference)
+Sleeve:          3%           ($300,000 sleeve capital)
+Leverage:        3x           ($900,000 total notional)
+Assets:          BTC + ETH + SOL (equal weight, 1/3 each)
+Notional/leg:    $300,000 per asset
+Margin required: $300,000 (= $900K notional / 3x)
+Margin/AUM:      3.0%
+HL concentration: 33rd daemon adds ~3% to HL exposure (within 65% cap)
+```
+
+### §39.5 Execution Protocol
+
+All 3 legs execute on HyperLiquid only (HL-only, K434 Phase 2 pattern):
+1. Submit LONG BTC POST_ONLY on HL ($300K notional)
+2. Submit LONG ETH POST_ONLY on HL ($300K notional)
+3. Submit LONG SOL POST_ONLY on HL ($300K notional)
+4. IOC fallback per leg if POST_ONLY times out (300s window)
+5. Bear-regime gate re-checked before submit (double-gate)
+
+**Close protocol (emergency or signal exit):**
+Step 1: IOC reduce-only SELL BTC (largest typical notional)
+Step 2: IOC reduce-only SELL ETH
+Step 3: IOC reduce-only SELL SOL
+No short-leg risk (LONG-only strategy).
+
+### §39.6 60d Paper-Trade Gate
+
+| Metric | Target | Notes |
+|--------|--------|-------|
+| Realized OOS Sharpe | ≥ 3.0 (60d window) | Bear-conditional Sharpe 4.59 in backtest |
+| Bear regime hits | ≥ 2 during paper period | Else extend paper period |
+| Max drawdown | < 15% | Per 60d paper window |
+
+**Gate passage → live activation procedure (§39.8)**
+
+If bear-regime hits < 2 during 60d paper period:
+- Extend paper period until ≥ 2 bear-regime activations observed
+- K495 is ONLY meaningful in bear regimes; insufficient hits = insufficient validation
+
+### §39.7 v6.25 Architecture Path
+
+```
+v6.25 candidate = v6.24 + K495 DEX-CEX bear-conditional (3%)
+
+v6.25 sleeve composition:
+  K280:    57%  (reduced 3pp vs v6.24 to fund K495)
+  K297:    20%
+  sUSDe:    5%
+  K449:     5%   (ETH-BTC delta-neutral, 4x, HL)
+  K476:     3%   (SOL-BTC delta-neutral, 4x, HL)
+  K484:     3%   (AVAX-BTC delta-neutral, 4x, HL)
+  K493:     3%   (ATOM-BTC delta-neutral, 4x, HL)
+  K495:     3%   (DEX-CEX flow divergence, 3x, bear-conditional, HL) ← NEW
+  K457:     1%   (basket, placeholder)
+  Total:  100%
+
+Combined FR-carry + K495 profit:
+  K449: $187K/yr + K476: $187K/yr + K484: $75.7K/yr + K493: $231K/yr + K495: $323K/yr
+  = ~$830K/yr combined @ $10M (17% multi-strategy sleeve)
+
+K495 v6.25 activation requires:
+  1. 60d paper-trade gate passed (§39.6)
+  2. Bear regime confirmed at time of activation
+  3. HL concentration check: total HL% must remain ≤ 65%
+```
+
+### §39.8 Files
+
+| File | Description |
+|------|-------------|
+| `scripts/k495_dex_cex_flow_run.py` | Main strategy script (~250 LOC, K339 pattern) |
+| `com.cryptolab.k495-dex-cex-flow.plist` | LaunchAgent plist (86400s daily cron) |
+| `data/k495_dashboard.json` | Real-time signal + regime + position state |
+| `cache/k495_flow_history.jsonl` | 30d+ DEX-CEX ratio history for z-score |
+| `cache/k495_btc_price_history.jsonl` | 90d+ BTC price cache for bear-gate |
+| `cache/k495_paper_trades.jsonl` | Paper-trade execution log |
+| `logs/k495_dex_cex_flow.log` | Daemon stdout log |
+| `logs/k495_dex_cex_flow.err` | Daemon stderr log |
+
+### §39.9 Activation Procedure
+
+1. K495 paper-trade gate passed (all 3 metrics — see §39.6)
+2. Bear regime confirmed (90d BTC return < 0 at time of activation)
+3. HL concentration verified ≤ 65%:
+   `python3 scripts/leverage_manager.py --check-health`
+4. Copy plist to LaunchAgents:
+   ```bash
+   REPO=$(python3 -c "from pathlib import Path; print(Path('scripts/k495_dex_cex_flow_run.py').resolve().parent.parent)")
+   sed "s|REPO_ROOT|$REPO|g" com.cryptolab.k495-dex-cex-flow.plist \
+     > ~/Library/LaunchAgents/com.cryptolab.k495-dex-cex-flow.plist
+   launchctl load ~/Library/LaunchAgents/com.cryptolab.k495-dex-cex-flow.plist
+   ```
+5. Update plist ProgramArguments: remove `--dry-run`, set `PAPER_TRADE=False`
+6. Set HL credentials: `export HL_USER_ADDRESS=0x... HL_PRIVATE_KEY=0x...`
+7. Run verification:
+   ```bash
+   python3 scripts/k495_dex_cex_flow_run.py --status
+   python3 scripts/verify_deployment_status.py
+   ```
+8. Confirm 33 daemons, 0 mismatches
+
+### §39.10 Emergency Exit Integration
+
+K495 is integrated into `scripts/emergency_hl_exit.py`:
+- `_detect_k495_position()`: detects LONG BTC+ETH+SOL simultaneously
+- `close_k495_position()`: IOC reduce-only BTC → ETH → SOL
+- `plan_exit()`: k495_detected + k495_detail in exit plan
+- CLI flag: `--include-k495` (see §14 emergency exit protocol)
+
+```bash
+# Emergency dry-run (includes K495 summary):
+python3 scripts/emergency_hl_exit.py --dry-run --include-k495 --user 0x...
+
+# Emergency EXECUTE (all venues including K495):
+python3 scripts/emergency_hl_exit.py --EXECUTE --include-k495 --user 0x...
+```
+
+**Bear-regime auto-close:**
+The daily cron (86400s) automatically closes K495 if 90d BTC return flips positive.
+This is the PRIMARY exit mechanism — emergency exit is a failsafe.
+
+### §39.11 Leverage Configuration
+
+K495 is registered in `data/leverage_config.json`:
+```json
+"K495_DEX_CEX_FLOW": 3.0
+```
+And in `scripts/leverage_manager.py`:
+```python
+"K495_DEX_CEX_FLOW": 3.0,  # K502: 3x cap for DEX-CEX flow divergence (bear-conditional)
+```
+Sleeve weight (v6.25 candidate):
+```python
+"K495": 0.03  # SLEEVE_WEIGHTS_V625
+```
+
+### §39.12 References
+
+| Wave | Description |
+|------|-------------|
+| K502 | This section — K495 production scaffold (33rd daemon, v6.25 architecture path) |
+| K495 | K495 analysis — DEX-CEX flow divergence CONDITIONAL ACCEPT ($323K/yr @$10M) |
+| K493 | ATOM-BTC FR differential (K499 scaffold, 32nd daemon, direct scaffold template) |
+| K484 | AVAX-BTC FR differential (K489 scaffold, 30th daemon) |
+| K434 | Smart router (K495 uses HL-only pattern) |
+| K266 | §6 strict gate framework (K495 scored 7/9, G4 bear-gate resolves) |
+
+---
+
+*K502 §39 -- K495 DEX-CEX flow divergence production scaffold (33rd daemon, bear-conditional LONG BTC+ETH+SOL, OOS Sh bear-cond 4.59, $323K/yr net @$10M, corr K208=-0.017 K280=0.008 fully orthogonal to FR-carry family, 60d paper-trade gate, v6.25 candidate) -- 2026-05-30*

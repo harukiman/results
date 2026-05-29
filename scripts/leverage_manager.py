@@ -60,6 +60,7 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K476_SOL_BTC":   4.0,   # K478: SOL-BTC paired-trade (v6.21 candidate, HL-only)
     "K484_AVAX_BTC":  4.0,   # K489: AVAX-BTC paired-trade (v6.23 candidate, HL-only, OOS Sh 43.89)
     "K493_ATOM_BTC":  4.0,   # K499: ATOM-BTC paired-trade (v6.24 candidate, HL-only, OOS Sh 50.79 #1 family)
+    "K495_DEX_CEX_FLOW": 3.0,  # K502: DEX-CEX flow divergence (v6.25 candidate, HL-only, bear-conditional, $323K/yr)
     "K457_basket":    4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
@@ -74,6 +75,7 @@ SLEEVE_WEIGHTS: Dict[str, float] = {
     "K476":   0.00,   # K476 SOL-BTC FR differential paired-trade (K478 scaffold, 3% target at v6.21 activation)
     "K484":   0.00,   # K484 AVAX-BTC FR differential paired-trade (K489 scaffold, 3% target at v6.23 activation)
     "K493":   0.00,   # K493 ATOM-BTC FR differential paired-trade (K499 scaffold, 3% target at v6.24 activation)
+    "K495":   0.00,   # K495 DEX-CEX flow divergence bear-conditional (K502 scaffold, 3% target at v6.25 activation)
 }
 
 # v6.21 candidate weights (proposed in K478 — not yet active)
@@ -107,6 +109,22 @@ SLEEVE_WEIGHTS_V624: Dict[str, float] = {
     "K476":  0.03,   # SOL-BTC delta-neutral, 4x leverage, HL-only (v6.21 addition)
     "K484":  0.03,   # AVAX-BTC delta-neutral, 4x leverage, HL-only (v6.23 addition)
     "K493":  0.03,   # ATOM-BTC delta-neutral, 4x leverage, HL-only (v6.24 addition, K499 scaffold)
+    "K457":  0.01,   # BTC+ETH+SOL basket (placeholder, pending paper gate)
+}
+
+# v6.25 candidate weights (proposed in K502 — not yet active)
+# K449 5% + K476 3% + K484 3% + K493 3% + K495 3% = 17% combined sleeve, ~$830K/yr @ $10M
+# K495: DEX-CEX flow divergence, bear-conditional, $323K/yr @$10M, new orthogonal alpha axis
+# corr K495 vs FR-carry family ~0 (new axis fully orthogonal)
+SLEEVE_WEIGHTS_V625: Dict[str, float] = {
+    "K280":  0.57,   # reduced 3pp vs v6.24 to fund K495 DEX-CEX bear-conditional sleeve
+    "K297":  0.20,
+    "sUSDe": 0.05,
+    "K449":  0.05,   # ETH-BTC delta-neutral, 4x leverage, HL-only (v6.16 base, 5%)
+    "K476":  0.03,   # SOL-BTC delta-neutral, 4x leverage, HL-only (v6.21 addition)
+    "K484":  0.03,   # AVAX-BTC delta-neutral, 4x leverage, HL-only (v6.23 addition)
+    "K493":  0.03,   # ATOM-BTC delta-neutral, 4x leverage, HL-only (v6.24 addition, K499 scaffold)
+    "K495":  0.03,   # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
     "K457":  0.01,   # BTC+ETH+SOL basket (placeholder, pending paper gate)
 }
 
@@ -220,6 +238,7 @@ def compute_position_size(
         "K476":   "K476_SOL_BTC",   # K478: 4x cap for SOL-BTC paired-trade sleeve
         "K484":   "K484_AVAX_BTC",  # K489: 4x cap for AVAX-BTC paired-trade sleeve
         "K493":   "K493_ATOM_BTC",  # K499: 4x cap for ATOM-BTC paired-trade sleeve
+        "K495":   "K495_DEX_CEX_FLOW",  # K502: 3x cap for DEX-CEX flow divergence (bear-conditional)
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)
@@ -271,6 +290,7 @@ def compute_margin_required(
         "K457":   "K457_basket",    # K459: 4x cap BTC+ETH+SOL basket
         "K476":   "K476_SOL_BTC",   # K478: 4x cap SOL-BTC paired-trade
         "K484":   "K484_AVAX_BTC",  # K489: 4x cap AVAX-BTC paired-trade
+        "K495":   "K495_DEX_CEX_FLOW",  # K502: 3x cap DEX-CEX flow divergence
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)
@@ -324,7 +344,7 @@ def check_margin_health(
     sleeves_margin: Dict[str, float] = {}
     total_margin   = 0.0
 
-    for sleeve in ["K280", "K297", "sUSDe", "K449", "K457", "K476", "K484"]:
+    for sleeve in ["K280", "K297", "sUSDe", "K449", "K457", "K476", "K484", "K495"]:
         m = compute_margin_required(sleeve, leverage, current_aum, deployment_pct)
         sleeves_margin[sleeve] = round(m, 2)
         total_margin += m

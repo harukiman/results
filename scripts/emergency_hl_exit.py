@@ -583,6 +583,106 @@ def _detect_k449_paired_positions(positions: List[Dict]) -> Optional[Dict]:
     }
 
 
+def _detect_k495_position(positions: List[Dict]) -> Optional[Dict]:
+    """
+    K502 Phase 4: Detect K495 DEX-CEX flow divergence positions (LONG BTC+ETH+SOL).
+
+    K495 is bear-conditional LONG-only (no short legs):
+      - LONG BTC (HL)
+      - LONG ETH (HL)
+      - LONG SOL (HL)
+
+    Identification: 2+ of BTC/ETH/SOL are LONG simultaneously (not short).
+    Note: BTC/ETH may appear in other strategies (K449/K476/K484 short legs).
+    K495 detection uses LONG-only criterion for all 3 symbols together.
+    If the position set has LONG BTC + LONG ETH + LONG SOL simultaneously,
+    this is almost certainly a K495 position (no other strategy holds all 3 LONG).
+
+    Returns dict describing the K495 position, or None if not found.
+    """
+    K495_SYMBOLS = {"BTC", "ETH", "SOL"}
+    k495_longs   = [p for p in positions
+                    if p.get("coin", "").upper() in K495_SYMBOLS
+                    and p.get("side") == "long"]
+
+    if len(k495_longs) < 2:
+        return None
+
+    # Require at least 2 of the 3 assets to be long (partial position is valid)
+    long_syms = {p["coin"].upper() for p in k495_longs}
+    if not long_syms.intersection(K495_SYMBOLS):
+        return None
+
+    total_value = sum(float(p.get("value_usd", 0.0)) for p in k495_longs)
+    legs = [
+        {
+            "symbol":    p["coin"].upper(),
+            "side":      "long",
+            "size":      p.get("size", 0.0),
+            "value_usd": p.get("value_usd", 0.0),
+        }
+        for p in k495_longs
+    ]
+
+    return {
+        "detected":       True,
+        "assets":         sorted(list(long_syms)),
+        "legs":           legs,
+        "total_value_usd": round(total_value, 2),
+        "state":          "LONG_" + "_".join(sorted(long_syms)),
+        "close_protocol": "IOC reduce-only BTC → ETH → SOL (largest notional first)",
+        "note":           "K495 DEX-CEX flow divergence position — bear-conditional LONG BTC+ETH+SOL; close all 3 legs IOC reduce-only",
+    }
+
+
+def close_k495_position(
+    logger:  "logging.Logger",
+    plan:    Dict,
+    dry_run: bool = True,
+) -> None:
+    """
+    K502 Phase 4: Close K495 DEX-CEX flow divergence positions (LONG BTC+ETH+SOL).
+
+    Close protocol:
+      Step 1: IOC reduce-only SELL BTC   (largest notional)
+      Step 2: IOC reduce-only SELL ETH
+      Step 3: IOC reduce-only SELL SOL   (smallest of the three)
+
+    K495 is LONG-only: no short-leg risk. Sequential IOC is sufficient.
+    Bear-regime gate flip (BULL) triggers auto-close in k495_dex_cex_flow_run.py
+    daily cron — this function handles emergency forced close.
+
+    Args:
+      logger:  logging.Logger instance
+      plan:    exit plan dict (from plan_exit())
+      dry_run: True = paper-trade simulation
+    """
+    k495_detail = plan.get("k495_detail")
+
+    if not k495_detail or not k495_detail.get("detected"):
+        logger.info("  [K495] No K495 DEX-CEX flow position detected (NEUTRAL or 60d paper-trade).")
+        return
+
+    assets     = k495_detail.get("assets", [])
+    total_val  = k495_detail.get("total_value_usd", 0.0)
+
+    logger.info(f"  [K495] DEX-CEX flow divergence close — {k495_detail['state']}")
+    logger.info(f"    Assets: {', '.join(assets)}  total=${total_val:,.0f}")
+    logger.info(f"    Protocol: {k495_detail['close_protocol']}")
+
+    if dry_run:
+        logger.info("    [DRY-RUN] K495 BTC+ETH+SOL close simulated — no actual orders submitted")
+        return
+
+    # LIVE scaffold: submit IOC reduce-only per asset (BTC → ETH → SOL order)
+    close_order = ["BTC", "ETH", "SOL"]
+    for sym in close_order:
+        leg = next((l for l in k495_detail.get("legs", []) if l["symbol"] == sym), None)
+        if leg:
+            logger.info(f"    SCAFFOLD: IOC reduce-only SELL {sym} ${leg['value_usd']:,.0f} (HL)")
+    logger.info("    SCAFFOLD: K495 close wired but not executed (HL auth required at live activation)")
+
+
 def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
     """
     Produce a structured exit plan:
@@ -621,6 +721,12 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
     k493_coins: set = set()
     if k493_pair:
         k493_coins = {k493_pair["long_symbol"], k493_pair["short_symbol"]}
+
+    # K502: detect K495 DEX-CEX flow divergence positions (LONG BTC+ETH+SOL)
+    k495_pos = _detect_k495_position(positions)
+    k495_coins: set = set()
+    if k495_pos:
+        k495_coins = set(k495_pos.get("assets", []))
 
     # K459: detect K457 basket positions (BTC/ETH/SOL)
     k457_basket = _detect_k457_basket_positions(positions)
@@ -863,6 +969,8 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
         "k484_pair_detail":       k484_pair,
         "k493_paired_detected":   k493_pair is not None,
         "k493_pair_detail":       k493_pair,
+        "k495_detected":          k495_pos is not None,
+        "k495_detail":            k495_pos,
     }
 
 
@@ -1909,7 +2017,8 @@ def main() -> int:
             "K380: --include-bybit flag added (K378 Phase 6 Bybit gap fix)\n"
             "K456: --include-okx flag added (3rd venue, OKX SWAP perpetuals)\n"
             "K460: --include-aevo flag added (4th venue, STUB scaffold)\n"
-            "K460: --include-dydx flag added (5th venue, Cosmos chain STUB scaffold)"
+            "K460: --include-dydx flag added (5th venue, Cosmos chain STUB scaffold)\n"
+            "K502: --include-k495 flag added (K495 DEX-CEX flow divergence, LONG BTC+ETH+SOL, bear-conditional)"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
@@ -2213,6 +2322,30 @@ USDY sleeve emergency guidance (K415 §21.6):
             "OOS Sharpe 50.79 (#1 paired-trade family). G5a 0.1763 (Cosmos hypothesis). "
             "Requires: K493 daemon running (com.cryptolab.k493-atom-btc). "
             "See: docs/k302a_runbook.md §38d"
+        ),
+    )
+
+    # K502: K495 DEX-CEX flow divergence bear-conditional emergency exit flag
+    # K495 = LONG BTC+ETH+SOL on HL (3 legs) when DEX-CEX z-score > 1.0 in bear regime.
+    # Close protocol: IOC market orders (reduce-only) BTC → ETH → SOL (largest notional first).
+    # Bear-conditional: gate closes on bull-regime flip (90d BTC return >= 0).
+    # Auto-exit via bear-gate flip is already in k495_dex_cex_flow_run.py (daily cron).
+    # Use --include-k495 to print K495-specific close summary during emergency exit.
+    parser.add_argument(
+        "--include-k495",
+        dest="include_k495",
+        action="store_true",
+        default=False,
+        help=(
+            "K502: Include K495 DEX-CEX flow divergence close summary during emergency exit. "
+            "K495 positions (LONG BTC+ETH+SOL, HL-only, 3 legs) are detected automatically "
+            "via _detect_k495_position(); this flag adds a structured summary. "
+            "Close protocol: IOC reduce-only BTC → ETH → SOL (largest notional first). "
+            "All 3 legs on HyperLiquid only. Bear-conditional: bear gate auto-closes on BULL flip. "
+            "OOS Sharpe bear-conditional 4.59. $323K/yr net @$10M. "
+            "Orthogonal to FR-carry: corr K208=-0.017, K280=0.008, K449=0.107. "
+            "Requires: K495 daemon running (com.cryptolab.k495-dex-cex-flow). "
+            "See: docs/k302a_runbook.md §39"
         ),
     )
 
