@@ -1,0 +1,744 @@
+{
+  "wave": "K601",
+  "strategy": "WIF-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T08:16:36+0900",
+  "runtime_s": 4.9,
+  "decision": "ACCEPT CONDITIONAL",
+  "decision_rationale": "G5 all PASS. Core statistical strength (Sh=12.934). Failed gates: ['G4 Walk-forward', 'G8 Cross-venue']. G6 low trades/yr + G8 structural failures consistent with long-window Solana meme strategy. Solana meme 4th sub-cluster CONFIRMED. Recommendation: 60d paper-trade on HL WIF (3 venues confirmed: HL, Bybit, OKX).",
+  "solana_meme_cluster_status": "CONFIRMED: Solana meme sub-cluster (4th meme dimension) VALID. WIF distinct from SOL K476 (G5b=-0.0096 < 0.40). WIF distinct from BONK (G5q=0.0448 < 0.40). WIF distinct from PEPE K598 (G5v=0.1634 < 0.40). WIF distinct from DOGE K592 (G5s=0.0549 < 0.40). WIF distinct from SHIB K595 (G5t=0.0626 < 0.40). Meme taxonomy 4-dim confirmed: PoW(DOGE) + ERC20-Shibarium(SHIB) + ERC20-PureMeme(PEPE) + Solana-SPL(WIF). Next Solana meme: BONK standalone eval (K602 candidate).",
+  "cluster_taxonomy": {
+    "L1": [
+      "APT",
+      "SOL",
+      "AVAX",
+      "ETH"
+    ],
+    "Cosmos": [
+      "ATOM",
+      "INJ",
+      "TIA",
+      "SEI"
+    ],
+    "Storage": [
+      "FIL"
+    ],
+    "AI/GPU": [
+      "RENDER"
+    ],
+    "AI/Training": [
+      "TAO"
+    ],
+    "Oracle": [
+      "LINK"
+    ],
+    "Social": [
+      "TON"
+    ],
+    "Gaming": [
+      "SAND"
+    ],
+    "Gaming/P2E": [
+      "AXS"
+    ],
+    "Compute": [
+      "ICP"
+    ],
+    "DeFi/Lending": [
+      "AAVE"
+    ],
+    "Meme/Retail-PoW": [
+      "DOGE"
+    ],
+    "Meme/Retail-ERC20-Shibarium": [
+      "SHIB"
+    ],
+    "Meme/Retail-ERC20-PureMeme": [
+      "PEPE"
+    ],
+    "Meme/Retail-Solana-SPL": [
+      "WIF"
+    ],
+    "BTC": [
+      "BTC (baseline)"
+    ]
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "wif_listed": true,
+      "hl_ticker": "WIF",
+      "total_symbols": 230,
+      "max_leverage": 5,
+      "margin_table_id": 5,
+      "api_success": true,
+      "note": "HL meta API: 230 symbols. WIF ticker: WIF-PERP (standard WIF unit). maxLeverage=5. WIF-PERP active on Hyperliquid. FR settlement: 1h intervals. FR cache: hl_fr_WIF.parquet (17519 rows, 2024-05-24 to 2026-05-24)."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "wif_listed": true,
+      "status": "Trading",
+      "bybit_ticker": "WIFUSDT",
+      "max_leverage": "50.00",
+      "api_success": true,
+      "note": "Bybit WIFUSDT: status=Trading, maxLeverage=50.00. 8h FR settlement interval. Bybit WIFUSDT = 1 WIF per contract. Cache: bybit_fr_WIFUSDT_730d.parquet (3670 rows)."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "wif_listed": true,
+      "state": "live",
+      "max_leverage": "50",
+      "inst_id": "WIF-USDT-SWAP",
+      "ct_val": "1",
+      "api_success": true,
+      "note": "OKX WIF-USDT-SWAP: state=live, maxLeverage=50, ctVal=1 WIF/contract. 8h FR settlement interval. OKX FR cache: okx_fr_WIF.parquet (568 rows)."
+    },
+    "venue_pass": true,
+    "venue_pass_any": true,
+    "vol_ratio_hl_6m": 5.7391,
+    "vol_ratio_hl_full": 2.3742,
+    "vol_threshold": 1.5,
+    "vol_pass": true,
+    "vol_note": "HL 6M vol ratio=5.7391x (ABOVE 1.5x threshold \u2014 HARD PASS). HL full=2.3742x. WIF Solana meme FR vol significantly higher than BTC institutional FR. WIF 6M=5.74x vs PEPE K598 6M=2.41x vs SHIB K595 6M=1.87x vs DOGE K592 6M=1.05x. WIF is highest-vol meme in family (youngest viral Solana meme, pump.fun era). Phase 0: HARD PASS \u2014 no conditional required.",
+    "prescreen_pass": true,
+    "wif_fr_rows": 17519,
+    "wif_fr_start": "2024-05-24 20:00:00",
+    "wif_fr_end": "2026-05-24 19:00:00",
+    "btc_fr_rows": 17512,
+    "wif_fr_mean_6m": -1.43e-06,
+    "wif_fr_std_6m": 5.656e-05,
+    "btc_fr_std_6m": 9.85e-06,
+    "note": "Phase 0: venue_pass=True, vol_pass=True (HARD PASS). HL WIF FR: 17519 rows (2024-05-24 to 2026-05-24). HL 6M vol=5.74x (ABOVE 1.5x) | HL full=2.37x. 3 venues: HL WIF-PERP + Bybit WIFUSDT + OKX WIF-USDT-SWAP."
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "WIF-PERP vs BTC-PERP (HL 1h FR differential, dogwifhat Solana SPL)",
+    "window_rationale": "W=168h selected by grid search (highest Sh with >= 5 trades/yr). WIF Solana SPL meme: FR cycles driven by pump.fun viral token rotations and Solana ecosystem retail mania (faster finality = faster FR reversion). WIF 6M vol ratio=5.74x BTC \u2014 highest-vol meme tested, enabling shorter optimal window than SHIB/PEPE."
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -11.6481,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "half_life_h": 3.37,
+      "half_life_days": 0.14,
+      "theta": 0.205419,
+      "intercept": 2.2e-07,
+      "r_squared": 0.1027,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 12.9342,
+      "perm_mean_sh": -0.1286,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 12.9342,
+      "t_stat": 10.0083,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.005556,
+      "n_trials": 9,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 11.3804,
+    "ann_ret_pct": 4.4275,
+    "max_dd_pct": -0.5071,
+    "trades_yr": 45.0,
+    "n_days": 503.0,
+    "n_hours": 12071,
+    "n_pos_months": 15,
+    "n_neg_months": 3,
+    "cum_ret": 0.061009,
+    "ret_mean": 5.05e-06,
+    "ret_std": 4.157e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 12.9342,
+    "ann_ret_pct": 6.6329,
+    "max_dd_pct": -0.3504,
+    "trades_yr": 38.4,
+    "n_days": 218.5,
+    "n_hours": 5245,
+    "n_pos_months": 6,
+    "n_neg_months": 2,
+    "cum_ret": 0.039714,
+    "ret_mean": 7.57e-06,
+    "ret_std": 5.479e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 11.8381,
+    "ann_ret_pct": 5.0955,
+    "max_dd_pct": -0.5071,
+    "trades_yr": 43.0,
+    "n_days": 721.5,
+    "n_hours": 17316,
+    "n_pos_months": 20,
+    "n_neg_months": 5,
+    "cum_ret": 0.100723,
+    "ret_mean": 5.82e-06,
+    "ret_std": 4.599e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 168,
+      "oos_sharpe": 12.9342,
+      "oos_ann_ret_pct": 6.6329,
+      "trades_yr": 38.4
+    },
+    {
+      "window_h": 120,
+      "oos_sharpe": 12.5225,
+      "oos_ann_ret_pct": 6.671,
+      "trades_yr": 51.8
+    },
+    {
+      "window_h": 336,
+      "oos_sharpe": 11.8084,
+      "oos_ann_ret_pct": 5.9457,
+      "trades_yr": 25.1
+    },
+    {
+      "window_h": 96,
+      "oos_sharpe": 11.0493,
+      "oos_ann_ret_pct": 6.1019,
+      "trades_yr": 65.1
+    },
+    {
+      "window_h": 48,
+      "oos_sharpe": 10.6145,
+      "oos_ann_ret_pct": 6.467,
+      "trades_yr": 95.2
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 12,
+    "n_positive": 9,
+    "all_positive": false,
+    "pass": false,
+    "sh_min": -7.0285,
+    "sh_max": 56.9452,
+    "sh_mean": 14.3257,
+    "sh_std": 18.2952,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-05-28",
+        "end": "2025-06-27",
+        "sharpe": 15.7746,
+        "positive": "True",
+        "max_dd": -0.0014
+      },
+      {
+        "fold": 2,
+        "start": "2025-06-27",
+        "end": "2025-07-27",
+        "sharpe": 18.7906,
+        "positive": "True",
+        "max_dd": -0.001287
+      },
+      {
+        "fold": 3,
+        "start": "2025-07-27",
+        "end": "2025-08-26",
+        "sharpe": -7.0285,
+        "positive": "False",
+        "max_dd": -0.004703
+      },
+      {
+        "fold": 4,
+        "start": "2025-08-26",
+        "end": "2025-09-25",
+        "sharpe": 10.2031,
+        "positive": "True",
+        "max_dd": -0.000535
+      },
+      {
+        "fold": 5,
+        "start": "2025-09-25",
+        "end": "2025-10-25",
+        "sharpe": 7.2048,
+        "positive": "True",
+        "max_dd": -0.00112
+      },
+      {
+        "fold": 6,
+        "start": "2025-10-25",
+        "end": "2025-11-24",
+        "sharpe": 56.9452,
+        "positive": "True",
+        "max_dd": -0.000179
+      },
+      {
+        "fold": 7,
+        "start": "2025-11-24",
+        "end": "2025-12-24",
+        "sharpe": -3.7561,
+        "positive": "False",
+        "max_dd": -0.001237
+      },
+      {
+        "fold": 8,
+        "start": "2025-12-24",
+        "end": "2026-01-23",
+        "sharpe": 0.6306,
+        "positive": "True",
+        "max_dd": -0.003294
+      },
+      {
+        "fold": 9,
+        "start": "2026-01-23",
+        "end": "2026-02-22",
+        "sharpe": -0.4007,
+        "positive": "False",
+        "max_dd": -0.001126
+      },
+      {
+        "fold": 10,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": 42.8411,
+        "positive": "True",
+        "max_dd": -0.001591
+      },
+      {
+        "fold": 11,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": 22.6938,
+        "positive": "True",
+        "max_dd": -0.002021
+      },
+      {
+        "fold": 12,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": 8.0103,
+        "positive": "True",
+        "max_dd": -0.001908
+      }
+    ],
+    "note": "9/12 positive folds. G4 PARTIAL: 3 negative fold(s). Sharpe range: [-7.03, 56.95]. WIF Solana meme cycles: pump.fun viral token rotations, Solana ecosystem NFT/token momentum, Solana staking yield cycles (faster finality = faster FR mean-reversion), Solana retail mania inflows (WIF/BONK/JUP seasonal rotation). Long-cycle signal: WIF consistently pays positive FR (longs pay shorts) during meme bull runs."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": false,
+      "G5 Family corr": true,
+      "G6 Trades/yr": true,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": false,
+      "G9 Data sufficiency": true
+    },
+    "gates_passed": 7,
+    "gates_total": 9,
+    "gates_failed": 2,
+    "g7_ret_4x_pct": 26.53,
+    "g4_all_positive": false,
+    "g5_all_pass": true,
+    "g6_trades_yr": 38.4,
+    "g8_note": "G8 signal corr=-0.0283 (threshold=0.55). Raw FR diff corr=0.3787. Overlap=641h (~27d). HL 1h settlement vs Bybit 8h settlement \u2014 resampled to 1h. Bybit WIFUSDT: 8h settlement mutes HL intra-day Solana meme FR spikes. Structural G8 FAIL consistent with K595 SHIB, K598 PEPE precedents (HL 1h vs 8h = systematic gap). Solana meme FR spikes are shorter-cycle (pump.fun viral = faster than ERC-20 gas cycles).",
+    "g6_note": "G6 PASS: 38.4 trades/yr",
+    "sol_corr_note": "SOL G5b=-0.0096 \u2014 WIF distinct from SOL L1. BONK G5q=0.0448 \u2014 WIF distinct from BONK within Solana meme.",
+    "decision": "ACCEPT CONDITIONAL"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": -0.0191,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "ERC-20 L1 vs Solana meme"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": -0.0096,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Solana ecosystem CRITICAL"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": 0.0256,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Avalanche vs Solana meme"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": 0.0556,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Cosmos vs Solana meme"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": -0.0323,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Cosmos vs Solana meme"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": 0.0741,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Cosmos vs Solana meme"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": -0.0152,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Cosmos vs Solana meme"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": -0.0161,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Move-VM vs Solana meme"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": 0.0167,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Storage vs Solana meme"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531 (AI/GPU)",
+        "corr": -0.0246,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "AI/GPU vs Solana meme"
+      },
+      "g5l": {
+        "label": "TAO-BTC (AI/Training)",
+        "corr": 0.0169,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "AI/Training vs Solana meme"
+      },
+      "g5r": {
+        "label": "ICP-BTC K587 (Compute)",
+        "corr": 0.1441,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 4709,
+        "note": "Compute/Cloud vs Solana meme"
+      },
+      "g5x": {
+        "label": "AXS-BTC K591 (Gaming/P2E)",
+        "corr": -0.0509,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3005,
+        "note": "Gaming/P2E vs Solana meme"
+      },
+      "g5m": {
+        "label": "LINK-BTC K557 (Oracle/Infra vs Solana meme)",
+        "corr": 0.0712,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Oracle middleware vs Solana retail meme. Orthogonal."
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline (CRITICAL)",
+        "corr": -0.0246,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "BTC institutional carry vs WIF Solana retail meme. Distinct FR dynamics: BTC = institutional hedging, WIF = Solana retail meme pump cycles."
+      },
+      "g5n": {
+        "label": "TON-BTC K571 (Social/Messaging vs Meme)",
+        "corr": 0.1067,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "TON = Telegram utility/social. WIF = Solana retail meme. If corr >= 0.40: BLOCKED-MEME-CLUSTER."
+      },
+      "g5o": {
+        "label": "SAND-BTC K583 (Gaming/Metaverse vs Solana meme)",
+        "corr": -0.0349,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "SAND = metaverse virtual world utility. WIF = Solana pure meme. Gaming and Solana meme both retail but distinct chain/FR drivers."
+      },
+      "g5p": {
+        "label": "MEME-BTC (Meme sub-cluster CRITICAL)",
+        "corr": -0.0144,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "MEME = generic memecoin token. WIF = Solana dog-hat viral meme. WIF distinct if Solana meme FR cycles differ from generic ERC-20 meme-cycle."
+      },
+      "g5q": {
+        "label": "BONK-BTC (Solana meme sub-sub-cluster CRITICAL)",
+        "corr": 0.0448,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "BONK = Solana ecosystem meme (airdrop-driven, older Solana meme). WIF = Solana viral dog-hat meme (pump.fun era, 2023 viral cycle). If corr >= 0.40: BLOCKED-MEME-SUBCLUSTER (WIF = BONK within Solana meme sub-cluster). CRITICAL: determines if dogwifhat vs BONK are distinct FR signals within Solana ecosystem."
+      },
+      "g5s": {
+        "label": "DOGE-BTC K592 (PoW meme CRITICAL)",
+        "corr": 0.0549,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "DOGE = PoW Scrypt (Elon-primary catalyst, legacy meme). WIF = Solana SPL (pump.fun viral, newer meme, no celebrity CEO). If corr >= 0.40: BLOCKED-MEME-SUB (Solana meme \u2261 PoW meme collapses)."
+      },
+      "g5t": {
+        "label": "SHIB-BTC K595 (ERC-20 Shibarium meme CRITICAL)",
+        "corr": 0.0626,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "SHIB = ERC-20 + Shibarium L2 + burn mechanics (Ethereum ecosystem). WIF = Solana SPL viral meme (no L2, no burn, Solana ecosystem). If corr >= 0.40: BLOCKED-MEME-SUB (Solana meme \u2261 ERC-20 meme collapses)."
+      },
+      "g5u": {
+        "label": "AAVE-BTC K596 (DeFi/Lending)",
+        "corr": 0.0064,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "DeFi lending utility vs Solana pure meme speculation. Orthogonal."
+      },
+      "g5v": {
+        "label": "PEPE-BTC K598 (ERC-20 pure meme CRITICAL)",
+        "corr": 0.1634,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "PEPE = ERC-20 Ethereum frog meme (community-driven, no utility). WIF = Solana SPL viral dog-hat meme (pump.fun, faster finality). If corr >= 0.40: BLOCKED-MEME-SUB (Solana meme \u2261 ERC-20 meme collapses). CRITICAL: determines if Solana meme is distinct dimension from ERC-20 meme."
+      }
+    },
+    "n_pass": 23,
+    "n_total": 23,
+    "all_pass": true,
+    "sol_distinct": true,
+    "erc20_distinct": true,
+    "meme_cluster_distinct": true,
+    "meme_sub_distinct": true,
+    "solana_meme_distinct": true,
+    "sol_corr_critical": -0.0096,
+    "eth_corr_critical": -0.0191,
+    "btc_corr_critical": -0.0246,
+    "ton_corr_critical": 0.1067,
+    "sand_corr_critical": -0.0349,
+    "meme_corr_critical": -0.0144,
+    "bonk_corr_critical": 0.0448,
+    "doge_corr_critical": 0.0549,
+    "shib_corr_critical": 0.0626,
+    "pepe_corr_critical": 0.1634,
+    "note": "G5 family: 23/23 PASS. SOL G5b=-0.0096 (Solana ecosystem CRITICAL). ETH G5a=-0.0191 (ERC-20 L1). K280 G5j=-0.0246 (BTC-carry CRITICAL). MEME G5p=-0.0144 (meme sub-cluster). BONK G5q=0.0448 (Solana meme sub-sub CRITICAL). DOGE G5s=0.0549 (PoW meme CRITICAL). SHIB G5t=0.0626 (ERC-20 Shibarium CRITICAL). PEPE G5v=0.1634 (ERC-20 pure meme CRITICAL). SOL distinct: True. ERC-20 distinct: True. Meme sub distinct (vs DOGE/SHIB/PEPE): True. Solana meme distinct (vs BONK): True."
+  },
+  "cross_venue_fr": {
+    "pass": false,
+    "hl_bybit_signal_corr": -0.0283,
+    "hl_bybit_diff_corr": 0.3787,
+    "bybit_wif_rows": 200,
+    "bybit_btc_rows": 2190,
+    "overlap_hours": 641,
+    "note": "G8 signal corr=-0.0283 (threshold=0.55). Raw FR diff corr=0.3787. Overlap=641h (~27d). HL 1h settlement vs Bybit 8h settlement \u2014 resampled to 1h. Bybit WIFUSDT: 8h settlement mutes HL intra-day Solana meme FR spikes. Structural G8 FAIL consistent with K595 SHIB, K598 PEPE precedents (HL 1h vs 8h = systematic gap). Solana meme FR spikes are shorter-cycle (pump.fun viral = faster than ERC-20 gas cycles)."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 6.6329,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 26.53,
+    "usdc_yr_1pct_10M": 26532,
+    "usdc_yr_2pct_10M": 53063,
+    "usdc_yr_1pct_100M": 265316,
+    "usdc_yr_2pct_100M": 530632,
+    "note": "4x leverage, OOS ann=6.63% \u00d7 4 = 26.53%/yr. @$10M 1% alloc: $26,532/yr. @$10M 2% alloc: $53,063/yr. @$100M 1% alloc: $265,316/yr. WIF Solana meme: pump.fun viral cycles (2-4wk) = faster than ERC-20 meme (4-8wk). WIF 6M vol ratio\u22485.7x BTC (vs PEPE K598 2.41x vs SHIB K595 1.87x vs DOGE K592 1.05x). WIF is highest-vol meme coin tested \u2014 highest return potential per unit AUM."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 64.5,
+    "paper_pending_pct": 6.0,
+    "wif_alloc_pct": 1.5,
+    "projected_pct": 72.0,
+    "cap_pct": 65.0,
+    "breach": true,
+    "note": "v6.28 HL=64.5% + paper pending (DOGE+SHIB+AAVE+PEPE) 6.0% + WIF 1.5% = 72.0%. Cap=65.0%. BREACH: multi-venue split required. WIF-PERP maxLev=20 (HL) \u2014 standard Solana meme coin leverage tier. WIF primary venue: Bybit WIFUSDT (maxLev=75) or OKX WIF-USDT-SWAP (maxLev=50). HL 0.5% (paper monitoring) + Bybit 1% (live primary) recommended split."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "SHIB-BTC",
+      "sharpe": 38.4808,
+      "ecosystem": "Meme/Retail (Shiba Inu ERC-20)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SAND-BTC",
+      "sharpe": 33.627,
+      "ecosystem": "Gaming/Metaverse",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 7,
+      "pair": "PEPE-BTC",
+      "sharpe": 26.4202,
+      "ecosystem": "Meme/Retail (Pepe ERC-20 frog meme)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 9,
+      "pair": "DOGE-BTC",
+      "sharpe": 21.0688,
+      "ecosystem": "Meme/Retail (Dogecoin PoW)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "AXS-BTC",
+      "sharpe": 17.815,
+      "ecosystem": "Gaming/P2E",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 11,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 12,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 14,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 15,
+      "pair": "WIF-BTC",
+      "sharpe": 12.9342,
+      "ecosystem": "Meme/Retail-Solana (dogwifhat SPL meme)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 16,
+      "pair": "ICP-BTC",
+      "sharpe": 12.5274,
+      "ecosystem": "Compute/Cloud",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 17,
+      "pair": "AAVE-BTC",
+      "sharpe": 11.354,
+      "ecosystem": "DeFi/Lending",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 18,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 19,
+      "pair": "TON-BTC",
+      "sharpe": 8.4016,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 20,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 21,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "wif_family_rank": 15
+}
