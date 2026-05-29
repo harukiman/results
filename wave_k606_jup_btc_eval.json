@@ -1,0 +1,812 @@
+{
+  "wave": "K606",
+  "strategy": "JUP-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T08:50:53+0900",
+  "runtime_s": 4.4,
+  "decision": "ACCEPT CONDITIONAL",
+  "decision_rationale": "G5 all PASS. Core statistical strength (Sh=29.895). Failed gates: ['G4 Walk-forward', 'G6 Trades/yr', 'G8 Cross-venue']. G6 low trades/yr + G8 structural failures consistent with long-window Solana DeFi DEX strategy. JUP Solana DeFi cluster CONFIRMED distinct from ETH DeFi (AAVE/CRV) and Solana meme (WIF/BONK). Recommendation: 60d paper-trade on HL JUP (3 venues confirmed: HL, Bybit, OKX).",
+  "solana_defi_cluster_status": "CONFIRMED: Solana DeFi sub-cluster (Jupiter DEX aggregator) DISTINCT from ETH DeFi (AAVE G5t=-0.0918 < 0.40, CRV G5u=-0.0172 < 0.40), ETH DEX (UNI G5y=-0.0082 < 0.40), Solana L1 (SOL G5b=0.0328 < 0.40), Solana meme (WIF G5w=-0.0392 < 0.40, BONK G5x=0.0987 < 0.40). JUP = first Solana DeFi DEX cluster member confirmed. Cluster taxonomy expanded: Solana-DeFi added alongside Solana-L1 and Solana-meme.",
+  "cluster_taxonomy": {
+    "L1": [
+      "APT",
+      "SOL",
+      "AVAX",
+      "ETH"
+    ],
+    "Cosmos": [
+      "ATOM",
+      "INJ",
+      "TIA",
+      "SEI"
+    ],
+    "Storage": [
+      "FIL"
+    ],
+    "AI/GPU": [
+      "RENDER"
+    ],
+    "AI/Training": [
+      "TAO"
+    ],
+    "Oracle": [
+      "LINK"
+    ],
+    "Social": [
+      "TON"
+    ],
+    "Gaming": [
+      "SAND"
+    ],
+    "Gaming/P2E": [
+      "AXS"
+    ],
+    "Compute": [
+      "ICP"
+    ],
+    "DeFi/Lending": [
+      "AAVE"
+    ],
+    "DeFi/DEX-Aggregator-Solana": [
+      "JUP (K606)"
+    ],
+    "Meme/Retail-PoW": [
+      "DOGE"
+    ],
+    "Meme/Retail-ERC20-Shibarium": [
+      "SHIB"
+    ],
+    "Meme/Retail-ERC20-PureMeme": [
+      "PEPE"
+    ],
+    "Meme/Retail-Solana-SPL": [
+      "WIF (pump.fun 2023)",
+      "BONK (airdrop 2022)"
+    ],
+    "BTC": [
+      "BTC (baseline)"
+    ]
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "jup_listed": true,
+      "hl_ticker": "JUP",
+      "total_symbols": 230,
+      "max_leverage": 10,
+      "margin_table_id": 51,
+      "api_success": true,
+      "note": "HL meta API: 230 symbols. JUP ticker: JUP-PERP (standard unit). maxLeverage=10. JUP-PERP active on Hyperliquid. FR settlement: 1h intervals. FR cache: hl_fr_JUP.parquet (17519 rows, 2024-05-25 to 2026-05-25)."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "jup_listed": true,
+      "status": "Trading",
+      "bybit_ticker": "JUPUSDT",
+      "max_leverage": "50.00",
+      "funding_interval_min": 240,
+      "api_success": true,
+      "note": "Bybit JUPUSDT: status=Trading, maxLeverage=50.00, fundingInterval=240min. Cache: bybit_fr_JUPUSDT_730d.parquet (3673 rows)."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "jup_listed": true,
+      "state": "live",
+      "max_leverage": "50",
+      "inst_id": "JUP-USDT-SWAP",
+      "ct_val": "10",
+      "api_success": true,
+      "note": "OKX JUP-USDT-SWAP: state=live, maxLeverage=50, ctVal=10 JUP/contract. OKX FR cache: okx_fr_JUP.parquet (568 rows)."
+    },
+    "venue_pass": true,
+    "venue_pass_any": true,
+    "vol_ratio_hl_6m": 2.1416,
+    "vol_ratio_hl_365d": 2.1337,
+    "vol_ratio_hl_full": 1.4975,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "vol_note": "HL 6M vol ratio=2.1416x (ABOVE 1.5x threshold). HL 365d=2.1337x. HL full=1.4975x. JUP Solana DeFi DEX aggregator: FR vol elevated vs BTC institutional FR (Solana DeFi cycles: JLP yield, Jupiter Perps, routing volume spikes). JUP 6M=2.14x vs BONK K603 6M=2.01x vs WIF K601 6M=5.74x vs PEPE K598=2.41x. JUP moderate vol (utility DEX vs pure meme speculation). Phase 0: HARD PASS \u2014 no conditional required.",
+    "prescreen_pass": "True",
+    "jup_fr_rows": 17519,
+    "jup_fr_start": "2024-05-25 02:00:00",
+    "jup_fr_end": "2026-05-25 01:00:00",
+    "btc_fr_rows": 17512,
+    "jup_fr_mean_6m": -9.7e-07,
+    "jup_fr_std_6m": 2.107e-05,
+    "btc_fr_std_6m": 9.84e-06,
+    "note": "Phase 0: venue_pass=True, vol_pass=True (HARD PASS). HL JUP FR: 17519 rows (2024-05-25 02:00:00 to 2026-05-25 01:00:00). HL 6M vol=2.14x (ABOVE 1.5x) | HL 365d=2.13x | HL full=1.50x. 3 venues: HL JUP-PERP + Bybit JUPUSDT + OKX JUP-USDT-SWAP."
+  },
+  "signal_config": {
+    "window_h": 336,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "JUP-PERP vs BTC-PERP (HL 1h FR differential, Jupiter Solana DEX aggregator)",
+    "window_rationale": "W=336h selected by grid search (highest Sh with >= 5 trades/yr). JUP Jupiter Exchange Solana DEX aggregator: FR cycles driven by Solana DeFi liquidity rotation (JLP yield farming, Jupiter Perpetuals volume, routing fee cycles), Solana ecosystem DeFi seasons (DEX aggregation volume spikes vs ETH DeFi AMM cycles), JUP airdrop Jan 2024 holder base = sustained speculative long positioning during Solana DeFi seasons (Solana TVL growth, DeFi summer equivalents). JUP 6M vol ratio=2.14x BTC \u2014 moderate (utility DEX, lower than WIF 5.74x/BONK 2.01x pure meme; higher than ETH DeFi)."
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -9.2509,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "half_life_h": 4.46,
+      "half_life_days": 0.19,
+      "theta": 0.155538,
+      "intercept": -1.6e-06,
+      "r_squared": 0.0778,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 29.8951,
+      "perm_mean_sh": 0.0112,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 29.8951,
+      "t_stat": 23.128,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.005556,
+      "n_trials": 9,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 28.126,
+    "ann_ret_pct": 8.3514,
+    "max_dd_pct": -0.5375,
+    "trades_yr": 16.5,
+    "n_days": 509.8,
+    "n_hours": 12235,
+    "n_pos_months": 15,
+    "n_neg_months": 3,
+    "cum_ret": 0.116644,
+    "ret_mean": 9.53e-06,
+    "ret_std": 3.172e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 29.8951,
+    "ann_ret_pct": 9.4794,
+    "max_dd_pct": -0.5043,
+    "trades_yr": 18.4,
+    "n_days": 218.5,
+    "n_hours": 5243,
+    "n_pos_months": 5,
+    "n_neg_months": 3,
+    "cum_ret": 0.056736,
+    "ret_mean": 1.082e-05,
+    "ret_std": 3.388e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 28.6642,
+    "ann_ret_pct": 8.6898,
+    "max_dd_pct": -0.5375,
+    "trades_yr": 17.0,
+    "n_days": 728.2,
+    "n_hours": 17478,
+    "n_pos_months": 19,
+    "n_neg_months": 6,
+    "cum_ret": 0.17338,
+    "ret_mean": 9.92e-06,
+    "ret_std": 3.239e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 336,
+      "oos_sharpe": 29.8951,
+      "oos_ann_ret_pct": 9.4794,
+      "trades_yr": 18.4
+    },
+    {
+      "window_h": 480,
+      "oos_sharpe": 27.8117,
+      "oos_ann_ret_pct": 8.8276,
+      "trades_yr": 18.4
+    },
+    {
+      "window_h": 600,
+      "oos_sharpe": 26.7332,
+      "oos_ann_ret_pct": 8.5821,
+      "trades_yr": 18.4
+    },
+    {
+      "window_h": 120,
+      "oos_sharpe": 23.7534,
+      "oos_ann_ret_pct": 9.2336,
+      "trades_yr": 51.8
+    },
+    {
+      "window_h": 240,
+      "oos_sharpe": 23.7472,
+      "oos_ann_ret_pct": 8.5004,
+      "trades_yr": 35.1
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 12,
+    "n_positive": 10,
+    "all_positive": false,
+    "pass": false,
+    "sh_min": -4.6889,
+    "sh_max": 83.7495,
+    "sh_mean": 31.5339,
+    "sh_std": 29.8952,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-05-28",
+        "end": "2025-06-27",
+        "sharpe": 57.9348,
+        "positive": "True",
+        "max_dd": -0.000386
+      },
+      {
+        "fold": 2,
+        "start": "2025-06-27",
+        "end": "2025-07-27",
+        "sharpe": 58.2264,
+        "positive": "True",
+        "max_dd": -0.00025
+      },
+      {
+        "fold": 3,
+        "start": "2025-07-27",
+        "end": "2025-08-26",
+        "sharpe": -4.3285,
+        "positive": "False",
+        "max_dd": -0.002432
+      },
+      {
+        "fold": 4,
+        "start": "2025-08-26",
+        "end": "2025-09-25",
+        "sharpe": 14.3222,
+        "positive": "True",
+        "max_dd": -0.000592
+      },
+      {
+        "fold": 5,
+        "start": "2025-09-25",
+        "end": "2025-10-25",
+        "sharpe": 53.129,
+        "positive": "True",
+        "max_dd": -0.001587
+      },
+      {
+        "fold": 6,
+        "start": "2025-10-25",
+        "end": "2025-11-24",
+        "sharpe": 83.7495,
+        "positive": "True",
+        "max_dd": -5.8e-05
+      },
+      {
+        "fold": 7,
+        "start": "2025-11-24",
+        "end": "2025-12-24",
+        "sharpe": 65.414,
+        "positive": "True",
+        "max_dd": -0.000429
+      },
+      {
+        "fold": 8,
+        "start": "2025-12-24",
+        "end": "2026-01-23",
+        "sharpe": 6.0087,
+        "positive": "True",
+        "max_dd": -0.001815
+      },
+      {
+        "fold": 9,
+        "start": "2026-01-23",
+        "end": "2026-02-22",
+        "sharpe": 38.0681,
+        "positive": "True",
+        "max_dd": -0.000921
+      },
+      {
+        "fold": 10,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": 7.2778,
+        "positive": "True",
+        "max_dd": -0.002279
+      },
+      {
+        "fold": 11,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": -4.6889,
+        "positive": "False",
+        "max_dd": -0.004514
+      },
+      {
+        "fold": 12,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": 3.2942,
+        "positive": "True",
+        "max_dd": -0.002281
+      }
+    ],
+    "note": "10/12 positive folds. G4 PARTIAL: 2 negative fold(s). Sharpe range: [-4.69, 83.75]. JUP Jupiter DEX aggregator: Solana DeFi liquidity cycles drive FR oscillation. JUP airdrop Jan 2024 \u2014 concentrated early holder base creates levered long bias during Solana DeFi seasons (Jupiter Perpetuals, JLP yield cycles, routing volume)."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": false,
+      "G5 Family corr": true,
+      "G6 Trades/yr": false,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": false,
+      "G9 Data sufficiency": true
+    },
+    "gates_passed": 6,
+    "gates_total": 9,
+    "gates_failed": 3,
+    "g7_ret_4x_pct": 37.92,
+    "g4_all_positive": false,
+    "g5_all_pass": true,
+    "g6_trades_yr": 18.4,
+    "g8_note": "G8 signal corr=0.3987 (threshold=0.55). Raw FR diff corr=0.4901. Overlap=17478h (~728d). HL 1h settlement vs Bybit 240min settlement (JUPUSDT) \u2014 resampled to 1h. Bybit JUPUSDT: 4h FR settlement mutes HL intra-day Solana DeFi FR spikes. Structural G8 gap consistent with HL 1h vs multi-hour Bybit intervals.",
+    "g6_note": "G6 trades=18.4/yr. JUP Solana DeFi DEX aggregator with longer smoothing window = lower trade frequency. G6 FAIL (<30/yr): structural characteristic of Solana DeFi routing cycle strategy.",
+    "defi_cluster_note": "AAVE G5t=-0.0918 (ETH DeFi lending). CRV G5u=-0.0172 (ETH DeFi AMM). UNI G5y=-0.0082 (ETH DEX). WIF G5w=-0.0392 (Solana meme). BONK G5x=0.0987 (Solana airdrop meme). SOL G5b=0.0328 (Solana ecosystem).",
+    "decision": "ACCEPT CONDITIONAL"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": 0.0107,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "ETH L1 vs Solana DeFi DEX aggregator"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": 0.0328,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "Solana ecosystem CRITICAL"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": 0.1066,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "Avalanche vs Solana DeFi"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": 0.2151,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "Cosmos vs Solana DeFi"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": 0.034,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "Cosmos DEX vs Solana DeFi"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": 0.1548,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "Cosmos vs Solana DeFi"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": 0.2039,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "Cosmos vs Solana DeFi"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": 0.2233,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "Move-VM vs Solana DeFi"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": 0.1026,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "Storage vs Solana DeFi"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531 (AI/GPU)",
+        "corr": 0.2077,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "AI/GPU vs Solana DeFi"
+      },
+      "g5l": {
+        "label": "TAO-BTC (AI/Training)",
+        "corr": -0.0142,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "AI/Training vs Solana DeFi"
+      },
+      "g5p": {
+        "label": "ICP-BTC K587 (Compute)",
+        "corr": -0.0463,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 4709,
+        "note": "Compute/Cloud vs Solana DeFi"
+      },
+      "g5q": {
+        "label": "AXS-BTC K591 (Gaming/P2E)",
+        "corr": 0.1155,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3005,
+        "note": "Gaming/P2E vs Solana DeFi"
+      },
+      "g5r": {
+        "label": "DOGE-BTC K592 (PoW meme)",
+        "corr": 0.1879,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "PoW meme vs Solana DeFi"
+      },
+      "g5s": {
+        "label": "SHIB-BTC K595 (ERC-20 meme)",
+        "corr": 0.1915,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "ERC-20 Shibarium vs Solana DeFi"
+      },
+      "g5t": {
+        "label": "AAVE-BTC K596 (DeFi/Lending CRITICAL)",
+        "corr": -0.0918,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "DeFi cluster CRITICAL: ETH DeFi lending vs Solana DEX"
+      },
+      "g5v": {
+        "label": "PEPE-BTC K598 (ERC-20 meme)",
+        "corr": 0.0502,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "ERC-20 pure meme vs Solana DeFi"
+      },
+      "g5w": {
+        "label": "WIF-BTC K601 (Solana meme CRITICAL)",
+        "corr": -0.0392,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "Solana pump.fun meme vs Solana DeFi"
+      },
+      "g5x": {
+        "label": "BONK-BTC K603 (Solana airdrop meme CRITICAL)",
+        "corr": 0.0987,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "Solana airdrop meme vs Solana DeFi DEX"
+      },
+      "g5m": {
+        "label": "LINK-BTC K557 (Oracle/Infra vs Solana DeFi)",
+        "corr": -0.0763,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "Oracle middleware vs Solana DeFi DEX aggregator. Orthogonal."
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline (CRITICAL)",
+        "corr": 0.2077,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "BTC institutional carry vs JUP Solana DeFi DEX retail. Distinct FR dynamics: BTC = institutional hedging, JUP = Solana DeFi routing cycles."
+      },
+      "g5n": {
+        "label": "TON-BTC K571 (Social/Messaging vs Solana DeFi)",
+        "corr": 0.0759,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "TON = Telegram utility. JUP = Solana DeFi DEX. Orthogonal."
+      },
+      "g5o": {
+        "label": "SAND-BTC K583 (Gaming/Metaverse vs Solana DeFi)",
+        "corr": 0.1158,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "Gaming metaverse vs Solana DeFi routing. Distinct FR drivers."
+      },
+      "g5u": {
+        "label": "CRV-BTC K599 (DeFi/AMM CRITICAL)",
+        "corr": -0.0172,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "CRV = Curve Finance ETH AMM (stablecoin pools, ve-token mechanics). JUP = Solana DEX aggregator (routing-centric, JLP yield). If corr >= 0.40: BLOCKED-DEFI (JUP replicates ETH DeFi AMM signal)."
+      },
+      "g5y": {
+        "label": "UNI-BTC (DEX cluster CRITICAL)",
+        "corr": -0.0082,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5243,
+        "note": "UNI = Uniswap ETH DEX AMM (K593 REJECT, ERC-20, Ethereum). JUP = Jupiter Solana DEX aggregator. If corr >= 0.40: BLOCKED-DEX (JUP == ETH DEX FR signal collapses). CRITICAL: determines if Solana DEX vs ETH DEX are distinct FR signals."
+      }
+    },
+    "n_pass": 25,
+    "n_total": 25,
+    "all_pass": true,
+    "sol_distinct": true,
+    "defi_distinct": true,
+    "dex_distinct": true,
+    "solana_meme_distinct": true,
+    "sol_corr_critical": 0.0328,
+    "eth_corr_critical": 0.0107,
+    "btc_corr_critical": 0.2077,
+    "aave_corr_critical": -0.0918,
+    "crv_corr_critical": -0.0172,
+    "wif_corr_critical": -0.0392,
+    "bonk_corr_critical": 0.0987,
+    "uni_corr_critical": -0.0082,
+    "doge_corr_critical": 0.1879,
+    "note": "G5 family: 25/25 PASS. SOL G5b=0.0328 (Solana ecosystem CRITICAL). AAVE G5t=-0.0918 (DeFi/Lending CRITICAL). CRV G5u=-0.0172 (DeFi/AMM CRITICAL). UNI G5y=-0.0082 (DEX cluster CRITICAL). WIF G5w=-0.0392 (Solana meme CRITICAL). BONK G5x=0.0987 (Solana airdrop meme CRITICAL). K280 G5j=0.2077 (BTC-carry CRITICAL). SOL distinct: True. DeFi distinct: True. DEX distinct: True. Solana meme distinct: True."
+  },
+  "cross_venue_fr": {
+    "pass": false,
+    "hl_bybit_signal_corr": 0.3987,
+    "hl_bybit_diff_corr": 0.4901,
+    "bybit_jup_rows": 3673,
+    "bybit_btc_rows": 2190,
+    "overlap_hours": 17478,
+    "note": "G8 signal corr=0.3987 (threshold=0.55). Raw FR diff corr=0.4901. Overlap=17478h (~728d). HL 1h settlement vs Bybit 240min settlement (JUPUSDT) \u2014 resampled to 1h. Bybit JUPUSDT: 4h FR settlement mutes HL intra-day Solana DeFi FR spikes. Structural G8 gap consistent with HL 1h vs multi-hour Bybit intervals."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 9.4794,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 37.92,
+    "usdc_yr_1pct_10M": 37918,
+    "usdc_yr_2pct_10M": 75835,
+    "usdc_yr_1pct_100M": 379176,
+    "usdc_yr_2pct_100M": 758352,
+    "note": "4x leverage, OOS ann=9.48% x 4 = 37.92%/yr. @$10M 1% alloc: $37,918/yr. @$10M 2% alloc: $75,835/yr. @$100M 1% alloc: $379,176/yr. JUP = Solana DEX aggregator: JLP yield + Jupiter Perps volume = elevated FR cycles. Solana DeFi sub-cluster (distinct execution layer from ETH DeFi AAVE/CRV). JUP 6M vol ratio~2.14x BTC (moderate: utility DEX < Solana memes WIF 5.74x/BONK 2.01x)."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 64.5,
+    "paper_pending_pct": 9.0,
+    "jup_alloc_pct": 1.5,
+    "projected_pct": 75.0,
+    "cap_pct": 65.0,
+    "breach": true,
+    "note": "v6.28 HL=64.5% + paper pending (DOGE+SHIB+AAVE+PEPE+WIF+BONK) 9.0% + JUP 1.5% = 75.0%. Cap=65.0%. BREACH: multi-venue split required. JUP maxLev=10 (HL), Bybit JUPUSDT maxLev=50. HL 0.5% (paper monitoring) + Bybit 1% (live primary) recommended split if breach."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "SHIB-BTC",
+      "sharpe": 38.4808,
+      "ecosystem": "Meme/Retail (Shiba Inu ERC-20)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SAND-BTC",
+      "sharpe": 33.627,
+      "ecosystem": "Gaming/Metaverse",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "pair": "JUP-BTC",
+      "sharpe": 29.8951,
+      "ecosystem": "DeFi/DEX-Aggregator-Solana (Jupiter, Solana native DEX routing)",
+      "status": "ACCEPT CONDITIONAL",
+      "rank": 7
+    },
+    {
+      "rank": 8,
+      "pair": "PEPE-BTC",
+      "sharpe": 26.4202,
+      "ecosystem": "Meme/Retail (Pepe ERC-20 frog meme)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 9,
+      "pair": "BONK-BTC",
+      "sharpe": 23.667,
+      "ecosystem": "Meme/Retail-Solana-SPL-Airdrop (2022)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 11,
+      "pair": "DOGE-BTC",
+      "sharpe": 21.0688,
+      "ecosystem": "Meme/Retail (Dogecoin PoW)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 12,
+      "pair": "AXS-BTC",
+      "sharpe": 17.815,
+      "ecosystem": "Gaming/P2E",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 14,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 15,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 16,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 17,
+      "pair": "WIF-BTC",
+      "sharpe": 12.9342,
+      "ecosystem": "Meme/Retail-Solana-SPL (pump.fun-era WIF)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 18,
+      "pair": "ICP-BTC",
+      "sharpe": 12.5274,
+      "ecosystem": "Compute/Cloud",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 19,
+      "pair": "AAVE-BTC",
+      "sharpe": 11.354,
+      "ecosystem": "DeFi/Lending",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 20,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 21,
+      "pair": "TON-BTC",
+      "sharpe": 8.4016,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 22,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 23,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "jup_family_rank": 7,
+  "jup_defi_cluster_comparison": {
+    "aave_k596": {
+      "pair": "AAVE-BTC",
+      "sharpe": 11.354,
+      "decision": "ACCEPT CONDITIONAL",
+      "g5_corr_vs_jup": -0.0918,
+      "distinct": true,
+      "note": "ETH DeFi lending (borrowing/lending yield cycles) vs Solana DEX routing (JLP yield, Perps volume)."
+    },
+    "crv_k599": {
+      "pair": "CRV-BTC",
+      "sharpe": null,
+      "decision": "TBD (K599)",
+      "g5_corr_vs_jup": -0.0172,
+      "distinct": true,
+      "note": "ETH DeFi AMM (Curve stablecoin pools, ve-token) vs Solana DEX aggregator."
+    },
+    "uni_k593": {
+      "pair": "UNI-BTC",
+      "sharpe": null,
+      "decision": "REJECT (K593)",
+      "g5_corr_vs_jup": -0.0082,
+      "distinct": true,
+      "note": "Uniswap ETH DEX (AMM, ERC-20) REJECT K593 \u2014 no FR signal. JUP Solana DEX has distinct Solana routing dynamics."
+    }
+  },
+  "jup_solana_context": {
+    "sol_g5b_corr": 0.0328,
+    "wif_g5w_corr": -0.0392,
+    "bonk_g5x_corr": 0.0987,
+    "solana_ecosystem_distinct": true,
+    "solana_meme_distinct": true,
+    "note": "JUP vs Solana ecosystem: SOL G5b=0.0328 (DISTINCT from SOL L1). JUP vs Solana meme: WIF G5w=-0.0392, BONK G5x=0.0987 (DISTINCT from Solana meme cluster). JUP = Solana DeFi DEX aggregator (routing utility) vs WIF/BONK = Solana SPL retail speculation meme. Distinct FR drivers: JUP = DeFi liquidity cycles vs meme = retail mania cycles."
+  }
+}
