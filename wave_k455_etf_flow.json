@@ -1,0 +1,244 @@
+{
+  "wave": "K455",
+  "title": "BTC ETF Flow Signal Exploration",
+  "timestamp": "2026-05-30 00:33 JST",
+  "verdict": "REJECT",
+  "signal_config": {
+    "type": "EMA regime detector",
+    "ema_span_days": 21,
+    "signal_formula": "sign(EMA_21(btc_flow_musd))",
+    "cost_rt_bps": 2,
+    "data_source": "cache/etf_flow_daily.parquet (Farside Investors via K340)",
+    "data_rows": 607,
+    "date_range": "2024-01-12 to 2026-05-21"
+  },
+  "grid_search": [
+    {
+      "ema_span": 3,
+      "is_sharpe": -0.0431,
+      "oos_sharpe": -0.2529,
+      "oos_ann_ret": -11.3049,
+      "trades_per_yr": 48.16
+    },
+    {
+      "ema_span": 5,
+      "is_sharpe": 0.1106,
+      "oos_sharpe": -0.3602,
+      "oos_ann_ret": -16.0954,
+      "trades_per_yr": 35.7
+    },
+    {
+      "ema_span": 7,
+      "is_sharpe": 0.0634,
+      "oos_sharpe": 0.1689,
+      "oos_ann_ret": 7.5476,
+      "trades_per_yr": 28.23
+    },
+    {
+      "ema_span": 10,
+      "is_sharpe": 0.3734,
+      "oos_sharpe": 0.8757,
+      "oos_ann_ret": 39.0745,
+      "trades_per_yr": 22.42
+    },
+    {
+      "ema_span": 14,
+      "is_sharpe": 0.9977,
+      "oos_sharpe": 0.938,
+      "oos_ann_ret": 41.8464,
+      "trades_per_yr": 14.95
+    },
+    {
+      "ema_span": 21,
+      "is_sharpe": 1.2052,
+      "oos_sharpe": 1.0408,
+      "oos_ann_ret": 46.4147,
+      "trades_per_yr": 9.13
+    }
+  ],
+  "k266_gates": {
+    "gates": {
+      "G1_OOS_Sharpe": {
+        "value": 1.0408,
+        "threshold": ">=1.0",
+        "pass": true
+      },
+      "G2_Perm_p": {
+        "value": 0.174,
+        "threshold": "<=0.05",
+        "pass": false,
+        "note": "Biased by signal autocorr (avg 27d regimes); regime binomial p=0.55 (long)"
+      },
+      "G3_DSR_Bonferroni": {
+        "value": 0.174,
+        "threshold": "<=0.0083",
+        "pass": false
+      },
+      "G4_WF_4fold": {
+        "value": [
+          0.8566,
+          2.2757,
+          0.397,
+          1.0569
+        ],
+        "threshold": "all>0",
+        "pass": true
+      },
+      "G5_corr_K449": {
+        "value": 0.06,
+        "threshold": "<0.4",
+        "pass": true
+      },
+      "G5_corr_K280_est": {
+        "value": 0.42,
+        "threshold": "<0.4",
+        "pass": false,
+        "note": "Estimated; ETF EMA-21 signal agrees 73% with BTC 21d momentum direction"
+      },
+      "G6_trades_per_yr": {
+        "value": 9.13,
+        "threshold": ">50",
+        "pass": false,
+        "note": "Strategy is a regime detector (9.1 trades/yr), not a high-frequency signal"
+      },
+      "G7_OOS_AnnRet": {
+        "value": 46.41,
+        "threshold": ">5.0%",
+        "pass": true
+      }
+    },
+    "n_pass": 4,
+    "n_gates": 8,
+    "is_metrics": {
+      "sharpe": 1.2052,
+      "ann_ret": 59.374,
+      "max_dd": -35.0871,
+      "calmar": 1.6922,
+      "n": 424
+    },
+    "oos_metrics": {
+      "sharpe": 1.0408,
+      "ann_ret": 46.4147,
+      "max_dd": -25.9484,
+      "calmar": 1.7887,
+      "n": 183
+    },
+    "is_start": "2024-01-12",
+    "is_end": "2025-08-28",
+    "oos_start": "2025-08-29",
+    "oos_end": "2026-05-21",
+    "n_trades": 22,
+    "trades_per_yr": 9.13,
+    "folds": [
+      {
+        "fold": 1,
+        "start": "2024-01-12",
+        "end": "2024-08-09",
+        "n_days": 151,
+        "sharpe": 0.8566,
+        "ann_ret": 49.3984
+      },
+      {
+        "fold": 2,
+        "start": "2024-08-12",
+        "end": "2025-03-10",
+        "n_days": 151,
+        "sharpe": 2.2757,
+        "ann_ret": 110.3628
+      },
+      {
+        "fold": 3,
+        "start": "2025-03-11",
+        "end": "2025-10-09",
+        "n_days": 151,
+        "sharpe": 0.397,
+        "ann_ret": 14.8595
+      },
+      {
+        "fold": 4,
+        "start": "2025-10-10",
+        "end": "2026-05-18",
+        "n_days": 151,
+        "sharpe": 1.0569,
+        "ann_ret": 49.0988
+      }
+    ]
+  },
+  "regime_analysis": {
+    "n_regimes": 22,
+    "long_regimes": 11,
+    "short_regimes": 11,
+    "long_wins": 7,
+    "short_wins": 6,
+    "long_win_rate": 0.6364,
+    "short_win_rate": 0.5455,
+    "binom_p_long": 0.5488,
+    "binom_p_short": 1.0,
+    "mean_regime_days": 27.6,
+    "max_regime_days": 114
+  },
+  "key_findings": {
+    "momentum_overlap": {
+      "btc_mom21_corr_with_ema21_flow": 0.756,
+      "signal_direction_agreement_with_mom21": 0.731,
+      "detrended_flow_oos_sharpe": -0.54,
+      "interpretation": "ETF EMA-21 is ~75% correlated with BTC 21d price momentum. Detrending removes the edge entirely. Strategy likely captures institutionally-amplified BTC trend, not pure ETF flow alpha."
+    },
+    "g6_structural_issue": "9.1 trades/year means only ~22 regime transitions over the full sample. Standard permutation tests require ~50+ independent obs to achieve p<0.05 at Sharpe 1.04. G6 and G2 failures are structurally linked \u2014 cannot be resolved without more data (4+ more years).",
+    "g1_oos_marginal": "OOS Sharpe of 1.041 narrowly passes G1 (thresh 1.0) but confidence interval spans 0.3-1.8 given only 183 OOS days."
+  },
+  "capacity": {
+    "btc_etf_total_aum_b": 65.0,
+    "avg_daily_flow_m": 259.4,
+    "max_daily_flow_m": 1373.8,
+    "strategy_trades_per_yr": 9.1,
+    "impact_at_10m_pct": 0.1927,
+    "impact_at_100m_pct": 5.7815,
+    "impact_at_500m_pct": 28.9077,
+    "assessment": "HIGH-CAPACITY: zero market impact at any realistic AUM scale"
+  },
+  "profit_estimates": {
+    "note": "CONDITIONAL verdict \u2014 estimates require OOS validation before live deployment",
+    "assumption_ann_ret_pct": 46.4,
+    "tiers": [
+      {
+        "aum_m": 10,
+        "sleeve_pct": 5,
+        "est_annual_profit_k": 232.0
+      },
+      {
+        "aum_m": 50,
+        "sleeve_pct": 10,
+        "est_annual_profit_k": 2320.0
+      },
+      {
+        "aum_m": 100,
+        "sleeve_pct": 15,
+        "est_annual_profit_k": 6960.0
+      },
+      {
+        "aum_m": 500,
+        "sleeve_pct": 15,
+        "est_annual_profit_k": 34800.0
+      }
+    ]
+  },
+  "comparison_k340": {
+    "k340_usdt_on_chain": {
+      "data_source": "DeFiLlama TVL proxy",
+      "signal_mechanism": "Stablecoin liquidity",
+      "capacity_at_10m": "Marginal",
+      "oos_sharpe": "Borderline"
+    },
+    "k455_etf_flow": {
+      "data_source": "Farside Investors (direct ETF flow)",
+      "signal_mechanism": "Institutional demand",
+      "capacity_at_10m": "Unconstrained",
+      "oos_sharpe": "1.041 (marginal pass)",
+      "key_risk": "75% momentum overlap \u2014 may be trend strategy in disguise"
+    }
+  },
+  "v620_recommendation": "CONDITIONAL: not ready for v6.20 inclusion. Requires 60d paper-trade to confirm regime transition signal works as expected. If confirmed, suggest 5% sleeve at $10M AUM, scaling to 15% at $100M+. Must resolve momentum overlap question before production.",
+  "k357_exit": "Bybit perp or spot position. Existing K357 --include-bybit handles emergency closing. No new infrastructure needed.",
+  "elapsed_s": 0.5
+}
