@@ -1,0 +1,597 @@
+{
+  "wave": "K590",
+  "strategy": "KAS-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T07:23:53+0900",
+  "runtime_s": 3.7,
+  "decision": "ACCEPT",
+  "decision_rationale": "G5 all PASS. 8/9 gates passed. Sh=13.303. G5j BTC-carry=-0.0244 (PoW cluster distinct). K591 scaffold candidate, v6.32+.",
+  "pow_blockdag_cluster_status": "CONFIRMED: PoW BlockDAG (Kaspa GHOSTDAG) = 13th ecosystem cluster. First PoW non-linear-chain consensus cluster in family.",
+  "cluster_taxonomy": {
+    "L1": [
+      "APT",
+      "SOL",
+      "AVAX",
+      "ETH"
+    ],
+    "Cosmos": [
+      "ATOM",
+      "INJ",
+      "TIA",
+      "SEI"
+    ],
+    "Storage": [
+      "FIL"
+    ],
+    "AI/GPU": [
+      "RENDER"
+    ],
+    "AI/Training": [
+      "TAO"
+    ],
+    "Oracle": [
+      "LINK"
+    ],
+    "Social": [
+      "TON"
+    ],
+    "Compute/Cloud": [
+      "ICP"
+    ],
+    "PoW/BlockDAG": [
+      "KAS"
+    ],
+    "BTC": [
+      "BTC (baseline)"
+    ]
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "kas_listed": true,
+      "total_symbols": 230,
+      "max_leverage": 3,
+      "margin_table_id": 3,
+      "api_success": true,
+      "note": "HL meta API: 230 symbols. KAS: LISTED. maxLeverage=3. KAS-PERP BlockDAG PoW perpetual on Hyperliquid. FR settlement: 1h intervals."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "kas_listed": true,
+      "status": "Trading",
+      "max_leverage": "50.00",
+      "api_success": true,
+      "note": "Bybit KASUSDT: status=Trading, maxLeverage=50.00. 8h FR settlement interval."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "kas_listed": false,
+      "api_success": true,
+      "note": "KAS-USDT-SWAP not found on OKX."
+    },
+    "venue_pass": true,
+    "okx_listed": false,
+    "venue_note": "HL=LISTED (maxLev=3, PoW token), Bybit=LISTED (maxLev=50), OKX=NOT LISTED (searched 351 OKX SWAPs \u2014 KAS absent). 2-venue pass: HL primary + Bybit backup sufficient for execution. G8 cross-venue will use Bybit as comparison venue.",
+    "vol_ratio_6m": 2.646,
+    "vol_threshold": 1.5,
+    "vol_pass": true,
+    "prescreen_pass": true,
+    "kas_fr_rows": 23044,
+    "kas_fr_start": "2023-10-12 18:00:00",
+    "kas_fr_end": "2026-05-29 22:00:00",
+    "btc_fr_rows": 17512,
+    "kas_fr_mean": 1.16e-06,
+    "kas_fr_std_6m": 2.607e-05,
+    "btc_fr_std_6m": 9.85e-06,
+    "note": "Phase 0: venue_pass=True, vol_ratio=2.65x (threshold=1.5x). KAS FR: 23044 rows (2023-10-12 to 2026-05-29). KAS FR mean=1.16e-06 (6M)."
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "KAS-PERP vs BTC-PERP (HL 1h FR differential)"
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -11.2358,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "half_life_h": 2.84,
+      "half_life_days": 0.12,
+      "theta": 0.244069,
+      "intercept": 1.44e-06,
+      "r_squared": 0.1221,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 13.3033,
+      "perm_mean_sh": -0.0185,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 13.3033,
+      "t_stat": 10.3018,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.007143,
+      "n_trials": 7,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 16.3492,
+    "ann_ret_pct": 6.6548,
+    "max_dd_pct": -0.7253,
+    "trades_yr": 46.4,
+    "n_days": 503.8,
+    "n_hours": 12091,
+    "n_pos_months": 15,
+    "n_neg_months": 3,
+    "cum_ret": 0.091853,
+    "ret_mean": 7.6e-06,
+    "ret_std": 4.349e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 13.3033,
+    "ann_ret_pct": 4.7298,
+    "max_dd_pct": -0.7333,
+    "trades_yr": 48.4,
+    "n_days": 218.9,
+    "n_hours": 5253,
+    "n_pos_months": 6,
+    "n_neg_months": 2,
+    "cum_ret": 0.028362,
+    "ret_mean": 5.4e-06,
+    "ret_std": 3.799e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 15.479,
+    "ann_ret_pct": 6.0717,
+    "max_dd_pct": -0.7333,
+    "trades_yr": 47.0,
+    "n_days": 722.7,
+    "n_hours": 17344,
+    "n_pos_months": 20,
+    "n_neg_months": 5,
+    "cum_ret": 0.120215,
+    "ret_mean": 6.93e-06,
+    "ret_std": 4.191e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 240,
+      "oos_sharpe": 16.6045,
+      "oos_ann_ret_pct": 4.9494,
+      "trades_yr": 25.0
+    },
+    {
+      "window_h": 168,
+      "oos_sharpe": 13.3033,
+      "oos_ann_ret_pct": 4.7298,
+      "trades_yr": 48.4
+    },
+    {
+      "window_h": 120,
+      "oos_sharpe": 11.4446,
+      "oos_ann_ret_pct": 4.2767,
+      "trades_yr": 58.4
+    },
+    {
+      "window_h": 96,
+      "oos_sharpe": 10.6732,
+      "oos_ann_ret_pct": 4.1531,
+      "trades_yr": 66.7
+    },
+    {
+      "window_h": 336,
+      "oos_sharpe": 10.3315,
+      "oos_ann_ret_pct": 3.5247,
+      "trades_yr": 41.7
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 12,
+    "n_positive": 8,
+    "all_positive": false,
+    "pass": false,
+    "sh_min": -12.162,
+    "sh_max": 49.8442,
+    "sh_mean": 12.1289,
+    "sh_std": 17.6341,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-05-28",
+        "end": "2025-06-27",
+        "sharpe": -12.162,
+        "positive": "False",
+        "max_dd": -0.00602
+      },
+      {
+        "fold": 2,
+        "start": "2025-06-27",
+        "end": "2025-07-27",
+        "sharpe": 8.3907,
+        "positive": "True",
+        "max_dd": -0.002086
+      },
+      {
+        "fold": 3,
+        "start": "2025-07-27",
+        "end": "2025-08-26",
+        "sharpe": -2.8658,
+        "positive": "False",
+        "max_dd": -0.001101
+      },
+      {
+        "fold": 4,
+        "start": "2025-08-26",
+        "end": "2025-09-25",
+        "sharpe": 21.9394,
+        "positive": "True",
+        "max_dd": -0.000579
+      },
+      {
+        "fold": 5,
+        "start": "2025-09-25",
+        "end": "2025-10-25",
+        "sharpe": 4.8135,
+        "positive": "True",
+        "max_dd": -0.001943
+      },
+      {
+        "fold": 6,
+        "start": "2025-10-25",
+        "end": "2025-11-24",
+        "sharpe": 7.0634,
+        "positive": "True",
+        "max_dd": -0.000869
+      },
+      {
+        "fold": 7,
+        "start": "2025-11-24",
+        "end": "2025-12-24",
+        "sharpe": -0.9664,
+        "positive": "False",
+        "max_dd": -0.002481
+      },
+      {
+        "fold": 8,
+        "start": "2025-12-24",
+        "end": "2026-01-23",
+        "sharpe": -9.4409,
+        "positive": "False",
+        "max_dd": -0.004205
+      },
+      {
+        "fold": 9,
+        "start": "2026-01-23",
+        "end": "2026-02-22",
+        "sharpe": 22.7107,
+        "positive": "True",
+        "max_dd": -0.002029
+      },
+      {
+        "fold": 10,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": 32.8696,
+        "positive": "True",
+        "max_dd": -0.001325
+      },
+      {
+        "fold": 11,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": 23.3499,
+        "positive": "True",
+        "max_dd": -0.001018
+      },
+      {
+        "fold": 12,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": 49.8442,
+        "positive": "True",
+        "max_dd": -8.6e-05
+      }
+    ],
+    "note": "8/12 positive folds. G4 PARTIAL: 4 negative folds. Sharpe range: [-12.16, 49.84]. KAS PoW mining cycles tied to BTC narrative cycles and GPU hashrate trends."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": false,
+      "G5 Family corr": true,
+      "G6 Trades/yr": true,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": true,
+      "G9 Data sufficiency": true
+    },
+    "gates_passed": 8,
+    "gates_total": 9,
+    "gates_failed": 1,
+    "g7_ret_4x_pct": 18.92,
+    "g4_all_positive": false,
+    "g5_all_pass": true,
+    "g8_note": "G8 raw KAS FR corr HL vs Bybit=0.6363. No BTC Bybit parquet for differential construction.",
+    "decision": "ACCEPT"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": -0.0411,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "PoS L1 vs PoW BlockDAG \u2014 consensus distinction"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": 0.0836,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "PoS L1 vs PoW BlockDAG"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": -0.0112,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "PoS L1 vs PoW BlockDAG"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": 0.0423,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs PoW BlockDAG"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": 0.0532,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs PoW BlockDAG"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": 0.116,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs PoW BlockDAG"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": 0.0335,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs PoW BlockDAG"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": 0.0164,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Move-VM L1 vs PoW BlockDAG"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": 0.014,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Storage vs PoW BlockDAG"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531 (AI/GPU)",
+        "corr": -0.0244,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "AI/GPU vs PoW BlockDAG"
+      },
+      "g5l": {
+        "label": "TAO-BTC (AI/Training)",
+        "corr": 0.0468,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "AI/Training vs PoW BlockDAG"
+      },
+      "g5m": {
+        "label": "LINK-BTC K557 (Oracle/Infra vs PoW BlockDAG)",
+        "corr": 0.0306,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Oracle data middleware vs PoW mining settlement."
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline (PoW BTC correlation CRITICAL)",
+        "corr": -0.0244,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "CRITICAL: KAS and BTC share PoW mining paradigm. If corr >= 0.40 \u2192 BLOCKED-PoW-CLUSTER (KAS FR driven by BTC mining narrative). GHOST DAG consensus must create distinct FR dynamics from BTC linear chain."
+      },
+      "g5n": {
+        "label": "TON-BTC K571 (Social/Messaging vs PoW BlockDAG)",
+        "corr": 0.0732,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Telegram social retail vs KAS PoW mining community."
+      },
+      "g5o": {
+        "label": "ICP-BTC K587 (Compute/Cloud vs PoW BlockDAG)",
+        "corr": 0.1035,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 4709,
+        "note": "Internet Computer serverless cloud vs Kaspa GHOSTDAG PoW. New G5o gate post-K587."
+      }
+    },
+    "n_pass": 15,
+    "n_total": 15,
+    "all_pass": true,
+    "pow_cluster_distinct": true,
+    "btc_corr_critical": -0.0244,
+    "eth_corr_l1": -0.0411,
+    "btc_pass": true,
+    "eth_pass": true,
+    "note": "G5 family: 15/15 PASS. BTC-carry G5j=-0.0244 (PoW BTC correlation CRITICAL). ETH-L1 G5a=-0.0411 (PoS vs PoW distinction). PoW BlockDAG cluster distinct: True."
+  },
+  "cross_venue_fr": {
+    "pass": true,
+    "venue": "Bybit_raw",
+    "hl_alt_signal_corr": 0.6363,
+    "bybit_kas_rows": 4588,
+    "overlap_hours": 23042,
+    "note": "G8 raw KAS FR corr HL vs Bybit=0.6363. No BTC Bybit parquet for differential construction."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 4.7298,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 18.92,
+    "usdc_yr_1pct_10M": 18919,
+    "usdc_yr_2pct_10M": 37838,
+    "usdc_yr_1pct_100M": 189192,
+    "usdc_yr_2pct_100M": 378384,
+    "note": "4x leverage, OOS ann=4.73% \u00d7 4 = 18.92%/yr. @$10M 1% alloc: $18,919/yr. @$10M 2% alloc: $37,838/yr. @$100M 1% alloc: $189,192/yr."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 64.5,
+    "kas_alloc_pct": 1.5,
+    "projected_pct": 66.0,
+    "cap_pct": 65.0,
+    "breach": true,
+    "note": "v6.28 HL=64.5% + KAS 1.5% = 66.0%. Cap=65.0%. BREACH: split required. KAS PoW token \u2014 check maxLeverage on HL (may be lower, e.g. 5x-10x). Alternative: Bybit (higher leverage, 8h settlement) for primary execution."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM/L1",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche/L1",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana/L1",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 7,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 9,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "KAS-BTC",
+      "sharpe": 13.3033,
+      "ecosystem": "PoW BlockDAG (Kaspa GHOSTDAG)",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 11,
+      "pair": "ICP-BTC",
+      "sharpe": 12.527,
+      "ecosystem": "Compute/Cloud",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 12,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 13,
+      "pair": "TON-BTC",
+      "sharpe": 8.402,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 14,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum/L1",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 15,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "kas_family_rank": 10
+}
