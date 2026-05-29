@@ -6789,3 +6789,264 @@ Sleeve weight (v6.25 candidate):
 ---
 
 *K506 §38e -- K500 INJ-BTC FR differential production scaffold (34th daemon, OOS Sh 11.23 #4 family, $124K/yr net @$10M, G5a 0.1409 Cosmos 2nd CONFIRMED, G5d 0.2893 PASS Cosmos cluster expandable, v6.25 K449+K476+K484+K493+K500 17% combined paired-trade sleeve ~$631K/yr, 60d paper-trade gate) -- 2026-05-30*
+
+---
+
+## §38f K507 SEI-BTC FR Differential — Production Scaffold Playbook
+
+**Wave:** K514 | **Date:** 2026-05-30 | **Status:** SCAFFOLD-READY
+**Strategy:** K507 SEI-BTC paired-trade (35th daemon)
+
+---
+
+### §38f.1 Strategy Summary
+
+K507 SEI-BTC implements a delta-neutral funding rate carry trade split across
+HyperLiquid (primary 1.5%) and Bybit (secondary 1.5%) for a combined 3% sleeve.
+
+| Dimension | Value |
+|-----------|-------|
+| OOS Sharpe | 48.10 (family rank #2) |
+| Net P&L | $179K/yr @ $10M AUM |
+| Sleeve | 3% combined (HL 1.5% + Bybit 1.5%) |
+| Leverage | 4x |
+| Cron | 8h (28800s StartInterval) |
+| Execution | POST_ONLY parallel (K439 pattern) |
+| Venue split | HL primary (SEI leg) + Bybit secondary (BTC leg) |
+| HL cap post-K507 | 63.5% (1.5pp headroom vs 65% limit) |
+| Cosmos cluster | 3rd ACCEPT (SEI EVM-compat + Cosmos SDK) |
+| Position notional | $1.2M combined ($600K HL + $600K Bybit @ $10M) |
+
+---
+
+### §38f.2 Cosmos 3rd Hypothesis — CONFIRMED
+
+K507 is the third Cosmos-ecosystem token to pass §6 gates (after ATOM in K493 and INJ in K500).
+
+| Dimension | ATOM (K493) | INJ (K500) | SEI (K507) |
+|-----------|-------------|------------|------------|
+| OOS Sharpe | 50.79 | 11.23 | 48.10 |
+| Family rank | #1 | #4 | #2 |
+| Cosmos role | IBC governance + staking | DeFi-perp native DEX | Parallelized EVM + CosmWasm |
+| FR driver | Governance/staking flow | Buyback-burn + perp activity | EVM capital flows + dual-stack |
+| Venue | HL-only | HL-only | HL+Bybit split |
+
+SEI Network is built on Cosmos SDK with EVM compatibility (parallelized EVM engine).
+The dual-stack (EVM + CosmWasm) creates orthogonal FR dynamics:
+- EVM wallet compatibility enables Ethereum DeFi capital flows → distinct demand patterns
+- Parallelized EVM execution: SEI can process EVM txns 10x faster than Ethereum
+- Cosmos IBC bridges allow cross-chain capital (Cosmos → SEI → EVM ecosystems)
+- These mechanics are entirely distinct from ATOM IBC/staking + INJ DeFi-perp activity
+
+---
+
+### §38f.3 FR Differential Signal
+
+```
+Signal: 7d EMA of (SEI FR − BTC FR)
+
+Entry logic (K507):
+  ema_7d > +threshold → SEI FR > BTC FR
+    → SHORT SEI @ HL (collect high FR)
+    → LONG BTC @ Bybit (cheap carry)
+    → state: LONG_BTC_SHORT_SEI
+  ema_7d < -threshold → BTC FR > SEI FR
+    → LONG SEI @ HL (cheap carry)
+    → SHORT BTC @ Bybit (collect high FR)
+    → state: LONG_SEI_SHORT_BTC
+  |ema_7d| ≤ threshold → NEUTRAL
+
+EMA period: 7 days × 3 settlements/day = 21 8h periods
+α = 2 / (21 + 1) = 0.0909
+Threshold: 0.00001 (1 bps per 8h)
+```
+
+---
+
+### §38f.4 HL+Bybit Split Protocol
+
+K507 uses a 50/50 venue split to keep HL concentration at 63.5% (below 65% cap):
+
+```
+HL concentration pre-K507:  62.0% (after K500 addition)
+K507 HL portion:            +1.5% (SEI leg on HL)
+K507 Bybit portion:         +1.5% (BTC leg on Bybit)
+HL concentration post-K507: 63.5% (1.5pp headroom vs 65% cap)
+```
+
+Position sizing at $10M / 3% total / 4x:
+```
+HL sleeve capital:   $10M × 1.5% = $150K
+HL notional:         $150K × 4x = $600K (SEI leg)
+Bybit sleeve capital: $10M × 1.5% = $150K
+Bybit notional:      $150K × 4x = $600K (BTC leg)
+Total notional:      $1,200,000 (two venues combined)
+Margin required:     $300K (= $1.2M / 4x)
+Margin/AUM:          3.0%
+```
+
+---
+
+### §38f.5 Paired Execution Protocol
+
+```
+Entry:
+  1. Submit SEI leg POST_ONLY on HL (long or short based on signal)
+  2. Submit BTC leg POST_ONLY on Bybit (opposite side)
+  3. Both legs submitted in parallel to minimise timing divergence
+  4. IOC fallback per leg if POST_ONLY times out within 300s
+  5. If both fail → retry next 8h cycle
+
+Close (emergency or signal below threshold):
+  Step 1 (SHORT first): cover short leg on its venue
+    - If LONG_SEI_SHORT_BTC: cover BTC@Bybit (IOC reduce-only)
+    - If LONG_BTC_SHORT_SEI: cover SEI@HL (IOC reduce-only)
+  Step 2 (LONG second): sell long leg on its venue
+    - If LONG_SEI_SHORT_BTC: sell SEI@HL (IOC reduce-only)
+    - If LONG_BTC_SHORT_SEI: sell BTC@Bybit (IOC reduce-only)
+  Rationale: cover short first avoids uncovered short exposure
+```
+
+---
+
+### §38f.6 60d Paper-Trade Activation Gate
+
+Before live activation, K507 must pass all three criteria:
+
+| Criterion | Target | Rationale |
+|-----------|--------|-----------|
+| OOS Sharpe (paper, 60d) | ≥ 5.0 | Very loose given OOS 48.10; practical fill-rate gate |
+| Fill rate (both legs, HL+Bybit) | ≥ 60% | POST_ONLY fill-rate across two venues |
+| Max drawdown | < 15% | Capital preservation |
+
+After gate: activate K507 3% live → v6.27 combined:
+K449 5% + K476 3% + K484 3% + K493 3% + K500 3% + K507 3% = 20% paired-trade sleeve
+~$810K/yr combined @ $10M
+
+---
+
+### §38f.7 v6.27 Architecture — Combined Paired-Trade Sleeve
+
+K507 completes the v6.27 paired-trade family (6 strategies, 20% combined):
+
+| Strategy | Pair | OOS Sharpe | Ann Return | Sleeve |
+|----------|------|-----------|------------|--------|
+| K449 | ETH-BTC | 5.66 | $187K/yr | 5% |
+| K476 | SOL-BTC | 16.30 | $187K/yr | 3% |
+| K484 | AVAX-BTC | 43.89 | $75.7K/yr | 3% |
+| K493 | ATOM-BTC | 50.79 | $231K/yr | 3% |
+| K500 | INJ-BTC | 11.23 | $124K/yr | 3% |
+| K507 | SEI-BTC | 48.10 | $179K/yr | 3% |
+| **Combined** | | | **~$810K/yr** | **20%** |
+
+HL concentration: 63.5% < 65% cap (1.5pp headroom post-K507).
+Bybit portion: K507 BTC leg adds 1.5% Bybit exposure.
+
+---
+
+### §38f.8 Emergency Exit Integration
+
+K507 is integrated into `scripts/emergency_hl_exit.py`:
+
+```python
+# Detection (K514 Phase 4):
+_detect_k507_paired_positions(positions)
+
+# Close (sequential: short leg first per venue, then long leg):
+close_k507_paired_positions(plan, logger, dry_run)
+
+# plan_exit() detects K507 automatically:
+plan["k507_pair_detail"]   # SEI/BTC positions with venue assignments
+plan["k507_paired_detected"]  # True/False
+```
+
+```bash
+# Emergency dry-run (includes K507 summary):
+python3 scripts/emergency_hl_exit.py --dry-run --include-k507 --user 0x...
+
+# Emergency EXECUTE (all venues including K507):
+python3 scripts/emergency_hl_exit.py --EXECUTE --include-bybit --include-k507 --user 0x...
+```
+
+HL portion: IOC reduce-only on HL (SEI leg).
+Bybit portion: IOC reduce-only on Bybit (BTC leg).
+Sequential: cover short first → sell long second.
+
+---
+
+### §38f.9 Activation Procedure
+
+1. K507 paper-trade gate passed (all 3 metrics — see §38f.6)
+2. Confirm HL concentration ≤ 63.5% (headroom intact)
+3. Update `scripts/k507_sei_btc_run.py`: set `PAPER_TRADE = False`
+4. Set environment variables:
+   - `PAPER_TRADE=False`
+   - `HL_USER_ADDRESS=0x...` (for HL leg)
+   - `HL_PRIVATE_KEY=...` (at activation moment only)
+   - `BYBIT_API_KEY=...` (for Bybit leg)
+   - `BYBIT_API_SECRET=...` (for Bybit leg)
+5. Copy plist to LaunchAgents:
+   ```bash
+   # Replace REPO_ROOT with actual absolute path
+   sed 's|REPO_ROOT|/path/to/crypto-lab|g' \
+     com.cryptolab.k507-sei-btc.plist > \
+     ~/Library/LaunchAgents/com.cryptolab.k507-sei-btc.plist
+   launchctl load ~/Library/LaunchAgents/com.cryptolab.k507-sei-btc.plist
+   ```
+6. Verify daemon active:
+   ```bash
+   launchctl list | grep k507
+   ```
+7. Confirm 35 daemons, 0 mismatches:
+   ```bash
+   python3 scripts/verify_deployment_status.py
+   ```
+8. Update v6.27 sleeve weights in leverage_manager.py (use SLEEVE_WEIGHTS_V627)
+
+---
+
+### §38f.10 Leverage Configuration
+
+K507 is registered in `data/leverage_config.json`:
+```json
+"K507_SEI_BTC": 4.0
+```
+And in `scripts/leverage_manager.py`:
+```python
+"K507_SEI_BTC": 4.0,  # K514: SEI-BTC paired-trade (v6.27 candidate, HL+Bybit split)
+```
+Sleeve weight (v6.27 candidate):
+```python
+"K507": 0.03  # SLEEVE_WEIGHTS_V627
+```
+
+---
+
+### §38f.11 File Inventory
+
+| File | Description |
+|------|-------------|
+| `scripts/k507_sei_btc_run.py` | Main strategy script (~300 LOC, K339 pattern, HL+Bybit split) |
+| `com.cryptolab.k507-sei-btc.plist` | LaunchAgent plist (28800s 8h cron) |
+| `data/k507_dashboard.json` | Real-time FR + position state (initial NEUTRAL) |
+| `cache/k507_fr_history.jsonl` | 7d+ SEI-BTC FR history for EMA |
+| `cache/k507_paper_trades.jsonl` | Paper-trade execution log |
+| `logs/k507_sei_btc.log` | Daemon stdout log |
+| `logs/k507_sei_btc.err` | Daemon stderr log |
+
+---
+
+### §38f.12 References
+
+| Wave | Description |
+|------|-------------|
+| K514 | This section — K507 SEI-BTC production scaffold (35th daemon, v6.27 architecture) |
+| K507 | K507 analysis — SEI-BTC FR differential ACCEPT ($179K/yr @$10M, Cosmos 3rd CONFIRMED) |
+| K506 | K500 INJ-BTC scaffold (34th daemon, direct scaffold template) |
+| K499 | K493 ATOM-BTC scaffold (32nd daemon, Cosmos 1st CONFIRMED) |
+| K434 | Smart router (K507 uses HL+Bybit split pattern) |
+| K266 | §6 strict gate framework (K507 ACCEPT) |
+
+---
+
+*K514 §38f -- K507 SEI-BTC FR differential production scaffold (35th daemon, OOS Sh 48.10 #2 family, $179K/yr net @$10M, Cosmos 3rd CONFIRMED SEI EVM-compat + Cosmos SDK distinct from ATOM/INJ, HL+Bybit split 1.5%+1.5% HL 63.5% headroom 1.5pp, v6.27 K449+K476+K484+K493+K500+K507 20% combined paired-trade sleeve ~$810K/yr, 60d paper-trade gate) -- 2026-05-30*

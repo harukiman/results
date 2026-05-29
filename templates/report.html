@@ -6,6 +6,7 @@
 <title>Strategy Report</title>
 <link rel="stylesheet" href="/static/style.css">
 <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" onerror="console.warn('html2pdf CDN failed, PDF will use print fallback')"></script>
 <style>
   @media print {
     .chart-container { height: 250px !important; }
@@ -15,9 +16,11 @@
 </style>
 </head>
 <body>
-<div class="no-print" style="margin-bottom:12px">
-  <a href="/">← Dashboard</a>
-  <button class="btn" style="margin-left:12px" onclick="window.print()">PDF保存 / 印刷</button>
+<div class="no-print" style="margin-bottom:12px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+  <a href="/" style="padding:8px 0">← Dashboard</a>
+  <button class="btn" style="margin-left:8px;background:#8b5cf6;color:#fff;padding:8px 14px;font-size:0.82rem" onclick="openPdfModal('strategy')">戦略PDF出力</button>
+  <button class="btn" style="background:#eab308;color:#000;padding:8px 14px;font-size:0.82rem" onclick="openPdfModal('tips')">Tips PDF出力</button>
+  <button class="btn" style="padding:8px 14px;font-size:0.82rem" onclick="window.print()">印刷</button>
 </div>
 
 <h1>Crypto Strategy Lab — Full Report</h1>
@@ -108,6 +111,363 @@ document.getElementById('genTime').textContent = new Date().toLocaleString('ja-J
 })();
 {% endfor %}
 
+// === PDF Export ===
+var _allResults = [
+{% for r in results %}
+{idx:{{ r.idx }},name:"{{ r.name }}",grade:"{{ r.grade }}",alpha:{{ r.metrics.alpha_pct }}},
+{% endfor %}
+];
+
+function openPdfModal(mode) {
+  document.getElementById('pdfOverlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  const title = document.getElementById('pdfTitle');
+  const body = document.getElementById('pdfBody');
+  const btn = document.getElementById('pdfGenBtn');
+
+  if (mode === 'strategy') {
+    title.textContent = '戦略PDF出力';
+    btn.onclick = () => generateStrategyPdf();
+    body.innerHTML = '<p style="color:var(--dim);margin-bottom:12px">戦略を選択してください。計算式、メトリクス、実運用ガイドを含む詳細PDFを生成します。</p>' +
+      '<select id="pdfStratSelect" style="width:100%;padding:8px;background:var(--bg);border:1px solid var(--border);color:var(--text);border-radius:4px;font-size:0.85rem">' +
+      _allResults.map(r => '<option value="' + r.idx + '">[' + r.grade + '] ' + r.name + ' (α=' + r.alpha + '%)</option>').join('') +
+      '</select>';
+  } else {
+    title.textContent = 'Tips PDF出力';
+    btn.onclick = () => generateTipsPdf();
+    body.innerHTML = '<p style="color:var(--dim);margin-bottom:12px">出力するTipsを選択してください。</p>' +
+      '<div style="margin-bottom:8px"><label style="cursor:pointer"><input type="checkbox" id="pdfTipsAll" onchange="toggleAllTips(this.checked)"> <strong>全て選択</strong></label></div>' +
+      '<div id="pdfTipsList" style="max-height:400px;overflow-y:auto"></div>';
+    fetch('/api/tips').then(r => r.json()).then(tips => {
+      document.getElementById('pdfTipsList').innerHTML = tips.map((t, i) =>
+        '<label style="display:block;padding:4px 0;cursor:pointer;font-size:0.85rem"><input type="checkbox" class="tipCb" value="' + i + '" checked> ' +
+        '<span style="color:' + ({warning:'var(--red)',discovery:'var(--green)',validation:'var(--accent)'}[t.category]||'var(--yellow)') + '">[' +
+        (t.category||'info').toUpperCase() + ']</span> ' + t.title + '</label>'
+      ).join('');
+      document.getElementById('pdfTipsAll').checked = true;
+    });
+  }
+}
+function closePdfModal() {
+  document.getElementById('pdfOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+  document.getElementById('pdfStatus').style.display = 'none';
+  document.getElementById('pdfStatus').style.color = 'var(--accent)';
+}
+function toggleAllTips(checked) {
+  document.querySelectorAll('.tipCb').forEach(cb => cb.checked = checked);
+}
+
+async function generateStrategyPdf() {
+  const idx = document.getElementById('pdfStratSelect').value;
+  const status = document.getElementById('pdfStatus');
+  status.textContent = '戦略データを取得中...';
+  status.style.display = '';
+
+  try {
+    const resp = await fetch('/api/strategy/' + idx + '/pdf-data');
+    if (!resp.ok) throw new Error('API error');
+    const d = await resp.json();
+
+    status.textContent = 'PDF生成中...';
+
+    const html = buildStrategyHtml(d);
+    await downloadPdf(html, d.name + '_report.pdf');
+    status.textContent = 'PDF生成完了!';
+    setTimeout(() => { status.style.display = 'none'; }, 2000);
+  } catch(e) {
+    status.textContent = 'エラー: ' + e.message;
+    status.style.color = 'var(--red)';
+  }
+}
+
+async function generateTipsPdf() {
+  const checked = [...document.querySelectorAll('.tipCb:checked')].map(cb => parseInt(cb.value));
+  if (!checked.length) { alert('Tipsを1つ以上選択してください'); return; }
+
+  const status = document.getElementById('pdfStatus');
+  status.textContent = 'Tips取得中...';
+  status.style.display = '';
+
+  try {
+    const resp = await fetch('/api/tips');
+    const allTips = await resp.json();
+    const selected = checked.map(i => allTips[i]).filter(Boolean);
+
+    status.textContent = 'PDF生成中...';
+    const html = buildTipsHtml(selected);
+    await downloadPdf(html, 'tips_report.pdf');
+    status.textContent = 'PDF生成完了!';
+    setTimeout(() => { status.style.display = 'none'; }, 2000);
+  } catch(e) {
+    status.textContent = 'エラー: ' + e.message;
+    status.style.color = 'var(--red)';
+  }
+}
+
+function buildStrategyHtml(d) {
+  const m = d.metrics;
+  const wf = d.walkforward || {};
+  const oos = wf.oos_metrics || {};
+  const oos2 = wf.oos2_metrics || {};
+  const oos3 = wf.oos3_metrics || {};
+  const rd = d.readiness || {};
+  const k = d.kelly || {};
+  const tb = d.trade_breakdown || {};
+  const styleNames = {scalp:'スキャル・短期系',trend:'トレンドフォロー・ブレイクアウト系',grid:'グリッド・DCA系'};
+
+  // Color helpers
+  const pos = v => v > 0 ? '#16a34a' : (v < 0 ? '#dc2626' : '#111');
+  const gradeColor = g => ({A:'#16a34a',B:'#2563eb',C:'#ca8a04',D:'#ea580c',F:'#dc2626'}[g]||'#111');
+
+  let html = '<div style="font-family:-apple-system,BlinkMacSystemFont,Helvetica Neue,sans-serif;color:#111;max-width:780px;margin:0 auto;padding:24px;line-height:1.7;font-size:15px">';
+
+  // Header
+  html += '<div style="border-bottom:3px solid #2563eb;padding-bottom:12px;margin-bottom:20px">';
+  html += '<h1 style="font-size:26px;margin:0 0 6px;font-weight:700">' + d.name + '</h1>';
+  html += '<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">';
+  html += '<span style="display:inline-block;width:36px;height:36px;line-height:36px;text-align:center;border-radius:50%;font-weight:700;font-size:18px;color:#fff;background:' + gradeColor(d.grade) + '">'+d.grade+'</span>';
+  html += '<span style="font-size:14px;color:#444;background:#f1f5f9;padding:4px 12px;border-radius:4px">' + (styleNames[d.trade_style]||d.trade_style) + '</span>';
+  if (rd.total_score != null) html += '<span style="font-size:14px;font-weight:700;color:#7c3aed">Readiness: ' + rd.total_score + '/100</span>';
+  html += '</div>';
+  html += '<p style="color:#555;margin:8px 0 0;font-size:14px">' + d.desc + '</p>';
+  html += '</div>';
+
+  // Live Readiness Criteria Table
+  if (rd.criteria) {
+    html += '<h2 style="font-size:18px;margin:24px 0 10px;color:#7c3aed;font-weight:700">Live Readiness Score: ' + (rd.total_score||'-') + '/100 — ' + (rd.grade||'') + '</h2>';
+    html += '<table style="width:100%;border-collapse:collapse;font-size:14px;margin:8px 0;border:1px solid #d1d5db">';
+    html += '<thead><tr style="background:#f8fafc"><th style="text-align:left;padding:8px 10px;border:1px solid #d1d5db;font-weight:600">評価軸</th>' +
+      '<th style="padding:8px 10px;border:1px solid #d1d5db;font-weight:600;text-align:center;width:80px">スコア</th>' +
+      '<th style="padding:8px 10px;border:1px solid #d1d5db;font-weight:600;text-align:left">詳細</th></tr></thead><tbody>';
+    const labels = {pbo:'PBO品質',oos:'OOS一貫性',r2:'エクイティR²',dd:'DD制御',degradation:'IS→OOS劣化'};
+    const maxPts = {pbo:25,oos:25,r2:20,dd:15,degradation:15};
+    let i = 0;
+    for (const [ck,cv] of Object.entries(rd.criteria)) {
+      const bg = i % 2 === 0 ? '#fff' : '#f9fafb';
+      const pct = Math.round((cv.score / (maxPts[ck]||1)) * 100);
+      const sc = pct >= 80 ? '#16a34a' : pct >= 60 ? '#ca8a04' : '#dc2626';
+      html += '<tr style="background:'+bg+'"><td style="padding:8px 10px;border:1px solid #d1d5db;font-weight:500">' + (labels[ck]||ck) + '</td>' +
+        '<td style="padding:8px 10px;border:1px solid #d1d5db;text-align:center;font-weight:700;color:'+sc+'">' + cv.score + '/' + (maxPts[ck]||'?') + '</td>' +
+        '<td style="padding:8px 10px;border:1px solid #d1d5db;color:#555;font-size:13px">' + cv.detail + '</td></tr>';
+      i++;
+    }
+    html += '</tbody></table>';
+  }
+
+  // Performance Metrics — Full comparison table across periods
+  html += '<h2 style="font-size:18px;margin:28px 0 10px;font-weight:700">パフォーマンス比較</h2>';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #d1d5db">';
+  html += '<thead><tr style="background:#1e293b;color:#fff">' +
+    '<th style="padding:8px 6px;border:1px solid #334155;text-align:left">Period</th>' +
+    '<th style="padding:8px 6px;border:1px solid #334155;text-align:right">Alpha%</th>' +
+    '<th style="padding:8px 6px;border:1px solid #334155;text-align:right">Ret/day%</th>' +
+    '<th style="padding:8px 6px;border:1px solid #334155;text-align:right">Return%</th>' +
+    '<th style="padding:8px 6px;border:1px solid #334155;text-align:right">BTC%</th>' +
+    '<th style="padding:8px 6px;border:1px solid #334155;text-align:right">MaxDD%</th>' +
+    '<th style="padding:8px 6px;border:1px solid #334155;text-align:right">Sharpe</th>' +
+    '<th style="padding:8px 6px;border:1px solid #334155;text-align:right">PF</th>' +
+    '<th style="padding:8px 6px;border:1px solid #334155;text-align:right">Trades</th>' +
+    '</tr></thead><tbody>';
+
+  function mRow(label, mt, bg, labelColor) {
+    if (!mt || mt.alpha_pct == null) return '';
+    return '<tr style="background:'+bg+'">' +
+      '<td style="padding:7px 6px;border:1px solid #d1d5db;font-weight:700;color:'+labelColor+'">'+label+'</td>' +
+      '<td style="padding:7px 6px;border:1px solid #d1d5db;text-align:right;font-weight:600;color:'+pos(mt.alpha_pct)+'">'+mt.alpha_pct+'</td>' +
+      '<td style="padding:7px 6px;border:1px solid #d1d5db;text-align:right;font-weight:600;color:'+pos(mt.return_daily_pct||0)+'">'+(mt.return_daily_pct||0)+'</td>' +
+      '<td style="padding:7px 6px;border:1px solid #d1d5db;text-align:right;color:'+pos(mt.total_return_pct)+'">'+mt.total_return_pct+'</td>' +
+      '<td style="padding:7px 6px;border:1px solid #d1d5db;text-align:right">'+(mt.benchmark_return_pct||0)+'</td>' +
+      '<td style="padding:7px 6px;border:1px solid #d1d5db;text-align:right;color:#dc2626">'+mt.max_drawdown_pct+'</td>' +
+      '<td style="padding:7px 6px;border:1px solid #d1d5db;text-align:right">'+mt.sharpe_ratio+'</td>' +
+      '<td style="padding:7px 6px;border:1px solid #d1d5db;text-align:right">'+mt.profit_factor+'</td>' +
+      '<td style="padding:7px 6px;border:1px solid #d1d5db;text-align:right">'+(mt.total_trades||'-')+'</td></tr>';
+  }
+
+  var isM = wf.is_metrics || m;
+  html += mRow('IS', isM, '#fff', '#111');
+  html += mRow('OOS', oos, '#eff6ff', '#2563eb');
+  html += mRow('OOS2', oos2, '#f0fdf4', '#16a34a');
+  html += mRow('OOS3', oos3, '#fefce8', '#ca8a04');
+  html += mRow('Full', m, '#f8fafc', '#111');
+  html += '</tbody></table>';
+
+  // PBO row
+  if (wf.pbo_score != null) {
+    html += '<div style="display:flex;gap:20px;flex-wrap:wrap;margin:12px 0;font-size:14px">';
+    html += '<span><strong>PBO:</strong> <span style="color:' + (wf.pbo_score < 0.3 ? '#16a34a' : '#dc2626') + ';font-weight:700">' + wf.pbo_score + '</span></span>';
+    if (wf.pbo2_score != null) html += '<span><strong>PBO2:</strong> <span style="color:' + (wf.pbo2_score < 0.3 ? '#16a34a' : '#dc2626') + ';font-weight:700">' + wf.pbo2_score + '</span></span>';
+    if (wf.pbo3_score != null) html += '<span><strong>PBO3:</strong> <span style="color:' + (wf.pbo3_score < 0.3 ? '#16a34a' : '#dc2626') + ';font-weight:700">' + wf.pbo3_score + '</span></span>';
+    html += '<span><strong>R²:</strong> ' + (m.r_squared || rd.r2 || '-') + '</span>';
+    html += '</div>';
+  }
+
+  // Detailed metrics side by side
+  html += '<h2 style="font-size:18px;margin:28px 0 10px;font-weight:700">詳細メトリクス</h2>';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:14px;border:1px solid #d1d5db">';
+  const rows = [
+    ['Alpha%', m.alpha_pct, pos(m.alpha_pct)], ['Total Return%', m.total_return_pct, pos(m.total_return_pct)],
+    ['Return/day%', m.return_daily_pct, pos(m.return_daily_pct)],
+    ['Benchmark (BTC)%', m.benchmark_return_pct, '#111'],
+    ['Sharpe Ratio', m.sharpe_ratio, '#111'], ['Sortino Ratio', m.sortino_ratio, '#111'],
+    ['Max Drawdown%', m.max_drawdown_pct, '#dc2626'], ['Calmar Ratio', m.calmar_ratio, '#111'],
+    ['Win Rate%', m.win_rate_pct, '#111'], ['Profit Factor', m.profit_factor, '#111'],
+    ['Avg Win%', m.avg_win_pct, '#16a34a'], ['Avg Loss%', m.avg_loss_pct, '#dc2626'],
+    ['Expectancy%', m.expectancy_pct, pos(m.expectancy_pct)], ['Total Trades', m.total_trades, '#111'],
+    ['Equity R²', m.r_squared || rd.r2 || '-', '#111'],
+  ];
+  rows.forEach(([label, val, color], i) => {
+    const bg = i % 2 === 0 ? '#fff' : '#f9fafb';
+    html += '<tr style="background:'+bg+'"><td style="padding:7px 10px;border:1px solid #d1d5db;font-weight:500">' + label + '</td>' +
+      '<td style="padding:7px 10px;border:1px solid #d1d5db;text-align:right;font-weight:700;font-size:15px;color:'+color+'">' + val + '</td></tr>';
+  });
+  html += '</table>';
+
+  // Kelly
+  if (k.kelly_fraction) {
+    html += '<h2 style="font-size:18px;margin:28px 0 10px;font-weight:700">Kelly Criterion (Bet Sizing)</h2>';
+    html += '<table style="width:100%;border-collapse:collapse;font-size:14px;border:1px solid #d1d5db">';
+    html += '<tr style="background:#faf5ff"><td style="padding:8px 10px;border:1px solid #d1d5db;font-weight:500">Kelly f*</td><td style="padding:8px 10px;border:1px solid #d1d5db;text-align:right;font-weight:700;color:#7c3aed">' + k.kelly_fraction + '</td></tr>';
+    html += '<tr><td style="padding:8px 10px;border:1px solid #d1d5db;font-weight:500">半Kelly (推奨)</td><td style="padding:8px 10px;border:1px solid #d1d5db;text-align:right;font-weight:700">' + k.half_kelly + '</td></tr>';
+    html += '<tr style="background:#faf5ff"><td style="padding:8px 10px;border:1px solid #d1d5db;font-weight:500">推奨レバレッジ</td><td style="padding:8px 10px;border:1px solid #d1d5db;text-align:right;font-weight:700;color:#7c3aed;font-size:16px">' + k.recommended_leverage + 'x</td></tr>';
+    html += '<tr><td style="padding:8px 10px;border:1px solid #d1d5db;font-weight:500">勝率</td><td style="padding:8px 10px;border:1px solid #d1d5db;text-align:right;font-weight:600">' + k.win_rate + '%</td></tr>';
+    html += '<tr style="background:#faf5ff"><td style="padding:8px 10px;border:1px solid #d1d5db;font-weight:500">ペイオフ比</td><td style="padding:8px 10px;border:1px solid #d1d5db;text-align:right;font-weight:600">' + k.payoff_ratio + '</td></tr>';
+    html += '<tr><td style="padding:8px 10px;border:1px solid #d1d5db;font-weight:500">エッジ/trade</td><td style="padding:8px 10px;border:1px solid #d1d5db;text-align:right;font-weight:600">' + k.edge_pct + '%</td></tr>';
+    html += '</table>';
+  }
+
+  // Trade breakdown
+  html += '<h2 style="font-size:18px;margin:28px 0 10px;font-weight:700">トレード内訳</h2>';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:14px;border:1px solid #d1d5db">';
+  html += '<tr style="background:#f8fafc"><td style="padding:7px 10px;border:1px solid #d1d5db;font-weight:500">総トレード</td><td style="padding:7px 10px;border:1px solid #d1d5db;text-align:right;font-weight:700">' + tb.total + '</td></tr>';
+  html += '<tr><td style="padding:7px 10px;border:1px solid #d1d5db;font-weight:500">Long / Short</td><td style="padding:7px 10px;border:1px solid #d1d5db;text-align:right;font-weight:600">' + tb.long + ' / ' + tb.short + '</td></tr>';
+  html += '<tr style="background:#f8fafc"><td style="padding:7px 10px;border:1px solid #d1d5db;font-weight:500">Exit: SL / TP / Signal</td><td style="padding:7px 10px;border:1px solid #d1d5db;text-align:right;font-weight:600">' + tb.sl_exits + ' / ' + tb.tp_exits + ' / ' + tb.signal_exits + '</td></tr>';
+  html += '<tr><td style="padding:7px 10px;border:1px solid #d1d5db;font-weight:500">平均保持時間</td><td style="padding:7px 10px;border:1px solid #d1d5db;text-align:right;font-weight:600">' + tb.avg_hold_bars + 'バー (' + (tb.avg_hold_bars*15/60).toFixed(1) + '時間)</td></tr>';
+  html += '</table>';
+
+  // Formula
+  if (d.formula && d.formula.sections) {
+    html += '<div style="margin-top:28px;border-top:3px solid #7c3aed;padding-top:16px">';
+    html += '<h2 style="font-size:18px;margin:0 0 12px;font-weight:700;color:#7c3aed">計算式・アルゴリズム詳細</h2>';
+    d.formula.sections.forEach(s => {
+      html += '<h3 style="font-size:15px;margin:16px 0 6px;color:#2563eb;font-weight:600">' + s.title + '</h3>';
+      html += '<pre style="font-size:13px;background:#f1f5f9;padding:14px;border-radius:8px;white-space:pre-wrap;line-height:1.8;border:1px solid #cbd5e1;color:#1e293b">' + s.content + '</pre>';
+    });
+    html += '</div>';
+  }
+
+  // CPCV
+  if (d.cpcv && d.cpcv.cpcv_pbo != null) {
+    html += '<h2 style="font-size:18px;margin:28px 0 10px;font-weight:700">CPCV (Combinatorial Purged Cross-Validation)</h2>';
+    html += '<table style="width:100%;border-collapse:collapse;font-size:14px;border:1px solid #d1d5db">';
+    html += '<tr style="background:#faf5ff"><td style="padding:7px 10px;border:1px solid #d1d5db;font-weight:500">CPCV PBO</td><td style="padding:7px 10px;border:1px solid #d1d5db;text-align:right;font-weight:700;color:#7c3aed">' + d.cpcv.cpcv_pbo + '</td></tr>';
+    html += '<tr><td style="padding:7px 10px;border:1px solid #d1d5db;font-weight:500">一貫性</td><td style="padding:7px 10px;border:1px solid #d1d5db;text-align:right;font-weight:700">' + (d.cpcv.cpcv_consistency*100).toFixed(0) + '%</td></tr>';
+    html += '<tr style="background:#faf5ff"><td style="padding:7px 10px;border:1px solid #d1d5db;font-weight:500">劣化率</td><td style="padding:7px 10px;border:1px solid #d1d5db;text-align:right;font-weight:600">' + d.cpcv.cpcv_degradation + '</td></tr>';
+    html += '<tr><td style="padding:7px 10px;border:1px solid #d1d5db;font-weight:500">検証パス数</td><td style="padding:7px 10px;border:1px solid #d1d5db;text-align:right;font-weight:600">' + d.cpcv.cpcv_paths + '</td></tr>';
+    html += '</table>';
+  }
+
+  // Equity curve as SVG sparkline
+  if (d.equity_curve && d.equity_curve.length > 10) {
+    html += '<h2 style="font-size:18px;margin:28px 0 10px;font-weight:700">エクイティカーブ</h2>';
+    var eq = d.equity_curve;
+    var eqMin = Math.min.apply(null, eq), eqMax = Math.max.apply(null, eq);
+    var eqRange = eqMax - eqMin || 1;
+    var svgW = 740, svgH = 160;
+    var pts = eq.map(function(v, i) {
+      return (i / (eq.length - 1) * svgW).toFixed(1) + ',' + (svgH - 8 - (v - eqMin) / eqRange * (svgH - 16)).toFixed(1);
+    }).join(' ');
+    html += '<div style="border:1px solid #d1d5db;border-radius:8px;padding:12px;background:#f8fafc">';
+    html += '<svg width="100%" viewBox="0 0 ' + svgW + ' ' + svgH + '" style="display:block">';
+    html += '<polyline points="' + pts + '" fill="none" stroke="#2563eb" stroke-width="2"/>';
+    html += '<text x="4" y="14" font-size="11" fill="#666">Max: $' + eqMax.toFixed(0) + '</text>';
+    html += '<text x="4" y="' + (svgH - 4) + '" font-size="11" fill="#666">Min: $' + eqMin.toFixed(0) + '</text>';
+    html += '</svg></div>';
+  }
+
+  html += '<div style="margin-top:32px;border-top:2px solid #e2e8f0;padding-top:10px;font-size:12px;color:#94a3b8;text-align:center">Generated: ' + new Date().toLocaleString('ja-JP') + ' | Crypto Strategy Lab</div>';
+  html += '</div>';
+  return html;
+}
+
+function _escHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function buildTipsHtml(tips) {
+  let html = '<div style="font-family:-apple-system,BlinkMacSystemFont,Helvetica Neue,sans-serif;color:#111;max-width:780px;margin:0 auto;padding:24px;line-height:1.7;font-size:15px">';
+  html += '<h1 style="font-size:26px;border-bottom:3px solid #ca8a04;padding-bottom:10px;margin-bottom:6px;font-weight:700">Tips & Discoveries Report</h1>';
+  html += '<p style="color:#555;margin-bottom:20px;font-size:14px">' + tips.length + '件のTipsを収録 | Generated: ' + new Date().toLocaleString('ja-JP') + '</p>';
+
+  const catColors = {warning:'#dc2626',discovery:'#16a34a',validation:'#2563eb',learning:'#ca8a04'};
+  const catBg = {warning:'#fef2f2',discovery:'#f0fdf4',validation:'#eff6ff',learning:'#fefce8'};
+  const catLabels = {warning:'WARNING',discovery:'DISCOVERY',validation:'VALIDATION',learning:'LEARNING'};
+
+  tips.forEach((t, i) => {
+    const color = catColors[t.category] || '#ca8a04';
+    const bg = catBg[t.category] || '#fefce8';
+    html += '<div style="margin-bottom:18px;padding:16px;border:1px solid #d1d5db;border-left:5px solid ' + color + ';border-radius:8px;background:'+bg+'">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
+    html += '<span style="font-size:12px;font-weight:700;color:#fff;background:'+color+';padding:2px 8px;border-radius:3px">' + (catLabels[t.category]||'INFO') + '</span>';
+    html += '<h2 style="font-size:16px;margin:0;font-weight:700;color:#111">' + _escHtml(t.title) + '</h2>';
+    html += '</div>';
+    html += '<pre style="font-size:14px;white-space:pre-wrap;line-height:1.8;margin:0;color:#333">' + _escHtml(t.content) + '</pre>';
+    if (t.source_strategy) html += '<p style="font-size:12px;color:#666;margin:10px 0 0;font-weight:500">Source: ' + _escHtml(t.source_strategy) + '</p>';
+    html += '</div>';
+  });
+
+  html += '<div style="margin-top:24px;font-size:12px;color:#94a3b8;border-top:2px solid #e2e8f0;padding-top:10px;text-align:center">Crypto Strategy Lab — Tips Report</div>';
+  html += '</div>';
+  return html;
+}
+
+async function downloadPdf(htmlContent, filename) {
+  // Create hidden iframe for rendering
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:800px;height:2400px';
+  document.body.appendChild(iframe);
+  const doc = iframe.contentDocument;
+  doc.open();
+  doc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;padding:0;background:#fff;-webkit-font-smoothing:antialiased;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}</style></head><body>' + htmlContent + '</body></html>');
+  doc.close();
+
+  await new Promise(r => setTimeout(r, 800));
+
+  try {
+    if (typeof html2pdf !== 'undefined') {
+      // Estimate content height to adjust scale (prevent canvas overflow)
+      const contentH = doc.body.scrollHeight;
+      const scale = contentH > 5000 ? 1.5 : (contentH > 3000 ? 2.0 : 2.5);
+      await html2pdf().set({
+        margin: [12, 8, 12, 8],
+        filename: filename,
+        image: {type:'jpeg', quality:0.95},
+        html2canvas: {scale: scale, useCORS:true, letterRendering:true, scrollY:0, windowHeight: contentH + 100},
+        jsPDF: {unit:'mm', format:'a4', orientation:'portrait'},
+        pagebreak: {mode:['css','legacy']},
+      }).from(doc.body).save();
+    } else {
+      throw new Error('html2pdf not loaded');
+    }
+  } catch(e) {
+    console.warn('html2pdf failed, using print fallback:', e);
+    // Fallback: open in new window for print
+    const win = window.open('', '_blank');
+    if (win) {
+      win.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>' + filename + '</title>' +
+        '<style>body{margin:20px;background:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6}</style></head><body>' +
+        htmlContent + '</body></html>');
+      win.document.close();
+      win.focus();
+      setTimeout(() => win.print(), 500);
+    } else {
+      alert('ポップアップがブロックされました。ブラウザの設定を確認してください。');
+    }
+  }
+  document.body.removeChild(iframe);
+}
+
 // Auto-generate summary
 const results = [
   {% for r in results %}
@@ -128,6 +488,26 @@ if (failing.length > 0) {
 }
 html += '</div>';
 document.getElementById('summary').innerHTML = html;
+</script>
+
+<!-- PDF Export Modal -->
+<div id="pdfOverlay" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);align-items:center;justify-content:center">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 id="pdfTitle" style="margin:0;font-size:1.2rem"></h2>
+      <button onclick="closePdfModal()" style="background:none;border:none;color:var(--dim);font-size:1.5rem;cursor:pointer">&times;</button>
+    </div>
+    <div id="pdfBody"></div>
+    <div id="pdfStatus" style="display:none;margin-top:12px;color:var(--accent);font-size:0.85rem"></div>
+    <div style="margin-top:16px;text-align:right">
+      <button onclick="closePdfModal()" style="padding:8px 16px;background:var(--border);color:var(--text);border:none;border-radius:5px;cursor:pointer;margin-right:8px">キャンセル</button>
+      <button id="pdfGenBtn" style="padding:8px 20px;background:#8b5cf6;color:#fff;border:none;border-radius:5px;cursor:pointer;font-weight:600">PDF生成</button>
+    </div>
+  </div>
+</div>
+<script>
+// Fix overlay display
+document.getElementById('pdfOverlay').style.display = 'none';
 </script>
 </body>
 </html>

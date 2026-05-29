@@ -633,6 +633,128 @@ def close_k500_paired_positions(
     return True
 
 
+def _detect_k507_paired_positions(positions: List[Dict]) -> Optional[Dict]:
+    """
+    K514 Phase 4: Detect K507 paired positions (SEI long + BTC short, or reverse).
+
+    K507 SEI-BTC = 2 legs split across HL + Bybit:
+      - One leg on HL (SEI leg)
+      - One leg on Bybit (BTC leg)
+    Sequential close: short leg first (avoid uncovered short), then long leg.
+    HL portion closes on HL; Bybit portion closes on Bybit.
+
+    A K507 pair is identified by:
+      - One long leg: SEI or BTC
+      - One short leg: the other of SEI/BTC
+      - HL+Bybit split: SEI on HL, BTC on Bybit (or reverse based on direction)
+
+    Note: SEI is the native token of Sei Network (parallelized EVM + Cosmos SDK).
+    K507 is the Cosmos 3rd ACCEPT. OOS Sharpe 48.10 (family rank #2).
+    HL+Bybit split: 1.5% HL + 1.5% Bybit → HL 63.5% (1.5pp headroom vs 65% cap).
+    SEI EVM-compat creates orthogonal FR dynamics vs ATOM IBC/staking + INJ DeFi-perp.
+    """
+    K507_SYMBOLS = {"SEI", "BTC"}
+    sei_btc = [p for p in positions if p.get("coin", "").upper() in K507_SYMBOLS]
+    if len(sei_btc) < 2:
+        return None
+
+    longs  = [p for p in sei_btc if p.get("side") == "long"]
+    shorts = [p for p in sei_btc if p.get("side") == "short"]
+
+    if not (longs and shorts):
+        return None
+
+    long_pos  = longs[0]
+    short_pos = shorts[0]
+    long_sym  = long_pos["coin"].upper()
+    short_sym = short_pos["coin"].upper()
+
+    if long_sym not in K507_SYMBOLS or short_sym not in K507_SYMBOLS:
+        return None
+    if long_sym == short_sym:
+        return None
+
+    # Determine venue split: SEI on HL, BTC on Bybit (or reverse)
+    long_venue  = "HL"    if long_sym == "SEI"  else "Bybit"
+    short_venue = "HL"    if short_sym == "SEI" else "Bybit"
+
+    return {
+        "detected":        True,
+        "long_symbol":     long_sym,
+        "short_symbol":    short_sym,
+        "long_value_usd":  long_pos.get("value_usd", 0.0),
+        "short_value_usd": short_pos.get("value_usd", 0.0),
+        "long_size":       long_pos.get("size", 0.0),
+        "short_size":      short_pos.get("size", 0.0),
+        "long_venue":      long_venue,
+        "short_venue":     short_venue,
+        "state":           f"LONG_{long_sym}_SHORT_{short_sym}",
+        "split_protocol":  "HL_1.5PCT_BYBIT_1.5PCT",
+        "close_protocol":  "short_leg_first_then_long_leg",
+        "note":            (
+            f"K507 SEI-BTC paired position — cover {short_sym}@{short_venue} first, "
+            f"then sell {long_sym}@{long_venue}. "
+            "HL+Bybit split: SEI leg on HL, BTC leg on Bybit (K514)."
+        ),
+    }
+
+
+def close_k507_paired_positions(
+    plan:    Dict,
+    logger:  "logging.Logger",
+    dry_run: bool = True,
+) -> bool:
+    """
+    K514 Phase 4: Close K507 SEI-BTC paired positions.
+    Sequential: short leg first (avoid uncovered short), then long leg.
+    HL portion closes on HL; Bybit portion closes on Bybit.
+
+    K507 HL+Bybit split:
+      SEI leg → HL (1.5% of AUM)
+      BTC leg → Bybit (1.5% of AUM)
+    Close: cover short (SEI@HL or BTC@Bybit) first → sell long second.
+
+    Args:
+      plan:    exit plan dict (from plan_exit())
+      logger:  logger instance
+      dry_run: True = paper-trade simulation
+
+    Returns True on success (or dry-run), False on error.
+    """
+    k507_detail = plan.get("k507_pair_detail")
+
+    if not k507_detail or not k507_detail.get("detected"):
+        logger.info("  [K507] No K507 SEI-BTC paired position detected (NEUTRAL or 60d paper-trade).")
+        return True
+
+    short_sym   = k507_detail["short_symbol"]
+    long_sym    = k507_detail["long_symbol"]
+    short_val   = k507_detail.get("short_value_usd", 0.0)
+    long_val    = k507_detail.get("long_value_usd", 0.0)
+    short_venue = k507_detail.get("short_venue", "Bybit")
+    long_venue  = k507_detail.get("long_venue", "HL")
+
+    logger.info(f"  [K507] SEI-BTC paired close — {k507_detail['state']}")
+    logger.info(f"    Step 1 (SHORT first): BUY-COVER {short_sym} ${short_val:,.0f}  "
+                f"({short_venue} IOC reduce-only)")
+    logger.info(f"    Step 2 (LONG second): SELL      {long_sym} ${long_val:,.0f}  "
+                f"({long_venue} IOC reduce-only)")
+    logger.info(f"    Split: HL 1.5% + Bybit 1.5% — close each leg on its venue")
+
+    if dry_run:
+        logger.info("    [DRY-RUN] K507 SEI-BTC close simulated — no actual orders submitted")
+        return True
+
+    # LIVE scaffold: IOC close on respective venues (sequential)
+    # Step 1: cover short on its venue (HL or Bybit)
+    logger.info(f"    SCAFFOLD: IOC reduce {short_sym} (cover short) @ {short_venue}")
+    # Step 2: sell long on its venue (HL or Bybit)
+    logger.info(f"    SCAFFOLD: IOC reduce {long_sym} (sell long) @ {long_venue}")
+    logger.info("    SCAFFOLD: K507 close wired but not executed "
+                "(HL+Bybit auth required at live activation)")
+    return True
+
+
 def _detect_k449_paired_positions(positions: List[Dict]) -> Optional[Dict]:
     """
     K450 Phase 11: Detect K449 paired positions (ETH long + BTC short, or reverse).
@@ -824,6 +946,12 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
     k500_coins: set = set()
     if k500_pair:
         k500_coins = {k500_pair["long_symbol"], k500_pair["short_symbol"]}
+
+    # K514: detect K507 paired positions (SEI/BTC — HL+Bybit split)
+    k507_pair = _detect_k507_paired_positions(positions)
+    k507_coins: set = set()
+    if k507_pair:
+        k507_coins = {k507_pair["long_symbol"], k507_pair["short_symbol"]}
 
     # K502: detect K495 DEX-CEX flow divergence positions (LONG BTC+ETH+SOL)
     k495_pos = _detect_k495_position(positions)
@@ -1071,8 +1199,55 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
             })
             total_notional += long_pos["value_usd"]
 
-    # All other positions: close in any order (non-K449, non-K457, non-K476, non-K484, non-K493, non-K500)
-    handled_coins = k449_coins | k457_coins | k476_coins | k484_coins | k493_coins | k500_coins
+    # K507 SEI-BTC paired positions: short leg first, then long leg (K514 Phase 4)
+    # HL+Bybit split: SEI on HL, BTC on Bybit (or reverse based on direction)
+    if k507_pair:
+        # Short leg first (avoid uncovered short) — close on its venue
+        short_coin  = k507_pair["short_symbol"]
+        short_venue = k507_pair.get("short_venue", "Bybit")
+        short_pos   = next((p for p in positions if p["coin"].upper() == short_coin
+                            and p["side"] == "short"), None)
+        if short_pos:
+            close_list.append({
+                "coin":             short_pos["coin"],
+                "size":             short_pos["size"],
+                "side_to_close":    "buy",   # covering short
+                "value_usd":        short_pos["value_usd"],
+                "current_side":     "short",
+                "k507_paired":      True,
+                "k507_close_order": 1,        # close short first
+                "venue":            short_venue,
+                "note":             (
+                    f"K507 SEI-BTC short leg {short_coin} — "
+                    f"cover first ({short_venue}). HL+Bybit 1.5%+1.5% split (K514)."
+                ),
+            })
+            total_notional += short_pos["value_usd"]
+
+        # Long leg second — close on its venue
+        long_coin  = k507_pair["long_symbol"]
+        long_venue = k507_pair.get("long_venue", "HL")
+        long_pos   = next((p for p in positions if p["coin"].upper() == long_coin
+                           and p["side"] == "long"), None)
+        if long_pos:
+            close_list.append({
+                "coin":             long_pos["coin"],
+                "size":             long_pos["size"],
+                "side_to_close":    "sell",
+                "value_usd":        long_pos["value_usd"],
+                "current_side":     "long",
+                "k507_paired":      True,
+                "k507_close_order": 2,        # close long second
+                "venue":            long_venue,
+                "note":             (
+                    f"K507 SEI-BTC long leg {long_coin} — "
+                    f"sell second ({long_venue}). HL+Bybit 1.5%+1.5% split (K514)."
+                ),
+            })
+            total_notional += long_pos["value_usd"]
+
+    # All other positions: close in any order (non-K449, non-K457, non-K476, non-K484, non-K493, non-K500, non-K507)
+    handled_coins = k449_coins | k457_coins | k476_coins | k484_coins | k493_coins | k500_coins | k507_coins
     for p in positions:
         coin = p.get("coin", "").upper()
         if coin in handled_coins:
@@ -1112,6 +1287,8 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
         "k493_pair_detail":       k493_pair,
         "k500_paired_detected":   k500_pair is not None,
         "k500_pair_detail":       k500_pair,
+        "k507_paired_detected":   k507_pair is not None,
+        "k507_pair_detail":       k507_pair,
         "k495_detected":          k495_pos is not None,
         "k495_detail":            k495_pos,
     }
@@ -2162,7 +2339,8 @@ def main() -> int:
             "K460: --include-aevo flag added (4th venue, STUB scaffold)\n"
             "K460: --include-dydx flag added (5th venue, Cosmos chain STUB scaffold)\n"
             "K502: --include-k495 flag added (K495 DEX-CEX flow divergence, LONG BTC+ETH+SOL, bear-conditional)\n"
-            "K506: --include-k500 flag added (K500 INJ-BTC FR differential, 34th daemon, Cosmos 2nd CONFIRMED)"
+            "K506: --include-k500 flag added (K500 INJ-BTC FR differential, 34th daemon, Cosmos 2nd CONFIRMED)\n"
+            "K514: --include-k507 flag added (K507 SEI-BTC FR differential, 35th daemon, Cosmos 3rd CONFIRMED, HL+Bybit split)"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
@@ -2492,6 +2670,31 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K514: K507 SEI-BTC FR differential paired-trade emergency exit flag
+    # K507 = SEI long + BTC short (or reverse) — HL+Bybit split (1.5%+1.5%).
+    # Sequential close: short leg first (avoid uncovered short), then long leg.
+    # HL portion closes on HL; Bybit portion closes on Bybit.
+    # Default: off (K507 positions are auto-detected via _detect_k507_paired_positions).
+    # Use --include-k507 to print K507-specific close summary and ensure sequential ordering.
+    parser.add_argument(
+        "--include-k507",
+        dest="include_k507",
+        action="store_true",
+        default=False,
+        help=(
+            "K514: Include K507 SEI-BTC paired-trade close summary during emergency exit. "
+            "K507 positions (SEI+BTC, HL+Bybit split, 2 legs) are detected automatically; "
+            "this flag adds a structured summary. "
+            "Close protocol: short leg first (avoid uncovered short), then long leg. "
+            "HL+Bybit split: SEI leg on HL (1.5%), BTC leg on Bybit (1.5%). "
+            "Close each leg on its respective venue (HL IOC + Bybit IOC). "
+            "OOS Sharpe 48.10 (family rank #2). Cosmos 3rd CONFIRMED. "
+            "SEI EVM-compat + Cosmos SDK distinct from ATOM/INJ. "
+            "Requires: K507 daemon running (com.cryptolab.k507-sei-btc). "
+            "See: docs/k302a_runbook.md §38f"
+        ),
+    )
+
     # K502: K495 DEX-CEX flow divergence bear-conditional emergency exit flag
     # K495 = LONG BTC+ETH+SOL on HL (3 legs) when DEX-CEX z-score > 1.0 in bear regime.
     # Close protocol: IOC market orders (reduce-only) BTC → ETH → SOL (largest notional first).
@@ -2764,6 +2967,27 @@ USDY sleeve emergency guidance (K415 §21.6):
                 logger.info(
                     "K500 INJ-BTC paired positions detected — included in HL exit above. "
                     "Use --include-k500 to print detailed INJ-BTC sequential close summary (§38e)."
+                )
+
+        # K514: K507 SEI-BTC paired close summary (documentation; positions auto-detected in plan_exit)
+        # K507 positions (SEI+BTC, HL+Bybit split) are included in the main HL+Bybit exit.
+        # This flag adds a structured summary of the K507-specific sequential close protocol.
+        # HL+Bybit split: SEI on HL, BTC on Bybit (or reverse). Close each leg on its venue.
+        if args.include_k507:
+            logger.info("=== K507 SEI-BTC PAIRED CLOSE SUMMARY (K514 §38f) ===")
+            success_k507 = close_k507_paired_positions(plan=plan, logger=logger, dry_run=False)
+            if success_k507:
+                logger.info("  K507 SEI-BTC close: complete (or no position detected).")
+            else:
+                logger.warning("  K507 SEI-BTC close: had errors — verify HL+Bybit positions manually.")
+            logger.info("  HL+Bybit split: SEI leg on HL (IOC), BTC leg on Bybit (IOC)")
+            logger.info("  See: docs/k302a_runbook.md §38f (K507 SEI-BTC strategy playbook)")
+        else:
+            if plan.get("k507_paired_detected"):
+                logger.info(
+                    "K507 SEI-BTC paired positions detected — included in HL+Bybit exit above. "
+                    "Use --include-k507 to print detailed SEI-BTC sequential close summary (§38f). "
+                    "HL+Bybit split: SEI@HL + BTC@Bybit (1.5%+1.5%)."
                 )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)

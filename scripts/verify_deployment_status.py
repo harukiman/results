@@ -287,6 +287,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k500_inj_btc",
         expected_html_status="SCAFFOLD-READY",  # K506: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=3.5 + fill_rate >=60% + maxDD <15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k507-sei-btc",
+        purpose="K507 SEI-BTC FR differential paired-trade (delta-neutral, 4x leverage, 8h cycle, HL+Bybit split 1.5%+1.5%, OOS Sh 48.10 #2 family, $179K/yr net @$10M, Cosmos 3rd CONFIRMED: SEI EVM-compat + Cosmos SDK, HL 63.5% post-K507 (1.5pp headroom), v6.27 candidate K449+K476+K484+K493+K500+K507 20% combined sleeve ~$810K/yr, 35th daemon)",
+        scripts=["scripts/k507_sei_btc_run.py"],
+        log_basename="k507_sei_btc",
+        expected_html_status="SCAFFOLD-READY",  # K514: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=5.0 + fill_rate >=60% + maxDD <15%)
+    ),
 ]
 
 
