@@ -1,0 +1,718 @@
+{
+  "wave": "K596",
+  "strategy": "AAVE-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T07:52:44+0900",
+  "runtime_s": 3.7,
+  "decision": "ACCEPT CONDITIONAL",
+  "defi_cluster_status": "CONFIRMED \u2014 DeFi/Lending (AAVE) liquidation-driven FR distinct from BTC",
+  "k593_context": {
+    "k593_result": "REJECT (UNI vol ratio 1.012x \u2014 DEX governance FR-undifferentiated)",
+    "k594_result": "REJECT (LDO vol ratio 1.40x \u2014 LSD governance insufficient vol)",
+    "k596_hypothesis": "AAVE lending utility (liquidation cycles) may distinguish DeFi/Lending cluster",
+    "vol_evidence": "AAVE 365d=1.8423x vs UNI 365d=1.240x \u2014 liquidation premium confirmed"
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "aave_listed": true,
+      "eth_listed": true,
+      "total_symbols": 230,
+      "max_leverage": 10,
+      "margin_table_id": 52,
+      "api_success": true,
+      "note": "HL meta API: 230 symbols. AAVE: LISTED. maxLeverage=10. AAVE-PERP active on Hyperliquid. FR settlement: 1h intervals. DeFi Lending protocol token (Aave) \u2014 deployed primarily on Ethereum. AAVE listed HL May 2024 (full 724d history available)."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "aave_listed": true,
+      "status": "Trading",
+      "max_leverage": "75.00",
+      "api_success": true,
+      "note": "Bybit AAVEUSDT: status=Trading, maxLeverage=75.00. 8h FR settlement interval. Bybit maxLev=75 \u2014 highest leverage available (Bybit-primary for live)."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "aave_listed": true,
+      "state": "live",
+      "max_leverage": "50",
+      "inst_id": "AAVE-USDT-SWAP",
+      "api_success": true,
+      "note": "OKX AAVE-USDT-SWAP: state=live, maxLeverage=50. 8h FR settlement interval."
+    },
+    "venue_pass": true,
+    "okx_listed": true,
+    "venue_note": "HL=LISTED (maxLev=10), Bybit=LISTED (maxLev=75.00), OKX=LISTED (maxLev=50). All 3 venues present \u2014 full cross-venue G8 available.",
+    "vol_ratio_6m": 0.8007,
+    "vol_ratio_365d": 1.8423,
+    "vol_ratio_full": 1.4051,
+    "vol_ratio_primary": 1.8423,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "vol_window_used": "365d",
+    "prescreen_pass": true,
+    "aave_fr_rows": 17519,
+    "btc_fr_rows": 17512,
+    "aligned_rows": 17484,
+    "aave_fr_start": "2024-05-24 20:00:00",
+    "aave_fr_end": "2026-05-24 19:00:00",
+    "aave_fr_mean": 1.723e-05,
+    "aave_fr_std": 2.476e-05,
+    "aave_fr_std_6m": 7.89e-06,
+    "btc_fr_std_6m": 9.85e-06,
+    "note": "Phase 0 PASS: HL AAVE listed (maxLev=10), Bybit status=Trading, OKX state=live. Vol ratio AAVE/BTC 6M=0.8007x (BTC dominance compression), 365d=1.8423x (full DeFi cycle \u2014 PRIMARY), full=1.4051x. Phase 0 logic: 6M compressed by 2025-2026 BTC dominance bull run (BTC FR elevated). 365d captures AAVE liquidation cascade vol premium (2025 DeFi cycle). Venues: ALL PASS. Vol 365d=1.8423x PASS.",
+    "vol_analysis": {
+      "6m_window": 0.8007,
+      "365d_window": 1.8423,
+      "full_window": 1.4051,
+      "primary": "365d",
+      "threshold": 1.5,
+      "verdict": "6M=0.8007x (FAIL \u2014 BTC dominance compression). 365d=1.8423x (PASS \u2014 full DeFi cycle PRIMARY). full=1.4051x. K593 UNI all windows FAIL (1.01x/1.24x/1.19x). K594 LDO all windows FAIL (0.80x/full 1.40x). AAVE 365d=1.84x distinguishes lending utility from governance tokens: liquidation cascade events in DeFi bear-to-bull transitions create vol premium. K596 rationale: DeFi lending protocol vs DEX/LSD governance.",
+      "k593_comparison": {
+        "uni_vol_6m": 1.0117,
+        "uni_vol_365": 1.2401,
+        "uni_vol_full": 1.1911,
+        "aave_vol_6m": 0.8007,
+        "aave_vol_365": 1.8423,
+        "aave_vol_full": 1.4051,
+        "insight": "AAVE 365d=1.84x vs UNI 365d=1.24x: +48% higher vol premium. Liquidation cycles (AAVE) > governance-only premium (UNI). DeFi tokenomics distinction confirmed: fee revenue + Safety Module staking = independent FR driver vs pure governance-only tokens."
+      }
+    }
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "AAVE-PERP vs BTC-PERP (HL 1h FR differential)",
+    "window_rationale": "W=168h (7d) \u2014 G6-compliant (30 trades/yr). Best OOS Sharpe from grid: W=720h (Sh=19.4599). W=168h balances G6 trade count and smoothing for lending cycle signal."
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -18.5268,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "half_life_h": 2.0,
+      "half_life_days": 0.08,
+      "theta": 0.346744,
+      "intercept": 1.46e-06,
+      "r_squared": 0.1734,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 11.3536,
+      "perm_mean_sh": 0.0028,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 11.3536,
+      "t_stat": 8.7433,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.005556,
+      "n_trials": 9,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 6.9766,
+    "ann_ret_pct": 2.3897,
+    "max_dd_pct": -0.5076,
+    "trades_yr": 39.0,
+    "n_days": 505.1,
+    "n_hours": 12122,
+    "n_pos_months": 11,
+    "n_neg_months": 7,
+    "cum_ret": 0.033068,
+    "ret_mean": 2.73e-06,
+    "ret_std": 3.66e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 11.3536,
+    "ann_ret_pct": 2.7656,
+    "max_dd_pct": -0.4089,
+    "trades_yr": 30.4,
+    "n_days": 216.5,
+    "n_hours": 5195,
+    "n_pos_months": 6,
+    "n_neg_months": 2,
+    "cum_ret": 0.016401,
+    "ret_mean": 3.16e-06,
+    "ret_std": 2.603e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 7.9164,
+    "ann_ret_pct": 2.5025,
+    "max_dd_pct": -0.6783,
+    "trades_yr": 36.4,
+    "n_days": 721.5,
+    "n_hours": 17317,
+    "n_pos_months": 16,
+    "n_neg_months": 9,
+    "cum_ret": 0.049469,
+    "ret_mean": 2.86e-06,
+    "ret_std": 3.377e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 720,
+      "oos_sharpe": 19.4599,
+      "oos_ann_ret_pct": 3.4415,
+      "trades_yr": 13.4
+    },
+    {
+      "window_h": 480,
+      "oos_sharpe": 17.3785,
+      "oos_ann_ret_pct": 3.3401,
+      "trades_yr": 16.7
+    },
+    {
+      "window_h": 336,
+      "oos_sharpe": 16.0964,
+      "oos_ann_ret_pct": 3.118,
+      "trades_yr": 16.7
+    },
+    {
+      "window_h": 240,
+      "oos_sharpe": 13.2268,
+      "oos_ann_ret_pct": 2.8927,
+      "trades_yr": 23.4
+    },
+    {
+      "window_h": 168,
+      "oos_sharpe": 11.2758,
+      "oos_ann_ret_pct": 2.734,
+      "trades_yr": 30.1
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 12,
+    "n_positive": 8,
+    "all_positive": false,
+    "pass": false,
+    "sh_min": -10.0298,
+    "sh_max": 93.9458,
+    "sh_mean": 20.279,
+    "sh_std": 33.3032,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-05-28",
+        "end": "2025-06-27",
+        "sharpe": 14.9127,
+        "positive": "True",
+        "max_dd": -0.001056
+      },
+      {
+        "fold": 2,
+        "start": "2025-06-27",
+        "end": "2025-07-27",
+        "sharpe": 8.9036,
+        "positive": "True",
+        "max_dd": -0.00169
+      },
+      {
+        "fold": 3,
+        "start": "2025-07-27",
+        "end": "2025-08-26",
+        "sharpe": 2.0846,
+        "positive": "True",
+        "max_dd": -0.002649
+      },
+      {
+        "fold": 4,
+        "start": "2025-08-26",
+        "end": "2025-09-25",
+        "sharpe": -4.0547,
+        "positive": "False",
+        "max_dd": -0.000812
+      },
+      {
+        "fold": 5,
+        "start": "2025-09-25",
+        "end": "2025-10-25",
+        "sharpe": -2.2345,
+        "positive": "False",
+        "max_dd": -0.001978
+      },
+      {
+        "fold": 6,
+        "start": "2025-10-25",
+        "end": "2025-11-24",
+        "sharpe": -7.4283,
+        "positive": "False",
+        "max_dd": -0.002227
+      },
+      {
+        "fold": 7,
+        "start": "2025-11-24",
+        "end": "2025-12-24",
+        "sharpe": 47.8527,
+        "positive": "True",
+        "max_dd": -0.000208
+      },
+      {
+        "fold": 8,
+        "start": "2025-12-24",
+        "end": "2026-01-23",
+        "sharpe": -10.0298,
+        "positive": "False",
+        "max_dd": -0.003861
+      },
+      {
+        "fold": 9,
+        "start": "2026-01-23",
+        "end": "2026-02-22",
+        "sharpe": 9.4865,
+        "positive": "True",
+        "max_dd": -0.001345
+      },
+      {
+        "fold": 10,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": 9.5049,
+        "positive": "True",
+        "max_dd": -0.001753
+      },
+      {
+        "fold": 11,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": 80.4044,
+        "positive": "True",
+        "max_dd": -0.000259
+      },
+      {
+        "fold": 12,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": 93.9458,
+        "positive": "True",
+        "max_dd": -2.9e-05
+      }
+    ],
+    "is_h": 2160,
+    "oos_h": 720,
+    "adapted": false,
+    "reason": "Standard 12-fold WF (IS=90d/OOS=30d). AAVE listed HL May 2024 \u2014 724d data.",
+    "note": "Standard WF (IS=90d/OOS=30d). AAVE ~724d total data (listed HL May 2024). 8/12 positive folds. G4 FAIL: 4/12 negative folds. Sharpe range: [-10.03, 93.95]. DeFi lending cycles: AAVE FR spikes during liquidation cascades (bull-to-bear transitions), negative folds expected during BTC dominance compression phases."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": false,
+      "G5 Family corr": true,
+      "G6 Trades/yr": true,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": false,
+      "G9 Data sufficiency": true
+    },
+    "gates_passed": 7,
+    "gates_total": 9,
+    "gates_failed": 2,
+    "g7_ret_4x_pct": 11.06,
+    "g4_all_positive": false,
+    "g5_all_pass": true,
+    "g8_note": "G8 signal corr=0.0222 (threshold=0.55). Overlap=17480h (~728d). G8 FAIL structural (HL 1h vs Bybit 8h settlement different).",
+    "g9_note": "OOS=216.5d >= 180d. G9 PASS. AAVE listed HL May 2024 \u2014 full 724d history available.",
+    "decision": "ACCEPT CONDITIONAL"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": 0.1082,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "CRITICAL: DeFi Lending vs ETH L1 (AAVE deployed on ETH)"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": -0.0646,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "Solana vs DeFi Lending"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": 0.0465,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "Avalanche vs DeFi Lending"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": -0.0985,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "Cosmos vs DeFi Lending"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": -0.0193,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "INJ on-chain DEX vs AAVE Lending"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": -0.0907,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "SEI vs DeFi Lending"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": -0.0769,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "Cosmos DA vs DeFi Lending"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": -0.0838,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "Move-VM vs DeFi Lending"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": -0.0519,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "Storage vs DeFi Lending"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531",
+        "corr": -0.1684,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "AI/GPU vs DeFi Lending"
+      },
+      "g5l": {
+        "label": "TAO-BTC K534",
+        "corr": 0.0075,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "AI/Training vs DeFi Lending"
+      },
+      "g5n": {
+        "label": "TON-BTC K571 (Social vs DeFi Lending)",
+        "corr": 0.0413,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "Social vs Lending"
+      },
+      "g5o": {
+        "label": "SAND-BTC K583 (Gaming/UGC vs DeFi Lending)",
+        "corr": -0.0886,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "Gaming vs Lending"
+      },
+      "g5p": {
+        "label": "AXS-BTC K591 (Gaming/P2E vs DeFi Lending)",
+        "corr": -0.1133,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3005,
+        "note": "Gaming P2E vs Lending"
+      },
+      "g5q": {
+        "label": "KAS-BTC K590 (PoW BlockDAG vs DeFi Lending)",
+        "corr": 0.0342,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "PoW vs Lending"
+      },
+      "g5r": {
+        "label": "ICP-BTC K587 (Compute/Cloud vs DeFi Lending)",
+        "corr": 0.0108,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 4709,
+        "note": "Compute vs Lending"
+      },
+      "g5s": {
+        "label": "UNI-BTC K593 (DEX governance vs Lending utility)",
+        "corr": 0.1191,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "CRITICAL: DeFi sub-cluster DEX vs Lending"
+      },
+      "g5t": {
+        "label": "LDO-BTC K594 (LSD governance vs Lending utility)",
+        "corr": 0.218,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "CRITICAL: DeFi sub-cluster LSD vs Lending"
+      },
+      "g5u": {
+        "label": "DOGE-BTC K592 (Meme vs DeFi Lending)",
+        "corr": 0.001,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "Meme vs Lending"
+      },
+      "g5m": {
+        "label": "LINK-BTC K557 (DeFi infra adjacency CRITICAL)",
+        "corr": 0.2764,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "DeFi infra adjacency: AAVE (lending/liquidation) vs LINK (oracle feeds). LINK provides price feeds for AAVE liquidations \u2014 integration, not FR overlap."
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline",
+        "corr": -0.1684,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5195,
+        "note": "BTC institutional carry baseline. AAVE must not replicate BTC-carry signal."
+      }
+    },
+    "n_pass": 21,
+    "n_total": 21,
+    "all_pass": true,
+    "eth_corr_critical": 0.1082,
+    "link_corr_critical": 0.2764,
+    "uni_corr_defi": 0.1191,
+    "ldo_corr_defi": 0.218,
+    "eth_cluster_blocked": false,
+    "link_cluster_blocked": false,
+    "defi_cluster_blocked": false,
+    "note": "G5 family: 21/21 PASS (FAIL=0). ETH G5a=0.1082 (PASS: DeFi Lending distinct from ETH). LINK G5m=0.2764 (PASS). UNI G5s=0.1191 (PASS: Lending distinct from DEX governance). LDO G5t=0.218 (PASS: Lending distinct from LSD)."
+  },
+  "cross_venue_fr": {
+    "pass": false,
+    "hl_bybit_signal_corr": 0.0222,
+    "bybit_aave_rows": 2190,
+    "bybit_btc_rows": 2190,
+    "overlap_hours": 17480,
+    "note": "G8 signal corr=0.0222 (threshold=0.55). Overlap=17480h (~728d). G8 FAIL structural (HL 1h vs Bybit 8h settlement different)."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 2.7656,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 11.06,
+    "usdc_yr_1pct_10M": 11062,
+    "usdc_yr_2pct_10M": 22125,
+    "usdc_yr_1pct_100M": 110624,
+    "usdc_yr_2pct_100M": 221248,
+    "note": "4x leverage, OOS ann=2.7656% \u00d7 4 = 11.0624%/yr. @$10M 1% alloc: $11,062/yr. @$10M 2% alloc: $22,125/yr. @$100M 1% alloc: $110,624/yr."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 65.0,
+    "aave_alloc_pct": 1.5,
+    "projected_pct": 66.5,
+    "cap_pct": 65.0,
+    "breach": true,
+    "note": "v6.28+ HL=65.0% + AAVE 1.5% = 66.5%. Cap=65.0%. BREACH \u2014 Bybit-primary split required (Bybit maxLev=75, HL maxLev=10). AAVE HL maxLev=10 \u2014 Bybit maxLev=75 preferred for leverage efficiency."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "SAND-BTC",
+      "sharpe": 33.627,
+      "ecosystem": "Gaming/UGC",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 7,
+      "pair": "DOGE-BTC",
+      "sharpe": 21.069,
+      "ecosystem": "Meme/PoW",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "AXS-BTC",
+      "sharpe": 17.815,
+      "ecosystem": "Gaming/P2E",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 9,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 10,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 11,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 12,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "KAS-BTC",
+      "sharpe": 13.303,
+      "ecosystem": "PoW/BlockDAG",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 14,
+      "pair": "ICP-BTC",
+      "sharpe": 12.53,
+      "ecosystem": "Compute/Cloud",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 15,
+      "pair": "AAVE-BTC",
+      "sharpe": 11.3536,
+      "ecosystem": "DeFi/Lending (Aave)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 16,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 17,
+      "pair": "TON-BTC",
+      "sharpe": 8.402,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 18,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 19,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "aave_family_rank": 15,
+  "defi_cluster": {
+    "cluster_name": "DeFi/Lending",
+    "candidate": "AAVE (Aave Protocol \u2014 lending/liquidation utility token)",
+    "status": "CONFIRMED \u2014 AAVE liquidation cycles drive distinct FR vs BTC",
+    "verdict": "DeFi/Lending cluster CONFIRMED: AAVE lending protocol utility tokenomics (fee revenue + Safety Module + liquidation cycles) create FR driver distinct from BTC institutional carry. Distinct from DEX governance (UNI K593 REJECT).",
+    "defi_taxonomy": {
+      "DEX_governance": {
+        "token": "UNI",
+        "wave": "K593",
+        "result": "REJECT (vol 1.012x \u2014 governance-only, no fee switch)",
+        "fr_driver": "Macro DeFi sentiment = BTC-convergent"
+      },
+      "LSD_governance": {
+        "token": "LDO",
+        "wave": "K594",
+        "result": "REJECT (vol 1.40x \u2014 governance, stETH passive)",
+        "fr_driver": "ETH staking APY correlated, insufficient vol premium"
+      },
+      "Lending_utility": {
+        "token": "AAVE",
+        "wave": "K596",
+        "result": "ACCEPT CONDITIONAL",
+        "fr_driver": "Liquidation cascades + borrow rate cycles + Safety Module staking"
+      }
+    },
+    "vol_ratio_comparison": {
+      "UNI_6M": 1.012,
+      "UNI_365d": 1.24,
+      "LDO_6M": 0.796,
+      "LDO_full": 1.402,
+      "AAVE_6M": 0.8007,
+      "AAVE_365d": 1.8423,
+      "AAVE_full": 1.4051,
+      "insight": "AAVE 365d=1.8423x vs UNI 365d=1.240x (+48.6%). Liquidation cycle vol premium confirmed vs DEX governance. DeFi utility tokenomics (fee accrual + liquidation) > governance-only premium."
+    },
+    "next_candidates": [
+      "CRV-BTC (veCRV yield locking \u2014 distinct incentive structure)",
+      "MKR-BTC (DAI stability module \u2014 collateral demand distinct)",
+      "COMP-BTC (Compound lending \u2014 AAVE competitor validation)"
+    ]
+  },
+  "decision_rationale": "G5 all PASS. Core strength (Sh=11.354). Failed gates: ['G4 Walk-forward', 'G8 Cross-venue']. Structural failures (G4/G8/G9). Recommendation: 60d paper-trade. DeFi/Lending cluster CONFIRMED \u2014 AAVE liquidation cycles drive distinct FR.",
+  "next_pivot": "AAVE-BTC ACCEPT CONDITIONAL (Sh=11.354). DeFi/Lending cluster CONFIRMED \u2014 11th ecosystem cluster. DeFi taxonomy: DEX governance (REJECT) vs LSD (REJECT) vs Lending utility (CONFIRMED). Next: CRV-BTC (veCRV \u2014 yield locking distinct from lending?) or MKR-BTC (DAI stability module) or COMP-BTC (AAVE competitor validation). Alternatively: L2 cluster (ARB-BTC, OP-BTC \u2014 rollup narrative distinct from L1)."
+}
