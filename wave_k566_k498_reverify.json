@@ -1,0 +1,148 @@
+{
+  "wave": "K566",
+  "title": "K498 State Re-Verification (Resolution of K530/K548/K561 Discrepancy)",
+  "generated_jst": "2026-05-30 06:40 JST",
+  "generated_utc": "2026-05-29T21:40:00Z",
+  "urgency": "URGENT: 15-min discrepancy (K548 vs K561)",
+  "pattern": "K339 READ-ONLY verification",
+  "methodology": "Ground truth from source files (not JSON measurements)",
+
+  "discrepancy_context": {
+    "k530_report": {
+      "time": "2026-05-30 05:08 JST",
+      "claim": "SMART_ROUTER_ENABLED = False",
+      "source": "wave_k530_k498_phase_1a_playbook.md (playbook, not measurement)",
+      "accuracy": "CORRECT (matches ground truth)"
+    },
+    "k548_report": {
+      "time": "2026-05-30 06:15 JST",
+      "claim": "SMART_ROUTER_ENABLED = False (verified CONFIRMED)",
+      "source": "wave_k548_okx_preconditions_verify.json (precondition verification)",
+      "accuracy": "CORRECT (matches ground truth)"
+    },
+    "k561_report": {
+      "time": "2026-05-30 06:30 JST",
+      "claim": "status='READY-TO-APPLY' for action A4 K498 activation",
+      "source": "wave_k561_phase_a_consolidated.json (playbook consolidation)",
+      "interpretation": "READINESS assessment, NOT measurement of source code state",
+      "accuracy": "CORRECT (preconditions DO pass; action IS ready to apply)",
+      "confusion": "K561 does NOT claim SMART_ROUTER_ENABLED=True in source code"
+    },
+    "discrepancy_resolution": {
+      "root_cause": "K561 is a PLAYBOOK (recommended next actions), NOT a measurement",
+      "k561_status_means": "5 Phase A actions are READY-TO-APPLY (preconditions verified in K548)",
+      "k561_does_not_mean": "SMART_ROUTER_ENABLED has been changed to True in source code",
+      "time_delta_k548_to_k561": "15 minutes",
+      "file_change_detected": false,
+      "conclusion": "NO STATE CHANGE between K548 and K561"
+    }
+  },
+
+  "ground_truth_verification": {
+    "timestamp_k566": "2026-05-30 06:40 JST",
+    "authoritative_sources": [
+      {
+        "file": "scripts/k280_live_fetch.py",
+        "line": 159,
+        "field": "SMART_ROUTER_ENABLED",
+        "value": false,
+        "evidence": "SMART_ROUTER_ENABLED = False   # K434: set True after testing; scaffold only in this wave",
+        "file_mtime_unix": 1780064121.7476757,
+        "file_mtime_jst": "2026-05-29 23:15 JST",
+        "confidence": "DEFINITIVE (source code, not configuration)"
+      },
+      {
+        "file": "data/smart_router_config.json",
+        "field": "routing_mode",
+        "value": "MISSING (implicit HL_OVERFLOW)",
+        "evidence": "routing_mode field not present; defaults to HL_OVERFLOW mode",
+        "file_mtime_unix": 1780072569.20358,
+        "file_mtime_jst": "2026-05-30 01:36 JST",
+        "confidence": "DEFINITIVE (config file, static)"
+      },
+      {
+        "file": "data/okx_dashboard.json",
+        "field": "status",
+        "value": "SCAFFOLD-READY",
+        "evidence": "daemon_label='com.cryptolab.okx-fr-monitor', daemon_number=20",
+        "file_mtime_unix": 1780069197.3969815,
+        "file_mtime_jst": "2026-05-30 00:39 JST",
+        "confidence": "DEFINITIVE (OKX monitor readiness state)"
+      }
+    ]
+  },
+
+  "launchctl_state": {
+    "timestamp": "2026-05-30 06:40 JST",
+    "com.cryptolab.okx-fr-monitor": {
+      "loaded": false,
+      "pid": null,
+      "status": "NOT LOADED (ready to load at Step 5 of K530 playbook)",
+      "next_step": "cp com.cryptolab.okx-fr-monitor.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.okx-fr-monitor.plist"
+    },
+    "active_daemons": [
+      "com.cryptolab.ct-forward (PID 93023)",
+      "com.cryptolab.strategy-reports (PID 58111)",
+      "com.cryptolab.strategy-explorer (PID 58104)"
+    ]
+  },
+
+  "k498_activation_status": {
+    "current_state": "NOT ACTIVATED (SMART_ROUTER_ENABLED=False)",
+    "activation_gate": "K530 14-LOC patch + K548 preconditions VERIFIED",
+    "readiness": "READY-TO-APPLY (all preconditions pass)",
+    "next_steps": [
+      "Apply K530 14-LOC patch (STEP 1 in playbook)",
+      "Verify OKX daemon scaffold state (STEP 1)",
+      "Deploy BBO_SELECT routing (STEP 2)",
+      "Load OKX FR monitor daemon (STEP 4)",
+      "24-48h paper observation gate (STEPS 5-6)",
+      "Live activation (STEP 7, after gate pass)"
+    ]
+  },
+
+  "phase_a_impact": {
+    "a1_k545_tax_harvester": "READY-TO-APPLY (5 min, ZERO risk)",
+    "a2_k481_builder_rebate": "READY-TO-APPLY (30 min, ZERO risk)",
+    "a3_k552_k280_patch": "READY-TO-APPLY (30 min, LOW risk, prerequisite for K376/K449)",
+    "a4_k498_bbo_select": "READY-TO-APPLY (8 hrs, LOW risk, preconditions VERIFIED by K548)",
+    "a5_k485_bybit_sub": "READY-TO-APPLY (30 min setup + 7d gate, LOW risk)",
+    "total_immediate_effort": "1.5 hours active",
+    "total_immediate_lift_10m_aum": "+$95,000/yr",
+    "full_activation_lift_30m_aum": "+$2.5-3.0M/yr"
+  },
+
+  "verdict": {
+    "k530_correct": true,
+    "k548_correct": true,
+    "k561_misleading": false,
+    "k561_actually_means": "All 5 Phase A actions are precondition-VERIFIED and ready to apply (not activated yet)",
+    "state_changed_between_k548_k561": false,
+    "k498_manually_activated_externally": false,
+    "k530_playbook_actionable": true,
+    "k530_playbook_safe": true,
+    "k561_phase_a_safe_to_execute": true,
+    "phase_a_start_recommended": true
+  },
+
+  "action_correctness_summary": {
+    "phase_a_sequence": ["A1 (K545)", "A2 (K481)", "A3 (K552)", "A4 (K498)", "A5 (K485)"],
+    "a4_k498_preconditions": {
+      "smart_router_disabled": "✓ PASS (False)",
+      "routing_mode_missing": "✓ PASS (missing, defaults to HL_OVERFLOW)",
+      "okx_scaffold_ready": "✓ PASS (SCAFFOLD-READY status)",
+      "okx_plist_exists": "✓ PASS (exists in repo root)",
+      "daemon_not_loaded": "✓ PASS (not loaded, ready to load)"
+    },
+    "all_preconditions_verified": true,
+    "k548_verification_still_valid": true,
+    "proceed_with_phase_a": true
+  },
+
+  "closing": {
+    "discrepancy_root_cause": "Semantic confusion: K561 is READINESS assessment (actions are READY), not state measurement (code still unchanged)",
+    "ground_truth_authority": "scripts/k280_live_fetch.py line 159 (source code is definitive)",
+    "recommendation": "Execute K530 playbook as planned. All Phase A actions are READY-TO-APPLY and verified safe. No external state change detected.",
+    "next_wave": "K567 or later: begin Phase A execution (after user decision point)"
+  }
+}
