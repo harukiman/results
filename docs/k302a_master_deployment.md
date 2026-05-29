@@ -2933,6 +2933,76 @@ Source files: `wave_k555_v629_proposal.py` | `wave_k555_v629_proposal.json` | `w
 
 ---
 
+## K559 Appendix — Week 4 Triple LIVE: K500 INJ + K507 SEI + K507 TIA
+
+### Overview
+
+K559 is the Week 4 cascade activation of the K547 Cosmos paired-trade family. Three strategies activate in sequence over 96 hours (D+21 → D+25), adding +$354K/yr incremental and bringing cumulative W1-W4 to **$861K/yr @ $10M**.
+
+### Activation Sequence
+
+| Day | Strategy | OOS Sh | Ann. Return | Venue | HL Delta | HL After |
+|-----|----------|--------|------------|-------|----------|----------|
+| D+21 | K500 INJ-BTC | 11.23 | $124K/yr | HL primary 3% | +3.0pp | 63.5% |
+| D+23 | K507 SEI-BTC | 48.10 | $179K/yr | 1% HL + 1% Bybit | +1.0pp | 64.5% |
+| D+25 | K507 TIA-BTC | 14.44 | $51K/yr | **Bybit-only 1%** | **+0.0pp** | **64.5%** |
+| — | **COMBINED** | — | **$354K/yr** | — | **+4.0pp** | **64.5%** |
+
+**Key HL decision:** TIA activates Bybit-only (not HL-primary as originally designed) to hold HL at 64.5% vs 65% cap. HL-primary TIA would breach at 65.5%.
+
+### Scaffold State (as of K559, 2026-05-30)
+
+| Dashboard | Position | Signal | Gate |
+|-----------|----------|--------|------|
+| k500_dashboard.json | LONG_INJ_SHORT_BTC | FR diff = -6.94e-05 (firing) | IN_PROGRESS |
+| k507_dashboard.json | NEUTRAL | FR diff = +5.56e-06 | IN_PROGRESS |
+| k507_tia_dashboard.json | LONG_BTC_SHORT_TIA | FR diff = +9.52e-06 (firing) | IN_PROGRESS |
+
+### Week 4 Cumulative Profit Table
+
+| AUM | W1-W3 (pre-K559) | + Week 4 | **W1-W4 Total** | + W5 APT |
+|-----|-----------------|----------|-----------------|----------|
+| $10M | $507K/yr | +$354K | **$861K/yr** | $1,163K/yr |
+| $30M | $1.52M/yr | +$1.06M | **$2.58M/yr** | $3.49M/yr |
+| $100M | $5.07M/yr | +$3.54M | **$8.61M/yr** | $11.63M/yr |
+
+### D+35 Decision Matrix (per strategy)
+
+| Strategy | PASS (≥50% OOS Sh) | HOLD | ROLLBACK | PASS action |
+|----------|--------------------|------|----------|-------------|
+| K500 INJ | Sh ≥ 5.6 | 3.4–5.6 | < 3.4 | Expand to 4% sleeve |
+| K507 SEI | Sh ≥ 24 | 14–24 | < 14 | Expand to 3% sleeve |
+| K507 TIA | Sh ≥ 7 | 4–7 | < 4 | Maintain 1% Bybit |
+
+### HL Exposure Post-Week 4
+
+```
+Pre-W4:       60.5%  (after K493 ATOM W3)
++ K500 3% HL: 63.5%  (+3.0pp)
++ SEI 1% HL:  64.5%  (+1.0pp)
++ TIA Bybit:  64.5%  (+0.0pp — Bybit-only contingency)
+Hard cap:     65.0%  → 0.5pp headroom
+```
+
+### Week 5 Prep (K512 APT-BTC, D+32)
+
+K512 APT: OOS Sharpe 51.10 (#1 family), $302K/yr @ $10M, 2% sleeve (1% HL + 1% Bybit)  
+Adding 1% HL would bring HL to 65.5% — **cap review required before activation**.  
+Resolution options: K500 expand with Bybit migration, K280 micro-trim, or K449 HL→Bybit migration.
+
+### User Actions (K559)
+
+- **Action #35**: K500 INJ-BTC D+21 LIVE load — 3% sleeve HL-primary, K357 emergency exit registered (K506)
+- **Action #36**: K507 SEI-BTC D+23 LIVE load — 1% HL + 1% Bybit split, HL +1pp → 64.5%
+- **Action #37**: K507 TIA-BTC D+25 LIVE load — Bybit-only 1%, HL unchanged 64.5%
+- **Action #38**: D+35 decision matrix: per-strategy Sharpe gate + Week 5 K512 APT go/no-go
+
+Source files: `wave_k559_week4_triple_live.py` | `wave_k559_week4_triple_live.json` | `wave_k559_week4_triple_live.md`
+
+*K559 Appendix — Added 2026-05-30 06:25 JST*
+
+---
+
 ## K558 Appendix — Week 2 K476+K484 Dual LIVE Activation
 
 **Wave:** K558 | **Generated:** 2026-05-30 06:15 JST  

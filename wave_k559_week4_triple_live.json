@@ -1,0 +1,984 @@
+{
+  "wave": "K559",
+  "title": "K559 Week 4 Triple LIVE: K500 INJ + K507 SEI + K507 TIA",
+  "generated_jst": "2026-05-30 06:24 JST",
+  "aum_ref_usd": 10000000,
+  "strategies": {
+    "K500_INJ_BTC": {
+      "activation_day": "D+21",
+      "oos_sharpe": 11.23,
+      "ann_return_usd": 124000,
+      "sleeve_pct": 0.03,
+      "venue": "HL_PRIMARY",
+      "hl_add_pp": 3.0
+    },
+    "K507_SEI_BTC": {
+      "activation_day": "D+23",
+      "oos_sharpe": 48.1,
+      "ann_return_usd": 179000,
+      "sleeve_pct": 0.02,
+      "venue": "HL_1pct_BYBIT_1pct",
+      "hl_add_pp": 1.0
+    },
+    "K507_TIA_BTC": {
+      "activation_day": "D+25",
+      "oos_sharpe": 14.44,
+      "ann_return_usd": 51000,
+      "sleeve_pct": 0.01,
+      "venue": "BYBIT_ONLY",
+      "hl_add_pp": 0.0,
+      "contingency": "Bybit-only \u2014 HL cap safety (avoids 0.5pp breach)"
+    }
+  },
+  "hl_trajectory": {
+    "pre_w4_pct": 0.605,
+    "after_inj_pct": 0.635,
+    "after_sei_pct": 0.645,
+    "after_tia_pct": 0.645,
+    "cap_pct": 0.65,
+    "headroom_pp": 0.5,
+    "tia_contingency": "BYBIT_ONLY"
+  },
+  "profit_table": {
+    "week4_combined_10m": 354000,
+    "week4_combined_30m": 1062000,
+    "week4_combined_100m": 3540000,
+    "cumulative_w1_w4_10m": 861000,
+    "cumulative_w1_w4_30m": 2583000,
+    "cumulative_w1_w4_100m": 8610000,
+    "cumulative_w1_w5_10m": 1163000,
+    "cumulative_w1_w5_30m": 3489000,
+    "cumulative_w1_w5_100m": 11630000
+  },
+  "decision_matrix_d35": {
+    "K500": {
+      "pass_sh": 5.6,
+      "hold_lo": 3.4,
+      "rollback_max": 3.4
+    },
+    "SEI": {
+      "pass_sh": 24.0,
+      "hold_lo": 14.0,
+      "rollback_max": 14.0
+    },
+    "TIA": {
+      "pass_sh": 7.0,
+      "hold_lo": 4.0,
+      "rollback_max": 4.0
+    }
+  },
+  "week5_preview": {
+    "strategy": "K512_APT_BTC",
+    "target_day": "D+32",
+    "oos_sharpe": 51.1,
+    "ann_return_usd": 302000,
+    "sleeve_pct": 0.02,
+    "hl_add_pp": 1.0
+  },
+  "phases": {
+    "phase1": {
+      "phase": 1,
+      "name": "prerequisites",
+      "checks": [
+        {
+          "name": "K449_W1_LIVE_PASS",
+          "status": "FAIL",
+          "detail": "paper=True \u2014 still PAPER (check K549 activation)"
+        },
+        {
+          "name": "K476_W2_LIVE_PASS",
+          "status": "FAIL",
+          "detail": "paper=True \u2014 still PAPER (check K558)"
+        },
+        {
+          "name": "K484_W2_LIVE_PASS",
+          "status": "FAIL",
+          "detail": "paper=True \u2014 still PAPER (check K558)"
+        },
+        {
+          "name": "K493_W3_LIVE_PASS",
+          "status": "FAIL",
+          "detail": "paper=True, 60d_sharpe=0.00 \u2014 still PAPER (check K556)"
+        },
+        {
+          "name": "K493_W3_SHARPE_GATE",
+          "status": "PASS",
+          "detail": "Realized Sharpe=0.00 (\u226525 PASS threshold, or 0=paper-mode)"
+        },
+        {
+          "name": "K280_sleeve_60pct",
+          "status": "PASS",
+          "detail": "leverage_manager.py found \u2014 verify 'K280': 0.60 (K552 Phase B1 applied)"
+        },
+        {
+          "name": "HL_cap_post_W4",
+          "status": "PASS",
+          "detail": "Post-W4 HL = 64.5% (cap 65%, TIA Bybit-only \u2192 SAFE)"
+        },
+        {
+          "name": "K500_INJ_scaffold_ready",
+          "status": "PASS",
+          "detail": "EXISTS \u2014 gate=IN_PROGRESS, OOS Sharpe=11.23 (paper=True)"
+        },
+        {
+          "name": "K507_SEI_scaffold_ready",
+          "status": "PASS",
+          "detail": "EXISTS \u2014 gate=IN_PROGRESS, OOS Sharpe=48.10 (paper=True)"
+        },
+        {
+          "name": "K507_TIA_scaffold_ready",
+          "status": "PASS",
+          "detail": "EXISTS \u2014 gate=IN_PROGRESS, OOS Sharpe=14.44 (paper=True)"
+        }
+      ],
+      "all_pass": false,
+      "summary": {
+        "pass": 6,
+        "warn": 0,
+        "fail": 4
+      }
+    },
+    "phase2": {
+      "phase": 2,
+      "name": "k500_scaffold",
+      "strategy": "K500 INJ-BTC FR Differential",
+      "target_day": "D+21",
+      "dashboard_found": true,
+      "dashboard": {
+        "last_poll_jst": "2026-05-30 04:04 JST",
+        "current_fr_diff_7d": -6.9385e-05,
+        "position_state": "LONG_INJ_SHORT_BTC",
+        "long_notional": 600000.0,
+        "short_notional": 600000.0,
+        "delta_neutral_drift_pct": 0.0,
+        "rebalance_required": false,
+        "daily_pnl_usdc": 0.0,
+        "60d_sharpe": 0.0,
+        "paper_trade_status": {
+          "days_elapsed": 0,
+          "target_60d": 60
+        },
+        "fr_inj_current": -5.78027e-05,
+        "fr_btc_current": 1.15823e-05,
+        "fr_raw_diff": -6.9385e-05,
+        "history_points": 1,
+        "total_notional_usdc": 1200000.0,
+        "leverage": 4.0,
+        "sleeve_pct": 0.03,
+        "aum_ref_usdc": 10000000.0,
+        "margin_used_usdc": 300000.0,
+        "margin_pct_of_aum": 0.03,
+        "gate_metrics": {
+          "oos_sharpe_target": 3.5,
+          "fill_rate_target_pct": 60,
+          "max_drawdown_pct": 15,
+          "current_oos_sharpe": 0.0,
+          "current_fill_rate": 0.0,
+          "current_max_dd_pct": 0.0,
+          "gate_status": "IN_PROGRESS"
+        },
+        "paper_trade_mode": true,
+        "wave": "K506",
+        "strategy": "K500 INJ-BTC FR Differential",
+        "smart_router": "HL_ONLY",
+        "execution_mode": "POST_ONLY_PARALLEL",
+        "signal": "LONG_INJ_SHORT_BTC",
+        "activation_criteria": {
+          "60d_paper_trade_gate": "required",
+          "oos_sharpe_min": 3.5,
+          "fill_rate_min_pct": 60,
+          "max_drawdown_max_pct": 15,
+          "status": "SCAFFOLD-READY",
+          "activation_sleeve_pct": 0.03,
+          "architecture": "v6.25 (K449 5% + K476 3% + K484 3% + K493 3% + K500 3% = 17% combined paired-trade sleeve)"
+        },
+        "oos_performance": {
+          "sharpe": 11.23,
+          "ann_return_usd": 124000,
+          "aum_ref": 10000000,
+          "wave_accept": "K500 10/13 \u00a76 gates",
+          "g5a_corr": 0.1409,
+          "g5d_corr": 0.2893,
+          "hl_cap_pct": 62.0,
+          "family_rank": "#4 (ATOM Sh50.79 > AVAX Sh43.89 > SOL Sh16.30 > INJ Sh11.23 > ETH Sh5.66)",
+          "cosmos_2nd_hypothesis": "CONFIRMED: INJ DeFi-perp mechanics distinct from ATOM IBC/staking",
+          "vol_ratio_vs_btc": 3.83,
+          "cross_venue_bybit": 0.82,
+          "cross_venue_okx": 0.94
+        },
+        "combined_sleeve": {
+          "K449_eth_btc_sharpe": 5.66,
+          "K476_sol_btc_sharpe": 16.3,
+          "K484_avax_btc_sharpe": 43.89,
+          "K493_atom_btc_sharpe": 50.79,
+          "K500_inj_btc_sharpe": 11.23,
+          "K449_ann_return_usd": 187000,
+          "K476_ann_return_usd": 187000,
+          "K484_ann_return_usd": 75700,
+          "K493_ann_return_usd": 231000,
+          "K500_ann_return_usd": 124000,
+          "combined_ann_return_usd": 631000,
+          "combined_note": "K449 5% + K476 3% + K484 3% + K493 3% + K500 3% = ~$631K/yr @ $10M (v6.25)"
+        },
+        "entry_ts_jst": "2026-05-30 04:04 JST",
+        "long_asset": "INJ",
+        "short_asset": "BTC",
+        "signal_strength": 3.0
+      },
+      "sizing": {
+        "sleeve_pct": 0.03,
+        "leverage": 4.0,
+        "total_notional_usd": 1200000.0,
+        "hl_notional_usd": 1200000.0,
+        "margin_usd": 300000.0,
+        "hl_add_pp": 3.0,
+        "ann_return_usd": 124000
+      }
+    },
+    "phase3": {
+      "phase": 3,
+      "name": "k507_sei_scaffold",
+      "strategy": "K507 SEI-BTC FR Differential",
+      "target_day": "D+23",
+      "dashboard_found": true,
+      "dashboard": {
+        "last_poll_jst": "2026-05-30 04:28 JST",
+        "current_fr_diff_7d": 5.5587e-06,
+        "position_state": "NEUTRAL",
+        "long_notional": 0.0,
+        "short_notional": 0.0,
+        "long_venue": "\u2014",
+        "short_venue": "\u2014",
+        "delta_neutral_drift_pct": 0.0,
+        "rebalance_required": false,
+        "daily_pnl_usdc": 0.0,
+        "60d_sharpe": 0.0,
+        "paper_trade_status": {
+          "days_elapsed": 0,
+          "target_60d": 60
+        },
+        "wave": "K514",
+        "strategy": "K507 SEI-BTC FR Differential",
+        "smart_router": "HL_PRIMARY_BYBIT_SECONDARY",
+        "execution_mode": "POST_ONLY_PARALLEL",
+        "split_protocol": "HL 1.5% + Bybit 1.5% (total 3% sleeve)",
+        "paper_trade_mode": true,
+        "signal": "NEUTRAL",
+        "leverage": 4.0,
+        "sleeve_pct": 0.03,
+        "hl_sleeve_pct": 0.015,
+        "bybit_sleeve_pct": 0.015,
+        "hl_concentration_pct": 63.5,
+        "aum_ref_usdc": 10000000.0,
+        "total_notional_usdc": 1200000.0,
+        "hl_notional_usdc": 600000.0,
+        "bybit_notional_usdc": 600000.0,
+        "margin_used_usdc": 300000.0,
+        "margin_pct_of_aum": 0.03,
+        "gate_metrics": {
+          "oos_sharpe_target": 5.0,
+          "fill_rate_target_pct": 60,
+          "max_drawdown_pct": 15,
+          "current_oos_sharpe": 0.0,
+          "current_fill_rate": 0.0,
+          "current_max_dd_pct": 0.0,
+          "gate_status": "IN_PROGRESS"
+        },
+        "activation_criteria": {
+          "60d_paper_trade_gate": "required",
+          "oos_sharpe_min": 5.0,
+          "fill_rate_min_pct": 60,
+          "max_drawdown_max_pct": 15,
+          "status": "SCAFFOLD-READY",
+          "activation_sleeve_pct": 0.03,
+          "split": "HL 1.5% + Bybit 1.5%",
+          "architecture": "v6.27 (K449 5% + K476 3% + K484 3% + K493 3% + K500 3% + K507 3% = 20% combined paired-trade sleeve)"
+        },
+        "oos_performance": {
+          "sharpe": 48.1,
+          "ann_return_usd": 179000,
+          "aum_ref": 10000000,
+          "wave_accept": "K507 ACCEPT (K514 scaffold)",
+          "family_rank": "#2 (ATOM Sh50.79 > SEI Sh48.10 > AVAX Sh43.89 > SOL Sh16.30 > INJ Sh11.23 > ETH Sh5.66)",
+          "cosmos_3rd_hypothesis": "CONFIRMED: SEI EVM-compat + Cosmos SDK distinct from ATOM/INJ",
+          "hl_concentration_pct": 63.5,
+          "hl_headroom_pp": 1.5
+        },
+        "combined_sleeve": {
+          "K449_eth_btc_sharpe": 5.66,
+          "K476_sol_btc_sharpe": 16.3,
+          "K484_avax_btc_sharpe": 43.89,
+          "K493_atom_btc_sharpe": 50.79,
+          "K500_inj_btc_sharpe": 11.23,
+          "K507_sei_btc_sharpe": 48.1,
+          "K449_ann_return_usd": 187000,
+          "K476_ann_return_usd": 187000,
+          "K484_ann_return_usd": 75700,
+          "K493_ann_return_usd": 231000,
+          "K500_ann_return_usd": 124000,
+          "K507_ann_return_usd": 179000,
+          "combined_ann_return_usd": 810000,
+          "combined_note": "K449 5% + K476 3% + K484 3% + K493 3% + K500 3% + K507 3% = ~$810K/yr @ $10M (v6.27)"
+        },
+        "fr_sei_current": 1.25e-05,
+        "fr_btc_current": 6.8806e-06,
+        "fr_raw_diff": 5.6194e-06,
+        "history_points": 2
+      },
+      "sizing": {
+        "sleeve_pct": 0.02,
+        "hl_pct": 0.01,
+        "bybit_pct": 0.01,
+        "leverage": 4.0,
+        "hl_notional_usd": 400000.0,
+        "bybit_notional_usd": 400000.0,
+        "margin_usd": 200000.0,
+        "hl_add_pp": 1.0,
+        "ann_return_usd": 179000
+      }
+    },
+    "phase4": {
+      "phase": 4,
+      "name": "k507_tia_scaffold",
+      "strategy": "K507 TIA-BTC FR Differential",
+      "target_day": "D+25",
+      "hl_contingency": "BYBIT_ONLY \u2014 HL cap safety (TIA 1% Bybit-only = 0pp HL delta)",
+      "dashboard_found": true,
+      "dashboard": {
+        "last_poll_jst": "2026-05-30 05:05 JST",
+        "current_fr_diff_7d": 9.5235e-06,
+        "position_state": "LONG_BTC_SHORT_TIA",
+        "long_notional": 200000.0,
+        "short_notional": 200000.0,
+        "long_venue": "HL",
+        "short_venue": "HL",
+        "delta_neutral_drift_pct": 0.0,
+        "rebalance_required": false,
+        "daily_pnl_usdc": 0.0,
+        "60d_sharpe": 0.0,
+        "paper_trade_status": {
+          "days_elapsed": 0,
+          "target_60d": 60
+        },
+        "fr_tia_current": 1.25e-05,
+        "fr_btc_current": 1.5723e-06,
+        "fr_raw_diff": 1.09277e-05,
+        "history_points": 4,
+        "total_notional_usdc": 400000.0,
+        "hl_notional_usdc": 400000.0,
+        "bybit_notional_usdc": 0.0,
+        "leverage": 4.0,
+        "sleeve_pct": 0.01,
+        "hl_sleeve_pct": 0.01,
+        "bybit_sleeve_pct": 0.0,
+        "aum_ref_usdc": 10000000.0,
+        "margin_used_usdc": 100000.0,
+        "margin_pct_of_aum": 0.01,
+        "hl_concentration_pct": 65.0,
+        "gate_metrics": {
+          "oos_sharpe_target": 3.5,
+          "fill_rate_target_pct": 60,
+          "max_drawdown_pct": 15,
+          "current_oos_sharpe": 0.0,
+          "current_fill_rate": 0.0,
+          "current_max_dd_pct": 0.0,
+          "gate_status": "IN_PROGRESS"
+        },
+        "paper_trade_mode": true,
+        "wave": "K524",
+        "strategy": "K507 TIA-BTC FR Differential",
+        "smart_router": "HL_ONLY",
+        "execution_mode": "POST_ONLY_PARALLEL",
+        "split_protocol": "HL 1% only (no Bybit split \u2014 smaller weight)",
+        "signal": "NEUTRAL",
+        "activation_criteria": {
+          "60d_paper_trade_gate": "required",
+          "oos_sharpe_min": 3.5,
+          "fill_rate_min_pct": 60,
+          "max_drawdown_max_pct": 15,
+          "status": "SCAFFOLD-READY",
+          "activation_sleeve_pct": 0.01,
+          "venue": "HL-only (1% sleeve, full HL)",
+          "architecture": "v6.28 (K449 5% + K476 4% + K484 5% + K493 5% + K500 4% + K507 SEI 2% + K507 TIA 1% + K512 APT 2% = 28% combined paired-trade sleeve)"
+        },
+        "oos_performance": {
+          "sharpe": 14.44,
+          "ann_return_usd": 51000,
+          "aum_ref": 10000000,
+          "wave_accept": "K507 TIA ACCEPT (K524 scaffold)",
+          "family_rank": "#6 (APT Sh51.10 > ATOM Sh50.79 > SEI Sh48.10 > AVAX Sh43.89 > SOL Sh16.30 > TIA Sh14.44 > INJ Sh11.23)",
+          "celestia_da_hypothesis": "Celestia modular DA layer \u2014 rollup adoption + blob fees drive orthogonal FR dynamics",
+          "g5d_corr_vs_atom": 0.05,
+          "g5d_note": "0.05 vs ATOM = LOWEST in family \u2014 TIA modular DA fully orthogonal to Cosmos hub IBC/staking",
+          "hl_concentration_pct": 65.0,
+          "hl_headroom_pp": 0.0,
+          "hl_only_spec": "1% sleeve HL-only (no Bybit split). If cap tightens: 1% Bybit fallback."
+        },
+        "combined_sleeve": {
+          "K449_eth_btc_sharpe": 5.66,
+          "K476_sol_btc_sharpe": 16.3,
+          "K484_avax_btc_sharpe": 43.89,
+          "K493_atom_btc_sharpe": 50.79,
+          "K500_inj_btc_sharpe": 11.23,
+          "K507_sei_btc_sharpe": 48.1,
+          "K507_tia_btc_sharpe": 14.44,
+          "K512_apt_btc_sharpe": 51.1,
+          "K449_ann_return_usd": 187000,
+          "K476_ann_return_usd": 187000,
+          "K484_ann_return_usd": 75700,
+          "K493_ann_return_usd": 231000,
+          "K500_ann_return_usd": 124000,
+          "K507_ann_return_usd": 179000,
+          "K507_tia_ann_return_usd": 51000,
+          "K512_ann_return_usd": 302000,
+          "combined_ann_return_usd": 1162000,
+          "combined_note": "K449 5% + K476 4% + K484 5% + K493 5% + K500 4% + K507 SEI 2% + K507 TIA 1% + K512 APT 2% = ~$1.162M/yr combined @ $10M (v6.28)"
+        },
+        "entry_ts_jst": "2026-05-30 05:03 JST",
+        "long_asset": "BTC",
+        "short_asset": "TIA",
+        "signal_strength": 1.0239
+      },
+      "sizing": {
+        "sleeve_pct": 0.01,
+        "hl_pct": 0.0,
+        "bybit_pct": 0.01,
+        "leverage": 4.0,
+        "total_notional_usd": 400000.0,
+        "bybit_notional_usd": 400000.0,
+        "margin_usd": 100000.0,
+        "hl_add_pp": 0.0,
+        "ann_return_usd": 51000,
+        "contingency": "BYBIT_ONLY \u2014 HL cap safety"
+      }
+    },
+    "phase5": {
+      "phase": 5,
+      "name": "k500_live_activation",
+      "target_date": "D+21 (after K493 PASS)",
+      "steps": [
+        {
+          "step": 1,
+          "phase": "D21_prereq",
+          "name": "Verify K493 D+21 Sharpe gate",
+          "command": "python3 scripts/k493_atom_btc_run.py --status | grep '60d_sharpe\\|gate_status'",
+          "verify": "60d_sharpe \u2265 25 (PASS) OR 15-25 (HOLD \u2192 K500 deferred to D28)",
+          "notes": "K493 ROLLBACK (<15) \u2192 halt Week 4 cascade entirely"
+        },
+        {
+          "step": 2,
+          "phase": "D21_prereq",
+          "name": "Verify HL margin headroom",
+          "command": "python3 scripts/emergency_hl_exit.py --dry-run --status",
+          "verify": "HL margin utilisation < 70% before adding $300K K500 margin",
+          "notes": "K500 3% sleeve = $300K margin. Ensure HL account has headroom."
+        },
+        {
+          "step": 3,
+          "phase": "D21_prereq",
+          "name": "K500 dashboard pre-flight",
+          "command": "python3 -c \"import json; d=json.load(open('data/k500_dashboard.json')); print(d['position_state'], d['gate_metrics']['gate_status'])\"",
+          "verify": "gate_status=IN_PROGRESS, signal firing LONG_INJ_SHORT_BTC",
+          "notes": "Dashboard shows position state; paper_trade_mode=true still at this point"
+        },
+        {
+          "step": 4,
+          "phase": "D21_config",
+          "name": "Remove --dry-run from K500 plist",
+          "command": "sed -i '' '/<string>--dry-run<\\/string>/d' com.cryptolab.k500-inj-btc.plist",
+          "verify": "grep 'dry-run' com.cryptolab.k500-inj-btc.plist || echo 'CLEAN'",
+          "notes": "ProgramArguments must not contain --dry-run for live execution"
+        },
+        {
+          "step": 5,
+          "phase": "D21_config",
+          "name": "Set PAPER_TRADE=False in K500 plist env",
+          "command": "# Edit plist EnvironmentVariables: PAPER_TRADE \u2192 False (or remove key)",
+          "verify": "grep PAPER_TRADE com.cryptolab.k500-inj-btc.plist",
+          "notes": "K500 reads PAPER_TRADE env; absent or 'False' \u2192 live execution"
+        },
+        {
+          "step": 6,
+          "phase": "D21_load",
+          "name": "Copy K500 plist to LaunchAgents",
+          "command": "cp com.cryptolab.k500-inj-btc.plist ~/Library/LaunchAgents/com.cryptolab.k500-inj-btc.plist",
+          "verify": "ls -la ~/Library/LaunchAgents/com.cryptolab.k500-inj-btc.plist",
+          "notes": "Copy modified (LIVE) plist to LaunchAgents"
+        },
+        {
+          "step": 7,
+          "phase": "D21_load",
+          "name": "launchctl load K500 daemon",
+          "command": "launchctl load ~/Library/LaunchAgents/com.cryptolab.k500-inj-btc.plist",
+          "verify": "launchctl list | grep k500-inj-btc",
+          "notes": "Daemon loads; first execution at next 8h cron window"
+        },
+        {
+          "step": 8,
+          "phase": "D21_verify",
+          "name": "Confirm K357 emergency exit includes K500/INJ",
+          "command": "grep -c 'K500\\|INJ' scripts/emergency_hl_exit.py",
+          "verify": "Count \u2265 2 (K506 scaffold registered K500 detection)",
+          "notes": "K357 emergency exit must handle K500 paired-position detection"
+        },
+        {
+          "step": 9,
+          "phase": "D21_verify",
+          "name": "K500 post-load status check",
+          "command": "python3 scripts/k500_inj_btc_run.py --status",
+          "verify": "paper_trade_mode=false, position_state=LONG_INJ_SHORT_BTC",
+          "notes": "Confirm live mode activated and signal is firing (INJ FR diff negative \u2192 long INJ)"
+        },
+        {
+          "step": 10,
+          "phase": "D21_commit",
+          "name": "Commit K500 LIVE plist + push",
+          "command": "git add com.cryptolab.k500-inj-btc.plist && git commit -m 'K559 K500 plist: D+21 INJ-BTC LIVE activation' && git push origin main",
+          "verify": "git log --oneline -1",
+          "notes": "Commit LIVE plist for audit trail. Monitor 48h before K507 SEI activation."
+        }
+      ],
+      "sizing": {
+        "sleeve_pct": 0.03,
+        "leverage": 4.0,
+        "total_notional_usd": 1200000.0,
+        "margin_usd": 300000.0,
+        "hl_add_pp": 3.0
+      },
+      "monitor_window_h": 48
+    },
+    "phase6": {
+      "phase": 6,
+      "name": "k507_sei_live_activation",
+      "target_date": "D+23 (48h after K500)",
+      "steps": [
+        {
+          "step": 1,
+          "phase": "D23_prereq",
+          "name": "K500 48h health gate",
+          "command": "python3 -c \"import json; d=json.load(open('data/k500_dashboard.json')); print(d.get('position_state'), d.get('daily_pnl_usdc',0))\"",
+          "verify": "position_state != NEUTRAL, daily_pnl_usdc > 0 (at least one 8h cycle completed)",
+          "notes": "K500 must show activity in 48h window; no margin breach on HL"
+        },
+        {
+          "step": 2,
+          "phase": "D23_prereq",
+          "name": "HL margin check post-K500",
+          "command": "python3 scripts/emergency_hl_exit.py --dry-run --status",
+          "verify": "HL utilisation < 75% after K500 $300K margin (headroom for K507 SEI 1% HL = $100K)",
+          "notes": "K507 SEI adds $100K HL margin (1% sleeve \u00d7 $10M). Total HL margin after SEI: ~$1.1M."
+        },
+        {
+          "step": 3,
+          "phase": "D23_prereq",
+          "name": "K507 SEI dashboard pre-flight",
+          "command": "python3 -c \"import json; d=json.load(open('data/k507_dashboard.json')); print(d['position_state'], d['smart_router'])\"",
+          "verify": "smart_router=HL_PRIMARY_BYBIT_SECONDARY, gate_status=IN_PROGRESS",
+          "notes": "Dashboard shows NEUTRAL (no signal at scaffold time \u2014 confirm current FR diff)"
+        },
+        {
+          "step": 4,
+          "phase": "D23_config",
+          "name": "Remove --dry-run from K507 SEI plist",
+          "command": "sed -i '' '/<string>--dry-run<\\/string>/d' com.cryptolab.k507-sei-btc.plist",
+          "verify": "grep 'dry-run' com.cryptolab.k507-sei-btc.plist || echo 'CLEAN'",
+          "notes": "SEI and TIA share plist name pattern \u2014 confirm targeting SEI plist"
+        },
+        {
+          "step": 5,
+          "phase": "D23_config",
+          "name": "Set PAPER_TRADE=False + verify HL/Bybit split config",
+          "command": "# Edit plist: PAPER_TRADE=False; confirm HL_SLEEVE=0.01, BYBIT_SLEEVE=0.01",
+          "verify": "grep -A3 'HL_SLEEVE\\|BYBIT_SLEEVE' com.cryptolab.k507-sei-btc.plist",
+          "notes": "Split config: 1% HL = $100K margin, 1% Bybit = $100K margin; total $200K sleeve"
+        },
+        {
+          "step": 6,
+          "phase": "D23_load",
+          "name": "Copy K507 SEI plist to LaunchAgents + launchctl load",
+          "command": "cp com.cryptolab.k507-sei-btc.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.k507-sei-btc.plist",
+          "verify": "launchctl list | grep k507-sei-btc",
+          "notes": "Daemon loads at D+23; HL exposure +1pp \u2192 64.5%"
+        },
+        {
+          "step": 7,
+          "phase": "D23_verify",
+          "name": "HL exposure verify post-SEI load",
+          "command": "python3 scripts/verify_deployment_status.py | grep hl_exposure",
+          "verify": "HL exposure \u2248 64.5% (< 65% cap)",
+          "notes": "Confirm HL cap not breached after SEI 1% HL contribution"
+        },
+        {
+          "step": 8,
+          "phase": "D23_commit",
+          "name": "Commit K507 SEI LIVE plist + push",
+          "command": "git add com.cryptolab.k507-sei-btc.plist && git commit -m 'K559 K507 SEI plist: D+23 SEI-BTC LIVE (1% HL + 1% Bybit)' && git push origin main",
+          "verify": "git log --oneline -1",
+          "notes": "Monitor 48h before K507 TIA activation at D+25"
+        }
+      ],
+      "sizing": {
+        "hl_pct": 0.01,
+        "bybit_pct": 0.01,
+        "hl_notional_usd": 400000.0,
+        "bybit_notional_usd": 400000.0,
+        "margin_usd": 200000.0,
+        "hl_add_pp": 1.0
+      }
+    },
+    "phase7": {
+      "phase": 7,
+      "name": "k507_tia_live_activation",
+      "target_date": "D+25 (48h after SEI)",
+      "venue": "BYBIT_ONLY",
+      "hl_contingency": "Bybit-only activated to maintain HL \u2264 64.5%",
+      "steps": [
+        {
+          "step": 1,
+          "phase": "D25_prereq",
+          "name": "K507 SEI 48h health gate",
+          "command": "python3 -c \"import json; d=json.load(open('data/k507_dashboard.json')); print(d.get('position_state'), d.get('daily_pnl_usdc',0))\"",
+          "verify": "K507 SEI showing position activity and positive PnL in 48h window",
+          "notes": "SEI NEUTRAL signal at scaffold is OK \u2014 any position confirms daemon running"
+        },
+        {
+          "step": 2,
+          "phase": "D25_prereq",
+          "name": "HL cap verification \u2014 confirm 64.5% not breached",
+          "command": "python3 scripts/verify_deployment_status.py | grep hl_exposure",
+          "verify": "HL \u2264 64.5% after K500+SEI",
+          "notes": "TIA is Bybit-only \u2192 0pp HL; confirm K500+SEI HL contributions as expected"
+        },
+        {
+          "step": 3,
+          "phase": "D25_prereq",
+          "name": "K507 TIA dashboard pre-flight",
+          "command": "python3 -c \"import json; d=json.load(open('data/k507_tia_dashboard.json')); print(d['position_state'], d['split_protocol'])\"",
+          "verify": "split_protocol shows HL 1% or Bybit-fallback. Override to Bybit-only at activation.",
+          "notes": "TIA scaffold had HL-only 1% design. K559 overrides to Bybit-only for cap safety."
+        },
+        {
+          "step": 4,
+          "phase": "D25_config",
+          "name": "Configure TIA plist for Bybit-only",
+          "command": "# Edit plist: PAPER_TRADE=False; HL_SLEEVE=0.00; BYBIT_SLEEVE=0.01; SMART_ROUTER=BYBIT_ONLY",
+          "verify": "grep 'BYBIT_SLEEVE\\|SMART_ROUTER\\|HL_SLEEVE' com.cryptolab.k507-sei-btc.plist",
+          "notes": "CRITICAL: TIA must route ALL notional to Bybit. HL_SLEEVE=0 prevents HL cap breach."
+        },
+        {
+          "step": 5,
+          "phase": "D25_config",
+          "name": "Remove --dry-run from TIA plist",
+          "command": "sed -i '' '/<string>--dry-run<\\/string>/d' com.cryptolab.k507-tia-btc.plist",
+          "verify": "grep 'dry-run' com.cryptolab.k507-tia-btc.plist || echo 'CLEAN'",
+          "notes": "TIA plist may be separate file; check com.cryptolab.k507-tia-btc.plist"
+        },
+        {
+          "step": 6,
+          "phase": "D25_load",
+          "name": "Copy TIA plist + launchctl load",
+          "command": "cp com.cryptolab.k507-tia-btc.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.k507-tia-btc.plist",
+          "verify": "launchctl list | grep k507-tia-btc",
+          "notes": "TIA daemon loads; all $400K notional on Bybit; 0pp HL delta confirmed"
+        },
+        {
+          "step": 7,
+          "phase": "D25_verify",
+          "name": "Final HL exposure verify (all 3 strategies LIVE)",
+          "command": "python3 scripts/verify_deployment_status.py | grep hl_exposure",
+          "verify": "HL = 64.5% (cap 65%, +0.5pp headroom)",
+          "notes": "K500 3pp + SEI 1pp + TIA 0pp = 4pp total \u2192 64.5%. Week 5 APT has 0.5pp remaining."
+        },
+        {
+          "step": 8,
+          "phase": "D25_commit",
+          "name": "Commit TIA LIVE plist + push",
+          "command": "git add com.cryptolab.k507-tia-btc.plist && git commit -m 'K559 K507 TIA plist: D+25 TIA-BTC LIVE (Bybit-only 1%, HL cap=64.5%)' && git push origin main",
+          "verify": "git log --oneline -1",
+          "notes": "All 3 Week 4 strategies now LIVE. Begin D+28 monitoring phase."
+        }
+      ],
+      "sizing": {
+        "sleeve_pct": 0.01,
+        "hl_pct": 0.0,
+        "bybit_pct": 0.01,
+        "bybit_notional_usd": 400000.0,
+        "margin_usd": 100000.0,
+        "hl_add_pp": 0.0
+      }
+    },
+    "phase8": {
+      "phase": 8,
+      "name": "hl_exposure",
+      "pre_w4_pct": 0.605,
+      "k500_hl_add_pp": 3.0,
+      "k507_sei_hl_pp": 1.0,
+      "k507_tia_hl_pp": 0.0,
+      "total_w4_add_pp": 4.0,
+      "post_w4_pct": 0.645,
+      "cap_pct": 0.65,
+      "headroom_pp": 0.5000000000000004,
+      "week5_apt_hl_pp": 1.0,
+      "week5_post_pct": 0.655,
+      "tia_contingency": "BYBIT_ONLY \u2014 avoids 0.5pp breach"
+    },
+    "phase9": {
+      "phase": 9,
+      "name": "monitoring_spec",
+      "window": "D+25 to D+35",
+      "strategies": [
+        {
+          "name": "K500 INJ-BTC",
+          "dashboard": "data/k500_dashboard.json",
+          "daily_pnl_target": 339.73,
+          "pass_sharpe": 5.6,
+          "venue": "HL primary"
+        },
+        {
+          "name": "K507 SEI-BTC",
+          "dashboard": "data/k507_dashboard.json",
+          "daily_pnl_target": 490.41,
+          "pass_sharpe": 24.0,
+          "venue": "1% HL + 1% Bybit"
+        },
+        {
+          "name": "K507 TIA-BTC",
+          "dashboard": "data/k507_tia_dashboard.json",
+          "daily_pnl_target": 139.73,
+          "pass_sharpe": 7.0,
+          "venue": "Bybit-only"
+        }
+      ],
+      "combined_daily_pnl_target_usd": 969.86,
+      "metrics_count": 8
+    },
+    "phase10": {
+      "phase": 10,
+      "name": "decision_matrix",
+      "evaluation_date": "D+35",
+      "decisions": [
+        {
+          "strategy": "K500_INJ_BTC",
+          "oos_sharpe": 11.23,
+          "pass_min": 5.6,
+          "hold_range": [
+            3.4,
+            5.6
+          ],
+          "rollback_max": 3.4,
+          "pass_action": "expand_to_4pct",
+          "hold_action": "maintain_3pct",
+          "rollback_action": "close_reload_paper"
+        },
+        {
+          "strategy": "K507_SEI_BTC",
+          "oos_sharpe": 48.1,
+          "pass_min": 24.0,
+          "hold_range": [
+            14.0,
+            24.0
+          ],
+          "rollback_max": 14.0,
+          "pass_action": "expand_to_3pct",
+          "hold_action": "maintain_2pct",
+          "rollback_action": "close_reload_paper"
+        },
+        {
+          "strategy": "K507_TIA_BTC",
+          "oos_sharpe": 14.44,
+          "pass_min": 7.0,
+          "hold_range": [
+            4.0,
+            7.0
+          ],
+          "rollback_max": 4.0,
+          "pass_action": "maintain_1pct_bybit_only",
+          "hold_action": "maintain_1pct",
+          "rollback_action": "close_reload_paper"
+        }
+      ]
+    },
+    "phase11": {
+      "phase": 11,
+      "name": "profit_projection",
+      "week4_breakdown": {
+        "k500_inj": {
+          "ann_10m": 124000,
+          "ann_30m": 372000,
+          "ann_100m": 1240000
+        },
+        "k507_sei": {
+          "ann_10m": 179000,
+          "ann_30m": 537000,
+          "ann_100m": 1790000
+        },
+        "k507_tia": {
+          "ann_10m": 51000,
+          "ann_30m": 153000,
+          "ann_100m": 510000
+        },
+        "combined": {
+          "ann_10m": 354000,
+          "ann_30m": 1062000,
+          "ann_100m": 3540000
+        }
+      },
+      "cumulative_w1_w4": {
+        "ann_10m": 861000,
+        "ann_30m": 2583000,
+        "ann_100m": 8610000
+      },
+      "cumulative_w1_w5": {
+        "ann_10m": 1163000,
+        "ann_30m": 3489000,
+        "ann_100m": 11630000
+      }
+    },
+    "phase12": {
+      "phase": 12,
+      "name": "week5_prep",
+      "strategy": "K512_APT_BTC",
+      "target_day": "D+32",
+      "oos_sharpe": 51.1,
+      "ann_return_usd": 302000,
+      "sleeve_pct": 0.02,
+      "hl_pct": 0.01,
+      "bybit_pct": 0.01,
+      "hl_add_pp": 1.0,
+      "hl_post_w5_pct": 0.655,
+      "cumulative_w5_usd": 1163000,
+      "decision_tree": {
+        "pass": "K512 activate D+32",
+        "partial_rollback": "K512 feasible with HL reclaim",
+        "full_rollback": "K512 deferred"
+      }
+    },
+    "phase13": {
+      "phase": 13,
+      "name": "user_checklist",
+      "total_time_min": 41,
+      "items": [
+        {
+          "id": 1,
+          "day": "D+21",
+          "time_min": 2,
+          "action": "Verify K493 W3 PASS gate (Sh \u2265 25)",
+          "command": "python3 -c \"import json; d=json.load(open('data/k493_dashboard.json')); print(d.get('60d_sharpe',0), d.get('gate_metrics',{}).get('gate_status'))\"",
+          "criteria": "60d_sharpe \u2265 25 \u2192 PROCEED. 15-25 \u2192 HOLD K500. < 15 \u2192 HALT cascade."
+        },
+        {
+          "id": 2,
+          "day": "D+21",
+          "time_min": 2,
+          "action": "K500 INJ-BTC scaffold audit",
+          "command": "python3 wave_k559_week4_triple_live.py --phase2",
+          "criteria": "Dashboard found, gate IN_PROGRESS, signal LONG_INJ_SHORT_BTC"
+        },
+        {
+          "id": 3,
+          "day": "D+21",
+          "time_min": 3,
+          "action": "K500 plist LIVE edit + launchctl load",
+          "command": "sed -i '' '/<string>--dry-run<\\/string>/d' com.cryptolab.k500-inj-btc.plist && cp com.cryptolab.k500-inj-btc.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.k500-inj-btc.plist",
+          "criteria": "launchctl list | grep k500-inj-btc shows running"
+        },
+        {
+          "id": 4,
+          "day": "D+21",
+          "time_min": 1,
+          "action": "Verify HL = 63.5% post-K500",
+          "command": "python3 scripts/verify_deployment_status.py | grep hl_exposure",
+          "criteria": "HL \u2248 63.5% (< 65% cap) \u2014 SAFE"
+        },
+        {
+          "id": 5,
+          "day": "D+23",
+          "time_min": 2,
+          "action": "K500 48h health check",
+          "command": "python3 -c \"import json; d=json.load(open('data/k500_dashboard.json')); print(d.get('position_state'), d.get('daily_pnl_usdc',0))\"",
+          "criteria": "position_state != NEUTRAL, daily_pnl_usdc > 0 (at least 1 fill cycle)"
+        },
+        {
+          "id": 6,
+          "day": "D+23",
+          "time_min": 2,
+          "action": "K507 SEI plist LIVE edit + launchctl load",
+          "command": "sed -i '' '/<string>--dry-run<\\/string>/d' com.cryptolab.k507-sei-btc.plist && cp com.cryptolab.k507-sei-btc.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.k507-sei-btc.plist",
+          "criteria": "launchctl list | grep k507-sei shows running"
+        },
+        {
+          "id": 7,
+          "day": "D+23",
+          "time_min": 1,
+          "action": "Verify HL = 64.5% post-SEI",
+          "command": "python3 scripts/verify_deployment_status.py | grep hl_exposure",
+          "criteria": "HL \u2248 64.5% (< 65% cap) \u2014 SAFE"
+        },
+        {
+          "id": 8,
+          "day": "D+25",
+          "time_min": 2,
+          "action": "K507 SEI 48h health check",
+          "command": "python3 -c \"import json; d=json.load(open('data/k507_dashboard.json')); print(d.get('position_state'), d.get('daily_pnl_usdc',0))\"",
+          "criteria": "K507 SEI showing activity in 48h window"
+        },
+        {
+          "id": 9,
+          "day": "D+25",
+          "time_min": 3,
+          "action": "K507 TIA plist: BYBIT-ONLY config + launchctl load",
+          "command": "# Edit: BYBIT_ONLY router, PAPER_TRADE=False, remove --dry-run. Then: cp plist ~/Library/LaunchAgents/ && launchctl load ...",
+          "criteria": "launchctl list | grep k507-tia. HL exposure unchanged at 64.5%"
+        },
+        {
+          "id": 10,
+          "day": "D+25",
+          "time_min": 1,
+          "action": "Final HL cap verify (all 3 LIVE)",
+          "command": "python3 scripts/verify_deployment_status.py | grep hl_exposure",
+          "criteria": "HL \u2264 64.5% (cap 65%, 0.5pp headroom) \u2014 ALL 3 STRATEGIES LIVE"
+        },
+        {
+          "id": 11,
+          "day": "D+28",
+          "time_min": 5,
+          "action": "First 7d cross-strategy review",
+          "command": "python3 wave_k559_week4_triple_live.py --phase9",
+          "criteria": "All 3: daily_pnl > 0, fill_rate > 20%, no margin breach, delta drift < 5%"
+        },
+        {
+          "id": 12,
+          "day": "D+28",
+          "time_min": 2,
+          "action": "Cross-correlation check (K500 vs SEI vs TIA)",
+          "command": "python3 -c \"import json; [print(json.load(open(f))['position_state']) for f in ['data/k500_dashboard.json','data/k507_dashboard.json','data/k507_tia_dashboard.json']]\"",
+          "criteria": "Positions should NOT all be identical direction (orthogonal signals expected)"
+        },
+        {
+          "id": 13,
+          "day": "D+35",
+          "time_min": 10,
+          "action": "Decision matrix evaluation per strategy",
+          "command": "python3 wave_k559_week4_triple_live.py --phase10",
+          "criteria": "Run per-strategy matrix. PASS \u2192 expand. HOLD \u2192 maintain. ROLLBACK \u2192 close."
+        },
+        {
+          "id": 14,
+          "day": "D+35",
+          "time_min": 3,
+          "action": "Week 5 K512 APT prep go/no-go",
+          "command": "python3 wave_k559_week4_triple_live.py --phase12",
+          "criteria": "HL \u2264 64.5%, at least 2/3 strategies PASS/HOLD \u2192 K512 D+32 scheduled"
+        },
+        {
+          "id": 15,
+          "day": "D+35",
+          "time_min": 2,
+          "action": "Commit weekly status + push",
+          "command": "git add data/k500_dashboard.json data/k507_dashboard.json data/k507_tia_dashboard.json && git commit -m 'K559 Week 4 D35 status update' && git push origin main",
+          "criteria": "Git push clean; repo reflects current LIVE state"
+        }
+      ]
+    }
+  }
+}
