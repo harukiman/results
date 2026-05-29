@@ -1,0 +1,115 @@
+{
+  "metadata": {
+    "wave_id": "K466",
+    "task": "BTC ETF Flow Signal Line Formal Closure",
+    "timestamp_jst": "2026-05-30 01:32 JST",
+    "timestamp_utc": "2026-05-29 16:32 UTC",
+    "decision_type": "CLOSED",
+    "related_waves": ["K455", "K462"],
+    "closure_reason": "Two sequential attempts (K455 + K462) both REJECT on core gates; line archived"
+  },
+  "closure_rationale": {
+    "original_line": "BTC ETF Flow Signal Alpha Line",
+    "original_status": "CONDITIONAL (K455)",
+    "first_attempt": "K455 BTC Total ETF Flow (Farside Investors)",
+    "second_attempt": "K462 GBTC-IBIT Divergence (Alternative formulation)",
+    "k455_decision": "REJECT",
+    "k462_decision": "REJECT"
+  },
+  "k455_evidence": {
+    "oos_sharpe": 1.0408,
+    "oos_ann_ret": 46.4147,
+    "gates_passed": 4,
+    "gates_total": 8,
+    "gates_passed_list": ["G1_OOS_Sharpe", "G4_WF_4fold", "G5_corr_K449", "G7_OOS_AnnRet"],
+    "gates_failed_list": ["G2_Perm_p", "G3_DSR_Bonferroni", "G5_corr_K280_est", "G6_trades_per_yr"],
+    "key_failure": "G5_corr_K280_est: 0.42 (threshold 0.40). ETF EMA-21 is 75% correlated with BTC 21d momentum direction, signal is not orthogonal.",
+    "detrended_oos_sharpe": -0.54,
+    "interpretation": "Detrending removes edge entirely. Strategy is trend-following, not pure ETF flow alpha. Institutional amplification of BTC momentum, not independent signal."
+  },
+  "k462_evidence": {
+    "oos_sharpe": -0.7703,
+    "oos_ann_ret": -75.4657,
+    "gates_passed": 0,
+    "gates_total": 7,
+    "gates_failed_list": ["G1_OOS_Sharpe", "G2_Perm_p", "G3_DSR_Bonferroni", "G4_WF_4fold", "G5_MomCorr", "G6_trades_per_yr", "G7_OOS_AnnRet"],
+    "direction_failure": "Raw divergence correlation with BTC forward returns = -0.116 (negative). GBTC-IBIT rotation hypothesis is DIRECTIONALLY INVERTED.",
+    "momentum_corr": 0.4412,
+    "detrended_oos_sharpe": -2.0259,
+    "peak_divergence_hypothesis": "High IBIT>GBTC divergence peaks at BTC price tops (FOMO into IBIT, profit-taking in GBTC) — contrarian signal, not bullish. Detrended signal catastrophically negative."
+  },
+  "summary": {
+    "k455_finding": "Marginal OOS pass (Sharpe 1.041 vs threshold 1.0) on 4/8 gates. 75% momentum correlation fails orthogonality. Detrended signal SR = -0.54 confirms trend-capture, not alpha.",
+    "k462_finding": "Complete REJECT: 0/7 gates. Directionally inverted (-0.117 corr with forward returns). Detrended signal SR = -2.026 (worse than K455). No path to improvement without new data source.",
+    "cumulative_evidence": "ETF flow (raw or divergence-based) does not provide independent alpha from BTC momentum. Both signal forms fail OOS validation under orthogonality constraint."
+  },
+  "reopen_conditions": {
+    "reopen_date_default": "2027-05-01",
+    "minimum_hold_period_months": 12,
+    "trigger_a_label": "High-Frequency Per-Fund Data",
+    "trigger_a_condition": "Access to intraday (hourly+) per-fund ETF flows (vs current daily aggregate)",
+    "trigger_a_data_source": "Farside Investors API or Bloomberg (requires paid subscription)",
+    "trigger_a_action": "Test correlation decay between IBIT/GBTC/other-funds and 1h/4h BTC momentum",
+    "trigger_b_label": "Non-US BTC ETF Flows",
+    "trigger_b_condition": "Historical flows from Hong Kong Spot ETF, Brazil ETFs, or other non-US venues",
+    "trigger_b_data_source": "DefiLlama bridge flows, Coingecko, or regional exchange APIs",
+    "trigger_b_action": "Test divergence between US-traded GBTC/IBIT and non-US flows for rotation signals",
+    "trigger_c_label": "Structural Regime Change",
+    "trigger_c_condition": "New institutional investor cohort (e.g., pension funds, insurance) with different flow timing vs passive index rebalances",
+    "trigger_c_monitoring": "Governance or regulatory change enabling new fund category",
+    "trigger_c_action": "Reassess signal sensitivity to buyer mix"
+  },
+  "cumulative_closed_lines": {
+    "total_count": 10,
+    "this_wave_new": 1,
+    "this_wave_escalated": 0,
+    "lines_list": [
+      "regime_filter_K315-K341",
+      "ml_allocator_K198-K345",
+      "usdh_stablecoin_K354",
+      "drift_sol_arb_K358-K375",
+      "monarq_timing_K350",
+      "stable_clustering_K377",
+      "coinbase_usdc_hl_K362",
+      "hl_spot_perp_K276b_K374",
+      "hypurrfi_yield_arb_K337_K441",
+      "btc_etf_flow_K455_K462_K466"
+    ]
+  },
+  "task_pipeline_updates": {
+    "affected_sections": ["deferred", "discarded_specific"],
+    "deferred_delta": -1,
+    "discarded_delta": 1,
+    "entry_btc_etf": {
+      "id": "K455+K462",
+      "topic": "BTC ETF Flow Signal (Closed K466)",
+      "decision": "CLOSED",
+      "closure_wave": "K466",
+      "closure_date": "2026-05-30",
+      "rationale": "K455: 4/8 gates (75% momentum corr, detrended SR -0.54). K462: 0/7 gates (directionally inverted -0.117, detrended SR -2.026). ETF flow does not provide orthogonal alpha.",
+      "reopen_date": "2027-05-01",
+      "reopen_triggers": [
+        "Intraday per-fund ETF flow data (hourly+) with reduced correlation decay",
+        "Non-US BTC ETF flows (Hong Kong, Brazil) with demonstrated divergence timing",
+        "Structural regime change (new institutional cohort with different rebalance timing)"
+      ]
+    }
+  },
+  "html_updates": {
+    "sections": ["report_header", "live_monitoring_table"],
+    "header_badge": "K466 BTC ETF flow line formal closure badge (10th cumulative closed line, reopen 2027-05-01)",
+    "badge_content": "★ K466 ETF flow line CLOSED (K455 4/8 gates + 75% momentum corr, K462 0/7 gates + directional inversion. Reopen: 2027-05-01 or high-freq/non-US data. Monitor: deferred.)",
+    "monitoring_row": "K466 row in Live Monitoring table (CLOSED status, conditional reopen criteria)"
+  },
+  "phase_summary": {
+    "phase_1_closed_lines_history": "COMPLETE (now 10 cumulative)",
+    "phase_2_closure_rationale": "COMPLETE (K455 trend-capture, K462 inverted)",
+    "phase_3_reopen_triggers": "COMPLETE (3 conditions: intraday data, non-US flows, regime change)",
+    "phase_4_task_pipeline_updates": "READY",
+    "phase_5_html_banner_update": "READY",
+    "phase_6_wave_documentation": "COMPLETE"
+  },
+  "git_commit_message": "★ K466 BTC ETF flow line formal closure (K455 + K462 both REJECT, 10th cumulative closed line)",
+  "status": "READY_FOR_COMMIT",
+  "confidence": "HIGH"
+}
