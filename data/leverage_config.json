@@ -22,7 +22,9 @@
     "K495_DEX_CEX_FLOW": 3.0,
     "K500_INJ_BTC":      4.0,
     "K507_SEI_BTC":      4.0,
-    "K512_APT_BTC":      4.0
+    "K507_TIA_BTC":      4.0,
+    "K512_APT_BTC":      4.0,
+    "K541_STABLECOIN_SUPPLY": 2.0
   },
   "k457_basket_notes": {
     "sleeve_pct": 0.05,
@@ -66,6 +68,30 @@
     "taker_fee_bps": 4.0,
     "activation": "SCAFFOLD-READY — activate when OKX trading goes live (K454 v6.20)",
     "margin_calc": "3x × K280 OKX leg × $10M = conservative, matching existing HL/Bybit caps"
+  },
+  "k507_tia_notes": {
+    "sleeve_pct": 0.01,
+    "hl_sleeve_pct": 0.01,
+    "bybit_sleeve_pct": 0.0,
+    "leverage": 4.0,
+    "margin_calc": "4x × 1% HL × $10M = $400K total HL notional / 4x = $100K margin (1% of AUM)",
+    "margin_pct_of_aum_10M": "1.0%",
+    "oos_sharpe": 14.44,
+    "ann_return_usd_net_10M": 51000,
+    "family_rank": "#6 (APT Sh51.10 > ATOM Sh50.79 > SEI Sh48.10 > AVAX Sh43.89 > SOL Sh16.30 > TIA Sh14.44 > INJ Sh11.23)",
+    "celestia_da_hypothesis": "CONFIRMED: Celestia modular DA layer — rollup adoption + data blob fee market creates orthogonal FR dynamics vs all other L1s",
+    "g5d_corr_vs_atom": 0.05,
+    "g5d_note": "0.05 vs ATOM = LOWEST in family — TIA modular DA fully orthogonal to Cosmos hub IBC/staking flows",
+    "hl_concentration_pct_after_add": 65.0,
+    "hl_headroom_pp": 0.0,
+    "hl_cap_note": "Exactly at 65% cap. Monitor: any new HL strategies require TIA to shift to Bybit or reduce.",
+    "venue": "HL primary 1% (both TIA and BTC legs on HL — HL-only spec, no Bybit split)",
+    "venue_fallback": "1% Bybit if HL cap tightens",
+    "execution": "POST_ONLY parallel (K439 paired execution pattern), HL-only",
+    "v628_candidate": "K449 5% + K476 4% + K484 5% + K493 5% + K500 4% + K507 SEI 2% + K507 TIA 1% + K512 APT 2% = 28% combined paired-trade sleeve (~$1.162M/yr @ $10M)",
+    "activation": "SCAFFOLD-READY — 60d paper-trade gate (OOS Sharpe >=3.5 + fill_rate >=60% + maxDD <15%)",
+    "wave": "K524",
+    "daemon_number": "37th"
   },
   "k512_notes": {
     "sleeve_pct": 0.02,
@@ -238,5 +264,35 @@
     "api_archive": "archive.prod.vertexprotocol.com/v1",
     "product_ids": {"BTC": 2, "ETH": 4},
     "activation": "SCAFFOLD-READY — activate when Vertex trading keys configured + v6.20 go-live"
+  },
+  "k541_notes": {
+    "sleeve_pct": 0.03,
+    "hl_sleeve_pct": 0.03,
+    "bybit_sleeve_pct": 0.0,
+    "leverage": 2.0,
+    "leverage_cap": 2.0,
+    "margin_calc": "2x × 3% sleeve × $10M = $600K total notional / 2x = $300K margin (3% of AUM)",
+    "margin_pct_of_aum_10M": "3.0%",
+    "per_asset_notional": "$200K each (BTC + ETH + SOL, equal weight)",
+    "oos_sharpe": 1.498,
+    "ann_return_usd_net_10M": 294000,
+    "seven_axis_sharpe": 6.872,
+    "seven_axis_lift": 0.165,
+    "g5_max_corr": 0.074,
+    "trades_per_yr": 273,
+    "orthogonality_note": "G5 max corr 0.074 — highly orthogonal to existing FR-carry strategies",
+    "signal_version": "V3 — 7d z-score 2nd derivative (acceleration spike > 0.5)",
+    "universe": ["BTC", "ETH", "SOL"],
+    "data_api": "DefiLlama free public API (stablecoins.llama.fi) — USDT + USDC combined supply",
+    "venue": "HL primary (all 3 legs on HL, no Bybit split — directional not paired)",
+    "execution": "POST_ONLY sequential (daily cron 86400s)",
+    "cron_interval_s": 86400,
+    "lower_leverage_rationale": "Directional signal (not delta-neutral) warrants 2x vs FR-carry 4x — higher directional risk",
+    "v629_candidate": "v6.28 + K541 3% = v6.29 combined ~$1.456M/yr @$10M (v6.28 $1.162M + K541 $294K)",
+    "paper_gate_days": 90,
+    "activation": "SCAFFOLD-READY — 90d paper-trade gate (OOS Sharpe >=1.2 + fill_rate >=60% + maxDD <25% + >=50 trades)",
+    "wave": "K550",
+    "daemon_number": "38th",
+    "k541_notes": "Stablecoin supply acceleration = fresh capital deployment signal; V3 uses 2nd derivative to capture regime inflection points"
   }
 }

@@ -7261,3 +7261,441 @@ launchctl list | grep k512
 ---
 
 *K520 §38g -- K512 APT-BTC FR differential production scaffold (36th daemon, OOS Sh 51.10 #1 family rank HIGHEST, $302K/yr net @$10M, Move-VM CONFIRMED Aptos Block-STM + Move resource model creates orthogonal FR dynamics vs all other VMs, OU half-life 0.27d ultra-fast mean reversion, HL+Bybit split 1%+1% HL 64% headroom 1pp, v6.28 combined paired-trade ~$1.11M/yr, 60d paper-trade gate) -- 2026-05-30*
+
+---
+
+## §38h K507 TIA-BTC FR Differential — Production Scaffold Playbook
+
+**Wave:** K524 | **Daemon:** 37th | **Status:** SCAFFOLD-READY | **Generated:** 2026-05-30
+
+### §38h.1 Strategy Summary
+
+| Attribute | Value |
+|-----------|-------|
+| Strategy | K507 TIA-BTC Funding Rate Differential |
+| Pair | TIA / BTC (Celestia modular DA vs BTC proof-of-work) |
+| Signal | 7-day EMA of TIA FR − BTC FR differential |
+| Sleeve | 1% of AUM (HL-only, no Bybit split) |
+| Capital (1% @$10M) | $100K capital → $400K total HL notional (4x) |
+| Per leg | $200K notional (TIA leg + BTC leg, both on HL) |
+| OOS Sharpe | **14.44** (family rank #6) |
+| Ann return | **$51K/yr** net @ $10M (1% sleeve, 4x leverage) |
+| HL concentration | 65.0% post-K507-TIA (exactly at cap) |
+| Execution | POST_ONLY parallel (K439), 8h cron, 28800s StartInterval |
+| Venue | HL-only (both legs on HyperLiquid) |
+| Wave ACCEPT | K507 TIA (K524 scaffold) |
+
+### §38h.2 Celestia Modular DA Hypothesis — CONFIRMED
+
+TIA (Celestia) has structurally distinct FR dynamics from BTC because:
+
+- **Modular Data Availability:** Celestia publishes block data for rollups/L2s (Optimism, Arbitrum, Starknet, Eclipse) — data availability layer, not execution layer
+- **Data Blob Fee Market:** Rollup operators pay TIA blob fees → secondary demand spikes during L2 adoption surges
+- **TIA Staking:** Data availability providers stake TIA → yield/staking FR patterns orthogonal to BTC proof-of-work
+- **Rollup Narrative:** TIA attracts speculative capital during Ethereum DA competition events (EIP-4844 / blobspace)
+- **G5d vs ATOM: 0.05 = LOWEST in family** — TIA modular DA fully orthogonal to Cosmos hub IBC/staking flows
+- **Family rank #6**: OOS Sh 14.44 — solid alpha at 1% sleeve weight; lift justifies daemon slot
+
+### §38h.3 FR Differential Signal
+
+```
+signal = EMA_7d(FR_TIA - FR_BTC)
+
+Entry:
+  ema_7d > +0.00001  → short TIA / long BTC  (LONG_BTC_SHORT_TIA)
+  ema_7d < -0.00001  → long TIA / short BTC  (LONG_TIA_SHORT_BTC)
+  |ema_7d| ≤ 0.00001 → NEUTRAL (no position)
+
+EMA period: 7 days × 3 settlements/day = 21 8h periods
+α = 2 / (21 + 1) = 0.0909
+```
+
+Both long and short legs execute on HL (HL-only spec).
+
+### §38h.4 HL-Only Spec (K524)
+
+| Aspect | Detail |
+|--------|--------|
+| Venue | HyperLiquid only (both TIA and BTC legs) |
+| Sleeve | 1% of AUM on HL |
+| Rationale | Smaller weight (1%) → no split needed |
+| HL post-TIA | 65.0% (exactly at 65% cap) |
+| Fallback | 1% Bybit if HL cap tightens |
+| Both legs | HL IOC reduce-only on emergency exit |
+
+**HL concentration math:**
+```
+Post-K512:  64.0% (K512 HL+Bybit 1%+1% → only APT leg on HL = 1pp)
+Add TIA:    +1.0% (TIA + BTC both on HL, but netted in delta-neutral)
+Post-TIA:   65.0% (exactly at cap — no further HL additions without moving TIA to Bybit)
+```
+
+### §38h.5 Paired Execution Protocol
+
+```
+Entry (LONG_TIA_SHORT_BTC example):
+  1. POST_ONLY LONG TIA @ HL  ($200K notional)
+  2. POST_ONLY SHORT BTC @ HL ($200K notional)
+  3. Both submitted in parallel (K439 pattern)
+  4. IOC fallback if POST_ONLY times out (5 min window)
+  5. If both fail: retry next 8h cycle
+
+Close (sequential — short first):
+  1. IOC BUY-COVER BTC @ HL (cover short first)
+  2. IOC SELL TIA @ HL (sell long second)
+  3. Both on HL (no cross-venue coordination needed)
+```
+
+### §38h.6 60d Paper-Trade Activation Gate
+
+| Metric | Target | Rationale |
+|--------|--------|-----------|
+| OOS Sharpe (paper) | ≥ 3.5 | Loose given OOS 14.44 (well above gate) |
+| Fill rate | ≥ 60% | POST_ONLY fills on 8h settlement |
+| Max drawdown | < 15% | Standard FR carry DD bound |
+| Gate duration | 60 days | Full 2-month validation period |
+
+After 60d gate passage:
+```
+Activate: python3 scripts/k507_tia_btc_run.py  (remove --dry-run, set PAPER_TRADE=False)
+Confirm: HL TIA + BTC positions at 1% sleeve
+Monitor: data/k507_tia_dashboard.json gate_metrics section
+```
+
+### §38h.7 v6.28 Architecture — Combined Paired-Trade Sleeve
+
+```
+v6.28 paired-trade family (K524 complete):
+  K449 ETH-BTC    5%   OOS Sh  5.66   $187K/yr
+  K476 SOL-BTC    4%   OOS Sh 16.30   $187K/yr
+  K484 AVAX-BTC   5%   OOS Sh 43.89    $75.7K/yr
+  K493 ATOM-BTC   5%   OOS Sh 50.79   $231K/yr
+  K500 INJ-BTC    4%   OOS Sh 11.23   $124K/yr
+  K507 SEI-BTC    2%   OOS Sh 48.10   $179K/yr
+  K507 TIA-BTC    1%   OOS Sh 14.44    $51K/yr  ← K524 (37th daemon)
+  K512 APT-BTC    2%   OOS Sh 51.10   $302K/yr
+  ─────────────────────────────────────────────
+  Total:         28%                $1.337K/yr combined paired-trade sleeve
+  v6.28 total (incl K280+K297+sUSDe+K495): ~$1.162M/yr paired-trade @ $10M
+  HL concentration: 65.0% (exactly at cap)
+```
+
+### §38h.8 Emergency Exit Integration
+
+```bash
+# K507 TIA positions auto-detected via _detect_k507_tia_paired_positions()
+# Use --include-k507-tia for structured close summary:
+python3 scripts/emergency_hl_exit.py --dry-run --include-k507-tia
+
+# Sequential close protocol:
+#   Step 1: IOC BUY-COVER short leg @ HL (avoid naked short)
+#   Step 2: IOC SELL long leg @ HL
+#   Both legs on HL (HL-only, no cross-venue coordination)
+```
+
+### §38h.9 Activation Procedure
+
+```bash
+# Step 1: Verify 37 daemons (0 mismatches)
+python3 scripts/verify_deployment_status.py
+
+# Step 2: Deploy plist (after 60d paper-trade gate)
+cp scripts/com.cryptolab.k507-tia-btc.plist ~/Library/LaunchAgents/
+sed -i '' "s|REPO_ROOT|$(pwd)|g" ~/Library/LaunchAgents/com.cryptolab.k507-tia-btc.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k507-tia-btc.plist
+
+# Step 3: Manual first run (dry-run)
+python3 scripts/k507_tia_btc_run.py --dry-run
+
+# Step 4: Activate live (after gate passage)
+# Set PAPER_TRADE=False in plist EnvironmentVariables
+# python3 scripts/leverage_manager.py --advance-phase LIVE_1.5X
+```
+
+### §38h.10 Leverage Configuration
+
+```json
+"K507_TIA_BTC": 4.0,   // in exchange_caps
+"k507_tia_notes": {
+  "sleeve_pct": 0.01,
+  "hl_sleeve_pct": 0.01,
+  "bybit_sleeve_pct": 0.0,
+  "leverage": 4.0,
+  "margin_calc": "4x × 1% HL × $10M = $400K HL notional / 4x = $100K margin (1% of AUM)",
+  "oos_sharpe": 14.44,
+  "ann_return_usd_net_10M": 51000,
+  "family_rank": "#6 (APT Sh51.10 > ATOM Sh50.79 > SEI Sh48.10 > AVAX Sh43.89 > SOL Sh16.30 > TIA Sh14.44 > INJ Sh11.23)",
+  "g5d_corr_vs_atom": 0.05,
+  "hl_concentration_pct_after_add": 65.0,
+  "hl_headroom_pp": 0.0
+}
+```
+
+### §38h.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k507_tia_btc_run.py` | Strategy script (K524 scaffold, ~250 LOC) |
+| `data/k507_tia_dashboard.json` | Live state + gate metrics (initial NEUTRAL) |
+| `scripts/com.cryptolab.k507-tia-btc.plist` | 37th daemon plist (gitignored) |
+| `scripts/emergency_hl_exit.py` | `--include-k507-tia` flag + K507 TIA detect/close |
+| `scripts/leverage_manager.py` | K507_TIA_BTC 4.0 cap + SLEEVE_WEIGHTS_V628 K507_TIA |
+| `data/leverage_config.json` | K507_TIA_BTC: 4.0 + k507_tia_notes |
+| `scripts/verify_deployment_status.py` | 37th daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§38h) |
+| `wave_k524_k507_tia_scaffold.py` | Wave driver/test |
+| `wave_k524_k507_tia_scaffold.json` | Wave result report |
+
+### §38h.12 References
+
+| Wave | Description |
+|------|-------------|
+| K524 | This section — K507 TIA-BTC production scaffold (37th daemon, v6.28 architecture) |
+| K507 | K507 analysis — TIA-BTC FR differential ACCEPT ($51K/yr @$10M, Celestia DA #6 CONFIRMED) |
+| K520 | K512 APT-BTC scaffold (36th daemon, direct scaffold template) |
+| K514 | K507 SEI-BTC scaffold (35th daemon, template for K507 TIA) |
+| K434 | Smart router (K507 TIA uses HL-only pattern) |
+| K266 | §6 strict gate framework (K507 TIA ACCEPT) |
+
+---
+
+*K524 §38h -- K507 TIA-BTC FR differential production scaffold (37th daemon, OOS Sh 14.44 #6 family, $51K/yr net @$10M, Celestia modular DA CONFIRMED rollup adoption + blob fee market creates orthogonal FR dynamics, G5d 0.05 vs ATOM LOWEST in family, HL-only 1% sleeve HL 65% exactly at cap, v6.28 combined paired-trade ~$1.162M/yr, 60d paper-trade gate OOS Sh >=3.5) -- 2026-05-30*
+
+---
+
+## §40 K541 Stablecoin Supply Growth — Production Scaffold Playbook
+
+**Wave:** K550 | **Daemon:** 38th | **Status:** SCAFFOLD-READY | **Date:** 2026-05-30
+
+### §40.1 Strategy Overview
+
+K541 Stablecoin Supply Growth detects regime inflection points by measuring the **acceleration** of stablecoin supply growth — a novel second-derivative signal that captures when fresh capital deployment is accelerating into crypto.
+
+**Signal hypothesis:**
+- USDT + USDC combined supply represents 90%+ of stablecoin market
+- Supply growth acceleration (not just growth) = fresh capital deployment signal
+- 7d z-score 2nd derivative captures regime shift, not noise or trend-following
+- V3 signal: 7d z-score acceleration > 0.5 → LONG BTC + ETH + SOL on HL
+- Orthogonal to existing FR-carry family (G5 max corr 0.074)
+
+**Key metrics (K541 ACCEPT CONDITIONAL — K550 scaffold):**
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe | 1.498 |
+| Ann return @$10M | $294K/yr |
+| 7-axis portfolio Sh | 6.872 |
+| 7-axis lift | +0.165 |
+| G5 max corr | 0.074 (highly orthogonal) |
+| Trades/yr | 273 (continuous) |
+| Universe | BTC + ETH + SOL |
+| Leverage | 2x (directional, lower than FR-carry 4x) |
+| Sleeve | 3% AUM |
+| Paper gate | 90d (longer than 60d for OOS Sh < 2.0) |
+| Data API | DefiLlama free public (stablecoins.llama.fi) |
+
+### §40.2 V3 Signal Mechanics (Acceleration Spike)
+
+```
+Step 1: 7d growth rate
+  growth[i] = (supply[i] - supply[i-7]) / supply[i-7]
+
+Step 2: Z-score normalization (30d rolling)
+  z[i] = (growth[i] - mean(growth[-30:])) / std(growth[-30:])
+
+Step 3: 1st derivative (velocity)
+  dz[i] = z[i] - z[i-1]
+
+Step 4: 2nd derivative (acceleration, 7d smoothed)
+  accel = mean(dz[-7:])
+
+Step 5: Signal
+  accel > 0.5 → LONG BTC + ETH + SOL
+  accel <= 0.5 → NEUTRAL (close if open)
+```
+
+**Why V3 (acceleration):**
+- V1 (supply level) → stationary-correlated with price, no edge
+- V2 (7d growth z-score) → captures trend, moderate edge
+- V3 (z-score 2nd derivative) → captures regime inflection, OOS Sh 1.498
+
+### §40.3 Universe & Sizing
+
+```
+Universe: BTC, ETH, SOL (equal weight, 3 legs)
+Venue:    HL primary (all 3 legs, HL-only)
+Sleeve:   3% AUM ($300K @ $10M)
+Leverage: 2x (directional — lower than FR-carry 4x)
+Notional: $600K total ($200K per asset)
+Margin:   $300K (3% of AUM @ 2x)
+
+Sizing rationale:
+  2x leverage (not 4x) because:
+    - Directional signal (not delta-neutral carry)
+    - Lower OOS Sharpe (1.498 vs FR-carry 11-51)
+    - Higher directional risk requires more conservative leverage
+    - 2x = significant alpha capture with controlled downside
+```
+
+### §40.4 DefiLlama API Integration
+
+```python
+# Free public API — no API key required
+GET https://stablecoins.llama.fi/stablecoins
+
+# Response: array of peggedAssets
+# USDT: symbol="USDT" or name contains "tether"
+# USDC: symbol="USDC" or name contains "usd coin"
+# Supply: asset["circulating"]["peggedUSD"]
+
+# Fallback: if API fails → use last cached value from
+# cache/k541_supply_history.jsonl
+```
+
+**API reliability:**
+- DefiLlama has >99% uptime for this endpoint
+- Fallback to history cache handles brief outages
+- Daily cron (86400s) aligns with DefiLlama data update cadence
+- No rate limiting on public stablecoins endpoint
+
+### §40.5 90d Paper-Trade Activation Criteria
+
+| Gate | Target | Rationale |
+|------|--------|-----------|
+| OOS Sharpe (paper 90d) | ≥ 1.2 | Lower than FR-carry given OOS Sh 1.498 |
+| Fill rate | ≥ 60% | POST_ONLY fill confirmation |
+| Max drawdown | < 25% | Directional signal — wider gate than paired-trade 15% |
+| Trades in 90d | ≥ 50 | 273/yr → ~67 in 90d, >50 ensures signal frequency |
+| Regime coverage | ≥ 1 acceleration event | Validate signal fires in real market conditions |
+
+**Gate status:** IN_PROGRESS (scaffold phase — building history)
+
+**Paper-trade gate longer than FR-carry family:**
+- FR-carry family uses 60d gate (OOS Sharpe 11-51)
+- K541 OOS Sh 1.498 is materially lower → 90d gate required
+- 90d allows 3× more trades to accumulate for robust evaluation
+- Accept only after full 90d window with all 5 criteria met
+
+### §40.6 Execution Protocol
+
+```
+Position type:    Directional LONG (not delta-neutral)
+Execution:        POST_ONLY sequential (BTC → ETH → SOL)
+Venue:            HL-only (all 3 legs)
+IOC fallback:     5 min per asset if POST_ONLY times out
+Daily cron:       StartInterval 86400 (daily, not 8h like FR-carry)
+
+Close triggers:
+  1. Signal disappears (accel ≤ 0.5) → close next cycle
+  2. Emergency exit (--include-k541 flag)
+  3. Manual close: python3 scripts/k541_stablecoin_supply_run.py --close "reason"
+  4. Regime shift (bear → bull → signal re-evaluates)
+
+Close protocol: IOC reduce-only BTC → ETH → SOL (largest notional first)
+```
+
+### §40.7 Dashboard: `data/k541_dashboard.json`
+
+Key fields:
+- `position_state`:          NEUTRAL | LONG_BTC_ETH_SOL
+- `zscore_acceleration`:     current V3 acceleration signal (threshold 0.5)
+- `total_supply_usdt_usdc`:  USDT + USDC combined supply (USD)
+- `signal_fires`:            true when acceleration > 0.5
+- `history_points`:          days of history accumulated
+- `data_sufficient`:         true when >= 38 daily points
+- `paper_trade_status`:      {days_elapsed, target_90d}
+- `gate_metrics`:            live evaluation vs activation criteria
+
+### §40.8 v6.29 Architecture Path
+
+```
+v6.29 = v6.28 + K541 Stablecoin Supply Growth 3%
+
+v6.28 (current target):
+  K280 + K297 + sUSDe + [K449 5% + K476 4% + K484 5% + K493 5% + K500 4% + K507 2% + K507-TIA 1% + K512 2%]
+  Combined paired-trade: ~$1.162M/yr @$10M
+  HL: 65% (exactly at cap)
+
+v6.29 (K541 addition):
+  K280 48% + K297 20% + sUSDe 5% + [paired-trade 28%] + K541 3%
+  Total: 104% → K280 reduced 3pp to 48% to fund K541
+  Combined estimate: ~$1.456M/yr @$10M (+$294K from K541)
+  HL concentration: 65% + K541 3% directional = 68% (EXCEEDS CAP)
+
+HL concentration note:
+  K541 adds 3% HL exposure → HL > 65% cap if added to v6.28 HL=65%
+  Options after gate passage:
+    A. Shift K507-TIA to Bybit (1pp HL relief) → HL back to 65%
+    B. Reduce K280 further (75% → 68% = 7pp relief)
+    C. Accept HL overweight temporarily during transition
+  Decision deferred to v6.29 activation gate
+```
+
+### §40.9 Activation Procedure
+
+```bash
+# Step 1: Verify 90d paper-trade gate passed
+python3 scripts/k541_stablecoin_supply_run.py --status
+# → Check: gate_metrics.gate_status == "PASS" (all 5 criteria met)
+
+# Step 2: Verify deployment status (should show 38 daemons, 0 mismatches)
+python3 scripts/verify_deployment_status.py
+
+# Step 3: Deploy plist (after 90d paper-trade gate)
+cp scripts/com.cryptolab.k541-stablecoin-supply.plist ~/Library/LaunchAgents/
+sed -i '' "s|REPO_ROOT|$(pwd)|g" ~/Library/LaunchAgents/com.cryptolab.k541-stablecoin-supply.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k541-stablecoin-supply.plist
+
+# Step 4: Manual first run (dry-run)
+python3 scripts/k541_stablecoin_supply_run.py --dry-run
+
+# Step 5: Activate live (after gate passage + HL concentration review)
+# Set PAPER_TRADE=False in plist EnvironmentVariables
+# Verify HL concentration <= 65% after K541 addition
+```
+
+### §40.10 Leverage Configuration
+
+```json
+"K541_STABLECOIN_SUPPLY": 2.0,   // in exchange_caps — 2x (directional, lower than FR-carry 4x)
+"k541_notes": {
+  "sleeve_pct": 0.03,
+  "leverage": 2.0,
+  "margin_calc": "2x × 3% × $10M = $600K total notional / 2x = $300K margin (3% AUM)",
+  "oos_sharpe": 1.498,
+  "ann_return_usd_net_10M": 294000,
+  "g5_max_corr": 0.074,
+  "paper_gate_days": 90,
+  "venue": "HL-only (all 3 legs: BTC + ETH + SOL)",
+  "activation": "SCAFFOLD-READY — 90d paper-trade gate (OOS Sharpe >=1.2 + fill_rate >=60% + maxDD <25% + >=50 trades)"
+}
+```
+
+### §40.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k541_stablecoin_supply_run.py` | Strategy script (K550 scaffold, ~300 LOC) |
+| `data/k541_dashboard.json` | Live state + gate metrics (initial NEUTRAL) |
+| `scripts/com.cryptolab.k541-stablecoin-supply.plist` | 38th daemon plist (gitignored) |
+| `scripts/emergency_hl_exit.py` | `--include-k541` flag + K541 detect/close |
+| `scripts/leverage_manager.py` | K541_STABLECOIN_SUPPLY 2.0 cap + SLEEVE_WEIGHTS_V629 |
+| `data/leverage_config.json` | K541_STABLECOIN_SUPPLY: 2.0 + k541_notes |
+| `scripts/verify_deployment_status.py` | 38th daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§40) |
+| `wave_k550_k541_scaffold.py` | Wave driver/test |
+| `wave_k550_k541_scaffold.json` | Wave result report |
+
+### §40.12 References
+
+| Wave | Description |
+|------|-------------|
+| K550 | This section — K541 stablecoin supply growth production scaffold (38th daemon, v6.29 architecture) |
+| K541 | K541 analysis — stablecoin supply growth ACCEPT CONDITIONAL ($294K/yr @$10M, OOS Sh 1.498) |
+| K524 | K507 TIA-BTC scaffold (37th daemon, direct scaffold template) |
+| K502 | K495 DEX-CEX non-paired scaffold pattern (K541 follows similar directional pattern) |
+| K266 | §6 strict gate framework (K541 ACCEPT CONDITIONAL) |
+
+---
+
+*K550 §40 -- K541 stablecoin supply growth production scaffold (38th daemon, OOS Sh 1.498 $294K/yr @$10M, V3 z-score 2nd derivative acceleration spike, DefiLlama USDT+USDC supply free API, 7-axis Sh 6.872 +0.165 lift, G5 max corr 0.074 orthogonal, BTC+ETH+SOL 3% sleeve 2x leverage HL-only, 90d paper-trade gate, v6.29 candidate) -- 2026-05-30*

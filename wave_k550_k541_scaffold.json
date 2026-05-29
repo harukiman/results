@@ -1,0 +1,96 @@
+{
+  "wave": "K550",
+  "strategy": "K541 Stablecoin Supply Growth (V3 Acceleration Spike)",
+  "daemon_number": "38th",
+  "timestamp_jst": "2026-05-30 06:02 JST",
+  "status": "SCAFFOLD-READY",
+  "tests_passed": 6,
+  "tests_total": 6,
+  "all_pass": true,
+  "results": [
+    {
+      "test": "dry_run_cycle",
+      "passed": true,
+      "returncode": 0,
+      "has_cycle_complete": true,
+      "stdout_preview": "\n=== K541 Stablecoin Supply Growth (V3 Acceleration) \u2014 2026-05-30 06:02 JST ===\n  Mode:      DRY-RUN\n  AUM:       $10,000,000  Sleeve: 3%  Leverage: 2.0x\n  Universe:  BTC, ETH, SOL\n  Signal:    V3 \u2014 7d z-score 2nd derivative (acceleration spike > 0.5)\n  Venue:     HL primary (daily cron 86400s)\n  OOS Sh:    1.498 ($294K/yr @$10M, 7-axis Sh 6.872 +0.165 lift)\n  Gate:      90d paper-trade (OOS Sh >=1.2 + fill_rate >=60% + maxDD <25% + >=50 trades)\n\n  [Step 1] Fetching stablecoin supply from DefiLl",
+      "stderr_preview": ""
+    },
+    {
+      "test": "verify_deployment",
+      "passed": true,
+      "daemon_count": 38,
+      "mismatches": 0,
+      "k541_in_registry": true,
+      "expected_daemons": 38,
+      "returncode": 0
+    },
+    {
+      "test": "zscore_acceleration",
+      "passed": true,
+      "data_sufficient": true,
+      "zscore_acceleration": 0.28679,
+      "signal_fires": false,
+      "history_points": 50
+    },
+    {
+      "test": "dashboard_schema",
+      "passed": true,
+      "missing_keys": [],
+      "gate_target_ok": true,
+      "oos_sharpe_ok": true,
+      "paper_gate_90_ok": true,
+      "wave": "K550"
+    },
+    {
+      "test": "leverage_config",
+      "passed": true,
+      "k541_cap": 2.0,
+      "notes_present": true,
+      "leverage_ok": true,
+      "sleeve_ok": true,
+      "gate_90d_ok": true
+    },
+    {
+      "test": "emergency_exit_flag",
+      "passed": true,
+      "has_include_k541": true,
+      "has_detect_k541": true,
+      "has_close_k541": true,
+      "has_k541_detail": true
+    }
+  ],
+  "scaffold_summary": {
+    "oos_sharpe": 1.498,
+    "ann_return_usd_10M": 294000,
+    "seven_axis_sharpe": 6.872,
+    "seven_axis_lift": 0.165,
+    "g5_max_corr": 0.074,
+    "trades_per_yr": 273,
+    "paper_gate_days": 90,
+    "signal_version": "V3 \u2014 7d z-score 2nd derivative (acceleration spike)",
+    "universe": [
+      "BTC",
+      "ETH",
+      "SOL"
+    ],
+    "leverage": 2.0,
+    "sleeve_pct": 0.03,
+    "data_api": "DefiLlama free public (stablecoins.llama.fi)",
+    "venue": "HL-only"
+  },
+  "90d_paper_gate_criteria": {
+    "oos_sharpe_min": 1.2,
+    "fill_rate_min_pct": 60,
+    "max_drawdown_pct": 25,
+    "min_trades_90d": 50,
+    "gate_status": "IN_PROGRESS"
+  },
+  "v629_summary": {
+    "description": "v6.28 + K541 3% stablecoin supply addition",
+    "combined_return_usd": 1456000,
+    "v628_base_usd": 1162000,
+    "k541_add_usd": 294000,
+    "hl_concentration_note": "K541 adds 3% HL \u2192 exceeds 65% cap; HL restructure required before v6.29 activation"
+  }
+}

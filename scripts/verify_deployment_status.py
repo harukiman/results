@@ -301,6 +301,20 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k512_apt_btc",
         expected_html_status="SCAFFOLD-READY",  # K520: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=5.0 + fill_rate >=60% + maxDD <15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k507-tia-btc",
+        purpose="K507 TIA-BTC FR differential paired-trade (delta-neutral, 4x leverage, 8h cycle, HL-only 1% sleeve, OOS Sh 14.44 #6 family, $51K/yr net @$10M, Celestia modular DA CONFIRMED: rollup adoption + blob fee market creates orthogonal FR dynamics, G5d 0.05 vs ATOM=LOWEST in family, HL 65% post-K507-TIA (exactly at cap), v6.28 candidate K449+K476+K484+K493+K500+K507+K507-TIA+K512 combined sleeve ~$1.162M/yr, 37th daemon)",
+        scripts=["scripts/k507_tia_btc_run.py"],
+        log_basename="k507_tia_btc",
+        expected_html_status="SCAFFOLD-READY",  # K524: plist in scripts/ (gitignored); activate after 60d paper-trade gate (OOS Sh >=3.5 + fill_rate >=60% + maxDD <15%)
+    ),
+    DaemonSpec(
+        label="com.cryptolab.k541-stablecoin-supply",
+        purpose="K541 Stablecoin Supply Growth directional signal (LONG BTC+ETH+SOL, V3 z-score 2nd derivative acceleration, 2x leverage, daily cron 86400s, HL-only, OOS Sh 1.498, $294K/yr @$10M, 7-axis Sh 6.872 +0.165 lift, G5 max corr 0.074 orthogonal, 90d paper-trade gate, DefiLlama free API, v6.29 candidate 3% sleeve, 38th daemon)",
+        scripts=["scripts/k541_stablecoin_supply_run.py"],
+        log_basename="k541_stablecoin_supply",
+        expected_html_status="SCAFFOLD-READY",  # K550: plist in scripts/ (gitignored); activate after 90d paper-trade gate (OOS Sh >=1.2 + fill_rate >=60% + maxDD <25% + >=50 trades)
+    ),
 ]
 
 

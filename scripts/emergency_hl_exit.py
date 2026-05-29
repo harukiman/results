@@ -878,6 +878,224 @@ def close_k512_paired_positions(
     return True
 
 
+def _detect_k541_position(positions: List[Dict]) -> Optional[Dict]:
+    """
+    K550 Phase 4: Detect K541 stablecoin supply growth signal positions.
+
+    K541 = LONG BTC + LONG ETH + LONG SOL on HL (directional, not paired).
+    Signal: 7d stablecoin supply z-score 2nd derivative (acceleration) > 0.5.
+    Universe: BTC, ETH, SOL (3 long legs, equal weight, HL-only).
+    Close protocol: IOC reduce-only BTC → ETH → SOL (all longs, HL-only).
+
+    Note: K541 is NOT a paired trade — all 3 legs are LONG.
+    Disambiguation from K495 DEX-CEX: K541 uses z-score acceleration signal
+    vs K495 DEX vol ratio signal. Both target BTC+ETH+SOL LONG but via different
+    independent signals. If both are open simultaneously, both are closed.
+
+    K541 ACCEPT CONDITIONAL (K550 scaffold):
+      OOS Sharpe 1.498, $294K/yr @$10M, 7-axis Sh 6.872 +0.165 lift
+      G5 max corr 0.074 — highly orthogonal to FR-carry family
+      90d paper-trade gate (longer than 60d for lower Sharpe)
+      DefiLlama free public API (stablecoins.llama.fi)
+    """
+    K541_SYMBOLS = {"BTC", "ETH", "SOL"}
+    k541_longs = [p for p in positions
+                  if p.get("coin", "").upper() in K541_SYMBOLS
+                  and p.get("side") == "long"]
+
+    if len(k541_longs) < 2:
+        return None  # need at least 2 of 3 symbols long
+
+    btc_long = next((p for p in k541_longs if p["coin"].upper() == "BTC"), None)
+    eth_long = next((p for p in k541_longs if p["coin"].upper() == "ETH"), None)
+    sol_long = next((p for p in k541_longs if p["coin"].upper() == "SOL"), None)
+
+    detected_legs = [p for p in [btc_long, eth_long, sol_long] if p is not None]
+    total_val = sum(p["value_usd"] for p in detected_legs)
+
+    return {
+        "detected":           True,
+        "strategy":           "K541 Stablecoin Supply Growth (V3 acceleration)",
+        "signal":             "7d USDT+USDC supply z-score 2nd derivative > 0.5",
+        "universe":           ["BTC", "ETH", "SOL"],
+        "legs_detected":      len(detected_legs),
+        "btc_long":           {"coin": "BTC", "value_usd": btc_long["value_usd"], "size": btc_long["size"]} if btc_long else None,
+        "eth_long":           {"coin": "ETH", "value_usd": eth_long["value_usd"], "size": eth_long["size"]} if eth_long else None,
+        "sol_long":           {"coin": "SOL", "value_usd": sol_long["value_usd"], "size": sol_long["size"]} if sol_long else None,
+        "total_notional":     total_val,
+        "venue":              "HL",
+        "close_protocol":     "IOC_SEQUENTIAL: LONG BTC → ETH → SOL (all reduce-only on HL)",
+        "note":               "K541 directional LONG (not paired) — all 3 legs on HL, close all simultaneously on emergency",
+    }
+
+
+def close_k541_position(
+    plan:    dict,
+    logger:  "logging.Logger",
+    dry_run: bool = False,
+) -> bool:
+    """
+    K550 Phase 4: Close K541 stablecoin supply growth signal positions.
+
+    Close protocol:
+      1. IOC reduce-only BTC long on HL (largest notional first)
+      2. IOC reduce-only ETH long on HL
+      3. IOC reduce-only SOL long on HL
+    All legs on HL (directional signal, HL-only).
+
+    Returns True if close completed (or no position detected).
+    """
+    k541_detail = plan.get("k541_detail")
+
+    if not k541_detail or not k541_detail.get("detected"):
+        logger.info("  K541: no stablecoin supply signal position detected — skipping.")
+        return True
+
+    total_val     = k541_detail.get("total_notional", 0.0)
+    legs_detected = k541_detail.get("legs_detected", 0)
+
+    logger.info(f"  [K541] Stablecoin supply signal close — {legs_detected} legs, ${total_val:,.0f} total notional (HL-only)")
+    logger.info(f"  [K541] Close protocol: IOC sequential BTC → ETH → SOL (all LONG reduce-only)")
+
+    for sym in ["BTC", "ETH", "SOL"]:
+        leg_key = f"{sym.lower()}_long"
+        leg = k541_detail.get(leg_key)
+        if not leg:
+            continue
+        val = leg.get("value_usd", 0.0)
+        if dry_run:
+            logger.info(f"    [K541] DRY-RUN: SELL {sym}@HL ${val:,.0f} (IOC reduce-only)")
+        else:
+            logger.info(f"    [K541] SCAFFOLD: IOC reduce LONG {sym}@HL ${val:,.0f} (K541 stablecoin signal)")
+            logger.info(f"    SCAFFOLD: K541 close wired but not executed "
+                        "(HL auth required at live activation)")
+    return True
+
+
+def _detect_k507_tia_paired_positions(positions: List[Dict]) -> Optional[Dict]:
+    """
+    K524 Phase 4: Detect K507 TIA paired positions (TIA long + BTC short, or reverse).
+
+    K507 TIA-BTC = 2 legs, both on HL (HL-only spec):
+      - TIA leg on HL
+      - BTC leg on HL
+      - No Bybit split (smaller 1% weight, HL-only per K524 spec)
+    Sequential close: short leg first (avoid uncovered short), then long leg.
+    Both legs close on HL (IOC reduce-only).
+
+    A K507 TIA pair is identified by:
+      - One long leg: TIA or BTC
+      - One short leg: the other of TIA/BTC
+      - Both legs on HL (HL-only)
+
+    Note: TIA is the native token of Celestia (modular data availability layer).
+    K507 TIA ACCEPT. OOS Sharpe 14.44 (family rank #6).
+    Celestia DA: rollup adoption + blob fee market drives FR dynamics orthogonal to BTC.
+    G5d vs ATOM: 0.05 = LOWEST in family (TIA modular DA distinct from Cosmos hub).
+    HL concentration: 64% post-K512 + 1% TIA = 65% (exactly at cap).
+    """
+    K507_TIA_SYMBOLS = {"TIA", "BTC"}
+    tia_btc = [p for p in positions if p.get("coin", "").upper() in K507_TIA_SYMBOLS]
+    if len(tia_btc) < 2:
+        return None
+
+    longs  = [p for p in tia_btc if p.get("side") == "long"]
+    shorts = [p for p in tia_btc if p.get("side") == "short"]
+
+    if not (longs and shorts):
+        return None
+
+    long_pos  = longs[0]
+    short_pos = shorts[0]
+    long_sym  = long_pos["coin"].upper()
+    short_sym = short_pos["coin"].upper()
+
+    if long_sym not in K507_TIA_SYMBOLS or short_sym not in K507_TIA_SYMBOLS:
+        return None
+    if long_sym == short_sym:
+        return None
+
+    # Both legs on HL (HL-only spec)
+    long_venue  = "HL"
+    short_venue = "HL"
+
+    return {
+        "detected":        True,
+        "long_symbol":     long_sym,
+        "short_symbol":    short_sym,
+        "long_value_usd":  long_pos.get("value_usd", 0.0),
+        "short_value_usd": short_pos.get("value_usd", 0.0),
+        "long_size":       long_pos.get("size", 0.0),
+        "short_size":      short_pos.get("size", 0.0),
+        "long_venue":      long_venue,
+        "short_venue":     short_venue,
+        "state":           f"LONG_{long_sym}_SHORT_{short_sym}",
+        "split_protocol":  "HL_ONLY_1PCT",
+        "close_protocol":  "short_leg_first_then_long_leg",
+        "note":            (
+            f"K507 TIA-BTC paired position — cover {short_sym}@{short_venue} first, "
+            f"then sell {long_sym}@{long_venue}. "
+            "HL-only: both TIA and BTC legs on HL (1% sleeve, K524)."
+        ),
+    }
+
+
+def close_k507_tia_paired_positions(
+    plan:    Dict,
+    logger:  "logging.Logger",
+    dry_run: bool = True,
+) -> bool:
+    """
+    K524 Phase 4: Close K507 TIA-BTC paired positions.
+    Sequential: short leg first (avoid uncovered short), then long leg.
+    Both legs close on HL (HL-only spec — no Bybit split).
+
+    K507 TIA HL-only:
+      TIA leg → HL (1% of AUM, full sleeve on HL)
+      BTC leg → HL (both legs on same venue)
+    Close: cover short (TIA@HL or BTC@HL) first → sell long second.
+
+    Args:
+      plan:    exit plan dict (from plan_exit())
+      logger:  logger instance
+      dry_run: True = paper-trade simulation
+
+    Returns True on success (or dry-run), False on error.
+    """
+    k507_tia_detail = plan.get("k507_tia_pair_detail")
+
+    if not k507_tia_detail or not k507_tia_detail.get("detected"):
+        logger.info("  [K507-TIA] No K507 TIA-BTC paired position detected (NEUTRAL or 60d paper-trade).")
+        return True
+
+    short_sym   = k507_tia_detail["short_symbol"]
+    long_sym    = k507_tia_detail["long_symbol"]
+    short_val   = k507_tia_detail.get("short_value_usd", 0.0)
+    long_val    = k507_tia_detail.get("long_value_usd", 0.0)
+    short_venue = k507_tia_detail.get("short_venue", "HL")
+    long_venue  = k507_tia_detail.get("long_venue", "HL")
+
+    logger.info(f"  [K507-TIA] TIA-BTC paired close — {k507_tia_detail['state']}")
+    logger.info(f"    Step 1 (SHORT first): BUY-COVER {short_sym} ${short_val:,.0f}  "
+                f"({short_venue} IOC reduce-only)")
+    logger.info(f"    Step 2 (LONG second): SELL      {long_sym} ${long_val:,.0f}  "
+                f"({long_venue} IOC reduce-only)")
+    logger.info(f"    Venue: HL-only (both legs on HL, 1% sleeve)")
+
+    if dry_run:
+        logger.info("    [DRY-RUN] K507 TIA-BTC close simulated — no actual orders submitted")
+        return True
+
+    # LIVE scaffold: IOC close on HL (sequential)
+    # Step 1: cover short on HL
+    logger.info(f"    SCAFFOLD: IOC reduce {short_sym} (cover short) @ {short_venue}")
+    # Step 2: sell long on HL
+    logger.info(f"    SCAFFOLD: IOC reduce {long_sym} (sell long) @ {long_venue}")
+    logger.info("    SCAFFOLD: K507 TIA close wired but not executed "
+                "(HL auth required at live activation)")
+    return True
+
+
 def _detect_k449_paired_positions(positions: List[Dict]) -> Optional[Dict]:
     """
     K450 Phase 11: Detect K449 paired positions (ETH long + BTC short, or reverse).
@@ -1081,6 +1299,18 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
     k512_coins: set = set()
     if k512_pair:
         k512_coins = {k512_pair["long_symbol"], k512_pair["short_symbol"]}
+
+    # K524: detect K507 TIA paired positions (TIA/BTC — HL-only)
+    k507_tia_pair = _detect_k507_tia_paired_positions(positions)
+    k507_tia_coins: set = set()
+    if k507_tia_pair:
+        k507_tia_coins = {k507_tia_pair["long_symbol"], k507_tia_pair["short_symbol"]}
+
+    # K550: detect K541 stablecoin supply growth signal positions (LONG BTC+ETH+SOL)
+    k541_pos = _detect_k541_position(positions)
+    k541_coins: set = set()
+    if k541_pos:
+        k541_coins = set(k541_pos.get("universe", []))
 
     # K502: detect K495 DEX-CEX flow divergence positions (LONG BTC+ETH+SOL)
     k495_pos = _detect_k495_position(positions)
@@ -1422,8 +1652,55 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
             })
             total_notional += long_pos["value_usd"]
 
-    # All other positions: close in any order (non-K449, non-K457, non-K476, non-K484, non-K493, non-K500, non-K507, non-K512)
-    handled_coins = k449_coins | k457_coins | k476_coins | k484_coins | k493_coins | k500_coins | k507_coins | k512_coins
+    # K507 TIA-BTC paired positions: short leg first, then long leg (K524 Phase 4)
+    # HL-only: both TIA and BTC legs on HL (1% sleeve, smaller weight)
+    if k507_tia_pair:
+        # Short leg first (avoid uncovered short) — both legs on HL
+        short_coin  = k507_tia_pair["short_symbol"]
+        short_venue = k507_tia_pair.get("short_venue", "HL")
+        short_pos   = next((p for p in positions if p["coin"].upper() == short_coin
+                            and p["side"] == "short"), None)
+        if short_pos:
+            close_list.append({
+                "coin":                 short_pos["coin"],
+                "size":                 short_pos["size"],
+                "side_to_close":        "buy",   # covering short
+                "value_usd":            short_pos["value_usd"],
+                "current_side":         "short",
+                "k507_tia_paired":      True,
+                "k507_tia_close_order": 1,        # close short first
+                "venue":                short_venue,
+                "note":                 (
+                    f"K507 TIA-BTC short leg {short_coin} — "
+                    f"cover first ({short_venue}). HL-only 1% sleeve (K524)."
+                ),
+            })
+            total_notional += short_pos["value_usd"]
+
+        # Long leg second — also on HL
+        long_coin  = k507_tia_pair["long_symbol"]
+        long_venue = k507_tia_pair.get("long_venue", "HL")
+        long_pos   = next((p for p in positions if p["coin"].upper() == long_coin
+                           and p["side"] == "long"), None)
+        if long_pos:
+            close_list.append({
+                "coin":                 long_pos["coin"],
+                "size":                 long_pos["size"],
+                "side_to_close":        "sell",
+                "value_usd":            long_pos["value_usd"],
+                "current_side":         "long",
+                "k507_tia_paired":      True,
+                "k507_tia_close_order": 2,        # close long second
+                "venue":                long_venue,
+                "note":                 (
+                    f"K507 TIA-BTC long leg {long_coin} — "
+                    f"sell second ({long_venue}). HL-only 1% sleeve (K524)."
+                ),
+            })
+            total_notional += long_pos["value_usd"]
+
+    # All other positions: close in any order (non-K449, non-K457, non-K476, non-K484, non-K493, non-K500, non-K507, non-K507-TIA, non-K512)
+    handled_coins = k449_coins | k457_coins | k476_coins | k484_coins | k493_coins | k500_coins | k507_coins | k512_coins | k507_tia_coins | k541_coins
     for p in positions:
         coin = p.get("coin", "").upper()
         if coin in handled_coins:
@@ -1467,6 +1744,10 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
         "k507_pair_detail":       k507_pair,
         "k512_paired_detected":   k512_pair is not None,
         "k512_pair_detail":       k512_pair,
+        "k507_tia_paired_detected": k507_tia_pair is not None,
+        "k507_tia_pair_detail":     k507_tia_pair,
+        "k541_detected":          k541_pos is not None,
+        "k541_detail":            k541_pos,
         "k495_detected":          k495_pos is not None,
         "k495_detail":            k495_pos,
     }
@@ -2519,7 +2800,9 @@ def main() -> int:
             "K502: --include-k495 flag added (K495 DEX-CEX flow divergence, LONG BTC+ETH+SOL, bear-conditional)\n"
             "K506: --include-k500 flag added (K500 INJ-BTC FR differential, 34th daemon, Cosmos 2nd CONFIRMED)\n"
             "K514: --include-k507 flag added (K507 SEI-BTC FR differential, 35th daemon, Cosmos 3rd CONFIRMED, HL+Bybit split)\n"
-            "K520: --include-k512 flag added (K512 APT-BTC FR differential, 36th daemon, Move-VM #1 family CONFIRMED, HL+Bybit split)"
+            "K520: --include-k512 flag added (K512 APT-BTC FR differential, 36th daemon, Move-VM #1 family CONFIRMED, HL+Bybit split)\n"
+            "K524: --include-k507-tia flag added (K507 TIA-BTC FR differential, 37th daemon, Celestia modular DA CONFIRMED, HL-only 1%)\n"
+            "K550: --include-k541 flag added (K541 stablecoin supply growth, 38th daemon, V3 acceleration, DefiLlama API, BTC+ETH+SOL LONG)"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
@@ -2900,6 +3183,56 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K524: K507 TIA-BTC FR differential paired-trade emergency exit flag
+    # K507 TIA = TIA long + BTC short (or reverse) — HL-only (1% sleeve, no Bybit split).
+    # Sequential close: short leg first (avoid uncovered short), then long leg.
+    # Both legs close on HL (HL IOC reduce-only — HL-only spec).
+    # Default: off (K507 TIA positions are auto-detected via _detect_k507_tia_paired_positions).
+    # Use --include-k507-tia to print K507 TIA-specific close summary and ensure sequential ordering.
+    parser.add_argument(
+        "--include-k507-tia",
+        dest="include_k507_tia",
+        action="store_true",
+        default=False,
+        help=(
+            "K524: Include K507 TIA-BTC paired-trade close summary during emergency exit. "
+            "K507 TIA positions (TIA+BTC, HL-only, 2 legs) are detected automatically; "
+            "this flag adds a structured summary. "
+            "Close protocol: short leg first (avoid uncovered short), then long leg. "
+            "HL-only: both TIA and BTC legs on HL (1% sleeve, no Bybit split). "
+            "Close both legs on HL IOC reduce-only. "
+            "OOS Sharpe 14.44 (family rank #6). Celestia modular DA CONFIRMED. "
+            "G5d vs ATOM: 0.05 = LOWEST in family. $51K/yr net @ $10M. "
+            "Requires: K507 TIA daemon running (com.cryptolab.k507-tia-btc). "
+            "See: docs/k302a_runbook.md §38h"
+        ),
+    )
+
+    # K550: K541 stablecoin supply growth emergency exit flag
+    # K541 = LONG BTC+ETH+SOL on HL (3 legs) when 7d supply z-score 2nd derivative > 0.5.
+    # Close protocol: IOC reduce-only BTC → ETH → SOL (all longs, HL-only).
+    # Signal-based (daily cron 86400s) — closes when acceleration drops below threshold.
+    # Default: off (K541 positions are auto-detected via _detect_k541_position).
+    # Use --include-k541 to print K541-specific close summary during emergency exit.
+    parser.add_argument(
+        "--include-k541",
+        dest="include_k541",
+        action="store_true",
+        default=False,
+        help=(
+            "K550: Include K541 stablecoin supply growth close summary during emergency exit. "
+            "K541 positions (LONG BTC+ETH+SOL, HL-only, 3 legs) are detected automatically "
+            "via _detect_k541_position(); this flag adds a structured summary. "
+            "Close protocol: IOC reduce-only BTC → ETH → SOL (all longs, HL-only). "
+            "Signal: 7d USDT+USDC supply z-score 2nd derivative > 0.5 (V3 acceleration). "
+            "DefiLlama free API (stablecoins.llama.fi). "
+            "OOS Sharpe 1.498. $294K/yr @$10M. G5 max corr 0.074 (orthogonal to FR-carry). "
+            "90d paper-trade gate. 3% sleeve, 2x leverage. "
+            "Requires: K541 daemon running (com.cryptolab.k541-stablecoin-supply). "
+            "See: docs/k302a_runbook.md §40"
+        ),
+    )
+
     # K502: K495 DEX-CEX flow divergence bear-conditional emergency exit flag
     # K495 = LONG BTC+ETH+SOL on HL (3 legs) when DEX-CEX z-score > 1.0 in bear regime.
     # Close protocol: IOC market orders (reduce-only) BTC → ETH → SOL (largest notional first).
@@ -3214,6 +3547,50 @@ USDY sleeve emergency guidance (K415 §21.6):
                     "K507 SEI-BTC paired positions detected — included in HL+Bybit exit above. "
                     "Use --include-k507 to print detailed SEI-BTC sequential close summary (§38f). "
                     "HL+Bybit split: SEI@HL + BTC@Bybit (1.5%+1.5%)."
+                )
+
+        # K524: K507 TIA-BTC paired close summary (documentation; positions auto-detected in plan_exit)
+        # K507 TIA positions (TIA+BTC, HL-only) are included in the main HL exit.
+        # This flag adds a structured summary of the K507 TIA-specific sequential close protocol.
+        # HL-only: both legs on HL (1% sleeve, no Bybit split).
+        if args.include_k507_tia:
+            logger.info("=== K507 TIA-BTC PAIRED CLOSE SUMMARY (K524 §38h) ===")
+            success_k507_tia = close_k507_tia_paired_positions(plan=plan, logger=logger, dry_run=False)
+            if success_k507_tia:
+                logger.info("  K507 TIA-BTC close: complete (or no position detected).")
+            else:
+                logger.warning("  K507 TIA-BTC close: had errors — verify HL positions manually.")
+            logger.info("  HL-only: both TIA and BTC legs on HL (IOC reduce-only)")
+            logger.info("  See: docs/k302a_runbook.md §38h (K507 TIA-BTC strategy playbook)")
+        else:
+            if plan.get("k507_tia_paired_detected"):
+                logger.info(
+                    "K507 TIA-BTC paired positions detected — included in HL exit above. "
+                    "Use --include-k507-tia to print detailed TIA-BTC sequential close summary (§38h). "
+                    "HL-only: both TIA@HL + BTC@HL (1% sleeve, no split)."
+                )
+
+        # K550: K541 stablecoin supply growth close summary (documentation; positions auto-detected)
+        # K541 positions (LONG BTC+ETH+SOL, HL-only) are included in the main HL exit.
+        # This flag adds a structured summary of the K541-specific sequential close protocol.
+        # HL-only: all 3 legs on HL (daily cron 86400s, 3% sleeve, 2x leverage).
+        if args.include_k541:
+            logger.info("=== K541 STABLECOIN SUPPLY GROWTH CLOSE SUMMARY (K550 §40) ===")
+            success_k541 = close_k541_position(plan=plan, logger=logger, dry_run=False)
+            if success_k541:
+                logger.info("  K541 stablecoin supply close: complete (or no position detected).")
+            else:
+                logger.warning("  K541 stablecoin supply close: had errors — verify HL positions manually.")
+            logger.info("  HL-only: all 3 legs (BTC+ETH+SOL) on HL (IOC reduce-only)")
+            logger.info("  Signal: 7d USDT+USDC supply z-score 2nd derivative (V3 acceleration)")
+            logger.info("  DefiLlama API: stablecoins.llama.fi (free public)")
+            logger.info("  See: docs/k302a_runbook.md §40 (K541 stablecoin supply playbook)")
+        else:
+            if plan.get("k541_detected"):
+                logger.info(
+                    "K541 stablecoin supply positions detected — included in HL exit above. "
+                    "Use --include-k541 to print detailed BTC+ETH+SOL LONG close summary (§40). "
+                    "HL-only: BTC@HL + ETH@HL + SOL@HL (3% sleeve, 2x leverage)."
                 )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)
