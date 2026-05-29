@@ -2834,3 +2834,165 @@ This sets `circuit_breaker.deactivated = True` and `current_leverage = 1.0`. All
 ---
 
 *K415 §21 — v6.15a/b USDY Sleeve Activation Playbook — 2026-05-25*
+
+---
+
+## §24 K434 Smart Router — Cross-Venue Routing Playbook (HL/Bybit/OKX)
+
+**Wave:** K434 | **Status:** SCAFFOLD-READY | **Date:** 2026-05-29
+**Script:** `scripts/smart_router.py` | **Config:** `data/smart_router_config.json`
+**Daemon:** `com.cryptolab.smart-router` (16th, StartInterval=3600)
+
+---
+
+### §24.1 Overview
+
+The Smart Router is the single largest execution optimization lever identified in the crypto-lab system.
+
+| Scale | Estimated Annual Edge |
+|-------|----------------------|
+| $10M AUM | ~$175,000/yr |
+| $50M AUM | ~$877,000/yr |
+
+**Mechanism:** For each K208 trade decision, the router fetches live funding rates from all 3 venues (HL, Bybit, OKX), computes the expected net profit per 8h settlement period accounting for:
+- FR capture (short receives positive FR; long pays it)
+- Maker rebate (HL GOLD 0.3 bps, Bybit VIP5 1.0 bps, OKX VIP1 0.5 bps)
+- Slippage estimate from top-of-book depth proxy
+- Concentration caps (K355 risk limits: HL ≤65%, Bybit ≤50%, OKX ≤30%)
+
+The highest-scoring venue that passes all constraints receives the order.
+
+---
+
+### §24.2 Architecture
+
+```
+K208 trade signal
+    │
+    ▼
+smart_router.select_best_venue(symbol, side, size)
+    │
+    ├── fetch_hl_state()      POST /info metaAndAssetCtxs
+    ├── fetch_bybit_state()   GET  /v5/market/tickers?category=linear
+    └── fetch_okx_state()     GET  /api/v5/public/funding-rate (per symbol)
+    │
+    ▼
+score_venue(venue, symbol, side, size)
+  = fr_capture + maker_rebate - slippage
+    │
+    ▼
+filter_by_concentration_caps()
+    │
+    ▼
+select_best_venue() → {"venue": "HL"|"Bybit"|"OKX", "score": float, ...}
+    │
+    ├── route_decision_log()  → data/smart_router_decisions.jsonl
+    └── write_dashboard()     → data/smart_router_dashboard.json
+```
+
+---
+
+### §24.3 Scoring Formula
+
+```
+net_per_8h = fr_capture + maker_rebate - slippage
+
+where:
+  fr_capture   = fr × (+1 if short, -1 if long)
+  maker_rebate = venue.maker_rebate_bps / 10000
+  slippage     = (position_usd / depth_usd) × 100 × 0.5 bps / 10000
+```
+
+**Venue Tier Reference:**
+
+| Venue | Tier | Maker Rebate | Taker Fee |
+|-------|------|-------------|-----------|
+| HL    | GOLD | +0.3 bps (receive) | 4.5 bps |
+| Bybit | VIP5 | +1.0 bps (receive) | 3.2 bps |
+| OKX   | VIP1 | +0.5 bps (receive) | 4.0 bps |
+
+---
+
+### §24.4 Activation Steps
+
+**Step 1: Test manually**
+```bash
+python3 scripts/smart_router.py --symbol BTC --side short --size 100000
+python3 scripts/smart_router.py --all-symbols
+```
+
+Verify:
+- [ ] FR snapshots fetched from all 3 venues (check stderr output)
+- [ ] Scoring produces reasonable rankings (Bybit VIP5 rebate should often rank highest)
+- [ ] Concentration caps applied correctly
+- [ ] `data/smart_router_dashboard.json` written
+
+**Step 2: Enable in k280_live_fetch.py**
+```python
+# In scripts/k280_live_fetch.py
+SMART_ROUTER_ENABLED = True   # K434: flip after testing
+```
+
+**Step 3: Activate daemon**
+```bash
+cp com.cryptolab.smart-router.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.smart-router.plist
+launchctl list | grep smart-router   # confirm loaded
+```
+
+**Step 4: Monitor**
+- Dashboard: `data/smart_router_dashboard.json`
+- Decision log: `data/smart_router_decisions.jsonl`
+- Logs: `logs/smart_router.log` / `logs/smart_router.err`
+
+---
+
+### §24.5 Concentration Cap Config
+
+Per K355 concentration risk rules:
+
+| Venue | Cap |
+|-------|-----|
+| HL    | ≤ 65% of total AUM |
+| Bybit | ≤ 50% of total AUM |
+| OKX   | ≤ 30% of total AUM |
+
+Config in `data/smart_router_config.json::concentration_caps`. Modify caps if exchange risk profile changes.
+
+---
+
+### §24.6 Fallback Behavior
+
+If best venue is rate-limited or has insufficient depth:
+1. Score ≤ −100 triggers fallback to next-best venue in `fallback_order`
+2. If ALL venues blocked: returns least-bad with `ALL_VENUES_BLOCKED` reason flag
+3. k280_live_fetch.py defaults to "HL" if smart router errors (zero disruption to existing logic)
+
+---
+
+### §24.7 Rollback
+
+```bash
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.smart-router.plist
+# In scripts/k280_live_fetch.py:
+SMART_ROUTER_ENABLED = False
+```
+
+K208 routing reverts to default HL-only behavior. Zero disruption to K276b/K302a satellite.
+
+---
+
+### §24.8 References
+
+| Wave | Content |
+|------|---------|
+| K432 | Smart routing identified as $175K/yr lever @ $10M ($877K/yr @ $50M) |
+| K434 | This implementation (smart_router.py, config, 16th daemon scaffold) |
+| K355 | Concentration risk caps (HL ≤65%, Bybit ≤50%) |
+| K208 | Reverse carry base strategy (K208 symbols: SOL/XRP/SUI/OP/APT/AXS/JTO/IMX/SAND/ADA) |
+| K280 | K208+K198+K276b 3-way architecture |
+| K302a | Combined v6.12 production system |
+
+---
+
+*K434 §24 — Smart Router SCAFFOLD (cross-venue HL/Bybit/OKX, 16th daemon) — 2026-05-29*

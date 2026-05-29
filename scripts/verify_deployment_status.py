@@ -154,6 +154,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="leverage_circuit_breaker",
         expected_html_status="SCAFFOLD-READY",  # K430: plist in repo root (gitignored); activate when advancing to LIVE_1.5X/LIVE_3X rollout phase
     ),
+    DaemonSpec(
+        label="com.cryptolab.smart-router",
+        purpose="K434 Smart Router daemon (cross-venue HL/Bybit/OKX FR scoring, 1h polling, K208 route optimization, +$175K/yr @ $10M, 16th daemon)",
+        scripts=["scripts/smart_router.py"],
+        log_basename="smart_router",
+        expected_html_status="SCAFFOLD-READY",  # K434: plist in repo root (gitignored); activate after live testing
+    ),
 ]
 
 

@@ -136,6 +136,62 @@ except Exception as _lev_err:
 
 MAX_MARGIN_PCT = 0.80   # refuse trade if portfolio margin > 80% AUM (K430 circuit breaker)
 
+# ── K434: Smart Router (cross-venue HL/Bybit/OKX routing for K208 trades) ────
+# select_best_venue() returns the optimal venue for each K208 trade based on:
+#   - current FR spread across venues
+#   - maker rebate tier (HL GOLD, Bybit VIP5, OKX VIP1)
+#   - slippage estimate from top-of-book depth
+#   - concentration caps (K355 risk limits)
+#
+# CALL SITE SCAFFOLD (K434 Phase 8 — production wiring not yet active):
+#   from smart_router import select_best_venue
+#   chosen = select_best_venue(
+#       symbol="BTC", side="short", position_size_usd=position_usd
+#   )
+#   venue = chosen["venue"]   # "HL" | "Bybit" | "OKX"
+#   # → use venue-specific order submission (HL or Bybit API)
+#
+# ACTIVATION: set SMART_ROUTER_ENABLED = True after live testing confirms
+#   1. FR snapshots fetch correctly from all 3 venues
+#   2. Scoring produces expected rankings for known symbols
+#   3. Concentration caps enforced correctly
+#   4. Dashboard JSON written to data/smart_router_dashboard.json
+SMART_ROUTER_ENABLED = False   # K434: set True after testing; scaffold only in this wave
+try:
+    import sys as _sys_sr
+    _sys_sr.path.insert(0, str(Path(__file__).resolve().parent))
+    from smart_router import select_best_venue as _select_best_venue
+    _SMART_ROUTER_AVAILABLE = True
+except Exception as _sr_err:
+    _SMART_ROUTER_AVAILABLE = False
+    print(f"  [K434] smart_router import failed ({_sr_err}) — K208 routing unchanged")
+
+
+def get_k208_venue(symbol: str, side: str, position_usd: float) -> str:
+    """
+    K434 Phase 8 call site: returns best venue for a K208 trade.
+    Falls back to "HL" if smart router is disabled or unavailable.
+
+    Args:
+        symbol:        K208 symbol (e.g. "SOL", "BTC")
+        side:          "short" or "long"
+        position_usd:  notional position size in USD
+
+    Returns:
+        venue string: "HL" | "Bybit" | "OKX"
+    """
+    if SMART_ROUTER_ENABLED and _SMART_ROUTER_AVAILABLE:
+        try:
+            result = _select_best_venue(symbol=symbol, side=side, position_size_usd=position_usd)
+            venue  = result.get("venue", "HL")
+            score  = result.get("score", 0.0)
+            print(f"  [K434] SmartRouter → {symbol} {side}: venue={venue} score={score:+.8f}")
+            return venue
+        except Exception as _sr_exc:
+            print(f"  [K434] SmartRouter error ({_sr_exc}) — defaulting to HL")
+    return "HL"   # default: HL (unchanged K208 behavior)
+
+
 # HL API
 HL_API_URL   = "https://api.hyperliquid.xyz/info"
 # Bybit public REST v5 — no auth needed

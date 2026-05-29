@@ -1,0 +1,48 @@
+{
+  "wave": "K434",
+  "title": "Smart Router Daemon (Cross-Venue HL/Bybit/OKX Routing)",
+  "date_jst": "2026-05-29 22:59 JST",
+  "status": "SCAFFOLD-READY",
+  "daemon_number": 16,
+  "daemon_label": "com.cryptolab.smart-router",
+  "profit_lever": {
+    "at_10M_usd_per_year": 175000,
+    "at_50M_usd_per_year": 877000,
+    "source": "K432 smart routing analysis"
+  },
+  "deliverables": {
+    "scripts/smart_router.py": "NEW — ~330 LOC cross-venue router (stdlib urllib, K339 REPO_ROOT)",
+    "data/smart_router_config.json": "NEW — venue tiers, rebates, concentration caps",
+    "com.cryptolab.smart-router.plist": "NEW — gitignored launchd plist (1h StartInterval)",
+    "scripts/verify_deployment_status.py": "UPDATED — 16th daemon entry",
+    "scripts/k280_live_fetch.py": "UPDATED — K434 call site scaffold + get_k208_venue()",
+    "docs/k302a_runbook.md": "UPDATED — §24 added",
+    "report.html": "UPDATED — banner badge + daemon row + status card",
+    "wave_k434_smart_router.md": "NEW — wave summary",
+    "wave_k434_smart_router.json": "NEW — this file"
+  },
+  "venues": {
+    "HL": {"tier": "GOLD", "maker_rebate_bps": 0.3, "taker_fee_bps": 4.5, "concentration_cap": 0.65},
+    "Bybit": {"tier": "VIP5", "maker_rebate_bps": 1.0, "taker_fee_bps": 3.2, "concentration_cap": 0.50},
+    "OKX": {"tier": "VIP1", "maker_rebate_bps": 0.5, "taker_fee_bps": 4.0, "concentration_cap": 0.30}
+  },
+  "scoring_formula": "net_per_8h = fr_capture + maker_rebate - slippage",
+  "k208_symbols": ["SOL", "XRP", "SUI", "OP", "APT", "AXS", "JTO", "IMX", "SAND", "ADA", "BTC", "ETH"],
+  "dependencies": {
+    "new_packages": false,
+    "uses_stdlib_only": true,
+    "k339_repo_root": true,
+    "modifies_k280_production_logic": false
+  },
+  "activation_checklist": [
+    "python3 scripts/smart_router.py --symbol BTC --side short --size 100000",
+    "python3 scripts/smart_router.py --all-symbols",
+    "verify data/smart_router_dashboard.json written",
+    "set SMART_ROUTER_ENABLED=True in scripts/k280_live_fetch.py",
+    "cp com.cryptolab.smart-router.plist ~/Library/LaunchAgents/",
+    "launchctl load ~/Library/LaunchAgents/com.cryptolab.smart-router.plist"
+  ],
+  "runbook_section": "docs/k302a_runbook.md §24",
+  "git_tag": "K434",
+  "commit_message": "K434 Smart router daemon SCAFFOLD (K208 cross-venue routing, +$175K/yr @ $10M, +$877K/yr @ $50M, 16th daemon)"
+}
