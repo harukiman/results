@@ -1,0 +1,658 @@
+{
+  "wave": "K593",
+  "strategy": "UNI-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T07:38:44+0900",
+  "runtime_s": 3.8,
+  "decision": "REJECT",
+  "defi_cluster_status": "NOT CONFIRMED \u2014 UNI vol ratio fail (1.012x < 1.5x)",
+  "k591_pivot_context": {
+    "k591_result": "ACCEPT CONDITIONAL (Gaming/P2E sub-cluster CONFIRMED)",
+    "k591_next": "DeFi cluster (UNI-BTC, AAVE-BTC) evaluation",
+    "k593_pivot": "UNI-BTC \u2014 first DeFi cluster evaluation",
+    "confirmed_clusters_post_k591": {
+      "L1": [
+        "APT",
+        "SOL",
+        "AVAX",
+        "ETH"
+      ],
+      "Cosmos": [
+        "ATOM",
+        "INJ",
+        "TIA",
+        "SEI"
+      ],
+      "Storage": [
+        "FIL"
+      ],
+      "AI/GPU": [
+        "RENDER"
+      ],
+      "AI/Training": [
+        "TAO"
+      ],
+      "Oracle": [
+        "LINK"
+      ],
+      "Social/Messaging": [
+        "TON"
+      ],
+      "Gaming/UGC": [
+        "SAND"
+      ],
+      "Gaming/P2E": [
+        "AXS"
+      ],
+      "PoW/BlockDAG": [
+        "KAS"
+      ],
+      "Compute/Cloud": [
+        "ICP"
+      ]
+    },
+    "defi_dex_candidate": "DeFi/DEX (UNI = Uniswap AMM governance)"
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "uni_listed": true,
+      "eth_listed": true,
+      "total_symbols": 230,
+      "uni_max_leverage": 10,
+      "uni_margin_table": 52,
+      "eth_max_leverage": 25,
+      "api_success": true,
+      "note": "HL meta API: 230 symbols. UNI: LISTED. maxLeverage=10. UNI-PERP active on Hyperliquid. FR settlement: 1h intervals. DeFi/DEX governance token (Uniswap AMM protocol) \u2014 deployed on Ethereum. UNI listed HL May 2024 (full 730d history available)."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "uni_listed": true,
+      "status": "Trading",
+      "max_leverage": "50.00",
+      "api_success": true,
+      "note": "Bybit UNIUSDT: status=Trading, maxLeverage=50.00. 8h FR settlement interval. 2190 rows cached (2024-05-25 to 2026-05-24)."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "uni_listed": true,
+      "state": "live",
+      "max_leverage": "50",
+      "inst_id": "UNI-USDT-SWAP",
+      "api_success": true,
+      "note": "OKX UNI-USDT-SWAP: state=live, maxLeverage=50. 8h FR settlement interval."
+    },
+    "venue_pass": true,
+    "vol_ratio_6m": 1.0117,
+    "vol_ratio_365d": 1.2401,
+    "vol_ratio_full": 1.1911,
+    "vol_threshold": 1.5,
+    "vol_pass": false,
+    "prescreen_pass": false,
+    "uni_fr_rows": 17519,
+    "uni_fr_start": "2024-05-24 20:00:00",
+    "uni_fr_end": "2026-05-24 19:00:00",
+    "btc_fr_rows": 17512,
+    "uni_fr_mean": 1.492e-05,
+    "uni_fr_std": 2.105e-05,
+    "btc_fr_std_6m": 9.85e-06,
+    "uni_listing_note": "UNI listed on HL May 2024 \u2014 730d full history. DeFi governance token: AMM DEX governance, ETH-deployed. Vol ratio 6M=1.012x (FAIL): UNI FR tracks BTC FR closely. DeFi governance tokens share macro crypto sentiment \u2014 no independent FR driver. This is the structural reason: ETH-deployed tokens converge to BTC FR level because DeFi yield cycles are synchronized with broad crypto market cycles.",
+    "vol_analysis": {
+      "6m_window": 1.0117,
+      "365d_window": 1.2401,
+      "full_window": 1.1911,
+      "threshold": 1.5,
+      "verdict": "ALL WINDOWS FAIL. 6M=1.0117x, 365d=1.2401x, full=1.1911x \u2014 all < 1.5x. DeFi governance (UNI) = BTC FR-convergent. No time window shows sufficient FR volatility premium over BTC. DeFi/DEX cluster at governance level is FR-undifferentiated."
+    },
+    "note": "Phase 0 FAIL: HL UNI listed (maxLev=10), Bybit status=Trading, OKX state=live. Vol ratio UNI/BTC 6M=1.0117x (threshold=1.5x). Venues: ALL PASS. Vol: FAIL. DeFi governance tokens track macro BTC FR cycle \u2014 insufficient independent signal."
+  },
+  "signal_config": {
+    "window_h": 96,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "UNI-PERP vs BTC-PERP (HL 1h FR differential)"
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -12.3907,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "half_life_h": 3.32,
+      "half_life_days": 0.14,
+      "theta": 0.208682,
+      "intercept": 3.7e-07,
+      "r_squared": 0.1043,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 9.2966,
+      "perm_mean_sh": -0.0644,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 9.2966,
+      "t_stat": 7.1936,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.005556,
+      "n_trials": 9,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 11.7872,
+    "ann_ret_pct": 4.073,
+    "max_dd_pct": -0.4885,
+    "trades_yr": 50.5,
+    "n_days": 506.0,
+    "n_hours": 12144,
+    "n_pos_months": 14,
+    "n_neg_months": 4,
+    "cum_ret": 0.056464,
+    "ret_mean": 4.65e-06,
+    "ret_std": 3.692e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 9.2966,
+    "ann_ret_pct": 2.8942,
+    "max_dd_pct": -0.389,
+    "trades_yr": 48.4,
+    "n_days": 218.5,
+    "n_hours": 5245,
+    "n_pos_months": 6,
+    "n_neg_months": 2,
+    "cum_ret": 0.017329,
+    "ret_mean": 3.3e-06,
+    "ret_std": 3.326e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 11.076,
+    "ann_ret_pct": 3.7175,
+    "max_dd_pct": -0.4885,
+    "trades_yr": 49.9,
+    "n_days": 724.5,
+    "n_hours": 17389,
+    "n_pos_months": 20,
+    "n_neg_months": 5,
+    "cum_ret": 0.073793,
+    "ret_mean": 4.24e-06,
+    "ret_std": 3.586e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 336,
+      "oos_sharpe": 12.3808,
+      "oos_ann_ret_pct": 2.6569,
+      "trades_yr": 16.7
+    },
+    {
+      "window_h": 240,
+      "oos_sharpe": 10.7261,
+      "oos_ann_ret_pct": 2.5611,
+      "trades_yr": 23.4
+    },
+    {
+      "window_h": 720,
+      "oos_sharpe": 10.708,
+      "oos_ann_ret_pct": 2.2207,
+      "trades_yr": 13.4
+    },
+    {
+      "window_h": 480,
+      "oos_sharpe": 9.5058,
+      "oos_ann_ret_pct": 2.2616,
+      "trades_yr": 23.4
+    },
+    {
+      "window_h": 96,
+      "oos_sharpe": 9.2966,
+      "oos_ann_ret_pct": 2.8942,
+      "trades_yr": 48.4
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 12,
+    "n_positive": 10,
+    "all_positive": false,
+    "pass": false,
+    "sh_min": -8.2532,
+    "sh_max": 36.556,
+    "sh_mean": 13.6281,
+    "sh_std": 13.4662,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-05-28",
+        "end": "2025-06-27",
+        "sharpe": 8.7375,
+        "positive": "True",
+        "max_dd": -0.000834
+      },
+      {
+        "fold": 2,
+        "start": "2025-06-27",
+        "end": "2025-07-27",
+        "sharpe": 8.296,
+        "positive": "True",
+        "max_dd": -0.001441
+      },
+      {
+        "fold": 3,
+        "start": "2025-07-27",
+        "end": "2025-08-26",
+        "sharpe": -8.2532,
+        "positive": "False",
+        "max_dd": -0.004096
+      },
+      {
+        "fold": 4,
+        "start": "2025-08-26",
+        "end": "2025-09-25",
+        "sharpe": 36.556,
+        "positive": "True",
+        "max_dd": -0.000398
+      },
+      {
+        "fold": 5,
+        "start": "2025-09-25",
+        "end": "2025-10-25",
+        "sharpe": 20.2132,
+        "positive": "True",
+        "max_dd": -0.000822
+      },
+      {
+        "fold": 6,
+        "start": "2025-10-25",
+        "end": "2025-11-24",
+        "sharpe": 4.2233,
+        "positive": "True",
+        "max_dd": -0.001734
+      },
+      {
+        "fold": 7,
+        "start": "2025-11-24",
+        "end": "2025-12-24",
+        "sharpe": 18.4212,
+        "positive": "True",
+        "max_dd": -0.000844
+      },
+      {
+        "fold": 8,
+        "start": "2025-12-24",
+        "end": "2026-01-23",
+        "sharpe": -7.9823,
+        "positive": "False",
+        "max_dd": -0.002734
+      },
+      {
+        "fold": 9,
+        "start": "2026-01-23",
+        "end": "2026-02-22",
+        "sharpe": 11.4806,
+        "positive": "True",
+        "max_dd": -0.001492
+      },
+      {
+        "fold": 10,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": 13.2082,
+        "positive": "True",
+        "max_dd": -0.001132
+      },
+      {
+        "fold": 11,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": 28.967,
+        "positive": "True",
+        "max_dd": -0.001139
+      },
+      {
+        "fold": 12,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": 29.6703,
+        "positive": "True",
+        "max_dd": -0.000737
+      }
+    ],
+    "is_h": 2160,
+    "oos_h": 720,
+    "adapted": false,
+    "reason": "Standard 12-fold WF (IS=90d/OOS=30d). UNI listed HL May 2024 \u2014 724.5d data.",
+    "note": "Standard WF (IS=90d/OOS=30d). UNI ~724.5d total data (listed HL May 2024). 10/12 positive folds. G4 FAIL: 2/12 negative folds. Sharpe range: [-8.25, 36.56]. DeFi macro cycles affect UNI FR \u2014 negative folds in bear/transition regimes."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": false,
+      "G5 Family corr": true,
+      "G6 Trades/yr": true,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": false,
+      "G9 Data sufficiency": true
+    },
+    "gates_passed": 7,
+    "gates_total": 9,
+    "gates_failed": 2,
+    "g7_ret_4x_pct": 11.58,
+    "g4_all_positive": false,
+    "g5_all_pass": true,
+    "g8_note": "G8 signal corr=0.0508 (threshold=0.55). Raw FR diff corr=0.1391. Overlap=17480h (~728d). HL 1h vs Bybit 8h settlement \u2014 different settlement mechanics. Bybit UNI: 2190 rows (8h). Bybit BTC: 2190 rows. G8 FAIL (structural: HL 1h vs Bybit 8h settlement different): signal_corr=0.0508 vs threshold=0.55.",
+    "g9_note": "OOS=218.5d >= 180d. G9 PASS. UNI listed HL May 2024 \u2014 full 730d history available.",
+    "decision": "REJECT"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": 0.0445,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "CRITICAL: DeFi DEX vs ETH (UNI deployed on ETH \u2014 cluster membership test)"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": -0.0029,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Solana vs DeFi DEX"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": 0.052,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Avalanche vs DeFi DEX"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": -0.036,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Cosmos vs DeFi DEX"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": 0.0401,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "INJ on-chain DEX vs UNI AMM DEX"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": -0.0099,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "SEI vs DeFi DEX"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": -0.0588,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Cosmos vs DeFi DEX"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": -0.0368,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Move-VM vs DeFi DEX"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": -0.0154,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Storage vs DeFi DEX"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531 (AI/GPU)",
+        "corr": -0.061,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "AI/GPU vs DeFi DEX"
+      },
+      "g5l": {
+        "label": "TAO-BTC (AI/Training)",
+        "corr": 0.0141,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "AI/Training vs DeFi DEX"
+      },
+      "g5n": {
+        "label": "TON-BTC K571 (Social/Messaging vs DeFi DEX)",
+        "corr": 0.0334,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Social vs DeFi DEX"
+      },
+      "g5o": {
+        "label": "SAND-BTC K583 (Gaming/UGC vs DeFi DEX)",
+        "corr": -0.0226,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "Gaming vs DeFi DEX"
+      },
+      "g5p": {
+        "label": "AXS-BTC K591 (Gaming/P2E vs DeFi DEX)",
+        "corr": -0.0304,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3005,
+        "note": "Gaming P2E vs DeFi DEX"
+      },
+      "g5m": {
+        "label": "LINK-BTC K557 (DeFi infra adjacency CRITICAL)",
+        "corr": 0.1662,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "DeFi infra adjacency: UNI (AMM DEX governance) vs LINK (oracle middleware). Distinct DeFi use cases expected."
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline",
+        "corr": -0.061,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5245,
+        "note": "vol-momentum baseline. UNI must not replicate BTC-carry signal."
+      }
+    },
+    "n_pass": 16,
+    "n_total": 16,
+    "all_pass": true,
+    "eth_corr_critical": 0.0445,
+    "link_corr_critical": 0.1662,
+    "eth_cluster_blocked": false,
+    "link_cluster_blocked": false,
+    "note": "G5 family: 16/16 PASS (FAIL=0). ETH G5a=0.0445 (PASS: DeFi distinct from ETH). LINK G5m=0.1662 (PASS)."
+  },
+  "cross_venue_fr": {
+    "pass": false,
+    "hl_bybit_signal_corr": 0.0508,
+    "hl_bybit_diff_corr": 0.1391,
+    "bybit_uni_rows": 2190,
+    "bybit_btc_rows": 2190,
+    "overlap_hours": 17480,
+    "note": "G8 signal corr=0.0508 (threshold=0.55). Raw FR diff corr=0.1391. Overlap=17480h (~728d). HL 1h vs Bybit 8h settlement \u2014 different settlement mechanics. Bybit UNI: 2190 rows (8h). Bybit BTC: 2190 rows. G8 FAIL (structural: HL 1h vs Bybit 8h settlement different): signal_corr=0.0508 vs threshold=0.55."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 2.8942,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 11.58,
+    "usdc_yr_1pct_10M": 11577,
+    "usdc_yr_2pct_10M": 23154,
+    "usdc_yr_1pct_100M": 115768,
+    "usdc_yr_2pct_100M": 231536,
+    "note": "4x leverage, OOS ann=2.8942% \u00d7 4 = 11.5768%/yr. @$10M 1% alloc: $11,577/yr. @$10M 2% alloc: $23,154/yr. @$100M 1% alloc: $115,768/yr."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 65.0,
+    "uni_alloc_pct": 0.0,
+    "projected_pct": 65.0,
+    "cap_pct": 65.0,
+    "breach": false,
+    "note": "UNI REJECT \u2014 HL concentration unchanged at 65.0%."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "SAND-BTC",
+      "sharpe": 33.627,
+      "ecosystem": "Gaming/UGC",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 7,
+      "pair": "AXS-BTC",
+      "sharpe": 17.815,
+      "ecosystem": "Gaming/P2E",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 9,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 11,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 12,
+      "pair": "ICP-BTC",
+      "sharpe": 12.53,
+      "ecosystem": "Compute/Cloud",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 14,
+      "pair": "TON-BTC",
+      "sharpe": 8.402,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 15,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 16,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "uni_family_rank": null,
+  "defi_cluster": {
+    "cluster_name": "DeFi/DEX",
+    "candidate": "UNI (Uniswap AMM governance)",
+    "status": "NOT CONFIRMED \u2014 UNI vol ratio fail (1.012x < 1.5x)",
+    "verdict": "DeFi/DEX cluster at governance level is FR-undifferentiated from BTC. UNI FR tracks macro crypto cycle without independent signal. Governance tokens derive FR from broad sentiment, not protocol-specific demand. Contrast: protocol utility tokens (AXS P2E yield, SAND metaverse land, FIL storage market) have independent FR drivers from protocol-specific demand.",
+    "insight": "DeFi cluster hypothesis: PARTIALLY INVALIDATED for AMM governance tokens. May be valid for: AAVE (lending/borrow rates distinct from AMM), CRV (veCRV yield distinct from governance), or perp-specific DeFi tokens with unique liquidation cycles. UNI vol ratio 6M=1.012x is the LOWEST in family history \u2014 closer to BTC FR than any other token tested.",
+    "next_candidates": [
+      "AAVE-BTC (lending protocol \u2014 borrow rate cycles may be distinct)",
+      "CRV-BTC (veCRV yield locking \u2014 distinct incentive structure)",
+      "MKR-BTC (DAI stability module \u2014 distinct collateral demand)",
+      "SUSHI-BTC (DEX v2 \u2014 check if distinguishable from UNI)",
+      "JUP-BTC (Solana DEX \u2014 different ecosystem, may show Sol FR adjacency)"
+    ],
+    "family_vol_ratios_comparison": {
+      "UNI_6M": 1.012,
+      "note": "Lowest vol ratio in all K500+ evaluations. DeFi governance convergence confirmed."
+    }
+  },
+  "decision_rationale": "Phase 0 FAIL: vol ratio 6M=1.0117x < threshold=1.5x. Full window vol ratio=1.1911x (also below 1.5x). UNI FR does not exhibit sufficient volatility vs BTC FR. DeFi governance tokens track BTC FR macro cycle closely: ETH-deployed tokens share broad DeFi sentiment without independent FR driver. DeFi/DEX cluster (UNI) = FR-undifferentiated at governance level. Next: AAVE-BTC (lending/borrow rate distinct from AMM?) or pivot to other cluster.",
+  "next_pivot": "UNI REJECT (vol ratio 1.012x < 1.5x). DeFi/DEX cluster governance level = FR-undifferentiated. Next pivot: AAVE-BTC (lending protocol \u2014 borrow rate distinct from AMM governance?) or CRV-BTC (veCRV yield locking) or MKR-BTC (DAI stability module). Alternative: confirm DeFi cluster is NOT a valid FR cluster \u2014 governance tokens do not carry independent FR signal vs BTC. Pivot to: NFT/Metaverse deeper dive (MANA-BTC) or Infrastructure (ARB-BTC, OP-BTC L2 rollup cluster)."
+}
