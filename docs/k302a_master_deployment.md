@@ -1,6 +1,167 @@
-# K532 Master Deployment Playbook — Single Source of Truth
-**Version:** 6.28 | **Generated:** 2026-05-30 05:13 JST | **Wave:** K532 Governance v5 (supersedes K501)
-**Status:** ACTIVE USER ACTIVATION GUIDE — ROI/hr ranked queue for all pending actions
+# K539 Master Deployment Playbook — Single Source of Truth
+**Version:** 6.28 | **Generated:** 2026-05-30 05:30 JST | **Wave:** K539 Immediate Action Consolidation (supersedes K532)
+**Status:** ACTIVE USER ACTIVATION GUIDE — 4-Phase D0-D60 sequenced playbook
+
+---
+
+## ★★★ K539 Immediate Action Plan — 4-Phase D0-D60
+
+**Realistic profit trajectory @$10M AUM (K523 calibrated):**
+
+| Phase | Timing | Annual Range | Central | Delta |
+|-------|--------|-------------|---------|-------|
+| Baseline v6.13d | Now | $400K–$600K | $500K | — |
+| Phase A active | D0 | $650K–$850K | $748K | +$248K |
+| Phase B active | D14 | $1.05M–$1.45M | $1.25M | +$502K |
+| Phase C active | D30 | $1.35M–$1.95M | $1.65M | +$400K |
+| Phase D active | D60 | $1.55M–$2.35M | $1.95M | +$300K |
+
+**Three convergent paths — single constraint (HL 65% cap + K280 overweight):**
+
+| Path | Annual Value | Action Required |
+|------|-------------|-----------------|
+| K376 BULL unlock | +$247K/yr @ 3% sleeve | HL headroom 2.5pp → K280 reduce first |
+| K208 decay defense | Prevent $0.6M/yr loss | K280 75%→40% (K511 v6.26) |
+| K498 Phase 1A | +$121K/yr @ $30M | 14-LOC patch + OKX daemon |
+
+---
+
+### Phase A: Immediate (D0, 30 minutes)
+
+| Step | Action | Effort | Risk | +$/yr @$10M |
+|------|--------|--------|------|-------------|
+| A1 | K481-A: HL approveBuilderFee registration | 30 min | ZERO | +$247,915 |
+| A2 | Verify 37 SCAFFOLD-READY daemon pre-conditions | 5 min | ZERO | — |
+| A3 | Confirm v6.13d baseline (K280=75%, K297p=20%, sUSDe=5%) | 2 min | ZERO | — |
+
+**Result:** v6.13d unchanged + K481 builder rebate active → $650-850K/yr
+
+---
+
+### Phase B Step 1: K280 Sleeve Restructure (D0, 4 hours)
+
+| Step | Action | Effort | Risk | HL Delta |
+|------|--------|--------|------|----------|
+| B1-1 | K280 weight 75% → 60% in data/portfolio_config.json | 30 min | LOW | -7.5pp |
+| B1-2 | K297p 20% → 5%; sUSDe 5% → 8% | 15 min | LOW | — |
+| B1-3 | K376 paper-trade seed at 1% provisional | 15 min | ZERO | — |
+| B1-4 | K495 paper-trade seed at 1% | 15 min | ZERO | — |
+| B1-5 | Restart K280 live daemon | 5 min | LOW | — |
+
+**Result:** v6.13e-interim (K280=60%, HL=57.5%, K376+K495 paper 1% each)
+**HL exposure after:** 57.5% (7.5pp headroom for K376 + new strategies)
+
+---
+
+### Phase B Step 2: K498 Phase 1A Smart Router (D7, 8 hours)
+
+**Prerequisite:** OKX API key configured
+
+| Step | Action | Effort | Risk | +$/yr @$30M |
+|------|--------|--------|------|-------------|
+| B2-1 | 14-LOC patch: SMART_ROUTER_ENABLED=True in scripts/k280_live_fetch.py | 30 min | LOW | +$121K |
+| B2-2 | Add BBO_SELECT routing_mode to data/smart_router_config.json | 15 min | LOW | — |
+| B2-3 | Load OKX FR monitor daemon | 5 min | LOW | — |
+| B2-4 | 24h paper observation | 24h | ZERO | — |
+
+```bash
+# B2-1 patch (14 LOC)
+# In scripts/k280_live_fetch.py: change SMART_ROUTER_ENABLED = False → True
+# In data/smart_router_config.json: {"routing_mode": "BBO_SELECT", "venues": ["HL","Bybit","OKX"]}
+
+# B2-3 daemon load
+cp /Users/nekonaomichi/crypto-lab/com.cryptolab.okx-fr-monitor.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.okx-fr-monitor.plist
+launchctl list | grep okx
+```
+
+**Result:** v6.13e + smart router BBO_SELECT active
+
+---
+
+### Phase C: K376 BULL_CONFIRMED (D14, 4 hours — CONDITIONAL)
+
+**Gate:** BTC 20d SMA slope > 0 × 7 consecutive days (K497 BULL_CONFIRMED)
+**Current:** TRANSITION zone (K533 — slope -33.83 $/day, ETA ~7 days from K527)
+
+| Step | Action | Effort | Risk | +$/yr @$10M |
+|------|--------|--------|------|-------------|
+| C1 | K497 BULL_CONFIRMED check | 2 min | ZERO | — |
+| C2 | K376 paper 1% → live 1% | 30 min | MEDIUM | +$82K |
+| C3 | K280 60% → 40% (full K511 v6.26) | 1 hr | LOW | defensive |
+| C4 | Spark sUSDS add 8% sleeve | 2 hr | LOW | — |
+| C5 | K376 expand 1% → 3% (D14→D30, gate pass) | 15 min | MEDIUM | +$165K |
+
+**Result:** v6.26 (K280=40%, K376=3%, K495=1%, sUSDe=8%, Spark=8%, HL≈52%)
+
+```bash
+# C1 check
+python3 scripts/k497_regime_monitor.py --status
+
+# C3 config update
+# Edit data/portfolio_config.json: k280_weight: 0.40
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+```
+
+---
+
+### Phase D: Full v6.28 Paired-Trade Family (D30–D60)
+
+| Step | Action | Gate | +$/yr @$10M |
+|------|--------|------|-------------|
+| D1 | K376 expand 3% → 5% | Sharpe ≥ 8 post 7d live | +$82K |
+| D2 | K495 expand 1% → 6% | 60d paper Sharpe ≥ 10 | +$150K |
+| D3 | K484 AVAX-BTC activate (3%) | 60d paper gate | +$76K |
+| D4 | K493 ATOM-BTC activate (3%) | 60d paper gate | +$75K |
+| D5 | K500 INJ-BTC activate (3%) | 60d paper gate | +$75K |
+| D6 | K507 SEI+TIA activate (D60) | 60d paper gate | +$50K |
+| D7 | K512 APT activate (D60) | 60d paper gate | +$50K |
+| D8 | K280 fine-tune 40% → 38% | HL re-balance target 64% | — |
+
+**Result:** v6.28 (K280=38%, K376=5-8%, K495=6%, paired-trade family, HL≈64%)
+
+---
+
+### Sleeve GANTT D0-D60
+
+```
+Strategy                   D0     D7    D14    D30    D60  Note
+------------------------------------------------------------------------------------------
+K280                      75%    60%    40%    38%    38%  K511 v6.26 full reduction
+K297p                     20%     5%     5%     5%     5%  reduce; free headroom
+sUSDe                      5%     8%     8%     8%     8%  stablecoin yield expansion
+Spark sUSDS                0%     0%     8%     8%     8%  add D14 post-K280 reduction
+K376 momentum              0%     1%     3%     5%     8%  paper→live; BULL_CONFIRMED gate
+K495 DEX-CEX flow          0%     1%     1%     6%     6%  1% test; 6% post-paper-gate D30
+K449 ETH-BTC               0%     0%     0%     5%     5%  daemon D7; sleeve D30 post-gate
+K476 SOL-BTC               0%     0%     3%     3%     3%  D14 post K280 restructure
+K484 AVAX-BTC              0%     0%     0%     3%     3%  60d paper gate; D30 if pass
+K493 ATOM-BTC              0%     0%     0%     3%     3%  60d paper gate; D30 if pass
+K500 INJ-BTC               0%     0%     0%     3%     3%  60d paper gate; D30 if pass
+K507 SEI                   0%     0%     0%     0%     2%  D60 paper-gate
+K507 TIA                   0%     0%     0%     0%     1%  D60 paper-gate
+K512 APT                   0%     0%     0%     0%     2%  D60 paper-gate
+K521 Options               0%     0%     0%     0%     0%  paper only — no live
+------------------------------------------------------------------------------------------
+TOTAL                    100%    75%    68%    87%    95%
+HL EXPOSURE               65%    58%    52%    54%    64%  Hard cap 65% enforced
+```
+
+### Critical Risk Summary
+
+| Risk | Severity | Mitigation |
+|------|----------|------------|
+| K280 reduction → loss if K208 decay not permanent | HIGH | Stage 75%→60%→40%; monitor daily |
+| BULL false positive (K376 premature live) | MEDIUM | Require 7d slope > 0; start 1% only |
+| Phase 1A patch breaks smart router | LOW | 24h paper observation; rollback ready |
+| HL cap breach from simultaneous strategy adds | HIGH | Track HL% at each step; 65% hard cap |
+| Paper-gate strategies fail Sharpe threshold | MEDIUM | Gate ≥ 8 Sharpe strictly enforced |
+
+> See `wave_k539_immediate_actions.{py,json,md}` for full detail.
+> **Source:** K539 | K481 | K497 | K509 | K511 | K523 | K527 | K530 | K532 | K533
+
+---
 
 ---
 
