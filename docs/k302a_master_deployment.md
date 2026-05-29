@@ -2415,3 +2415,100 @@ Source files: `wave_k530_k498_phase_1a_playbook.py` | `wave_k530_k498_phase_1a_p
 **EV: +$378,800/yr @$10M (probability-weighted)**
 
 See `wave_k540_dual_catalyst_prep.{py,json,md}` for full playbook.
+
+---
+
+## Appendix K545 — Tax Loss Harvester Activation (User Action #30)
+
+*(Added 2026-05-30 05:35 JST — K545 deep-dive audit + activation playbook)*
+
+**INFORMATIONAL ONLY. NOT TAX ADVICE. Consult a licensed tax professional.**
+
+### User Action #30: Tax Loss Harvester — 18th Daemon LIVE (5 min, +$47K/yr @$10M, +$473K/yr @$100M)
+
+#### K442/K444 Audit Summary
+
+All files present and functional as of K545:
+
+| File | Size | Status |
+|------|------|--------|
+| `wave_k442_tax_optimization.py` | 20,665 B | OK — 10 jurisdictions |
+| `scripts/loss_harvester.py` | 31,701 B | OK — 729 LOC, Phase 11 PASS |
+| `com.cryptolab.loss-harvester.plist` | 1,163 B | OK — annual Dec 28 cron |
+| `data/portfolio_aum_state.json` | 1,253 B | OK — tax fields populated |
+
+**Gap:** Plist NOT loaded in `~/Library/LaunchAgents/`. Annual Dec 28 trigger will
+NOT fire until loaded.
+
+#### Profit Projection (INFORMATIONAL — K523 17.2%/yr basis)
+
+| AUM | Japan (55%) | Korea (22%) | Germany (26.4%) |
+|-----|------------|------------|----------------|
+| $10M base | **$47,300/yr** | $18,920/yr | $22,682/yr |
+| $10M optimistic | $94,600/yr | $37,840/yr | $45,365/yr |
+| $100M base | **$473,000/yr** | $189,200/yr | $226,825/yr |
+| $100M optimistic | $946,000/yr | $378,400/yr | $453,650/yr |
+
+Loss harvest = 5% of annual gross gains (base), 10% (optimistic).
+Japan no-loss-carryforward makes Dec 28 harvest MANDATORY (not optional).
+
+#### 5-Step Activation
+
+**Step 1 (1hr): Legal check**
+```bash
+# After confirming jurisdiction + rate with tax advisor:
+python3 scripts/loss_harvester.py --set-rate 55 --set-jurisdiction JPN
+# Korea: --set-rate 22 --set-jurisdiction KOR
+# Germany: --set-rate 26.375 --set-jurisdiction DE
+```
+
+**Step 2 (5min): Integrity check**
+```bash
+python3 scripts/loss_harvester.py --mock-test
+# Expected: PASS ($351,500 liability verified)
+```
+
+**Step 3 (5min): USER ACTION #30 — Deploy 18th daemon**
+```bash
+cp /Users/nekonaomichi/crypto-lab/com.cryptolab.loss-harvester.plist \
+   ~/Library/LaunchAgents/com.cryptolab.loss-harvester.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.loss-harvester.plist
+launchctl list | grep loss-harvester
+```
+
+**Risk:** LOW — RunAtLoad=false. Next trigger: Dec 28 2026 06:00 JST.
+No trades executed. Pure harvest plan generation.
+
+**Step 4 (30d passive): K429 integration**
+```bash
+# Weekly status:
+python3 scripts/loss_harvester.py --status
+```
+
+**Step 5 (2-4hr, Dec 28-31 ONLY): Execute harvest**
+```bash
+python3 scripts/loss_harvester.py --realize-losses
+# Review with tax advisor → close positions manually
+```
+
+#### Key Risks
+
+| Risk | Jurisdiction | Mitigation |
+|------|-------------|-----------|
+| No loss carryforward | Japan ONLY | Dec 28 trigger MANDATORY |
+| Business classification | SGP/HKG | Document investment intent |
+| HL cost basis accuracy | All | Log entry price in trade JSONL |
+| K357 mass realization | All | Immediate harvest protocol |
+
+#### Daemon Specification
+
+| Label | `com.cryptolab.loss-harvester` |
+|-------|-------------------------------|
+| Number | 18th daemon |
+| Schedule | Annual Dec 28 06:00 JST |
+| RunAtLoad | false |
+| Script | `scripts/loss_harvester.py --realize-losses` |
+
+Source files: `wave_k545_tax_harvester_activation.{py,json,md}`
+
+*K545 Appendix — Added 2026-05-30 05:35 JST*

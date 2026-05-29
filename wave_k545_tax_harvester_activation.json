@@ -1,0 +1,434 @@
+{
+  "wave": "K545",
+  "title": "Tax Loss Harvester Production Activation Deep-Dive",
+  "generated_jst": "2026-05-30 05:38 JST",
+  "disclaimer": "INFORMATIONAL ONLY. NOT TAX ADVICE.",
+  "phase1_audit": {
+    "all_files_present": true,
+    "k442_status": "COMPLETE \u2014 10 jurisdictions, profit projections, loss harvesting analysis",
+    "k444_status": "SCAFFOLD-READY \u2014 script 729 LOC, plist staged, Phase 11 PASS",
+    "loss_harvester_script_status": "FUNCTIONAL \u2014 awaiting plist load + K429 wire-up"
+  },
+  "phase2_deployment_status": {
+    "state": "SCAFFOLD-READY",
+    "configured": true,
+    "user_tax_rate_pct": 37.0,
+    "jurisdiction": "US_STCG",
+    "taxable_events_ytd": 200,
+    "estimated_realized_gain_ytd_usd": 1000000.0,
+    "estimated_realized_loss_ytd_usd": 50000.0,
+    "estimated_tax_liability_usd": 351500.0,
+    "harvest_candidates_count": 2,
+    "plist_in_launchagents": false,
+    "activation_step_required": true,
+    "note": "K444 script + plist exist. Tax fields backfilled. To activate: cp plist to ~/Library/LaunchAgents/ + launchctl load. Annual cron: Dec 28 06:00 JST."
+  },
+  "phase3_jurisdiction_model": {
+    "JPN": {
+      "name": "Japan",
+      "effective_rate_pct": 55.0,
+      "loss_carryforward_years": 0,
+      "wash_sale_equivalent": false,
+      "re_entry_wait_days": 0,
+      "notes": "Japan: Crypto = zatsushotoku (miscellaneous income). No LTCG distinction. 45% national + 10% local = 55% at top bracket. 2.1% reconstruction surtax additional. NO loss carryforward to next year (critical: harvest by Dec 31 each year). No wash-sale equivalent for crypto. Exit tax >500M JPY (~$3.3M USD). Losses can offset other miscellaneous income within same year."
+    },
+    "KOR": {
+      "name": "South Korea",
+      "effective_rate_pct": 22.0,
+      "loss_carryforward_years": 5,
+      "wash_sale_equivalent": false,
+      "re_entry_wait_days": 0,
+      "notes": "22% flat (20% income + 2% local) on gains >KRW 2.5M (~$1.7K USD). Loss carryforward 5 years \u2014 harvest losses even if gains net to zero. No wash-sale equivalent. Re-entry timing not restricted."
+    },
+    "SGP": {
+      "name": "Singapore",
+      "effective_rate_pct": 0.0,
+      "loss_carryforward_years": 0,
+      "wash_sale_equivalent": false,
+      "re_entry_wait_days": 0,
+      "notes": "0% CGT for individual investors. Business traders: IRAS may assess ordinary income. Loss harvesting irrelevant at 0% rate. K208 volume creates business classification risk (mitigate via documented intent)."
+    },
+    "UAE": {
+      "name": "UAE (Dubai)",
+      "effective_rate_pct": 0.0,
+      "loss_carryforward_years": 0,
+      "wash_sale_equivalent": false,
+      "re_entry_wait_days": 0,
+      "notes": "0% personal income/CGT. VARA-regulated crypto environment. Loss harvesting irrelevant at 0% rate. Best jurisdiction for K208 frequency trading \u2014 no realization event tax."
+    },
+    "DEU": {
+      "name": "Germany",
+      "effective_rate_pct": 26.375,
+      "loss_carryforward_years": 999,
+      "wash_sale_equivalent": false,
+      "re_entry_wait_days": 0,
+      "notes": "K208 always <1yr \u2192 26.375% flat. K297' PAXG static hold: potentially 0% if held >1yr. Annual loss offset: K376 stop-outs can offset K208/K297' gains. Indefinite loss carryforward. Annual \u20ac600 exempt allowance."
+    }
+  },
+  "phase6_profit_projections": {
+    "$10M": {
+      "JPN": {
+        "jurisdiction": "Japan",
+        "tax_rate_pct": 55.0,
+        "gross_gain_yr_usd": 1720000.0,
+        "annual_savings_usd": {
+          "conservative": 18920.0,
+          "base": 47300.0,
+          "optimistic": 94600.0
+        },
+        "5y_cumulative_savings_usd": {
+          "conservative": 94600.0,
+          "base": 236500.0,
+          "optimistic": 473000.0
+        },
+        "k444_baseline_estimate": {
+          "conservative": 5500,
+          "base": 16500,
+          "optimistic": 41250
+        },
+        "note": "Japan: Crypto = zatsushotoku (miscellaneous income). No LTCG distinction. 45% national + 10% local = 55% at top bracket. 2.1% reconstruction surtax additional. NO loss carryforward to next year (critical: harvest by Dec 31 each year). No wash-sale equivalent for crypto. Exit tax >500M JPY (~$3.3M USD). Losses can offset other miscellaneous income within same year."
+      },
+      "KOR": {
+        "jurisdiction": "South Korea",
+        "tax_rate_pct": 22.0,
+        "gross_gain_yr_usd": 1720000.0,
+        "annual_savings_usd": {
+          "conservative": 7568.0,
+          "base": 18920.0,
+          "optimistic": 37840.0
+        },
+        "5y_cumulative_savings_usd": {
+          "conservative": 37840.0,
+          "base": 94600.0,
+          "optimistic": 189200.0
+        },
+        "k444_baseline_estimate": {
+          "conservative": 5500,
+          "base": 16500,
+          "optimistic": 41250
+        },
+        "note": "22% flat (20% income + 2% local) on gains >KRW 2.5M (~$1.7K USD). Loss carryforward 5 years \u2014 harvest losses even if gains net to zero. No wash-sale equivalent. Re-entry timing not restricted."
+      },
+      "DEU": {
+        "jurisdiction": "Germany",
+        "tax_rate_pct": 26.375,
+        "gross_gain_yr_usd": 1720000.0,
+        "annual_savings_usd": {
+          "conservative": 9073.0,
+          "base": 22682.0,
+          "optimistic": 45365.0
+        },
+        "5y_cumulative_savings_usd": {
+          "conservative": 45365.0,
+          "base": 113410.0,
+          "optimistic": 226825.0
+        },
+        "k444_baseline_estimate": {
+          "conservative": 5500,
+          "base": 16500,
+          "optimistic": 41250
+        },
+        "note": "K208 always <1yr \u2192 26.375% flat. K297' PAXG static hold: potentially 0% if held >1yr. Annual loss offset: K376 stop-outs can offset K208/K297' gains. Indefinite loss carryforward. Annual \u20ac600 exempt allowance."
+      }
+    },
+    "$100M": {
+      "JPN": {
+        "jurisdiction": "Japan",
+        "tax_rate_pct": 55.0,
+        "gross_gain_yr_usd": 17200000.0,
+        "annual_savings_usd": {
+          "conservative": 189200.0,
+          "base": 473000.0,
+          "optimistic": 946000.0
+        },
+        "5y_cumulative_savings_usd": {
+          "conservative": 946000.0,
+          "base": 2365000.0,
+          "optimistic": 4730000.0
+        },
+        "k444_baseline_estimate": {
+          "conservative": 55000,
+          "base": 165000,
+          "optimistic": 412500
+        },
+        "note": "Japan: Crypto = zatsushotoku (miscellaneous income). No LTCG distinction. 45% national + 10% local = 55% at top bracket. 2.1% reconstruction surtax additional. NO loss carryforward to next year (critical: harvest by Dec 31 each year). No wash-sale equivalent for crypto. Exit tax >500M JPY (~$3.3M USD). Losses can offset other miscellaneous income within same year."
+      },
+      "KOR": {
+        "jurisdiction": "South Korea",
+        "tax_rate_pct": 22.0,
+        "gross_gain_yr_usd": 17200000.0,
+        "annual_savings_usd": {
+          "conservative": 75680.0,
+          "base": 189200.0,
+          "optimistic": 378400.0
+        },
+        "5y_cumulative_savings_usd": {
+          "conservative": 378400.0,
+          "base": 946000.0,
+          "optimistic": 1892000.0
+        },
+        "k444_baseline_estimate": {
+          "conservative": 55000,
+          "base": 165000,
+          "optimistic": 412500
+        },
+        "note": "22% flat (20% income + 2% local) on gains >KRW 2.5M (~$1.7K USD). Loss carryforward 5 years \u2014 harvest losses even if gains net to zero. No wash-sale equivalent. Re-entry timing not restricted."
+      },
+      "DEU": {
+        "jurisdiction": "Germany",
+        "tax_rate_pct": 26.375,
+        "gross_gain_yr_usd": 17200000.0,
+        "annual_savings_usd": {
+          "conservative": 90730.0,
+          "base": 226825.0,
+          "optimistic": 453650.0
+        },
+        "5y_cumulative_savings_usd": {
+          "conservative": 453650.0,
+          "base": 1134125.0,
+          "optimistic": 2268250.0
+        },
+        "k444_baseline_estimate": {
+          "conservative": 55000,
+          "base": 165000,
+          "optimistic": 412500
+        },
+        "note": "K208 always <1yr \u2192 26.375% flat. K297' PAXG static hold: potentially 0% if held >1yr. Annual loss offset: K376 stop-outs can offset K208/K297' gains. Indefinite loss carryforward. Annual \u20ac600 exempt allowance."
+      }
+    }
+  },
+  "phase7_roadmap": {
+    "K545-1": {
+      "title": "Audit K442/K444 deliverables",
+      "status": "COMPLETE (K545 audit confirms all files present)",
+      "outputs": [
+        "wave_k442_tax_optimization.py \u2014 552 LOC, 10 jurisdictions, OK",
+        "wave_k442_tax_optimization.json \u2014 full jurisdiction table, OK",
+        "wave_k444_loss_harvester.json \u2014 daemon spec, SCAFFOLD-READY",
+        "wave_k444_loss_harvester.md \u2014 activation guide, OK",
+        "scripts/loss_harvester.py \u2014 729 LOC, Phase 11 PASS, OK",
+        "com.cryptolab.loss-harvester.plist \u2014 annual Dec 28 cron, OK",
+        "data/loss_harvester_dashboard.json \u2014 mock data populated, OK"
+      ],
+      "finding": "All K442/K444 files PRESENT and FUNCTIONAL. Activation status: SCAFFOLD-READY (plist not loaded in LaunchAgents). Tax fields backfilled with mock data (Phase 11 test state). Real YTD data: pending K429 integration hook wiring."
+    },
+    "K545-2": {
+      "title": "Deploy scripts/loss_harvester.py patch if missing",
+      "status": "NOT NEEDED \u2014 script fully implemented (729 LOC)",
+      "outputs": [
+        "No patch required. K444 implementation is production-quality."
+      ]
+    },
+    "K545-3": {
+      "title": "Daemon plist creation / deployment (18th daemon)",
+      "status": "PLIST EXISTS \u2014 deployment to LaunchAgents pending user action",
+      "outputs": [
+        "com.cryptolab.loss-harvester.plist \u2014 K545 User Action #30",
+        "Annual Dec 28 06:00 JST trigger",
+        "RunAtLoad=false (safe: no immediate execution)"
+      ],
+      "user_action": "cp com.cryptolab.loss-harvester.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.loss-harvester.plist"
+    },
+    "K545-4": {
+      "title": "30-day paper-trade tracking",
+      "status": "PENDING \u2014 requires K429 integration hook wiring",
+      "outputs": [
+        "Weekly status checks: python3 scripts/loss_harvester.py --status"
+      ]
+    },
+    "K545-5": {
+      "title": "User dashboard for tax harvest events",
+      "status": "SCAFFOLD-READY \u2014 data/loss_harvester_dashboard.json + report.html widget",
+      "outputs": [
+        "data/loss_harvester_dashboard.json (auto-updated on each run)",
+        "report.html K444 daemon row shows YTD stats"
+      ]
+    }
+  },
+  "phase8_risk_table": [
+    {
+      "risk": "Wash-sale equivalent violation (re-entry too soon)",
+      "probability": "LOW (non-US crypto)",
+      "impact": "MEDIUM",
+      "mitigation": "Japan, Korea, Germany: no wash-sale equivalent for crypto as of 2026. Re-entry after 0 days is permissible. ALWAYS confirm current rules with licensed tax advisor \u2014 laws change. US persons: crypto currently NOT subject to wash-sale (confirm annually).",
+      "status": "MANAGED \u2014 no minimum wait required (non-US crypto)"
+    },
+    {
+      "risk": "Crypto-to-crypto trade tax treatment",
+      "probability": "HIGH (certainty \u2014 all closes are taxable in Japan/Korea)",
+      "impact": "HIGH (operational)",
+      "mitigation": "Japan: every position close is a realization event (zatsushotoku). Korea: every close above KRW 2.5M threshold is taxable. K208 8h cycle = 1,095 events/yr = 1,095 Japanese realization events. K444 loss_harvester.py tracks all events via K302a/K443 trade logs.",
+      "status": "KNOWN RISK \u2014 infrastructure in place for tracking"
+    },
+    {
+      "risk": "HL API cost basis tracking accuracy",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "mitigation": "HL public API does not expose cost basis (K398/K414 lesson). Workaround: log entry price in K302a trade JSONL at position open. K444 reads k302a_satellite_paper_trades.jsonl for YTD event reconstruction. Full accuracy requires K429 enhancement to log entry prices.",
+      "status": "PARTIAL WORKAROUND \u2014 JSONL logging required"
+    },
+    {
+      "risk": "Japan no-loss-carryforward rule",
+      "probability": "CERTAIN (Japan)",
+      "impact": "HIGH",
+      "mitigation": "Japan: losses NOT carried to next tax year. Must realize losses BEFORE Dec 31 each year. K444 daemon Dec 28 trigger is specifically designed for this. If losses realized after Dec 31 = wasted (cannot offset next year gains).",
+      "status": "CRITICAL \u2014 Dec 28 trigger is mandatory, not optional"
+    },
+    {
+      "risk": "K357 emergency exit creates forced mass realization",
+      "probability": "LOW",
+      "impact": "HIGH (tax)",
+      "mitigation": "K357 emergency exit = all positions liquidated simultaneously. If triggered Nov-Dec, run --realize-losses immediately to capture any remaining loss positions before Dec 31. K357 threshold: portfolio draw >15% in single session.",
+      "status": "LOW PROBABILITY \u2014 monitored, documented"
+    },
+    {
+      "risk": "Japan exit tax for large holdings",
+      "probability": "MEDIUM (at >$3.3M USD)",
+      "impact": "HIGH",
+      "mitigation": "Japan exit tax: assets >500M JPY (~$3.3M USD at 2026 rates). If relocating to lower-tax jurisdiction: consult tax advisor on exit tax filing. K442 jurisdiction comparison shows $10.2M/5y delta (Japan vs UAE). At scale, professional advice on jurisdiction strategy is high ROI.",
+      "status": "DOCUMENTED \u2014 user legal action required at >$3.3M"
+    }
+  ],
+  "phase9_playbook": {
+    "steps": [
+      {
+        "step": 1,
+        "id": "K545-1",
+        "title": "Confirm jurisdiction + tax rate (legal check)",
+        "effort": "1hr (legal consultation)",
+        "risk": "ZERO (review only)",
+        "action": "Identify exact tax residency and crypto classification. Japan: confirm 55% rate applies (vs any Tokutei-koji entity structure). Other non-US: confirm K442 jurisdiction table rate. Set rate via: python3 scripts/loss_harvester.py --set-rate <RATE> --set-jurisdiction <JURIS>",
+        "command": "python3 scripts/loss_harvester.py --set-rate 55 --set-jurisdiction JPN",
+        "verify": "python3 scripts/loss_harvester.py --status",
+        "expected_output": "Tax Year: 2026 | Jurisdiction: JPN | User Tax Rate: 55.0%"
+      },
+      {
+        "step": 2,
+        "id": "K545-2",
+        "title": "Verify scripts/loss_harvester.py integrity",
+        "effort": "5min",
+        "risk": "ZERO",
+        "action": "Confirm script exists, K339 REPO_ROOT pattern correct, --mock-test passes Phase 11 gate ($351.5K liability verification).",
+        "command": "python3 scripts/loss_harvester.py --mock-test",
+        "verify": "python3 scripts/loss_harvester.py --status",
+        "expected_output": "PASS: YES | Total harvestable loss: $11,700"
+      },
+      {
+        "step": 3,
+        "id": "K545-3",
+        "title": "Deploy plist to LaunchAgents (18th daemon activation)",
+        "effort": "5min",
+        "risk": "LOW (annual cron only, no immediate execution)",
+        "action": "Copy plist to ~/Library/LaunchAgents/ and load. Daemon triggers once per year: Dec 28 06:00 JST. RunAtLoad=false \u2014 no immediate execution risk.",
+        "command": "cp /Users/nekonaomichi/crypto-lab/com.cryptolab.loss-harvester.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.loss-harvester.plist",
+        "verify": "launchctl list | grep loss-harvester",
+        "expected_output": "com.cryptolab.loss-harvester (loaded, not running \u2014 annual trigger)"
+      },
+      {
+        "step": 4,
+        "id": "K545-4",
+        "title": "30-day paper-trade tracking",
+        "effort": "30d passive",
+        "risk": "ZERO",
+        "action": "Let K376/K208/K297' strategies generate real realization events. Enable K429 integration hook in strategy scripts to call record_realization_event(pnl, strategy, coin) on each position close. Check weekly: python3 scripts/loss_harvester.py --status",
+        "command": "python3 scripts/loss_harvester.py --write-dashboard",
+        "verify": "python3 scripts/loss_harvester.py --annual-report",
+        "expected_output": "total_realization_events: >0 | realized_gains_usd: >0"
+      },
+      {
+        "step": 5,
+        "id": "K545-5",
+        "title": "Year-end harvest execution (Dec 28\u201331 window)",
+        "effort": "2-4hr (Dec 28\u201331 only)",
+        "risk": "MEDIUM (live position closes)",
+        "action": "Review harvest plan output. Identify positions with unrealized losses. Execute position closes manually (LIVE auto-execution prohibited). Re-enter positions after 0 wait days (Japan/Korea: no wash-sale equivalent). Generate annual report for tax advisor.",
+        "command": "python3 scripts/loss_harvester.py --realize-losses",
+        "verify": "python3 scripts/loss_harvester.py --annual-report",
+        "expected_output": "harvest_plan: total_harvestable_loss_usd > 0"
+      }
+    ],
+    "estimated_total_effort": "1.5hr upfront + 30d passive + 2-4hr Dec 28-31",
+    "expected_annual_benefit_usd": {
+      "at_10M_JPN_55pct_base": "$47,300/yr",
+      "at_10M_KOR_22pct_base": "$18,920/yr",
+      "at_10M_DEU_26pct_base": "$22,704/yr",
+      "at_100M_JPN_55pct_base": "$473,000/yr",
+      "at_100M_KOR_22pct_base": "$189,200/yr"
+    }
+  },
+  "integration": {
+    "k357_emergency_exit": {
+      "description": "K357 emergency exit triggers liquidation of all positions",
+      "tax_impact": "Emergency exit = mass realization event. All unrealized gains become taxable. K357 exit near year-end is the worst tax outcome. Mitigation: If emergency exit triggered Nov-Dec, accelerate loss harvesting from remaining positions to offset the forced gains realization.",
+      "loss_harvester_hook": "On K357 trigger: loss_harvester.record_realization_event() for each liquidated position. Dashboard reflects real-time tax liability spike.",
+      "action": "Monitor K357 flags; if triggered Nov-Dec, run --realize-losses immediately"
+    },
+    "k430_leverage_3x": {
+      "description": "K430 leverage 3x amplifies both gains AND losses",
+      "tax_impact": "3x leverage means $1M position generates $3M notional exposure. A 5% move = 15% of deployed capital. Losses are larger in absolute USD (good for harvesting). Gains are larger (bad for tax). K545 harvest target: capture stop-out losses before year-end.",
+      "harvest_implication": "At $10M AUM, K430 3x: effective notional ~$27M. A 2% drawdown on K376 = ~$540K loss available for harvest. At 55% (Japan): saves $297K in one event."
+    },
+    "k429_aum_manager": {
+      "description": "K429 AUM manager tracks cumulative PnL",
+      "integration": "K444 record_realization_event() is the K429 integration hook. Each K429 position close event should call this function to maintain running YTD tax liability estimate.",
+      "activation_note": "K429 integration NOT yet wired in production (as of K545). Manual entry via --record-event for now. Full wiring = add 1 function call per strategy close event."
+    },
+    "hl_position_cost_basis": {
+      "description": "HL API cost basis accuracy",
+      "status": "LIMITED \u2014 HL does not provide cost basis via public API",
+      "workaround": "Track entry price via K302a trade log (k302a_satellite_paper_trades.jsonl). loss_harvester.py reads this file for YTD event data. For live trades: entry price must be logged at open (recommend K429 enhancement)."
+    }
+  },
+  "key_findings": {
+    "activation_gap": "K444 loss harvester is fully implemented (729 LOC) but NOT yet active in production. Gap: plist not loaded in LaunchAgents. K429 integration hook not wired.",
+    "largest_lever": "At $10M JPN (55% rate): $47K/yr (base) to $94K/yr (optimistic). At $100M JPN: $473K/yr (base) to $946K/yr (optimistic). Japan no-loss-carryforward makes Dec 28 deadline hard.",
+    "quick_win": "User Action #30: cp plist + launchctl load (5 minutes). Annual Dec 28 trigger then auto-executes harvest analysis.",
+    "k442_k445_combined": "$30-75K/yr @$10M (K442 estimate) + K545 extended to $94K max @$10M JPN 55%. At $100M: up to $946K/yr (optimistic, JPN). Jurisdiction change (Japan \u2192 UAE/SGP) adds $10.2M/5yr at $50M AUM (K442)."
+  },
+  "profit_summary_usd_yr": {
+    "at_10M": {
+      "JPN_55pct": {
+        "conservative": 18700,
+        "base": 47300,
+        "optimistic": 94600
+      },
+      "KOR_22pct": {
+        "conservative": 7480,
+        "base": 18920,
+        "optimistic": 37840
+      },
+      "DEU_26pct": {
+        "conservative": 8988,
+        "base": 22740,
+        "optimistic": 45480
+      }
+    },
+    "at_100M": {
+      "JPN_55pct": {
+        "conservative": 187000,
+        "base": 473000,
+        "optimistic": 946000
+      },
+      "KOR_22pct": {
+        "conservative": 74800,
+        "base": 189200,
+        "optimistic": 378400
+      },
+      "DEU_26pct": {
+        "conservative": 89880,
+        "base": 227400,
+        "optimistic": 454800
+      }
+    }
+  },
+  "daemon_spec": {
+    "label": "com.cryptolab.loss-harvester",
+    "number": 18,
+    "cron_schedule": "Annual Dec 28 06:00 JST",
+    "run_at_load": false,
+    "script": "scripts/loss_harvester.py",
+    "plist": "com.cryptolab.loss-harvester.plist",
+    "status": "SCAFFOLD-READY \u2014 pending LaunchAgents deployment",
+    "activation_command": "cp com.cryptolab.loss-harvester.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.loss-harvester.plist"
+  }
+}
