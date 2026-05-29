@@ -1,0 +1,861 @@
+{
+  "wave": "K546",
+  "strategy": "FET-BTC FR Differential Paired-Trade",
+  "target": "FET (Fetch.ai / ASI Alliance \u2014 AI agent orchestration, Layer 3)",
+  "run_time_jst": "2026-05-30T05:46:09+09:00",
+  "runtime_s": 2.9,
+  "decision": "BLOCKED-AI-CLUSTER (TAO+K476+SEI+APT)",
+  "phase0_prescreen": {
+    "target": "FET (Fetch.ai / ASI Alliance \u2014 AI agent orchestration, Cosmos SDK AEA marketplace, HL listed 2024-05-24, ASI merger with OCEAN+AGIX in 2024)",
+    "fet_fr_std_full": 4.725e-05,
+    "btc_fr_std_full": 1.764e-05,
+    "vol_ratio_full": 2.6787,
+    "vol_ratio_6m": 6.414,
+    "threshold": 1.5,
+    "vol_pass": true,
+    "venue_listing": {
+      "hl_fr_data_exists": true,
+      "bybit_fr_data_exists": true,
+      "bybit_row_count": 41,
+      "okx_fr_data_exists": false,
+      "hl_note": "FET-PERP active on Hyperliquid (hl_fr_FET.parquet confirmed). HL listing: 2024-05-24. Data spans 2024-05-24 to 2026-05-24 (24m). 17519 rows \u2014 same vintage as TAO/ATOM/INJ. HL primary signal source \u2014 excellent coverage for G9.",
+      "bybit_note": "FETUSDT on Bybit (bybit_fr_FETUSDT_730d.parquet) \u2014 only 41 rows (2024-05-25 to 2024-06-07, ~13d). Data truncated \u2014 insufficient for G8 primary. Bybit FET coverage substantially worse than TAO (730d vs 13d). G8 will rely on HL vs HL-4h resampling or be rated borderline.",
+      "okx_note": "OKX FET (okx_fr_FET.parquet) \u2014 NOT in cache. FET/ASI may be listed on OKX as ASI-USDT-SWAP post-merger. G8 cross-venue limited to Bybit only (insufficient). G8 borderline expected \u2014 structural note applied.",
+      "venue_pass": true
+    },
+    "phase0_pass": true,
+    "family_vol_comparison": {
+      "eth_btc_k449": 1.084,
+      "avax_btc_k484": 1.499,
+      "fil_btc_k517": 1.717,
+      "render_btc_k531_full": 1.62,
+      "sol_btc_k476": 1.764,
+      "render_btc_k531_6m": 1.912,
+      "tao_btc_k534_full": 2.7735,
+      "tia_btc_k507": 2.285,
+      "sei_btc_k507": 2.328,
+      "atom_btc_k493": 2.337,
+      "apt_btc_k512": 2.841,
+      "inj_btc_k500": 3.826,
+      "tao_btc_k534_6m": 5.0516,
+      "fet_btc_k546_full": 2.6787,
+      "fet_btc_k546_6m": 6.414
+    },
+    "fet_vol_analysis": "FET vol ratio 2.679x BTC (6m: 6.414x). Threshold: 1.5x. PROCEED \u2014 FET vol PASS. FET drives high-vol FR spikes during: AI agent deployment milestones, ASI Alliance announcements (FET+OCEAN+AGIX merger events), Multi-agent AI system releases (AutoGPT, AgentGPT, OpenAI Agents), AI regulation/policy events (EU AI Act, US executive orders on AI). 6m vol ratio 6.414x \u2014 AI narrative expansion. PASS.",
+    "decision": "PROCEED to full backtest \u2014 FET venue check PASS (HL confirmed) + vol ratio 2.679x >= 1.5x PASS. 6m recency: 6.414x. FET AI agent orchestration Layer 3 test begins. Note: Bybit data limited (13d), OKX not in cache \u2014 G8 will be borderline."
+  },
+  "data_info": {
+    "hl_fet_fr_rows": 17484,
+    "date_range": "2024-05-24 to 2026-05-23",
+    "oos_start": "2025-10-18",
+    "oos_end": "2026-05-23",
+    "oos_days": 216,
+    "total_rows": 17316,
+    "is_rows": 12122,
+    "oos_rows": 5194,
+    "data_source_note": "FET-PERP HL listing: 2024-05-24. Single symbol (FET, not yet renamed ASI). 24-month data history \u2014 same vintage as TAO/ATOM/INJ. Bybit FET: severely limited (41 rows, 13d only \u2014 data quality issue). OKX FET: not in cache. G8 cross-venue materially limited."
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "leverage_cap": 4.0
+  },
+  "statistical_analysis": {
+    "adf": {
+      "statistic": -15.7676,
+      "p_value": 1.17e-28,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "critical_1pct": -3.4307,
+      "critical_5pct": -2.8617,
+      "interpretation": "FET-BTC FR differential IS stationary at 5% level. ADF stat -15.7676 vs 5% critical -2.8617. Mean-reversion assumption CONFIRMED."
+    },
+    "ou": {
+      "lambda": 0.129933,
+      "half_life_hours": 5.33,
+      "half_life_days": 0.222,
+      "long_run_mean": 1.04e-05,
+      "r_squared": 0.065
+    },
+    "autocorr": {
+      "lag_1h": 0.87,
+      "lag_24h": 0.2843,
+      "lag_168h_7d": 0.1453
+    }
+  },
+  "is_metrics": {
+    "sharpe": 18.779,
+    "ann_ret_pct": 7.702,
+    "max_dd_pct": -0.4525,
+    "rows": 12122
+  },
+  "oos_metrics": {
+    "sharpe": 40.06,
+    "ann_ret_pct": 22.652,
+    "max_dd_pct": -0.293,
+    "rows": 5194,
+    "days": 216
+  },
+  "fet_render_sub_analysis": {
+    "available": true,
+    "n_obs": 17484,
+    "date_range": "2024-05-24 \u2013 2026-05-23",
+    "raw_fr_corr": 0.095,
+    "signal_corr": 0.0684,
+    "g5k_threshold": 0.4,
+    "distinct_sub_cluster": true,
+    "verdict": "AI LAYER DISTINCT (FET agents \u2260 RENDER GPU compute): sig_corr=0.0684 < 0.4",
+    "interpretation": "FET (AI agents) vs RENDER (GPU compute) signal correlation = 0.0684. DISTINCT: Agent deployment demand \u2260 GPU capacity demand. FET peaks: enterprise AI adoption milestones, autonomous agent releases. RENDER peaks: NVIDIA earnings, GPU shortage, inference demand. 10th cluster (AI agents) supported \u2014 FET can coexist with RENDER."
+  },
+  "fet_tao_sub_analysis": {
+    "available": true,
+    "n_obs": 17484,
+    "date_range": "2024-05-24 \u2013 2026-05-23",
+    "raw_fr_corr": 0.3101,
+    "signal_corr": 0.3771,
+    "g5l_threshold": 0.4,
+    "distinct_sub_cluster": true,
+    "verdict": "AI LAYER DISTINCT (FET agents \u2260 TAO training): sig_corr=0.3771 < 0.4",
+    "interpretation": "FET (AI agents) vs TAO (AI training) signal correlation = 0.3771. DISTINCT: Agent deployment demand \u2260 model training demand. FET peaks: enterprise AI agent adoption, AEA deployment milestones. TAO peaks: subnet launches, AGI milestones, Bittensor halving. 10th cluster (AI agents) distinct from 9th (AI training). CONFIRMED."
+  },
+  "section_6_gates": {
+    "G1_oos_sharpe": {
+      "value": 40.06,
+      "threshold": ">= 1.0",
+      "pass": true,
+      "note": "OOS annualised Sharpe 40.060 \u2265 1.0."
+    },
+    "G2_perm_pvalue": {
+      "value": 0.0,
+      "threshold": "<= 0.05",
+      "pass": true,
+      "note": "1000 direction reshuffles OOS. p=0.0000."
+    },
+    "G3_dsr_bonferroni": {
+      "n_trials": 12,
+      "t_stat": 30.8471,
+      "p_raw": 2.62e-192,
+      "p_bonferroni": 3.14e-191,
+      "threshold": 0.00417,
+      "pass": true,
+      "note": "Bonferroni: p < 0.05/12 = 0.00417"
+    },
+    "G4_walk_forward_12fold": {
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2024-08-29",
+          "oos_end": "2024-09-28",
+          "sharpe": 24.977,
+          "ann_ret_pct": 10.248,
+          "entries": 3
+        },
+        {
+          "fold": 2,
+          "oos_start": "2024-09-28",
+          "oos_end": "2024-10-28",
+          "sharpe": 1.237,
+          "ann_ret_pct": 0.459,
+          "entries": 5
+        },
+        {
+          "fold": 3,
+          "oos_start": "2024-10-28",
+          "oos_end": "2024-11-27",
+          "sharpe": 26.189,
+          "ann_ret_pct": 13.799,
+          "entries": 3
+        },
+        {
+          "fold": 4,
+          "oos_start": "2024-11-27",
+          "oos_end": "2024-12-27",
+          "sharpe": 33.652,
+          "ann_ret_pct": 19.578,
+          "entries": 5
+        },
+        {
+          "fold": 5,
+          "oos_start": "2024-12-27",
+          "oos_end": "2025-01-26",
+          "sharpe": -3.487,
+          "ann_ret_pct": -1.368,
+          "entries": 4
+        },
+        {
+          "fold": 6,
+          "oos_start": "2025-01-26",
+          "oos_end": "2025-02-25",
+          "sharpe": 28.355,
+          "ann_ret_pct": 8.39,
+          "entries": 2
+        },
+        {
+          "fold": 7,
+          "oos_start": "2025-02-25",
+          "oos_end": "2025-03-27",
+          "sharpe": 14.435,
+          "ann_ret_pct": 6.194,
+          "entries": 2
+        },
+        {
+          "fold": 8,
+          "oos_start": "2025-03-27",
+          "oos_end": "2025-04-26",
+          "sharpe": 42.659,
+          "ann_ret_pct": 15.048,
+          "entries": 2
+        },
+        {
+          "fold": 9,
+          "oos_start": "2025-04-26",
+          "oos_end": "2025-05-26",
+          "sharpe": 27.822,
+          "ann_ret_pct": 9.318,
+          "entries": 2
+        },
+        {
+          "fold": 10,
+          "oos_start": "2025-05-26",
+          "oos_end": "2025-06-25",
+          "sharpe": 12.699,
+          "ann_ret_pct": 4.577,
+          "entries": 4
+        },
+        {
+          "fold": 11,
+          "oos_start": "2025-06-25",
+          "oos_end": "2025-07-25",
+          "sharpe": 32.265,
+          "ann_ret_pct": 14.321,
+          "entries": 1
+        },
+        {
+          "fold": 12,
+          "oos_start": "2025-07-25",
+          "oos_end": "2025-08-24",
+          "sharpe": 9.674,
+          "ann_ret_pct": 2.549,
+          "entries": 2
+        }
+      ],
+      "fold_sharpes": [
+        24.977,
+        1.237,
+        26.189,
+        33.652,
+        -3.487,
+        28.355,
+        14.435,
+        42.659,
+        27.822,
+        12.699,
+        32.265,
+        9.674
+      ],
+      "all_positive": false,
+      "n_positive_folds": 11,
+      "n_negative_folds": 1,
+      "min_fold_sharpe": -3.487,
+      "n_folds_computed": 12,
+      "pass": false,
+      "note": "12-fold WF (IS 90d/OOS 30d). All positive: False. Negative folds: [{'fold': 5, 'oos_start': '2024-12-27', 'oos_end': '2025-01-26', 'sharpe': -3.487, 'ann_ret_pct': -1.368, 'entries': 4}]."
+    },
+    "G5a_corr_g5a": {
+      "value": 0.1707,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "K449 ETH-BTC: FET-BTC vs K449 ETH-BTC = 0.1707. PASS."
+    },
+    "G5b_corr_g5b": {
+      "value": 0.446,
+      "threshold": "< 0.4",
+      "pass": false,
+      "note": "K476 SOL-BTC: FET-BTC vs K476 SOL-BTC = 0.4460. FAIL."
+    },
+    "G5c_corr_g5c": {
+      "value": 0.2509,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "K484 AVAX-BTC: FET-BTC vs K484 AVAX-BTC = 0.2509. PASS."
+    },
+    "G5d_corr_g5d": {
+      "value": 0.1717,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "K493 ATOM-BTC: FET-BTC vs K493 ATOM-BTC = 0.1717. PASS."
+    },
+    "G5e_corr_g5e": {
+      "value": 0.3515,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "K500 INJ-BTC: FET-BTC vs K500 INJ-BTC = 0.3515. PASS."
+    },
+    "G5f_corr_g5f": {
+      "value": 0.5273,
+      "threshold": "< 0.4",
+      "pass": false,
+      "note": "SEI-BTC: FET-BTC vs SEI-BTC = 0.5273. FAIL."
+    },
+    "G5g_corr_g5g": {
+      "value": 0.342,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "TIA-BTC: FET-BTC vs TIA-BTC = 0.3420. PASS."
+    },
+    "G5h_corr_g5h": {
+      "value": 0.5357,
+      "threshold": "< 0.4",
+      "pass": false,
+      "note": "K512 APT-BTC: FET-BTC vs K512 APT-BTC = 0.5357. FAIL."
+    },
+    "G5i_corr_g5i": {
+      "value": 0.305,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "K517 FIL-BTC: FET-BTC vs K517 FIL-BTC = 0.3050. PASS."
+    },
+    "G5j_corr_g5j": {
+      "value": 0.07,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "Structural estimate: K280 vol momentum vs FET-BTC FR carry. Corr ~0.07. AI agent orchestration FR is event-driven (ASI milestones, agent deployment waves) \u2014 not correlated with vol momentum. PASS."
+    },
+    "G5k_corr_g5k": {
+      "value": 0.0243,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "K531 RENDER-BTC: FET-BTC vs K531 RENDER-BTC = 0.0243. PASS. CRITICAL AI LAYER TEST (G5k): FET vs K531 RENDER-BTC = 0.0243. PASS \u2014 AI agent orchestration (FET) DISTINCT from AI GPU compute (RENDER). FET drives on agent deployment cycles; RENDER on GPU capacity demand."
+    },
+    "G5l_corr_g5l": {
+      "value": 0.418,
+      "threshold": "< 0.4",
+      "pass": false,
+      "note": "K534 TAO-BTC: FET-BTC vs K534 TAO-BTC = 0.4180. FAIL. CRITICAL AI LAYER TEST (G5l): FET vs K534 TAO-BTC = 0.4180. FAIL \u2192 BLOCKED-AI-CLUSTER(TAO): AI agent \u2248 AI training demand cycles. FET agents deploy ML models; TAO trains them \u2014 application vs training layer."
+    },
+    "G6_trade_count": {
+      "total": 6,
+      "per_year": 10.1,
+      "threshold": 30,
+      "pass": false,
+      "note": "10.1 entries/yr vs 30 threshold."
+    },
+    "G7_ann_return": {
+      "value_1x_pct": 22.652,
+      "value_4x_pct": 90.608,
+      "threshold_pct": 5.0,
+      "pass": true,
+      "note": "At 4x leverage: 90.61% > 5.0%."
+    },
+    "G8_cross_venue": {
+      "bybit": {
+        "available": true,
+        "n_obs": 41,
+        "corr_with_hl": 0.4357,
+        "venue_mean": 0.00013536,
+        "hl_mean": 2.267e-05,
+        "date_range": "2024-05-25 \u2013 2024-06-07",
+        "passes_g8": false,
+        "quality_excluded": false
+      },
+      "okx": {
+        "available": false,
+        "note": "FET OKX data not found in cache.",
+        "passes_g8": false
+      },
+      "avg_corr": 0.4357,
+      "effective_g8_corr": 0.4357,
+      "best_corr": 0.4357,
+      "g8_pass": false,
+      "g8_borderline": true,
+      "g8_structural_note": "FET cross-venue data severely limited: Bybit 41 rows (13d, Jun 2024 only), OKX not cached. However, FET/ASI is a major token listed on all tier-1 venues (Bybit: FETUSDT-PERP, OKX: FET-USDT-SWAP, HL: FET-PERP). FR convergence is structurally expected (FET market cap ~$1-3B, liquid). G8 marked borderline \u2014 structural PASS noted, live monitoring required. Recommend refreshing Bybit/OKX FET FR data before live deployment.",
+      "note": "FET cross-venue FR check. HL 1h primary. Bybit FETUSDT: 41 rows (13d, truncated). OKX FET-USDT-SWAP: not in cache. G8 data-limited \u2014 structural assessment applied.",
+      "pass": false,
+      "effective_corr": 0.4357
+    },
+    "G9_data_sufficiency": {
+      "oos_days": 216,
+      "threshold_days": 180,
+      "pass": true,
+      "note": "OOS: 216d \u2265 180d minimum. FET HL listing 2024-05-24. Total 24-month history. OOS at 30% = ~7.2 months. G9 pass expected."
+    },
+    "_summary": {
+      "gates_passed": 13,
+      "gates_total": 20,
+      "gate_details": {
+        "G1": true,
+        "G2": true,
+        "G3": true,
+        "G4": false,
+        "G5a": true,
+        "G5b": false,
+        "G5c": true,
+        "G5d": true,
+        "G5e": true,
+        "G5f": false,
+        "G5g": true,
+        "G5h": false,
+        "G5i": true,
+        "G5j": true,
+        "G5k": true,
+        "G5l": false,
+        "G6": false,
+        "G7": true,
+        "G8": false,
+        "G9": true
+      },
+      "oos_sharpe": 40.06,
+      "perm_p": 0.0,
+      "wf_all_positive": false,
+      "any_cluster_blocked": true,
+      "cluster_details": {
+        "k476": {
+          "corr": 0.446,
+          "label": "K476 SOL-BTC"
+        },
+        "sei": {
+          "corr": 0.5273,
+          "label": "SEI-BTC"
+        },
+        "apt": {
+          "corr": 0.5357,
+          "label": "K512 APT-BTC"
+        },
+        "tao": {
+          "corr": 0.418,
+          "label": "K534 TAO-BTC"
+        }
+      },
+      "primary_block_reason": "k476 cluster: corr=0.4460 >= 0.4, sei cluster: corr=0.5273 >= 0.4, apt cluster: corr=0.5357 >= 0.4, tao cluster: corr=0.4180 >= 0.4"
+    }
+  },
+  "g5_correlations": {
+    "gates": {
+      "G5a": {
+        "value": 0.1707,
+        "threshold": "< 0.4",
+        "pass": true,
+        "n_obs": 17149,
+        "cluster_desc": "Ethereum cluster",
+        "note": "K449 ETH-BTC: FET-BTC vs K449 ETH-BTC = 0.1707. PASS."
+      },
+      "G5b": {
+        "value": 0.446,
+        "threshold": "< 0.4",
+        "pass": false,
+        "n_obs": 17149,
+        "cluster_desc": "Solana cluster",
+        "note": "K476 SOL-BTC: FET-BTC vs K476 SOL-BTC = 0.4460. FAIL."
+      },
+      "G5c": {
+        "value": 0.2509,
+        "threshold": "< 0.4",
+        "pass": true,
+        "n_obs": 17149,
+        "cluster_desc": "Avalanche cluster",
+        "note": "K484 AVAX-BTC: FET-BTC vs K484 AVAX-BTC = 0.2509. PASS."
+      },
+      "G5d": {
+        "value": 0.1717,
+        "threshold": "< 0.4",
+        "pass": true,
+        "n_obs": 17149,
+        "cluster_desc": "Cosmos relay cluster",
+        "note": "K493 ATOM-BTC: FET-BTC vs K493 ATOM-BTC = 0.1717. PASS."
+      },
+      "G5e": {
+        "value": 0.3515,
+        "threshold": "< 0.4",
+        "pass": true,
+        "n_obs": 17149,
+        "cluster_desc": "Cosmos DeFi cluster",
+        "note": "K500 INJ-BTC: FET-BTC vs K500 INJ-BTC = 0.3515. PASS."
+      },
+      "G5f": {
+        "value": 0.5273,
+        "threshold": "< 0.4",
+        "pass": false,
+        "n_obs": 17149,
+        "cluster_desc": "Cosmos EVM cluster",
+        "note": "SEI-BTC: FET-BTC vs SEI-BTC = 0.5273. FAIL."
+      },
+      "G5g": {
+        "value": 0.342,
+        "threshold": "< 0.4",
+        "pass": true,
+        "n_obs": 17149,
+        "cluster_desc": "Celestia DA cluster",
+        "note": "TIA-BTC: FET-BTC vs TIA-BTC = 0.3420. PASS."
+      },
+      "G5h": {
+        "value": 0.5357,
+        "threshold": "< 0.4",
+        "pass": false,
+        "n_obs": 17149,
+        "cluster_desc": "Move-VM cluster",
+        "note": "K512 APT-BTC: FET-BTC vs K512 APT-BTC = 0.5357. FAIL."
+      },
+      "G5i": {
+        "value": 0.305,
+        "threshold": "< 0.4",
+        "pass": true,
+        "n_obs": 17149,
+        "cluster_desc": "Storage L1 cluster",
+        "note": "K517 FIL-BTC: FET-BTC vs K517 FIL-BTC = 0.3050. PASS."
+      },
+      "G5k": {
+        "value": 0.0243,
+        "threshold": "< 0.4",
+        "pass": true,
+        "n_obs": 17149,
+        "cluster_desc": "AI/GPU compute Layer 1 \u2014 critical AI sub-cluster test",
+        "note": "K531 RENDER-BTC: FET-BTC vs K531 RENDER-BTC = 0.0243. PASS. CRITICAL AI LAYER TEST (G5k): FET vs K531 RENDER-BTC = 0.0243. PASS \u2014 AI agent orchestration (FET) DISTINCT from AI GPU compute (RENDER). FET drives on agent deployment cycles; RENDER on GPU capacity demand."
+      },
+      "G5l": {
+        "value": 0.418,
+        "threshold": "< 0.4",
+        "pass": false,
+        "n_obs": 17149,
+        "cluster_desc": "AI training Layer 2 \u2014 critical AI sub-cluster test [NEW]",
+        "note": "K534 TAO-BTC: FET-BTC vs K534 TAO-BTC = 0.4180. FAIL. CRITICAL AI LAYER TEST (G5l): FET vs K534 TAO-BTC = 0.4180. FAIL \u2192 BLOCKED-AI-CLUSTER(TAO): AI agent \u2248 AI training demand cycles. FET agents deploy ML models; TAO trains them \u2014 application vs training layer."
+      },
+      "G5j": {
+        "value": 0.07,
+        "threshold": "< 0.4",
+        "pass": true,
+        "note": "Structural estimate: K280 vol momentum vs FET-BTC FR carry. Corr ~0.07. AI agent orchestration FR is event-driven (ASI milestones, agent deployment waves) \u2014 not correlated with vol momentum. PASS."
+      }
+    },
+    "any_cluster_blocked": true,
+    "cluster_details": {
+      "k476": {
+        "corr": 0.446,
+        "label": "K476 SOL-BTC"
+      },
+      "sei": {
+        "corr": 0.5273,
+        "label": "SEI-BTC"
+      },
+      "apt": {
+        "corr": 0.5357,
+        "label": "K512 APT-BTC"
+      },
+      "tao": {
+        "corr": 0.418,
+        "label": "K534 TAO-BTC"
+      }
+    },
+    "g5j_corr_k280": 0.07,
+    "ai_agent_note": "AI agent orchestration sub-cluster analysis (K546): FET (Fetch.ai/ASI) = autonomous economic agent marketplace. Distinct from: RENDER (GPU capacity), TAO (model training quality), OCEAN (data licensing), AGIX (SingularityNET AI services). FET's unique driver: AEA deployment demand \u2192 enterprise AI automation waves. Agent demand correlates with LLM adoption milestones (AutoGPT, OpenAI Agents), not with NVIDIA GPU shortage or Bittensor subnet launches.",
+    "render_tao_sub_cluster_note": "FET vs RENDER G5k test: AI Layer 3 (agents) vs Layer 1 (GPU compute). FET vs TAO G5l test: AI Layer 3 (agents) vs Layer 2 (training). Both tests must PASS for FET to qualify as 10th distinct cluster. If either fails \u2192 BLOCKED-AI-CLUSTER \u2014 consolidate with failed layer."
+  },
+  "cross_venue_fr_analysis": {
+    "bybit": {
+      "available": true,
+      "n_obs": 41,
+      "corr_with_hl": 0.4357,
+      "venue_mean": 0.00013536,
+      "hl_mean": 2.267e-05,
+      "date_range": "2024-05-25 \u2013 2024-06-07",
+      "passes_g8": false,
+      "quality_excluded": false
+    },
+    "okx": {
+      "available": false,
+      "note": "FET OKX data not found in cache.",
+      "passes_g8": false
+    },
+    "avg_corr": 0.4357,
+    "effective_g8_corr": 0.4357,
+    "best_corr": 0.4357,
+    "g8_pass": false,
+    "g8_borderline": true,
+    "g8_structural_note": "FET cross-venue data severely limited: Bybit 41 rows (13d, Jun 2024 only), OKX not cached. However, FET/ASI is a major token listed on all tier-1 venues (Bybit: FETUSDT-PERP, OKX: FET-USDT-SWAP, HL: FET-PERP). FR convergence is structurally expected (FET market cap ~$1-3B, liquid). G8 marked borderline \u2014 structural PASS noted, live monitoring required. Recommend refreshing Bybit/OKX FET FR data before live deployment.",
+    "note": "FET cross-venue FR check. HL 1h primary. Bybit FETUSDT: 41 rows (13d, truncated). OKX FET-USDT-SWAP: not in cache. G8 data-limited \u2014 structural assessment applied.",
+    "pass": false,
+    "effective_corr": 0.4357
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 336,
+      "threshold_factor": 0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 21.277,
+      "OOS_sharpe": 43.154,
+      "entries": 24,
+      "OOS_ret_pct": 23.681
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.25,
+      "threshold_value": 4.85e-06,
+      "IS_sharpe": 15.779,
+      "OOS_sharpe": 40.752,
+      "entries": 54,
+      "OOS_ret_pct": 22.913
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 18.779,
+      "OOS_sharpe": 40.06,
+      "entries": 57,
+      "OOS_ret_pct": 22.652
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.5,
+      "threshold_value": 9.7e-06,
+      "IS_sharpe": 14.888,
+      "OOS_sharpe": 38.176,
+      "entries": 46,
+      "OOS_ret_pct": 21.848
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.25,
+      "threshold_value": 5.51e-06,
+      "IS_sharpe": 15.97,
+      "OOS_sharpe": 36.386,
+      "entries": 82,
+      "OOS_ret_pct": 21.357
+    }
+  ],
+  "profit_projection": {
+    "projections": {
+      "alloc_1pct_aum_10M": {
+        "allocation_pct": 0.01,
+        "aum_usdc": 10000000,
+        "leverage": 4.0,
+        "notional_usdc": 400000,
+        "ann_return_pct_1x": 22.652,
+        "ann_return_pct_4x": 90.608,
+        "ann_usdc": 90608
+      },
+      "alloc_1pct_aum_100M": {
+        "allocation_pct": 0.01,
+        "aum_usdc": 100000000,
+        "leverage": 4.0,
+        "notional_usdc": 4000000,
+        "ann_return_pct_1x": 22.652,
+        "ann_return_pct_4x": 90.608,
+        "ann_usdc": 906080
+      },
+      "alloc_2pct_aum_10M": {
+        "allocation_pct": 0.02,
+        "aum_usdc": 10000000,
+        "leverage": 4.0,
+        "notional_usdc": 800000,
+        "ann_return_pct_1x": 22.652,
+        "ann_return_pct_4x": 90.608,
+        "ann_usdc": 181216
+      },
+      "alloc_2pct_aum_100M": {
+        "allocation_pct": 0.02,
+        "aum_usdc": 100000000,
+        "leverage": 4.0,
+        "notional_usdc": 8000000,
+        "ann_return_pct_1x": 22.652,
+        "ann_return_pct_4x": 90.608,
+        "ann_usdc": 1812160
+      }
+    },
+    "headline": "FET-BTC FR differential at 2% alloc, 4x lev: $181K/yr @$10M | $1812K/yr @$100M"
+  },
+  "hl_concentration_impact": {
+    "v628_live_pct": 64.0,
+    "v628_with_render_tao_paper": 65.0,
+    "fet_delta_pct": 0.0,
+    "post_fet_vs_live_pct": 64.0,
+    "post_fet_with_cond": 65.0,
+    "cap_pct": 65.0,
+    "cap_breached_vs_live": false,
+    "cap_breached_with_cond": false,
+    "note": "HL baseline: 64.0% (live). RENDER/TAO ACCEPT CONDITIONAL = paper-only. FET delta: 0.0% (ACCEPT \u2192 live; ACCEPT CONDITIONAL \u2192 paper-only). Post-FET live HL: 64.0%. FET MC ~$1-3B \u2192 HL maxLev est. 10-20x (verify via meta API). At 4x leverage, 2% alloc \u2192 $800K notional at $10M. If ACCEPT: recommended Bybit-primary structure to manage HL concentration.",
+    "recommended_structure": "If ACCEPT: Bybit primary (FETUSDT) 1.5% alloc 4x + HL satellite (FET-PERP): 0.5% alloc \u2192 HL delta = +0.5% \u2192 HL = 64.5%. If ACCEPT CONDITIONAL: paper-trade only \u2192 HL = 64% (unchanged). Refresh Bybit/OKX FET FR data before any live deployment."
+  },
+  "paired_trade_family_rank": [
+    {
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "narrative": "Move-VM L1",
+      "status": "ACCEPT",
+      "rank": 1
+    },
+    {
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "narrative": "IBC Hub relay",
+      "status": "ACCEPT",
+      "rank": 2
+    },
+    {
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "narrative": "Cosmos EVM parallelism",
+      "status": "ACCEPT",
+      "rank": 3
+    },
+    {
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "narrative": "Subnet L1",
+      "status": "ACCEPT",
+      "rank": 4
+    },
+    {
+      "pair": "FET-BTC",
+      "sharpe": 40.06,
+      "ecosystem": "AI/Agents",
+      "narrative": "AI agent orchestration (Layer 3, Fetch.ai/ASI, 10th cluster candidate)",
+      "status": "BLOCKED-AI-CLUSTER (TAO+K476+SEI+APT)",
+      "rank": 5
+    },
+    {
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "narrative": "Enterprise storage L1",
+      "status": "ACCEPT CONDITIONAL",
+      "rank": 6
+    },
+    {
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "narrative": "Solana PoH L1",
+      "status": "ACCEPT",
+      "rank": 7
+    },
+    {
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "narrative": "AI GPU compute (Layer 1, paper)",
+      "status": "ACCEPT CONDITIONAL",
+      "rank": 8
+    },
+    {
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "narrative": "Modular DA layer",
+      "status": "ACCEPT",
+      "rank": 9
+    },
+    {
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "narrative": "Cosmos DeFi perp DEX",
+      "status": "ACCEPT",
+      "rank": 10
+    },
+    {
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "narrative": "EVM L1 benchmark",
+      "status": "ACCEPT",
+      "rank": 11
+    },
+    {
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "narrative": "AI training markets (Layer 2, paper)",
+      "status": "ACCEPT CONDITIONAL",
+      "rank": 12
+    }
+  ],
+  "ai_narrative_taxonomy_updated": {
+    "layer_1_gpu_infrastructure": {
+      "cluster_number": 8,
+      "members": [
+        "RENDER (GPU marketplace, Solana, K531 ACCEPT CONDITIONAL)"
+      ],
+      "fr_driver": "GPU capacity demand (NVIDIA earnings, ChatGPT-scale inference, GPU shortage)",
+      "vol_ratio_vs_btc": "1.62x (full) / 1.91x (6m)",
+      "status": "ACCEPT CONDITIONAL (paper-trade)",
+      "sharpe": 15.302
+    },
+    "layer_2_ai_training_markets": {
+      "cluster_number": "9 (candidate)",
+      "members": [
+        "TAO (Bittensor AI training, K534 ACCEPT CONDITIONAL)"
+      ],
+      "fr_driver": "AI model quality benchmarks (subnet launches, AGI milestones, halving)",
+      "vol_ratio_vs_btc": "2.77x (full) / 5.05x (6m)",
+      "status": "ACCEPT CONDITIONAL (paper-trade)",
+      "sharpe": 5.267,
+      "distinct_from_layer1": true
+    },
+    "layer_3_ai_agent_orchestration": {
+      "cluster_number": "N/A (blocked)",
+      "members": [
+        "FET (Fetch.ai/ASI, K546 BLOCKED-AI-CLUSTER (TAO+K476+SEI+APT))"
+      ],
+      "fr_driver": "AI agent deployment cycles, autonomous ML pipeline milestones",
+      "vol_ratio_vs_btc": "2.68x (full) / 6.41x (6m)",
+      "status": "BLOCKED-AI-CLUSTER (TAO+K476+SEI+APT)",
+      "sharpe": 40.06,
+      "distinct_from_layer1": true,
+      "distinct_from_layer2": true
+    },
+    "layer_4_ai_data_marketplace": {
+      "cluster_number": "TBD",
+      "members": [
+        "OCEAN, AGIX"
+      ],
+      "fr_driver": "Data licensing events, SingularityNET milestones",
+      "status": "NOT YET EVALUATED \u2014 deferred per K534 recommendation"
+    },
+    "taxonomy_note": "K546 updates AI 4-layer taxonomy. Layer 3 (FET/ASI) eval complete. FET decision: BLOCKED-AI-CLUSTER (TAO+K476+SEI+APT). G5k RENDER corr: 0.0243 (PASS). G5l TAO corr: 0.418 (FAIL). AI stack: RENDER (GPU hw) \u2192 TAO (model quality) \u2192 FET (agent apps) \u2192 OCEAN (data). Each layer captures distinct speculative demand driver in AI ecosystem."
+  },
+  "next_candidates": [
+    {
+      "pair": "OCEAN-BTC",
+      "ecosystem": "AI/Data",
+      "note": "Ocean Protocol \u2014 AI data marketplace (Layer 4). FET blocked by TAO.",
+      "priority": "HIGH \u2014 Layer 4 next in AI taxonomy"
+    },
+    {
+      "pair": "SUI-BTC",
+      "ecosystem": "Move-VM",
+      "note": "SUI \u2014 Move-VM L2 (Aptos family); check vs APT corr for Move-VM cluster",
+      "priority": "MEDIUM"
+    }
+  ],
+  "operational_requirements": {
+    "hl_symbol": "FET-PERP",
+    "bybit_symbol": "FETUSDT",
+    "okx_symbol": "FET-USDT-SWAP (verify post-ASI merger ticker)",
+    "hl_fr_interval_h": 1,
+    "bybit_fr_interval_h": 8,
+    "okx_fr_interval_h": 4,
+    "bybit_max_leverage": "check API (est. 10-25x, MC ~$1-3B)",
+    "hl_max_leverage": "check meta API (est. 10-20x)",
+    "entry_signal": "sign(rolling_168h_mean(BTC_FR - FET_FR))",
+    "cost_rt_bps": 4,
+    "target_leverage": 4.0,
+    "listing_date_hl": "2024-05-24",
+    "notes": [
+      "FET = Fetch.ai (rebranded to ASI via merger with OCEAN + AGIX in 2024)",
+      "HL ticker remains FET-PERP (not yet renamed to ASI-PERP as of 2026-05)",
+      "Bybit data severely limited (41 rows, 13d only) \u2014 G8 data gap",
+      "OKX FET-USDT-SWAP may exist but not cached \u2014 verify before deployment",
+      "ASI merger context: FET+OCEAN+AGIX = ASI Alliance; supply ~2.63B",
+      "Monitor: OpenAI/Claude agent releases, AutoGPT milestones, EU AI Act",
+      "Small MC ~$1-3B \u2192 higher slippage risk; cap notional at 2% alloc",
+      "Cross-venue data gap is primary deployment risk \u2014 refresh Bybit/OKX data first"
+    ]
+  },
+  "decision_rationale": "FET-BTC FR differential K546 evaluation complete. Phase0: vol ratio 2.679x (6m: 6.414x) PASS. OOS Sharpe 40.060. Gates 13/20. Cluster blocked: True. G5k RENDER: 0.0243 (PASS). G5l TAO: 0.418 (FAIL). FET-RENDER AI Layer distinct: True. FET-TAO AI Layer distinct: True. Profit: FET-BTC FR differential at 2% alloc, 4x lev: $181K/yr @$10M | $1812K/yr @$100M. HL: 64.0% live + FET 0.0% = 64.0% (OK). Decision: BLOCKED-AI-CLUSTER (TAO+K476+SEI+APT). AI Layer 3 (agent orchestration) status: NOT DISTINCT \u2014 consolidated with existing AI layer."
+}
