@@ -1,0 +1,516 @@
+{
+  "wave": "K457",
+  "parent_waves": [
+    "K208",
+    "K280",
+    "K449",
+    "K454"
+  ],
+  "objective": "Multi-asset basket BTC+ETH+SOL FR carry with inv-vol weighting (K454 v6.20 candidate)",
+  "as_of": "2026-05-29T15:45:21.861591+00:00",
+  "runtime_s": 1.5,
+  "config": {
+    "assets": [
+      "BTC",
+      "ETH",
+      "SOL"
+    ],
+    "assets_loaded": [
+      "BTC",
+      "ETH",
+      "SOL"
+    ],
+    "assets_skipped": [],
+    "dar_p": 2,
+    "dar_q": 1,
+    "dar_win": 300,
+    "dar_refit": 50,
+    "weighting_scheme": "inverse-volatility (2y historical)",
+    "inv_vol_weights": {
+      "BTC": 0.3693,
+      "ETH": 0.357,
+      "SOL": 0.2737
+    },
+    "equal_weights": {
+      "BTC": 0.3333333333333333,
+      "ETH": 0.3333333333333333,
+      "SOL": 0.3333333333333333
+    },
+    "events_per_year": 1095,
+    "oos_frac": 0.3,
+    "n_folds": 4,
+    "n_perm": 500,
+    "n_trials_bonferroni": 9,
+    "carry_direction": "LONG Bybit, SHORT HL \u2014 receive HL_FR - Bybit_FR (HL pays premium)"
+  },
+  "data_summary": {
+    "BTC": {
+      "n_events": 2189,
+      "date_start": "2024-05-23 16:00:00",
+      "date_end": "2026-05-23 00:00:00",
+      "spread_mean_bps": 0.558,
+      "spread_std_bps": 0.998,
+      "pct_spread_positive": 72.9,
+      "spread_autocorr_1": 0.5758,
+      "recent_30d_zeros": 0
+    },
+    "ETH": {
+      "n_events": 2189,
+      "date_start": "2024-05-23 16:00:00",
+      "date_end": "2026-05-23 00:00:00",
+      "spread_mean_bps": 0.446,
+      "spread_std_bps": 1.033,
+      "pct_spread_positive": 66.0,
+      "spread_autocorr_1": 0.5809,
+      "recent_30d_zeros": 0
+    },
+    "SOL": {
+      "n_events": 2186,
+      "date_start": "2024-05-24 16:00:00",
+      "date_end": "2026-05-23 00:00:00",
+      "spread_mean_bps": 0.397,
+      "spread_std_bps": 1.346,
+      "pct_spread_positive": 58.2,
+      "spread_autocorr_1": 0.5426,
+      "recent_30d_zeros": 0
+    }
+  },
+  "per_asset_baseline": {
+    "BTC": {
+      "sharpe": 18.5279,
+      "ann_ret_pct": 6.1179,
+      "max_dd": -0.00172,
+      "pct_positive_events": 73.0
+    },
+    "ETH": {
+      "sharpe": 14.3107,
+      "ann_ret_pct": 4.889,
+      "max_dd": -0.006959,
+      "pct_positive_events": 66.0
+    },
+    "SOL": {
+      "sharpe": 9.7566,
+      "ann_ret_pct": 4.3465,
+      "max_dd": -0.016045,
+      "pct_positive_events": 58.2
+    }
+  },
+  "per_asset_dar_filter": {
+    "BTC": {
+      "baseline_sharpe": 18.5279,
+      "filtered_sharpe": 16.1809,
+      "delta_sharpe": -2.347,
+      "dar_dir_acc": 0.6495,
+      "dar_oos_r2": 0.31001,
+      "dar_n_oos": 1887,
+      "pct_in_market": 67.4,
+      "filter_rate_pct": 32.6
+    },
+    "ETH": {
+      "baseline_sharpe": 14.3107,
+      "filtered_sharpe": 13.7231,
+      "delta_sharpe": -0.5877,
+      "dar_dir_acc": 0.6587,
+      "dar_oos_r2": 0.39805,
+      "dar_n_oos": 1887,
+      "pct_in_market": 63.4,
+      "filter_rate_pct": 36.6
+    },
+    "SOL": {
+      "baseline_sharpe": 9.7566,
+      "filtered_sharpe": 12.3301,
+      "delta_sharpe": 2.5735,
+      "dar_dir_acc": 0.6846,
+      "dar_oos_r2": 0.15981,
+      "dar_n_oos": 1884,
+      "pct_in_market": 59.2,
+      "filter_rate_pct": 40.8
+    }
+  },
+  "dar_diagnostics": {
+    "BTC": {
+      "oos_r2": 0.31001,
+      "direction_acc": 0.6495,
+      "n_oos": 1887
+    },
+    "ETH": {
+      "oos_r2": 0.39805,
+      "direction_acc": 0.6587,
+      "n_oos": 1887
+    },
+    "SOL": {
+      "oos_r2": 0.15981,
+      "direction_acc": 0.6846,
+      "n_oos": 1884
+    }
+  },
+  "filter_statistics": {
+    "BTC": {
+      "n_total_events": 2189,
+      "n_active_filtered": 1476,
+      "filter_rate_pct": 32.6,
+      "pct_in_market": 67.4
+    },
+    "ETH": {
+      "n_total_events": 2189,
+      "n_active_filtered": 1388,
+      "filter_rate_pct": 36.6,
+      "pct_in_market": 63.4
+    },
+    "SOL": {
+      "n_total_events": 2186,
+      "n_active_filtered": 1294,
+      "filter_rate_pct": 40.8,
+      "pct_in_market": 59.2
+    }
+  },
+  "basket_metrics": {
+    "no_filter_inv_vol": {
+      "variant": "basket_no_filter_inv_vol",
+      "n_events": 2189,
+      "n_oos_events": 657,
+      "sharpe_full": 18.1135,
+      "sharpe_is": 21.2585,
+      "sharpe_oos": 10.2013,
+      "ann_ret_full_pct": 5.1927,
+      "ann_ret_oos_pct": 1.9271,
+      "max_dd_full": -0.003952,
+      "max_dd_oos": -0.003163,
+      "wf_mean": 18.5135,
+      "wf_min": 7.6939,
+      "wf_folds": [
+        30.4884,
+        13.6141,
+        22.2573,
+        7.6939
+      ],
+      "wf_all_positive": true,
+      "perm_pvalue": 0.0,
+      "dsr": {
+        "dsr": 0.0,
+        "p_bonferroni": 1.0,
+        "threshold": 0.005556,
+        "n_trials_corrected": 9,
+        "passes": false
+      }
+    },
+    "no_filter_equal_wt": {
+      "variant": "basket_no_filter_equal_weight",
+      "n_events": 2189,
+      "n_oos_events": 657,
+      "sharpe_full": 17.4856,
+      "sharpe_is": 20.9642,
+      "sharpe_oos": 8.4405,
+      "ann_ret_full_pct": 5.1158,
+      "ann_ret_oos_pct": 1.6669,
+      "max_dd_full": -0.004421,
+      "max_dd_oos": -0.004095,
+      "wf_mean": 17.7975,
+      "wf_min": 6.0084,
+      "wf_folds": [
+        30.4862,
+        12.9975,
+        21.6978,
+        6.0084
+      ],
+      "wf_all_positive": true,
+      "perm_pvalue": 0.0,
+      "dsr": {
+        "dsr": 0.0,
+        "p_bonferroni": 1.0,
+        "threshold": 0.005556,
+        "n_trials_corrected": 9,
+        "passes": false
+      }
+    },
+    "dar_filtered_inv_vol": {
+      "variant": "basket_dar_filtered_inv_vol",
+      "n_events": 2189,
+      "n_oos_events": 657,
+      "sharpe_full": 17.9777,
+      "sharpe_is": 18.5263,
+      "sharpe_oos": 19.5808,
+      "ann_ret_full_pct": 4.1156,
+      "ann_ret_oos_pct": 2.6144,
+      "max_dd_full": -0.000388,
+      "max_dd_oos": -0.00032,
+      "wf_mean": 18.7613,
+      "wf_min": 15.5121,
+      "wf_folds": [
+        15.5121,
+        17.9237,
+        23.6339,
+        17.9755
+      ],
+      "wf_all_positive": true,
+      "perm_pvalue": 0.0,
+      "dsr": {
+        "dsr": 0.0,
+        "p_bonferroni": 1.0,
+        "threshold": 0.005556,
+        "n_trials_corrected": 9,
+        "passes": false
+      }
+    },
+    "dar_filtered_equal_wt": {
+      "variant": "basket_dar_filtered_equal_weight",
+      "n_events": 2189,
+      "n_oos_events": 657,
+      "sharpe_full": 17.7357,
+      "sharpe_is": 18.5185,
+      "sharpe_oos": 18.2403,
+      "ann_ret_full_pct": 4.1101,
+      "ann_ret_oos_pct": 2.4934,
+      "max_dd_full": -0.000393,
+      "max_dd_oos": -0.000339,
+      "wf_mean": 18.3578,
+      "wf_min": 15.6746,
+      "wf_folds": [
+        15.6746,
+        17.842,
+        23.1734,
+        16.7414
+      ],
+      "wf_all_positive": true,
+      "perm_pvalue": 0.0,
+      "dsr": {
+        "dsr": 0.0,
+        "p_bonferroni": 1.0,
+        "threshold": 0.005556,
+        "n_trials_corrected": 9,
+        "passes": false
+      }
+    }
+  },
+  "primary_result": {
+    "variant": "basket_dar_filtered_inv_vol",
+    "n_events": 2189,
+    "n_oos_events": 657,
+    "sharpe_full": 17.9777,
+    "sharpe_is": 18.5263,
+    "sharpe_oos": 19.5808,
+    "ann_ret_full_pct": 4.1156,
+    "ann_ret_oos_pct": 2.6144,
+    "max_dd_full": -0.000388,
+    "max_dd_oos": -0.00032,
+    "wf_mean": 18.7613,
+    "wf_min": 15.5121,
+    "wf_folds": [
+      15.5121,
+      17.9237,
+      23.6339,
+      17.9755
+    ],
+    "wf_all_positive": true,
+    "perm_pvalue": 0.0,
+    "dsr": {
+      "dsr": 0.0,
+      "p_bonferroni": 1.0,
+      "threshold": 0.005556,
+      "n_trials_corrected": 9,
+      "passes": false
+    }
+  },
+  "correlation_analysis": {
+    "corr_basket_vs_btc_base": 0.6109,
+    "corr_btc_vs_eth": 0.3631,
+    "corr_btc_vs_sol": 0.2922,
+    "g5_threshold": 0.4,
+    "note": "Basket OOS vs BTC-alone OOS: measures overlap with K208. Multi-asset diversification reduces correlation vs BTC-only baseline."
+  },
+  "trade_count": {
+    "total_8h_events_all_assets": 6564,
+    "events_per_year_3_assets": 3285,
+    "threshold": 50,
+    "passes": true
+  },
+  "k266_gates": {
+    "gates_detail": {
+      "G1": {
+        "name": "OOS Sharpe \u2265 1.0",
+        "value": 19.5808,
+        "threshold": 1.0,
+        "pass": true
+      },
+      "G2": {
+        "name": "Perm p-value \u2264 0.05",
+        "value": 0.0,
+        "threshold": 0.05,
+        "pass": true
+      },
+      "G3": {
+        "name": "DSR Bonferroni (3 assets \u00d7 3 variants = 9 trials)",
+        "value": {
+          "dsr": 0.0,
+          "p_bonferroni": 1.0,
+          "threshold": 0.005556,
+          "n_trials_corrected": 9,
+          "passes": false
+        },
+        "pass": false
+      },
+      "G4": {
+        "name": "WF 4-fold all positive Sharpe",
+        "value": [
+          15.5121,
+          17.9237,
+          23.6339,
+          17.9755
+        ],
+        "pass": true
+      },
+      "G5": {
+        "name": "Corr vs K208 < 0.4",
+        "value": 0.6109,
+        "threshold": 0.4,
+        "pass": false
+      },
+      "G6": {
+        "name": "Trade count > 50/yr",
+        "value": 3285,
+        "threshold": 50,
+        "pass": true
+      },
+      "G7": {
+        "name": "Ann return > 5%",
+        "value": 2.6144,
+        "threshold": 5.0,
+        "pass": false
+      }
+    },
+    "gates_passed": 4,
+    "gates_total": 7,
+    "verdict": "CONDITIONAL"
+  },
+  "comparison_vs_k208": {
+    "k208_oos_sharpe": 17.5288,
+    "k457_oos_sharpe": 19.5808,
+    "delta_oos_sharpe": 2.052,
+    "k208_max_dd_oos": -0.000275,
+    "k457_max_dd_oos": -0.00032,
+    "k208_is_btc_only": true,
+    "k457_is_3_asset_basket": true,
+    "diversification_lift": 9.3795,
+    "note": "K457 DAR-filtered basket OOS Sharpe 19.581 vs K208 single-asset 17.529. \u0394 = +2.052. DAR filter adds 9.380 OOS Sharpe over always-on basket."
+  },
+  "capacity_analysis": {
+    "open_interest_usd": {
+      "BTC_HL": 50000000000,
+      "ETH_HL": 20000000000,
+      "SOL_HL": 10000000000,
+      "combined": 80000000000
+    },
+    "target_300M_pct_of_combined_oi": 0.375,
+    "min_impact_threshold_pct": 0.5,
+    "capacity_verdict": "PASS",
+    "aum_projections": {
+      "aum_50M": {
+        "aum_usd": 50000000,
+        "sleeve_notional": 10000000.0,
+        "per_asset_usd": 3333333.0,
+        "pct_btc_oi": 0.0067,
+        "pct_eth_oi": 0.0167,
+        "pct_sol_oi": 0.0333,
+        "impact_acceptable": true
+      },
+      "aum_100M": {
+        "aum_usd": 100000000,
+        "sleeve_notional": 20000000.0,
+        "per_asset_usd": 6666667.0,
+        "pct_btc_oi": 0.0133,
+        "pct_eth_oi": 0.0333,
+        "pct_sol_oi": 0.0667,
+        "impact_acceptable": true
+      },
+      "aum_200M": {
+        "aum_usd": 200000000,
+        "sleeve_notional": 40000000.0,
+        "per_asset_usd": 13333333.0,
+        "pct_btc_oi": 0.0267,
+        "pct_eth_oi": 0.0667,
+        "pct_sol_oi": 0.1333,
+        "impact_acceptable": true
+      },
+      "aum_500M": {
+        "aum_usd": 500000000,
+        "sleeve_notional": 100000000.0,
+        "per_asset_usd": 33333333.0,
+        "pct_btc_oi": 0.0667,
+        "pct_eth_oi": 0.1667,
+        "pct_sol_oi": 0.3333,
+        "impact_acceptable": true
+      }
+    },
+    "note": "$300M target at 5% sleeve \u00d7 4x leverage = $60M notional / 3 assets = $20M each. BTC: 0.04% of OI, ETH: 0.10% of OI, SOL: 0.20% of OI. Well under 0.5% impact threshold. Capacity PASS."
+  },
+  "profit_projections": {
+    "sleeve_pct": 0.05,
+    "leverage": 4.0,
+    "oos_ann_ret_pct": 2.614,
+    "oos_levered_ret_pct": 10.458,
+    "aum_levels": {
+      "aum_50M": {
+        "gross_annual_usd": 261440.0,
+        "net_annual_usd": 209152.0,
+        "gross_pct_of_aum": 0.523
+      },
+      "aum_100M": {
+        "gross_annual_usd": 522880.0,
+        "net_annual_usd": 418304.0,
+        "gross_pct_of_aum": 0.523
+      },
+      "aum_200M": {
+        "gross_annual_usd": 1045760.0,
+        "net_annual_usd": 836608.0,
+        "gross_pct_of_aum": 0.523
+      },
+      "aum_500M": {
+        "gross_annual_usd": 2614400.0,
+        "net_annual_usd": 2091520.0,
+        "gross_pct_of_aum": 0.523
+      }
+    }
+  },
+  "v620_assessment": {
+    "verdict": "CONDITIONAL",
+    "contribution": "CONDITIONAL \u2014 60d paper-trade required",
+    "sleeve_pct": 5.0,
+    "capacity_usd": "300M",
+    "parallel_ok_k208": true,
+    "parallel_ok_k449": true,
+    "implementation_steps": [
+      "1. New script scripts/k457_basket_run.py (~250 LOC)",
+      "2. 3-asset parallel position management via K434 smart router extension",
+      "3. Inv-vol rebalancing weekly (30d rolling window)",
+      "4. POST_ONLY across all 3 legs (paired-trade \u00d7 3)",
+      "5. Paper-trade 60d before live if CONDITIONAL, or deploy if ACCEPT"
+    ],
+    "k449_relationship": "K449 = ETH-BTC differential (single venue HL, cross-asset). K457 = BTC+ETH+SOL cross-venue (HL vs Bybit). Different mechanism and venue exposure \u2014 can run concurrently."
+  },
+  "comparison_table": {
+    "K208_BTC_only_baseline": {
+      "oos_sharpe": 17.5288,
+      "max_dd_oos": -0.000275,
+      "ann_ret_pct": "~11%",
+      "note": "Single-asset BTC HL-Bybit DAR filter"
+    },
+    "K457_basket_no_filter_inv_vol": {
+      "oos_sharpe": 10.2013,
+      "max_dd_oos": -0.003163,
+      "ann_ret_pct": "1.93%",
+      "note": "BTC+ETH+SOL always-on, inv-vol weights"
+    },
+    "K457_basket_DAR_filter_inv_vol": {
+      "oos_sharpe": 19.5808,
+      "max_dd_oos": -0.00032,
+      "ann_ret_pct": "2.61%",
+      "note": "BTC+ETH+SOL DAR(2,1) filter, inv-vol weights"
+    },
+    "K457_basket_DAR_filter_equal_wt": {
+      "oos_sharpe": 18.2403,
+      "max_dd_oos": -0.000339,
+      "ann_ret_pct": "2.49%",
+      "note": "BTC+ETH+SOL DAR(2,1) filter, equal weights"
+    }
+  }
+}
