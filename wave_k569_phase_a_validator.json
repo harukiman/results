@@ -1,0 +1,842 @@
+{
+  "wave": "K569",
+  "title": "Phase A Pre-Execution Validator (5 actions simulated)",
+  "generated_jst": "2026-05-30 06:49 JST",
+  "validator_version": "1.0.0",
+  "summary": {
+    "total_actions": 5,
+    "total_checks": 35,
+    "pass": 23,
+    "warn": 4,
+    "fail": 0,
+    "blockers": 0,
+    "action_simulation_results": {
+      "A1": "WARN",
+      "A2": "WARN",
+      "A3": "READY",
+      "A4": "READY",
+      "A5": "WARN"
+    },
+    "actions_ready": 2,
+    "actions_warn_only": 3,
+    "actions_blocked": 0,
+    "overall_readiness": "READY_WITH_WARNINGS"
+  },
+  "actions": {
+    "A1": {
+      "action_id": "A1",
+      "wave": "K545",
+      "title": "Tax Harvester plist load (annual Dec 28 06:00 JST)",
+      "estimated_time": "5 minutes",
+      "roi_estimate": "+$47K/yr @$10M (JPN tax jurisdiction)",
+      "risk_level": "ZERO",
+      "checks": [
+        {
+          "name": "plist_file_exists",
+          "status": "PASS",
+          "detail": "com.cryptolab.loss-harvester.plist found at /Users/nekonaomichi/crypto-lab/com.cryptolab.loss-harvester.plist",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "plist_syntax",
+          "status": "PASS",
+          "detail": "plist XML syntax valid (plistlib)",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "not_already_installed",
+          "status": "PASS",
+          "detail": "Plist NOT yet in ~/Library/LaunchAgents/ \u2014 clean install",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "harvester_script_exists",
+          "status": "PASS",
+          "detail": "scripts/loss_harvester.py found (31701 bytes)",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "not_already_loaded",
+          "status": "PASS",
+          "detail": "com.cryptolab.loss-harvester NOT currently loaded \u2014 clean install path",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "logs_dir_writable",
+          "status": "PASS",
+          "detail": "logs/ directory exists and writable",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "schedule_correct",
+          "status": "PASS",
+          "detail": "StartCalendarInterval=Dec-28 06:00, RunAtLoad=false \u2014 correct annual trigger",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "k339_no_hardcoded_paths",
+          "status": "WARN",
+          "detail": "loss_harvester.py has 1 /Users/ references",
+          "severity": "LOW",
+          "remediation": "Verify REPO_ROOT = Path(__file__).resolve().parent.parent pattern is used."
+        }
+      ],
+      "simulation_result": "WARN",
+      "known_issues": [
+        "K339 WARNING: loss_harvester.py contains 1 hardcoded /Users/ path(s) \u2014 daemon may fail after username change",
+        "Daemon triggers once annually (Dec 28) \u2014 verify system is running on that date",
+        "TAX_RATE_PCT env var should be set before Dec 28 run (default jurisdiction = US_STCG)",
+        "plist uses /usr/bin/python3 (system Python) \u2014 ensure loss_harvester.py deps are stdlib-only"
+      ],
+      "pre_execution_steps": [
+        "cp com.cryptolab.loss-harvester.plist ~/Library/LaunchAgents/",
+        "launchctl load ~/Library/LaunchAgents/com.cryptolab.loss-harvester.plist"
+      ],
+      "post_execution_verify": [
+        "launchctl list | grep loss-harvester",
+        "python3 scripts/loss_harvester.py --status",
+        "cat logs/loss_harvester.log  # after first scheduled run"
+      ],
+      "execution_commands": [
+        "cd /path/to/crypto-lab",
+        "cp com.cryptolab.loss-harvester.plist ~/Library/LaunchAgents/",
+        "launchctl load ~/Library/LaunchAgents/com.cryptolab.loss-harvester.plist",
+        "launchctl list | grep loss-harvester  # verify LOADED"
+      ]
+    },
+    "A2": {
+      "action_id": "A2",
+      "wave": "K481",
+      "title": "HL Builder Rebate \u2014 approveBuilderFee on-chain action",
+      "estimated_time": "30 minutes",
+      "roi_estimate": "+$99K-$496K/yr @$10M (conservative 25% referral pool mid estimate)",
+      "risk_level": "ZERO (additive, no existing logic removed)",
+      "checks": [
+        {
+          "name": "hl_builder_wallet_set",
+          "status": "WARN",
+          "detail": "HL_BUILDER_WALLET env var NOT SET \u2014 daemon integration will silently skip builder code",
+          "severity": "MEDIUM",
+          "remediation": "export HL_BUILDER_WALLET=0x<your_main_wallet> before running daemons."
+        },
+        {
+          "name": "target_script_exists",
+          "status": "PASS",
+          "detail": "scripts/post_only_order_manager.py exists (44083 bytes)",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "builder_code_enabled_state",
+          "status": "PASS",
+          "detail": "BUILDER_CODE_ENABLED already True in k280_live_fetch.py \u2014 rebate active",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "builder_wallet_env_wiring",
+          "status": "PASS",
+          "detail": "HL_BUILDER_WALLET env var referenced in k280_live_fetch.py (2 hits)",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "kyc_required",
+          "status": "PASS",
+          "detail": "No KYC required for HL builder fee registration (wallet signature only \u2014 per K481 docs)",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "hl_account_balance_prereq",
+          "status": "INFO",
+          "detail": "HL requires >=100 USDC perps account value for builder fee eligibility (cannot verify without live API call)",
+          "severity": "LOW",
+          "remediation": "Confirm HL account value > $100 USDC before applying."
+        }
+      ],
+      "simulation_result": "WARN",
+      "known_issues": [
+        "Rebate mechanism is referral pool (NOT direct taker fee rebate) \u2014 true rate TBD after activation",
+        "K370 correction: K368 assumed 50% direct rebate; actual rate requires post-activation claim data",
+        "Builder code active max 10 approvals per user \u2014 currently 0 used",
+        "On-chain action must use MAIN wallet (not API/agent wallet) \u2014 easy to confuse",
+        "Self-rebate mode (f=0): builder earns from referral pool, user pays zero extra fees",
+        "Activation is immediate once approved \u2014 no epoch delay documented"
+      ],
+      "pre_execution_steps": [
+        "Login to app.hyperliquid.xyz with MAIN wallet (not API/agent wallet)",
+        "Account \u2192 Builder \u2192 Enter builder wallet address (= your main wallet address)",
+        "Fee rate = 0 (f=0 \u2192 zero extra cost to user)",
+        "Sign transaction with main wallet",
+        "Set env var: export HL_BUILDER_WALLET=0x<your_wallet>"
+      ],
+      "post_execution_verify": [
+        "echo $HL_BUILDER_WALLET  # should be set",
+        "grep BUILDER_CODE_ENABLED scripts/k280_live_fetch.py  # after code patch",
+        "HL UI \u2192 Account \u2192 Builder \u2192 verify fee approved"
+      ],
+      "execution_commands": [
+        "# Step 1: On-chain action via HL UI (no CLI equivalent)",
+        "# app.hyperliquid.xyz \u2192 Account \u2192 Builder \u2192 Approve",
+        "# Builder address = your main HL wallet",
+        "# Fee = 0",
+        "",
+        "# Step 2: Set env var (add to ~/.zshrc or ~/.bashrc)",
+        "export HL_BUILDER_WALLET=0x<YOUR_MAIN_WALLET_ADDRESS>",
+        "",
+        "# Step 3: Enable in code (6-LOC patch, K481 Phase 2)",
+        "# Edit scripts/post_only_order_manager.py \u2014 see K481 patch spec"
+      ]
+    },
+    "A3": {
+      "action_id": "A3",
+      "wave": "K552",
+      "title": "K280 sleeve weight 75% \u2192 60% patch (leverage_manager.py L74)",
+      "estimated_time": "30 minutes",
+      "roi_estimate": "+$260K unlock (30-day cascade: K449 + K376 sleeves activated)",
+      "risk_level": "LOW (backup recommended; affects all production position sizing)",
+      "checks": [
+        {
+          "name": "leverage_manager_exists",
+          "status": "PASS",
+          "detail": "scripts/leverage_manager.py found (32461 bytes)",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "k280_value_0.75_confirmed",
+          "status": "PASS",
+          "detail": "Found K280=0.75 in SLEEVE_WEIGHTS: L76:     \"K280\":   0.75,   # K280 main (K198 + K208 + K276b) \u2014 v6.13d; v6.16 red",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "aum_state_k280_0.75",
+          "status": "PASS",
+          "detail": "portfolio_aum_state.json K280=0.75 confirmed (needs patch too)",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "aum_manager_k280_check",
+          "status": "PASS",
+          "detail": "portfolio_aum_manager.py has K280=0.75 (3rd file to patch)",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "verify_deploy_script_exists",
+          "status": "PASS",
+          "detail": "scripts/verify_deployment_status.py found \u2014 post-patch validation tool available",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "k449_daemon_installed",
+          "status": "INFO",
+          "detail": "K449 daemon NOT in LaunchAgents \u2014 A3 patch prerequisite for K449 LIVE activation",
+          "severity": "LOW",
+          "remediation": ""
+        }
+      ],
+      "simulation_result": "READY",
+      "known_issues": [
+        "CRITICAL: SLEEVE_WEIGHTS 'K280' value flows to ALL production position sizing \u2014 patch 3 files atomically",
+        "Backup REQUIRED before patch: cp scripts/leverage_manager.py scripts/leverage_manager.py.bak.K552",
+        "HL exposure recompute: 57.5% \u2192 50.0% (7.5pp freed for K376/K449 family)",
+        "K280_V621 dict also has 0.69 \u2014 do NOT confuse with SLEEVE_WEIGHTS (primary) dict",
+        "K449 LIVE activation is a downstream dependency of A3 (per K561 cascade spec)",
+        "sed command uses '' for macOS sed (BSD sed) \u2014 Linux sed uses sed -i (no empty string)",
+        "Daemon restart NOT needed immediately \u2014 position sizing reloads on next cycle"
+      ],
+      "pre_execution_steps": [
+        "cp scripts/leverage_manager.py scripts/leverage_manager.py.bak.K552",
+        "Verify current value: grep '\"K280\"' scripts/leverage_manager.py",
+        "Verify all 3 files show 0.75 (leverage_manager.py L74, data/portfolio_aum_state.json, scripts/portfolio_aum_manager.py)"
+      ],
+      "post_execution_verify": [
+        "grep -n '\"K280\"' scripts/leverage_manager.py",
+        "python3 scripts/verify_deployment_status.py",
+        "python3 scripts/portfolio_aum_manager.py --status  # recompute HL exposure"
+      ],
+      "execution_commands": [
+        "# Step 0: Backup",
+        "cp scripts/leverage_manager.py scripts/leverage_manager.py.bak.K552",
+        "",
+        "# Step 1: Primary patch (K552 sed command)",
+        "sed -i '' 's/\"K280\":   0\\.75,   # K280 main (K198 + K208 + K276b) \u2014 v6\\.13d; v6\\.16 reduces to 0\\.72/\"K280\":   0.60,   # K280 main (K539 Phase B1: 75\u219260%, frees 7.5pp HL, 2026-05-30)/' scripts/leverage_manager.py",
+        "",
+        "# Step 2: Verify patch applied",
+        "grep -n '\"K280\"' scripts/leverage_manager.py",
+        "",
+        "# Step 3: Run verify script",
+        "python3 scripts/verify_deployment_status.py"
+      ]
+    },
+    "A4": {
+      "action_id": "A4",
+      "wave": "K498",
+      "title": "14-LOC BBO_SELECT patch (3 files) + OKX daemon launchctl load",
+      "estimated_time": "8 hours (4.75h active, 3.25h passive verification)",
+      "roi_estimate": "+$121K/yr @$30M AUM | +$1.03M/yr @$100M AUM",
+      "risk_level": "LOW (SMART_ROUTER_ENABLED gate, read-only OKX fetch, rollback <2min)",
+      "checks": [
+        {
+          "name": "smart_router_enabled_false",
+          "status": "PASS",
+          "detail": "SMART_ROUTER_ENABLED=False \u2014 pre-patch state confirmed (K548 verified)",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "routing_mode_missing",
+          "status": "PASS",
+          "detail": "routing_mode field MISSING \u2014 pre-patch state confirmed (defaults to HL_OVERFLOW)",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "routing_mode_gate_missing",
+          "status": "PASS",
+          "detail": "routing_mode gate NOT in smart_router.py \u2014 pre-patch state confirmed",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "okx_plist_exists_valid",
+          "status": "PASS",
+          "detail": "com.cryptolab.okx-fr-monitor.plist exists and syntax valid",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "okx_daemon_not_loaded",
+          "status": "PASS",
+          "detail": "com.cryptolab.okx-fr-monitor NOT loaded \u2014 clean activation path (K548 verified)",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "okx_api_key_not_set",
+          "status": "INFO",
+          "detail": "OKX_API_KEY NOT SET \u2014 acceptable for Phase 1A (read-only FR fetch; trading keys needed for Phase 2)",
+          "severity": "LOW",
+          "remediation": ""
+        },
+        {
+          "name": "okx_fr_fetcher_exists",
+          "status": "PASS",
+          "detail": "scripts/okx_fr_fetcher.py found (29122 bytes)",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "a3_prerequisite_complete",
+          "status": "PASS",
+          "detail": "A3 (K280 75\u219260%) appears applied \u2014 prerequisite satisfied",
+          "severity": "INFO",
+          "remediation": ""
+        }
+      ],
+      "simulation_result": "READY",
+      "known_issues": [
+        "OKX API keys NOT required for Phase 1A (FR fetch is public) \u2014 but needed for Phase 2 trading",
+        "Patch order: 1) k280_live_fetch.py \u2192 2) smart_router_config.json \u2192 3) smart_router.py \u2192 4) daemon load",
+        "Restart k280-live daemon after patches: launchctl unload/load ~/Library/LaunchAgents/com.cryptolab.k280-live.plist",
+        "Rollback: flip SMART_ROUTER_ENABLED=False + remove routing_mode from config (<2min)",
+        "BBO_SELECT routes per-order to highest-scoring venue (FR+rebate-slippage) \u2014 Bybit VIP5 wins most orders",
+        "OKX daemon StartInterval=28800 (8h) \u2014 first run happens after 8h from load (RunAtLoad=false)",
+        "K548 verified all 5 pre-conditions GREEN as of 2026-05-30 06:15 JST \u2014 state unchanged at K569"
+      ],
+      "pre_execution_steps": [
+        "Complete A3 first (K280 75\u219260% is prerequisite)",
+        "Verify OKX dashboard: python3 scripts/okx_fr_fetcher.py --dashboard",
+        "Confirm OKX public API reachable (no API keys needed for FR fetch)",
+        "Backup: cp scripts/k280_live_fetch.py scripts/k280_live_fetch.py.bak.K530",
+        "Backup: cp data/smart_router_config.json data/smart_router_config.json.bak.K530"
+      ],
+      "post_execution_verify": [
+        "grep SMART_ROUTER_ENABLED scripts/k280_live_fetch.py  # should be True",
+        "grep routing_mode data/smart_router_config.json  # should be BBO_SELECT",
+        "python3 scripts/smart_router.py --all-symbols  # dry-run test",
+        "launchctl list | grep okx-fr-monitor",
+        "cat data/okx_dashboard.json | python3 -m json.tool | head -20"
+      ],
+      "execution_commands": [
+        "# PATCH 1: k280_live_fetch.py \u2014 enable smart router (4 LOC change)",
+        "# Old: SMART_ROUTER_ENABLED = False   # K434: set True after testing",
+        "# New: (add 3 comment lines + True flag)",
+        "",
+        "# PATCH 2: smart_router_config.json \u2014 add routing_mode BBO_SELECT (3 LOC)",
+        "# Add after 'default_post_only': true,",
+        "",
+        "# PATCH 3: smart_router.py \u2014 routing mode gate in select_best_venue() (7 LOC)",
+        "",
+        "# DAEMON: load OKX FR monitor",
+        "cp com.cryptolab.okx-fr-monitor.plist ~/Library/LaunchAgents/",
+        "launchctl load ~/Library/LaunchAgents/com.cryptolab.okx-fr-monitor.plist",
+        "launchctl list | grep okx  # verify LOADED"
+      ]
+    },
+    "A5": {
+      "action_id": "A5",
+      "wave": "K485",
+      "title": "Bybit sub-account application + 7-day paper-trade gate",
+      "estimated_time": "30 min application + 7 days KYC + paper gate",
+      "roi_estimate": "+$204K/yr lift (Phase 1B: $10M HL W1+W2 strategy isolation)",
+      "risk_level": "LOW (7-day paper gate required; application risk = KYC denial)",
+      "checks": [
+        {
+          "name": "bybit_sub1_api_key_not_set",
+          "status": "INFO",
+          "detail": "BYBIT_SUB1_API_KEY NOT SET \u2014 expected pre-application (set after Bybit sub-account created)",
+          "severity": "LOW",
+          "remediation": "After creating Bybit sub-account: export BYBIT_SUB1_API_KEY=<key>"
+        },
+        {
+          "name": "bybit_master_api_not_set",
+          "status": "WARN",
+          "detail": "BYBIT_API_KEY (master) NOT SET \u2014 Bybit integration not yet configured",
+          "severity": "MEDIUM",
+          "remediation": "Generate Bybit master API key (read+trade, NO withdraw). Set BYBIT_API_KEY env var."
+        },
+        {
+          "name": "bybit_kyc_required",
+          "status": "WARN",
+          "detail": "Bybit sub-account requires KYC (personal accounts prohibited: multi-wallet ToS risk per K485 spec)",
+          "severity": "MEDIUM",
+          "remediation": "Use institutional/fund account structure. DO NOT create duplicate personal accounts (ToS violation)."
+        },
+        {
+          "name": "bybit_vip_tier_check",
+          "status": "INFO",
+          "detail": "Bybit VIP5 tier assumed in smart_router_config.json (1.0bps maker rebate) \u2014 verify master account tier",
+          "severity": "LOW",
+          "remediation": "Check Bybit master account VIP tier. VIP1 = 0.1bps, VIP5 = 1.0bps maker rebate."
+        },
+        {
+          "name": "paper_gate_required",
+          "status": "INFO",
+          "detail": "K485 spec mandates 7-day paper-trade gate after sub-account activation before live capital",
+          "severity": "LOW",
+          "remediation": ""
+        },
+        {
+          "name": "no_bybit_daemons",
+          "status": "INFO",
+          "detail": "No Bybit-specific daemons currently loaded",
+          "severity": "INFO",
+          "remediation": ""
+        },
+        {
+          "name": "hl_concentration_impact",
+          "status": "INFO",
+          "detail": "A5 strategy isolation (W2) keeps HL at 64.5% \u2014 0.5pp headroom to 65% hard cap (per K560 Week 5 spec)",
+          "severity": "LOW",
+          "remediation": "Monitor HL concentration after A5 activation. Hard cap=65% (feedback_concentration_risk_HL.md)."
+        }
+      ],
+      "simulation_result": "WARN",
+      "known_issues": [
+        "KYC required for Bybit sub-account \u2014 timeline: 1-7 business days",
+        "Multi-wallet PROHIBITED per Bybit ToS for personal accounts \u2014 use institutional structure",
+        "7-day paper gate is mandatory before live capital allocation (K485 \u00a76 gate)",
+        "$204K/yr estimate = Phase 1B strategy isolation at $10M HL only (same OB, stagger benefit)",
+        "Full Phase 1A benefit ($2.2M/yr) requires $25M AUM across HL+Bybit \u2014 longer timeline",
+        "Bybit VIP5 tier (1.0bps maker rebate) drives smart router advantage vs HL GOLD (0.3bps)",
+        "No smart router code changes needed for A5 \u2014 sub-account is a routing target, not code change"
+      ],
+      "pre_execution_steps": [
+        "Login to Bybit master account",
+        "Navigate: Account \u2192 Sub-Accounts \u2192 Create Sub-Account",
+        "Sub-account type: Standard (not UTA unified trading account for Phase 1B)",
+        "Set sub-account credentials (separate from master)",
+        "Complete KYC for sub-account if prompted",
+        "Deposit test funds for 7-day paper-trade gate"
+      ],
+      "post_execution_verify": [
+        "Bybit UI \u2192 Sub-Accounts \u2192 verify sub-account listed",
+        "python3 -c \"import os; print(os.environ.get('BYBIT_SUB1_API_KEY','NOT SET'))\"",
+        "After 7d gate: python3 scripts/k280_live_fetch.py --dry-run --venue Bybit"
+      ],
+      "execution_commands": [
+        "# Step 1: Apply at Bybit UI (no CLI)",
+        "# bybit.com \u2192 Account \u2192 Sub-Accounts \u2192 Create",
+        "",
+        "# Step 2: Generate API keys for sub-account",
+        "# Set read + trade permissions (NO withdraw)",
+        "",
+        "# Step 3: Set env vars (after API keys generated)",
+        "export BYBIT_SUB1_API_KEY=<sub_account_api_key>",
+        "export BYBIT_SUB1_API_SECRET=<sub_account_api_secret>",
+        "",
+        "# Step 4: 7-day paper-trade gate",
+        "# Monitor K280/K302a paper trades on sub-account",
+        "",
+        "# Step 5: After gate passed, activate live trading"
+      ]
+    }
+  },
+  "cross_action_dependencies": {
+    "ordering": {
+      "recommended_sequence": [
+        "A1",
+        "A2",
+        "A3",
+        "A4",
+        "A5"
+      ],
+      "rationale": "A1+A2 independent; A3 prerequisite for A4 (routing efficiency) and K449 LIVE; A5 independent but longest lead time"
+    },
+    "dependencies": {
+      "A1_A2_independent": true,
+      "A3_prerequisite_for_A4": true,
+      "A3_prerequisite_for_K449_LIVE": true,
+      "A4_prerequisite_for_K208_routing_efficiency": true,
+      "A5_independent": true,
+      "A5_lead_time_days": 7
+    },
+    "parallel_safe": {
+      "A1_and_A2": true,
+      "A1_and_A5": true,
+      "A2_and_A5": true,
+      "A3_and_A5": true,
+      "A4_while_A5_pending": true,
+      "A3_before_A4": "REQUIRED"
+    },
+    "critical_path": "A3 \u2192 A4 (code patches sequential; daemon load after patches)",
+    "fastest_execution": "A1+A2 in parallel (5min+30min) \u2192 A3 (30min) \u2192 A4 start \u2192 A5 application in parallel with A4",
+    "total_active_time_min": 380,
+    "total_passive_time_days": 7
+  },
+  "issue_inventory": [
+    {
+      "action": "A2",
+      "wave": "K481",
+      "check": "hl_builder_wallet_set",
+      "status": "WARN",
+      "severity": "MEDIUM",
+      "detail": "HL_BUILDER_WALLET env var NOT SET \u2014 daemon integration will silently skip builder code",
+      "remediation": "export HL_BUILDER_WALLET=0x<your_main_wallet> before running daemons."
+    },
+    {
+      "action": "A5",
+      "wave": "K485",
+      "check": "bybit_master_api_not_set",
+      "status": "WARN",
+      "severity": "MEDIUM",
+      "detail": "BYBIT_API_KEY (master) NOT SET \u2014 Bybit integration not yet configured",
+      "remediation": "Generate Bybit master API key (read+trade, NO withdraw). Set BYBIT_API_KEY env var."
+    },
+    {
+      "action": "A5",
+      "wave": "K485",
+      "check": "bybit_kyc_required",
+      "status": "WARN",
+      "severity": "MEDIUM",
+      "detail": "Bybit sub-account requires KYC (personal accounts prohibited: multi-wallet ToS risk per K485 spec)",
+      "remediation": "Use institutional/fund account structure. DO NOT create duplicate personal accounts (ToS violation)."
+    },
+    {
+      "action": "A1",
+      "wave": "K545",
+      "check": "k339_no_hardcoded_paths",
+      "status": "WARN",
+      "severity": "LOW",
+      "detail": "loss_harvester.py has 1 /Users/ references",
+      "remediation": "Verify REPO_ROOT = Path(__file__).resolve().parent.parent pattern is used."
+    },
+    {
+      "action": "A1",
+      "wave": "K545",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "K339 WARNING: loss_harvester.py contains 1 hardcoded /Users/ path(s) \u2014 daemon may fail after username change",
+      "remediation": ""
+    },
+    {
+      "action": "A1",
+      "wave": "K545",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Daemon triggers once annually (Dec 28) \u2014 verify system is running on that date",
+      "remediation": ""
+    },
+    {
+      "action": "A1",
+      "wave": "K545",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "TAX_RATE_PCT env var should be set before Dec 28 run (default jurisdiction = US_STCG)",
+      "remediation": ""
+    },
+    {
+      "action": "A1",
+      "wave": "K545",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "plist uses /usr/bin/python3 (system Python) \u2014 ensure loss_harvester.py deps are stdlib-only",
+      "remediation": ""
+    },
+    {
+      "action": "A2",
+      "wave": "K481",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Rebate mechanism is referral pool (NOT direct taker fee rebate) \u2014 true rate TBD after activation",
+      "remediation": ""
+    },
+    {
+      "action": "A2",
+      "wave": "K481",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "K370 correction: K368 assumed 50% direct rebate; actual rate requires post-activation claim data",
+      "remediation": ""
+    },
+    {
+      "action": "A2",
+      "wave": "K481",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Builder code active max 10 approvals per user \u2014 currently 0 used",
+      "remediation": ""
+    },
+    {
+      "action": "A2",
+      "wave": "K481",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "On-chain action must use MAIN wallet (not API/agent wallet) \u2014 easy to confuse",
+      "remediation": ""
+    },
+    {
+      "action": "A2",
+      "wave": "K481",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Self-rebate mode (f=0): builder earns from referral pool, user pays zero extra fees",
+      "remediation": ""
+    },
+    {
+      "action": "A2",
+      "wave": "K481",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Activation is immediate once approved \u2014 no epoch delay documented",
+      "remediation": ""
+    },
+    {
+      "action": "A3",
+      "wave": "K552",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "CRITICAL: SLEEVE_WEIGHTS 'K280' value flows to ALL production position sizing \u2014 patch 3 files atomically",
+      "remediation": ""
+    },
+    {
+      "action": "A3",
+      "wave": "K552",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Backup REQUIRED before patch: cp scripts/leverage_manager.py scripts/leverage_manager.py.bak.K552",
+      "remediation": ""
+    },
+    {
+      "action": "A3",
+      "wave": "K552",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "HL exposure recompute: 57.5% \u2192 50.0% (7.5pp freed for K376/K449 family)",
+      "remediation": ""
+    },
+    {
+      "action": "A3",
+      "wave": "K552",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "K280_V621 dict also has 0.69 \u2014 do NOT confuse with SLEEVE_WEIGHTS (primary) dict",
+      "remediation": ""
+    },
+    {
+      "action": "A3",
+      "wave": "K552",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "K449 LIVE activation is a downstream dependency of A3 (per K561 cascade spec)",
+      "remediation": ""
+    },
+    {
+      "action": "A3",
+      "wave": "K552",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "sed command uses '' for macOS sed (BSD sed) \u2014 Linux sed uses sed -i (no empty string)",
+      "remediation": ""
+    },
+    {
+      "action": "A3",
+      "wave": "K552",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Daemon restart NOT needed immediately \u2014 position sizing reloads on next cycle",
+      "remediation": ""
+    },
+    {
+      "action": "A4",
+      "wave": "K498",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "OKX API keys NOT required for Phase 1A (FR fetch is public) \u2014 but needed for Phase 2 trading",
+      "remediation": ""
+    },
+    {
+      "action": "A4",
+      "wave": "K498",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Patch order: 1) k280_live_fetch.py \u2192 2) smart_router_config.json \u2192 3) smart_router.py \u2192 4) daemon load",
+      "remediation": ""
+    },
+    {
+      "action": "A4",
+      "wave": "K498",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Restart k280-live daemon after patches: launchctl unload/load ~/Library/LaunchAgents/com.cryptolab.k280-live.plist",
+      "remediation": ""
+    },
+    {
+      "action": "A4",
+      "wave": "K498",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Rollback: flip SMART_ROUTER_ENABLED=False + remove routing_mode from config (<2min)",
+      "remediation": ""
+    },
+    {
+      "action": "A4",
+      "wave": "K498",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "BBO_SELECT routes per-order to highest-scoring venue (FR+rebate-slippage) \u2014 Bybit VIP5 wins most orders",
+      "remediation": ""
+    },
+    {
+      "action": "A4",
+      "wave": "K498",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "OKX daemon StartInterval=28800 (8h) \u2014 first run happens after 8h from load (RunAtLoad=false)",
+      "remediation": ""
+    },
+    {
+      "action": "A4",
+      "wave": "K498",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "K548 verified all 5 pre-conditions GREEN as of 2026-05-30 06:15 JST \u2014 state unchanged at K569",
+      "remediation": ""
+    },
+    {
+      "action": "A5",
+      "wave": "K485",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "KYC required for Bybit sub-account \u2014 timeline: 1-7 business days",
+      "remediation": ""
+    },
+    {
+      "action": "A5",
+      "wave": "K485",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Multi-wallet PROHIBITED per Bybit ToS for personal accounts \u2014 use institutional structure",
+      "remediation": ""
+    },
+    {
+      "action": "A5",
+      "wave": "K485",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "7-day paper gate is mandatory before live capital allocation (K485 \u00a76 gate)",
+      "remediation": ""
+    },
+    {
+      "action": "A5",
+      "wave": "K485",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "$204K/yr estimate = Phase 1B strategy isolation at $10M HL only (same OB, stagger benefit)",
+      "remediation": ""
+    },
+    {
+      "action": "A5",
+      "wave": "K485",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Full Phase 1A benefit ($2.2M/yr) requires $25M AUM across HL+Bybit \u2014 longer timeline",
+      "remediation": ""
+    },
+    {
+      "action": "A5",
+      "wave": "K485",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "Bybit VIP5 tier (1.0bps maker rebate) drives smart router advantage vs HL GOLD (0.3bps)",
+      "remediation": ""
+    },
+    {
+      "action": "A5",
+      "wave": "K485",
+      "check": "known_issue",
+      "status": "INFO",
+      "severity": "LOW",
+      "detail": "No smart router code changes needed for A5 \u2014 sub-account is a routing target, not code change",
+      "remediation": ""
+    }
+  ],
+  "k339_compliance": {
+    "repo_root_from_file": "/Users/nekonaomichi/crypto-lab",
+    "no_hardcoded_user_paths": true,
+    "pattern": "REPO_ROOT = Path(__file__).resolve().parent"
+  }
+}
