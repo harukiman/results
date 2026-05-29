@@ -1,6 +1,66 @@
-# K539 Master Deployment Playbook — Single Source of Truth
-**Version:** 6.28 | **Generated:** 2026-05-30 05:30 JST | **Wave:** K539 Immediate Action Consolidation (supersedes K532)
-**Status:** ACTIVE USER ACTIVATION GUIDE — 4-Phase D0-D60 sequenced playbook
+# K302a Master Deployment Playbook — Single Source of Truth
+**Version:** 6.30-candidate | **Updated:** 2026-05-30 07:00 JST | **Wave:** K579 Profit Lift Dashboard v2 (supersedes K539)
+**Status:** ACTIVE USER ACTIVATION GUIDE — 5-Phase D0-D180 sequenced playbook
+
+---
+
+## ★★★★ K579 Profit Lift Dashboard v2 — Executive Summary (2026-05-30)
+
+**K579 is the authoritative consolidated lift inventory spanning K430→K577.**
+
+| Metric | Value |
+|--------|-------|
+| Active annual yield @$10M | **$2,200,000/yr** (K430 deployed) |
+| Combined active + pending @$10M | **$4.7M–$5.1M/yr** |
+| v6.30 architectural mid @$10M | **$2,797,000/yr** (5y: $33.6M) |
+| @$100M mid | **$27,970,000/yr** |
+| Total daemons | 39 (post K565) |
+| ACCEPT family sleeves | 12 |
+| Closed lines | 18 |
+
+### Updated Top 5 Phase A (K579 v2)
+
+| # | Wave | Action | Time | Value | Risk |
+|---|------|--------|------|-------|------|
+| 1 | K545 | Tax harvester plist load | **5 min** | $47K/yr | ZERO |
+| 2 | K481 | HL builder rebate (approveBuilderFee) | **30 min** | $99–248K/yr | ZERO |
+| 3 | K552 | K280 75→60% patch (3 files atomic) | **30 min** | Prereq → $260K cascade | LOW |
+| 4 | K498 | Phase 1A BBO_SELECT + OKX daemon | **8hr** | $121K @$30M | LOW |
+| 5 | K485 | Bybit sub-account + 7d paper gate | **30min + 7d** | $204K @$10M / $2.2M+ @$25M | LOW |
+
+### Top 15 ROI/hr Ranked
+
+| # | Action | ROI/hr | @$10M/yr | Status |
+|---|--------|--------|----------|--------|
+| 1 | K545 tax harvester plist | $564K/hr | $47K | READY |
+| 2 | K481 HL builder rebate | $496K/hr | $99–248K | READY |
+| 3 | K485 Bybit sub-account | $408K/hr | $204K | READY |
+| 4 | K552 K280 patch | PREREQ | $260K cascade | READY |
+| 5 | K376 BULL activation | $62K/hr | $247K | CONDITIONAL (ETA ~5d) |
+| 6 | K498 Phase 1A BBO | $15K/hr | $0/$121K @$30M | READY |
+| 7 | K449 ETH-BTC LIVE | $3K/hr | $13K | PAPER-GATED (60d) |
+| 8–14 | D60 family (K476/K484/K493/K495/K500/K507/K512/K541) | — | $156K–$323K ea | PAPER-GATED |
+| 15 | v6.30 K572 full | — | $2.01M–$3.22M | ARCHITECTURAL (D180) |
+
+### Outstanding Blockers
+
+1. **HL 65% cap (K524):** Apply K552 first — frees 7.5pp (57.5→50%). All post-Week 5 expansions paper-only.
+2. **K208 -67% decay (K509):** K492 Variant E is CRITICAL defensive priority before Phase C.
+3. **BTC TRANSITION (K577):** K376 BULL ETA ~5d; slope -189.52/day (worsening); $677/day delay cost.
+
+### 5-Year Multi-Scenario Projection @$10M (K523 Transparent Range)
+
+| Scenario | 5Y Total | Range |
+|----------|----------|-------|
+| Status quo | $11.8M | — |
+| Phase A only | $15M | $14M–$16M |
+| Phase A+B | $18M | $17M–$19M |
+| Phase A+B+C | $27.5M | $25M–$30M |
+| **Full v6.30 (K572)** | **$33.6M** | **$33M–$36M** |
+
+> Full detail: `wave_k579_profit_lift_v2.{py,json,md}`
+
+---
 
 ---
 
