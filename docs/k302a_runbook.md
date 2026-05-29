@@ -5809,3 +5809,104 @@ The 4x cap matches K449 (ETH-BTC paired-trade). At $10M / 3% sleeve / 4x:
 ---
 
 *K478 §38 -- K476 SOL-BTC FR differential production scaffold (29th daemon, OOS Sh 16.30, $187K/yr @ $10M, 60d paper-trade gate, v6.21 K449+K476 6% combined sleeve) -- 2026-05-25*
+
+---
+
+## §38b K376 Graduation Pre-Validation (K488)
+
+**Added:** 2026-05-30 | **Wave:** K488 | **Decision:** CONDITIONAL ACCEPT
+
+### §38b.1 Gate Summary
+
+| Gate | Value | Threshold | Status |
+|------|-------|-----------|--------|
+| G1 OOS Sharpe | 2.524 avg | ≥ 1.0 | PASS |
+| G2 Perm p-value | 0.016 | ≤ 0.05 | PASS |
+| G5 Corr vs K280 | 0.04 | < 0.40 | PASS |
+| G5 Corr vs K449 | 0.08 | < 0.40 | PASS |
+| G5 Corr vs K476 | 0.06 | < 0.40 | PASS |
+| G6 Trades/yr | 839 | ≥ 30 | PASS |
+| G7 Ann return | 149.7% OOS | ≥ 8% | PASS |
+| G8 Fill rate | 0.0% (bear) | ≥ 60% | PENDING |
+| G9 Live Sharpe | 0.0 (bear) | ≥ 1.0 | PENDING |
+| MaxDD (sleeve) | 1.53% | < 5% | PASS |
+
+**Summary: 6/8 PASS, 2 PENDING, 0 FAIL**
+
+### §38b.2 Key Finding: Bear Regime Paper Period
+
+The entire 60-day paper-trade period (2026-03-31 to 2026-05-30) ran in BTC bear regime (SMA slope consistently -3,300 to -3,370). This correctly suppressed all K376 signals per K378 design. The regime filter is **VALIDATED** — 0 false positives, 0 bear-regime trades.
+
+G8 (fill rate) and G9 (live Sharpe) are PENDING because they cannot be measured without realized trades. This is **not a failure** — it is correct behavior.
+
+### §38b.3 Profit Impact
+
+| Sleeve | Ann PnL @$10M | Assumption |
+|--------|--------------|-----------|
+| 3% (v6.14) | $247K/yr | 55% bull, 149.7% avg OOS ret |
+| 5% (v6.20) | $412K/yr | same |
+| 10% | $824K/yr | same |
+| 35% (K483 Kelly) | $2,882K/yr | BLOCKED: HL cap 65% |
+
+**K483 Kelly path**: 35% K376 is theoretically optimal (1/4 Kelly MV) but blocked by HL concentration cap. Path: 3% → 30d live → 5% → 12m live → Kelly re-eval.
+
+### §38b.4 Conditional Activation Steps (K489)
+
+When BTC 20d SMA slope turns positive (bull recovery), execute:
+
+```bash
+# 1. Verify bull regime confirmed
+python3 scripts/k376_momentum_run.py --verbose
+# → Check: current_regime == "bull" AND slope > 0
+
+# 2. Confirm 0 emergency flags
+ls EMERGENCY_EXIT_TRIGGERED.flag 2>/dev/null && echo "FLAG PRESENT — DO NOT ACTIVATE"
+
+# 3. Activate daemon (user action)
+cp com.cryptolab.k376-momentum.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k376-momentum.plist
+
+# 4. Monitor G8 fill rate (check after each run)
+python3 -c "
+import json
+d = json.load(open('data/k376_momentum_dashboard.json'))
+print('Fill rate 60d:', d.get('fill_rate_60d'))
+print('Live Sh 30d:',   d.get('live_sharpe_30d'))
+print('Regime:',        d.get('current_regime'))
+"
+
+# 5. Expand to 5% sleeve after 30d live with Sharpe > 1.0
+# (Edit SLEEVE_PCT = 0.05 in scripts/k376_momentum_run.py, reload daemon)
+```
+
+### §38b.5 Universe Expansion Path (Post-Activation)
+
+| Phase | Coins | Gate |
+|-------|-------|------|
+| Day 0 activation | ETH, LINK, AVAX | K488 CONDITIONAL ACCEPT |
+| Day 0+ (add immediately) | + DOT (15m) | K390 GRADUATE_NOW (OOS Sh 4.382, WF 4/4) |
+| Day 30+ | + SUI, ADA (or PEPE) | 30d live Sharpe > 1.0 confirmed |
+
+### §38b.6 Rollback Thresholds (First 30d Live)
+
+| Metric | Trigger | Action |
+|--------|---------|--------|
+| G8 fill rate | < 50% sustained 7d | Pause daemon, investigate maker execution |
+| G9 live Sharpe | < 0 sustained 14d | Reduce sleeve to 1% and reassess |
+| Max drawdown | > 3% portfolio level | Emergency exit via EMERGENCY_EXIT_TRIGGERED.flag |
+
+### §38b.7 References
+
+| Wave | Reference |
+|------|-----------|
+| K488 | This section — K376 graduation pre-validation (CONDITIONAL ACCEPT) |
+| K380 | §17 K376 activation plan (original scaffold) |
+| K376 | wave_k376_volume_momentum.json (OOS backtest) |
+| K378 | K378 CONDITIONAL_ACCEPT decision |
+| K390 | Universe expansion (DOT GRADUATE_NOW) |
+| K483 | Kelly re-optimization (K376 35% suggestion) |
+| K488 | wave_k488_k376_graduation_prep.{py,json,md} |
+
+---
+
+*K488 §38b -- K376 volume-spike momentum graduation pre-validation (CONDITIONAL ACCEPT, 6/8 gates, $412K/yr @$10M 5% sleeve, activate on BTC bull recovery) -- 2026-05-30*
