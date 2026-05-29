@@ -2996,3 +2996,124 @@ K208 routing reverts to default HL-only behavior. Zero disruption to K276b/K302a
 ---
 
 *K434 §24 — Smart Router SCAFFOLD (cross-venue HL/Bybit/OKX, 16th daemon) — 2026-05-29*
+
+---
+
+## §25 HL HYPE Staking — Fee Tier Discount (K437)
+
+**K432 correction:** Original estimate used $1.30/HYPE (Nov-2024 airdrop price). Actual price May-2026 = $59.00 (45x higher). Gold tier cost = $590,000, not $13,000. **Optimal tier is Bronze (100 HYPE = $5,900).**
+
+### §25.1 Overview
+
+HYPE staking on Hyperliquid L1 unlocks a percentage discount on all HL trading fees. Discount stacks multiplicatively on top of volume-based tier fees.
+
+| Tier | HYPE Required | Cost @ $59 | Discount | ROI @ $10M AUM |
+|------|---------------|-----------|----------|----------------|
+| None | 0 | $0 | 0% | — |
+| Wood | 10 | $590 | 5% | 719.5% |
+| **Bronze** | **100** | **$5,900** | **10%** | **143.9%** ← Recommended |
+| Silver | 1,000 | $59,000 | 15% | 21.6% |
+| Gold | 10,000 | $590,000 | 20% | 2.9% |
+| Platinum | 100,000 | $5,900,000 | 30% | 0.4% |
+| Diamond | 500,000 | $29,500,000 | 40% | 0.1% |
+
+### §25.2 Staking Mechanics
+
+```
+Transfer flow: Spot Account → Staking Account (instant)
+Delegation lockup: 1 day after delegation
+Unstaking queue: 7 days (staking → spot)
+Max pending withdrawals: 5 per address
+Slashing risk: NONE (no automatic slashing; validator jailing only)
+Auto-compound: YES (rewards re-delegated every ~90min epoch)
+Staking APY: ~2.26% at current total stake (~400M HYPE staked)
+```
+
+### §25.3 Activation Steps (Bronze Tier)
+
+1. **Buy 100 HYPE on HL spot** — HYPE/USDC, market order, ~$5,900
+2. **Transfer to staking account** — HL dashboard → Portfolio → Transfer → Spot→Staking → 100 HYPE (instant)
+3. **Delegate** — app.hyperliquid.xyz/staking → select Foundation validator → Delegate 100 HYPE
+4. **Verify** — HL trading dashboard → Account → Fee Tier → "Bronze" (10% discount)
+5. **Done** — discount activates within current trading session
+
+### §25.4 ROI Model
+
+At $10M AUM, K302a routes ~60% of capital through HL:
+- Conservative HL annual volume: $375M (K208 HL leg + K297p satellite)
+- Volume tier: 1 (14-day proxy ~$14.4M, threshold $5M)
+- Base annual HL fees (no stake): $84,900/yr
+
+| Tier | Fee Saving/yr | Stk Yield/yr | Total Benefit/yr | ROI |
+|------|-------------|-------------|-----------------|-----|
+| Bronze | $8,490 | $133 | $8,623 | 143.9% |
+| Silver | $12,735 | $1,333 | $14,068 | 21.6% |
+| Gold | $16,980 | $13,334 | $30,314 | 2.9% |
+
+**At $50M AUM (volume tier 2, base fees $342K/yr):**
+
+| Tier | Fee Saving/yr | ROI |
+|------|-------------|-----|
+| Bronze | $34,238 | 580.3% |
+| Silver | $51,356 | 87.0% |
+| Gold | $68,475 | 11.6% |
+
+### §25.5 Scaling Path
+
+| AUM Milestone | Optimal Tier | Stake Cost | Annual Benefit |
+|---------------|-------------|-----------|---------------|
+| $10M (now) | **Bronze** | $5,900 | $8,623/yr |
+| $50M | **Silver** | $59,000 | $51,356/yr |
+| $100M+ | **Gold** | $590,000 | ~$137K/yr |
+
+### §25.6 HYPE Price Risk
+
+```
+Bronze tier ($5,900 stake):
+  Breakeven exit price: $45.77 (22.4% drop from $59)
+  Loss at 50% drop: -$5,354 net (offset by $8,623 benefit)
+  Verdict: LOW RISK — acceptable
+
+Gold tier ($590,000 stake) at $10M AUM:
+  Breakeven exit price: $55.97 (only 5.1% drop from $59)
+  Loss at 50% drop: -$264,686 net
+  Verdict: HIGH RISK — NOT RECOMMENDED until $100M+ AUM
+
+Hedge option: 1x HYPE-USD short on HL perps
+  Effect: Neutralizes HYPE price exposure
+  Cost: ~1–3%/yr in funding
+  Required: Only for Silver/Gold size positions
+```
+
+### §25.7 Unstaking Procedure
+
+```bash
+# 1. Undelegate on staking page (app.hyperliquid.xyz/staking)
+# 2. Wait 1 day (delegation lockup)
+# 3. Transfer: Staking → Spot (HL dashboard)
+# 4. Wait 7 days (unstaking queue)
+# 5. HYPE available in spot account
+
+# Max 5 pending withdrawals per address
+# Plan large unstakes in batches if needed
+```
+
+### §25.8 Monitoring
+
+Monthly check:
+- app.hyperliquid.xyz/staking → confirm delegation active
+- HL trading dashboard → Account → verify fee tier shows "Bronze"
+- Staking rewards visible as balance increase (auto-compound)
+- At $50M AUM: upgrade to Silver (buy 900 more HYPE, delegate)
+
+### §25.9 References
+
+| Wave | Content |
+|------|---------|
+| K432 | Original HYPE Gold stake estimate ($13K, 19.5% ROI — K432 price error) |
+| K437 | This section — corrected ROI, Bronze recommendation |
+| K436 | Master deployment playbook (action #8 updated to Bronze) |
+
+---
+
+*K437 §25 — HL HYPE Staking (Bronze recommended, 143.9% ROI @ $10M, corrected from K432) — 2026-05-29*
