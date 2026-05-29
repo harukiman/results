@@ -182,6 +182,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k449_eth_btc",
         expected_html_status="SCAFFOLD-READY",  # K450: plist in repo root (gitignored); activate after 60d paper-trade gate + fill_rate>=65%
     ),
+    DaemonSpec(
+        label="com.cryptolab.okx-fr-monitor",
+        purpose="K456 OKX FR Monitor (K454 v6.20 wave 1/7, 3rd K208 venue, 18-symbol FR poll, 8h cycle, triangle arb HL/Bybit/OKX, 20th daemon)",
+        scripts=["scripts/okx_fr_fetcher.py"],
+        log_basename="okx_fr_monitor",
+        expected_html_status="SCAFFOLD-READY",  # K456: plist in repo root (gitignored); activate after OKX API keys configured + v6.20 go-live
+    ),
 ]
 
 

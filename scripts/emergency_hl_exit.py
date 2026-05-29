@@ -914,6 +914,188 @@ def close_bybit_positions(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# 7c. OKX Close-All (K456 OKX integration scaffold — Phase 3 venue)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# OKX API v5 endpoints (auth required for trading; read-only does not need keys)
+OKX_API_URL              = "https://www.okx.com"
+OKX_CANCEL_BATCH_ROUTE   = "/api/v5/trade/cancel-batch-orders"
+OKX_POSITION_LIST_ROUTE  = "/api/v5/account/positions"
+OKX_CLOSE_POSITION_ROUTE = "/api/v5/trade/close-position"
+
+
+def _okx_signed_request(
+    method: str,
+    endpoint: str,
+    params: Dict,
+    api_key: str,
+    api_secret: str,
+    passphrase: str,
+    logger: logging.Logger,
+) -> Dict:
+    """
+    Submit authenticated OKX v5 API request using HMAC-SHA256.
+    OKX auth headers:
+      OK-ACCESS-KEY       — API key
+      OK-ACCESS-SIGN      — base64(HMAC-SHA256(timestamp+method+path+body, secret))
+      OK-ACCESS-TIMESTAMP — ISO 8601 UTC timestamp (seconds + milliseconds)
+      OK-ACCESS-PASSPHRASE — passphrase set at API key creation
+
+    Returns response JSON dict; raises RuntimeError on failure.
+    """
+    import base64
+    import urllib.request
+    import urllib.error
+
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.") + \
+         f"{datetime.now(timezone.utc).microsecond // 1000:03d}Z"
+
+    if method.upper() == "GET":
+        query = "&".join(f"{k}={v}" for k, v in sorted(params.items()))
+        path_with_query = endpoint + ("?" + query if query else "")
+        body_str        = ""
+    else:
+        path_with_query = endpoint
+        body_str        = json.dumps(params, separators=(",", ":"))
+
+    sign_payload = ts + method.upper() + path_with_query + body_str
+    signature    = base64.b64encode(
+        hmac.new(
+            api_secret.encode("utf-8"),
+            sign_payload.encode("utf-8"),
+            hashlib.sha256,
+        ).digest()
+    ).decode()
+
+    headers = {
+        "OK-ACCESS-KEY":        api_key,
+        "OK-ACCESS-SIGN":       signature,
+        "OK-ACCESS-TIMESTAMP":  ts,
+        "OK-ACCESS-PASSPHRASE": passphrase,
+        "Content-Type":         "application/json",
+        "User-Agent":           "ct-emergency-exit/1.0",
+    }
+
+    url = OKX_API_URL + path_with_query
+    try:
+        if method.upper() == "GET":
+            req = urllib.request.Request(url, headers=headers)
+        else:
+            req = urllib.request.Request(
+                OKX_API_URL + endpoint,
+                data=body_str.encode("utf-8"),
+                headers=headers,
+                method="POST",
+            )
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            result = json.loads(resp.read().decode("utf-8"))
+        if result.get("code") != "0":
+            logger.warning(
+                f"OKX API non-zero code: {result.get('code')} — {result.get('msg')}"
+            )
+        return result
+    except Exception as exc:
+        raise RuntimeError(f"OKX API request failed ({endpoint}): {exc}")
+
+
+def close_okx_positions(
+    api_key:    str,
+    api_secret: str,
+    passphrase: str,
+    dry_run:    bool,
+    logger:     logging.Logger,
+    inst_type:  str = "SWAP",
+) -> bool:
+    """
+    K456 scaffold: close all OKX perpetual swap positions + cancel all orders.
+
+    Uses OKX v5 API:
+      1. GET  /api/v5/account/positions           — fetch all open SWAP positions
+      2. POST /api/v5/trade/close-position × N    — market-close each position
+         (mgnMode=cross, autoCxl=true to auto-cancel related orders)
+
+    inst_type: "SWAP" (perpetual swaps, default) | "FUTURES" | "MARGIN"
+    Credentials: read from OKX_API_KEY / OKX_API_SECRET / OKX_PASSPHRASE env vars.
+
+    Returns True on success (all positions attempted), False if any error.
+
+    PAPER-TRADE SAFE: in dry_run=True returns without calling OKX API.
+
+    OKX close-position endpoint fields:
+      instId   — e.g. "BTC-USDT-SWAP"
+      mgnMode  — "cross" | "isolated" (use "cross" for cross-margin perps)
+      posSide  — "long" | "short" | "net" (use "net" for one-way mode)
+      autoCxl  — "true" (auto-cancel related open orders)
+    """
+    if dry_run:
+        logger.info("  [DRY-RUN] close_okx_positions — skipping API calls (dry-run mode).")
+        logger.info("    Would fetch OKX positions and close all SWAP perpetuals.")
+        return True
+
+    logger.info(f"OKX Step 1: Fetching open positions (instType={inst_type})...")
+    positions = []
+    try:
+        resp = _okx_signed_request(
+            "GET", OKX_POSITION_LIST_ROUTE,
+            {"instType": inst_type},
+            api_key, api_secret, passphrase, logger,
+        )
+        for item in resp.get("data", []):
+            pos_amt = float(item.get("pos", 0) or 0)
+            if abs(pos_amt) > 0:
+                positions.append(item)
+        logger.info(f"  OKX open positions: {len(positions)}")
+    except Exception as exc:
+        logger.error(f"  OKX position fetch FAILED: {exc}")
+        return False
+
+    if not positions:
+        logger.info("  No OKX positions to close.")
+        return True
+
+    logger.info(f"OKX Step 2: Closing {len(positions)} positions (market, autoCxl=true)...")
+    all_ok = True
+    for pos in positions:
+        inst_id  = pos.get("instId", "")
+        pos_side = pos.get("posSide", "net")
+        mgn_mode = pos.get("mgnMode", "cross")
+
+        if not inst_id:
+            continue
+
+        close_params = {
+            "instId":  inst_id,
+            "mgnMode": mgn_mode,
+            "posSide": pos_side,
+            "autoCxl": "true",
+        }
+        try:
+            result = _okx_signed_request(
+                "POST", OKX_CLOSE_POSITION_ROUTE,
+                close_params,
+                api_key, api_secret, passphrase, logger,
+            )
+            if result.get("code") == "0":
+                data = result.get("data", [{}])
+                clt_ord_id = data[0].get("clOrdId", "") if data else ""
+                logger.info(
+                    f"  OKX close {inst_id} ({pos_side}): OK  clOrdId={clt_ord_id}"
+                )
+            else:
+                logger.warning(
+                    f"  OKX close {inst_id} warning: code={result.get('code')} "
+                    f"msg={result.get('msg')}"
+                )
+                all_ok = False
+        except Exception as exc:
+            logger.error(f"  OKX close FAILED {inst_id}: {exc}")
+            all_ok = False
+        time.sleep(0.3)   # rate-limit: OKX trading API
+
+    return all_ok
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # 8. Interactive Confirm (--EXECUTE guard)
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -970,7 +1152,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description=(
             "K357 Emergency HyperLiquid Exit Script (K355 critical gap mitigation)\n"
-            "K380: --include-bybit flag added (K378 Phase 6 Bybit gap fix)"
+            "K380: --include-bybit flag added (K378 Phase 6 Bybit gap fix)\n"
+            "K456: --include-okx flag added (3rd venue, OKX SWAP perpetuals)"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
@@ -997,6 +1180,12 @@ Examples:
   # HL only (skip Bybit):
   python3 scripts/emergency_hl_exit.py --EXECUTE --no-bybit
 
+  # LIVE EXECUTION — HL + Bybit + OKX (K456 3rd venue):
+  export OKX_API_KEY=...
+  export OKX_API_SECRET=...
+  export OKX_PASSPHRASE=...
+  python3 scripts/emergency_hl_exit.py --EXECUTE --include-okx
+
 Trigger conditions (per §14 runbook):
   - CFTC/regulatory enforcement action against HL
   - HL platform alert (exploit, insolvency signal, ADL cascade)
@@ -1007,6 +1196,12 @@ Bybit emergency exit (§14 update, K380):
   - Requires BYBIT_API_KEY + BYBIT_API_SECRET env vars
   - Cancels all open Bybit orders, then market-closes all linear positions
   - See: docs/k302a_runbook.md §14.7 (Bybit gap fix)
+
+OKX emergency exit (K456 §30.5):
+  - Requires OKX_API_KEY + OKX_API_SECRET + OKX_PASSPHRASE env vars
+  - Closes all OKX SWAP perpetual positions (mgnMode=cross, autoCxl=true)
+  - Scaffold-only at K456 — activate when OKX trading is live (v6.20)
+  - See: docs/k302a_runbook.md §30.5
 
 USDY sleeve emergency guidance (K415 §21.6):
   - USDY (Ondo Finance) is T-bill backed — safe to HOLD through HL/Bybit crisis
@@ -1033,6 +1228,27 @@ USDY sleeve emergency guidance (K415 §21.6):
                              help="(default) Include Bybit close-all in emergency exit (K380 gap fix)")
     bybit_group.add_argument("--no-bybit",      dest="include_bybit", action="store_false",
                              help="Skip Bybit close-all (HL only)")
+    # K456: OKX emergency exit flag (scaffold — activate when OKX trading is live in v6.20)
+    okx_group = parser.add_mutually_exclusive_group()
+    okx_group.add_argument(
+        "--include-okx",
+        dest="include_okx",
+        action="store_true",
+        default=False,
+        help=(
+            "K456: Include OKX close-all in emergency exit (3rd venue, v6.20 scaffold). "
+            "Requires OKX_API_KEY + OKX_API_SECRET + OKX_PASSPHRASE env vars. "
+            "Use when OKX trading positions exist (post v6.20 go-live). "
+            "See: docs/k302a_runbook.md §30.5"
+        ),
+    )
+    okx_group.add_argument(
+        "--no-okx",
+        dest="include_okx",
+        action="store_false",
+        help="Skip OKX close-all (default — OKX not yet live at K456)",
+    )
+
     # K415: USDY emergency exit documentation flag
     # IMPORTANT: USDY is NOT part of the standard emergency exit.
     #   - USDY is T-bill backed; hold through HL/Bybit crisis (see §21.6)
@@ -1174,6 +1390,43 @@ USDY sleeve emergency guidance (K415 §21.6):
         else:
             logger.info("Bybit close-all skipped (--no-bybit flag).")
 
+        # K456: OKX emergency close-all (3rd venue, scaffold — activate post v6.20)
+        okx_success = True
+        if args.include_okx:
+            logger.info("=== OKX EMERGENCY CLOSE-ALL (K456 3rd venue scaffold) ===")
+            okx_api_key    = os.environ.get("OKX_API_KEY", "")
+            okx_api_secret = os.environ.get("OKX_API_SECRET", "")
+            okx_passphrase = os.environ.get("OKX_PASSPHRASE", "")
+            if not okx_api_key or not okx_api_secret or not okx_passphrase:
+                logger.warning(
+                    "OKX_API_KEY, OKX_API_SECRET, or OKX_PASSPHRASE not set — "
+                    "skipping OKX close. Set env vars to enable: "
+                    "export OKX_API_KEY=... OKX_API_SECRET=... OKX_PASSPHRASE=..."
+                )
+                okx_success = False
+            else:
+                okx_success = close_okx_positions(
+                    api_key=okx_api_key,
+                    api_secret=okx_api_secret,
+                    passphrase=okx_passphrase,
+                    dry_run=False,
+                    logger=logger,
+                )
+                if okx_success:
+                    logger.info("OKX close-all COMPLETE.")
+                else:
+                    logger.error("OKX close-all HAD ERRORS — verify OKX positions manually.")
+                # Clear OKX secrets from memory
+                okx_api_key    = "0" * len(okx_api_key)
+                okx_api_secret = "0" * len(okx_api_secret)
+                okx_passphrase = "0" * len(okx_passphrase)
+                del okx_api_key, okx_api_secret, okx_passphrase
+        else:
+            logger.info(
+                "OKX close-all skipped (--no-okx, default at K456 scaffold). "
+                "Use --include-okx when OKX trading positions exist (post v6.20)."
+            )
+
         # K415: USDY emergency documentation (NOT a redemption execution)
         # USDY redemption is intentionally NOT automated here.
         # Rationale: T-bill yield = safe harbor during HL/Bybit crisis. Hold is optimal.
@@ -1195,18 +1448,23 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "Use --include-usdy to print USDY guidance."
             )
 
-        # Post-check (HL only — Bybit has no equivalent read-back in this scaffold)
+        # Post-check (HL only — Bybit/OKX have no equivalent read-back in this scaffold)
         if not args.skip_postcheck:
             postcheck = run_postcheck(user, logger)
             status    = postcheck.get("status", "UNKNOWN")
             logger.info(f"Post-check status: {status}")
 
-            # Send completion alert (include Bybit status)
+            # Send completion alert (include Bybit + OKX status)
             bybit_status_str = "OK" if bybit_success else "ERRORS (check logs)"
+            okx_status_str   = (
+                "OK" if okx_success
+                else ("SKIPPED (not flagged)" if not args.include_okx else "ERRORS (check logs)")
+            )
             send_ntfy_alert(
                 message=(f"EMERGENCY EXIT COMPLETE\n"
                          f"HL status: {status}\n"
                          f"Bybit close-all: {bybit_status_str}\n"
+                         f"OKX close-all: {okx_status_str}\n"
                          f"Residual HL positions: {len(postcheck.get('residual_positions', []))}"),
                 title="EMERGENCY EXIT COMPLETE",
                 priority="high",
@@ -1215,7 +1473,7 @@ USDY sleeve emergency guidance (K415 §21.6):
         else:
             logger.warning("Post-check skipped by --skip-postcheck flag")
 
-        overall_success = success and bybit_success
+        overall_success = success and bybit_success and okx_success
         return 0 if overall_success else 1
 
     # Dry-run success
@@ -1224,13 +1482,19 @@ USDY sleeve emergency guidance (K415 §21.6):
     logger.info("When ready to execute:")
     logger.info("  1. Verify the plan above is correct")
     logger.info("  2. Export HL_USER_ADDRESS, HL_PRIVATE_KEY, BYBIT_API_KEY, BYBIT_API_SECRET env vars")
-    logger.info("  3. Run: python3 scripts/emergency_hl_exit.py --EXECUTE")
+    logger.info("  3. For OKX (v6.20): export OKX_API_KEY, OKX_API_SECRET, OKX_PASSPHRASE env vars")
+    logger.info("  4. Run: python3 scripts/emergency_hl_exit.py --EXECUTE")
     logger.info("     (adds Bybit close-all by default; use --no-bybit to skip)")
-    logger.info("  4. Confirm both interactive prompts")
+    logger.info("     (adds OKX close-all with --include-okx; default off at K456 scaffold)")
+    logger.info("  5. Confirm both interactive prompts")
     if args.include_bybit:
         logger.info("  [DRY-RUN] Bybit close-all would be attempted (--include-bybit=True)")
     else:
         logger.info("  [DRY-RUN] Bybit close-all would be skipped (--no-bybit)")
+    if args.include_okx:
+        logger.info("  [DRY-RUN] OKX close-all would be attempted (--include-okx)")
+    else:
+        logger.info("  [DRY-RUN] OKX close-all would be skipped (default --no-okx at K456 scaffold)")
 
     # K415: USDY dry-run note
     logger.info("")

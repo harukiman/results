@@ -1,0 +1,60 @@
+{
+  "wave": "K456",
+  "title": "OKX Integration Scaffold (K454 v6.20 Wave 1/7)",
+  "date_jst": "2026-05-30",
+  "status": "SCAFFOLD-READY",
+  "summary": "Adds OKX as 3rd major K208 venue, enabling triangle arb across HL/Bybit/OKX. 20th daemon scaffolded.",
+  "deliverables": {
+    "scripts/okx_fr_fetcher.py": "NEW — K456 OKX FR fetcher (18 symbols, 30d cache, dashboard, triangle arb helper)",
+    "com.cryptolab.okx-fr-monitor.plist": "NEW — 20th daemon plist (StartInterval 28800, gitignored)",
+    "scripts/verify_deployment_status.py": "UPDATED — 20th daemon (com.cryptolab.okx-fr-monitor) added to REGISTRY",
+    "data/okx_dashboard.json": "NEW — initial state dashboard (last_poll: null, status: SCAFFOLD-READY)",
+    "scripts/emergency_hl_exit.py": "UPDATED — --include-okx flag, close_okx_positions() function, §30.5 wiring",
+    "scripts/leverage_manager.py": "UPDATED — DEFAULT_EXCHANGE_CAPS K280_K208_OKX: 3.0",
+    "data/leverage_config.json": "UPDATED — exchange_caps K280_K208_OKX: 3.0 + k456_okx_notes",
+    "docs/k302a_runbook.md": "UPDATED — §30 OKX integration (10 subsections: overview, API, VIP, keys, emergency, activation, leverage, orders, daemon, refs)",
+    "report.html": "UPDATED — K456 row in Live Monitoring, v6.20 1/7 badge, 20 daemons footer, timestamp 00:32 JST"
+  },
+  "phases": {
+    "phase1_api_research": "OKX REST: base=https://www.okx.com, FR=GET /api/v5/public/funding-rate, history=GET /api/v5/public/funding-rate-history, auth=HMAC-SHA256",
+    "phase2_okx_fr_fetcher": "~300 LOC, fetch_okx_funding_rate(), fetch_okx_funding_history(), save_okx_fr_cache(), fetch_and_cache_all(), write_okx_dashboard(), compute_triangle_arb_opportunities()",
+    "phase3_smart_router": "VERIFIED — OKX already enabled in smart_router_config.json + fetch_okx_state() in smart_router.py",
+    "phase4_k208_adapter": "Triangle arb helper in okx_fr_fetcher.py, K434 smart router auto-includes OKX",
+    "phase5_post_only": "OKX post-only params documented in §30.8 (tdMode=cross, posSide, ordType=post_only)",
+    "phase6_leverage_caps": "K280_K208_OKX: 3.0 added to leverage_config.json and leverage_manager.py DEFAULT_EXCHANGE_CAPS",
+    "phase7_emergency_exit": "--include-okx flag + close_okx_positions() + _okx_signed_request() added to emergency_hl_exit.py",
+    "phase8_plist": "com.cryptolab.okx-fr-monitor.plist created (StartInterval 28800, gitignored)",
+    "phase9_verify_status": "20th daemon DaemonSpec added to REGISTRY in verify_deployment_status.py",
+    "phase10_dashboard": "data/okx_dashboard.json initial state with all metadata",
+    "phase11_runbook": "§30 added to docs/k302a_runbook.md (10 subsections, 200+ lines)",
+    "phase12_html": "K456 Live Monitoring row + banner badge + footer 20 daemons updated"
+  },
+  "k208_venues": {
+    "HL": "PRIMARY — ACTIVE (v6.13d)",
+    "Bybit": "2nd venue — ACTIVE (v6.13d)",
+    "OKX": "3rd venue — SCAFFOLD-READY (K456)"
+  },
+  "triangle_arb": {
+    "threshold_bps": 5.0,
+    "logic": "short highest-FR venue, long lowest-FR venue across all 3 venues",
+    "helper": "compute_triangle_arb_opportunities() in okx_fr_fetcher.py"
+  },
+  "daemon": {
+    "label": "com.cryptolab.okx-fr-monitor",
+    "number": 20,
+    "start_interval": 28800,
+    "script": "scripts/okx_fr_fetcher.py --daemon",
+    "status": "SCAFFOLD-READY"
+  },
+  "v620_progress": {
+    "wave": "1/7",
+    "plan": "K454: K208 venues 3 → 10",
+    "next": "K457 (wave 2/7) — TBD next venue"
+  },
+  "constraints": [
+    "SCAFFOLD ONLY — no actual trading",
+    "OKX API keys NOT required for read-only fetch",
+    "K280 production logic NOT modified",
+    "K339 security pattern enforced"
+  ]
+}

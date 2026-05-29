@@ -3826,3 +3826,214 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k449-eth-btc.plist
 ---
 
 *K450 §29 -- K449 ETH-BTC paired-trade scaffold (19th daemon, delta-neutral, 4x, v6.16 candidate) -- 2026-05-30*
+
+---
+
+## §30. K456 OKX Integration Scaffold (20th Daemon, K454 v6.20 Wave 1/7)
+
+### §30.1 Overview
+
+K456 adds OKX as the 3rd major trading venue for the K208 funding rate carry strategy.
+This is wave 1/7 toward the v6.20 architecture target (K454 plan: expand K208 venues from 3 → 10).
+
+**K208 3-venue architecture (v6.20 target):**
+
+| Venue  | Role              | Status (K456)     |
+|--------|-------------------|-------------------|
+| HL     | Primary venue     | ACTIVE (v6.13d)   |
+| Bybit  | 2nd venue         | ACTIVE (v6.13d)   |
+| OKX    | 3rd venue (new)   | SCAFFOLD-READY    |
+
+**Triangle arbitrage potential:** K208 v6.20 will short the highest-FR venue and long the lowest,
+across all 3 venues simultaneously. When OKX FR diverges from HL/Bybit by > 5bps, a triangle
+arb opportunity exists that the K434 smart router will exploit.
+
+### §30.2 OKX API Reference
+
+**Base URL:** `https://www.okx.com`
+
+| Endpoint | Method | Purpose | Auth required |
+|----------|--------|---------|---------------|
+| `/api/v5/public/funding-rate?instId=BTC-USDT-SWAP` | GET | Current FR | No |
+| `/api/v5/public/funding-rate-history?instId=...&limit=100` | GET | Historical FR | No |
+| `/api/v5/market/ticker?instId=BTC-USDT-SWAP` | GET | Mark price + volume | No |
+| `/api/v5/market/books?instId=BTC-USDT-SWAP&sz=5` | GET | Order book depth | No |
+| `/api/v5/account/positions?instType=SWAP` | GET | Open positions | **Yes** |
+| `/api/v5/trade/close-position` | POST | Close position | **Yes** |
+| `/api/v5/trade/cancel-batch-orders` | POST | Cancel orders | **Yes** |
+
+**Auth method:** HMAC-SHA256
+- `OK-ACCESS-KEY`: API key
+- `OK-ACCESS-SIGN`: Base64(HMAC-SHA256(timestamp+method+path+body, secret))
+- `OK-ACCESS-TIMESTAMP`: ISO 8601 UTC (e.g. `2026-05-30T00:30:00.000Z`)
+- `OK-ACCESS-PASSPHRASE`: Set at API key creation
+
+**OKX instId format:** `{BASE}-USDT-SWAP` (e.g. `BTC-USDT-SWAP`, `ETH-USDT-SWAP`)
+
+**Funding cycle:** 8 hours (matches HL; Bybit also 8h for most pairs)
+
+### §30.3 VIP Tier Requirements
+
+OKX VIP tier is based on 30-day trading volume and OKB holding:
+
+| Tier    | Volume (30d) | Maker rebate | Taker fee |
+|---------|-------------|--------------|-----------|
+| Regular | < $5M       | 0 bps        | 5.0 bps   |
+| VIP1    | ≥ $5M       | +0.5 bps rebate | 4.0 bps |
+| VIP2    | ≥ $15M      | +1.0 bps rebate | 3.0 bps |
+| VIP3    | ≥ $30M      | +1.5 bps rebate | 2.5 bps |
+
+**K456 target:** VIP1 (matches K434 `smart_router_config.json` entry).
+At $10M AUM with 3x leverage and 30% K208 OKX allocation: ~$90M/month volume → comfortably VIP2.
+
+### §30.4 API Key Setup (Environment Variables)
+
+```bash
+# Set in shell profile (~/.zshrc or ~/.bash_profile):
+export OKX_API_KEY="your_okx_api_key"
+export OKX_API_SECRET="your_okx_api_secret"
+export OKX_PASSPHRASE="your_okx_passphrase"
+```
+
+**Required permissions (trading):**
+- Read (positions, balances): required from K456
+- Trade (orders): required for K208 live trading (K454 v6.20 go-live)
+- Withdraw: NOT required (never enable for trading bots)
+
+**Read-only fetch (K456 monitoring) requires NO keys** — public endpoints only.
+
+### §30.5 Emergency Exit OKX Procedure
+
+K456 adds `--include-okx` flag to `emergency_hl_exit.py`:
+
+```bash
+# Dry-run (safe — no trades):
+python3 scripts/emergency_hl_exit.py --dry-run --include-okx
+
+# Live execution (requires OKX credentials):
+export OKX_API_KEY=...
+export OKX_API_SECRET=...
+export OKX_PASSPHRASE=...
+python3 scripts/emergency_hl_exit.py --EXECUTE --include-okx
+```
+
+**Exit sequence (with `--include-okx`):**
+1. HL: cancel all orders → market-close all positions
+2. Bybit: cancel all orders → market-close all linear positions
+3. OKX: close all SWAP perpetual positions (mgnMode=cross, autoCxl=true)
+
+**Default behavior:** `--include-okx` is `False` at K456 (SCAFFOLD-READY).
+Enable only when OKX trading positions exist (post v6.20 go-live).
+
+### §30.6 Activation Playbook
+
+**Step 1: Verify read-only fetch (no keys needed)**
+```bash
+python3 scripts/okx_fr_fetcher.py                     # BTC-USDT-SWAP FR
+python3 scripts/okx_fr_fetcher.py --all               # all 18 K208 symbols
+python3 scripts/okx_fr_fetcher.py --dashboard         # print cached dashboard
+```
+Expected output: BTC current FR, annualized rate, mark price.
+
+**Step 2: Configure API keys (for trading)**
+```bash
+export OKX_API_KEY="..."
+export OKX_API_SECRET="..."
+export OKX_PASSPHRASE="..."
+# Verify in leverage_config.json that K280_K208_OKX: 3.0 is present
+python3 scripts/leverage_manager.py  # should show OKX cap in exchange_caps
+```
+
+**Step 3: Activate 20th daemon**
+```bash
+cp com.cryptolab.okx-fr-monitor.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.okx-fr-monitor.plist
+# Verify:
+python3 scripts/verify_deployment_status.py  # com.cryptolab.okx-fr-monitor: LOADED/ACTIVE
+```
+
+**Step 4: Verify 0 mismatches**
+```bash
+python3 scripts/verify_deployment_status.py
+# Expected: 20 daemons, 0 mismatches (okx-fr-monitor: SCAFFOLD-READY or ACTIVE)
+```
+
+**Step 5: K434 smart router OKX scoring (already enabled)**
+OKX is already in `data/smart_router_config.json` with `enabled: true`.
+Smart router auto-includes OKX in venue scoring once daemon confirms live data.
+
+**Step 6: K208 3-venue triangle arb (K454 v6.20)**
+When v6.20 go-live is approved:
+1. Advance K280 to use OKX as 3rd execution venue
+2. K434 smart router: OKX score function `fetch_okx_state()` already implemented
+3. K208 short/long decisions now use max(HL_FR, Bybit_FR, OKX_FR) → short that venue
+4. Triangle arb threshold: 5bps spread across any 2 of 3 venues
+
+### §30.7 Leverage Configuration
+
+OKX leverage cap is in `data/leverage_config.json`:
+```json
+"exchange_caps": {
+  "K280_K208_OKX": 3.0   // K456: conservative 3x (OKX supports up to 100x for BTC)
+}
+```
+
+Conservative 3x cap rationale:
+- Matches HL/Bybit caps for consistency and risk parity
+- OKX maximum for BTC = 100x (available but inappropriate for carry strategy)
+- 3x provides +$2.2M/yr leverage lift at $10M AUM (same as HL/Bybit)
+- Advance via `python3 scripts/leverage_manager.py --advance` (PAPER_TRADE → LIVE_1.5X → LIVE_3X)
+
+### §30.8 K208 OKX-Specific Order Parameters
+
+OKX post-only limit order (K439 POST_ONLY integration):
+```python
+order_params = {
+    "instId":  "BTC-USDT-SWAP",
+    "tdMode":  "cross",           # cross-margin mode
+    "side":    "sell",            # "buy" or "sell"
+    "posSide": "short",           # "long", "short", or "net" (one-way mode)
+    "ordType": "post_only",       # POST_ONLY maker order
+    "sz":      "10",              # contract size
+    "px":      "50000.0",         # limit price
+    "reduceOnly": "false",        # set "true" for close-only orders
+}
+```
+OKX post-only fails if price would immediately cross → returns error code (IOC fallback triggered).
+
+### §30.9 Daemon Configuration
+
+```
+Label:          com.cryptolab.okx-fr-monitor
+Script:         scripts/okx_fr_fetcher.py --daemon
+StartInterval:  28800 (8 hours — matches OKX funding cycle)
+RunAtLoad:      false
+Log:            logs/okx_fr_monitor.log
+Err:            logs/okx_fr_monitor.err
+Plist:          com.cryptolab.okx-fr-monitor.plist (gitignored, repo root)
+Dashboard:      data/okx_dashboard.json
+FR history:     cache/okx_fr_BTC_USDT_SWAP.parquet (30d)
+                cache/okx_fr_ETH_USDT_SWAP.parquet (30d)
+```
+
+**Activation (when OKX trading ready):**
+```bash
+cp com.cryptolab.okx-fr-monitor.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.okx-fr-monitor.plist
+```
+
+### §30.10 References
+
+| Wave | Content |
+|------|---------|
+| K456 | This section — OKX integration scaffold (20th daemon, K454 v6.20 wave 1/7) |
+| K454 | v6.20 architecture plan: K208 venues 3→10, capacity expansion mandate |
+| K434 | Smart router (OKX already in venue list: `data/smart_router_config.json`) |
+| K439 | POST_ONLY order manager (OKX post-only order params §30.8) |
+| K430 | Leverage management (K280_K208_OKX: 3.0 cap added) |
+| K357 | Emergency exit (--include-okx flag added in K456) |
+| K208 | Funding rate carry strategy (K456 adds OKX as 3rd execution venue) |
+
+---
+
+*K456 §30 -- OKX integration scaffold (20th daemon, K454 v6.20 wave 1/7, 3rd K208 venue, triangle arb HL/Bybit/OKX) -- 2026-05-30*
