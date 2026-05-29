@@ -1,0 +1,699 @@
+{
+  "wave": "K519",
+  "script": "wave_k519_google_trends_signal",
+  "timestamp": "2026-05-30 04:37 UTC",
+  "data": {
+    "source": "Google Trends via pytrends (free, no API key)",
+    "keywords": [
+      "bitcoin",
+      "ethereum",
+      "crypto crash"
+    ],
+    "geo": "worldwide",
+    "date_range": "2024-01-01 \u2192 2026-05-29",
+    "is_period": "2024-01-01 \u2192 2025-06-30",
+    "oos_period": "2025-07-01 \u2192 2026-05-29",
+    "btc_trends_days": 880,
+    "crash_trends_days": 880,
+    "btc_trends_stats": {
+      "mean": 44.7,
+      "std": 17.3,
+      "min": 14.0,
+      "max": 100.0
+    },
+    "batch_size_days": 89,
+    "rate_limit_throttle_sec": 5,
+    "note": "pytrends 90d batches, daily resolution. Scale normalized per batch (0-100 relative)"
+  },
+  "signal_direction": {
+    "V1": "BTC search z-score > threshold \u2192 SHORT (FOMO peak fade)",
+    "V2": "BTC search z-score < -threshold \u2192 LONG (retail apathy bottom)",
+    "V3": "'crypto crash' z-score spike \u2192 contrarian LONG (capitulation)",
+    "V4": "Combined V1 + V2 + V3 bidirectional",
+    "V5": "Search velocity (1d z-score delta) signal"
+  },
+  "variant_results": {
+    "V1": {
+      "btc_params": {
+        "w": 7,
+        "th": 0.8,
+        "h": 3,
+        "is_sharpe": -0.817
+      },
+      "btc_is": {
+        "n": 547,
+        "sharpe": -0.817,
+        "ann_return": -0.02,
+        "max_dd": 0.0,
+        "cum_return": -0.03,
+        "trades_yr": 0.7,
+        "win_rate": 0.0
+      },
+      "btc_oos": {
+        "n": 333,
+        "sharpe": -1.047,
+        "ann_return": -0.04,
+        "max_dd": 0.0,
+        "cum_return": -0.03,
+        "trades_yr": 1.1,
+        "win_rate": 0.0
+      },
+      "eth_params": {
+        "w": 7,
+        "th": 0.8,
+        "h": 3,
+        "is_sharpe": -0.817
+      },
+      "eth_is": {
+        "n": 547,
+        "sharpe": -0.817,
+        "ann_return": -0.02,
+        "max_dd": 0.0,
+        "cum_return": -0.03,
+        "trades_yr": 0.7,
+        "win_rate": 0.0
+      },
+      "eth_oos": {
+        "n": 333,
+        "sharpe": -1.047,
+        "ann_return": -0.04,
+        "max_dd": 0.0,
+        "cum_return": -0.03,
+        "trades_yr": 1.1,
+        "win_rate": 0.0
+      },
+      "sol_params": {
+        "w": 7,
+        "th": 0.8,
+        "h": 3,
+        "is_sharpe": -0.817
+      },
+      "sol_is": {
+        "n": 547,
+        "sharpe": -0.817,
+        "ann_return": -0.02,
+        "max_dd": 0.0,
+        "cum_return": -0.03,
+        "trades_yr": 0.7,
+        "win_rate": 0.0
+      },
+      "sol_oos": {
+        "n": 333,
+        "sharpe": -1.047,
+        "ann_return": -0.04,
+        "max_dd": 0.0,
+        "cum_return": -0.03,
+        "trades_yr": 1.1,
+        "win_rate": 0.0
+      },
+      "port_is": {
+        "n": 547,
+        "sharpe": -0.817,
+        "ann_return": -0.02,
+        "max_dd": 0.0,
+        "cum_return": -0.03,
+        "trades_yr": 0.7,
+        "win_rate": 0.0
+      },
+      "port_oos": {
+        "n": 333,
+        "sharpe": -1.047,
+        "ann_return": -0.04,
+        "max_dd": 0.0,
+        "cum_return": -0.03,
+        "trades_yr": 1.1,
+        "win_rate": 0.0
+      }
+    },
+    "V2": {
+      "btc_params": {
+        "w": 14,
+        "th": 0.8,
+        "h": 21,
+        "is_sharpe": 3.682
+      },
+      "btc_is": {
+        "n": 547,
+        "sharpe": 3.682,
+        "ann_return": 19.84,
+        "max_dd": -7.47,
+        "cum_return": 34.33,
+        "trades_yr": 120.8,
+        "win_rate": 0.453
+      },
+      "btc_oos": {
+        "n": 333,
+        "sharpe": -1.159,
+        "ann_return": -4.54,
+        "max_dd": -9.69,
+        "cum_return": -4.12,
+        "trades_yr": 138.1,
+        "win_rate": 0.333
+      },
+      "eth_params": {
+        "w": 14,
+        "th": 0.8,
+        "h": 14,
+        "is_sharpe": 1.628
+      },
+      "eth_is": {
+        "n": 547,
+        "sharpe": 1.628,
+        "ann_return": 15.99,
+        "max_dd": -16.51,
+        "cum_return": 26.17,
+        "trades_yr": 122.8,
+        "win_rate": 0.342
+      },
+      "eth_oos": {
+        "n": 333,
+        "sharpe": -0.496,
+        "ann_return": -3.57,
+        "max_dd": -12.53,
+        "cum_return": -3.43,
+        "trades_yr": 139.2,
+        "win_rate": 0.394
+      },
+      "sol_params": {
+        "w": 30,
+        "th": 1.5,
+        "h": 21,
+        "is_sharpe": 2.05
+      },
+      "sol_is": {
+        "n": 547,
+        "sharpe": 2.05,
+        "ann_return": 5.72,
+        "max_dd": -1.94,
+        "cum_return": 8.89,
+        "trades_yr": 16.7,
+        "win_rate": 0.6
+      },
+      "sol_oos": {
+        "n": 333,
+        "sharpe": -0.852,
+        "ann_return": -2.71,
+        "max_dd": -4.47,
+        "cum_return": -2.48,
+        "trades_yr": 30.7,
+        "win_rate": 0.286
+      },
+      "port_is": {
+        "n": 547,
+        "sharpe": 2.816,
+        "ann_return": 13.85,
+        "max_dd": -8.16,
+        "cum_return": 22.85,
+        "trades_yr": 122.8,
+        "win_rate": 0.397
+      },
+      "port_oos": {
+        "n": 333,
+        "sharpe": -0.926,
+        "ann_return": -3.6,
+        "max_dd": -8.18,
+        "cum_return": -3.3,
+        "trades_yr": 139.2,
+        "win_rate": 0.378
+      }
+    },
+    "V3": {
+      "btc_params": {
+        "w": 14,
+        "th": 1.0,
+        "h": 21,
+        "is_sharpe": 4.016
+      },
+      "btc_is": {
+        "n": 547,
+        "sharpe": 4.016,
+        "ann_return": 23.14,
+        "max_dd": -3.61,
+        "cum_return": 41.08,
+        "trades_yr": 101.4,
+        "win_rate": 0.408
+      },
+      "btc_oos": {
+        "n": 333,
+        "sharpe": -1.058,
+        "ann_return": -4.36,
+        "max_dd": -8.07,
+        "cum_return": -3.97,
+        "trades_yr": 109.6,
+        "win_rate": 0.34
+      },
+      "eth_params": {
+        "w": 14,
+        "th": 1.0,
+        "h": 21,
+        "is_sharpe": 2.252
+      },
+      "eth_is": {
+        "n": 547,
+        "sharpe": 2.252,
+        "ann_return": 14.61,
+        "max_dd": -11.98,
+        "cum_return": 24.08,
+        "trades_yr": 101.4,
+        "win_rate": 0.322
+      },
+      "eth_oos": {
+        "n": 333,
+        "sharpe": 1.552,
+        "ann_return": 11.04,
+        "max_dd": -11.08,
+        "cum_return": 10.34,
+        "trades_yr": 109.6,
+        "win_rate": 0.44
+      },
+      "sol_params": {
+        "w": 14,
+        "th": 1.0,
+        "h": 21,
+        "is_sharpe": 3.053
+      },
+      "sol_is": {
+        "n": 547,
+        "sharpe": 3.053,
+        "ann_return": 25.9,
+        "max_dd": -9.04,
+        "cum_return": 46.61,
+        "trades_yr": 101.4,
+        "win_rate": 0.368
+      },
+      "sol_oos": {
+        "n": 333,
+        "sharpe": -0.237,
+        "ann_return": -1.5,
+        "max_dd": -12.32,
+        "cum_return": -1.54,
+        "trades_yr": 109.6,
+        "win_rate": 0.35
+      },
+      "port_is": {
+        "n": 547,
+        "sharpe": 3.367,
+        "ann_return": 21.22,
+        "max_dd": -7.12,
+        "cum_return": 37.01,
+        "trades_yr": 101.4,
+        "win_rate": 0.375
+      },
+      "port_oos": {
+        "n": 333,
+        "sharpe": 0.318,
+        "ann_return": 1.73,
+        "max_dd": -10.2,
+        "cum_return": 1.45,
+        "trades_yr": 109.6,
+        "win_rate": 0.46
+      }
+    },
+    "V4": {
+      "btc_params": {
+        "w": 7,
+        "th": 0.8,
+        "h": 14,
+        "is_sharpe": 4.36
+      },
+      "btc_is": {
+        "n": 547,
+        "sharpe": 4.36,
+        "ann_return": 48.45,
+        "max_dd": -12.07,
+        "cum_return": 104.71,
+        "trades_yr": 298.3,
+        "win_rate": 0.463
+      },
+      "btc_oos": {
+        "n": 333,
+        "sharpe": -1.416,
+        "ann_return": -11.91,
+        "max_dd": -20.03,
+        "cum_return": -10.58,
+        "trades_yr": 312.4,
+        "win_rate": 0.386
+      },
+      "eth_params": {
+        "w": 30,
+        "th": 0.8,
+        "h": 21,
+        "is_sharpe": 2.264
+      },
+      "eth_is": {
+        "n": 547,
+        "sharpe": 2.264,
+        "ann_return": 28.43,
+        "max_dd": -30.97,
+        "cum_return": 51.31,
+        "trades_yr": 274.3,
+        "win_rate": 0.404
+      },
+      "eth_oos": {
+        "n": 333,
+        "sharpe": -0.254,
+        "ann_return": -3.13,
+        "max_dd": -32.12,
+        "cum_return": -3.48,
+        "trades_yr": 278.4,
+        "win_rate": 0.394
+      },
+      "sol_params": {
+        "w": 7,
+        "th": 0.8,
+        "h": 14,
+        "is_sharpe": 2.299
+      },
+      "sol_is": {
+        "n": 547,
+        "sharpe": 2.299,
+        "ann_return": 39.58,
+        "max_dd": -30.18,
+        "cum_return": 76.96,
+        "trades_yr": 298.3,
+        "win_rate": 0.418
+      },
+      "sol_oos": {
+        "n": 333,
+        "sharpe": -1.351,
+        "ann_return": -18.37,
+        "max_dd": -29.77,
+        "cum_return": -16.15,
+        "trades_yr": 312.4,
+        "win_rate": 0.358
+      },
+      "port_is": {
+        "n": 547,
+        "sharpe": 3.448,
+        "ann_return": 38.82,
+        "max_dd": -23.47,
+        "cum_return": 77.18,
+        "trades_yr": 333.0,
+        "win_rate": 0.473
+      },
+      "port_oos": {
+        "n": 333,
+        "sharpe": -1.196,
+        "ann_return": -11.14,
+        "max_dd": -24.93,
+        "cum_return": -10.02,
+        "trades_yr": 337.6,
+        "win_rate": 0.438
+      }
+    },
+    "V5": {
+      "btc_params": {
+        "w": 30,
+        "th": 0.8,
+        "h": 7,
+        "is_sharpe": 0.702
+      },
+      "btc_is": {
+        "n": 547,
+        "sharpe": 0.702,
+        "ann_return": 6.67,
+        "max_dd": -7.7,
+        "cum_return": 9.77,
+        "trades_yr": 143.5,
+        "win_rate": 0.321
+      },
+      "btc_oos": {
+        "n": 333,
+        "sharpe": 0.081,
+        "ann_return": 0.62,
+        "max_dd": -3.87,
+        "cum_return": 0.3,
+        "trades_yr": 103.0,
+        "win_rate": 0.309
+      },
+      "eth_params": {
+        "w": 30,
+        "th": 0.8,
+        "h": 7,
+        "is_sharpe": 0.654
+      },
+      "eth_is": {
+        "n": 547,
+        "sharpe": 0.654,
+        "ann_return": 7.93,
+        "max_dd": -12.45,
+        "cum_return": 11.39,
+        "trades_yr": 143.5,
+        "win_rate": 0.34
+      },
+      "eth_oos": {
+        "n": 333,
+        "sharpe": -0.433,
+        "ann_return": -5.64,
+        "max_dd": -8.54,
+        "cum_return": -5.75,
+        "trades_yr": 103.0,
+        "win_rate": 0.277
+      },
+      "sol_params": {
+        "w": 7,
+        "th": 0.8,
+        "h": 14,
+        "is_sharpe": 0.606
+      },
+      "sol_is": {
+        "n": 547,
+        "sharpe": 0.606,
+        "ann_return": 8.22,
+        "max_dd": -9.78,
+        "cum_return": 11.56,
+        "trades_yr": 228.2,
+        "win_rate": 0.307
+      },
+      "sol_oos": {
+        "n": 333,
+        "sharpe": -0.726,
+        "ann_return": -8.19,
+        "max_dd": -14.85,
+        "cum_return": -7.73,
+        "trades_yr": 212.6,
+        "win_rate": 0.284
+      },
+      "port_is": {
+        "n": 547,
+        "sharpe": 0.806,
+        "ann_return": 7.61,
+        "max_dd": -7.96,
+        "cum_return": 11.33,
+        "trades_yr": 244.9,
+        "win_rate": 0.343
+      },
+      "port_oos": {
+        "n": 333,
+        "sharpe": -0.501,
+        "ann_return": -4.4,
+        "max_dd": -8.41,
+        "cum_return": -4.27,
+        "trades_yr": 234.6,
+        "win_rate": 0.294
+      }
+    }
+  },
+  "best_variant": {
+    "name": "V3",
+    "oos_sharpe": 0.318,
+    "oos_ann_return_pct": 1.73,
+    "port_oos": {
+      "n": 333,
+      "sharpe": 0.318,
+      "ann_return": 1.73,
+      "max_dd": -10.2,
+      "cum_return": 1.45,
+      "trades_yr": 109.6,
+      "win_rate": 0.46
+    },
+    "port_is": {
+      "n": 547,
+      "sharpe": 3.367,
+      "ann_return": 21.22,
+      "max_dd": -7.12,
+      "cum_return": 37.01,
+      "trades_yr": 101.4,
+      "win_rate": 0.375
+    }
+  },
+  "perm_test": {
+    "p_value": 1.0,
+    "n_perm": 500,
+    "block_size": 21,
+    "significant": false
+  },
+  "walk_forward": {
+    "folds": [
+      {
+        "fold": 1,
+        "start": "2024-01-01",
+        "end": "2024-05-16",
+        "sharpe": 5.049,
+        "positive": "True",
+        "n": 137
+      },
+      {
+        "fold": 2,
+        "start": "2024-01-01",
+        "end": "2024-09-29",
+        "sharpe": 3.947,
+        "positive": "True",
+        "n": 273
+      },
+      {
+        "fold": 3,
+        "start": "2024-01-01",
+        "end": "2025-02-12",
+        "sharpe": 4.619,
+        "positive": "True",
+        "n": 409
+      },
+      {
+        "fold": 4,
+        "start": "2024-01-01",
+        "end": "2025-06-28",
+        "sharpe": 4.024,
+        "positive": "True",
+        "n": 545
+      }
+    ],
+    "n_positive": 4
+  },
+  "correlations": {
+    "vs_k449_eth_btc": 0.0134,
+    "vs_k280_btc_mom90": -0.0729,
+    "vs_k495_btc_7d": -0.0411,
+    "vs_k510_roi30d": -0.085,
+    "vs_k515_fg_proxy": -0.059,
+    "vs_btc_1d_ret": 0.0285
+  },
+  "regime_analysis": {
+    "bull_oos_sharpe": -3.381,
+    "bear_oos_sharpe": 0.426,
+    "bull_fraction": 0.381,
+    "bear_fraction": 0.619,
+    "bull_n": 127,
+    "bear_n": 206
+  },
+  "gates": {
+    "G1": {
+      "label": "OOS Sharpe >= 1.0",
+      "value": 0.318,
+      "threshold": 1.0,
+      "pass_": false
+    },
+    "G2": {
+      "label": "Perm p-value <= 0.05 (IS block)",
+      "value": 1.0,
+      "threshold": 0.05,
+      "pass_": false
+    },
+    "G3": {
+      "label": "DSR Bonferroni p<=0.00005 (n=960)",
+      "value": 1.0,
+      "threshold": 5.208333333333334e-05,
+      "pass_": false
+    },
+    "G4": {
+      "label": "Walk-fwd 3/4+ folds positive",
+      "value": 4,
+      "threshold": 3,
+      "pass_": true
+    },
+    "G5": {
+      "label": "Max corr vs existing < 0.40",
+      "value": 0.085,
+      "threshold": 0.4,
+      "pass_": true
+    },
+    "G6": {
+      "label": "Trades/yr >= 10",
+      "value": 109.6,
+      "threshold": 10,
+      "pass_": true
+    },
+    "G7": {
+      "label": "OOS Ann Return > 5%",
+      "value": 1.73,
+      "threshold": 5.0,
+      "pass_": false
+    }
+  },
+  "n_gates_pass": 3,
+  "n_combos_total": 960,
+  "decision": "REJECT",
+  "decision_rationale": [
+    "Decision: REJECT (3/7 gates pass)",
+    "OOS Sharpe 0.318 (threshold 1.0) \u2014 FAIL",
+    "Perm p=1.0000 (threshold 0.05) \u2014 FAIL",
+    "Walk-forward: 4/4 folds positive",
+    "Max corr vs existing: 0.0850 (threshold 0.40) \u2014 PASS",
+    "K515 proxy corr: -0.0590 \u2014 orthogonal",
+    "Data: Google Trends via pytrends, daily via 90d batches",
+    "Note: F&G (K515) includes GT as one component; GT alone tests the isolated search dimension"
+  ],
+  "profit_projection": {
+    "sleeve_pct": 0.03,
+    "leverage": 2.0,
+    "ann_return_1x_pct": 1.73,
+    "ann_return_lev_pct": 3.46,
+    "notional_10m": 600000,
+    "profit_10m_usd_yr": 10380,
+    "profit_100m_usd_yr": 103800,
+    "decision": "REJECT"
+  },
+  "cross_axis_stack": {
+    "k449_ref": 5.66,
+    "k495_ref": 2.17,
+    "k510_ref": 1.249,
+    "k515_ref": 1.201,
+    "k519_oos_sharpe": 0.318,
+    "four_axis_k449_k495_k510_k515": 6.305,
+    "five_axis_all": 6.313,
+    "marginal_lift_from_k519": 0.008,
+    "note": "Orthogonal Sharpe approx: sqrt(sum of sq). Valid only if max corr < 0.20."
+  },
+  "k519_vs_k515_comparison": {
+    "k515_data": "Fear & Greed Index (composite: social + price + dominance + GT component)",
+    "k519_data": "Google Trends raw search volume (isolated search interest only)",
+    "overlap": "GT is ~1/6 component in F&G composite",
+    "correlation_expected": "r \u2248 0.3\u20130.5 expected (partial overlap via shared GT component)",
+    "measured_proxy_corr": -0.059,
+    "distinct_axis": true,
+    "interpretation": "If |corr| < 0.40: GT adds orthogonal information beyond F&G composite. FOMO searches peak BEFORE F&G extreme greed (leading indicator). Retail apathy troughs in GT often precede F&G fear (faster-moving signal)."
+  },
+  "risk_factors": {
+    "pytrends_stability": "Google unofficial API, may break on schema changes (historical: stable 5+ yrs)",
+    "rate_limiting": "429 errors common, mitigated by 5s throttle + retries",
+    "scale_normalization": "Each 90d batch normalized 0-100 independently (stitching artifact risk)",
+    "trends_manipulation": "Search volume can be gamed by pump narratives (low liquidity assets)",
+    "weekly_resolution_fallback": "Periods >3mo return weekly data, daily batching required",
+    "keyword_sensitivity": "Different keywords ('BTC' vs 'bitcoin') give different scales",
+    "regime_dependency": "Bull market Sh=-3.381, Bear Sh=0.426"
+  },
+  "next_axis_recommendation": {
+    "primary": "K520 On-chain Wallet Cluster: large-wallet accumulation/distribution (Glassnode free tier or Dune)",
+    "alternative": "K521 Options Market Skew: 25-delta put/call IV skew (Deribit public API, free)",
+    "note": "Social axis (K515/K519) proven effective. Next orthogonal dimension: derivatives market structure (options skew) or wallet behavior (UTXO). Options skew captures institutional hedging demand, distinct from retail search/sentiment."
+  },
+  "elapsed_sec": 141.2,
+  "overfitting_diagnosis": {
+    "pattern": "Classic IS-OOS degradation across ALL variants",
+    "is_sharpe_range": "0.806 to 3.448",
+    "oos_sharpe_range": "-1.196 to +0.318",
+    "best_oos_variant": "V3 (crash contrarian LONG, Sh=0.318)",
+    "only_oos_positive": "V3 ETH-only (Sh=1.552) - but fails as portfolio",
+    "root_cause": [
+      "1. pytrends data is WEEKLY not daily within each batch (values repeat 7-day periods)",
+      "2. Hold periods (3-21d) overlap with the weekly granularity of trend data",
+      "3. IS period (2024) saw specific BTC bull cycle that correlated with search patterns",
+      "4. OOS period (2025-2026) = bear/sideways regime where FOMO thesis inverted",
+      "5. Walk-forward showed positive IS folds but this was in-sample by design",
+      "6. Batch stitching creates scale artifacts that confound z-score signals"
+    ],
+    "key_insight": "Google Trends weekly batches masquerade as daily data. The z-score signal selects on noise, not persistent patterns.",
+    "v3_partial_success": "V3 (ETH crash contrarian) OOS Sh=1.552 is genuine but fragile: only 1 asset, max DD=-11%",
+    "why_fg_works_but_gt_doesnt": "F&G is a daily composite aggregated by humans/APIs. Google Trends is a relative index that changes daily scale per batch - making z-score normalization unreliable."
+  }
+}
