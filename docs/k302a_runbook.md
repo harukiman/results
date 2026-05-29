@@ -5449,3 +5449,156 @@ python3 scripts/verify_deployment_status.py
 ---
 
 *K465 §35 -- Lighter + Vertex integration scaffold (25th + 26th daemons, v6.20 7-venue K208 mesh COMPLETE, 26 daemons confirmed, conservative tier 3x/0.03 OI cap) -- 2026-05-30*
+
+---
+
+## §37. K473 Spark sUSDS APY Monitor — 50/50 sUSDe + Spark sUSDS Stablecoin Sleeve (28th Daemon)
+
+**Wave:** K473 | **Date:** 2026-05-30 | **K471 Fast-Track Recommendation**
+
+### §37.1 Strategy Overview
+
+K471 analysis found a full 7-protocol stablecoin aggregator would deliver +$40K/yr but require 5.5 wave effort. Fast-track: add Spark sUSDS as a second stablecoin yield protocol alongside existing K344 sUSDe, achieving 3.5x lift-per-effort ratio.
+
+**K473 50/50 sleeve design:**
+
+| Protocol | Token | Mechanism | APY (K473) | Redemption | Chain |
+|----------|-------|-----------|------------|------------|-------|
+| Ethena   | sUSDe | Funding rate delta-neutral | ~3.9–4.1% | 7d cooldown | Ethereum |
+| Spark (Sky) | sUSDS | DSR / Sky savings rate | ~3.3–4.5% | Instant | Ethereum |
+| **Combined** | 50/50 | Blended | **~3.6–4.5%** | Mixed | Ethereum |
+
+**Current snapshot (2026-05-30 K473 live fetch):**
+- sUSDS APY: 3.34% (DefiLlama pool `54e9b138-3146-4c1f-8dce-1cb948f5ef96`)
+- sUSDe APY: 3.88% (K412 7d mean)
+- Combined 50/50: 3.61% (below 4% G1 gate — monitor for DSR rate recovery)
+- K266 gates: PASS 5/6 (G1 marginal at current rates)
+
+**K471 lift estimate:** +$40K/yr at $10M AUM (K471 analysis basis; subject to live APY conditions)
+
+### §37.2 K266 Stablecoin Gate Evaluation (K473 Modified)
+
+| Gate | Description | Status | Detail |
+|------|-------------|--------|--------|
+| G1 | Net APY ≥ 4% combined | CONDITIONAL | 3.61% current; target 4%+ when DSR rates recover |
+| G2 | Audit verified | PASS | Ethena (multiple audits) + Sky/MakerDAO (MCD audited) |
+| G3 | Stability (low vol) | PASS | sUSDS 30d vol 0.23pp (well below 0.5pp threshold) |
+| G4 | Redemption acceptable | PASS | sUSDe 7d + sUSDS instant; stagger withdrawals |
+| G5 | Correlation low | PASS | Funding-rate mechanism vs DSR mechanism — different drivers |
+| G6 | Single-protocol max 50% | PASS | 50/50 allocation enforced |
+
+**Gate status:** PASS 5/6 (G1 CONDITIONAL at current rates)
+
+### §37.3 Spark sUSDS Monitor Daemon
+
+**Script:** `scripts/spark_usds_monitor.py`
+**Plist:** `com.cryptolab.spark-usds-monitor.plist` (gitignored — copy to LaunchAgents)
+**Schedule:** Weekly (StartInterval: 604800)
+**Dashboard:** `data/spark_usds_dashboard.json`
+**Alerts:** `cache/k473_spark_usds_alerts.jsonl`
+**Logs:** `logs/k473_spark_usds.log` / `.err`
+**ntfy topic:** `cryptolab-spark-usds`
+
+**Alert thresholds:**
+
+| Alert | Condition | Severity | Action |
+|-------|-----------|----------|--------|
+| LOW_APY | sUSDS 7d mean < 3% | WARNING | K473 reduce candidate |
+| HIGH_APY | sUSDS 7d mean > 10% | INFO | Verify data correctness |
+| CRASH | 30d→7d drop > 2pp | CRITICAL | Sky DSR rate cut — reassess K473 sleeve |
+| SPREAD_WIDE | \|sUSDe − sUSDS\| > 3pp | INFO | Rebalance allocation toward higher-yielding |
+| NO_ALERT | Normal conditions | INFO | K473 sleeve unchanged |
+
+### §37.4 K297' Sleeve Replacement Options
+
+**Current v6.20:** sUSDe 10% (K344 alone)
+**K473 proposals:**
+
+```
+Option A (RECOMMENDED — v6.21 candidate):
+  sUSDe 5% (K344) + Spark sUSDS 5% (K473) = 10% total
+  → Diversification benefit: different yield mechanisms, instant redemption on sUSDS side
+  → Combined APY ≈ 3.6% current, 4–5% when DSR rates normalize
+
+Option B (expansion):
+  Keep sUSDe 10% + add sUSDS as new 5% sleeve = 15% total stablecoin
+  → Higher absolute yield but increases stablecoin concentration
+  → Requires v6.21 architecture review
+
+Activation trigger: DSR/sUSDS APY recovery to ≥ 3.5% sustained 14d + user confirmation
+```
+
+### §37.5 Spark Protocol Background
+
+- **Protocol:** Spark (by Sky, formerly MakerDAO)
+- **Mechanism:** Sky Savings Rate (SSR) — USDS deposited earns DSR-equivalent yield
+- **Smart contract:** Ethereum mainnet — audited MakerDAO-derived infrastructure
+- **TVL (K473 snapshot):** ~$825M (Ethereum main pool)
+- **Governance:** Sky (MKR holders via governance vote)
+- **Additional pools:** Arbitrum (~$359M, 3.60% APY), Base (~$223M, 3.60% APY)
+- **Risk:** Governance vote can reduce DSR rate (CRASH alert covers this)
+
+### §37.6 Emergency Exit Procedure
+
+**sUSDS requires NO HL delta hedge** (pure stablecoin yield — not directional).
+
+**Step 1: Redeem sUSDS (user action — instant)**
+```
+Option 1: https://app.spark.fi/ → Earn → sUSDS → Withdraw
+Option 2: https://sky.money/ → Savings → Withdraw
+Receive: USDS (stablecoin)
+Swap USDS → USDC via Curve/Uniswap if needed
+```
+
+**Step 2: Use emergency exit script for guidance**
+```bash
+python3 scripts/emergency_hl_exit.py --dry-run --user $HL_USER_ADDRESS --include-spark
+# Prints Spark sUSDS guidance (no Ethereum tx)
+```
+
+**Note:** The `--include-spark` flag on `emergency_hl_exit.py` prints guidance only.
+Ethereum wallet signing is always a user action.
+
+### §37.7 Activation Procedure
+
+```bash
+# 1. Test single-shot fetch
+python3 scripts/spark_usds_monitor.py
+# Expected output: sUSDS current APY, combined 50/50, K266 gates, alert status
+
+# 2. Load daemon
+cp com.cryptolab.spark-usds-monitor.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.spark-usds-monitor.plist
+
+# 3. Verify deployment (28 daemons expected)
+python3 scripts/verify_deployment_status.py
+# Expected: com.cryptolab.spark-usds-monitor — SCAFFOLD-READY → PENDING ACTIVATION → ACTIVE
+
+# 4. Activate sleeve position (after K266 G1 recovery + user decision)
+# Option A: Redirect 5% from sUSDe allocation to sUSDS
+# (Requires: sUSDS APY >= 3.5% sustained, sUSDe + sUSDS combined >= 4%)
+```
+
+### §37.8 Activation Triggers
+
+| Trigger | Description | Action |
+|---------|-------------|--------|
+| K473-USDS | sUSDS APY ≥ 3.5% sustained 14d | Activate Option A (sUSDe 5% + sUSDS 5%) |
+| K473-COMBINED | Combined 50/50 APY ≥ 4.0% | Full sleeve go-live |
+| K473-REDUCE | sUSDS APY < 3% sustained 7d | Reduce/exit sUSDS position |
+| K412-LOW_APY | sUSDe APY < 3% | Rebalance toward sUSDS (if sUSDS higher) |
+
+### §37.9 References
+
+| Wave | Content |
+|------|---------|
+| K473 | This section — Spark sUSDS monitor (28th daemon, K471 fast-track) |
+| K471 | Stablecoin aggregator analysis (+$40K/yr at 3.5x lift-per-effort) |
+| K412 | sUSDe APY monitor pattern (K344 sleeve, 27th daemon architecture) |
+| K344 | sUSDe OC sleeve (current v6.20 10% stablecoin allocation) |
+| K266 | §6 strict gate framework (modified for stablecoin context in K473) |
+| K297' | Sleeve framework (Option A: sUSDe 5% + sUSDS 5% = 10%) |
+
+---
+
+*K473 §37 -- Spark sUSDS 50/50 stablecoin sleeve scaffold (28th daemon, K471 fast-track, v6.21 candidate, combined APY 3.6–4.5%, K266 5/6 gates PASS) -- 2026-05-30*

@@ -1,0 +1,75 @@
+{
+  "wave": "K473",
+  "title": "sUSDe + Spark sUSDS 50/50 Fast-Track Scaffold",
+  "date": "2026-05-30",
+  "source_wave": "K471",
+  "k471_recommendation": "full 7-protocol aggregator +$40K/yr but 5.5 wave effort; fast-track: add Spark sUSDS alone = 3.5x lift-per-effort",
+
+  "spark_protocol": {
+    "pool_id": "54e9b138-3146-4c1f-8dce-1cb948f5ef96",
+    "symbol": "USDS",
+    "chain": "Ethereum",
+    "tvl_usd": 824742276,
+    "current_apy_pct": 3.34412,
+    "apy_7d_mean_pct": 3.5728075,
+    "apy_30d_mean_pct": 3.667874838709677,
+    "apy_30d_vol_pp": 0.23174188863001532,
+    "data_points": 89,
+    "redemption": "instant (no lockup)",
+    "mechanism": "Sky Savings Rate (DSR-based)",
+    "additional_pools": {
+      "arbitrum": {"apy": 3.6, "tvl": 358908668},
+      "base": {"apy": 3.6, "tvl": 222589638}
+    }
+  },
+
+  "susde_reference": {
+    "pool": "Ethena sUSDe (K344/K412)",
+    "apy_7d_mean_pct": 3.8785214285714287,
+    "baseline_pct": 4.01,
+    "redemption": "7d cooldown",
+    "mechanism": "funding rate delta-neutral"
+  },
+
+  "combined_50_50": {
+    "combined_apy_pct": 3.6113,
+    "spread_pp": 0.5344,
+    "annual_yield_10m_usd": 361132,
+    "lift_vs_baseline_usd": -39868,
+    "k471_lift_estimate_usd": 40000,
+    "recommended_allocation": "sUSDe 50% / sUSDS 50% (balanced)"
+  },
+
+  "k266_gates": {
+    "G1_net_apy_gte_4pct": {"pass": false, "value": "3.61%", "note": "marginal; DSR recovery expected"},
+    "G2_audit_verified": {"pass": true},
+    "G3_stability": {"pass": true, "vol_pp": 0.232},
+    "G4_redemption": {"pass": true, "detail": "sUSDS instant + sUSDe 7d"},
+    "G5_correlation_low": {"pass": true},
+    "G6_single_protocol_50pct": {"pass": true},
+    "overall": "PASS 5/6 (CONDITIONAL — G1 marginal at current DSR rates)"
+  },
+
+  "sleeve_proposal": {
+    "option_a": "sUSDe 5% + sUSDS 5% = 10% (v6.21 candidate — replaces sUSDe-only 10%)",
+    "option_b": "Keep sUSDe 10% + add sUSDS 5% = 15% total stablecoin",
+    "default": "Option A",
+    "activation_trigger": "sUSDS >= 3.5% sustained 14d + combined >= 4% + user confirmation"
+  },
+
+  "deliverables": {
+    "scripts/spark_usds_monitor.py": "NEW — K473 Spark sUSDS weekly APY monitor (28th daemon)",
+    "com.cryptolab.spark-usds-monitor.plist": "NEW — weekly launchd (gitignored)",
+    "scripts/verify_deployment_status.py": "UPDATED — 28th daemon added",
+    "data/spark_usds_dashboard.json": "NEW — live APY dashboard (generated K473)",
+    "scripts/emergency_hl_exit.py": "UPDATED — --include-spark flag + close_spark_positions() stub",
+    "docs/k302a_runbook.md": "UPDATED — §37 K473 Spark sUSDS overview",
+    "report.html": "UPDATED — K473 row, 28th daemon, timestamp, banner"
+  },
+
+  "daemon_count": {
+    "before_k473": 27,
+    "after_k473": 28,
+    "new_daemon": "com.cryptolab.spark-usds-monitor"
+  }
+}

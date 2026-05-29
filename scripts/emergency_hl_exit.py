@@ -1353,6 +1353,73 @@ def close_jlp_positions(
     return False
 
 
+def close_spark_positions(
+    dry_run: bool,
+    logger:  logging.Logger,
+) -> bool:
+    """
+    K473 scaffold: close Spark sUSDS (Sky/MakerDAO) stablecoin yield position.
+
+    Spark sUSDS is an Ethereum-based yield-bearing stablecoin — NOT a HL/Bybit/OKX
+    perpetual position. No HL delta hedge is required (stablecoin, not directional).
+
+    K473 context:
+      - sUSDS: Spark Protocol (Sky/MakerDAO DSR-based), Ethereum mainnet
+      - Pool: USDS / Ethereum (DefiLlama ID: 54e9b138-3146-4c1f-8dce-1cb948f5ef96)
+      - Current APY: ~3.34% (K473 live fetch, 2026-05-30)
+      - Combined 50/50 with sUSDe: ~3.61% (K473 blended estimate)
+      - Redemption: INSTANT (no lockup, unlike sUSDe 7d cooldown)
+
+    To close sUSDS manually:
+      1. Connect Ethereum wallet (MetaMask/Ledger) to https://app.spark.fi/
+      2. Navigate to Earn → sUSDS
+      3. Click "Withdraw" to redeem sUSDS for USDS
+      4. Optionally swap USDS → USDC via Uniswap or Curve
+
+    Or via Sky Protocol directly:
+      1. Go to https://sky.money/ (formerly MakerDAO)
+      2. Connect wallet → Savings → Withdraw
+
+    NOTE: No HL/Bybit positions involved — this is a pure DeFi stablecoin position.
+    Redemption is instant. No delta hedge to unwind on HL.
+    This script CANNOT access Ethereum private keys. Wallet action is user responsibility.
+
+    Current scope: STUB — guidance only.
+    Returns True on dry-run (safe). Returns False in live mode (not implemented).
+    """
+    if dry_run:
+        logger.info(
+            "  [DRY-RUN] close_spark_positions — K473 STUB (Spark sUSDS, guidance only). "
+            "No API call made."
+        )
+        logger.info(
+            "    sUSDS is Ethereum DeFi — NOT a HL/Bybit/OKX perp position. No delta hedge."
+        )
+        logger.info(
+            "    Close via Spark UI: https://app.spark.fi/ → Earn → sUSDS → Withdraw."
+        )
+        logger.info(
+            "    Or via Sky: https://sky.money/ → Savings → Withdraw. Redemption is INSTANT."
+        )
+        logger.info(
+            "    Dashboard: data/spark_usds_dashboard.json | Monitor: scripts/spark_usds_monitor.py | "
+            "Runbook: docs/k302a_runbook.md §37"
+        )
+        return True
+
+    # STUB: live sUSDS close not yet implemented (K473 scaffold — Ethereum wallet required)
+    logger.warning(
+        "close_spark_positions: STUB — Ethereum wallet signing not implemented (K473 scaffold). "
+        "sUSDS must be redeemed manually via Spark UI: https://app.spark.fi/ → Earn → sUSDS → Withdraw."
+    )
+    logger.warning(
+        "  Redemption is INSTANT (no lockup). After withdrawal, swap USDS → USDC if needed. "
+        "No HL delta hedge required (sUSDS is not a directional perp position). "
+        "See: docs/k302a_runbook.md §37 for full Spark sUSDS exit procedure."
+    )
+    return False
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # 8. Interactive Confirm (--EXECUTE guard)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1655,6 +1722,26 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K473: Spark sUSDS (Sky/MakerDAO) emergency exit flag (stub scaffold — Ethereum DeFi)
+    # sUSDS is an Ethereum DeFi yield position — NOT a perp/futures position on HL/Bybit/OKX.
+    # Redemption is instant (no lockup). No HL delta hedge required.
+    # Activated as part of K473 50/50 sUSDe+sUSDS sleeve (v6.21 candidate).
+    parser.add_argument(
+        "--include-spark",
+        dest="include_spark",
+        action="store_true",
+        default=False,
+        help=(
+            "K473: Print Spark sUSDS emergency exit guidance (Ethereum DeFi STUB scaffold). "
+            "STUB only — Ethereum wallet signing required (user responsibility). "
+            "sUSDS is NOT on HL/Bybit/OKX — manual redeem at app.spark.fi or sky.money. "
+            "Redemption is INSTANT (no lockup). No HL delta hedge needed. "
+            "K473 monitor: scripts/spark_usds_monitor.py (weekly DefiLlama poll). "
+            "Dashboard: data/spark_usds_dashboard.json. "
+            "See: docs/k302a_runbook.md §37"
+        ),
+    )
+
     args = parser.parse_args()
 
     # Determine mode
@@ -1939,7 +2026,25 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "Use --include-jlp to print JLP guidance if JLP position is active."
             )
 
-        overall_success = success and bybit_success and okx_success and aevo_success and dydx_success and jlp_success
+        # K473: Spark sUSDS (Sky/MakerDAO) emergency exit — Ethereum DeFi STUB scaffold
+        spark_success = True
+        if args.include_spark:
+            logger.info("=== SPARK sUSDS EMERGENCY REDEMPTION GUIDANCE (K473 Ethereum DeFi STUB scaffold) ===")
+            spark_success = close_spark_positions(dry_run=False, logger=logger)
+            if spark_success:
+                logger.info("Spark sUSDS: STUB returned OK (no actual Ethereum tx — manual redemption required).")
+            else:
+                logger.warning(
+                    "Spark sUSDS: STUB not implemented (Ethereum wallet signing required). "
+                    "Manual redemption: https://app.spark.fi/ → Earn → sUSDS → Withdraw."
+                )
+        else:
+            logger.info(
+                "Spark sUSDS close skipped (--include-spark not set, default off at K473 scaffold). "
+                "Use --include-spark to print Spark sUSDS guidance if sUSDS position is active."
+            )
+
+        overall_success = success and bybit_success and okx_success and aevo_success and dydx_success and jlp_success and spark_success
         return 0 if overall_success else 1
 
     # Dry-run success
@@ -2005,6 +2110,21 @@ USDY sleeve emergency guidance (K415 §21.6):
         logger.info("  [DRY-RUN] JLP close guidance STUB would be printed (--include-jlp)")
     else:
         logger.info("  [DRY-RUN] JLP close would be skipped (default --no-jlp at K468 scaffold)")
+
+    # K473: Spark sUSDS (Sky/MakerDAO) dry-run note
+    logger.info("")
+    logger.info("  [Spark sUSDS — K473 §37] Spark sUSDS emergency guidance:")
+    logger.info("    sUSDS is Ethereum DeFi (NOT a HL/Bybit/OKX perp) — manual redemption required.")
+    logger.info("    Redeem: https://app.spark.fi/ → Earn → sUSDS → Withdraw (INSTANT, no lockup).")
+    logger.info("    Or via Sky: https://sky.money/ → Savings → Withdraw.")
+    logger.info("    K473: 50/50 sUSDe+sUSDS sleeve (v6.21 candidate), combined APY ~3.6–4.5%.")
+    logger.info("    sUSDS current APY: ~3.34% (K473 live fetch). No HL delta hedge needed.")
+    logger.info("    Use --include-spark to print sUSDS guidance during --EXECUTE mode.")
+    logger.info("    See: docs/k302a_runbook.md §37 | Monitor: data/spark_usds_dashboard.json")
+    if args.include_spark:
+        logger.info("  [DRY-RUN] Spark sUSDS guidance STUB would be printed (--include-spark)")
+    else:
+        logger.info("  [DRY-RUN] Spark sUSDS close would be skipped (default --no-spark at K473 scaffold)")
 
     return 0
 

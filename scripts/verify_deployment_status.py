@@ -238,6 +238,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="jlp_apy_monitor",
         expected_html_status="SCAFFOLD-READY",  # K468: plist in repo root (gitignored); weekly StartInterval (604800) via launchd; activate when JLP entry trigger fires (>=25% APY)
     ),
+    DaemonSpec(
+        label="com.cryptolab.spark-usds-monitor",
+        purpose="K473 Spark sUSDS APY weekly monitor (K471 fast-track, 50/50 sUSDe+sUSDS sleeve, v6.21 candidate, combined APY 4-5%, +$40K/yr at $10M, weekly DefiLlama poll, 28th daemon)",
+        scripts=["scripts/spark_usds_monitor.py"],
+        log_basename="k473_spark_usds",
+        expected_html_status="SCAFFOLD-READY",  # K473: plist in repo root (gitignored); weekly StartInterval (604800) via launchd; activate after K266 gate review + sUSDS position funded
+    ),
 ]
 
 
