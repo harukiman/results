@@ -281,6 +281,27 @@ def run_precheck(user: str, dry_run: bool, logger: logging.Logger) -> Dict:
                 f"Positions: {len(positions)} | Open orders: {len(orders)}")
     logger.info(f"Total notional to close: ${plan['total_notional_usd']:.2f}")
 
+    # ── K429 AUM Context (read portfolio_aum_state for deployed_capital awareness) ──
+    try:
+        _aum_state_path = REPO_ROOT / "data" / "portfolio_aum_state.json"
+        if _aum_state_path.exists():
+            with open(_aum_state_path) as _af:
+                _aum_st = json.load(_af)
+            _aum     = _aum_st.get("current_aum_usdc",       0)
+            _deploy  = _aum_st.get("deployed_capital_usdc",  0)
+            _cum_pct = _aum_st.get("cumulative_pnl_pct",     0.0)
+            logger.info(
+                f"[K429] AUM state: current=${_aum:,.0f} | deployed=${_deploy:,.0f} | "
+                f"cumPnL={_cum_pct:+.3f}%"
+            )
+            snapshot["k429_aum_context"] = {
+                "current_aum_usdc":      _aum,
+                "deployed_capital_usdc": _deploy,
+                "cumulative_pnl_pct":    _cum_pct,
+            }
+    except Exception:
+        pass  # AUM context is informational only; do not disrupt emergency exit
+
     return snapshot
 
 

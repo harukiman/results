@@ -69,6 +69,24 @@ BUILDER_FEE_F          = 0          # tenths of bp extra cost (0 = self-rebate, 
 #   if BUILDER_CODE_ENABLED and BUILDER_WALLET_ADDRESS:
 #       order_action["builder"] = {"b": BUILDER_WALLET_ADDRESS, "f": BUILDER_FEE_F}
 
+# ── K430: Leverage application (additive — LEVERAGE=1.0 at default PAPER_TRADE) ─
+# K302a satellite (PAXG/SPX HL perps). Exchange caps: PAXG 10x, SPX 5x.
+# At default PAPER_TRADE phase: LEVERAGE=1.0 → behaviour UNCHANGED.
+try:
+    import sys as _sys_lev_k302a
+    _sys_lev_k302a.path.insert(0, str(Path(__file__).resolve().parent))
+    from leverage_manager import (
+        get_current_leverage    as _get_leverage_k302a,
+        compute_margin_required as _compute_margin_k302a,
+        check_margin_health     as _check_margin_k302a,
+    )
+    LEVERAGE_K302A = _get_leverage_k302a()
+    _LEVERAGE_K302A_ENABLED = True
+except Exception as _lev_err_k302a:
+    print(f"  [K430] leverage_manager import failed ({_lev_err_k302a}) — defaulting to 1x")
+    LEVERAGE_K302A = 1.0
+    _LEVERAGE_K302A_ENABLED = False
+
 # ── Paths ──────────────────────────────────────────────────────────────────────
 BASE  = Path(__file__).resolve().parent.parent  # K339 security rule: no absolute /Users/ paths
 CACHE = BASE / "cache"
@@ -772,6 +790,29 @@ def run_daily(date_str: str):
         oracle_health = oracle_health_dash,
     )
 
+    # ── K429 AUM Tracking (additive — safe if portfolio_aum_manager not present) ─
+    # K302a is SECONDARY: updates AUM only (PT1 check is done by primary K280).
+    aum_metrics_k302a = {}
+    try:
+        import os as _os_k429
+        if _os_k429.environ.get("AUM_TRACKING_ENABLED", "true").lower() != "false":
+            import sys as _sys_k429
+            _sys_k429.path.insert(0, str(BASE / "scripts"))
+            from portfolio_aum_manager import (
+                update_aum, get_current_metrics, compute_position_size, load_state,
+            )
+            _aum_state    = load_state()
+            _k297_alloc   = compute_position_size("K297_prime", _aum_state)
+            _pnl_usdc     = today_pnl * _k297_alloc   # today_pnl is fractional return
+            update_aum(_pnl_usdc, sleeve_name="K297_prime")
+            aum_metrics_k302a = get_current_metrics()
+            print(
+                f"\n  [K429] K297' AUM contrib: ${_pnl_usdc:+,.2f} USDC | "
+                f"Portfolio AUM=${aum_metrics_k302a.get('current_aum_usdc', 0):,.0f}"
+            )
+    except Exception as _e_aum:
+        print(f"  [K429] AUM tracking skipped: {_e_aum}")
+
     # ── Paper trade log ────────────────────────────────────────────────────────
     log_entry = {
         "date":               str(today_date),
@@ -785,6 +826,11 @@ def run_daily(date_str: str):
         "spx_pnl_today":      round(float(spx_pnl.iloc[-1]),  8) if not spx_pnl.empty else None,
         "alerts":             [a["code"] for a in alerts],
         "elapsed_s":          round(time.time() - t0, 1),
+        # K429 AUM metrics
+        "k429_aum_usdc":      aum_metrics_k302a.get("current_aum_usdc"),
+        # K430 leverage metadata (additive; LEVERAGE=1.0 at default PAPER_TRADE)
+        "k430_leverage":      LEVERAGE_K302A,
+        "k430_leverage_enabled": _LEVERAGE_K302A_ENABLED,
     }
     with open(TRADES_LOG, "a") as f:
         f.write(json.dumps(log_entry) + "\n")

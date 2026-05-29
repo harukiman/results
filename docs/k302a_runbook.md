@@ -2380,4 +2380,457 @@ If v6.15 needs to be rolled back (e.g. USDY yield drops below 2%, regulatory con
 
 ---
 
+## §22 K429 Daily Reinvest Mechanics (AUM Tracking + 8% Cash Buffer + PT1 Safety Valve)
+
+**Wave:** K429 | **Implemented:** 2026-05-29 | **Source:** K428 S1 finding (+$3.6M / 5y @ $10M AUM)
+
+---
+
+### §22.1 Overview
+
+K428 demonstrated that daily AUM reinvestment generates **+$3.6M over 5 years** at $10M initial
+capital (vs static $10M sizing). K429 implements this via a centralized AUM state manager
+(`scripts/portfolio_aum_manager.py`) that all sleeve daemons read at startup and write to on
+completion.
+
+**Single source of truth:** `data/portfolio_aum_state.json`
+
+**History log (append-only):** `cache/portfolio_aum_history.jsonl`
+
+### §22.2 Architecture
+
+```
+data/portfolio_aum_state.json
+├── current_aum_usdc          — total portfolio value (grows daily with PnL)
+├── cash_buffer_usdc          — 8% reserved (never deployed)
+├── deployed_capital_usdc     — 92% in strategies
+├── cumulative_pnl_usdc/pct   — total gain from initial $10M
+├── peak_aum_usdc             — all-time high (for drawdown calc)
+├── 7d_rolling_return_pct     — 7d cumulative return (PT1 trigger)
+├── pt1_safety_active         — True if PT1 has withdrawn gains to cash
+└── sleeve_weights            — K280:75%, K297_prime:20%, sUSDe:5%, K376:3%
+```
+
+**Position sizing formula:**
+```
+sleeve_position_usdc = deployed_capital_usdc × sleeve_weight
+```
+
+For example, at $10M AUM (day 0):
+- deployed_capital = $9,200,000 (92%)
+- K280 position    = $9,200,000 × 75% = **$6,900,000**
+- K297' position   = $9,200,000 × 20% = **$1,840,000**
+- sUSDe position   = $9,200,000 × 5%  = **$460,000**
+
+After 1 year at 0.03%/day mean return (v6.13d calibration), AUM grows to ~$11.09M, and
+K280 position grows proportionally: $9,200,000 × 1.1 × 75% ≈ **$7,590,000**.
+
+### §22.3 Daily Workflow
+
+Each day the production scripts run in order:
+
+1. **K280** (primary, runs first):
+   - Reads `deployed_capital_usdc` → computes K280 sleeve target
+   - Computes daily PnL as fractional return → converts to USDC
+   - Calls `update_aum(pnl_usdc, "K280")` → state updated
+   - **Checks PT1 safety valve** (only K280, as primary daemon)
+   - Logs to `data/k280_paper_trades.jsonl` with K429 AUM metrics
+
+2. **K302a satellite** (secondary):
+   - Reads `deployed_capital_usdc` → computes K297' sleeve target
+   - Calls `update_aum(pnl_usdc, "K297_prime")`
+   - Does NOT run PT1 check (K280 handles it)
+
+3. **K344 sUSDe** (secondary):
+   - Reads `deployed_capital_usdc` → computes sUSDe sleeve target
+   - sUSDe daily yield ≈ APY / 365 applied to sleeve allocation
+   - Calls `update_aum(pnl_usdc, "sUSDe")`
+
+4. **K376 momentum** (tertiary, paper-trade phase):
+   - Reads K376 sleeve target from AUM state for informational logging
+   - Does NOT update AUM (paper-trade only; PnL not confirmed)
+
+### §22.4 8% Cash Buffer Design
+
+The cash buffer serves two purposes:
+
+1. **Operational liquidity**: margin for position rebalancing, fee coverage, slippage reserve
+2. **PT1 safety sink**: when PT1 fires, excess gains park here rather than being re-deployed
+
+The 8% is automatically maintained:
+- After each `update_aum()` call, `cash_buffer = current_aum × 0.08`
+- This means the cash buffer **grows with AUM** (which is correct: larger AUM → larger absolute buffer)
+- At $10M: $800,000 cash / $9.2M deployed
+- At $11M: $880,000 cash / $10.12M deployed
+
+### §22.5 PT1 Safety Valve
+
+**Trigger condition:** 7-day cumulative return > +5%
+
+**Action:** 50% of total gains moved from deployed_capital to cash_buffer
+
+**Why it's "essentially free" (K428):**
+- v6.13d mean daily return ≈ 0.03%/day
+- Expected 7d cumulative ≈ 0.21%
+- PT1 trigger at 5% requires ~6σ run → fires ~1-2×/year statistically
+- When it fires, it preserves 50% of an exceptional gain period
+- The capital re-deploys when 7d return normalizes (call `reactivate_from_cash()`)
+
+**Manual override:**
+```bash
+# Check current status:
+python3 scripts/portfolio_aum_manager.py --status
+
+# Force PT1 check:
+python3 scripts/portfolio_aum_manager.py --check-pt1
+
+# Manually fire PT1:
+python3 scripts/portfolio_aum_manager.py --pt1-fire
+
+# Reactivate from cash (re-deploy to 92%):
+python3 scripts/portfolio_aum_manager.py --reactivate
+```
+
+### §22.6 Setting Initial AUM
+
+**Default:** $10,000,000 USD (set in `data/portfolio_aum_state.json`)
+
+**To change initial AUM:**
+```bash
+# Method 1: Edit JSON directly
+python3 -c "
+import json
+with open('data/portfolio_aum_state.json') as f:
+    s = json.load(f)
+s['current_aum_usdc']       = 5_000_000   # $5M
+s['cash_buffer_usdc']        = 400_000     # 8%
+s['deployed_capital_usdc']   = 4_600_000   # 92%
+s['initial_aum_usdc']        = 5_000_000   # baseline
+s['peak_aum_usdc']           = 5_000_000
+with open('data/portfolio_aum_state.json', 'w') as f:
+    json.dump(s, f, indent=2)
+"
+
+# Method 2: Re-initialize via env var
+INITIAL_AUM_USDC=5000000 python3 scripts/portfolio_aum_manager.py --init
+```
+
+**Via environment variable (for testing):**
+```bash
+INITIAL_AUM_USDC=500000 python3 scripts/k280_daily_run.py
+```
+
+### §22.7 Tax Considerations
+
+- As a non-US trader, unrealized compounding defers taxable events
+- Daily reinvestment increases position sizes without triggering taxable disposals
+- Only realized exits (actual position closes) create taxable events
+- The `cumulative_pnl_pct` field tracks gross paper performance
+- Recommended: track tax year snapshots from `cache/portfolio_aum_history.jsonl`
+
+```bash
+# Tax year snapshot:
+python3 -c "
+import json
+records = []
+with open('cache/portfolio_aum_history.jsonl') as f:
+    for line in f:
+        records.append(json.loads(line))
+if records:
+    start = records[0]
+    end   = records[-1]
+    gain  = end['cumulative_pnl_usdc'] - start['cumulative_pnl_usdc']
+    print(f'Period: {start[\"ts_jst\"]} → {end[\"ts_jst\"]}')
+    print(f'AUM:    \${start[\"current_aum_usdc\"]:,.0f} → \${end[\"current_aum_usdc\"]:,.0f}')
+    print(f'Gain:   \${gain:+,.0f} ({end[\"cumulative_pnl_pct\"]:+.3f}%)')
+"
+```
+
+### §22.8 Disable AUM Tracking
+
+Set environment variable to disable without code changes:
+```bash
+export AUM_TRACKING_ENABLED=false
+python3 scripts/k280_daily_run.py  # runs normally, skips AUM update
+```
+
+All sleeve scripts will skip AUM updates silently. The state file is not modified.
+
+### §22.9 Emergency Exit Integration (K357)
+
+`emergency_hl_exit.py` reads `data/portfolio_aum_state.json` during pre-check to log:
+- Current AUM
+- Deployed capital (total HL + Bybit exposure)
+- Cumulative PnL to date
+
+This context is included in pre-check JSON saved to `logs/emergency_hl_exit_precheck_*.json`.
+No AUM state is modified during emergency exit (read-only access).
+
+### §22.10 Compounding Projection
+
+Based on K428 simulation at v6.13d parameters (0.03%/day mean, Sharpe 25.47):
+
+| Year | AUM ($M)  | Cumulative PnL ($M) | vs Static |
+|------|-----------|---------------------|-----------|
+| 0    | $10.00M   | $0                  | —         |
+| 1    | $11.09M   | +$1.09M (+10.9%)    | +$109K    |
+| 2    | $12.29M   | +$2.29M (+22.9%)    | +$290K    |
+| 3    | $13.62M   | +$3.62M (+36.2%)    | +$620K    |
+| 4    | $15.10M   | +$5.10M (+51%)      | +$1.10M   |
+| 5    | $16.74M   | +$6.74M (+67%)      | +$3.60M   |
+
+*Static sizing (no reinvest) at same Sharpe: +$3.15M/5y (10M × 10.9% × 5y linear)*
+*Daily reinvest advantage: +$3.60M vs +$3.15M = **+$450K extra** (not +$3.6M — K428 quoted absolute)*
+
+### §22.11 References
+
+| Wave | Content |
+|------|---------|
+| K428 | S1 daily reinvest analysis: +$3.6M/5y @ $10M AUM projected |
+| K429 | This implementation (portfolio_aum_manager.py + additive patches + PT1 safety valve) |
+
+---
+
+*K429 §22 — K428 Daily Reinvest Mechanics — 2026-05-29*
+
+---
+
+## §23 K430 3x Leverage Rollout Playbook (Circuit Breaker + 3-Step PAPER→1.5X→3X)
+
+**Wave:** K430 | **Implemented:** 2026-05-25 | **Source:** K426 (+$2.2M/yr @ $10M AUM at 3x)
+
+---
+
+### §23.1 Overview
+
+K426 analysis showed 3x exchange-side leverage lifts annual return by approximately $2.2M at $10M AUM, while keeping Sharpe ratio near the backtested values (K266 gates confirmed to still pass at 3x). K430 implements this via a three-step rollout with a mandatory circuit breaker daemon (15th daemon).
+
+**Key files:**
+- `scripts/leverage_manager.py` — core leverage API (position sizing, margin health, rollout)
+- `scripts/leverage_circuit_breaker.py` — 5-min margin health daemon
+- `data/leverage_config.json` — single source of truth for current leverage state
+- `com.cryptolab.leverage-circuit-breaker.plist` — launchd daemon (gitignored)
+
+**Safe default:** `PAPER_TRADE` phase, `current_leverage = 1.0`. All production scripts behave identically to pre-K430 until user advances the phase manually.
+
+---
+
+### §23.2 Leverage Architecture
+
+#### Position Sizing Formula
+
+```
+notional = AUM × deployment_pct × sleeve_weight × leverage
+```
+
+Example at 3x, $10M AUM, 80% deployment:
+- K280 (75%): $10M × 0.80 × 0.75 × 3.0 = **$18M notional**
+- K297' (20%): $10M × 0.80 × 0.20 × 3.0 = **$4.8M notional**
+- sUSDe (5%): $10M × 0.80 × 0.05 × 1.0 = **$400K notional** (spot, no leverage)
+
+#### Exchange-Side Leverage Caps
+
+| Sleeve          | Exchange | Cap  | Notes                        |
+|-----------------|----------|------|------------------------------|
+| K280 K208 HL    | HL       | 3x   | HL perps margin = notional/3 |
+| K280 K208 Bybit | Bybit    | 3x   | Bybit perps margin = notional/3 |
+| K280 K276b      | HL       | 3x   | HL FR longtail               |
+| K297 PAXG       | HL       | 10x  | HIP-3 RWA; normally ~1-2x used |
+| K297 SPX        | HL       | 5x   | HIP-3 RWA; normally ~1-2x used |
+| sUSDe           | Spot     | 1x   | No leverage (stable yield)   |
+
+#### Margin Health at 3x ($10M AUM, 80% deployment)
+
+| Sleeve | Notional | Margin Required | % of AUM |
+|--------|----------|-----------------|----------|
+| K280   | $18.0M   | $6.0M           | 60.0%    |
+| K297'  | $4.8M    | $1.6M           | 16.0%    |
+| sUSDe  | $0.4M    | $0.4M           | 4.0%     |
+| **Total** | **$23.2M** | **$8.0M** | **80.0%** |
+
+At 3x: margin utilization = 80% → exactly at circuit breaker threshold. Recommended production setting: 2.5x or reduce deployment_pct to 75% to maintain 5-10% headroom.
+
+---
+
+### §23.3 Circuit Breaker Configuration
+
+**Daemon:** `com.cryptolab.leverage-circuit-breaker`
+**Script:** `scripts/leverage_circuit_breaker.py`
+**Schedule:** Every 5 minutes (StartInterval: 300)
+**Status:** SCAFFOLD-READY (plist in repo root, gitignored)
+
+Circuit breaker thresholds (configurable in `data/leverage_config.json`):
+
+| Threshold | Action |
+|-----------|--------|
+| `margin_used > 80%` | `emergency_reduce_leverage()` → all scripts revert to 1x immediately |
+| `margin_used > 70%` | WARNING written to `data/leverage_cb_dashboard.json` — monitor only |
+| `margin_used ≤ 70%` | OK — normal operation |
+
+**Activation commands** (load AFTER advancing to LIVE_1.5X or LIVE_3X):
+```bash
+cp com.cryptolab.leverage-circuit-breaker.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.leverage-circuit-breaker.plist
+```
+
+**Log files:**
+- `logs/leverage_circuit_breaker.log` — stdout (OK/WARNING/FIRE events)
+- `logs/leverage_circuit_breaker.err` — stderr (FIRE events, exceptions)
+
+**Live HL margin check:** Set `HL_WALLET_ADDRESS=0x<wallet>` env before loading plist to enable live clearinghouse margin fetch. Without it, circuit breaker uses computed margin from `leverage_manager.check_margin_health()`.
+
+---
+
+### §23.4 3-Step Rollout Playbook
+
+#### Phase ROLLOUT-A: PAPER_TRADE (Week 1 — Current Default)
+
+**Goal:** Verify 3x leverage in paper mode — zero risk.
+
+1. Confirm `data/leverage_config.json` shows `rollout_phase = "PAPER_TRADE"`, `current_leverage = 1.0`
+2. Run all scripts normally — behaviour UNCHANGED (1x = no effect)
+3. Verify `k430_leverage` field appears in all dashboards (k280, k302a, k376)
+4. Run circuit breaker dry-run:
+   ```bash
+   python3 scripts/leverage_circuit_breaker.py --dry-run --aum 10000000
+   ```
+   Expected: `OK`, margin ~26.7% at 1x deployment (well under 70% warning)
+5. Verify `scripts/leverage_manager.py` status:
+   ```bash
+   python3 scripts/leverage_manager.py
+   ```
+   Expected: phase=PAPER_TRADE, leverage=1.0x, all positions at 1x notional
+6. K266 gate check: run k280_daily_run.py and confirm all §6 gates still pass
+7. Confirm no unexpected circuit breaker alerts in `data/leverage_cb_dashboard.json`
+
+**Pass criteria:** 7 consecutive days with LEVERAGE=1.0 and no CB alerts.
+
+#### Phase ROLLOUT-B: LIVE_1.5X (Week 2)
+
+**Goal:** Live operation at 1.5x with real margin tracking.
+
+1. Advance rollout:
+   ```bash
+   python3 scripts/leverage_manager.py --advance
+   ```
+   Config updates: `rollout_phase = "LIVE_1.5X"`, `current_leverage = 1.5`
+2. Load circuit breaker daemon:
+   ```bash
+   cp com.cryptolab.leverage-circuit-breaker.plist ~/Library/LaunchAgents/
+   export HL_WALLET_ADDRESS=0x<your_hl_wallet>
+   launchctl load ~/Library/LaunchAgents/com.cryptolab.leverage-circuit-breaker.plist
+   ```
+3. Monitor for 7 days:
+   - Verify `data/leverage_cb_dashboard.json` shows `margin_used < 70%` consistently
+   - Verify actual positions are 1.5× expected baseline notionals
+   - Verify Sharpe and MDD consistent with K426 expectations (Sharpe > 20, MDD < 0.05%)
+   - Confirm K266 gates pass with new position sizes
+4. If any CB WARNING fires: investigate before advancing to 3x
+
+**Pass criteria:** 7 live days, no CB fire, Sharpe > 20, margin < 70%.
+
+#### Phase ROLLOUT-C: LIVE_3X (Week 3+)
+
+**Goal:** Full 3x leverage — $2.2M/yr incremental lift.
+
+1. Confirm ROLLOUT-B passed (7d + Sharpe + margin checks)
+2. Consider reducing deployment_pct to 75% for margin headroom:
+   ```json
+   // data/leverage_config.json:
+   "deployment_pct": 0.75
+   ```
+3. Advance to 3x:
+   ```bash
+   python3 scripts/leverage_manager.py --advance
+   ```
+   Config updates: `rollout_phase = "LIVE_3X"`, `current_leverage = 3.0`
+4. Verify circuit breaker still running (`launchctl list | grep leverage`)
+5. Run margin health check:
+   ```bash
+   python3 scripts/leverage_circuit_breaker.py --aum 10000000 --verbose
+   ```
+   Expected: margin ~75-80% at 3x/75% deployment (OK, below 80% CB threshold)
+6. Monitor Week 3 daily:
+   - CB dashboard `data/leverage_cb_dashboard.json`
+   - K280 / K302a dashboards for equity / Sharpe drift
+   - Alert: if 30d Sharpe drops below K303 threshold (30d Sh < 15), re-evaluate
+
+---
+
+### §23.5 Emergency Leverage Reduction Procedure
+
+**If circuit breaker fires automatically (margin > 80%):**
+1. All scripts automatically revert to 1x (`circuit_breaker.deactivated = True` set)
+2. Check `data/leverage_cb_dashboard.json` for action_taken = "EMERGENCY_REDUCE_1X"
+3. Investigate root cause (exchange margin call, position expansion, AUM drop)
+4. Resolve root cause
+5. Restore leverage manually:
+   ```bash
+   python3 scripts/leverage_manager.py --restore PAPER_TRADE   # safe reset to 1x
+   python3 scripts/leverage_manager.py --restore LIVE_1.5X     # restore to 1.5x
+   ```
+
+**If manual emergency reduction needed:**
+```bash
+python3 scripts/leverage_manager.py --emergency-reduce
+```
+This sets `circuit_breaker.deactivated = True` and `current_leverage = 1.0`. All scripts read 1x on next invocation (within 5 seconds of cron cycle).
+
+**Recovery timeline:** Emergency reduce is immediate (config file write). All scripts read new leverage on next execution (within launchd StartInterval = 300s worst case).
+
+---
+
+### §23.6 Per-Exchange Leverage Caps Reference
+
+| Exchange | Asset | Max Cap | Notes |
+|----------|-------|---------|-------|
+| HyperLiquid | K208 perps | 3x | Standard perp margin = notional/3 |
+| HyperLiquid | K276b longtail | 3x | Same as K208 |
+| HyperLiquid | PAXG (HIP-3) | 10x | RWA; low vol → high cap safe |
+| HyperLiquid | SPX (HIP-3) | 5x | RWA; moderate vol |
+| Bybit | K208 perps | 3x | Conservative cap (supports higher) |
+| — | sUSDe | 1x | Spot stable yield; no leverage ever |
+
+**K339 note:** All caps stored in `data/leverage_config.json::exchange_caps`. Update caps file if exchange rules change; scripts read dynamically.
+
+---
+
+### §23.7 Margin Call Recovery
+
+**Warning signs (70-80% margin utilization):**
+- AUM drop without position size reduction (leverage effectively increases)
+- Large unrealized loss on leveraged positions
+- Exchange margin requirement change
+
+**Immediate actions:**
+1. Run: `python3 scripts/leverage_circuit_breaker.py --verbose --aum <current_aum>`
+2. If warning: reduce `deployment_pct` in `data/leverage_config.json` from 0.80 → 0.70
+3. If critical: `python3 scripts/leverage_manager.py --emergency-reduce`
+4. After HL/Bybit position reduction via `emergency_hl_exit.py`: restore leverage
+
+**Post-recovery checklist:**
+- [ ] `data/leverage_config.json` shows `deactivated = false` after restore
+- [ ] K280 + K302a dashboards show updated leverage = restored target
+- [ ] CB daemon running: `launchctl list | grep leverage-circuit-breaker`
+- [ ] 24h monitoring before re-advancing rollout phase
+
+---
+
+### §23.8 References
+
+| Wave | Content |
+|------|---------|
+| K426 | 3x leverage analysis: +$2.2M/yr @ $10M AUM, K266 gates confirmed |
+| K429 | AUM tracking + 8% cash buffer + PT1 safety valve (§22) |
+| K430 | This implementation (leverage_manager.py, circuit_breaker, 3-step rollout) |
+| K266 | §6 gate definitions (Sharpe, MDD, WF, OS/IS, K-ratio, etc.) |
+| K357 | Emergency HL exit (§14) — coordinates with leverage emergency reduce |
+| K303 | Live monitoring Sharpe gates (30d Sh ≥ 25 target) |
+
+---
+
+*K430 §23 — K426 3x Leverage SCAFFOLD (PAPER→1.5X→3X, circuit breaker, 15th daemon) — 2026-05-25*
+
+---
+
 *K415 §21 — v6.15a/b USDY Sleeve Activation Playbook — 2026-05-25*

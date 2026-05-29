@@ -899,6 +899,41 @@ def run_daily(date_str: str):
         hlp_scale     = hlp_scale,
     )
 
+    # ── K429 AUM Tracking (additive — safe if portfolio_aum_manager not present) ─
+    # K280 is PRIMARY: updates AUM AND runs PT1 safety valve check.
+    # Position sizing at next run will read updated deployed_capital from state.
+    aum_metrics = {}
+    try:
+        import os as _os_k429
+        if _os_k429.environ.get("AUM_TRACKING_ENABLED", "true").lower() != "false":
+            import sys as _sys_k429
+            _sys_k429.path.insert(0, str(BASE / "scripts"))
+            from portfolio_aum_manager import (
+                update_aum, check_pt1_safety, apply_pt1_withdrawal,
+                get_current_metrics, compute_position_size, load_state,
+            )
+            # Convert fractional PnL to USDC using current deployed capital
+            _aum_state  = load_state()
+            _k280_alloc = compute_position_size("K280", _aum_state)
+            _pnl_usdc   = today_pnl * _k280_alloc   # today_pnl is fractional return
+            _aum_state  = update_aum(_pnl_usdc, sleeve_name="K280")
+
+            # PT1 safety valve check (K280 = primary daemon)
+            _rolling_7d = _aum_state.get("7d_rolling_return_pct", 0.0)
+            if check_pt1_safety(_rolling_7d):
+                print(f"\n  [K429][PT1] Firing safety valve (7d={_rolling_7d:+.3f}%)")
+                apply_pt1_withdrawal()
+
+            aum_metrics = get_current_metrics()
+            print(
+                f"\n  [K429] AUM=${aum_metrics.get('current_aum_usdc', 0):,.0f} | "
+                f"CumPnL={aum_metrics.get('cumulative_pnl_pct', 0):+.3f}% | "
+                f"7d={aum_metrics.get('7d_rolling_return_pct', 0):+.3f}% | "
+                f"PT1={'ACTIVE' if aum_metrics.get('pt1_safety_active') else 'OK'}"
+            )
+    except Exception as _e_aum:
+        print(f"  [K429] AUM tracking skipped: {_e_aum}")
+
     # ── Append to paper trade log ─────────────────────────────────────────────
     log_entry = {
         "date":      str(today_date),
@@ -909,6 +944,10 @@ def run_daily(date_str: str):
         "total_eq":  round(total_eq, 8),
         "alerts":    [a["code"] for a in alerts],
         "elapsed_s": round(time.time() - t0, 1),
+        # K429 AUM metrics (populated if AUM tracking enabled)
+        "k429_aum_usdc":          aum_metrics.get("current_aum_usdc"),
+        "k429_cumulative_pnl_pct": aum_metrics.get("cumulative_pnl_pct"),
+        "k429_pt1_active":         aum_metrics.get("pt1_safety_active"),
     }
     with open(TRADES_LOG, "a") as f:
         f.write(json.dumps(log_entry) + "\n")

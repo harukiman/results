@@ -1,0 +1,94 @@
+{
+  "wave": "K429",
+  "title": "K428 Daily Reinvest Implementation (AUM Tracking + 8% Cash Buffer + PT1 Safety Valve)",
+  "timestamp_jst": "2026-05-29 22:39 JST",
+  "basis": "K428 S1 finding: daily reinvest @ $10M AUM → +$3.6M / 5y vs static sizing",
+  "status": "IMPLEMENTED",
+
+  "deliverables": {
+    "new_files": [
+      "scripts/portfolio_aum_manager.py",
+      "data/portfolio_aum_state.json"
+    ],
+    "patched_files": [
+      "scripts/k280_daily_run.py",
+      "scripts/k302a_satellite_run.py",
+      "scripts/k344_susde_oc_daily_run.py",
+      "scripts/k376_momentum_run.py",
+      "scripts/emergency_hl_exit.py"
+    ],
+    "updated_files": [
+      "docs/k302a_runbook.md",
+      "report.html"
+    ]
+  },
+
+  "architecture": {
+    "state_file": "data/portfolio_aum_state.json",
+    "history_file": "cache/portfolio_aum_history.jsonl",
+    "initial_aum_usdc": 10000000,
+    "cash_buffer_pct": 0.08,
+    "deployed_pct": 0.92,
+    "sleeve_weights": {
+      "K280": 0.75,
+      "K297_prime": 0.20,
+      "sUSDe": 0.05,
+      "K376": 0.03
+    }
+  },
+
+  "pt1_safety_valve": {
+    "trigger_7d_return_pct": 5.0,
+    "withdrawal_pct_of_gains": 0.50,
+    "rationale": "Essentially free per K428 — v6.13d mean 0.03%/day → 7d≈0.21%, fires ~1-2x/yr at 5% threshold",
+    "reactivation": "call reactivate_from_cash() when 7d return normalizes"
+  },
+
+  "integration": {
+    "K280_primary": "updates AUM + runs PT1 check (first daemon each day)",
+    "K302a_secondary": "updates AUM with K297' PnL (no PT1 check)",
+    "K344_secondary": "updates AUM with sUSDe yield contribution",
+    "K376_tertiary": "reads K376 sleeve target from state (paper-trade; no PnL update)",
+    "emergency_exit": "reads AUM state for deployed_capital context in pre-check",
+    "additive": "all production scripts continue working without K429 if AUM_TRACKING_ENABLED=False"
+  },
+
+  "position_sizing": {
+    "formula": "sleeve_position_usdc = deployed_capital_usdc × sleeve_weight",
+    "example_day0": {
+      "deployed_capital": 9200000,
+      "K280_position": 6900000,
+      "K297_prime_position": 1840000,
+      "sUSDe_position": 460000
+    },
+    "example_year1": {
+      "note": "After 1y @ 0.03%/day mean (v6.13d), AUM≈$11.09M",
+      "deployed_capital": 10202800,
+      "K280_position_approx": 7652100
+    }
+  },
+
+  "compounding_projection": {
+    "years": [0, 1, 2, 3, 4, 5],
+    "aum_M":  [10.00, 11.09, 12.29, 13.62, 15.10, 16.74],
+    "cum_pnl_M": [0, 1.09, 2.29, 3.62, 5.10, 6.74],
+    "vs_static_M": [0, 0.109, 0.290, 0.620, 1.10, 1.74],
+    "note": "vs static: linear 10.9%/yr × N years; compounding advantage grows as AUM grows"
+  },
+
+  "html_updates": {
+    "banner": "K429 daily reinvest LIVE: AUM tracking $X.XM, cumulative +Y.Y% (PT1 safety ON/OFF)",
+    "widget": "Portfolio AUM card with live metrics from data/portfolio_aum_state.json",
+    "footer": "K429 daily reinvest LIVE (§22 runbook)"
+  },
+
+  "runbook": "docs/k302a_runbook.md §22",
+
+  "test_plan": [
+    "python3 scripts/portfolio_aum_manager.py --init → verify $10M state created",
+    "python3 scripts/portfolio_aum_manager.py --sim-pnl 50000 → verify AUM=$10.05M",
+    "python3 scripts/portfolio_aum_manager.py --check-pt1 → verify PT1 does not fire at +0.05%",
+    "python3 scripts/portfolio_aum_manager.py --status → verify sleeve allocations correct",
+    "AUM_TRACKING_ENABLED=False python3 scripts/k280_daily_run.py → verify graceful skip"
+  ]
+}

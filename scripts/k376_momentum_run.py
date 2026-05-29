@@ -58,6 +58,23 @@ SIGNAL_LOOKBACK_H   = 24                          # 24h of 5min bars for vol rol
 PAPER_TRADE_DAYS    = 60                          # required before capital activation
 FILL_RATE_GATE_PCT  = 0.65                        # G8: fill rate ≥ 65%
 
+# ── K430: Leverage application (additive — LEVERAGE=1.0 at default PAPER_TRADE) ─
+# K376 is a paper-trade candidate; leverage applied when live activation occurs.
+# Conditional: K376 leverage only active if K266 gates still pass at 3x (K426 confirmed).
+# At PAPER_TRADE (default): LEVERAGE=1.0 → SLEEVE_PCT unchanged.
+try:
+    import sys as _sys_lev_k376
+    _sys_lev_k376.path.insert(0, str(Path(__file__).resolve().parent))
+    from leverage_manager import get_current_leverage as _get_leverage_k376
+    LEVERAGE_K376 = _get_leverage_k376()
+    _LEVERAGE_K376_ENABLED = True
+except Exception as _lev_err_k376:
+    LEVERAGE_K376 = 1.0
+    _LEVERAGE_K376_ENABLED = False
+
+# Effective leveraged sleeve pct (used in dashboard; actual sizing applied at activation)
+SLEEVE_PCT_LEVERAGED = SLEEVE_PCT * LEVERAGE_K376
+
 # ── File paths ────────────────────────────────────────────────────────────────
 EMERGENCY_FLAG_FILE     = REPO_ROOT / "EMERGENCY_EXIT_TRIGGERED.flag"
 DASHBOARD_JSON          = DATA_DIR  / "k376_momentum_dashboard.json"
@@ -488,6 +505,11 @@ def update_dashboard(
         "next_eligibility":    "After 60d paper-trade + G8 fill rate >=65% confirmation",
         "runbook_section":     "docs/k302a_runbook.md §17",
         "last_updated_utc":    datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+        # K430 leverage metadata (additive; LEVERAGE=1.0 at default PAPER_TRADE)
+        "k430_leverage":           LEVERAGE_K376,
+        "k430_sleeve_pct_leveraged": SLEEVE_PCT_LEVERAGED,
+        "k430_leverage_enabled":   _LEVERAGE_K376_ENABLED,
+        "k430_note":               "K376 leverage active after live activation + K266 gate at 3x confirmed (K426)",
     }
 
     with open(DASHBOARD_JSON, "w", encoding="utf-8") as f:
@@ -603,6 +625,26 @@ K378 activation criteria embedded:
         update_dashboard(regime, slope, open_positions, all_fills, logger)
     else:
         logger.info("[DRY-RUN] Dashboard update skipped.")
+
+    # ── K429 AUM Tracking (additive — position sizing read from state at startup) ─
+    # K376 is TERTIARY: reports 3% sleeve's current target from AUM state.
+    # PnL update is minimal at paper-trade stage (no confirmed fills yet).
+    if not args.dry_run:
+        try:
+            import os as _os_k429
+            if _os_k429.environ.get("AUM_TRACKING_ENABLED", "true").lower() != "false":
+                sys.path.insert(0, str(REPO_ROOT / "scripts"))
+                from portfolio_aum_manager import (
+                    compute_position_size, load_state,
+                )
+                _aum_state   = load_state()
+                _k376_target = compute_position_size("K376", _aum_state)
+                logger.info(
+                    f"[K429] K376 sleeve target: ${_k376_target:,.0f} USDC "
+                    f"(deployed_capital × {_aum_state.get('sleeve_weights', {}).get('K376', 0.03):.0%})"
+                )
+        except Exception as _e_aum:
+            logger.debug(f"[K429] AUM tracking skipped: {_e_aum}")
 
     logger.info("K376 momentum run complete.")
     return 0

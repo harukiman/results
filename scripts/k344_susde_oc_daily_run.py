@@ -330,6 +330,31 @@ def run_daily(date_str: str, dry_run: bool = False):
     print(f"  Signal: {signal_code} | Allocation: {allocation*100:.0f}% of sleeve "
           f"({allocation * SLEEVE_WEIGHT * 100:.2f}% of total portfolio)")
 
+    # ── K429 AUM Tracking (additive — safe if portfolio_aum_manager not present) ─
+    # K344 is SECONDARY: updates sUSDe yield contribution to AUM.
+    # sUSDe yield is APY-based; daily PnL ≈ current_apy_pct / 365 / 100 × sleeve_allocation.
+    if not dry_run:
+        try:
+            import os as _os_k429
+            if _os_k429.environ.get("AUM_TRACKING_ENABLED", "true").lower() != "false":
+                import sys as _sys_k429
+                _sys_k429.path.insert(0, str(REPO_ROOT / "scripts"))
+                from portfolio_aum_manager import (
+                    update_aum, get_current_metrics, compute_position_size, load_state,
+                )
+                _aum_state    = load_state()
+                _susde_alloc  = compute_position_size("sUSDe", _aum_state) * allocation
+                _apy_daily    = (state.get("current_apy_pct", 0.0) / 365.0 / 100.0)
+                _pnl_usdc     = _susde_alloc * _apy_daily
+                update_aum(_pnl_usdc, sleeve_name="sUSDe")
+                _m = get_current_metrics()
+                print(
+                    f"\n  [K429] sUSDe AUM contrib: ${_pnl_usdc:+,.2f} USDC/day | "
+                    f"Portfolio AUM=${_m.get('current_aum_usdc', 0):,.0f}"
+                )
+        except Exception as _e_aum:
+            print(f"  [K429] AUM tracking skipped: {_e_aum}")
+
     return {
         "date":            date_str,
         "signal":          signal_code,
