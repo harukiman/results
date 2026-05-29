@@ -1,0 +1,312 @@
+{
+  "wave": "K553",
+  "strategy": "AGIX-BTC FR Differential Paired-Trade (REJECT — AGIX delisted, ASI merger 2024)",
+  "target": "AGIX (SingularityNET — AI data marketplace, Layer 4 AI taxonomy)",
+  "run_time_jst": "2026-05-30T06:08:43+09:00",
+  "runtime_s": 1.1,
+  "decision": "REJECT (AGIX delisted — ASI merger 2024: FET+AGIX+OCEAN→FET)",
+  "phase0_prescreen": {
+    "target": "AGIX (SingularityNET — AI services marketplace, Layer 4 AI taxonomy). ASI merger 2024: FET + AGIX + OCEAN → FET/ASI ticker. AGIX holders converted to FET at published ratio. AGIX perp markets delisted post-merger on all major venues.",
+    "asi_merger_summary": {
+      "announcement_date": "2024-03 (governance vote)",
+      "execution_date": "2024-Q2",
+      "merging_tokens": [
+        "FET (Fetch.ai)",
+        "AGIX (SingularityNET)",
+        "OCEAN (Ocean Protocol)"
+      ],
+      "surviving_token": "FET (rebranded to ASI / Artificial Superintelligence Alliance)",
+      "hl_ticker_post_merger": "FET (not renamed to ASI on HL as of 2026-05)",
+      "impact": "AGIX and OCEAN ceased to exist as independent perpetual futures. All AGIX volume consolidated into FET-PERP. FET K546 evaluated: BLOCKED-AI-CLUSTER (TAO+K476+SEI+APT, Sh=40.06). Layer 4 (AI data marketplace) effectively subsumed into FET/ASI narrative."
+    },
+    "venue_checks": {
+      "hl": {
+        "venue": "HL",
+        "agix_listed": false,
+        "ocean_listed": false,
+        "asi_listed": false,
+        "fet_listed": true,
+        "total_symbols": 230,
+        "api_success": true,
+        "note": "HL meta API queried. Total symbols: 230. AGIX: NOT LISTED (delisted/migrated). OCEAN: NOT LISTED (delisted/migrated). ASI: NOT LISTED. FET (ASI merged token): LISTED (K546 eval done). Conclusion: AGIX and OCEAN perp markets DO NOT EXIST on HL. ASI merger 2024 eliminated AGIX/OCEAN as separate FR vehicles."
+      },
+      "bybit": {
+        "venue": "Bybit",
+        "agix_listed": false,
+        "ocean_listed": false,
+        "api_success": true,
+        "note": "Bybit instruments API queried. AGIX: NOT LISTED (delisted). OCEAN: NOT LISTED (delisted). Bybit AGIX perp confirmed absent. ASI merger delisting confirmed."
+      },
+      "okx": {
+        "venue": "OKX",
+        "agix_listed": false,
+        "ocean_listed": false,
+        "asi_listed": false,
+        "api_success": true,
+        "note": "OKX instruments API queried. AGIX: NOT LISTED (delisted). OCEAN: NOT LISTED (delisted). ASI: NOT LISTED. OKX AGIX swap confirmed absent. ASI merger delisting confirmed."
+      }
+    },
+    "local_cache_check": {
+      "hl_fr_agix_parquet_exists": false,
+      "hl_fr_ocean_parquet_exists": false,
+      "bybit_agix_parquet_exists": false,
+      "okx_agix_parquet_exists": false,
+      "note": "Cache verification: No AGIX FR parquet files exist in k163_hl or cache/. This confirms AGIX was never listed on HL post-merger and was never cached. No stale data risk — clean state."
+    },
+    "agix_exists_anywhere": false,
+    "ocean_exists_anywhere": false,
+    "phase0_pass": false,
+    "vol_ratio_check": "N/A — delisted (no FR data to compute vol ratio)",
+    "phase0_result": "PHASE 0 FAIL: AGIX-PERP does not exist on HL, Bybit, or OKX. ASI merger 2024 (FET+AGIX+OCEAN→FET) eliminated AGIX as independent perp. OCEAN also absent from all venues (same merger). Backtest phases 1-8 SKIPPED. K507 lesson applied: venue check prevents futile backtest on a delisted instrument. Decision: REJECT (AGIX delisted) — advance to pivot analysis."
+  },
+  "pivot_analysis": {
+    "trigger": "AGIX REJECT (delisted) — pivot analysis required",
+    "pivot_options": [
+      {
+        "candidate": "OCEAN-BTC",
+        "ecosystem": "AI/Data (Ocean Protocol)",
+        "narrative": "AI data marketplace Layer 4 (alt to AGIX)",
+        "venue_check": "FAIL — OCEAN-PERP NOT listed on HL/Bybit/OKX (same ASI merger)",
+        "local_cache": "hl_fr_OCEAN.parquet: NOT in cache",
+        "vol_ratio": "N/A (no perp data)",
+        "priority": "SKIP",
+        "reason": "OCEAN experienced same ASI merger fate as AGIX. OCEAN holders converted to FET/ASI. No OCEAN perp market exists. Layer 4 via OCEAN also closed."
+      },
+      {
+        "candidate": "SUI-BTC",
+        "ecosystem": "Move-VM L2 (Mysten Labs)",
+        "narrative": "Move-VM L2 (Aptos family cluster — check vs APT corr)",
+        "venue_check": "PASS — SUI-PERP listed on HL (hl_fr_SUI.parquet in cache)",
+        "vol_ratio_full": 1.3345,
+        "vol_ratio_6m": 1.1368,
+        "vol_threshold": 1.5,
+        "vol_pass": false,
+        "priority": "LOW",
+        "reason": "SUI vol ratio 1.3345x (6m: 1.1368x) < 1.5x threshold. Phase 0 would FAIL on vol ratio (not venue). Also: APT-BTC (K512 Sh=51.10) is Move-VM family #1; SUI-BTC likely high G5 correlation vs APT → AI-cluster-style block. Deferred per vol threshold."
+      },
+      {
+        "candidate": "LINK-BTC",
+        "ecosystem": "Oracle / Cross-chain infrastructure",
+        "narrative": "Chainlink decentralized oracle network — Layer 0 data feed",
+        "venue_check": "Need to verify HL listing (LINK likely listed — major token)",
+        "local_cache": "hl_fr_LINK.parquet: check required",
+        "vol_ratio": "Expected 1.3-1.8x BTC (oracle infrastructure, stable demand)",
+        "priority": "HIGH",
+        "reason": "LINK is distinct narrative from all current family members: oracle infrastructure (price feeds, VRF, CCIP cross-chain). Not Cosmos, not Move-VM, not AI, not Storage. LINK FR driven by: DeFi protocol deployment, cross-chain bridge events, CCIP adoption milestones, enterprise oracle partnerships. Potentially new ecosystem cluster. Recommend K554 LINK-BTC evaluation."
+      },
+      {
+        "candidate": "DOT-BTC",
+        "ecosystem": "Polkadot parachain relay (interop)",
+        "narrative": "Polkadot relay chain — parachain slot auctions, XCM interop",
+        "venue_check": "DOT-PERP likely on HL (major token)",
+        "local_cache": "hl_fr_DOT.parquet: in cache (confirmed)",
+        "vol_ratio": "Expected 1.5-2.5x BTC (parachain cycle driven)",
+        "priority": "MEDIUM",
+        "reason": "DOT parachain lease auctions drive distinct FR cycles (crowd loans, bonding events). Cosmos competitor but different mechanism. G5 check vs ATOM/INJ/TIA required — could be blocked by Cosmos cluster. Lower priority than LINK (similar IBC/relay narrative)."
+      },
+      {
+        "candidate": "NEAR-BTC",
+        "ecosystem": "NEAR Protocol (sharding L1)",
+        "narrative": "Nightshade sharding, chain abstraction, FastAuth",
+        "venue_check": "NEAR-PERP listed on HL (hl_fr_NEAR.parquet in cache)",
+        "local_cache": "hl_fr_NEAR.parquet: in cache (confirmed)",
+        "vol_ratio": "Expected 1.5-2.0x BTC (sharding milestone driven)",
+        "priority": "MEDIUM",
+        "reason": "NEAR distinct from Move-VM (not Aptos/SUI) and distinct from Cosmos. Chain abstraction + FastAuth unique user-acquisition angle. NEAR FR driven by: chain abstraction launches, NEAR AI agent integration (potential AI cross-narrative), user growth milestones. K554 LINK-BTC recommended first."
+      }
+    ],
+    "recommendation": {
+      "next_wave": "K554 LINK-BTC",
+      "rationale": "LINK is the highest-priority non-AI pivot candidate: (1) Distinct ecosystem narrative (oracle infrastructure, not blockchain L1). (2) Confirmed HL listing likely (major token). (3) FR driver is DeFi utilization/cross-chain (independent of AI cluster). (4) No Move-VM/Cosmos overlap risk. (5) LINK-BTC pair would be 13th family member if ACCEPT. OCEAN/AGIX: both closed via ASI merger. Layer 4 AI taxonomy: CLOSED.",
+      "layer4_ai_marketplace_status": "CLOSED: ASI merger 2024 consolidated AGIX+OCEAN+FET into single FET token. FET K546 = BLOCKED-AI-CLUSTER. AI data marketplace signal is embedded in FET FR, not separable as distinct AGIX or OCEAN perp. AI taxonomy Layer 4 evaluation: COMPLETE (result = closed/merged). No further AI data marketplace eval possible via perp FR strategy."
+    }
+  },
+  "section_6_gates": {
+    "applicable": false,
+    "reason": "G1-G9 gates: N/A — Phase 0 venue check failed before data acquisition. No backtest data, no statistical analysis, no walk-forward, no cross-venue. Decision pathway: Phase 0 FAIL → immediate REJECT → pivot. Gate G0 (venue listing): FAIL (AGIX not listed on HL/Bybit/OKX).",
+    "g0_venue_check": "FAIL",
+    "g1_through_g9": "N/A (Phase 0 FAIL)"
+  },
+  "asi_merger_lesson": {
+    "event": "ASI Alliance merger 2024 (Q1 announcement, Q2 execution)",
+    "tokens_merged": [
+      "FET (Fetch.ai)",
+      "AGIX (SingularityNET)",
+      "OCEAN (Ocean Protocol)"
+    ],
+    "surviving_ticker": "FET (ASI token)",
+    "lesson_for_lab": "When evaluating a token from a known merger event, ALWAYS check: (1) Is the token still listed independently post-merger? (2) Did the merger consolidate perp FR vehicles? (3) Was the surviving token already evaluated? K553 applies K507 OSMO lesson: venue check FIRST, saves 30+ min compute. ASI merger 2024 = structural event that permanently closes Layer 4 as distinct eval.",
+    "k546_fet_context": "FET (the surviving ASI token) was fully evaluated in K546. K546 result: BLOCKED-AI-CLUSTER (TAO+K476+SEI+APT, OOS Sh=40.06). FET already represents all three merged narratives (FET+AGIX+OCEAN). Evaluating AGIX separately would have been redundant even if listed."
+  },
+  "profit_projection": {
+    "applicable": false,
+    "reason": "REJECT (AGIX delisted) — no allocation, no profit. Phase 0 FAIL.",
+    "agix_usdc_yr_at_10m": 0,
+    "agix_usdc_yr_at_100m": 0,
+    "hl_concentration_delta": 0.0,
+    "note": "FET (ASI merged token) profit projection from K546: $181K/yr @$10M at 2% alloc 4x lev (BLOCKED — unrealizable). AGIX REJECT adds zero to family profit total."
+  },
+  "hl_concentration_impact": {
+    "v6_28_baseline_hl_pct": 64.0,
+    "agix_addition": 0.0,
+    "post_k553_hl_pct": 64.0,
+    "concentration_check": "PASS (unchanged — REJECT adds no exposure)",
+    "note": "AGIX REJECT → no HL concentration change. v6.28 baseline: HL 64% (post K546 BLOCKED, K534 TAO conditional). Next genuine addition must implement Bybit/OKX split if HL would exceed 65%."
+  },
+  "paired_trade_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "narrative": "Move-VM L1",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "narrative": "IBC Hub relay",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "narrative": "Cosmos EVM parallelism",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "narrative": "Subnet L1",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "FET-BTC",
+      "sharpe": 40.06,
+      "ecosystem": "AI/Agents",
+      "narrative": "AI agent orchestration Layer 3 (ASI)",
+      "status": "BLOCKED-AI-CLUSTER (TAO+K476+SEI+APT)"
+    },
+    {
+      "rank": 6,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "narrative": "Enterprise storage L1",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 7,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "narrative": "Solana PoH L1",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 8,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "narrative": "AI GPU compute Layer 1 (paper)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 9,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "narrative": "Modular DA layer",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 10,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "narrative": "Cosmos DeFi perp DEX",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 11,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "narrative": "EVM L1 benchmark",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 12,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "narrative": "AI training markets Layer 2 (paper)",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "ai_narrative_taxonomy_final": {
+    "layer_1_gpu_infrastructure": {
+      "members": [
+        "RENDER (K531 ACCEPT CONDITIONAL, Sh=15.302)"
+      ],
+      "fr_driver": "GPU capacity demand (NVIDIA earnings, inference compute)",
+      "status": "ACCEPT CONDITIONAL (paper-trade)"
+    },
+    "layer_2_ai_training_markets": {
+      "members": [
+        "TAO (K534 ACCEPT CONDITIONAL, Sh=5.267)"
+      ],
+      "fr_driver": "AI model benchmarks (subnet launches, AGI milestones)",
+      "status": "ACCEPT CONDITIONAL (paper-trade)"
+    },
+    "layer_3_ai_agent_orchestration": {
+      "members": [
+        "FET/ASI (K546 BLOCKED-AI-CLUSTER, Sh=40.06 unrealizable)"
+      ],
+      "fr_driver": "AI agent deployment cycles, autonomous AI milestones",
+      "status": "BLOCKED-AI-CLUSTER (TAO+K476+SEI+APT)"
+    },
+    "layer_4_ai_data_marketplace": {
+      "candidates": [
+        "AGIX (K553 REJECT — delisted)",
+        "OCEAN (delisted — same merger)"
+      ],
+      "fr_driver": "Data licensing, ML model monetization (now absorbed into FET)",
+      "status": "CLOSED — ASI merger 2024 eliminated AGIX and OCEAN as distinct FR vehicles",
+      "note": "Layer 4 is permanently closed for perp FR paired-trade strategy. AGIX and OCEAN are no longer independently tradeable as perpetual futures. Their narrative (AI data marketplace) is now part of FET/ASI composite. FET K546 (BLOCKED) implicitly covers Layer 4 economics. No further Layer 4 evaluation possible. AI taxonomy: 4 layers evaluated, 2 active (RENDER/TAO), 1 blocked (FET), 1 closed (AGIX/OCEAN)."
+    },
+    "taxonomy_complete": true,
+    "taxonomy_completeness_note": "AI 4-layer taxonomy evaluation COMPLETE as of K553. Layer 1 (GPU): RENDER ✓. Layer 2 (Training): TAO ✓. Layer 3 (Agents): FET ✓ (blocked). Layer 4 (Data): AGIX/OCEAN ✓ (closed/merged). Next evaluations: Non-AI ecosystem expansion (oracle, interop, sharding)."
+  },
+  "next_candidates": [
+    {
+      "pair": "LINK-BTC",
+      "ecosystem": "Oracle/Cross-chain",
+      "wave": "K554",
+      "note": "Chainlink oracle infrastructure — distinct from all current family. HIGH priority.",
+      "priority": "HIGH"
+    },
+    {
+      "pair": "NEAR-BTC",
+      "ecosystem": "NEAR sharding L1",
+      "wave": "K555 (tentative)",
+      "note": "Nightshade sharding L1, chain abstraction — distinct from Cosmos/Move-VM. MEDIUM.",
+      "priority": "MEDIUM"
+    },
+    {
+      "pair": "DOT-BTC",
+      "ecosystem": "Polkadot parachain relay",
+      "wave": "K556 (tentative)",
+      "note": "Polkadot XCM interop — potential Cosmos cluster overlap risk. Check first.",
+      "priority": "MEDIUM"
+    }
+  ],
+  "decision_rationale": "K553 AGIX-BTC FR differential evaluation complete. Phase 0 FAIL: AGIX-PERP NOT listed on HL (confirmed API), Bybit (confirmed API), OKX (confirmed API). ASI merger 2024 (FET+AGIX+OCEAN→FET) eliminated AGIX as an independent perpetual futures instrument. K507 OSMO lesson applied: venue check FIRST prevents futile backtest on delisted instrument (~30 min saved). OCEAN also absent from all venues (same merger fate). FET (surviving ASI token): already evaluated K546 — BLOCKED-AI-CLUSTER. AI 4-layer taxonomy: Layer 4 (AI data marketplace) CLOSED. Taxonomy evaluation complete. Decision: REJECT (AGIX delisted). Next: K554 LINK-BTC (oracle infrastructure, new ecosystem axis)."
+}
