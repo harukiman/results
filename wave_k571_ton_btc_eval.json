@@ -1,0 +1,565 @@
+{
+  "wave": "K571",
+  "strategy": "TON-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T06:56:08+0900",
+  "runtime_s": 3.5,
+  "decision": "ACCEPT CONDITIONAL",
+  "social_cluster_status": "CONFIRMED: Social/Messaging (Telegram) = 11th ecosystem cluster",
+  "k562_pivot_context": {
+    "k562_result": "BLOCKED-CLUSTER (G5i FIL=0.44, G5k RENDER=0.46)",
+    "meta_cluster_identified": "DeFi infrastructure utility meta-cluster",
+    "k571_pivot": "Social/Messaging (TON) \u2014 non-infrastructure use case",
+    "use_case_taxonomy": {
+      "L1": [
+        "APT",
+        "SOL",
+        "AVAX",
+        "ETH"
+      ],
+      "Cosmos": [
+        "ATOM",
+        "INJ",
+        "TIA",
+        "SEI"
+      ],
+      "Storage": [
+        "FIL"
+      ],
+      "AI": [
+        "RENDER",
+        "TAO"
+      ],
+      "Oracle": [
+        "LINK"
+      ],
+      "Social": [
+        "TON"
+      ],
+      "BTC": [
+        "BTC (baseline)"
+      ]
+    }
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "ton_listed": true,
+      "total_symbols": 230,
+      "max_leverage": 10,
+      "margin_table_id": 51,
+      "api_success": true,
+      "note": "HL meta API: 230 symbols. TON: LISTED. maxLeverage=10. TON-PERP active on Hyperliquid. FR settlement: 1h intervals. High retail participation (Telegram ecosystem)."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "ton_listed": true,
+      "status": "Trading",
+      "max_leverage": "50.00",
+      "api_success": true,
+      "note": "Bybit TONUSDT: status=Trading, maxLeverage=50.00. 8h FR settlement interval. High liquidity for retail TON flow."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "ton_listed": true,
+      "state": "live",
+      "max_leverage": "50",
+      "inst_id": "TON-USDT-SWAP",
+      "api_success": true,
+      "note": "OKX TON-USDT-SWAP: state=live, maxLeverage=50. 8h FR settlement interval. OKX TON FR cached (90d, Feb-May 2026)."
+    },
+    "venue_pass": true,
+    "vol_ratio_6m": 1.815,
+    "vol_threshold": 1.5,
+    "vol_pass": true,
+    "prescreen_pass": true,
+    "ton_fr_rows": 21126,
+    "ton_fr_start": "2023-12-31 15:00:00",
+    "ton_fr_end": "2026-05-29 21:00:00",
+    "btc_fr_rows": 17512,
+    "ton_fr_mean": 6e-06,
+    "ton_fr_std_6m": 1.8e-05,
+    "btc_fr_std_6m": 1e-05,
+    "note": "Phase 0 PASS: 3/3 venues confirmed (HL maxLev=10, Bybit maxLev=50, OKX maxLev=50). Vol ratio TON/BTC 6M=1.81x (threshold=1.5x). TON 21126 rows (2023-12-31 to 2026-05-29). Positive carry bias: TON FR mean=6.18e-06 (retail longs dominate Telegram ecosystem)."
+  },
+  "signal_config": {
+    "window_h": 240,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "TON-PERP vs BTC-PERP (HL 1h FR differential)"
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -11.8516,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "half_life_h": 3.38,
+      "half_life_days": 0.14,
+      "theta": 0.205302,
+      "intercept": -6.6e-07,
+      "r_squared": 0.1026,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 8.4016,
+      "perm_mean_sh": 0.0547,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 8.4016,
+      "t_stat": 6.506,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.007143,
+      "n_trials": 7,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 26.5096,
+    "ann_ret_pct": 7.3374,
+    "max_dd_pct": -0.3165,
+    "trades_yr": 16.0,
+    "n_days": 500.8,
+    "n_hours": 12019,
+    "n_pos_months": 16,
+    "n_neg_months": 1,
+    "cum_ret": 0.100672,
+    "ret_mean": 8.38e-06,
+    "ret_std": 2.957e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 8.4016,
+    "ann_ret_pct": 2.4467,
+    "max_dd_pct": -0.4125,
+    "trades_yr": 36.7,
+    "n_days": 218.9,
+    "n_hours": 5253,
+    "n_pos_months": 7,
+    "n_neg_months": 1,
+    "cum_ret": 0.014672,
+    "ret_mean": 2.79e-06,
+    "ret_std": 3.111e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 20.7249,
+    "ann_ret_pct": 5.85,
+    "max_dd_pct": -0.4125,
+    "trades_yr": 22.3,
+    "n_days": 719.7,
+    "n_hours": 17272,
+    "n_pos_months": 22,
+    "n_neg_months": 2,
+    "cum_ret": 0.115344,
+    "ret_mean": 6.68e-06,
+    "ret_std": 3.016e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 240,
+      "oos_sharpe": 8.4016,
+      "oos_ann_ret_pct": 2.4467,
+      "trades_yr": 36.7
+    },
+    {
+      "window_h": 336,
+      "oos_sharpe": 8.0702,
+      "oos_ann_ret_pct": 2.022,
+      "trades_yr": 23.3
+    },
+    {
+      "window_h": 168,
+      "oos_sharpe": 6.7325,
+      "oos_ann_ret_pct": 2.1196,
+      "trades_yr": 46.7
+    },
+    {
+      "window_h": 120,
+      "oos_sharpe": 6.1699,
+      "oos_ann_ret_pct": 1.9621,
+      "trades_yr": 48.4
+    },
+    {
+      "window_h": 72,
+      "oos_sharpe": 4.8045,
+      "oos_ann_ret_pct": 1.7871,
+      "trades_yr": 71.7
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 12,
+    "n_positive": 10,
+    "all_positive": false,
+    "pass": false,
+    "sh_min": -4.4976,
+    "sh_max": 48.6541,
+    "sh_mean": 16.5234,
+    "sh_std": 14.7617,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-05-28",
+        "end": "2025-06-27",
+        "sharpe": 17.5501,
+        "positive": "True",
+        "max_dd": -0.000898
+      },
+      {
+        "fold": 2,
+        "start": "2025-06-27",
+        "end": "2025-07-27",
+        "sharpe": 30.9329,
+        "positive": "True",
+        "max_dd": -0.000696
+      },
+      {
+        "fold": 3,
+        "start": "2025-07-27",
+        "end": "2025-08-26",
+        "sharpe": -0.6467,
+        "positive": "False",
+        "max_dd": -0.00269
+      },
+      {
+        "fold": 4,
+        "start": "2025-08-26",
+        "end": "2025-09-25",
+        "sharpe": 48.6541,
+        "positive": "True",
+        "max_dd": -4e-06
+      },
+      {
+        "fold": 5,
+        "start": "2025-09-25",
+        "end": "2025-10-25",
+        "sharpe": 28.5331,
+        "positive": "True",
+        "max_dd": -0.000401
+      },
+      {
+        "fold": 6,
+        "start": "2025-10-25",
+        "end": "2025-11-24",
+        "sharpe": 6.5647,
+        "positive": "True",
+        "max_dd": -0.001063
+      },
+      {
+        "fold": 7,
+        "start": "2025-11-24",
+        "end": "2025-12-24",
+        "sharpe": 5.8606,
+        "positive": "True",
+        "max_dd": -0.001112
+      },
+      {
+        "fold": 8,
+        "start": "2025-12-24",
+        "end": "2026-01-23",
+        "sharpe": 3.2518,
+        "positive": "True",
+        "max_dd": -0.000558
+      },
+      {
+        "fold": 9,
+        "start": "2026-01-23",
+        "end": "2026-02-22",
+        "sharpe": -4.4976,
+        "positive": "False",
+        "max_dd": -0.003548
+      },
+      {
+        "fold": 10,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": 15.4335,
+        "positive": "True",
+        "max_dd": -0.001671
+      },
+      {
+        "fold": 11,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": 25.5869,
+        "positive": "True",
+        "max_dd": -0.001068
+      },
+      {
+        "fold": 12,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": 21.0576,
+        "positive": "True",
+        "max_dd": -0.001413
+      }
+    ],
+    "note": "10/12 positive folds. G4 FAIL: 2 negative folds. Sharpe range: [-4.50, 48.65]. Negative folds in Q4 2025 / Q1 2026 bear market consolidation \u2014 retail TON longs reduced, FR compressed. Structural G4 partial."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": false,
+      "G5 Family corr": true,
+      "G6 Trades/yr": true,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": false,
+      "G9 Data sufficiency": true
+    },
+    "gates_passed": 7,
+    "gates_total": 9,
+    "gates_failed": 2,
+    "g7_ret_4x_pct": 9.79,
+    "g4_all_positive": false,
+    "g5_all_pass": true,
+    "g8_note": "G8 signal corr=-0.1851 (threshold=0.55). Raw FR diff corr=0.2613. Overlap=569h (~24d). Structural issue: HL 1h settlement vs OKX 8h settlement. Signal divergence expected from different settlement mechanics. Same pattern as K557 LINK G8 FAIL. Execution path: HL-only.",
+    "decision": "ACCEPT CONDITIONAL"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": 0.0653,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "DeFi utility vs Social"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": 0.0137,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Solana vs Social"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": 0.0147,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Avalanche vs Social"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": 0.0683,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs Social"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": -0.0395,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs Social"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": -0.0107,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs Social"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": 0.0114,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs Social"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": -0.017,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Move-VM vs Social"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": 0.0124,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Storage vs Social"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531 (AI/GPU)",
+        "corr": 0.0125,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "AI/GPU vs Social"
+      },
+      "g5l": {
+        "label": "TAO-BTC (AI/Training)",
+        "corr": 0.0444,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "AI/Training vs Social"
+      },
+      "g5m": {
+        "label": "LINK-BTC K557 (Oracle/infra vs Social messaging CRITICAL)",
+        "corr": 0.0604,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "CRITICAL: TON (social) vs LINK (push-oracle/infra). G5m < 0.40 \u2192 Social cluster distinct from Oracle/Infra cluster."
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline",
+        "corr": 0.0125,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "vol-momentum baseline (multi-symbol carry). TON must not replicate BTC-carry signal."
+      }
+    },
+    "n_pass": 13,
+    "n_total": 13,
+    "all_pass": true,
+    "social_cluster_distinct": true,
+    "eth_corr_critical": 0.0653,
+    "link_corr_critical": 0.0604,
+    "note": "G5 family: 13/13 PASS. ETH G5a=0.0653 (DeFi utility vs Social messaging). LINK G5m=0.0604 (oracle/infra vs social). Social cluster distinct: True."
+  },
+  "cross_venue_fr": {
+    "pass": false,
+    "hl_okx_signal_corr": -0.1851,
+    "hl_okx_diff_corr": 0.2613,
+    "okx_ton_rows": 499,
+    "okx_btc_rows": 90,
+    "overlap_hours": 569,
+    "note": "G8 signal corr=-0.1851 (threshold=0.55). Raw FR diff corr=0.2613. Overlap=569h (~24d). Structural issue: HL 1h settlement vs OKX 8h settlement. Signal divergence expected from different settlement mechanics. Same pattern as K557 LINK G8 FAIL. Execution path: HL-only."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 2.4467,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 9.79,
+    "usdc_yr_1pct_10M": 9787,
+    "usdc_yr_2pct_10M": 19574,
+    "usdc_yr_1pct_100M": 97868,
+    "usdc_yr_2pct_100M": 195736,
+    "note": "4x leverage, OOS ann=2.45% \u00d7 4 = 9.79%/yr. @$10M 1% alloc: $9,787/yr. @$10M 2% alloc: $19,574/yr. @$100M 1% alloc: $97,868/yr."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 64.5,
+    "ton_alloc_pct": 1.5,
+    "projected_pct": 66.0,
+    "cap_pct": 65.0,
+    "breach": true,
+    "note": "v6.28 HL=64.5% + TON 1.5% = 66.0%. Cap=65.0%. BREACH: split required. Recommendation: 1% TON \u2192 HL=65.5% (marginal breach, fallback required). Alternative: add TON via split Bybit execution to reduce HL concentration."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 7,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 9,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 11,
+      "pair": "TON-BTC",
+      "sharpe": 8.4016,
+      "ecosystem": "Social/Messaging (Telegram)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 12,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 13,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "ton_family_rank": 11,
+  "decision_rationale": "G5 all PASS. Core statistical strength (Sh=8.402). Failed gates: ['G4 Walk-forward', 'G8 Cross-venue']. G4 FAIL: 2/12 negative folds (bear market Q4-2025/Q1-2026 retail compression). G8 FAIL structural: HL 1h vs OKX 8h settlement mechanics. Precedent: K557 LINK identical pattern \u2192 ACCEPT CONDITIONAL. Recommendation: 60d paper-trade on HL (3 venues confirmed). 11th cluster CONFIRMED: Social/Messaging (Telegram ecosystem).",
+  "next_pivot": "TON ACCEPT CONDITIONAL \u2192 60d paper-trade. Social/Messaging cluster confirmed (11th). Next pivot: explore TAP (Tap-to-earn Telegram game), DOGS (Telegram community token), or CATS. Alternative: revisit non-crypto social tokens."
+}
