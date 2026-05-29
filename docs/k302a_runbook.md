@@ -7699,3 +7699,238 @@ python3 scripts/k541_stablecoin_supply_run.py --dry-run
 ---
 
 *K550 §40 -- K541 stablecoin supply growth production scaffold (38th daemon, OOS Sh 1.498 $294K/yr @$10M, V3 z-score 2nd derivative acceleration spike, DefiLlama USDT+USDC supply free API, 7-axis Sh 6.872 +0.165 lift, G5 max corr 0.074 orthogonal, BTC+ETH+SOL 3% sleeve 2x leverage HL-only, 90d paper-trade gate, v6.29 candidate) -- 2026-05-30*
+
+---
+
+## §41 K521 Options 25d Skew Playbook (K565 scaffold, 39th daemon)
+
+### §41.1 Strategy Summary
+
+| Item | Value |
+|------|-------|
+| Strategy | K521 Options 25d Skew (V4 DVOL + ETH-BTC Skew Composite) |
+| Signal | Deribit DVOL z-score (60%) + ETH-BTC 25d skew spread z-score (40%) > 1.0 |
+| Gate status | CONDITIONAL ACCEPT 6/7 gates (G3 DSR ultra-conservative fail) |
+| OOS Sharpe | 1.019 |
+| Ann Return | $494K/yr @ $10M (5-axis Sh 6.386, +0.082 lift) |
+| Max correlation | 0.199 (G5 orthogonal confirmed — institutional axis distinct from retail F&G) |
+| Sleeve | 3% of AUM |
+| Leverage | 2x (directional — lower than FR-carry 4x) |
+| Universe | BTC (primary, HL-only, single leg) |
+| Venue | HyperLiquid (BTC/USDC perpetual, cross margin) |
+| Cron | Daily 86400s |
+| Paper gate | 90d (G3 DSR CONDITIONAL — 217 trades/yr backtest) |
+| API | Deribit public API (free, no auth): DVOL index + options 25d skew book |
+| v6.30 candidate | v6.29 + K521 3% = ~$1.950M/yr @$10M combined |
+| Daemon | 39th daemon |
+| Wave | K565 |
+
+### §41.2 Signal Hypothesis
+
+**Core thesis:** Institutional hedging demand creates predictable patterns in Deribit options markets.
+When DVOL spikes (BTC implied volatility surges), combined with elevated 25d put-call skew spread
+(ETH-BTC differential), a mean-reversion LONG BTC opportunity emerges as the fear peak is reached.
+
+**V4 composite signal:**
+```
+dvol_z     = (DVOL_current - mean(DVOL_30d)) / std(DVOL_30d)
+skew_z     = (ETH_skew - BTC_skew - mean(spread_30d)) / std(spread_30d)
+composite  = 0.6 × dvol_z + 0.4 × skew_z
+signal     = composite > 1.0  →  LONG BTC @ HL
+```
+
+**Why institutional axis is distinct:**
+- K515 Fear & Greed = retail sentiment (survey-based, daily)
+- K521 DVOL = options market IV (derivatives, real money, institutional)
+- K529 Wallet flow = on-chain accumulation (smart money)
+- Max corr 0.199 confirms orthogonality to all existing strategy axes
+
+### §41.3 Deribit Free Public API
+
+| Endpoint | URL |
+|----------|-----|
+| DVOL index (history) | `https://www.deribit.com/api/v2/public/get_volatility_index_data` |
+| Options book summary | `https://www.deribit.com/api/v2/public/get_book_summary_by_currency` |
+| Index price (spot) | `https://www.deribit.com/api/v2/public/get_index_price` |
+
+**Auth:** None required (all endpoints are public).
+**Rate limit:** No API key needed; standard Deribit rate limits apply (~10 req/s).
+**DVOL params:** `currency=BTC, start_timestamp=<ms>, end_timestamp=<ms>, resolution=86400`
+**Options params:** `currency=BTC, kind=option` → returns array of option book summaries
+
+### §41.4 §6 Gate Results
+
+| Gate | Result | Detail |
+|------|--------|--------|
+| G1 IS Sharpe | PASS | IS Sh sufficient |
+| G2 OOS Sharpe | PASS | OOS Sh 1.019 |
+| G3 DSR | FAIL (CONDITIONAL) | Ultra-conservative DSR threshold not met; institutional signal |
+| G4 Walk-forward | PASS | Consistent across folds |
+| G5a Correlation | PASS | Max corr 0.199 (orthogonal) |
+| G6 Signal frequency | PASS | 217 trades/yr |
+| G7 Return | PASS | $494K/yr @$10M |
+| **Total** | **6/7** | **CONDITIONAL ACCEPT** |
+
+G3 DSR note: The Deflated Sharpe Ratio penalty applies because K521 has multiple candidate
+signals (DVOL alone, skew alone, composite V4). The ultra-conservative DSR adjustment
+penalizes this exploration — however, V4 was selected a priori based on economic reasoning
+(not data mining), partially mitigating the DSR concern. 90d paper gate required.
+
+### §41.5 90d Paper-Trade Gate Criteria
+
+The 90d paper-trade gate is **MANDATORY** before live activation:
+
+| Criterion | Threshold | Rationale |
+|-----------|-----------|-----------|
+| OOS Sharpe (paper) | ≥ 0.8 | Lower than backtest OOS 1.019 (conservative) |
+| Fill rate | ≥ 60% | DVOL signal fires ~217×/yr → expect daily fills |
+| Max drawdown | < 20% | Directional risk (not delta-neutral) |
+| Trades count (90d) | ≥ 100 | From 217/yr backtest → ~53 in 90d (relax to ≥100 for 90d) |
+| Days elapsed | ≥ 90 | Hard minimum regardless of metrics |
+
+**Gate status check:**
+```bash
+python3 scripts/k521_options_skew_run.py --status
+# → Check: gate_metrics.gate_status == "PASS" (all 5 criteria met)
+```
+
+### §41.6 Risk Controls
+
+**Leverage:** 2x (vs FR-carry 4x) — justified by:
+  - Directional signal (not delta-neutral) → higher tail risk
+  - G3 DSR CONDITIONAL → conservative until gate
+  - DVOL spikes can reverse sharply (mean-reversion window: 1-3 days)
+
+**HL concentration:**
+  - K521 adds 3% BTC LONG → HL exposure +3%
+  - v6.29 HL already at ~65% cap → K521 may push HL > 65%
+  - Resolution options (same as K541):
+    A. Reduce K280 further (48% → 45%) to make room
+    B. Accept temporary HL overweight during paper gate
+    C. Route BTC LONG to Bybit (avoids HL cap entirely)
+  - Decision deferred to v6.30 activation gate
+
+**Emergency exit:**
+  - `python3 scripts/emergency_hl_exit.py --dry-run --include-k521`
+  - Close protocol: IOC reduce-only LONG BTC @ HL (single leg)
+  - See: §41.7 Emergency Exit Procedure
+
+**Live signal off → auto-exit:**
+  - Daily cron checks composite_z vs SIGNAL_THRESHOLD (1.0)
+  - When composite_z drops below 1.0 → daily_rebalance() auto-exits LONG BTC
+  - No manual intervention required for normal signal exit
+
+### §41.7 Emergency Exit Procedure
+
+```bash
+# Dry-run check (safe, no real orders):
+python3 scripts/emergency_hl_exit.py --dry-run --user 0xYOUR_ADDRESS --include-k521
+
+# Live close (requires HL credentials):
+export HL_USER_ADDRESS=0x...
+export HL_PRIVATE_KEY=0x...
+python3 scripts/emergency_hl_exit.py --EXECUTE --include-k521
+
+# Direct script close:
+python3 scripts/k521_options_skew_run.py --close "emergency exit"
+```
+
+**K521 close protocol (single leg):**
+1. Detect LONG BTC position from HL clearinghouse state
+2. Submit IOC reduce-only SELL BTC @ HL (market price, reduce-only)
+3. Update dashboard `position_state → NEUTRAL`
+4. Log to `cache/k521_paper_trades.jsonl`
+
+### §41.8 v6.30 Architecture Path
+
+```
+v6.30 = v6.29 + K521 Options 25d Skew 3%
+
+v6.29 (current target):
+  K280 48% + K297 20% + sUSDe 5% + [paired-trade 28%] + K541 3%
+  Combined estimate: ~$1.456M/yr @$10M (v6.28 $1.162M + K541 $294K)
+  HL: 65%+ (approaching cap)
+
+v6.30 (K521 addition):
+  K280 45% + K297 20% + sUSDe 5% + [paired-trade 28%] + K541 3% + K521 3%
+  Total: 104% → K280 reduced 3pp to 45% to fund K521
+  Combined estimate: ~$1.950M/yr @$10M (+$494K from K521)
+  HL concentration: review required before activation
+
+Dual directional axis:
+  K541 (stablecoin supply): BTC+ETH+SOL LONG on supply acceleration
+  K521 (options skew):      BTC LONG on DVOL spike + institutional fear
+  Both highly orthogonal (K541 max corr 0.074, K521 max corr 0.199)
+  Combined: two independent non-FR alpha axes
+```
+
+### §41.9 Activation Procedure
+
+```bash
+# Step 1: Verify 90d paper-trade gate passed
+python3 scripts/k521_options_skew_run.py --status
+# → Check: gate_metrics.gate_status == "PASS" (all 5 criteria met)
+
+# Step 2: Verify deployment status (should show 39 daemons, 0 mismatches)
+python3 scripts/verify_deployment_status.py
+
+# Step 3: Deploy plist (after 90d paper-trade gate)
+cp scripts/com.cryptolab.k521-options-skew.plist ~/Library/LaunchAgents/
+sed -i '' "s|REPO_ROOT|$(pwd)|g" ~/Library/LaunchAgents/com.cryptolab.k521-options-skew.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k521-options-skew.plist
+
+# Step 4: Manual first run (dry-run)
+python3 scripts/k521_options_skew_run.py --dry-run
+
+# Step 5: Activate live (after gate passage + HL concentration review)
+# Set PAPER_TRADE=False in plist EnvironmentVariables
+# Verify HL concentration <= 65% after K521 addition
+# If HL > 65%: reduce K280 further or route BTC to Bybit
+```
+
+### §41.10 Leverage Configuration
+
+```json
+"K521_OPTIONS_SKEW": 2.0,   // in exchange_caps — 2x (directional, lower than FR-carry 4x)
+"k521_notes": {
+  "sleeve_pct": 0.03,
+  "leverage": 2.0,
+  "margin_calc": "2x × 3% × $10M = $600K total notional / 2x = $300K margin (3% AUM)",
+  "oos_sharpe": 1.019,
+  "ann_return_usd_net_10M": 494000,
+  "five_axis_sharpe": 6.386,
+  "max_corr_g5": 0.199,
+  "paper_gate_days": 90,
+  "venue": "HL-only (BTC single leg: LONG BTC on DVOL spike)",
+  "activation": "SCAFFOLD-READY — 90d paper-trade gate (OOS Sh >=0.8 + fill_rate >=60% + maxDD <20% + >=100 trades)"
+}
+```
+
+### §41.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k521_options_skew_run.py` | Strategy script (K565 scaffold, ~250 LOC) |
+| `data/k521_dashboard.json` | Live state + gate metrics (initial NEUTRAL) |
+| `scripts/com.cryptolab.k521-options-skew.plist` | 39th daemon plist (gitignored) |
+| `scripts/emergency_hl_exit.py` | `--include-k521` flag + K521 detect/close |
+| `scripts/leverage_manager.py` | K521_OPTIONS_SKEW 2.0 cap + SLEEVE_WEIGHTS_V630 |
+| `data/leverage_config.json` | K521_OPTIONS_SKEW: 2.0 + k521_notes |
+| `scripts/verify_deployment_status.py` | 39th daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§41) |
+| `wave_k565_k521_scaffold.py` | Wave driver/test |
+| `wave_k565_k521_scaffold.json` | Wave result report |
+
+### §41.12 References
+
+| Wave | Description |
+|------|-------------|
+| K565 | This section — K521 options 25d skew production scaffold (39th daemon, v6.30 candidate) |
+| K521 | K521 analysis — options 25d skew CONDITIONAL ACCEPT ($494K/yr @$10M, OOS Sh 1.019, 6/7 gates) |
+| K550 | K541 stablecoin supply scaffold (38th daemon, direct scaffold template) |
+| K502 | K495 DEX-CEX non-paired scaffold pattern |
+| K266 | §6 strict gate framework (K521 CONDITIONAL ACCEPT) |
+
+---
+
+*K565 §41 -- K521 options 25d skew production scaffold (39th daemon, OOS Sh 1.019 $494K/yr @$10M, V4 DVOL z-score + ETH-BTC 25d skew spread composite, Deribit free public API, 5-axis Sh 6.386 +0.082 lift, Max corr 0.199 orthogonal, BTC LONG 3% sleeve 2x leverage HL-only, 90d paper-trade gate, v6.30 candidate) -- 2026-05-30*

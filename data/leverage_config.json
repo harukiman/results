@@ -24,7 +24,8 @@
     "K507_SEI_BTC":      4.0,
     "K507_TIA_BTC":      4.0,
     "K512_APT_BTC":      4.0,
-    "K541_STABLECOIN_SUPPLY": 2.0
+    "K541_STABLECOIN_SUPPLY": 2.0,
+    "K521_OPTIONS_SKEW": 2.0
   },
   "k457_basket_notes": {
     "sleeve_pct": 0.05,
@@ -264,6 +265,45 @@
     "api_archive": "archive.prod.vertexprotocol.com/v1",
     "product_ids": {"BTC": 2, "ETH": 4},
     "activation": "SCAFFOLD-READY — activate when Vertex trading keys configured + v6.20 go-live"
+  },
+  "k521_notes": {
+    "sleeve_pct": 0.03,
+    "hl_sleeve_pct": 0.03,
+    "bybit_sleeve_pct": 0.0,
+    "leverage": 2.0,
+    "leverage_cap": 2.0,
+    "margin_calc": "2x × 3% sleeve × $10M = $600K total notional / 2x = $300K margin (3% of AUM)",
+    "margin_pct_of_aum_10M": "3.0%",
+    "per_asset_notional": "$600K BTC only (single leg, HL-only)",
+    "oos_sharpe": 1.019,
+    "ann_return_usd_net_10M": 494000,
+    "five_axis_sharpe": 6.386,
+    "five_axis_lift": 0.082,
+    "max_corr_g5": 0.199,
+    "trades_per_yr": 217,
+    "gates_passed": 6,
+    "gates_total": 7,
+    "failing_gate": "G3 DSR ultra-conservative",
+    "orthogonality_note": "Max corr 0.199 — orthogonal confirmed (institutional axis distinct from retail F&G)",
+    "signal_version": "V4 — DVOL z-score (60%) + ETH-BTC 25d skew spread z-score (40%) composite > 1.0",
+    "universe": ["BTC"],
+    "data_api": "Deribit public API (free, no auth) — DVOL index + options 25d skew book summary",
+    "venue": "HL primary (BTC LONG, directional not paired, single leg)",
+    "execution": "POST_ONLY or IOC market (daily cron 86400s)",
+    "lower_leverage_rationale": "Directional signal (not delta-neutral) + G3 DSR CONDITIONAL — conservative until 90d gate",
+    "v630_candidate": "v6.29 + K521 3% = v6.30 combined ~$1.950M/yr @$10M (v6.29 $1.456M + K521 $494K)",
+    "paper_gate_days": 90,
+    "activation_criteria": {
+      "oos_sharpe_min": 0.8,
+      "fill_rate_min": 0.60,
+      "max_dd_max": 0.20,
+      "trades_min_90d": 100,
+      "days_required": 90
+    },
+    "activation": "SCAFFOLD-READY — 90d paper-trade gate (OOS Sh >=0.8 + fill_rate >=60% + maxDD <20% + >=100 trades in 90d)",
+    "wave": "K565",
+    "daemon_number": "39th",
+    "k521_hypothesis": "Deribit DVOL spike = institutional hedging demand surge; 25d skew spread confirms systemic vs idiosyncratic fear; mean-reversion LONG BTC when institutional fear peaks"
   },
   "k541_notes": {
     "sleeve_pct": 0.03,

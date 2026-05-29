@@ -315,6 +315,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k541_stablecoin_supply",
         expected_html_status="SCAFFOLD-READY",  # K550: plist in scripts/ (gitignored); activate after 90d paper-trade gate (OOS Sh >=1.2 + fill_rate >=60% + maxDD <25% + >=50 trades)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k521-options-skew",
+        purpose="K521 Options 25d Skew directional signal (LONG BTC, V4 DVOL z-score + ETH-BTC 25d skew spread composite, 2x leverage, daily cron 86400s, HL-only, OOS Sh 1.019, $494K/yr @$10M, 5-axis Sh 6.386 +0.082 lift, Max corr 0.199 orthogonal, 90d paper-trade gate, Deribit free public API, v6.30 candidate 3% sleeve, 39th daemon)",
+        scripts=["scripts/k521_options_skew_run.py"],
+        log_basename="k521_options_skew",
+        expected_html_status="SCAFFOLD-READY",  # K565: plist in scripts/ (gitignored); activate after 90d paper-trade gate (OOS Sh >=0.8 + fill_rate >=60% + maxDD <20% + >=100 trades in 90d)
+    ),
 ]
 
 

@@ -1,0 +1,69 @@
+{
+  "strategy": "K521 Options 25d Skew (V4 DVOL + Skew Composite)",
+  "daemon_number": 39,
+  "wave": "K565",
+  "position_state": "NEUTRAL",
+  "last_signal_z": -0.9067,
+  "last_dvol": 35.99,
+  "last_skew_spread": 21.624,
+  "last_notional_usd": 600000.0,
+  "last_action": "HOLD",
+  "last_action_ts": "2026-05-29T21:49:16.814409+00:00",
+  "paper_trade_start": "2026-05-30T06:38:00+00:00",
+  "paper_trade_active": true,
+  "paper_trade_days": -1,
+  "paper_trade_target_d": 90,
+  "gate_metrics": {
+    "oos_sharpe_paper": null,
+    "fill_rate": null,
+    "max_drawdown": null,
+    "trades_count_90d": null,
+    "gate_status": "PENDING",
+    "activation_criteria": {
+      "oos_sharpe_min": 0.8,
+      "fill_rate_min": 0.6,
+      "max_dd_max": 0.2,
+      "trades_min_90d": 100,
+      "days_required": 90
+    }
+  },
+  "performance": {
+    "oos_sharpe_backtest": 1.019,
+    "ann_return_usd_10m": 494000,
+    "five_axis_sharpe": 6.386,
+    "five_axis_lift": 0.082,
+    "max_corr_g5": 0.199,
+    "trades_per_yr_backtest": 217,
+    "gates_passed": 6,
+    "gates_total": 7,
+    "failing_gate": "G3 DSR ultra-conservative"
+  },
+  "signal_config": {
+    "signal_version": "V4",
+    "description": "DVOL z-score (60%) + ETH-BTC 25d skew spread z-score (40%) composite",
+    "threshold": 1.0,
+    "dvol_z_weight": 0.6,
+    "skew_z_weight": 0.4,
+    "zscore_lookback_d": 30,
+    "min_history_points": 15,
+    "data_api": "Deribit public API (free, no auth) \u2014 DVOL index + options 25d skew",
+    "dvol_url": "https://www.deribit.com/api/v2/public/get_volatility_index_data",
+    "book_url": "https://www.deribit.com/api/v2/public/get_book_summary_by_currency"
+  },
+  "position_config": {
+    "universe": [
+      "BTC"
+    ],
+    "sleeve_pct": 0.03,
+    "leverage": 2.0,
+    "notional_usd_10m": 600000.0,
+    "margin_usd_10m": 300000.0,
+    "venue": "HL primary (BTC/USDC perpetual, cross margin)",
+    "execution": "POST_ONLY or IOC market (daily cron 86400s)",
+    "lower_leverage_rationale": "Directional signal (not delta-neutral) + G3 DSR CONDITIONAL \u2014 conservative until 90d gate"
+  },
+  "v630_candidate": "K521 3% sleeve (post-90d paper gate)",
+  "v630_portfolio_note": "v6.30 = v6.29 + K521 3% Options Skew directional | K541 + K521 = dual orthogonal non-FR axes",
+  "activation_path": "SCAFFOLD-READY \u2014 90d paper-trade gate (OOS Sh >=0.8 paper + fill_rate >=60% + maxDD <20% + >=100 trades in 90d)",
+  "generated_at_jst": "2026-05-30 06:49 JST"
+}

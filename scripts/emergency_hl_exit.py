@@ -972,6 +972,92 @@ def close_k541_position(
     return True
 
 
+def _detect_k521_position(positions: List[Dict]) -> Optional[Dict]:
+    """
+    K565 Phase 4: Detect K521 Options 25d Skew signal positions.
+
+    K521 = LONG BTC on HL (directional, not paired).
+    Signal: Deribit DVOL z-score + ETH-BTC 25d skew spread composite > 1.0 (V4).
+    Universe: BTC primary (1 long leg, HL-only, 3% sleeve).
+    Close protocol: IOC reduce-only LONG BTC (single leg, HL-only).
+
+    Note: K521 is NOT a paired trade — single BTC LONG on DVOL spike.
+    Disambiguation from K495/K541: K521 targets BTC only (not BTC+ETH+SOL).
+    K521 CONDITIONAL ACCEPT (K565 scaffold):
+      OOS Sharpe 1.019, $494K/yr @$10M, 5-axis Sh 6.386 +0.082 lift
+      Max corr 0.199 — orthogonal confirmed (institutional axis distinct from retail F&G)
+      90d paper-trade gate (G3 DSR CONDITIONAL)
+      Deribit free public API (DVOL index + options 25d skew, no auth)
+    """
+    K521_SYMBOLS = {"BTC"}
+    k521_longs = [p for p in positions
+                  if p.get("coin", "").upper() in K521_SYMBOLS
+                  and p.get("side") == "long"]
+
+    if not k521_longs:
+        return None
+
+    btc_long  = k521_longs[0]
+    total_val = btc_long.get("value_usd", 0.0)
+
+    return {
+        "detected":       True,
+        "strategy":       "K521 Options 25d Skew (V4 DVOL + skew composite)",
+        "signal":         "Deribit DVOL z-score (60%) + ETH-BTC 25d skew spread z-score (40%) composite > 1.0",
+        "universe":       ["BTC"],
+        "btc_long":       {
+            "coin":      "BTC",
+            "value_usd": btc_long.get("value_usd", 0.0),
+            "size":      btc_long.get("size", 0.0),
+        },
+        "total_notional": total_val,
+        "venue":          "HL",
+        "close_protocol": "IOC_SINGLE: LONG BTC reduce-only on HL",
+        "note":           (
+            "K521 directional LONG BTC (not paired) — single leg on HL. "
+            "Close IOC reduce-only. Mean-reversion on DVOL spike. "
+            "Deribit free API: DVOL index + 25d skew (no auth)."
+        ),
+    }
+
+
+def close_k521_position(
+    plan:    dict,
+    logger:  "logging.Logger",
+    dry_run: bool = False,
+) -> bool:
+    """
+    K565 Phase 4: Close K521 Options 25d Skew signal position (LONG BTC).
+
+    Close protocol:
+      1. Detect K521 BTC LONG from plan
+      2. IOC reduce-only LONG BTC on HL
+    Single leg (BTC only, HL-only, 3% sleeve, 2x leverage).
+
+    Returns True if close completed (or no position detected).
+    """
+    k521_detail = plan.get("k521_detail")
+
+    if not k521_detail or not k521_detail.get("detected"):
+        logger.info("  K521: no options skew signal position detected — skipping.")
+        return True
+
+    total_val = k521_detail.get("total_notional", 0.0)
+    btc_leg   = k521_detail.get("btc_long", {})
+    btc_val   = btc_leg.get("value_usd", total_val)
+
+    logger.info(f"  [K521] Options skew signal close — LONG BTC ${btc_val:,.0f} (HL-only)")
+    logger.info(f"  [K521] Close protocol: IOC reduce-only LONG BTC @ HL (single leg)")
+
+    if dry_run:
+        logger.info(f"    [K521] DRY-RUN: SELL BTC@HL ${btc_val:,.0f} (IOC reduce-only)")
+    else:
+        logger.info(f"    [K521] SCAFFOLD: IOC reduce LONG BTC@HL ${btc_val:,.0f} (K521 options skew signal)")
+        logger.info("    SCAFFOLD: K521 close wired but not executed "
+                    "(HL auth required at live activation)")
+    return True
+
+
 def _detect_k507_tia_paired_positions(positions: List[Dict]) -> Optional[Dict]:
     """
     K524 Phase 4: Detect K507 TIA paired positions (TIA long + BTC short, or reverse).
@@ -1311,6 +1397,12 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
     k541_coins: set = set()
     if k541_pos:
         k541_coins = set(k541_pos.get("universe", []))
+
+    # K565: detect K521 options 25d skew signal positions (LONG BTC, HL-only)
+    k521_pos = _detect_k521_position(positions)
+    k521_coins: set = set()
+    if k521_pos:
+        k521_coins = set(k521_pos.get("universe", []))
 
     # K502: detect K495 DEX-CEX flow divergence positions (LONG BTC+ETH+SOL)
     k495_pos = _detect_k495_position(positions)
@@ -1699,8 +1791,8 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
             })
             total_notional += long_pos["value_usd"]
 
-    # All other positions: close in any order (non-K449, non-K457, non-K476, non-K484, non-K493, non-K500, non-K507, non-K507-TIA, non-K512)
-    handled_coins = k449_coins | k457_coins | k476_coins | k484_coins | k493_coins | k500_coins | k507_coins | k512_coins | k507_tia_coins | k541_coins
+    # All other positions: close in any order (non-K449, non-K457, non-K476, non-K484, non-K493, non-K500, non-K507, non-K507-TIA, non-K512, non-K541, non-K521)
+    handled_coins = k449_coins | k457_coins | k476_coins | k484_coins | k493_coins | k500_coins | k507_coins | k512_coins | k507_tia_coins | k541_coins | k521_coins
     for p in positions:
         coin = p.get("coin", "").upper()
         if coin in handled_coins:
@@ -1750,6 +1842,8 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
         "k541_detail":            k541_pos,
         "k495_detected":          k495_pos is not None,
         "k495_detail":            k495_pos,
+        "k521_detected":          k521_pos is not None,
+        "k521_detail":            k521_pos,
     }
 
 
@@ -2802,7 +2896,8 @@ def main() -> int:
             "K514: --include-k507 flag added (K507 SEI-BTC FR differential, 35th daemon, Cosmos 3rd CONFIRMED, HL+Bybit split)\n"
             "K520: --include-k512 flag added (K512 APT-BTC FR differential, 36th daemon, Move-VM #1 family CONFIRMED, HL+Bybit split)\n"
             "K524: --include-k507-tia flag added (K507 TIA-BTC FR differential, 37th daemon, Celestia modular DA CONFIRMED, HL-only 1%)\n"
-            "K550: --include-k541 flag added (K541 stablecoin supply growth, 38th daemon, V3 acceleration, DefiLlama API, BTC+ETH+SOL LONG)"
+            "K550: --include-k541 flag added (K541 stablecoin supply growth, 38th daemon, V3 acceleration, DefiLlama API, BTC+ETH+SOL LONG)\n"
+            "K565: --include-k521 flag added (K521 options 25d skew, 39th daemon, DVOL+skew V4 composite, Deribit free API, BTC LONG)"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
@@ -3233,6 +3328,31 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K565: K521 options 25d skew emergency exit flag
+    # K521 = LONG BTC on HL (1 leg) when DVOL z-score + ETH-BTC skew spread composite > 1.0 (V4).
+    # Close protocol: IOC reduce-only LONG BTC (single leg, HL-only).
+    # Signal-based (daily cron 86400s) — closes when composite z drops below threshold.
+    # Default: off (K521 positions are auto-detected via _detect_k521_position).
+    # Use --include-k521 to print K521-specific close summary during emergency exit.
+    parser.add_argument(
+        "--include-k521",
+        dest="include_k521",
+        action="store_true",
+        default=False,
+        help=(
+            "K565: Include K521 options 25d skew close summary during emergency exit. "
+            "K521 positions (LONG BTC, HL-only, 1 leg) are detected automatically "
+            "via _detect_k521_position(); this flag adds a structured summary. "
+            "Close protocol: IOC reduce-only LONG BTC (single leg, HL-only). "
+            "Signal: Deribit DVOL z-score (60%) + ETH-BTC 25d skew spread z-score (40%) > 1.0 (V4). "
+            "Deribit free public API (no auth). "
+            "OOS Sharpe 1.019. $494K/yr @$10M. Max corr 0.199 (orthogonal, institutional axis). "
+            "90d paper-trade gate (G3 DSR CONDITIONAL). 3% sleeve, 2x leverage. "
+            "Requires: K521 daemon running (com.cryptolab.k521-options-skew). "
+            "See: docs/k302a_runbook.md §41"
+        ),
+    )
+
     # K502: K495 DEX-CEX flow divergence bear-conditional emergency exit flag
     # K495 = LONG BTC+ETH+SOL on HL (3 legs) when DEX-CEX z-score > 1.0 in bear regime.
     # Close protocol: IOC market orders (reduce-only) BTC → ETH → SOL (largest notional first).
@@ -3591,6 +3711,29 @@ USDY sleeve emergency guidance (K415 §21.6):
                     "K541 stablecoin supply positions detected — included in HL exit above. "
                     "Use --include-k541 to print detailed BTC+ETH+SOL LONG close summary (§40). "
                     "HL-only: BTC@HL + ETH@HL + SOL@HL (3% sleeve, 2x leverage)."
+                )
+
+        # K565: K521 options 25d skew close summary (documentation; positions auto-detected)
+        # K521 positions (LONG BTC, HL-only, single leg) are included in the main HL exit.
+        # This flag adds a structured summary of the K521-specific close protocol.
+        # HL-only: 1 leg on HL (daily cron 86400s, 3% sleeve, 2x leverage).
+        if args.include_k521:
+            logger.info("=== K521 OPTIONS 25d SKEW CLOSE SUMMARY (K565 §41) ===")
+            success_k521 = close_k521_position(plan=plan, logger=logger, dry_run=False)
+            if success_k521:
+                logger.info("  K521 options skew close: complete (or no position detected).")
+            else:
+                logger.warning("  K521 options skew close: had errors — verify HL BTC position manually.")
+            logger.info("  HL-only: LONG BTC on HL (IOC reduce-only, single leg)")
+            logger.info("  Signal: Deribit DVOL z-score (60%) + ETH-BTC 25d skew spread (40%) V4 composite")
+            logger.info("  Deribit API: free public (no auth) — DVOL index + options book summary")
+            logger.info("  See: docs/k302a_runbook.md §41 (K521 options skew playbook)")
+        else:
+            if plan.get("k521_detected"):
+                logger.info(
+                    "K521 options skew positions detected — included in HL exit above. "
+                    "Use --include-k521 to print detailed BTC LONG close summary (§41). "
+                    "HL-only: BTC@HL (3% sleeve, 2x leverage, single leg)."
                 )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)

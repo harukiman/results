@@ -66,6 +66,7 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K507_TIA_BTC":   4.0,   # K524: TIA-BTC paired-trade (v6.28 candidate, HL-only 1%, OOS Sh 14.44, Celestia modular DA #6, $51K/yr)
     "K512_APT_BTC":   4.0,   # K520: APT-BTC paired-trade (v6.28 candidate, HL+Bybit split, OOS Sh 51.10, Move-VM #1 family, $302K/yr)
     "K541_STABLECOIN_SUPPLY": 2.0,  # K550: stablecoin supply growth (v6.29 candidate, HL-only, 3% sleeve, 2x leverage, OOS Sh 1.498, $294K/yr)
+    "K521_OPTIONS_SKEW": 2.0,       # K565: options 25d skew DVOL+skew V4 (v6.30 candidate, HL-only, 3% sleeve, 2x leverage, OOS Sh 1.019, $494K/yr)
     "K457_basket":    4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
@@ -194,6 +195,31 @@ SLEEVE_WEIGHTS_V629: Dict[str, float] = {
     "K507_TIA": 0.01,  # TIA-BTC delta-neutral, 4x leverage, HL-only 1% (v6.28 K524 addition, $51K/yr)
     "K512":    0.02,    # APT-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.28 addition, $302K/yr)
     "K541":    0.03,    # Stablecoin supply growth, 2x leverage, HL-only (v6.29 K550 addition, $294K/yr, 90d gate)
+    "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
+}
+
+# v6.30 candidate weights (proposed in K565 — not yet active)
+# K521 Options 25d Skew 3% sleeve added to v6.29 combined portfolio
+# OOS Sh 1.019, $494K/yr @$10M, 5-axis Sh 6.386 +0.082 lift, Max corr 0.199 orthogonal
+# 90d paper-trade gate (G3 DSR CONDITIONAL — longer gate for conservative DSR)
+# Deribit free API: DVOL index + 25d skew (no auth) — BTC LONG directional
+# Total combined v6.30: ~$1.950M/yr @$10M (v6.29 $1.456M + K521 $494K)
+# HL concentration: K521 BTC LONG = HL-only +3% → watch vs 65% cap (v6.29 HL at ~65%+)
+# v6.30 activation: K521 90d gate pass + HL concentration review (may require K280 reduction)
+SLEEVE_WEIGHTS_V630: Dict[str, float] = {
+    "K280":    0.45,    # reduced 3pp vs v6.29 to fund K521 options skew sleeve
+    "K297":    0.20,
+    "sUSDe":   0.05,
+    "K449":    0.05,    # ETH-BTC delta-neutral, 4x leverage, HL-only (v6.16 base, 5%)
+    "K476":    0.04,    # SOL-BTC delta-neutral, 4x leverage, HL-only (v6.21 addition, 4%)
+    "K484":    0.05,    # AVAX-BTC delta-neutral, 4x leverage, HL-only (v6.23 addition, 5%)
+    "K493":    0.05,    # ATOM-BTC delta-neutral, 4x leverage, HL-only (v6.24 addition, 5%)
+    "K500":    0.04,    # INJ-BTC delta-neutral, 4x leverage, HL-only (v6.25 addition, 4%)
+    "K507":    0.02,    # SEI-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.27 addition, 2%)
+    "K507_TIA": 0.01,  # TIA-BTC delta-neutral, 4x leverage, HL-only 1% (v6.28 K524 addition, $51K/yr)
+    "K512":    0.02,    # APT-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.28 addition, $302K/yr)
+    "K541":    0.03,    # Stablecoin supply growth, 2x leverage, HL-only (v6.29 K550 addition, $294K/yr)
+    "K521":    0.03,    # Options 25d skew DVOL+skew V4, 2x leverage, HL-only (v6.30 K565 addition, $494K/yr)
     "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
 }
 
