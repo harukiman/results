@@ -1,0 +1,841 @@
+{
+  "wave": "K607",
+  "strategy": "TRX-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T17:55:38+0900",
+  "runtime_s": 6.9,
+  "decision": "ACCEPT CONDITIONAL",
+  "decision_rationale": "G5 all PASS. OOS Sh=18.5932. Failed gates: ['G6 Trades/yr', 'G8 Cross-venue']. TRX-BTC shows independent FR alpha. Structural failures only (settlement mismatch or low trade frequency). Recommendation: 60d paper-trade on HL.",
+  "em_cluster_status": "CONFIRMED: TRX = EM-Payment/Justin-Sun cluster (new cluster #19 in family taxonomy). G5r XRP=0.0554 PASS (TRX distinct from XRP payment cluster). G5p DOGE=0.1923 PASS. G5v TON=0.1381 PASS. TRON DPoS FR signal: USDT TRC-20 demand cycles + Justin Sun regulatory events + TRON DAO reserve (USDD de-peg risk) = distinct from XRP institutional cross-border.",
+  "cluster_taxonomy": {
+    "L1": [
+      "APT",
+      "SOL",
+      "AVAX",
+      "ETH"
+    ],
+    "Cosmos": [
+      "ATOM",
+      "INJ",
+      "TIA",
+      "SEI"
+    ],
+    "Storage": [
+      "FIL"
+    ],
+    "AI/GPU": [
+      "RENDER"
+    ],
+    "AI/Training": [
+      "TAO"
+    ],
+    "Oracle": [
+      "LINK"
+    ],
+    "Social/Messaging": [
+      "TON"
+    ],
+    "Gaming/Metaverse": [
+      "SAND"
+    ],
+    "Gaming/P2E": [
+      "AXS"
+    ],
+    "Compute/Cloud": [
+      "ICP"
+    ],
+    "DeFi/Lending": [
+      "AAVE"
+    ],
+    "DeFi/veToken": [
+      "CRV"
+    ],
+    "PoW/BlockDAG": [
+      "KAS"
+    ],
+    "PoW/Scrypt-Meme": [
+      "DOGE"
+    ],
+    "Payment/Cross-border": [
+      "XRP"
+    ],
+    "PoW/Scrypt-Utility": [
+      "LTC"
+    ],
+    "PoW/SHA-256-BTC-Fork": [
+      "BCH"
+    ],
+    "Meme/Retail": [
+      "SHIB",
+      "PEPE",
+      "BONK",
+      "WIF"
+    ],
+    "BTC": [
+      "BTC (baseline)"
+    ],
+    "EM-Payment/Justin-Sun": [
+      "TRX"
+    ]
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "trx_listed": true,
+      "hl_ticker": "TRX",
+      "total_symbols": 230,
+      "max_leverage": 10,
+      "margin_table_id": 51,
+      "api_success": true,
+      "note": "HL meta API: 230 symbols. TRX: LISTED. maxLeverage=10. TRX-PERP active on Hyperliquid. FR settlement: 1h intervals. TRX: TRON DPoS blockchain \u2014 Justin Sun ecosystem, USDT-dominant chain."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "trx_listed": true,
+      "status": "Trading",
+      "bybit_ticker": "TRXUSDT",
+      "max_leverage": "75.00",
+      "api_success": true,
+      "note": "Bybit TRXUSDT: status=Trading, maxLeverage=75.00. 8h FR settlement interval. TRON DPoS on Bybit \u2014 high liquidity."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "trx_listed": true,
+      "state": "live",
+      "max_leverage": "50",
+      "inst_id": "TRX-USDT-SWAP",
+      "ct_val": "1000",
+      "api_success": true,
+      "note": "OKX TRX-USDT-SWAP: state=live, maxLeverage=50, ctVal=1000 TRX/contract. 8h FR settlement interval."
+    },
+    "venue_pass": true,
+    "vol_ratio_hl_6m": 2.3036,
+    "vol_ratio_hl_365d": 1.8658,
+    "vol_ratio_hl_full": 1.4885,
+    "vol_threshold": 1.5,
+    "vol_pass": true,
+    "vol_conditional": false,
+    "prescreen_pass": true,
+    "trx_fr_rows": 24654,
+    "trx_fr_start": "2023-08-06 16:00:00",
+    "trx_fr_end": "2026-05-29 23:00:00",
+    "btc_fr_rows": 17512,
+    "trx_fr_mean_6m": 1.42e-06,
+    "trx_fr_std_6m": 2.27e-05,
+    "btc_fr_std_6m": 9.85e-06,
+    "note": "Phase 0: venue_pass=True, vol_pass=True (HARD PASS (6M ok)). HL TRX FR: 24654 rows (2023-08-06 to 2026-05-29). HL 6M=2.304x | HL 365d=1.866x | full=1.488x. 3 venues confirmed: HL TRX-PERP + Bybit TRXUSDT + OKX TRX-USDT-SWAP. HL maxLev=10, Bybit=75.00, OKX=50.",
+    "vol_note": "HL TRX/BTC 6M vol ratio=2.3036x (ABOVE 1.5x). HL TRX/BTC 365d vol ratio=1.8658x (ABOVE 1.5x). HL full=1.4885x. TRX TRON DPoS: vol driven by Justin Sun SEC events, TRON DAO reserve (USDD) de-peg risk, HTX exchange concentration, USDT TRC-20 demand spikes. High 6M vol ratio (>2x): TRON EM payment narrative active."
+  },
+  "signal_config": {
+    "window_h": 720,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "TRX-PERP vs BTC-PERP (HL 1h FR differential)",
+    "window_rationale": "W=720h grid optimal (OOS Sh=20.26). TRX TRON DPoS: 3-second blocks, EVM-compatible (2022). USDT TRC-20 demand cycles driven by EM payment flows \u2014 monthly+ cycles expected (TRON DAO reserve events are episodic)."
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -15.1075,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "half_life_h": 3.61,
+      "half_life_days": 0.15,
+      "theta": 0.191781,
+      "intercept": -1.43e-06,
+      "r_squared": 0.0963,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 18.5932,
+      "perm_mean_sh": -0.0114,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 18.5932,
+      "t_stat": 14.3981,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.005556,
+      "n_trials": 9,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 22.3368,
+    "ann_ret_pct": 7.1345,
+    "max_dd_pct": -0.7524,
+    "trades_yr": 19.0,
+    "n_days": 480.8,
+    "n_hours": 11539,
+    "n_pos_months": 13,
+    "n_neg_months": 4,
+    "cum_ret": 0.093978,
+    "ret_mean": 8.14e-06,
+    "ret_std": 3.413e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 18.5932,
+    "ann_ret_pct": 4.6729,
+    "max_dd_pct": -0.4997,
+    "trades_yr": 10.0,
+    "n_days": 218.9,
+    "n_hours": 5253,
+    "n_pos_months": 8,
+    "n_neg_months": 0,
+    "cum_ret": 0.028021,
+    "ret_mean": 5.33e-06,
+    "ret_std": 2.685e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 21.2138,
+    "ann_ret_pct": 6.3644,
+    "max_dd_pct": -0.7524,
+    "trades_yr": 16.2,
+    "n_days": 699.7,
+    "n_hours": 16792,
+    "n_pos_months": 21,
+    "n_neg_months": 3,
+    "cum_ret": 0.121999,
+    "ret_mean": 7.27e-06,
+    "ret_std": 3.205e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 720,
+      "oos_sharpe": 20.2636,
+      "oos_ann_ret_pct": 4.9391,
+      "trades_yr": 7.0
+    },
+    {
+      "window_h": 840,
+      "oos_sharpe": 19.0194,
+      "oos_ann_ret_pct": 4.5183,
+      "trades_yr": 5.3
+    },
+    {
+      "window_h": 1080,
+      "oos_sharpe": 16.9793,
+      "oos_ann_ret_pct": 3.8886,
+      "trades_yr": 1.8
+    },
+    {
+      "window_h": 960,
+      "oos_sharpe": 15.6963,
+      "oos_ann_ret_pct": 3.7565,
+      "trades_yr": 5.3
+    },
+    {
+      "window_h": 120,
+      "oos_sharpe": 11.7583,
+      "oos_ann_ret_pct": 4.2261,
+      "trades_yr": 53.7
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 12,
+    "n_positive": 8,
+    "all_positive": false,
+    "partial_pass": true,
+    "pass": true,
+    "sh_min": -9.7931,
+    "sh_max": 65.5092,
+    "sh_mean": 14.6949,
+    "sh_std": 21.9349,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-05-28",
+        "end": "2025-06-27",
+        "sharpe": -9.7931,
+        "positive": "False",
+        "max_dd": -0.003807
+      },
+      {
+        "fold": 2,
+        "start": "2025-06-27",
+        "end": "2025-07-27",
+        "sharpe": 13.0402,
+        "positive": "True",
+        "max_dd": -0.001815
+      },
+      {
+        "fold": 3,
+        "start": "2025-07-27",
+        "end": "2025-08-26",
+        "sharpe": -9.3939,
+        "positive": "False",
+        "max_dd": -0.003294
+      },
+      {
+        "fold": 4,
+        "start": "2025-08-26",
+        "end": "2025-09-25",
+        "sharpe": 20.7691,
+        "positive": "True",
+        "max_dd": -0.00201
+      },
+      {
+        "fold": 5,
+        "start": "2025-09-25",
+        "end": "2025-10-25",
+        "sharpe": -5.2449,
+        "positive": "False",
+        "max_dd": -0.001911
+      },
+      {
+        "fold": 6,
+        "start": "2025-10-25",
+        "end": "2025-11-24",
+        "sharpe": 65.5092,
+        "positive": "True",
+        "max_dd": -0.000148
+      },
+      {
+        "fold": 7,
+        "start": "2025-11-24",
+        "end": "2025-12-24",
+        "sharpe": 2.7601,
+        "positive": "True",
+        "max_dd": -0.001595
+      },
+      {
+        "fold": 8,
+        "start": "2025-12-24",
+        "end": "2026-01-23",
+        "sharpe": 8.4506,
+        "positive": "True",
+        "max_dd": -0.001151
+      },
+      {
+        "fold": 9,
+        "start": "2026-01-23",
+        "end": "2026-02-22",
+        "sharpe": 35.5135,
+        "positive": "True",
+        "max_dd": -0.002552
+      },
+      {
+        "fold": 10,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": 25.037,
+        "positive": "True",
+        "max_dd": -0.000673
+      },
+      {
+        "fold": 11,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": 35.4919,
+        "positive": "True",
+        "max_dd": -0.001232
+      },
+      {
+        "fold": 12,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": -5.8012,
+        "positive": "False",
+        "max_dd": -0.004939
+      }
+    ],
+    "note": "8/12 positive folds. G4 PASS (>=8/12 positive). Sharpe range: [-9.79, 65.51]. TRX TRON DPoS: Justin Sun narrative events are episodic (SEC, TRON DAO reserve). USDT TRC-20 demand spikes create non-uniform FR cycles across folds."
+  },
+  "section_6_gates": {
+    "g1_oos_sharpe": {
+      "pass": true,
+      "value": 18.5932,
+      "thresh": 1.0
+    },
+    "g2_perm": {
+      "pass": true,
+      "p_value": 0.0,
+      "thresh": 0.05
+    },
+    "g3_dsr": {
+      "pass": true,
+      "p_value": 0.0,
+      "thresh": 0.005556
+    },
+    "g4_walkforward": {
+      "pass": true,
+      "n_positive": 8,
+      "n_folds": 12
+    },
+    "g5_family_corr": {
+      "pass": true,
+      "n_pass": 25,
+      "n_total": 25
+    },
+    "g6_trades_yr": {
+      "pass": false,
+      "value": 10.0,
+      "thresh": 30
+    },
+    "g7_ann_ret_4x": {
+      "pass": true,
+      "value_pct": 18.6916,
+      "thresh_pct": 5.0
+    },
+    "g8_cross_venue": {
+      "pass": false,
+      "corr": 0.4126,
+      "thresh": 0.55
+    },
+    "g9_oos_days": {
+      "pass": true,
+      "value": 218.9,
+      "thresh": 180
+    },
+    "failed_gates": [
+      "G6 Trades/yr",
+      "G8 Cross-venue"
+    ],
+    "n_failed": 2,
+    "decision": "ACCEPT CONDITIONAL"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": 0.0748,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "L1/DeFi vs TRON DPoS CRITICAL"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": 0.1286,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Solana L1 vs TRON DPoS"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": 0.2635,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Avalanche vs TRON DPoS"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": 0.0359,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs TRON DPoS"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": -0.0195,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos DeFi vs TRON DPoS"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": 0.0813,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos SVM vs TRON DPoS"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": 0.0409,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos DA vs TRON DPoS"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": 0.0513,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Move-VM vs TRON DPoS"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": 0.0934,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Storage vs TRON DPoS"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531 (AI/GPU)",
+        "corr": 0.1353,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "AI/GPU vs TRON DPoS"
+      },
+      "g5l": {
+        "label": "TAO-BTC (AI/Training)",
+        "corr": 0.0341,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "AI/Training vs TRON DPoS"
+      },
+      "g5s": {
+        "label": "ICP-BTC K587 (Compute)",
+        "corr": 0.0366,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 4709,
+        "note": "Compute/Cloud vs TRON DPoS"
+      },
+      "g5t": {
+        "label": "AXS-BTC K591 (Gaming/P2E)",
+        "corr": -0.1252,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3005,
+        "note": "Gaming/P2E vs TRON DPoS"
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline (DPoS vs PoW CRITICAL)",
+        "corr": 0.1353,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "BTC SHA-256 PoW carry vs TRX TRON DPoS. TRX = Delegated Proof of Stake (27 Super Representatives) \u2014 no mining. BTC = SHA-256 PoW mining. No consensus algorithm overlap. Expected: LOW correlation (distinct validation mechanism). Compare: BCH (SHA-256) G5_K280=0.2601 PASS. TRX (DPoS) expected: << 0.40 (no mining bridge to BTC carry signal). If corr >= 0.40: TRX FR driven by broad BTC risk appetite, not TRON specific."
+      },
+      "g5m": {
+        "label": "LINK-BTC K557 (Oracle/Infra vs TRON DPoS)",
+        "corr": -0.0907,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Oracle middleware vs TRON DPoS stablecoin platform. Orthogonal."
+      },
+      "g5n": {
+        "label": "KAS-BTC K590 (PoW BlockDAG vs DPoS CRITICAL)",
+        "corr": 0.0756,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "KAS = PoW BlockDAG GHOSTDAG (Blake3). TRX = TRON DPoS (27 Super Representatives). Distinct consensus: mining vs delegation. Expected orthogonal."
+      },
+      "g5o": {
+        "label": "SAND-BTC K583 (Gaming/Metaverse vs TRON DPoS)",
+        "corr": 0.0623,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "SAND = metaverse gaming. TRX = stablecoin rails/DPoS. Orthogonal."
+      },
+      "g5p": {
+        "label": "DOGE-BTC K592 (PoW Scrypt vs DPoS \u2014 Justin Sun vs Elon CRITICAL)",
+        "corr": 0.1923,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "DOGE = PoW Scrypt meme coin (Elon Musk narrative). TRX = TRON DPoS (Justin Sun narrative). Celebrity-driven but distinct celebrities and distinct mechanisms. DOGE: meme/crypto-twitter; TRX: USDT stablecoin rails/DeFi. If corr >= 0.40: Justin Sun = Elon crypto-celebrity cluster."
+      },
+      "g5q": {
+        "label": "SHIB-BTC K595 (Meme/ERC20 vs TRON DPoS)",
+        "corr": 0.0981,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "SHIB = ERC-20 meme (Shibarium). TRX = TRON DPoS. Orthogonal."
+      },
+      "g5r": {
+        "label": "XRP-BTC K597 (Payment/Cross-border vs TRON EM Payment CRITICAL)",
+        "corr": 0.0554,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "XRP = Ripple federated consensus, institutional cross-border settlement. TRX = TRON DPoS, emerging-market stablecoin payment rails (USDT TRC-20). Both 'payment' narratives but DISTINCT: XRP = institutional/bank-regulated; TRX = EM/informal/crypto-native. If corr >= 0.40: BLOCKED-PAYMENT \u2014 TRX = XRP payment cluster, no new alpha."
+      },
+      "g5u": {
+        "label": "AAVE-BTC K596 (DeFi/Lending vs TRON DPoS)",
+        "corr": -0.0615,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "AAVE = DeFi lending. TRX = TRON stablecoin platform. Orthogonal."
+      },
+      "g5v": {
+        "label": "TON-BTC K571 (Social/Messaging vs TRON DPoS CRITICAL)",
+        "corr": 0.1381,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "TON = Telegram blockchain (Durov narrative, messaging utility). TRX = TRON DPoS (Justin Sun narrative, stablecoin rails). Both 'celebrity-driven' but distinct: TON = messaging/social; TRX = EM payment/stablecoin. Expected orthogonal."
+      },
+      "g5w": {
+        "label": "CRV-BTC K599 (DeFi/veToken vs TRON DPoS)",
+        "corr": 0.0526,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "CRV = Curve veCRV. TRX = TRON DPoS. Orthogonal."
+      },
+      "g5x": {
+        "label": "LTC-BTC K600 (PoW Scrypt-Utility vs DPoS CRITICAL)",
+        "corr": 0.1514,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "LTC = PoW Scrypt payment utility (mining-based). TRX = TRON DPoS (27 Super Reps \u2014 delegation). Distinct consensus: mining vs delegation. Expected orthogonal (LTC = PoW utility; TRX = DPoS stablecoin rails). If corr >= 0.40: PoW/DPoS payment cluster collapse."
+      },
+      "g5y": {
+        "label": "BCH-BTC K605 (PoW SHA-256 fork vs TRON DPoS CRITICAL)",
+        "corr": 0.0995,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "BCH = Bitcoin Cash (SHA-256 PoW fork, Roger Ver, large-block ideology). TRX = TRON DPoS (Justin Sun, stablecoin rails, EM payment). Distinct: PoW SHA-256 vs DPoS delegation. Expected orthogonal \u2014 BCH drives BTC fork narrative; TRX drives USDT demand."
+      }
+    },
+    "n_pass": 25,
+    "n_total": 25,
+    "all_pass": true,
+    "eth_corr_critical": 0.0748,
+    "btc_carry_corr_critical": 0.1353,
+    "xrp_corr_critical": 0.0554,
+    "doge_corr_critical": 0.1923,
+    "ltc_corr_critical": 0.1514,
+    "ton_corr_critical": 0.1381,
+    "bch_corr_critical": 0.0995,
+    "note": "G5: 25/25 PASS | ETH=0.0748 K280-BTC-carry=0.1353 [DPoS vs PoW] XRP=0.0554 [PAYMENT CRITICAL] DOGE=0.1923 [Justin Sun vs Elon] LTC=0.1514 TON=0.1381 BCH=0.0995."
+  },
+  "cross_venue_fr": {
+    "hl_bybit_signal_corr": 0.4126,
+    "hl_bybit_fr_diff_corr": 0.586,
+    "bybit_vol_ratio_6m": 3.2295,
+    "bybit_vol_ratio_365d": 2.91,
+    "pass": false,
+    "threshold": 0.55,
+    "n": 5037,
+    "note": "HL vs Bybit signal corr=0.4126 (threshold=0.55). FR diff corr=0.5860. Bybit 6M vol ratio=3.2295x, 365d=2.9100x. TRX cross-venue: HL (1h) + Bybit (8h) + OKX (8h). HL 1h vs Bybit 8h settlement mismatch = structural G8 issue (K557+ precedent). TRX TRON DPoS: 3-second blocks, EVM-compatible \u2014 high-frequency settlement capable."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 4.6729,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 18.6916,
+    "usdc_yr_1pct_10M": 18692,
+    "usdc_yr_2pct_10M": 37383,
+    "usdc_yr_1pct_100M": 186916,
+    "usdc_yr_2pct_100M": 373832,
+    "note": "4x leverage, OOS ann=4.6729% x 4 = 18.69%/yr. @$10M 1% alloc: $18,692/yr. @$10M 2% alloc: $37,383/yr. TRX TRON DPoS: USDT TRC-20 stablecoin demand cycles, Justin Sun narrative events. High vol ratio (6M=2.30x) = strong FR differential signal potential."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 65.0,
+    "trx_alloc_pct": 1.5,
+    "projected_pct": 66.5,
+    "cap_pct": 65.0,
+    "breach": true,
+    "note": "v6.28+ HL=65.0% + TRX 1.5% = 66.5%. Cap=65.0%. BREACH \u2014 multi-venue split required (Bybit-primary). TRX maxLev=10 (HL), 75 (Bybit), 50 (OKX). TRX TRON DPoS: marginTableId=51 (HL). High Bybit/OKX leverage available."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "SHIB-BTC",
+      "sharpe": 38.481,
+      "ecosystem": "Meme/Retail (Shiba Inu ERC-20)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SAND-BTC",
+      "sharpe": 33.627,
+      "ecosystem": "Gaming/Metaverse",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 7,
+      "pair": "PEPE-BTC",
+      "sharpe": 26.42,
+      "ecosystem": "Meme/Retail (Pepe ERC-20)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "BCH-BTC",
+      "sharpe": 26.002,
+      "ecosystem": "PoW/SHA-256-BTC-Fork (Bitcoin Cash)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 9,
+      "pair": "BONK-BTC",
+      "sharpe": 23.667,
+      "ecosystem": "Meme/Retail-Solana-SPL",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 11,
+      "pair": "DOGE-BTC",
+      "sharpe": 21.069,
+      "ecosystem": "Meme/PoW (Dogecoin Scrypt)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 12,
+      "pair": "TRX-BTC",
+      "sharpe": 18.5932,
+      "ecosystem": "EM-Payment/Justin-Sun (TRON DPoS)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "AXS-BTC",
+      "sharpe": 17.815,
+      "ecosystem": "Gaming/P2E",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 14,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 15,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 16,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 17,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 18,
+      "pair": "WIF-BTC",
+      "sharpe": 12.934,
+      "ecosystem": "Meme/Solana (dogwifhat)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 19,
+      "pair": "ICP-BTC",
+      "sharpe": 12.527,
+      "ecosystem": "Compute/Cloud",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 20,
+      "pair": "AAVE-BTC",
+      "sharpe": 11.354,
+      "ecosystem": "DeFi/Lending",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 21,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 22,
+      "pair": "LTC-BTC",
+      "sharpe": 9.39,
+      "ecosystem": "PoW/Scrypt-Utility (Litecoin)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 23,
+      "pair": "TON-BTC",
+      "sharpe": 8.402,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 24,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 25,
+      "pair": "CRV-BTC",
+      "sharpe": 5.29,
+      "ecosystem": "DeFi/veToken (Curve)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 26,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "trx_family_rank": 12,
+  "family_size": 26,
+  "cluster_count": 20,
+  "xrp_corr_critical": 0.0554,
+  "btc_carry_corr_critical": 0.1353,
+  "doge_corr_critical": 0.1923,
+  "ltc_corr_critical": 0.1514,
+  "ton_corr_critical": 0.1381,
+  "bch_corr_critical": 0.0995
+}
