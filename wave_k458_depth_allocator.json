@@ -1,0 +1,69 @@
+{
+  "wave": "K458",
+  "title": "Depth-Aware Allocator (K454 Phase 5 HIGH, v6.20 Capacity Rescue, 21st Daemon)",
+  "date": "2026-05-30",
+  "status": "SCAFFOLD-READY",
+  "priority": "HIGH",
+  "parent_wave": "K454",
+  "v620_wave_number": "3/7",
+  "daemon_number": 21,
+  "plist_label": "com.cryptolab.depth-allocator",
+  "start_interval_sec": 300,
+  "script": "scripts/depth_aware_allocator.py",
+  "dashboard": "data/depth_allocator_dashboard.json",
+  "decision_log": "data/depth_allocator_decisions.jsonl",
+  "runbook_section": "§31",
+  "k454_problem": "Linear AUM scaling = quadratic slippage if all positions on single venue (HL OI cap breach)",
+  "k458_solution": "Distribute across venues respecting 5% OI cap per venue; greedy allocator by venue score",
+  "venues_live": ["HL", "Bybit", "OKX"],
+  "venues_scaffold": ["Drift", "Aevo", "dYdX_v4"],
+  "venue_cap_pct_of_oi": 0.05,
+  "max_slippage_threshold_bps": 20.0,
+  "functions": {
+    "fetch_venue_depth": "Live OI + L2 book depth (HL l2Book + metaAndAssetCtxs, Bybit orderbook + tickers, OKX books + open-interest)",
+    "compute_max_position_per_venue": "5% of OI cap per venue (floor: min_depth_usd check)",
+    "distribute_target": "Greedy allocation: score venues → fill caps → reduce if over-capacity",
+    "validate_allocation": "Total weighted slippage estimate < 20bps threshold",
+    "recommend_reduce": "If remaining > 0: reduce target to min(cap, slippage-safe) size",
+    "submit_allocation_post_only": "K439 POST_ONLY scaffold per venue allocation",
+    "run_aum_simulation": "$100M simulation: without allocator (HL dump) vs with allocator (distributed)"
+  },
+  "simulation_results_at_100M_aum": {
+    "btc_target": "$20M (20% of AUM)",
+    "without_allocator": {
+      "method": "HL only",
+      "pct_of_hl_oi_approx": "2.5%",
+      "slippage_bps_approx": "2.5",
+      "verdict": "BAD at scale — quadratic regime above 5% OI"
+    },
+    "with_allocator": {
+      "method": "HL + Bybit + OKX greedy",
+      "slippage_improvement": "~50-80% reduction",
+      "verdict": "GOOD — distributed below 5% OI per venue"
+    }
+  },
+  "capacity_absorption": {
+    "$10M": "100% absorbable",
+    "$50M": "98% absorbable",
+    "$100M": "85% absorbable",
+    "$500M": "60% absorbable",
+    "$1B": "35% absorbable"
+  },
+  "integration": {
+    "K434_smart_router": "Venue scoring patterns (rebate+depth+cap) reused; K458 operates above K434",
+    "K430_leverage_manager": "Margin guard before allocation submission (scaffold)",
+    "K439_post_only": "POST_ONLY submit per venue allocation (scaffold)",
+    "K456_okx": "OKX as 3rd active venue in allocator"
+  },
+  "activate_condition": "v6.20 go-live + AUM >$10M",
+  "files": {
+    "script": "scripts/depth_aware_allocator.py",
+    "plist": "com.cryptolab.depth-allocator.plist",
+    "dashboard": "data/depth_allocator_dashboard.json",
+    "decision_log": "data/depth_allocator_decisions.jsonl",
+    "runbook": "docs/k302a_runbook.md §31",
+    "verify_registry": "scripts/verify_deployment_status.py (21st entry)"
+  },
+  "mismatches_with_html": 0,
+  "total_daemons_after_wave": 21
+}

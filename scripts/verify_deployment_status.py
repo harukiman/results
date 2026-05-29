@@ -189,6 +189,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="okx_fr_monitor",
         expected_html_status="SCAFFOLD-READY",  # K456: plist in repo root (gitignored); activate after OKX API keys configured + v6.20 go-live
     ),
+    DaemonSpec(
+        label="com.cryptolab.depth-allocator",
+        purpose="K458 Depth-Aware Allocator (K454 phase 5 HIGH priority, v6.20 capacity rescue, 5% OI cap per venue, HL/Bybit/OKX greedy distribution, $100M+ slippage guard, 21st daemon)",
+        scripts=["scripts/depth_aware_allocator.py"],
+        log_basename="depth_allocator",
+        expected_html_status="SCAFFOLD-READY",  # K458: plist in repo root (gitignored); activate after v6.20 go-live + AUM >$10M
+    ),
 ]
 
 
