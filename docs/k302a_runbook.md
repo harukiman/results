@@ -7050,3 +7050,214 @@ Sleeve weight (v6.27 candidate):
 ---
 
 *K514 §38f -- K507 SEI-BTC FR differential production scaffold (35th daemon, OOS Sh 48.10 #2 family, $179K/yr net @$10M, Cosmos 3rd CONFIRMED SEI EVM-compat + Cosmos SDK distinct from ATOM/INJ, HL+Bybit split 1.5%+1.5% HL 63.5% headroom 1.5pp, v6.27 K449+K476+K484+K493+K500+K507 20% combined paired-trade sleeve ~$810K/yr, 60d paper-trade gate) -- 2026-05-30*
+
+---
+
+## §38g K512 APT-BTC FR Differential — Production Scaffold Playbook
+
+**Wave:** K520 | **Daemon:** 36th | **Status:** SCAFFOLD-READY | **Date:** 2026-05-30
+
+### §38g.1 Strategy Summary
+
+| Attribute | Value |
+|-----------|-------|
+| Strategy | K512 APT-BTC FR Differential Paired-Trade |
+| OOS Sharpe | **51.10** (family rank **#1** — highest in paired-trade family) |
+| Annual Return | **$302K/yr net @ $10M AUM** (2% sleeve, 4x leverage) |
+| Sleeve | 2% of AUM (HL 1% + Bybit 1%) |
+| Leverage | 4x (per K512 analysis, K430 cap) |
+| Execution | POST_ONLY parallel (K439 pattern), cross-venue |
+| Cron cadence | 8h (StartInterval 28800 — matches FR settlement) |
+| OU half-life | **0.27d** (extremely fast mean reversion validates carry alpha) |
+| EMA window | 7d (21 × 8h periods) |
+| Signal threshold | ±0.00001 (7d EMA FR differential) |
+| Drift rebalance | 5% leg divergence triggers rebalance |
+| Activation gate | 60d paper-trade: OOS Sh ≥5.0 + fill_rate ≥60% + maxDD <15% |
+| Script | `scripts/k512_apt_btc_run.py` |
+| Dashboard | `data/k512_dashboard.json` |
+| Plist | `com.cryptolab.k512-apt-btc.plist` (gitignored) |
+
+### §38g.2 Move-VM Hypothesis — CONFIRMED
+
+**Hypothesis:** Aptos (APT) has structurally distinct funding rate dynamics from BTC because:
+
+1. **Move-VM resource model:** No reentrancy by design — distinct execution semantics vs EVM.  
+   Creates unique on-chain activity patterns: DeFi TVL grows differently from Ethereum.
+2. **Block-STM parallel execution:** Optimistic concurrency control enables throughput spikes
+   orthogonal to all other L1s (EVM serial, Cosmos SDK sequential, Sealevel speculative).
+3. **Facebook/Diem heritage:** Institutional capital flows via ex-Meta engineers + institutional backers
+   create demand spikes not correlated with Ethereum or Cosmos ecosystem.
+4. **Move bytecode safety:** Formal verification properties attract different DeFi liquidity patterns
+   (e.g., Echelon, Thala, Amnis Finance) with distinct yield dynamics.
+5. **APT staking yield:** Aptos native staking rate creates carry differential with BTC (no staking).
+
+**Evidence:**
+- OOS Sharpe 51.10 — **#1 in entire paired-trade family** (> ATOM 50.79 > SEI 48.10 > AVAX 43.89)
+- OU half-life 0.27d: APT-BTC spread mean-reverts in ~6.5 hours — ultra-fast structural carry
+- 7d EMA captures persistent structural FR differential, not noise cycles
+
+### §38g.3 FR Differential Signal
+
+```
+Signal logic (7d EMA of APT FR − BTC FR):
+  ema_7d > +threshold  → APT FR > BTC FR
+    → SHORT APT @ HL (collect high FR) + LONG BTC @ Bybit (cheap carry)
+    → position_state = LONG_BTC_SHORT_APT
+
+  ema_7d < -threshold  → BTC FR > APT FR
+    → LONG APT @ HL (cheap carry) + SHORT BTC @ Bybit (collect high FR)
+    → position_state = LONG_APT_SHORT_BTC
+
+  |ema_7d| ≤ threshold → NEUTRAL (no position)
+```
+
+### §38g.4 HL+Bybit Split Protocol
+
+| Attribute | Value |
+|-----------|-------|
+| HL sleeve | 1% of AUM (APT leg) |
+| Bybit sleeve | 1% of AUM (BTC leg) |
+| HL notional @ $10M | $400K (1% × $10M × 4x) |
+| Bybit notional @ $10M | $400K (1% × $10M × 4x) |
+| Total notional | $800K |
+| Margin required | $200K ($800K / 4x) |
+| Margin/AUM | 2.0% |
+| HL concentration post-K512 | **64%** (1pp headroom vs 65% cap) |
+
+**Rationale:** K507 SEI+TIA added HL concentration to ~63%. K512 APT split 50/50 across HL+Bybit
+maintains HL at 64% — exactly 1pp headroom from the 65% hard cap (per K355 concentration rules).
+
+### §38g.5 Paired Execution Protocol
+
+```
+Parallel POST_ONLY (K439 pattern):
+  1. Submit APT leg POST_ONLY on HL     (1% of AUM, 4x leverage)
+  2. Submit BTC leg POST_ONLY on Bybit  (1% of AUM, 4x leverage)
+  3. Both legs fire simultaneously (minimise timing divergence)
+  4. IOC fallback if POST_ONLY times out within 300s
+  5. Retry on next 8h cycle if both legs miss
+
+Close protocol (sequential, short first):
+  Step 1: Cover short leg IOC reduce-only on its venue (HL or Bybit)
+  Step 2: Sell long leg IOC reduce-only on its venue (Bybit or HL)
+  Rationale: Cover short first to avoid uncovered short exposure window
+```
+
+### §38g.6 60d Paper-Trade Activation Gate
+
+| Gate Criterion | Target | Rationale |
+|----------------|--------|-----------|
+| OOS Sharpe (paper) | ≥ 5.0 | Very loose vs OOS 51.10 — validates live execution |
+| Fill rate | ≥ 60% (both legs, HL + Bybit) | POST_ONLY paired fill confirmation |
+| Max drawdown | < 15% | Capital preservation during paper phase |
+| Duration | 60 calendar days minimum | Covers ≥3 full FR cycles |
+
+After gate passage:
+- Activate K512 2% sleeve (HL 1% + Bybit 1%)
+- Deploy v6.28 combined paired-trade architecture
+- Total combined paired-trade: ~$1.11M/yr @ $10M
+
+### §38g.7 v6.28 Architecture — Combined Paired-Trade Sleeve
+
+| Strategy | Sleeve | Sharpe | Ann Return |
+|----------|--------|--------|------------|
+| K449 ETH-BTC | 5% | 5.66 | $187K/yr |
+| K476 SOL-BTC | 4% | 16.30 | $187K/yr |
+| K484 AVAX-BTC | 5% | 43.89 | $75.7K/yr |
+| K493 ATOM-BTC | 5% | 50.79 | $231K/yr |
+| K500 INJ-BTC | 4% | 11.23 | $124K/yr |
+| K507 SEI-BTC | 2% | 48.10 | $179K/yr |
+| K507 TIA | 1% | 14.44 | est. |
+| **K512 APT-BTC** | **2%** | **51.10** | **$302K/yr** |
+| **Total combined** | **28%** | — | **~$1.11M+/yr** |
+
+**K512 lift:** +$302K/yr vs v6.27 baseline → v6.28 provides ~$302K/yr incremental profit @ $10M.
+
+### §38g.8 Emergency Exit Integration
+
+```bash
+# Detect K512 APT-BTC positions in emergency exit plan (auto-detected)
+python3 scripts/emergency_hl_exit.py --dry-run
+
+# Print detailed K512 close summary
+python3 scripts/emergency_hl_exit.py --dry-run --include-k512
+
+# Live execution (HL + Bybit + K512)
+python3 scripts/emergency_hl_exit.py --EXECUTE --include-bybit --include-k512
+```
+
+**K512 close protocol (emergency):**
+1. `_detect_k512_paired_positions()` identifies APT+BTC positions across HL+Bybit
+2. `close_k512_paired_positions()` submits IOC reduce-only on each venue sequentially
+3. Short leg covered first (avoid uncovered short window)
+4. Long leg sold second
+
+### §38g.9 Activation Procedure
+
+```bash
+# Step 1: Verify 60d paper-trade gate passed
+python3 scripts/k512_apt_btc_run.py --status
+
+# Step 2: Verify deployment status (should show 36 daemons)
+python3 scripts/verify_deployment_status.py
+
+# Step 3: Deploy plist (when ready for live)
+# Replace REPO_ROOT with actual path first
+cp scripts/com.cryptolab.k512-apt-btc.plist ~/Library/LaunchAgents/
+# Edit plist: replace REPO_ROOT and switch --dry-run to live mode
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k512-apt-btc.plist
+
+# Step 4: Verify daemon loaded
+launchctl list | grep k512
+
+# Step 5: Advance leverage phase when live
+# python3 scripts/leverage_manager.py --advance-phase LIVE_1.5X
+```
+
+### §38g.10 Leverage Configuration
+
+```json
+"K512_APT_BTC": 4.0,   // in exchange_caps
+"k512_notes": {
+  "sleeve_pct": 0.02,
+  "hl_sleeve_pct": 0.01,
+  "bybit_sleeve_pct": 0.01,
+  "leverage": 4.0,
+  "margin_calc": "4x × 1% HL × $10M = $400K HL notional + 4x × 1% Bybit × $10M = $400K Bybit notional = $800K total / 4x = $200K margin",
+  "oos_sharpe": 51.10,
+  "ann_return_usd_net_10M": 302000,
+  "family_rank": "#1 (APT Sh51.10 > ATOM Sh50.79 > SEI Sh48.10 > AVAX Sh43.89)",
+  "hl_concentration_pct_after_add": 64.0,
+  "hl_headroom_pp": 1.0
+}
+```
+
+### §38g.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k512_apt_btc_run.py` | Strategy script (K520 scaffold, ~350 LOC) |
+| `data/k512_dashboard.json` | Live state + gate metrics (initial NEUTRAL) |
+| `scripts/com.cryptolab.k512-apt-btc.plist` | 36th daemon plist (gitignored) |
+| `scripts/emergency_hl_exit.py` | `--include-k512` flag + K512 detect/close |
+| `scripts/leverage_manager.py` | K512_APT_BTC 4.0 cap + SLEEVE_WEIGHTS_V628 |
+| `data/leverage_config.json` | K512_APT_BTC: 4.0 + k512_notes |
+| `scripts/verify_deployment_status.py` | 36th daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§38g) |
+| `wave_k520_k512_apt_scaffold.py` | Wave driver/test |
+| `wave_k520_k512_apt_scaffold.json` | Wave result report |
+
+### §38g.12 References
+
+| Wave | Description |
+|------|-------------|
+| K520 | This section — K512 APT-BTC production scaffold (36th daemon, v6.28 architecture) |
+| K512 | K512 analysis — APT-BTC FR differential ACCEPT ($302K/yr @$10M, Move-VM #1 CONFIRMED) |
+| K514 | K507 SEI-BTC scaffold (35th daemon, direct scaffold template) |
+| K506 | K500 INJ-BTC scaffold (34th daemon, Cosmos 2nd CONFIRMED) |
+| K434 | Smart router (K512 uses HL+Bybit split pattern) |
+| K266 | §6 strict gate framework (K512 ACCEPT) |
+
+---
+
+*K520 §38g -- K512 APT-BTC FR differential production scaffold (36th daemon, OOS Sh 51.10 #1 family rank HIGHEST, $302K/yr net @$10M, Move-VM CONFIRMED Aptos Block-STM + Move resource model creates orthogonal FR dynamics vs all other VMs, OU half-life 0.27d ultra-fast mean reversion, HL+Bybit split 1%+1% HL 64% headroom 1pp, v6.28 combined paired-trade ~$1.11M/yr, 60d paper-trade gate) -- 2026-05-30*

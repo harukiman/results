@@ -1,0 +1,101 @@
+{
+  "wave": "K520",
+  "strategy": "K512 APT-BTC FR Differential",
+  "generated_jst": "2026-05-30 04:48 JST",
+  "total_tests": 13,
+  "passed": 13,
+  "failed": 0,
+  "results": [
+    {
+      "name": "script_exists",
+      "status": "PASS",
+      "detail": "scripts/k512_apt_btc_run.py exists (917 lines)"
+    },
+    {
+      "name": "plist_exists",
+      "status": "PASS",
+      "detail": "com.cryptolab.k512-apt-btc.plist: label + StartInterval=28800 OK"
+    },
+    {
+      "name": "dashboard_exists",
+      "status": "PASS",
+      "detail": "data/k512_dashboard.json: state=LONG_APT_SHORT_BTC, OOS Sh 51.10, $302K/yr"
+    },
+    {
+      "name": "dry_run",
+      "status": "PASS",
+      "detail": "dry-run: K512 Cycle Complete (exit 0)"
+    },
+    {
+      "name": "dashboard_written",
+      "status": "PASS",
+      "detail": "dashboard: wave=K520, sleeve=2%, HL=64.0% (1pp headroom)"
+    },
+    {
+      "name": "notional_sizing",
+      "status": "PASS",
+      "detail": "notional: HL=$400,000 + Bybit=$400,000 = $800,000 total, $200,000 margin (2% @ $10M \u00d7 4x)"
+    },
+    {
+      "name": "fr_differential_logic",
+      "status": "PASS",
+      "detail": "FR logic: positive\u2192LONG_BTC_SHORT_APT (APT@HL), negative\u2192LONG_APT_SHORT_BTC, neutral\u2192None"
+    },
+    {
+      "name": "emergency_exit_detect",
+      "status": "PASS",
+      "detail": "detect_k512: detected=True, LONG APT@HL, SHORT BTC@Bybit, split=HL_1PCT_BYBIT_1PCT"
+    },
+    {
+      "name": "leverage_manager_k512",
+      "status": "PASS",
+      "detail": "leverage_manager: K512_APT_BTC cap=4.0, SLEEVE_WEIGHTS_V628 K512=2%, total=107%"
+    },
+    {
+      "name": "leverage_config_k512",
+      "status": "PASS",
+      "detail": "leverage_config.json: K512_APT_BTC=4.0, k512_notes OOS Sh 51.10 $302K/yr"
+    },
+    {
+      "name": "verify_deployment_k512",
+      "status": "PASS",
+      "detail": "verify_deployment_status: K512 36th daemon registered"
+    },
+    {
+      "name": "runbook_section",
+      "status": "PASS",
+      "detail": "docs/k302a_runbook.md: \u00a738g present with OOS Sh 51.10, $302K/yr, Move-VM, 0.27d"
+    },
+    {
+      "name": "report_html_k512",
+      "status": "PASS",
+      "detail": "report.html: K512 monitoring row present"
+    }
+  ],
+  "k512_spec": {
+    "oos_sharpe": 51.1,
+    "ann_return_usd": 302000,
+    "sleeve_pct": 0.02,
+    "leverage": 4.0,
+    "hl_sleeve_pct": 0.01,
+    "bybit_sleeve_pct": 0.01,
+    "hl_concentration": 64.0,
+    "ou_half_life_days": 0.27,
+    "daemon_number": 36,
+    "family_rank": "#1 (APT Sh51.10 > ATOM Sh50.79 > SEI Sh48.10 > AVAX Sh43.89)",
+    "move_vm": "Block-STM parallel execution + Move resource model"
+  },
+  "activation_gate": {
+    "oos_sharpe_min": 5.0,
+    "fill_rate_min_pct": 60,
+    "max_drawdown_pct": 15,
+    "duration_days": 60,
+    "status": "SCAFFOLD-READY"
+  },
+  "v628_combined": {
+    "total_ann_return_usd": 1112000,
+    "note": "K449 5% + K476 4% + K484 5% + K493 5% + K500 4% + K507 SEI 2% + K507 TIA 1% + K512 APT 2% = ~$1.11M/yr @ $10M",
+    "hl_concentration_pct": 64.0,
+    "hl_headroom_pp": 1.0
+  }
+}

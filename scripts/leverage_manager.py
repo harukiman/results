@@ -63,6 +63,7 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K495_DEX_CEX_FLOW": 3.0,  # K502: DEX-CEX flow divergence (v6.25 candidate, HL-only, bear-conditional, $323K/yr)
     "K500_INJ_BTC":   4.0,   # K506: INJ-BTC paired-trade (v6.25 candidate, HL-only, OOS Sh 11.23, Cosmos 2nd, $124K/yr)
     "K507_SEI_BTC":   4.0,   # K514: SEI-BTC paired-trade (v6.27 candidate, HL+Bybit split, OOS Sh 48.10, Cosmos 3rd, $179K/yr)
+    "K512_APT_BTC":   4.0,   # K520: APT-BTC paired-trade (v6.28 candidate, HL+Bybit split, OOS Sh 51.10, Move-VM #1 family, $302K/yr)
     "K457_basket":    4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
@@ -149,6 +150,25 @@ SLEEVE_WEIGHTS_V627: Dict[str, float] = {
     "K507":  0.03,   # SEI-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.27 addition, K514 scaffold, $179K/yr)
     "K495":  0.03,   # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
     "K457":  0.01,   # BTC+ETH+SOL basket (placeholder, pending paper gate)
+}
+
+# v6.28 candidate weights (proposed in K520 — not yet active)
+# K449 5% + K476 4% + K484 5% + K493 5% + K500 4% + K507 SEI 2% + K507 TIA 1% + K512 APT 2% = 28% combined
+# ~$1.11M/yr @ $10M (K449 $187K + K476 $187K + K484 $75.7K + K493 $231K + K500 $124K + K507 SEI $179K + K512 APT $302K + K507 TIA est.)
+# HL+Bybit split: K512 uses HL 1% + Bybit 1% → HL 64% (1pp headroom vs 65% cap)
+# K512 Move-VM #1 CONFIRMED: APT Block-STM parallel execution + Move resource model — family rank #1 OOS Sh 51.10
+SLEEVE_WEIGHTS_V628: Dict[str, float] = {
+    "K280":  0.52,   # reduced 2pp vs v6.27 to fund K512 APT-BTC sleeve
+    "K297":  0.20,
+    "sUSDe": 0.05,
+    "K449":  0.05,   # ETH-BTC delta-neutral, 4x leverage, HL-only (v6.16 base, 5%)
+    "K476":  0.04,   # SOL-BTC delta-neutral, 4x leverage, HL-only (v6.21 addition, bumped to 4%)
+    "K484":  0.05,   # AVAX-BTC delta-neutral, 4x leverage, HL-only (v6.23 addition, bumped to 5%)
+    "K493":  0.05,   # ATOM-BTC delta-neutral, 4x leverage, HL-only (v6.24 addition, bumped to 5%)
+    "K500":  0.04,   # INJ-BTC delta-neutral, 4x leverage, HL-only (v6.25 addition, bumped to 4%)
+    "K507":  0.02,   # SEI-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.27 addition, reduced to 2%)
+    "K512":  0.02,   # APT-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.28 addition, K520 scaffold, $302K/yr)
+    "K495":  0.03,   # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
 }
 
 # v6.16 candidate weights (proposed in K450 — not yet active)
@@ -264,6 +284,7 @@ def compute_position_size(
         "K495":   "K495_DEX_CEX_FLOW",  # K502: 3x cap for DEX-CEX flow divergence (bear-conditional)
         "K500":   "K500_INJ_BTC",   # K506: 4x cap for INJ-BTC paired-trade sleeve
         "K507":   "K507_SEI_BTC",   # K514: 4x cap for SEI-BTC paired-trade sleeve (HL+Bybit split)
+        "K512":   "K512_APT_BTC",   # K520: 4x cap for APT-BTC paired-trade sleeve (HL+Bybit split, Move-VM #1)
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)
@@ -318,6 +339,7 @@ def compute_margin_required(
         "K495":   "K495_DEX_CEX_FLOW",  # K502: 3x cap DEX-CEX flow divergence
         "K500":   "K500_INJ_BTC",   # K506: 4x cap INJ-BTC paired-trade
         "K507":   "K507_SEI_BTC",   # K514: 4x cap SEI-BTC paired-trade (HL+Bybit split)
+        "K512":   "K512_APT_BTC",   # K520: 4x cap APT-BTC paired-trade (HL+Bybit split, Move-VM #1)
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)

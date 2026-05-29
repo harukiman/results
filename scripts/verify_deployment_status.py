@@ -294,6 +294,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k507_sei_btc",
         expected_html_status="SCAFFOLD-READY",  # K514: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=5.0 + fill_rate >=60% + maxDD <15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k512-apt-btc",
+        purpose="K512 APT-BTC FR differential paired-trade (delta-neutral, 4x leverage, 8h cycle, HL+Bybit split 1%+1%, OOS Sh 51.10 #1 family, $302K/yr net @$10M, Move-VM CONFIRMED: Aptos Block-STM + Move resource model creates orthogonal FR dynamics, OU half-life 0.27d, HL 64% post-K512 (1pp headroom), v6.28 candidate K449+K476+K484+K493+K500+K507+K512 combined sleeve, 36th daemon)",
+        scripts=["scripts/k512_apt_btc_run.py"],
+        log_basename="k512_apt_btc",
+        expected_html_status="SCAFFOLD-READY",  # K520: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=5.0 + fill_rate >=60% + maxDD <15%)
+    ),
 ]
 
 
