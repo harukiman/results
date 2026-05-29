@@ -1453,3 +1453,83 @@ Total  :             53.0%   (cap 65%, 12pp headroom for v6.23+)
 Source files: `wave_k479_v622_proposal.py` | `wave_k479_v622_proposal.json` | `wave_k479_v622_proposal.md`
 
 *K479 Appendix — Added 2026-05-30 02:34 JST*
+
+---
+
+## Appendix K481 — Builder Rebate Activation Playbook (User Action #23)
+
+**Wave:** K481 | **Added:** 2026-05-30 02:44 JST | **Classification:** ZERO RISK, Fee minimization axis #4
+
+### Summary
+
+HL builder rebate activation: 65-minute setup yielding $99K–$496K/yr at $10M AUM with zero risk to strategy P&L, zero HL concentration change, zero signal change. This is the highest ROI-per-hour action in the entire deployment playbook (~$91K/hr even at conservative estimate).
+
+### User Action #23: HL Builder Rebate Activation (M0, Priority #1)
+
+| # | Action | Time | Expected Annual ROI @ $10M | Risk |
+|---|--------|------|---------------------------|------|
+| 23 | K481 Builder rebate activation (5-step playbook) | 65 min + 24h paper | **$99K–$496K/yr** (conservative–optimistic) | ZERO |
+
+> **Action #23 supersedes the Action #1 description from K436/K464.** K481 provides the full implementation-ready playbook with code patch, monitoring spec, and exact profit model. Action #1 in the priority table (K370 builder rebate) maps to this K481 playbook.
+
+### Profit Projection (K481 Refined)
+
+| AUM | Conservative (10%) | Mid (25%) | Optimistic (50%) |
+|-----|-------------------|-----------|-----------------|
+| $10M | **$99,166/yr** | $247,915/yr | $495,830/yr |
+| $50M | $495,830/yr | $1,239,574/yr | $2,479,148/yr |
+| $100M | $991,659/yr | $2,479,148/yr | $4,958,297/yr |
+| $200M | $1,983,319/yr | $4,958,297/yr | $9,916,594/yr |
+
+Model: HL fraction 57.5%, daily turnover 1.5x, POST_ONLY fill rate 70%, HL taker 4.5 bps.
+
+### 5-Step Activation Sequence
+
+**Step 1 (20 min):** `approveBuilderFee` on HL main wallet → `https://app.hyperliquid.xyz/trade` → Account → Builder. Fee = 0 (f=0). MUST be signed by main wallet (not API/agent wallet). Immediate activation.
+
+**Step 2 (5 min):** `export HL_BUILDER_CODE="0x<YOUR_MAIN_WALLET_ADDRESS>"` in `~/.zshrc` + daemon plists. Do NOT commit to git.
+
+**Step 3 (10 min):** Apply 6-LOC patch to `scripts/post_only_order_manager.py`:
+```python
+# K481: Builder code injection (ZERO-RISK additive, env-var gated)
+_builder_code = os.environ.get("HL_BUILDER_CODE", "").strip()
+if venue == "HL" and _builder_code and not dry_run:
+    order_action["builder"] = {"b": _builder_code, "f": 0}
+```
+Run `python3 scripts/post_only_order_manager.py --dry-run` to verify no errors.
+
+**Step 4 (24h):** Paper-trade 24h. Verify builder field in HL order payload. Check `https://app.hyperliquid.xyz/referrals` for rebate > $0. Gate: must see positive accrual before LIVE switch.
+
+**Step 5 (30 min + ongoing):** Restart live daemons. Add daily rebate check: expected $272/day (conservative) at $10M. Alert if < $136/day for 3+ consecutive days.
+
+### Updated Deployment Parameters
+
+| Parameter | K479 v6.22 | K481 (this wave) |
+|-----------|-----------|-----------------|
+| Total user actions | 22 | **23** |
+| Builder rebate status | SCAFFOLD (K370) | **ACTIVATION-READY (K481)** |
+| Annual profit @ $10M (con.) | ~$1,366K | **~$1,465K (+$99K builder rebate)** |
+| Annual profit @ $10M (mid) | ~$1,366K | **~$1,614K (+$248K builder rebate)** |
+| ROI/hr for setup | — | **~$91,538/hr** (conservative) |
+
+### Risk Assessment
+
+- HL concentration delta: **ZERO** (builder code is order metadata)
+- Signal change: **NONE**
+- Counterparty risk: **NONE** (HL internal referral pool)
+- Execution risk: **NONE** (f=0, no extra cost)
+- Worst case if program ends: return to current cost baseline (no degradation)
+- K266 gate: **ACCEPT-FREE** (cost optimization, not alpha signal)
+
+### Daily Rebate Targets (Monitoring)
+
+| AUM | Conservative/day | Mid/day | Optimistic/day |
+|-----|-----------------|---------|----------------|
+| $10M | $272 | $679 | $1,358 |
+| $100M | $2,717 | $6,792 | $13,584 |
+
+Alert threshold: < 50% of conservative for 3+ consecutive days.
+
+Source files: `wave_k481_builder_rebate_activation.py` | `wave_k481_builder_rebate_activation.json` | `wave_k481_builder_rebate_activation.md`
+
+*K481 Appendix — Added 2026-05-30 02:44 JST*

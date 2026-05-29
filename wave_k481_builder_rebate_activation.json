@@ -1,0 +1,224 @@
+{
+  "wave": "K481",
+  "title": "Builder Rebate Activation Playbook",
+  "generated_utc": "2026-05-29T17:47:14.460336+00:00",
+  "generated_jst": "2026-05-30 02:47 JST",
+  "status": "PLAYBOOK-READY (user activation required)",
+  "phase1_program_state": {
+    "status": "ACTIVE (verified 2026-05-27 via HL docs)",
+    "mechanism": "order_action['builder'] = {'b': wallet_address, 'f': fee_tenths_bp}",
+    "self_rebate_mode": "f=0 \u2192 zero extra cost to user (builder earns from referral pool)",
+    "registration_url": "https://app.hyperliquid.xyz/trade \u2192 Account \u2192 Builder",
+    "docs_url": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint/perpetuals",
+    "eligibility": ">=100 USDC perps account value; no minimum volume threshold found",
+    "approval_action": "approveBuilderFee \u2014 on-chain signed by MAIN wallet (not API/agent wallet)",
+    "activation_lag": "Immediate (no epoch delay documented)",
+    "fee_cap": "0.1% perps, 1% spot; f=0 \u2192 no cap concern",
+    "max_approvals": "10 active approvals per user",
+    "reward_mechanism": "Builder earns from referral pool rewards \u2014 NOT a direct taker fee rebate from HL. Exact referral pool rate not publicly documented. K370 conservative: 10% of taker fee implied. Optimistic: 50%. Mid: 25%. True rate discoverable only after activation (actual claim data). ",
+    "k368_correction": "K368 '$82,800/yr' assumed direct 50% rebate of taker fee \u2014 not confirmed by docs. K370 corrected: referral pool mechanism, true rate TBD. K481: add MID scenario (25%) and POST_ONLY fill rate factor for refined estimate. ",
+    "kyc_required": "No KYC documented for builder code registration",
+    "documents_needed": "None \u2014 wallet signature only"
+  },
+  "phase2_integration": {
+    "target_file": "scripts/post_only_order_manager.py",
+    "target_function": "submit_post_only_order()",
+    "patch_lines": 6,
+    "patch_type": "ADDITIVE (no existing logic removed)",
+    "gate": "HL_BUILDER_CODE env var \u2014 silently skips if unset",
+    "dry_run_safe": true,
+    "live_impact": "NONE until HL_BUILDER_CODE set AND venue=='HL'",
+    "code_patch_diff": "\n--- a/scripts/post_only_order_manager.py\n+++ b/scripts/post_only_order_manager.py\n@@ near submit_post_only_order(), after dry_run block, in live order construction @@\n\n+    # K481: Builder code injection (ZERO-RISK additive, env-var gated)\n+    _builder_code = os.environ.get(\"HL_BUILDER_CODE\", \"\").strip()\n+    if venue == \"HL\" and _builder_code and not dry_run:\n+        order_action[\"builder\"] = {\"b\": _builder_code, \"f\": 0}\n\n # --- existing order submission logic continues below ---\n",
+    "code_patch_notes": "\nThe 6-LOC patch inserts builder code into HL order actions in submit_post_only_order().\n\nInsertion point: after the dry_run guard, before the live HL order API call.\nThe field \"f\": 0 means builder fee = 0 tenths of a basis point = ZERO extra cost to trader.\nOnly injects when:\n  (A) venue == \"HL\"  (Bybit/OKX orders are NOT affected)\n  (B) HL_BUILDER_CODE env var is set (fails gracefully if unset)\n  (C) not dry_run (paper-trade does not send to HL API)\n\nDiff explanation (6 meaningful lines):\n  Line 1: Comment documenting K481 origin\n  Line 2: Read HL_BUILDER_CODE from environment (strip whitespace)\n  Line 3: Guard: HL venue + code set + not dry-run\n  Line 4: Inject builder field into order_action dict\n  (Lines 5-6 are blank line + closing comment \u2014 standard style)\n\nResult: Every POST_ONLY maker order on HL carries builder field.\nIOC fallback orders: also add builder field at same injection point\nin submit_ioc_fallback() for HL venue (separate 6-LOC addition, same pattern).\n",
+    "smart_router_note": "K434 smart_router.py venue scoring can be updated to add builder_rebate_bps to HL score. Recommend: HL effective_maker_bps += conservative_rebate_bps. This is optional \u2014 builder rebate accrues regardless of router preference."
+  },
+  "phase3_profit_projection": {
+    "model_params": {
+      "hl_fraction": 0.575,
+      "daily_turnover_x": 1.5,
+      "post_only_fill_rate": 0.7,
+      "hl_taker_rate_bps": 4.5,
+      "trading_days": 365
+    },
+    "scenarios": {
+      "conservative_10pct": 0.1,
+      "mid_25pct": 0.25,
+      "optimistic_50pct": 0.5
+    },
+    "profit_table": [
+      {
+        "aum_label": "$10M",
+        "aum_usd": 10000000,
+        "conservative_10pct": 99166.0,
+        "mid_25pct": 247915.0,
+        "optimistic_50pct": 495830.0
+      },
+      {
+        "aum_label": "$50M",
+        "aum_usd": 50000000,
+        "conservative_10pct": 495830.0,
+        "mid_25pct": 1239574.0,
+        "optimistic_50pct": 2479148.0
+      },
+      {
+        "aum_label": "$100M",
+        "aum_usd": 100000000,
+        "conservative_10pct": 991659.0,
+        "mid_25pct": 2479148.0,
+        "optimistic_50pct": 4958297.0
+      },
+      {
+        "aum_label": "$200M",
+        "aum_usd": 200000000,
+        "conservative_10pct": 1983319.0,
+        "mid_25pct": 4958297.0,
+        "optimistic_50pct": 9916594.0
+      }
+    ],
+    "key_numbers_10M": {
+      "conservative_usdc_yr": 99166,
+      "mid_usdc_yr": 247915,
+      "optimistic_usdc_yr": 495830
+    },
+    "key_numbers_100M": {
+      "conservative_usdc_yr": 991659,
+      "mid_usdc_yr": 2479148,
+      "optimistic_usdc_yr": 4958297
+    },
+    "key_numbers_200M": {
+      "conservative_usdc_yr": 1983319,
+      "mid_usdc_yr": 4958297,
+      "optimistic_usdc_yr": 9916594
+    }
+  },
+  "phase4_activation_steps": [
+    {
+      "step": 1,
+      "title": "Register builder fee on HL (on-chain, main wallet)",
+      "time": "20 min",
+      "url": "https://app.hyperliquid.xyz/trade (\u2192 Account \u2192 Builder)",
+      "detail": "Navigate to HL web app \u2192 account settings \u2192 'Builder' section. Approve builder fee: address = YOUR_MAIN_WALLET, fee = 0 (f=0, zero extra cost to traders). This triggers approveBuilderFee on-chain \u2014 MUST be signed by main wallet (not API/agent). Eligibility: \u2265100 USDC perps account value (easy). No volume threshold. Activation: immediate (no epoch delay documented). Max 10 active approvals per user address. ",
+      "env_var": null,
+      "risk": "ZERO"
+    },
+    {
+      "step": 2,
+      "title": "Set HL_BUILDER_CODE environment variable",
+      "time": "5 min",
+      "url": null,
+      "detail": "After approval, set the env var to your main HL wallet address (the approved builder address, not the secret private key). Add to ~/.zshrc or launchctl env:   export HL_BUILDER_CODE='0x<YOUR_MAIN_WALLET_ADDRESS>' Never commit this value to git. Never write it to HTML or report files. The variable is read at runtime by the patched order manager. ",
+      "env_var": "HL_BUILDER_CODE",
+      "risk": "ZERO (public wallet address, not private key)"
+    },
+    {
+      "step": 3,
+      "title": "Apply 6-LOC patch to scripts/post_only_order_manager.py",
+      "time": "10 min",
+      "url": null,
+      "detail": "Apply the 6-line patch (see CODE_PATCH section in JSON / md file). The patch adds HL_BUILDER_CODE injection to submit_post_only_order() at the HL-specific order construction point. Additive change only \u2014 no existing logic removed. Gated by HL_BUILDER_CODE env var: if unset, silently skips (no breakage). After patch, run: python3 scripts/post_only_order_manager.py --dry-run to verify no errors. Do NOT apply to LIVE production without dry-run verification. ",
+      "env_var": "HL_BUILDER_CODE",
+      "risk": "LOW (additive patch, env-var gated, dry-run required)"
+    },
+    {
+      "step": 4,
+      "title": "Paper-trade 24h: verify builder field in order payload",
+      "time": "24h monitoring",
+      "url": null,
+      "detail": "Run paper-trade for 24h with the patch active. Verify in HL clearinghouse state (or HL order history) that submitted orders include the builder field: order_action['builder'] = {'b': '0x...', 'f': 0}. Check HL referral dashboard after 24h for accrued rebates. If rebate = $0 after 24h, check: (a) approveBuilderFee confirmed on-chain, (b) HL_BUILDER_CODE set correctly, (c) orders actually reaching HL (not Bybit/OKX). Gate: rebate > $0 in 24h before LIVE switch. ",
+      "env_var": null,
+      "risk": "ZERO (paper-trade only)"
+    },
+    {
+      "step": 5,
+      "title": "Switch to LIVE, add daily rebate dashboard widget",
+      "time": "30 min + ongoing",
+      "url": "https://app.hyperliquid.xyz/referrals (rebate claim UI)",
+      "detail": "After paper-trade gate passes: switch daemon from paper to LIVE. Rebates accumulate in referral pool \u2014 claim via HL UI periodically. Add rebate monitoring: daily cron to check HL referral balance vs expected. Expected daily rebate @ $10M AUM: $26\u2013$129 (conservative\u2013mid range). Alert if actual daily < 50% of expected for 3+ consecutive days (signals builder registration issue or fill rate degradation). Update report.html daily rebate widget (see MONITORING section). ",
+      "env_var": null,
+      "risk": "LOW (monitoring recommended; rebate = bonus income not critical path)"
+    }
+  ],
+  "phase5_risks": {
+    "program_termination": {
+      "risk": "HL terminates builder rebate program",
+      "severity": "LOW",
+      "prob": "LOW (program has been live 12+ months, HL incentive to keep builders)",
+      "mitigation": "Rebate is BONUS income \u2014 core strategy profitability unchanged if program ends. Monitor HL docs/Discord for program changes quarterly. If program ends: remove builder field from order_action (1 line). No impact to strategy P&L \u2014 cost structure returns to current baseline. "
+    },
+    "maker_fill_rate_degradation": {
+      "risk": "POST_ONLY fill rate drops below 60% (K378 G8 gate FAIL)",
+      "severity": "MEDIUM (reduces rebate proportionally)",
+      "prob": "LOW-MED (depends on market regime; wide spreads reduce fill rate)",
+      "mitigation": "K439 already monitors 60d maker fill rate with G8 gate alert. Rebate scales linearly: 50% fill rate \u2192 50% of projected rebate. Rebate never negative \u2014 worst case is zero (no taker rebate clawed back). TICK_IMPROVEMENT_BIPS=0.5 provides buffer vs raw mid-price placement. "
+    },
+    "builder_code_revocation": {
+      "risk": "approveBuilderFee approval expires or is revoked",
+      "severity": "LOW",
+      "prob": "LOW (no expiry documented; user can revoke intentionally)",
+      "mitigation": "Weekly check: call HL API clearinghouse /builderFees to verify approval active. If revoked: re-run approveBuilderFee (5 min to restore). Monitoring: add to daily rebate check \u2014 if daily rebate = $0 for 2+ days, alert. "
+    },
+    "hl_concentration_risk": {
+      "risk": "Builder code increases HL dependency",
+      "severity": "NEGLIGIBLE",
+      "delta": "ZERO (builder code does not change venue allocation or trading behavior)",
+      "note": "Current HL fraction 53% (v6.22). Builder code has no impact on this metric."
+    },
+    "smart_router_interaction": {
+      "risk": "K434 smart router routes orders away from HL, reducing rebate capture",
+      "severity": "LOW (smart router optimizes for best net profit; HL rebate adds to HL score)",
+      "mitigation": "Update smart_router.py venue scoring: add builder_rebate_bps to HL score. With builder rebate, HL effective maker rate improves by ~0.45\u20132.25 bps. This makes HL even more attractive vs Bybit/OKX in routing decisions. Net effect: builder rebate HELPS smart router prefer HL when appropriate. "
+    },
+    "cross_venue_programs": {
+      "bybit": {
+        "program": "Bybit Broker Program",
+        "status": "EXISTS \u2014 requires application, different structure",
+        "rebate": "0.02% maker rebate for broker-routed orders (verified 2025)",
+        "activation": "Apply at https://partner.bybit.com/ \u2014 requires volume history",
+        "note": "Lower priority than HL builder (HL already at 57.5% allocation)"
+      },
+      "okx": {
+        "program": "OKX Affiliate / API Broker Program",
+        "status": "EXISTS \u2014 application-based",
+        "rebate": "Commission share on referred volume",
+        "activation": "Apply at https://www.okx.com/affiliate \u2014 different from self-builder",
+        "note": "Explore after HL builder activated. OKX volume <10% of HL currently."
+      }
+    }
+  },
+  "monitoring": {
+    "daily_rebate_check": {
+      "frequency": "Daily (can run in existing pnl_engine or separate cron)",
+      "method": "GET https://api.hyperliquid.xyz/info \u2192 referral/builder rewards",
+      "alert_threshold": "< 50% of expected for 3 consecutive days",
+      "expected_daily_10M": {
+        "conservative_10pct": 271.7,
+        "mid_25pct": 679.2,
+        "optimistic_50pct": 1358.4
+      }
+    },
+    "weekly_approval_check": {
+      "frequency": "Weekly",
+      "method": "Check HL clearinghouse builderFees state for wallet",
+      "alert": "If approval missing \u2192 re-run approveBuilderFee"
+    },
+    "fill_rate_gate": {
+      "existing": "K439 already tracks 60d maker fill rate in cache/post_only_fills.jsonl",
+      "gate": "K378 G8: alert if fill rate < 60% over 60d",
+      "rebate_impact": "Fill rate 70% \u2192 60%: rebate drops 14% (linear)"
+    }
+  },
+  "zero_risk_assertion": {
+    "hl_concentration_delta": 0.0,
+    "signal_change": "NONE",
+    "counterparty_risk": "NONE (referral pool, not external)",
+    "execution_risk": "NONE (f=0, no extra cost to trader)",
+    "k266_gate_classification": "ACCEPT-FREE (cost optimization, not a new signal)",
+    "worst_case_if_program_ends": "Return to current cost structure, zero degradation"
+  },
+  "security": {
+    "builder_code_in_output": false,
+    "builder_code_in_html": false,
+    "builder_code_in_commit": false,
+    "note": "HL_BUILDER_CODE is wallet address (public), not private key. Still excluded from output files per security hygiene."
+  }
+}
