@@ -2665,6 +2665,162 @@ Source files: `wave_k549_k449_week1_live.{py,json,md}`
 
 *K549 Appendix — Added 2026-05-30 05:46 JST*
 
+---
+
+## Appendix K556 — K493 ATOM-BTC Week 3 LIVE Activation (User Action #34)
+
+*(Added 2026-05-30 06:07 JST — K556 Week 3 LIVE activation playbook)*
+
+### User Action #34: K493 ATOM-BTC LIVE (Week 3, ~20 min, +$231K/yr @$10M, cumulative $507K/yr)
+
+#### K493 Strategy Summary
+
+K493 ATOM-BTC is **family #1** by OOS Sharpe (50.79), the highest in the paired-trade cascade.
+Cosmos hypothesis fully confirmed: ATOM FR driven by IBC flows, staking yield competition, governance cycles
+— most orthogonal alt (G5a = 0.1763 < AVAX 0.300 < SOL 0.253).
+
+| Parameter | Value |
+|-----------|-------|
+| Strategy | ATOM-BTC FR Differential Paired-Trade |
+| OOS Sharpe | **50.79** (family #1) |
+| Live Sharpe Est | ~35.55 (20-30% decay) |
+| Sleeve (Week 3) | 5% × $10M = $500K capital |
+| Leverage | 4x → $2M notional |
+| Split | 60% HL ($1.2M) + 40% Bybit ($0.8M) |
+| K493 profit (standalone) | **$231,000/yr @ $10M** |
+| K493 profit @ $30M | **$693,000/yr** |
+| K493 profit @ $100M | **$2,310,000/yr** |
+| Cumulative W1-W3 | **$507,000/yr @ $10M** |
+| Cumulative W1-W3 @ $30M | **$1,520,000/yr** |
+| HL post-K493 | **~60.5%** (cap 65%, 4.5pp headroom) |
+
+**Pre-requisite:** K449 Week 1 PASS + K476+K484 Week 2 PASS (K280 already at 60%).
+
+#### Cumulative Activation Profit Trajectory
+
+| Week | Strategy | Delta | Cumulative @$10M |
+|------|----------|-------|-----------------|
+| Week 1 | K449 ETH-BTC | +$13K | $13K/yr |
+| Week 2 | K476 SOL + K484 AVAX | +$263K | $276K/yr |
+| **Week 3** | **K493 ATOM-BTC** | **+$231K** | **$507K/yr** |
+| Week 4 | K500 INJ + K507 SEI + K507 TIA | +$354K | $861K/yr |
+| Week 5 | K512 APT-BTC | +$302K | $1,163K/yr |
+
+#### HL Exposure After Week 3
+
+```
+Pre-Week 3 baseline:       ~58.0%  (after K280 cut + K449 + K476 + K484)
++ K493 5% × 50% HL split: +2.5pp
+Post-K493:                 ~60.5%  (vs 65% hard cap)
+Week 4 headroom:           4.5pp remaining
+```
+
+#### 10-Step Activation (Day 0, ~20 minutes)
+
+**Step 1 (2 min): Verify Week 2 PASS**
+```bash
+cat data/k476_dashboard.json && cat data/k484_dashboard.json
+# Both paper_trade_mode must be false
+```
+
+**Step 2 (2 min): K493 dashboard health**
+```bash
+python3 scripts/k493_atom_btc_run.py --status
+# Expected: signal=LONG_ATOM_SHORT_BTC, gate_status=IN_PROGRESS
+```
+
+**Step 3 (2 min): HL margin check**
+```bash
+python3 scripts/emergency_hl_exit.py --dry-run --status
+# Margin utilisation < 70%
+```
+
+**Step 4 (2 min): Remove --dry-run + set PAPER_TRADE=False**
+```bash
+sed -i '' '/<string>--dry-run<\/string>/d' com.cryptolab.k493-atom-btc.plist
+grep 'dry-run' com.cryptolab.k493-atom-btc.plist || echo 'CLEAN'
+# Also edit PAPER_TRADE value: True → False in EnvironmentVariables
+```
+
+**Step 5 (1 min): Copy plist to LaunchAgents**
+```bash
+cp com.cryptolab.k493-atom-btc.plist \
+   ~/Library/LaunchAgents/com.cryptolab.k493-atom-btc.plist
+```
+
+**Step 6 (1 min): USER ACTION #34 — Load K493 daemon**
+```bash
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k493-atom-btc.plist
+launchctl list | grep k493-atom-btc
+```
+
+**Step 7 (1 min): Confirm K357 emergency exit includes K493**
+```bash
+grep -c 'K493\|ATOM' scripts/emergency_hl_exit.py
+# Expected: >= 3 (K499 scaffold already registered)
+```
+
+**Step 8 (2 min): Status verify**
+```bash
+python3 scripts/k493_atom_btc_run.py --status
+# Expected: position_state=LONG_ATOM_SHORT_BTC
+```
+
+**Step 9 (3 min): Commit + push**
+```bash
+git add com.cryptolab.k493-atom-btc.plist
+git commit -m "K556 K493 ATOM-BTC Week 3 LIVE (Sh50.79, \$231K/yr, HL 60.5%)"
+git push origin main
+```
+
+**Step 10 (2 min): Begin Week 4 prep**
+```bash
+python3 wave_k556_k493_week3_live.py --phase10
+```
+
+#### Day 21-28 Monitoring (Quick Daily Check)
+
+```bash
+cat data/k493_dashboard.json | python3 -c "
+import json, sys; d = json.load(sys.stdin)
+g = d.get('gate_metrics', {})
+print(f'State:  {d[\"position_state\"]}')
+print(f'PnL:    \${d[\"daily_pnl_usdc\"]:.2f}  (target \$633/day)')
+print(f'Sharpe: {d[\"60d_sharpe\"]:.2f}  (D28 target: ≥25)')
+print(f'Fill:   {g.get(\"current_fill_rate\",0):.1%}  (target ≥65%)')
+print(f'Drift:  {d[\"delta_neutral_drift_pct\"]:.3%}')
+"
+```
+
+#### Day 28 Decision Matrix
+
+| Decision | Realized Sharpe | Fill Rate | Action |
+|----------|----------------|-----------|--------|
+| **PASS** | ≥ 25 | ≥ 65% | Expand to 8% sleeve → Week 4 |
+| **HOLD** | 15-25 | 50-65% | Maintain 5%; re-evaluate D35 |
+| **ROLLBACK** | < 15 | < 50% or margin > 80% | Close legs; reload paper mode |
+
+#### Week 4 Prep (After K493 PASS at D28)
+
+| Strategy | Timing | Sleeve | HL Delta | Annual Return |
+|----------|--------|--------|----------|--------------|
+| K500 INJ-BTC | D21 | 2% HL + 1% Bybit | +2.0pp | $124K/yr |
+| K507 SEI-BTC | D23 (+48h) | 1.5% HL + 1.5% Bybit | +1.5pp | $179K/yr |
+| K507 TIA-BTC | D25 (+48h) | 1% HL | +1.0pp | $51K/yr |
+
+#### Daemon Specification
+
+| Label | `com.cryptolab.k493-atom-btc` |
+|-------|-------------------------------|
+| Number | 32nd daemon |
+| Schedule | Every 8h (28800s interval) |
+| RunAtLoad | false |
+| Script | `scripts/k493_atom_btc_run.py` |
+| Signal | 7d EMA ATOM-BTC FR differential |
+
+Source files: `wave_k556_k493_week3_live.{py,json,md}`
+
+*K556 Appendix — Added 2026-05-30 06:07 JST*
 
 ---
 

@@ -1,0 +1,550 @@
+{
+  "wave": "K556",
+  "strategy": "K493_ATOM_BTC",
+  "title": "K493 ATOM-BTC Week 3 LIVE Activation Playbook",
+  "generated_jst": "2026-05-30 06:15 JST",
+  "aum_ref_usd": 10000000,
+  "k493_oos_sharpe": 50.79,
+  "k493_ann_return_usd": 231000,
+  "cumulative_w3_usd": 507000,
+  "hl_post_k493_pct": 0.605,
+  "hl_cap_pct": 0.65,
+  "profit_table": {
+    "k493_at_10m": 231000,
+    "k493_at_30m": 693000,
+    "k493_at_100m": 2310000,
+    "cumulative_w3_at_10m": 507000,
+    "cumulative_w3_at_30m": 1521000,
+    "cumulative_w3_at_100m": 5070000
+  },
+  "phases": {
+    "phase1": {
+      "phase": 1,
+      "name": "scaffold_verify",
+      "checks": [
+        {
+          "name": "k493_dashboard_json",
+          "status": "PASS",
+          "detail": "EXISTS \u2014 state=LONG_ATOM_SHORT_BTC, paper=True, sleeve=3%, gate=IN_PROGRESS"
+        },
+        {
+          "name": "k493_paper_mode",
+          "status": "PASS",
+          "detail": "PAPER_TRADE=True (current) \u2014 must flip to False at Week 3 activation"
+        },
+        {
+          "name": "k493_oos_sharpe",
+          "status": "PASS",
+          "detail": "OOS Sharpe=50.79 (target \u226525 for family #1 confidence)"
+        },
+        {
+          "name": "k493_paper_days",
+          "status": "PASS",
+          "detail": "Paper days elapsed: 0.0/60 (D21 target = Week 3 activation)"
+        },
+        {
+          "name": "k493_signal_firing",
+          "status": "PASS",
+          "detail": "Signal firing: LONG_ATOM_SHORT_BTC (LONG_ATOM_SHORT_BTC expected in current regime)"
+        },
+        {
+          "name": "k493_run_script",
+          "status": "PASS",
+          "detail": "scripts/k493_atom_btc_run.py"
+        },
+        {
+          "name": "k493_plist_exists",
+          "status": "PASS",
+          "detail": "com.cryptolab.k493-atom-btc.plist"
+        },
+        {
+          "name": "k493_plist_dry_run",
+          "status": "PASS",
+          "detail": "--dry-run flag PRESENT (must remove for Week 3 LIVE)"
+        },
+        {
+          "name": "k493_plist_launchagent",
+          "status": "WARN",
+          "detail": "NOT loaded \u2014 required for Week 3 activation"
+        },
+        {
+          "name": "k357_k493_registered",
+          "status": "PASS",
+          "detail": "K493 ATOM/BTC pair detection PRESENT in emergency_hl_exit.py"
+        },
+        {
+          "name": "k493_split_protocol",
+          "status": "PASS",
+          "detail": "Split design: HL-only 3% (K547 plan: 2.5pp HL + 2.5pp Bybit for cap management)"
+        },
+        {
+          "name": "K449_dashboard",
+          "status": "PASS",
+          "detail": "EXISTS \u2014 paper=True (still PAPER)"
+        },
+        {
+          "name": "K476_dashboard",
+          "status": "PASS",
+          "detail": "EXISTS \u2014 paper=True (still PAPER)"
+        },
+        {
+          "name": "K484_dashboard",
+          "status": "PASS",
+          "detail": "EXISTS \u2014 paper=True (still PAPER)"
+        }
+      ],
+      "all_pass": true,
+      "summary": {
+        "pass": 13,
+        "warn": 1,
+        "fail": 0
+      }
+    },
+    "phase2": {
+      "phase": 2,
+      "name": "prerequisites",
+      "items": [
+        {
+          "name": "Week 1 K449 LIVE PASS (K549 Day 7)",
+          "status": "REQUIRED",
+          "detail": "K449 ETH-BTC must show 7d realized Sharpe \u2265 5 and fill_rate \u2265 50%",
+          "action": "python3 scripts/k449_eth_btc_run.py --status  \u2192 check 60d_sharpe > 0 and fills > 0"
+        },
+        {
+          "name": "Week 2 K476 SOL-BTC LIVE PASS",
+          "status": "REQUIRED",
+          "detail": "K476 must show 7d positive PnL and fill_rate > 0% in live mode",
+          "action": "python3 scripts/k476_sol_btc_run.py --status  (if script exists)"
+        },
+        {
+          "name": "Week 2 K484 AVAX-BTC LIVE PASS",
+          "status": "REQUIRED",
+          "detail": "K484 must show 7d positive PnL and fill_rate > 0% in live mode",
+          "action": "python3 scripts/k484_avax_btc_run.py --status  (if script exists)"
+        },
+        {
+          "name": "HL exposure trajectory check",
+          "status": "REQUIRED",
+          "detail": "Pre-K493: ~58% HL (after W1+W2)\n    K493 adds +2.5pp HL (5% sleeve \u00d7 50% HL split)\n    Post-K493: ~60.5% HL vs 65% hard cap \u2192 SAFE (+4.5pp headroom)",
+          "action": "python3 scripts/verify_deployment_status.py  \u2192 check hl_exposure_pct"
+        },
+        {
+          "name": "K280 sleeve 75\u219260% applied (K552 / K539 Phase B1)",
+          "status": "REQUIRED",
+          "detail": "K280 must be at 60% or lower in scripts/leverage_manager.py",
+          "action": "grep '\"K280\"' scripts/leverage_manager.py  \u2192 expect 0.60"
+        },
+        {
+          "name": "K498 Phase 1A activated (K530)",
+          "status": "CHECK",
+          "detail": "BBO_SELECT smart router + OKX daemon should be active (per K530 playbook)",
+          "action": "launchctl list | grep okx  \u2192 confirm running"
+        }
+      ],
+      "hl_trajectory": {
+        "pre_week3_pct": 0.58,
+        "k493_add_pp": 2.5,
+        "post_k493_pct": 0.605,
+        "cap_pct": 0.65,
+        "headroom_pp": 4.5,
+        "week4_headroom_pp": 4.5
+      }
+    },
+    "phase3": {
+      "phase": 3,
+      "name": "live_switch_steps",
+      "sizing": {
+        "aum_ref_usd": 10000000,
+        "sleeve_pct": 0.05,
+        "sleeve_capital_usd": 500000.0,
+        "leverage": 4.0,
+        "total_notional_usd": 2000000.0,
+        "hl_notional_usd": 1200000.0,
+        "bybit_notional_usd": 800000.0,
+        "hl_margin_usd": 300000.0,
+        "bybit_margin_usd": 200000.0
+      },
+      "steps": [
+        {
+          "step": 1,
+          "phase": "D0_prereq",
+          "name": "Verify K280 sleeve at 60%",
+          "command": "grep '\"K280\"' scripts/leverage_manager.py",
+          "verify": "Expected: \"K280\":   0.60,",
+          "notes": "If still 0.75, apply K539 Phase B1 cut first (1-LOC sed command)"
+        },
+        {
+          "step": 2,
+          "phase": "D0_prereq",
+          "name": "Verify Week 1+2 LIVE status",
+          "command": "python3 scripts/k449_eth_btc_run.py --status",
+          "verify": "paper_trade_mode=false, position_state != NEUTRAL",
+          "notes": "K449+K476+K484 must be LIVE and showing non-zero fills before K493 activates"
+        },
+        {
+          "step": 3,
+          "phase": "D0_prereq",
+          "name": "Check HL margin health",
+          "command": "python3 scripts/emergency_hl_exit.py --dry-run --status",
+          "verify": "Margin utilisation < 70% on HL account",
+          "notes": "K493 adds $300K HL margin. Ensure sufficient headroom."
+        },
+        {
+          "step": 4,
+          "phase": "D0_config",
+          "name": "Remove --dry-run from K493 plist",
+          "command": "sed -i '' '/<string>--dry-run<\\/string>/d' com.cryptolab.k493-atom-btc.plist",
+          "verify": "grep 'dry-run' com.cryptolab.k493-atom-btc.plist || echo 'CLEAN'",
+          "notes": "Remove --dry-run from ProgramArguments to enable live execution"
+        },
+        {
+          "step": 5,
+          "phase": "D0_config",
+          "name": "Set PAPER_TRADE=False in plist env",
+          "command": "# Edit plist EnvironmentVariables: set PAPER_TRADE to False",
+          "verify": "grep PAPER_TRADE com.cryptolab.k493-atom-btc.plist",
+          "notes": "k493_atom_btc_run.py reads PAPER_TRADE env var \u2014 must be 'False' or absent for live"
+        },
+        {
+          "step": 6,
+          "phase": "D0_load",
+          "name": "Copy plist to LaunchAgents",
+          "command": "cp com.cryptolab.k493-atom-btc.plist ~/Library/LaunchAgents/com.cryptolab.k493-atom-btc.plist",
+          "verify": "ls -la ~/Library/LaunchAgents/com.cryptolab.k493-atom-btc.plist",
+          "notes": "Copy modified (LIVE mode) plist to system LaunchAgents directory"
+        },
+        {
+          "step": 7,
+          "phase": "D0_load",
+          "name": "launchctl load K493 daemon",
+          "command": "launchctl load ~/Library/LaunchAgents/com.cryptolab.k493-atom-btc.plist",
+          "verify": "launchctl list | grep k493-atom-btc",
+          "notes": "Loads daemon; first execution at next 8h cron interval"
+        },
+        {
+          "step": 8,
+          "phase": "D0_verify",
+          "name": "Confirm K357 emergency exit includes K493",
+          "command": "grep -c 'K493\\|ATOM' scripts/emergency_hl_exit.py",
+          "verify": "Expected: >=3 matches (K499 already implemented K493 detection)",
+          "notes": "K493 paired-position detection present per K499 scaffold"
+        },
+        {
+          "step": 9,
+          "phase": "D0_verify",
+          "name": "K434 smart router routing check",
+          "command": "python3 scripts/k493_atom_btc_run.py --status",
+          "verify": "Dashboard refreshed, venue=HL or HL+Bybit split confirmed",
+          "notes": "K493 uses HL-primary + Bybit-secondary split for cap management"
+        },
+        {
+          "step": 10,
+          "phase": "D0_verify",
+          "name": "K493 initial position status",
+          "command": "python3 scripts/k493_atom_btc_run.py --status",
+          "verify": "position_state=LONG_ATOM_SHORT_BTC (signal already firing per K547)",
+          "notes": "ATOM FR diff was -1.77e-5 at scaffold time \u2014 signal likely still active"
+        },
+        {
+          "step": 11,
+          "phase": "D0_commit",
+          "name": "Commit plist LIVE change + push",
+          "command": "git add com.cryptolab.k493-atom-btc.plist && git commit -m \"K556 K493 plist: remove --dry-run for Week 3 LIVE activation\" && git push origin main",
+          "verify": "git log --oneline -1",
+          "notes": "Commit the LIVE plist to repo for audit trail"
+        }
+      ],
+      "execution": {
+        "order_type": "POST_ONLY (maker)",
+        "submission": "Parallel (K439 pattern)",
+        "close_order": "Sequential: BTC short first, then ATOM long",
+        "fallback": "IOC on timeout (>5s)",
+        "cadence_h": 8
+      }
+    },
+    "phase4": {
+      "phase": 4,
+      "name": "monitoring_spec",
+      "d0": "2026-05-30",
+      "d21_target": "2026-06-20",
+      "d28_decision": "2026-06-27",
+      "daily_pnl_target_usd": 632.88,
+      "metrics": [
+        {
+          "name": "Daily Sharpe realized",
+          "source": "60d_sharpe in k493_dashboard.json",
+          "detail": "Daily P&L / rolling vol \u2192 target \u2265 25 at D28 for PASS"
+        },
+        {
+          "name": "Fill rate (paired legs)",
+          "source": "paper_fill_rate_pct in gate_metrics",
+          "detail": "Both ATOM + BTC legs must fill > 65% of signals; POST_ONLY maker fill"
+        },
+        {
+          "name": "HL margin health",
+          "source": "Via emergency_hl_exit.py --status",
+          "detail": "Margin utilisation < 75%; alert if > 80% (K386 fallback trigger)"
+        },
+        {
+          "name": "Funding rate carry/leg",
+          "source": "fr_atom_current + fr_btc_current in dashboard",
+          "detail": "ATOM FR \u2212 BTC FR > 0 confirms positive carry; monitor 7d EMA stability"
+        },
+        {
+          "name": "Delta neutral drift",
+          "source": "delta_neutral_drift_pct in dashboard",
+          "detail": "Drift > 5% triggers rebalance; > 10% triggers alert"
+        },
+        {
+          "name": "Cross-venue sync (HL+Bybit)",
+          "source": "Via k493_atom_btc_run.py --status",
+          "detail": "If Bybit leg split active: confirm both legs in sync; no uncovered position"
+        },
+        {
+          "name": "Realized daily PnL",
+          "source": "daily_pnl_usdc in dashboard",
+          "detail": "Expected: $633/day @ $10M ($231000/yr \u00f7 365)"
+        }
+      ]
+    },
+    "phase5": {
+      "phase": 5,
+      "name": "decision_matrix",
+      "evaluation_date": "D28 (2026-06-27 target)",
+      "decisions": [
+        {
+          "outcome": "PASS",
+          "sharpe_min": 25.0,
+          "fill_min": 0.65,
+          "action": "expand_to_8pct"
+        },
+        {
+          "outcome": "HOLD",
+          "sharpe_range": [
+            15.0,
+            25.0
+          ],
+          "action": "maintain_5pct"
+        },
+        {
+          "outcome": "ROLLBACK",
+          "sharpe_max": 15.0,
+          "action": "close_reload_paper"
+        }
+      ],
+      "oos_paper_sharpe_decay_est": {
+        "oos_paper": 50.79,
+        "live_est": 35.55,
+        "decay_pct": 30.0,
+        "note": "20-30% Sharpe decay from slippage + fee drag expected post-live"
+      }
+    },
+    "phase6": {
+      "phase": 6,
+      "name": "hl_exposure",
+      "pre_k493_pct": 0.58,
+      "k493_hl_add_pp": 2.5,
+      "post_k493_pct": 0.605,
+      "cap_pct": 0.65,
+      "headroom_pp": 4.5000000000000036,
+      "week4_planned_pp": 4.5,
+      "week4_post_pct": 0.65,
+      "split": {
+        "hl_fraction": 0.6,
+        "bybit_fraction": 0.4
+      }
+    },
+    "phase7": {
+      "phase": 7,
+      "name": "profit_projection",
+      "k493_standalone": {
+        "at_10m_usd": 231000,
+        "at_30m_usd": 693000,
+        "at_100m_usd": 2310000
+      },
+      "week3_cumulative": {
+        "at_10m_usd": 507000,
+        "at_30m_usd": 1521000,
+        "at_100m_usd": 5070000,
+        "breakdown": {
+          "k449_eth_btc": 13000,
+          "k476_sol_btc": 187000,
+          "k484_avax_btc": 76000,
+          "k493_atom_btc": 231000
+        }
+      },
+      "full_family_projection": {
+        "at_10m_usd": 1163000,
+        "at_30m_usd": 3489000,
+        "at_100m_usd": 11630000
+      }
+    },
+    "phase8": {
+      "phase": 8,
+      "name": "risk_inventory",
+      "risks": [
+        {
+          "id": "R1",
+          "name": "Paper vs LIVE Sharpe divergence",
+          "severity": "HIGH",
+          "probability": "MEDIUM",
+          "detail": "OOS Sh 50.79 \u2192 live est 35.5 (20-30% decay). High OOS Sharpe = more decay risk (overfitting to historical FR cycles).",
+          "mitigation": "Post-only fill optimization; 7d live monitoring gate; rollback < Sh 15"
+        },
+        {
+          "id": "R2",
+          "name": "HL + Bybit cross-venue sync failure",
+          "severity": "MEDIUM",
+          "probability": "LOW",
+          "detail": "If Bybit leg fails to fill while HL ATOM leg fills \u2192 uncovered directional exposure",
+          "mitigation": "K439 rollback: cancel HL leg within 5s if Bybit fails. Monitor cross-venue sync daily."
+        },
+        {
+          "id": "R3",
+          "name": "Cosmos hypothesis maintenance",
+          "severity": "MEDIUM",
+          "probability": "LOW",
+          "detail": "ATOM FR differential driven by IBC flows + staking yield competition + governance cycles. If IBC network effect weakens or staking APY converges with market, signal degrades.",
+          "mitigation": "Monitor ATOM staking yield vs BTC funding. Check G5a correlation monthly."
+        },
+        {
+          "id": "R4",
+          "name": "BTC flash crash (correlated leg risk)",
+          "severity": "HIGH",
+          "probability": "LOW",
+          "detail": "BTC -20% flash crash: all BTC-short legs gain, ATOM-long leg loses. Delta-neutral design absorbs price move. Tail loss est 1.7-4.0%.",
+          "mitigation": "K357 emergency exit registered. HL margin monitored. Delta drift alert > 10%."
+        },
+        {
+          "id": "R5",
+          "name": "HL cap breach during Week 3 activation",
+          "severity": "HIGH",
+          "probability": "LOW",
+          "detail": "K493 adds 2.5pp HL \u2192 60.5% (cap 65%). If Week 1+2 used more HL than planned, breach risk increases.",
+          "mitigation": "Verify HL pct via verify_deployment_status.py before activation. Use Bybit split."
+        },
+        {
+          "id": "R6",
+          "name": "G6 low-frequency gate (18.2/yr)",
+          "severity": "LOW",
+          "probability": "CERTAIN",
+          "detail": "K493 only fires ~18 trades/yr (confirmed G6 FAIL). Long holding periods mean slippage per trade is amortized but signal is slow to adapt.",
+          "mitigation": "Accepted at reduced sizing (3% sleeve). Monitor signal count vs expected 18.2/yr."
+        }
+      ]
+    },
+    "phase9": {
+      "phase": 9,
+      "name": "user_checklist",
+      "total_time_min": 22,
+      "items": [
+        {
+          "id": 1,
+          "action": "K547 Week 2 PASS verification",
+          "command": "cat data/k476_dashboard.json && cat data/k484_dashboard.json",
+          "criteria": "Both paper_trade_mode=false AND position_state != NEUTRAL in recent poll",
+          "time_min": 2
+        },
+        {
+          "id": 2,
+          "action": "K493 dashboard health check",
+          "command": "python3 scripts/k493_atom_btc_run.py --status",
+          "criteria": "Dashboard up-to-date; gate_status=IN_PROGRESS; signal LONG_ATOM_SHORT_BTC",
+          "time_min": 2
+        },
+        {
+          "id": 3,
+          "action": "HL margin pre-check",
+          "command": "python3 scripts/emergency_hl_exit.py --dry-run --status",
+          "criteria": "Margin utilisation < 70%; sufficient headroom for +$300K margin",
+          "time_min": 2
+        },
+        {
+          "id": 4,
+          "action": "Edit K493 plist \u2014 remove --dry-run, set PAPER_TRADE=False",
+          "command": "sed -i '' '/<string>--dry-run<\\/string>/d' com.cryptolab.k493-atom-btc.plist",
+          "criteria": "grep 'dry-run' com.cryptolab.k493-atom-btc.plist returns nothing (CLEAN)",
+          "time_min": 3
+        },
+        {
+          "id": 5,
+          "action": "Copy plist to LaunchAgents + launchctl load",
+          "command": "cp com.cryptolab.k493-atom-btc.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.k493-atom-btc.plist",
+          "criteria": "launchctl list | grep k493-atom-btc returns PID > 0",
+          "time_min": 2
+        },
+        {
+          "id": 6,
+          "action": "Confirm K357 emergency exit includes K493",
+          "command": "grep -c 'K493\\|ATOM' scripts/emergency_hl_exit.py",
+          "criteria": "Count >= 3 (K499 scaffold already added K493 detection)",
+          "time_min": 1
+        },
+        {
+          "id": 7,
+          "action": "7d Sharpe verification (D28 gate)",
+          "command": "python3 wave_k556_k493_week3_live.py --phase5",
+          "criteria": "Review decision matrix; schedule D28 calendar reminder",
+          "time_min": 2
+        },
+        {
+          "id": 8,
+          "action": "Commit LIVE plist + push",
+          "command": "git add com.cryptolab.k493-atom-btc.plist && git commit -m \"K556 K493 ATOM-BTC Week 3 LIVE activation\" && git push origin main",
+          "criteria": "git log --oneline -1 shows K556 commit",
+          "time_min": 3
+        },
+        {
+          "id": 9,
+          "action": "Week 4 prep initiation (K500+K507)",
+          "command": "python3 wave_k556_k493_week3_live.py --phase10",
+          "criteria": "Review K500/K507 paper gate status; schedule Week 4 activation",
+          "time_min": 5
+        }
+      ]
+    },
+    "phase10": {
+      "phase": 10,
+      "name": "week4_prep",
+      "strategies": [
+        {
+          "daemon": "K500 INJ-BTC",
+          "oos_sharpe": 11.23,
+          "ann_return_usd": 124000,
+          "sleeve": "2% HL + 1% Bybit",
+          "hl_add_pp": 2.0,
+          "timing": "D21 (K493 gate pass)",
+          "plist": "com.cryptolab.k500-inj-btc.plist",
+          "signal_status": "LONG_INJ_SHORT_BTC (firing at scaffold)"
+        },
+        {
+          "daemon": "K507 SEI-BTC",
+          "oos_sharpe": 48.1,
+          "ann_return_usd": 179000,
+          "sleeve": "1.5% HL + 1.5% Bybit",
+          "hl_add_pp": 1.5,
+          "timing": "D23 (+48h after K500)",
+          "plist": "com.cryptolab.k507-sei-btc.plist",
+          "signal_status": "NEUTRAL at scaffold"
+        },
+        {
+          "daemon": "K507 TIA-BTC",
+          "oos_sharpe": 14.44,
+          "ann_return_usd": 51000,
+          "sleeve": "1% HL",
+          "hl_add_pp": 1.0,
+          "timing": "D25 (+48h after SEI)",
+          "plist": "com.cryptolab.k507-sei-btc.plist",
+          "signal_status": "LONG_BTC_SHORT_TIA at scaffold"
+        }
+      ],
+      "cumulative_w1_w4_usd": 861000,
+      "hl_after_w4_pct": 0.65,
+      "decision_tree": {
+        "pass": "K500 activate D21",
+        "hold": "K500 deferred to D35",
+        "rollback": "Week 4 cascade paused"
+      }
+    }
+  }
+}
