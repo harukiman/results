@@ -5906,10 +5906,96 @@ print('Regime:',        d.get('current_regime'))
 | K390 | Universe expansion (DOT GRADUATE_NOW) |
 | K483 | Kelly re-optimization (K376 35% suggestion) |
 | K488 | wave_k488_k376_graduation_prep.{py,json,md} |
+| K497 | §38b.8 — Auto-trigger workflow (31st daemon) |
 
 ---
 
-*K488 §38b -- K376 volume-spike momentum graduation pre-validation (CONDITIONAL ACCEPT, 6/8 gates, $412K/yr @$10M 5% sleeve, activate on BTC bull recovery) -- 2026-05-30*
+### §38b.8 Auto-Trigger Workflow (K497 — 31st Daemon)
+
+**Added:** 2026-05-30 | **Wave:** K497 | **Daemon:** com.cryptolab.k376-regime-monitor
+
+#### Overview
+
+K497 automates the BTC 20d SMA slope monitoring that previously required manual checking. Without automation, bull regime onset could go undetected for 7+ days, costing $677/day × N days = $X,XXX lost profit.
+
+| Metric | Value |
+|--------|-------|
+| Monitoring frequency | Daily (07:00 JST via launchd) |
+| BULL_CONFIRMED threshold | slope ≥ 0 for ≥ 7 consecutive days |
+| TRANSITION alert | -500 < slope < +500 |
+| BEAR threshold | slope ≤ -500 |
+| Current regime (2026-05-30) | TRANSITION (slope: -33.9 $/day) |
+
+#### Historical Regime Statistics (2y backtest)
+
+| Metric | Value |
+|--------|-------|
+| Bull fraction | 50.9% |
+| Avg bull duration | 39.1 days |
+| Avg bear duration | 34.0 days |
+| BULL_CONFIRMED triggers/yr | 4.75 |
+| K376 regime-weighted profit/yr @$10M | ~$126K/yr (vs $247K max all-bull) |
+| Automation lag savings/yr | $19,274/yr (6d lag savings × 4.75 triggers × $677/day) |
+
+#### Profit Impact
+
+- **Max annual K376 profit** (all-bull): $247,000/yr @$10M, $2.47M/yr @$100M
+- **Regime-weighted expected** (50.9% bull): ~$126K/yr @$10M
+- **Without automation**: ~7d avg detection lag → $4,739/trigger lost
+- **With K497 automation**: ≤1d lag → $677/trigger lost
+- **Savings per trigger**: ~$4,062; **Annual savings**: ~$19K/yr @$10M
+
+#### Daemon Files
+
+| File | Purpose |
+|------|---------|
+| `scripts/k376_regime_trigger_monitor.py` | Main monitor script (~170 LOC) |
+| `scripts/com.cryptolab.k376-regime-monitor.plist` | plist spec (gitignored; sed REPO_ROOT before cp) |
+| `data/k376_regime_status.json` | Current state (regime/slope/days_pos/sma) |
+| `data/alerts.log` | Alert append log (BULL_CONFIRMED/TRANSITION events) |
+| `data/k376_activation_alert.md` | Auto-generated 5-step checklist when BULL_CONFIRMED |
+
+#### Daemon Activation
+
+```bash
+# Copy and configure plist
+sed "s|REPO_ROOT|$(pwd)|g" scripts/com.cryptolab.k376-regime-monitor.plist \
+  > ~/Library/LaunchAgents/com.cryptolab.k376-regime-monitor.plist
+
+# Load (runs once immediately, then daily at 07:00 JST)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k376-regime-monitor.plist
+
+# Verify
+launchctl list | grep k376-regime-monitor
+tail -f logs/k376_regime_monitor.log
+
+# Manual one-shot check
+python3 scripts/k376_regime_trigger_monitor.py
+cat data/k376_regime_status.json
+```
+
+#### Alert Response Protocol
+
+When `data/alerts.log` shows BULL_CONFIRMED:
+
+1. Read `data/k376_activation_alert.md` (auto-generated 5-step playbook)
+2. Verify independently: `python3 scripts/k376_momentum_run.py --verbose`
+3. Check HL concentration: current HL% + K376_3% ≤ 65%
+4. Execute §38b.4 Conditional Activation Steps
+5. Update HTML badge: SCAFFOLD-READY → ACTIVE
+
+**IMPORTANT:** K497 daemon generates alerts and checklists but does NOT activate K376. User confirmation required for live switch.
+
+#### Backtest Command
+
+```bash
+python3 scripts/k376_regime_trigger_monitor.py --backtest
+# → JSON with bull/bear duration distribution and profit quantification
+```
+
+---
+
+*K497 §38b.8 -- K376 auto-trigger workflow (31st daemon, daily BTC SMA slope monitor, BULL_CONFIRMED → +$247K/yr @$10M unlock, lag ≤1d, $19K/yr lag savings) -- 2026-05-30*
 
 ---
 

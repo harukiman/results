@@ -259,6 +259,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k484_avax_btc",
         expected_html_status="SCAFFOLD-READY",  # K489: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=5.0 paper + fill_rate >=60% + maxDD <15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k376-regime-monitor",
+        purpose="K497 K376 bull regime trigger monitor (daily BTC 20d SMA slope check, BULL_CONFIRMED alert when slope>0 for ≥7d, NO live switch — user gate, +$247K/yr unlock at $10M when triggered, 31st daemon)",
+        scripts=["scripts/k376_regime_trigger_monitor.py"],
+        log_basename="k376_regime_monitor",
+        expected_html_status="SCAFFOLD-READY",  # K497: plist in scripts/ (gitignored); daily StartCalendarInterval 22:00 UTC (07:00 JST); activate to enable daily regime polling
+    ),
 ]
 
 
