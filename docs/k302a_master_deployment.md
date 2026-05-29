@@ -1,8 +1,64 @@
-# K464 Master Deployment Playbook — Single Source of Truth
-**Version:** 6.20 | **Generated:** 2026-05-30 | **Wave:** K464 (supersedes K436)
-**Status:** ACTIVE USER ACTIVATION GUIDE — single source of truth for all pending actions (v6.13d → v6.16 → v6.20)
+# K501 Master Deployment Playbook — Single Source of Truth
+**Version:** 6.24 | **Generated:** 2026-05-30 03:41 JST | **Wave:** K501 (supersedes K464)
+**Status:** ACTIVE USER ACTIVATION GUIDE — ROI/hr ranked queue for all pending actions
 
 ---
+
+## K501 Profit Lift Queue — User Action Summary (NEW)
+
+**Total pending lift: +$2,319,403/yr @ $10M | +$7,498,061/yr @ $30M | +$28,606,724/yr @ $100M**  
+**5-year delta: +$36,224,170 vs baseline (CAGR 20.84% → 44.03% effective)**
+
+### Immediate Top 5 (No Dependencies, Start Now)
+
+| Priority | Action | Setup | Risk | +$/yr @$10M |
+|----------|--------|-------|------|------------|
+| 1 | **K481-A**: Register HL builder rebate (approveBuilderFee, main wallet) | 30 min | ZERO | +$247,915 |
+| 2 | **K485-1A**: Create Bybit sub-account + HL W2 strategy isolation | 30 min | LOW | +$204,370 |
+| 3 | **K483**: Update portfolio weights to v6.22a (Kelly MV) | 1 hr | LOW | +$150,300 |
+| 4 | **K493**: Start ATOM-BTC paper-trade (K499 scaffold loaded) | 4 hr | LOW | +$231,000 |
+| 5 | **K482-3**: Implement vol-conditional scaler (prerequisite for K482-1/2) | 8 hr | LOW | +$368,961 |
+
+### Full 10-Action Queue (ROI/hr Ranked)
+
+| Rank | ID | ROI/hr @$10M | +$/yr @$10M | +$/yr @$100M | Setup | Risk | Deps |
+|------|----|-------------|-------------|--------------|-------|------|------|
+| 1 | K482-1 | $724,600/hr | +$362,300 | +$3,623,000 | 0.5h | MEDIUM | K482-3, K482-2 |
+| 2 | K481-A | $495,830/hr | +$247,915 | +$2,479,148 | 0.5h | ZERO | none |
+| 3 | K485-1A | $408,740/hr | +$204,370 | +$5,000,000 | 0.5h | LOW | none |
+| 4 | K488 | $247,047/hr | +$247,047 | +$4,117,450 | 1.0h | MEDIUM | K497 BULL gate |
+| 5 | K483 | $150,300/hr | +$150,300 | +$1,503,000 | 1.0h | LOW | none |
+| 6 | K482-2 | $77,210/hr | +$154,420 | +$1,544,199 | 2.0h | LOW | K482-3 |
+| 7 | K493 | $57,750/hr | +$231,000 | +$2,310,000 | 4.0h | LOW | none (60d paper) |
+| 8 | K482-3 | $46,120/hr | +$368,961 | +$3,689,611 | 8.0h | LOW | none |
+| 9 | K492-3 | $42,244/hr | +$126,731 | +$1,267,309 | 3.0h | LOW | K498-1A |
+| 10 | K492-2 | $22,588/hr | +$45,175 | +$451,748 | 2.0h | LOW | none |
+
+**Also pending (lower queue rank):** K437 (HYPE Bronze stake, +$8.6K/yr, 30min, LOW), K484 (AVAX-BTC, +$75K/yr, 60d paper), K498-1A (smart router OKX, +$121K @$30M, 8hr, LOW)
+
+**Activated:** K430 (3x leverage, +$2.2M/yr — circuit breaker required)
+
+**Dependency chain:**
+- K482: implement in order K482-3 → K482-2 → K482-1
+- K492: implement in order K492-2 → K492-1 → K492-3 (also needs K498-1A)
+- K488: wait for K497 BULL_CONFIRMED (BTC 20d SMA slope > 0)
+- K481-B (code patch): after K481-A registration
+
+Full detail: `wave_k501_profit_lift_queue.md` / `wave_k501_profit_lift_queue.json`
+
+---
+
+## K501 v6.24 5-Year Projection Update
+
+| Scenario | CAGR | 5y Terminal @$10M | vs Baseline |
+|----------|------|------------------|-------------|
+| v6.13d baseline (K430 activated) | 20.84% | $25,766,390 | — |
+| + All pending lifts activated | 44.03% effective | $61,990,560 | +$36,224,170 |
+| @$100M all activated | — | ~$484M+ | significant |
+
+---
+
+
 
 ## Executive Summary
 
