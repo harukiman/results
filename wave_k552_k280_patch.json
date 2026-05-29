@@ -1,0 +1,182 @@
+{
+  "wave": "K552",
+  "title": "K280 sleeve 75→60% concrete production patch",
+  "generated_jst": "2026-05-30 05:56 JST",
+  "discovery_summary": {
+    "authoritative_source": "scripts/leverage_manager.py (runtime SLEEVE_WEIGHTS dict)",
+    "json_state_source":   "data/portfolio_aum_state.json (persisted state — also needs update)",
+    "secondary_sources": [
+      "scripts/portfolio_aum_manager.py (DEFAULT_SLEEVE_WEIGHTS — default fallback only)",
+      "scripts/k302a_satellite_run.py (K302A_MAIN_WEIGHT — cross-display only, NOT used for sizing)",
+      "scripts/k386_v613e_fallback_run.py (V613E_WEIGHTS — fallback mode only, NOT normal path)"
+    ]
+  },
+
+  "patch_primary": {
+    "file": "scripts/leverage_manager.py",
+    "line": 74,
+    "before": "    \"K280\":   0.75,   # K280 main (K198 + K208 + K276b) — v6.13d; v6.16 reduces to 0.72",
+    "after":  "    \"K280\":   0.60,   # K280 main (K539 Phase B1: 75→60%, frees 7.5pp HL, 2026-05-30)",
+    "context": "SLEEVE_WEIGHTS dict — primary runtime dict used by compute_position_size()",
+    "impact": "CRITICAL: all production position sizing flows through this value",
+    "hl_exposure_delta": "-7.5pp (57.5% → 50.0% HL, opens 7.5pp for K376/K449 family)"
+  },
+
+  "patch_json_state": {
+    "file": "data/portfolio_aum_state.json",
+    "line": 18,
+    "before": "    \"K280\": 0.75,",
+    "after":  "    \"K280\": 0.60,",
+    "context": "sleeve_weights dict — persisted state read by load_state(), backfilled into runtime",
+    "impact": "REQUIRED: without this, load_state() may backfill 0.75 over leverage_manager",
+    "note": "Update BOTH files atomically. JSON state is read by k280_daily_run.py via AUM tracking."
+  },
+
+  "patch_aum_manager": {
+    "file": "scripts/portfolio_aum_manager.py",
+    "line": 86,
+    "before": "    \"K280\":       0.75,",
+    "after":  "    \"K280\":       0.60,",
+    "context": "DEFAULT_SLEEVE_WEIGHTS — used ONLY when portfolio_aum_state.json does not exist",
+    "impact": "LOW (only affects fresh installs / state reset), but update for consistency",
+    "note": "Also update the docstring on line 17: '75%' → '60%'"
+  },
+
+  "patch_aum_manager_docstring": {
+    "file": "scripts/portfolio_aum_manager.py",
+    "line": 17,
+    "before": "  K280:        75%  →  position = deployed_capital × 0.75",
+    "after":  "  K280:        60%  →  position = deployed_capital × 0.60  # K552 Phase B1",
+    "context": "Module-level docstring — documentation only, no runtime impact",
+    "impact": "DOCUMENTATION consistency"
+  },
+
+  "do_not_change": [
+    {
+      "file": "scripts/k302a_satellite_run.py",
+      "line": 151,
+      "value": "K302A_MAIN_WEIGHT = 0.75",
+      "reason": "This is used for DISPLAY-ONLY combined dashboard math (K302a satellite view). Changing it would break the satellite dashboard's weighting display. It does NOT drive position sizing."
+    },
+    {
+      "file": "scripts/k386_v613e_fallback_run.py",
+      "line": 66,
+      "value": "\"K280\": 0.85",
+      "reason": "v6.13e BEAR_1 fallback — intentionally boosted to 85% in bear regime. Leave unchanged."
+    },
+    {
+      "file": "scripts/k386_v613e_fallback_run.py",
+      "line": 74,
+      "value": "\"K280\": 0.75",
+      "reason": "v6.13d reference weight within the fallback script. Informational snapshot — not runtime weight."
+    }
+  ],
+
+  "diff": {
+    "primary": {
+      "file": "scripts/leverage_manager.py",
+      "diff": "--- a/scripts/leverage_manager.py\n+++ b/scripts/leverage_manager.py\n@@ -71,7 +71,7 @@ SLEEVE_WEIGHTS_V616: Dict[str, float] = {\n # v6.13d sleeve weights (K348)\n # v6.16 candidate: K280 72% + K297' 20% + sUSDe 5% + K449 3% = 100%\n SLEEVE_WEIGHTS: Dict[str, float] = {\n-    \"K280\":   0.75,   # K280 main (K198 + K208 + K276b) — v6.13d; v6.16 reduces to 0.72\n+    \"K280\":   0.60,   # K280 main (K539 Phase B1: 75→60%, frees 7.5pp HL, 2026-05-30)\n     \"K297\":   0.20,   # K302a satellite (PAXG 60% + SPX 40%)\n     \"sUSDe\":  0.05,   # sUSDe OC sleeve"
+    },
+    "json_state": {
+      "file": "data/portfolio_aum_state.json",
+      "diff": "--- a/data/portfolio_aum_state.json\n+++ b/data/portfolio_aum_state.json\n@@ -15,7 +15,7 @@\n   \"day_count\": 0,\n   \"sleeve_weights\": {\n-    \"K280\": 0.75,\n+    \"K280\": 0.60,\n     \"K297_prime\": 0.2,"
+    }
+  },
+
+  "validation": {
+    "step1_verify_before": {
+      "cmd": "grep -n '\"K280\".*0\\.75\\|K280.*0\\.75' scripts/leverage_manager.py data/portfolio_aum_state.json scripts/portfolio_aum_manager.py",
+      "expected": "3 lines showing 0.75 (leverage_manager L74, aum_state L18, portfolio_aum_manager L86)"
+    },
+    "step2_apply_patch": {
+      "cmd_primary": "sed -i '' 's/\"K280\":   0\\.75,   # K280 main (K198 + K208 + K276b) — v6\\.13d; v6\\.16 reduces to 0\\.72/\"K280\":   0.60,   # K280 main (K539 Phase B1: 75→60%, frees 7.5pp HL, 2026-05-30)/' scripts/leverage_manager.py",
+      "cmd_json": "python3 -c \"import json; f='data/portfolio_aum_state.json'; d=json.load(open(f)); d['sleeve_weights']['K280']=0.60; json.dump(d, open(f,'w'), indent=2)\"",
+      "cmd_aum_manager": "sed -i '' 's/\"K280\":       0\\.75,/\"K280\":       0.60,/' scripts/portfolio_aum_manager.py"
+    },
+    "step3_verify_after": {
+      "cmd": "grep -n '\"K280\".*0\\.' scripts/leverage_manager.py data/portfolio_aum_state.json scripts/portfolio_aum_manager.py",
+      "expected": "All three show 0.60"
+    },
+    "step4_deployment_status": {
+      "cmd": "python3 scripts/verify_deployment_status.py 2>&1 | head -40",
+      "expected": "No MISMATCH errors; state consistent"
+    },
+    "step5_hl_recompute": {
+      "description": "Manual HL exposure check post-patch",
+      "formula": "K280 HL component = 0.60 × AUM × deployment_pct × K208_HL_fraction",
+      "K208_HL_fraction": 0.50,
+      "K208_HL_pct_of_K280": "~50% of K280 notional on HL (split HL+Bybit)",
+      "calc_at_10M": "0.60 × $9.2M deployed × 0.50 HL = $2.76M on HL → ~30% HL direct",
+      "note": "v6.13d HL was 57.5% includes paired trades; after K280 cut, K449 5% HL adds back ~2.5pp → net ~50% HL",
+      "hl_headroom_pp": 15.0,
+      "k449_K376_headroom": "7.5pp freed directly from K280 cut; comfortable for K449(5%) + K376 family"
+    },
+    "step6_k297_unchanged_check": {
+      "cmd": "grep -n 'K297_prime.*0\\.' scripts/leverage_manager.py data/portfolio_aum_state.json",
+      "expected": "K297_prime: 0.20 unchanged"
+    },
+    "step7_sum_check": {
+      "description": "Verify sleeve weights still sum correctly post-patch",
+      "cmd": "python3 -c \"import json; d=json.load(open('data/portfolio_aum_state.json')); w=d['sleeve_weights']; print('Sum:', sum(w.values()), '\\nWeights:', w)\"",
+      "expected_note": "Sum will be 0.60+0.20+0.05+0.03=0.88 (K376 is sub-slice of K280, total < 1.0 is valid per design)"
+    }
+  },
+
+  "daemons": {
+    "affected_by_k280_weight": [
+      {
+        "daemon": "com.cryptolab.k280-live",
+        "plist": "com.cryptolab.k280-live.plist",
+        "script": "scripts/k280_daily_run.py",
+        "loads_weight_from": "portfolio_aum_manager.load_state() → data/portfolio_aum_state.json",
+        "restart_required": true,
+        "restart_cmd": "launchctl unload ~/Library/LaunchAgents/com.cryptolab.k280-live.plist && launchctl load ~/Library/LaunchAgents/com.cryptolab.k280-live.plist"
+      },
+      {
+        "daemon": "com.cryptolab.k302a-satellite",
+        "plist": "com.cryptolab.k302a-satellite.plist",
+        "script": "scripts/k302a_satellite_run.py",
+        "loads_weight_from": "leverage_manager.SLEEVE_WEIGHTS (module-level) + compute_position_size()",
+        "restart_required": true,
+        "restart_cmd": "launchctl unload ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist && launchctl load ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist"
+      }
+    ],
+    "not_affected": [
+      "com.cryptolab.paper-trade — uses independent weight config",
+      "com.cryptolab.forward-test — read-only monitoring",
+      "com.cryptolab.inbox-poll — no position sizing",
+      "com.cryptolab.hl-predicted-monitor — monitoring only"
+    ],
+    "launchctl_status_check": "launchctl list | grep cryptolab"
+  },
+
+  "rollback": {
+    "description": "Revert K280 from 0.60 back to 0.75 if patch causes issues",
+    "rollback_primary": "sed -i '' 's/\"K280\":   0\\.60,   # K280 main (K539 Phase B1: 75→60%, frees 7.5pp HL, 2026-05-30)/\"K280\":   0.75,   # K280 main (K198 + K208 + K276b) — v6.13d; v6.16 reduces to 0.72/' scripts/leverage_manager.py",
+    "rollback_json": "python3 -c \"import json; f='data/portfolio_aum_state.json'; d=json.load(open(f)); d['sleeve_weights']['K280']=0.75; json.dump(d, open(f,'w'), indent=2)\"",
+    "rollback_aum_manager": "sed -i '' 's/\"K280\":       0\\.60,/\"K280\":       0.75,/' scripts/portfolio_aum_manager.py",
+    "then_restart": "launchctl unload/load for k280-live and k302a-satellite",
+    "trigger_rollback_if": [
+      "HL exposure rises unexpectedly > 65% after K449 add",
+      "Margin health check > 80% (circuit breaker fires)",
+      "K280 daily PnL anomaly > 3sigma (check k280_live_dashboard.json)"
+    ],
+    "git_backup": "git stash (before applying) or git diff HEAD for comparison"
+  },
+
+  "profit_unlock": {
+    "direct_effect": "K280 sleeve $10M × 0.75 → $7.5M → $6M (deployed_capital basis): $1.5M freed capital",
+    "hl_headroom_freed": "7.5pp HL headroom: 57.5% → 50.0%",
+    "enables_k449_live": {
+      "k449_sleeve": "5% × $9.2M deployed = $460K capital × 4x leverage = $1.84M notional",
+      "k449_annual": "$13K/yr (conservative) — pipeline validation for $1.163M/yr total",
+      "hl_after_k449": "50% + 5% sleeve HL portion ≈ 52-54% (well under 65% cap)"
+    },
+    "enables_k376_bull": {
+      "k376_trigger": "ETA 14d (K551 analysis)",
+      "k376_annual": "$247K/yr",
+      "hl_after_k376": "depends on k376 HL allocation, but 7.5pp headroom comfortably accommodates"
+    },
+    "net_30d_unlock": "$247K (K376) + $13K+ (K449 pipeline start) = $260K+ immediate; full pipeline $1.163M/yr"
+  }
+}
