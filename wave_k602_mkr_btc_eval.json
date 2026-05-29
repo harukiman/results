@@ -1,0 +1,708 @@
+{
+  "wave": "K602",
+  "strategy": "MKR-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T08:26:24+0900",
+  "runtime_s": 2.7,
+  "decision": "REJECT",
+  "dai_cluster_status": "CANNOT CONFIRM \u2014 MKR venue delisted (HL isDelisted, Bybit Closed, OKX not found)",
+  "k599_context": {
+    "k593_result": "REJECT (UNI vol 1.012x \u2014 DEX governance FR-undifferentiated)",
+    "k594_result": "REJECT (LDO vol 1.40x \u2014 LSD governance insufficient vol)",
+    "k596_result": "ACCEPT CONDITIONAL (AAVE vol 365d=1.842x, Sh=11.35 \u2014 Lending utility)",
+    "k599_result": "ACCEPT CONDITIONAL (CRV vol 365d=1.803x, Sh=5.29 \u2014 veToken bribe)",
+    "k602_hypothesis": "MKR DAI stability module (collateral demand cycle, SF governance) may distinguish DeFi Stablecoin Issuance sub-cluster",
+    "venue_finding": "MKR-PERP delisted across all major venues: HL isDelisted=True, Bybit Closed (Aug 2025), OKX not found, Binance SETTLING. Cannot evaluate live strategy \u2014 Phase 0 VENUE FAIL."
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "mkr_listed": true,
+      "is_delisted": true,
+      "total_symbols": 230,
+      "max_leverage": 10,
+      "margin_table_id": 51,
+      "api_success": true,
+      "venue_fail": true,
+      "note": "HL meta API: 230 symbols. MKR: LISTED. isDelisted=True. maxLeverage=10. CRITICAL: HL isDelisted=True \u2014 MKR-PERP delisted from Hyperliquid. FR data cache available 2024-05-24 to 2025-09-05 (468 active days). Phase 0 VENUE FAIL: cannot execute live strategy."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "mkr_listed": false,
+      "status": "Closed",
+      "max_leverage": "25.00",
+      "delivery_time": "1755507600000",
+      "api_success": true,
+      "venue_fail": true,
+      "note": "Bybit MKRUSDT: status=Closed, maxLeverage=25.00, deliveryTime=1755507600000. VENUE FAIL: Contract Closed/Expired. 8h FR settlement interval."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "mkr_listed": false,
+      "api_success": true,
+      "venue_fail": true,
+      "okx_code": "51001",
+      "note": "OKX MKR-USDT-SWAP: NOT FOUND (code=51001). VENUE FAIL: OKX does not list MKR perpetual swap."
+    },
+    "venue_pass": false,
+    "hl_delisted": true,
+    "bybit_closed": true,
+    "okx_not_found": true,
+    "venue_note": "HL isDelisted=True (maxLev=10), Bybit status=Closed (deliveryTime=1755507600000), OKX=NOT FOUND (code=51001). Binance MKRUSDT=SETTLING (checked 2026-05-30). ALL MAJOR VENUES DELISTED MKR PERPETUAL FUTURES.",
+    "vol_ratio_6m": 1.2864,
+    "vol_ratio_365d": 1.3418,
+    "vol_ratio_full": 1.3429,
+    "vol_ratio_primary": 1.3429,
+    "vol_threshold": 1.5,
+    "vol_pass": "False",
+    "vol_pass_bool": false,
+    "vol_window_used": "max(6M, 365d, full) \u2014 active period 2024-05-24 to 2025-09-05",
+    "prescreen_pass": false,
+    "mkr_active_start": "2024-05-24 20:00:00",
+    "mkr_active_end": "2025-09-05 11:00:00",
+    "mkr_active_days": 468.0,
+    "mkr_fr_rows_active": 11247,
+    "btc_fr_rows_active": 11275,
+    "aligned_rows": 11247,
+    "mkr_fr_mean": 2.107e-05,
+    "mkr_fr_std": 2.649e-05,
+    "bybit_mkr_fr_mean": 7.747e-05,
+    "bybit_mkr_note": "Bybit 8h FR (historical, contract Closed): mean=7.747397e-05, rows=1352, range=2024-05-25 00:00:00 to 2025-08-18 08:00:00. Bybit MKRUSDT deliveryTime=2025-08-18 \u2014 contract expired.",
+    "note": "Phase 0 FAIL (VENUE): HL isDelisted=True, Bybit status=Closed, OKX=NOT FOUND. Vol ratio MKR/BTC (active period): 6M=1.2864x, 365d=1.3418x, full=1.3429x (primary=1.3429x \u2014 all < 1.5x). Double failure: venue AND vol. Active period: 2024-05-24 20:00:00 to 2025-09-05 11:00:00 (11247 rows). DECISION: REJECT \u2014 cannot deploy live strategy.",
+    "vol_analysis": {
+      "6m_window": 1.2864,
+      "365d_window": 1.3418,
+      "full_window": 1.3429,
+      "primary": "max(6M, 365d, full) \u2014 active period",
+      "threshold": 1.5,
+      "verdict": "6M=1.2864x, 365d=1.3418x, full=1.3429x. Primary=1.3429x FAIL. UNI K593: 6M=1.012x \u2192 REJECT. LDO K594: 1.40x \u2192 REJECT. AAVE K596: 365d=1.842x \u2192 PASS. CRV K599: 365d=1.803x \u2192 PASS. MKR K602: max=1.3429x \u2014 BELOW 1.5x threshold. DAI stability fee adjustments insufficient vol premium vs BTC carry. CDP demand cycles: BTC/ETH collateral \u2192 MKR FR correlated to broader market. Stability Fee governance votes create modest discrete vol spikes, not enough for sustained FR differentiation from BTC institutional carry.",
+      "defi_comparison": {
+        "aave_vol_365": 1.8423,
+        "crv_vol_365": 1.8026,
+        "mkr_vol_6m": 1.2864,
+        "mkr_vol_365": 1.3418,
+        "mkr_vol_full": 1.3429,
+        "insight": "MKR max=1.3429x vs AAVE 1.842x vs CRV 1.803x. MKR vol insufficient: DAI peg is mechanical (PSM arbitrage dampens vol). Stability Fees are governance decisions \u2192 discrete step changes, not continuous vol. MKR token = insurance against DAI failure + burn from SF revenue. FR reflects stable collateral demand rather than speculative DeFi vol premium."
+      }
+    }
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "MKR-PERP vs BTC-PERP (HL 1h FR differential \u2014 HISTORICAL ONLY)",
+    "active_period": "2024-05-24 20:00:00 to 2025-09-05 11:00:00 (468 active days)",
+    "window_rationale": "W=168h (7d) \u2014 G6-compliant (37 trades/yr). Best OOS Sharpe: W=336h (Sh=12.6656, trades/yr=13.0 < 30 G6 FAIL). W=168h selected: G6 compliant (>= 30 trades/yr). Historical context only \u2014 strategy not live-eligible."
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -11.6593,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4309,
+      "critical_5": -2.8618
+    },
+    "ou_half_life": {
+      "half_life_h": 2.61,
+      "half_life_days": 0.11,
+      "theta": 0.265099,
+      "intercept": 1.11e-06,
+      "r_squared": 0.1324,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 10.9774,
+      "perm_mean_sh": 0.0167,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 10.9774,
+      "t_stat": 6.762,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.005556,
+      "n_trials": 9,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 16.1493,
+    "ann_ret_pct": 5.3101,
+    "max_dd_pct": -0.4492,
+    "trades_yr": 31.6,
+    "n_days": 323.2,
+    "n_hours": 7756,
+    "n_pos_months": 11,
+    "n_neg_months": 1,
+    "cum_ret": 0.047015,
+    "ret_mean": 6.06e-06,
+    "ret_std": 3.513e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 10.9774,
+    "ann_ret_pct": 3.5973,
+    "max_dd_pct": -0.2709,
+    "trades_yr": 36.9,
+    "n_days": 138.5,
+    "n_hours": 3324,
+    "n_pos_months": 5,
+    "n_neg_months": 1,
+    "cum_ret": 0.01365,
+    "ret_mean": 4.11e-06,
+    "ret_std": 3.501e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 14.5973,
+    "ann_ret_pct": 4.7963,
+    "max_dd_pct": -0.4492,
+    "trades_yr": 33.2,
+    "n_days": 461.7,
+    "n_hours": 11080,
+    "n_pos_months": 15,
+    "n_neg_months": 2,
+    "cum_ret": 0.060665,
+    "ret_mean": 5.48e-06,
+    "ret_std": 3.511e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 336,
+      "oos_sharpe": 12.6656,
+      "oos_ann_ret_pct": 3.395,
+      "trades_yr": 13.0
+    },
+    {
+      "window_h": 168,
+      "oos_sharpe": 11.3309,
+      "oos_ann_ret_pct": 3.6899,
+      "trades_yr": 36.3
+    },
+    {
+      "window_h": 120,
+      "oos_sharpe": 10.8571,
+      "oos_ann_ret_pct": 3.6387,
+      "trades_yr": 41.5
+    },
+    {
+      "window_h": 72,
+      "oos_sharpe": 10.325,
+      "oos_ann_ret_pct": 3.8207,
+      "trades_yr": 57.1
+    },
+    {
+      "window_h": 240,
+      "oos_sharpe": 9.0344,
+      "oos_ann_ret_pct": 2.939,
+      "trades_yr": 33.8
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 6,
+    "n_positive": 5,
+    "all_positive": false,
+    "pass": false,
+    "sh_min": -1.2407,
+    "sh_max": 25.2974,
+    "sh_mean": 11.2599,
+    "sh_std": 9.6841,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-03-09",
+        "end": "2025-04-08",
+        "sharpe": 2.2678,
+        "positive": "True",
+        "max_dd": -0.001961
+      },
+      {
+        "fold": 2,
+        "start": "2025-04-08",
+        "end": "2025-05-08",
+        "sharpe": 7.5234,
+        "positive": "True",
+        "max_dd": -0.001126
+      },
+      {
+        "fold": 3,
+        "start": "2025-05-08",
+        "end": "2025-06-07",
+        "sharpe": 21.951,
+        "positive": "True",
+        "max_dd": -0.001324
+      },
+      {
+        "fold": 4,
+        "start": "2025-06-07",
+        "end": "2025-07-07",
+        "sharpe": 25.2974,
+        "positive": "True",
+        "max_dd": -0.00059
+      },
+      {
+        "fold": 5,
+        "start": "2025-07-07",
+        "end": "2025-08-06",
+        "sharpe": 11.7608,
+        "positive": "True",
+        "max_dd": -0.002184
+      },
+      {
+        "fold": 6,
+        "start": "2025-08-06",
+        "end": "2025-09-05",
+        "sharpe": -1.2407,
+        "positive": "False",
+        "max_dd": -0.001804
+      }
+    ],
+    "is_h": 1440,
+    "oos_h": 720,
+    "adapted": true,
+    "reason": "6-fold WF (IS=60d/OOS=30d). MKR listed HL May 2024, delisted Sep 2025 \u2014 only 468 active days.",
+    "note": "Adapted 6-fold WF (IS=60d/OOS=30d). MKR active ~468d (2024-05-24 to 2025-09-05). 5/6 positive folds. G4 PARTIAL: 1/6 negative folds. Sharpe range: [-1.24, 25.30]. MKR: DAI stability cycles \u2014 final fold (Aug 2025) negative as MKR delisting approached. CONTEXT ONLY: strategy not live-eligible (venue FAIL)."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G0 Venue": false,
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": false,
+      "G5 Family corr": true,
+      "G6 Trades/yr": true,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": false,
+      "G9 Data sufficiency": false
+    },
+    "gates_passed": 6,
+    "gates_total": 10,
+    "gates_failed": 4,
+    "g7_ret_4x_pct": 14.39,
+    "g4_all_positive": false,
+    "g5_all_pass": true,
+    "g0_venue_fail": true,
+    "g8_note": "G8 signal corr=0.0375 (threshold=0.55). Overlap=10808h (~450d). G8 FAIL structural (HL 1h vs Bybit 8h). NOTE: G8 historically computed but irrelevant \u2014 Bybit MKRUSDT Closed, HL isDelisted.",
+    "g9_note": "OOS=138.5d < 180d. G9 FAIL. MKR active period 468d (2024-05-24 to 2025-09-05). OOS=138.5d insufficient for live deployment.",
+    "venue_override_note": "G0 venue FAIL is deterministic REJECT regardless of other gates. HL isDelisted, Bybit Closed, OKX not found, Binance SETTLING. Historical backtest G1-G7 shown for DeFi cluster documentation only.",
+    "decision": "REJECT"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": 0.2898,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "CRITICAL: MKR on ETH L1 (DAI CDP demand via ETH collateral)"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": 0.2956,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "Solana vs MKR stable-issuance"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": 0.2098,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "Avalanche vs MKR"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": 0.0848,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "Cosmos vs MKR"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": 0.0229,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "INJ vs MKR"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": -0.0467,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "SEI vs MKR"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": 0.1302,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "TIA vs MKR"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": 0.0975,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "APT vs MKR"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": 0.1338,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "Storage vs MKR"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531",
+        "corr": 0.1122,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "AI/GPU vs MKR"
+      },
+      "g5l": {
+        "label": "TAO-BTC K534",
+        "corr": 0.2472,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "AI/Training vs MKR"
+      },
+      "g5n": {
+        "label": "TON-BTC K571",
+        "corr": -0.0161,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "Social/Messaging vs MKR"
+      },
+      "g5o": {
+        "label": "SAND-BTC K583",
+        "corr": 0.0857,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "Gaming/UGC vs MKR"
+      },
+      "g5p": {
+        "label": "AXS-BTC K591",
+        "corr": null,
+        "pass": null,
+        "n": 0,
+        "note": "data missing or no overlap with MKR active period"
+      },
+      "g5q": {
+        "label": "KAS-BTC K590",
+        "corr": 0.0566,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "PoW/BlockDAG vs MKR"
+      },
+      "g5r": {
+        "label": "ICP-BTC K587",
+        "corr": null,
+        "pass": null,
+        "n": 0,
+        "note": "data missing or no overlap with MKR active period"
+      },
+      "g5s": {
+        "label": "UNI-BTC K593 (DeFi DEX vs MKR stable-issuance)",
+        "corr": 0.1509,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "CRITICAL: DeFi DEX sub-cluster"
+      },
+      "g5t": {
+        "label": "LDO-BTC K594 (LSD vs MKR stablecoin)",
+        "corr": 0.0766,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "DeFi LSD sub-cluster"
+      },
+      "g5u": {
+        "label": "AAVE-BTC K596 (DeFi Lending vs MKR stablecoin)",
+        "corr": 0.1616,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "CRITICAL: Lending vs stable-issuance"
+      },
+      "g5v": {
+        "label": "CRV-BTC K599 (veToken vs MKR stablecoin)",
+        "corr": 0.1775,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "CRITICAL: veToken bribe vs DAI issuance"
+      },
+      "g5w": {
+        "label": "DOGE-BTC K592",
+        "corr": 0.1156,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "Meme vs MKR"
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline",
+        "corr": 0.1122,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3324,
+        "note": "BTC institutional carry baseline. MKR must not replicate BTC-carry signal."
+      }
+    },
+    "n_pass": 20,
+    "n_evaluated": 20,
+    "n_total": 22,
+    "all_pass": true,
+    "eth_corr_critical": 0.2898,
+    "aave_corr_defi": 0.1616,
+    "crv_corr_defi": 0.1775,
+    "eth_cluster_blocked": false,
+    "defi_cluster_blocked": false,
+    "note": "G5 family: 20/20 evaluated PASS (FAIL=0). 2 N/A (AXS K591, ICP K587 \u2014 listed after MKR delisting, no overlap). ETH G5a=0.2898 (PASS: MKR distinct from ETH L1 carry). AAVE G5u=0.1616 (PASS: MKR stable-issuance distinct from AAVE lending). CRV G5v=0.1775 (PASS: MKR distinct from CRV veToken). NOTE: Historical G5 on active period (2024-05-24 to 2025-09-05). Context only \u2014 strategy not live-eligible (venue FAIL)."
+  },
+  "cross_venue_fr": {
+    "pass": false,
+    "hl_bybit_signal_corr": 0.0375,
+    "bybit_mkr_rows": 1352,
+    "bybit_btc_rows": 2190,
+    "overlap_hours": 10808,
+    "note": "G8 signal corr=0.0375 (threshold=0.55). Overlap=10808h (~450d). G8 FAIL structural (HL 1h vs Bybit 8h). NOTE: G8 historically computed but irrelevant \u2014 Bybit MKRUSDT Closed, HL isDelisted."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 3.5973,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 14.39,
+    "usdc_yr_1pct_10M": 0,
+    "usdc_yr_2pct_10M": 0,
+    "usdc_yr_1pct_100M": 0,
+    "usdc_yr_2pct_100M": 0,
+    "note": "REJECT \u2014 venue fail. $0 profit (no live deployment). Historical: OOS ann=3.5973% \u00d7 4x = 14.3892%/yr (for reference only). Re-evaluate if MKR re-lists on HL/Bybit with new perpetual contract."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 65.0,
+    "mkr_alloc_pct": 0.0,
+    "projected_pct": 65.0,
+    "cap_pct": 65.0,
+    "breach": false,
+    "note": "MKR REJECT (venue FAIL) \u2014 HL concentration unchanged at 65.0%. isDelisted on HL \u2014 no allocation possible. HL delta = 0.0pp. No HL concentration impact."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "SAND-BTC",
+      "sharpe": 33.627,
+      "ecosystem": "Gaming/UGC",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 7,
+      "pair": "DOGE-BTC",
+      "sharpe": 21.069,
+      "ecosystem": "Meme/PoW",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "AXS-BTC",
+      "sharpe": 17.815,
+      "ecosystem": "Gaming/P2E",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 9,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 10,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 11,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 12,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "KAS-BTC",
+      "sharpe": 13.303,
+      "ecosystem": "PoW/BlockDAG",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 14,
+      "pair": "ICP-BTC",
+      "sharpe": 12.53,
+      "ecosystem": "Compute/Cloud",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 15,
+      "pair": "AAVE-BTC",
+      "sharpe": 11.354,
+      "ecosystem": "DeFi/Lending",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 16,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 17,
+      "pair": "TON-BTC",
+      "sharpe": 8.402,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 18,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 19,
+      "pair": "CRV-BTC",
+      "sharpe": 5.29,
+      "ecosystem": "DeFi/veToken (veCRV bribe)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 20,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "mkr_family_rank": null,
+  "family_count": 20,
+  "dai_stablecoin_cluster": {
+    "cluster_name": "DeFi Stablecoin Issuance (MakerDAO/DAI)",
+    "candidate": "MKR (MakerDAO \u2014 CDP-based stablecoin issuance, DAI governance)",
+    "status": "CANNOT CONFIRM \u2014 Venue failure (HL isDelisted, Bybit Closed, OKX not found)",
+    "verdict": "DeFi Stablecoin Issuance sub-cluster: CANNOT CONFIRM via MKR. Primary failure: MKR perp futures delisted across all major venues (Sep 2025). Secondary failure: vol ratio max=1.333x < 1.5x threshold (active period). Hypothesis reasoning: DAI PSM arbitrage (USDC\u2194DAI) dampens MKR FR vol premium. Stability Fee governance = discrete step changes vs continuous vol drivers (AAVE/CRV). MKR token value accrual via burn mechanism is not a direct FR driver. Sub-cluster remains unconfirmed \u2014 evaluate COMP-BTC or SNX-BTC for DeFi diversification.",
+    "defi_taxonomy": {
+      "DEX_governance": {
+        "token": "UNI",
+        "wave": "K593",
+        "result": "REJECT (vol 1.012x \u2014 governance-only, no fee distribution)",
+        "fr_driver": "Macro DeFi sentiment = BTC-convergent"
+      },
+      "LSD_governance": {
+        "token": "LDO",
+        "wave": "K594",
+        "result": "REJECT (vol 1.40x \u2014 governance, stETH passive)",
+        "fr_driver": "ETH staking APY correlated, insufficient vol premium"
+      },
+      "Lending_utility": {
+        "token": "AAVE",
+        "wave": "K596",
+        "result": "ACCEPT CONDITIONAL (Sh=11.35, G4/G8 structural fail)",
+        "fr_driver": "Liquidation cascades + borrow rate cycles + Safety Module staking"
+      },
+      "veToken_bribe": {
+        "token": "CRV",
+        "wave": "K599",
+        "result": "ACCEPT CONDITIONAL (Sh=5.29, G4/G8 structural fail)",
+        "fr_driver": "veCRV gauge voting cycle (weekly) + bribe market APY + Convex flywheel"
+      },
+      "Stablecoin_issuance": {
+        "token": "MKR",
+        "wave": "K602",
+        "result": "REJECT (venue delisted, vol 1.333x < 1.5x)",
+        "fr_driver": "DAI CDP demand cycle (BTC/ETH collateral) + SF governance votes (dampened by PSM)"
+      }
+    },
+    "vol_ratio_comparison": {
+      "UNI_365d": 1.24,
+      "LDO_full": 1.402,
+      "MKR_6M": 1.2864,
+      "MKR_365d": 1.3418,
+      "MKR_full": 1.3429,
+      "AAVE_365d": 1.8423,
+      "CRV_365d": 1.8026,
+      "insight": "MKR max=1.3429x < AAVE 1.8423x < CRV 1.8026x. DeFi vol hierarchy: Liquidation-driven (AAVE) > Bribe-economy (CRV) > Stablecoin-issuance (MKR) > DEX-governance (UNI). PSM (DAI\u2194USDC 1:1 swap) caps MKR FR vol: peg maintained mechanically, not via speculation \u2014 reduces FR differentiation from BTC carry."
+    },
+    "historical_backtest_note": "Historical backtest (W=168h, active 2024-05-24 to 2025-09-05): OOS Sh=10.9774, IS Sh=16.1493. High Sharpe historically but: (1) short active period 468d, (2) OOS only 138.5d < 180d G9 threshold, (3) not deployable \u2014 all venues closed/delisted. IF MKR relists: re-evaluate with fresh data and venue check.",
+    "next_candidates": [
+      "COMP-BTC (Compound \u2014 alt lending cluster, AAVE competitor validation)",
+      "SNX-BTC (Synthetix \u2014 synthetic assets, distinct DeFi vertical from MKR/AAVE)",
+      "ARB-BTC (Arbitrum \u2014 L2 cluster, rollup narrative distinct from L1s)",
+      "OP-BTC (Optimism \u2014 L2 cluster, alt rollup ecosystem)"
+    ]
+  },
+  "decision_rationale": "Phase 0 VENUE FAIL: HL isDelisted=True, Bybit status=Closed, OKX=NOT FOUND. Binance MKRUSDT=SETTLING. Vol ratio 6M=1.2864x, 365d=1.3418x, full=1.3429x (all < 1.5x threshold on active period). MKR perp futures delisted across all major venues as of Sep 2025. DeFi Stablecoin Issuance sub-cluster CANNOT CONFIRM via MKR. Historical backtest quality HIGH (OOS Sh=10.977) but not live-eligible. Re-evaluation trigger: MKR relisting on HL or Bybit with new contract. Next pivot: COMP-BTC (Compound \u2014 alt lending cluster vs AAVE), SNX-BTC (Synthetix \u2014 synthetic assets distinct DeFi vertical), or L2 cluster (ARB-BTC, OP-BTC \u2014 rollup narrative).",
+  "next_pivot": "MKR-BTC REJECT (venue delisted, vol max=1.3429x < 1.5x). DeFi taxonomy 4-cluster confirmed (AAVE K596 + CRV K599). 5th DeFi sub-cluster (Stablecoin Issuance) CANNOT CONFIRM via MKR \u2014 venue unavailable. DeFi exploration: 4 sub-clusters evaluated, 2 ACCEPT CONDITIONAL (AAVE, CRV). Pivot options: (A) COMP-BTC (Compound, alt lending validation) \u2014 if listed on HL/Bybit; (B) SNX-BTC (Synthetix synthetic assets \u2014 distinct DeFi vertical); (C) L2 cluster (ARB-BTC, OP-BTC \u2014 rollup narrative, ecosystem fees); (D) Resume with next MEMORY backlog item."
+}
