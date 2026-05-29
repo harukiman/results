@@ -1,0 +1,868 @@
+{
+  "wave": "K453",
+  "strategy": "HL HIP-4 Prediction Market Trading Prototype",
+  "run_time_jst": "2026-05-30T00:23 JST",
+  "runtime_s": 0.23,
+  "data_summary": {
+    "n_snapshots": 4,
+    "span_days": 2.04,
+    "total_rows": 88,
+    "first_snapshot": "hip4_20260526_2220.parquet",
+    "last_snapshot": "hip4_20260528_2322.parquet"
+  },
+  "market_inventory": {
+    "snapshot_count": 4,
+    "latest_ts_utc": "2026-05-28T23:22:04.026000+00:00",
+    "n_markets": 6,
+    "n_outcomes_total": 22,
+    "markets": [
+      {
+        "question_name": "May CPI year-over-year",
+        "category": "macro_one-off",
+        "n_outcomes": 4,
+        "resolution_target": "2026-06-11",
+        "outcomes": [
+          {
+            "outcome_name": "Fallback",
+            "outcome_id": 100,
+            "coin_key": "#1000",
+            "mid_price_yes": 0.5,
+            "resolved": false,
+            "description": ""
+          },
+          {
+            "outcome_name": "Below 4.3%",
+            "outcome_id": 101,
+            "coin_key": "#1010",
+            "mid_price_yes": 0.4215,
+            "resolved": false,
+            "description": "This outcome resolves to Yes if the one-decimal BLS CPI year-over-year value for May 2026 is below 4.3%."
+          },
+          {
+            "outcome_name": "Exactly 4.3%",
+            "outcome_id": 102,
+            "coin_key": "#1020",
+            "mid_price_yes": 0.4175,
+            "resolved": false,
+            "description": "This outcome resolves to Yes if the one-decimal BLS CPI year-over-year value for May 2026 is exactly 4.3%."
+          },
+          {
+            "outcome_name": "Above 4.3%",
+            "outcome_id": 103,
+            "coin_key": "#1030",
+            "mid_price_yes": 0.149975,
+            "resolved": false,
+            "description": "This outcome resolves to Yes if the one-decimal BLS CPI year-over-year value for May 2026 is above 4.3%."
+          }
+        ],
+        "strategy_applicability": [
+          "calibration_arb",
+          "event_trading"
+        ]
+      },
+      {
+        "question_name": "",
+        "category": "unknown",
+        "n_outcomes": 3,
+        "resolution_target": "TBD",
+        "outcomes": [
+          {
+            "outcome_name": "June Fed rate change",
+            "outcome_id": 104,
+            "coin_key": "#1040",
+            "mid_price_yes": 0.02698,
+            "resolved": false,
+            "description": "The market resolves to Change if the upper bound of the target federal funds rate range in the Federal Open Market Committee (FOMC) statement for the meeting currently scheduled for June 16-17, 2026 differs from the upper bound of the target range set by the most recent prior FOMC statement. Otherwise, the market resolves to No Change. The market also resolves to No Change if the June 16-17, 2026 meeting is canceled, or if no FOMC statement containing a rate decision for that meeting is released by 23:59 ET on July 29, 2026. The target range stated in the FOMC statement for the June 16-17, 2026 meeting determines the result. If that statement is unavailable or does not clearly state the target range, the post-meeting target range upper bound shown on the Federal Reserve's open market operations page determines the result. Resolution uses the initially released decision; later revisions after resolution are not considered. Scheduled meeting dates and source references are provided for convenience and are not binding terms of resolution."
+          },
+          {
+            "outcome_name": "Champions League Winner",
+            "outcome_id": 110,
+            "coin_key": "#1100",
+            "mid_price_yes": 0.58531,
+            "resolved": false,
+            "description": "The market resolves to PSG if UEFA officially crowns Paris Saint-Germain as champion of the 2025-26 UEFA Champions League. The market resolves to Arsenal if UEFA officially crowns Arsenal as champion of the 2025-26 UEFA Champions League. Match results after regular time, extra time, and penalties, if applicable, are all valid for resolution purposes. If UEFA crowns either listed club as champion without a completed final match, including but not limited to following abandonment, walkover, forfeit, disqualification, or administrative decision, the market resolves for that club accordingly. If the final is postponed or delayed, the rescheduled final will be used, provided UEFA officially crowns a champion by July 1, 2026 at 23:59 UTC. The market resolves to 0.5 if: (a) UEFA cancels the 2025-26 UEFA Champions League, (b) UEFA declares no champion, (c) UEFA crowns a club other than PSG or Arsenal as champion, (d) UEFA declares any clubs as co-champions, or (e) UEFA has not officially crowned a champion by July 1, 2026 at 23:59 UTC. UEFA is the primary resolution source, although independent reputable news sources may be used as fallback sources if UEFA has not published the relevant result. Once resolved, subsequent appeals, corrections, reversals, or champion reassignments by UEFA or any other body will not affect the market resolution. metadata=category:sports|subCategory:football"
+          },
+          {
+            "outcome_name": "Recurring",
+            "outcome_id": 116,
+            "coin_key": "#1160",
+            "mid_price_yes": 0.867255,
+            "resolved": false,
+            "description": "class:priceBinary|underlying:BTC|expiry:20260529-0600|targetPrice:72951|period:1d"
+          }
+        ],
+        "strategy_applicability": [
+          "event_trading"
+        ]
+      },
+      {
+        "question_name": "Recurring",
+        "category": "btc_daily_binary",
+        "n_outcomes": 4,
+        "resolution_target": "daily (06:00 UTC expiry)",
+        "outcomes": [
+          {
+            "outcome_name": "Recurring Fallback",
+            "outcome_id": 117,
+            "coin_key": "#1170",
+            "mid_price_yes": 0.5,
+            "resolved": false,
+            "description": "other"
+          },
+          {
+            "outcome_name": "Recurring Named Outcome",
+            "outcome_id": 118,
+            "coin_key": "#1180",
+            "mid_price_yes": 0.002505,
+            "resolved": false,
+            "description": "index:0"
+          },
+          {
+            "outcome_name": "Recurring Named Outcome",
+            "outcome_id": 119,
+            "coin_key": "#1190",
+            "mid_price_yes": 0.937295,
+            "resolved": false,
+            "description": "index:1"
+          },
+          {
+            "outcome_name": "Recurring Named Outcome",
+            "outcome_id": 120,
+            "coin_key": "#1200",
+            "mid_price_yes": 0.07368,
+            "resolved": false,
+            "description": "index:2"
+          }
+        ],
+        "strategy_applicability": [
+          "event_trading",
+          "kelly_binary",
+          "mean_reversion"
+        ]
+      },
+      {
+        "question_name": "June Fed rate change",
+        "category": "macro_fomc",
+        "n_outcomes": 1,
+        "resolution_target": "2026-06-17 (FOMC decision)",
+        "outcomes": [
+          {
+            "outcome_name": "June Fed rate change",
+            "outcome_id": 104,
+            "coin_key": "#1040",
+            "mid_price_yes": 0.02698,
+            "resolved": false,
+            "description": "The market resolves to Change if the upper bound of the target federal funds rate range in the Federal Open Market Committee (FOMC) statement for the meeting currently scheduled for June 16-17, 2026 differs from the upper bound of the target range set by the most recent prior FOMC statement. Otherwise, the market resolves to No Change. The market also resolves to No Change if the June 16-17, 2026 meeting is canceled, or if no FOMC statement containing a rate decision for that meeting is released by 23:59 ET on July 29, 2026. The target range stated in the FOMC statement for the June 16-17, 2026 meeting determines the result. If that statement is unavailable or does not clearly state the target range, the post-meeting target range upper bound shown on the Federal Reserve's open market operations page determines the result. Resolution uses the initially released decision; later revisions after resolution are not considered. Scheduled meeting dates and source references are provided for convenience and are not binding terms of resolution."
+          }
+        ],
+        "strategy_applicability": [
+          "event_trading",
+          "calibration_arb"
+        ]
+      },
+      {
+        "question_name": "Champions League Winner",
+        "category": "sports_one-off",
+        "n_outcomes": 1,
+        "resolution_target": "2026-05-31 (UCL Final)",
+        "outcomes": [
+          {
+            "outcome_name": "Champions League Winner",
+            "outcome_id": 110,
+            "coin_key": "#1100",
+            "mid_price_yes": 0.58531,
+            "resolved": false,
+            "description": "The market resolves to PSG if UEFA officially crowns Paris Saint-Germain as champion of the 2025-26 UEFA Champions League. The market resolves to Arsenal if UEFA officially crowns Arsenal as champion of the 2025-26 UEFA Champions League. Match results after regular time, extra time, and penalties, if applicable, are all valid for resolution purposes. If UEFA crowns either listed club as champion without a completed final match, including but not limited to following abandonment, walkover, forfeit, disqualification, or administrative decision, the market resolves for that club accordingly. If the final is postponed or delayed, the rescheduled final will be used, provided UEFA officially crowns a champion by July 1, 2026 at 23:59 UTC. The market resolves to 0.5 if: (a) UEFA cancels the 2025-26 UEFA Champions League, (b) UEFA declares no champion, (c) UEFA crowns a club other than PSG or Arsenal as champion, (d) UEFA declares any clubs as co-champions, or (e) UEFA has not officially crowned a champion by July 1, 2026 at 23:59 UTC. UEFA is the primary resolution source, although independent reputable news sources may be used as fallback sources if UEFA has not published the relevant result. Once resolved, subsequent appeals, corrections, reversals, or champion reassignments by UEFA or any other body will not affect the market resolution. metadata=category:sports|subCategory:football"
+          }
+        ],
+        "strategy_applicability": [
+          "event_trading"
+        ]
+      },
+      {
+        "question_name": "Recurring",
+        "category": "btc_daily_binary",
+        "n_outcomes": 1,
+        "resolution_target": "daily (06:00 UTC expiry)",
+        "outcomes": [
+          {
+            "outcome_name": "Recurring",
+            "outcome_id": 116,
+            "coin_key": "#1160",
+            "mid_price_yes": 0.867255,
+            "resolved": false,
+            "description": "class:priceBinary|underlying:BTC|expiry:20260529-0600|targetPrice:72951|period:1d"
+          }
+        ],
+        "strategy_applicability": [
+          "event_trading",
+          "kelly_binary"
+        ]
+      }
+    ]
+  },
+  "price_evolution": {
+    "n_snapshots": 4,
+    "span_days": 2.04,
+    "outcomes": [
+      {
+        "outcome_id": 100,
+        "outcome_name": "Fallback",
+        "question_name": "May CPI year-over-year",
+        "n_snapshots": 4,
+        "price_first": 0.5,
+        "price_last": 0.5,
+        "total_drift": 0.0,
+        "max_move": 0.0,
+        "std_moves": 0.0,
+        "prices_series": [
+          0.5,
+          0.5,
+          0.5,
+          0.5
+        ]
+      },
+      {
+        "outcome_id": 101,
+        "outcome_name": "Below 4.3%",
+        "question_name": "May CPI year-over-year",
+        "n_snapshots": 4,
+        "price_first": 0.368,
+        "price_last": 0.4215,
+        "total_drift": 0.0535,
+        "max_move": 0.0535,
+        "std_moves": 0.0252,
+        "prices_series": [
+          0.368,
+          0.368,
+          0.4215,
+          0.4215
+        ]
+      },
+      {
+        "outcome_id": 102,
+        "outcome_name": "Exactly 4.3%",
+        "question_name": "May CPI year-over-year",
+        "n_snapshots": 4,
+        "price_first": 0.4366,
+        "price_last": 0.4175,
+        "total_drift": -0.0191,
+        "max_move": 0.0191,
+        "std_moves": 0.009,
+        "prices_series": [
+          0.4366,
+          0.4366,
+          0.4175,
+          0.4175
+        ]
+      },
+      {
+        "outcome_id": 103,
+        "outcome_name": "Above 4.3%",
+        "question_name": "May CPI year-over-year",
+        "n_snapshots": 4,
+        "price_first": 0.2285,
+        "price_last": 0.15,
+        "total_drift": -0.0785,
+        "max_move": 0.0785,
+        "std_moves": 0.037,
+        "prices_series": [
+          0.2285,
+          0.2285,
+          0.15,
+          0.15
+        ]
+      },
+      {
+        "outcome_id": 104,
+        "outcome_name": "June Fed rate change",
+        "question_name": "",
+        "n_snapshots": 4,
+        "price_first": 0.0315,
+        "price_last": 0.027,
+        "total_drift": -0.0045,
+        "max_move": 0.006,
+        "std_moves": 0.0032,
+        "prices_series": [
+          0.0315,
+          0.032,
+          0.026,
+          0.027
+        ]
+      },
+      {
+        "outcome_id": 105,
+        "outcome_name": "Recurring",
+        "question_name": "",
+        "n_snapshots": 2,
+        "price_first": 0.0486,
+        "price_last": 0.0413,
+        "total_drift": -0.0073,
+        "max_move": 0.0073,
+        "std_moves": 0.0,
+        "prices_series": [
+          0.0486,
+          0.0413
+        ]
+      },
+      {
+        "outcome_id": 106,
+        "outcome_name": "Recurring Fallback",
+        "question_name": "Recurring",
+        "n_snapshots": 2,
+        "price_first": 0.5,
+        "price_last": 0.5,
+        "total_drift": 0.0,
+        "max_move": 0.0,
+        "std_moves": 0.0,
+        "prices_series": [
+          0.5,
+          0.5
+        ]
+      },
+      {
+        "outcome_id": 107,
+        "outcome_name": "Recurring Named Outcome",
+        "question_name": "Recurring",
+        "n_snapshots": 2,
+        "price_first": 0.211,
+        "price_last": 0.2078,
+        "total_drift": -0.0032,
+        "max_move": 0.0032,
+        "std_moves": 0.0,
+        "prices_series": [
+          0.211,
+          0.2078
+        ]
+      },
+      {
+        "outcome_id": 108,
+        "outcome_name": "Recurring Named Outcome",
+        "question_name": "Recurring",
+        "n_snapshots": 2,
+        "price_first": 0.7793,
+        "price_last": 0.7883,
+        "total_drift": 0.009,
+        "max_move": 0.009,
+        "std_moves": 0.0,
+        "prices_series": [
+          0.7793,
+          0.7883
+        ]
+      },
+      {
+        "outcome_id": 109,
+        "outcome_name": "Recurring Named Outcome",
+        "question_name": "Recurring",
+        "n_snapshots": 2,
+        "price_first": 0.0036,
+        "price_last": 0.0036,
+        "total_drift": 0.0,
+        "max_move": 0.0,
+        "std_moves": 0.0,
+        "prices_series": [
+          0.0036,
+          0.0036
+        ]
+      },
+      {
+        "outcome_id": 110,
+        "outcome_name": "Champions League Winner",
+        "question_name": "",
+        "n_snapshots": 4,
+        "price_first": 0.5783,
+        "price_last": 0.5853,
+        "total_drift": 0.007,
+        "max_move": 0.0067,
+        "std_moves": 0.0031,
+        "prices_series": [
+          0.5783,
+          0.5783,
+          0.585,
+          0.5853
+        ]
+      },
+      {
+        "outcome_id": 120,
+        "outcome_name": "Recurring Named Outcome",
+        "question_name": "Recurring",
+        "n_snapshots": 2,
+        "price_first": 0.1101,
+        "price_last": 0.0737,
+        "total_drift": -0.0364,
+        "max_move": 0.0364,
+        "std_moves": 0.0,
+        "prices_series": [
+          0.1101,
+          0.0737
+        ]
+      },
+      {
+        "outcome_id": 119,
+        "outcome_name": "Recurring Named Outcome",
+        "question_name": "Recurring",
+        "n_snapshots": 2,
+        "price_first": 0.8632,
+        "price_last": 0.9373,
+        "total_drift": 0.0741,
+        "max_move": 0.0741,
+        "std_moves": 0.0,
+        "prices_series": [
+          0.8632,
+          0.9373
+        ]
+      },
+      {
+        "outcome_id": 117,
+        "outcome_name": "Recurring Fallback",
+        "question_name": "Recurring",
+        "n_snapshots": 2,
+        "price_first": 0.5,
+        "price_last": 0.5,
+        "total_drift": 0.0,
+        "max_move": 0.0,
+        "std_moves": 0.0,
+        "prices_series": [
+          0.5,
+          0.5
+        ]
+      },
+      {
+        "outcome_id": 116,
+        "outcome_name": "Recurring",
+        "question_name": "",
+        "n_snapshots": 2,
+        "price_first": 0.86,
+        "price_last": 0.8673,
+        "total_drift": 0.0073,
+        "max_move": 0.0073,
+        "std_moves": 0.0,
+        "prices_series": [
+          0.86,
+          0.8673
+        ]
+      },
+      {
+        "outcome_id": 118,
+        "outcome_name": "Recurring Named Outcome",
+        "question_name": "Recurring",
+        "n_snapshots": 2,
+        "price_first": 0.0025,
+        "price_last": 0.0025,
+        "total_drift": -0.0,
+        "max_move": 0.0,
+        "std_moves": 0.0,
+        "prices_series": [
+          0.0025,
+          0.0025
+        ]
+      }
+    ]
+  },
+  "btc_daily_binary": {
+    "n_btc_binary_outcomes": 2,
+    "decoded_markets": [
+      {
+        "outcome_id": 105,
+        "coin_key": "#1050",
+        "target_price": 76877.0,
+        "expiry_utc": "2026-05-27T06:00:00+00:00",
+        "period": "1d",
+        "description": "class:priceBinary|underlying:BTC|expiry:20260527-0600|targetPrice:76877|period:1d"
+      },
+      {
+        "outcome_id": 116,
+        "coin_key": "#1160",
+        "target_price": 72951.0,
+        "expiry_utc": "2026-05-29T06:00:00+00:00",
+        "period": "1d",
+        "description": "class:priceBinary|underlying:BTC|expiry:20260529-0600|targetPrice:72951|period:1d"
+      }
+    ],
+    "btc_price_series": [
+      {
+        "dt_utc": "2026-05-26 22:20:26.921000+00:00",
+        "btc_mark": 75757.5
+      },
+      {
+        "dt_utc": "2026-05-26 22:43:09.966000+00:00",
+        "btc_mark": 75759.5
+      },
+      {
+        "dt_utc": "2026-05-28 22:21:58.251000+00:00",
+        "btc_mark": 73633.5
+      },
+      {
+        "dt_utc": "2026-05-28 23:22:04.026000+00:00",
+        "btc_mark": 73567.5
+      }
+    ],
+    "calibration_hints": [
+      {
+        "outcome_id": 105,
+        "target_price": 76877.0,
+        "last_btc_mark": 73567.5,
+        "implied_direction": "BTC < target"
+      },
+      {
+        "outcome_id": 116,
+        "target_price": 72951.0,
+        "last_btc_mark": 73567.5,
+        "implied_direction": "BTC > target"
+      }
+    ],
+    "note": "BTC daily binary: expiry at 06:00 UTC daily. 3 active outcomes per cycle (index:0,1,2) + fallback. index:0 = imminent-expiry outcome. index:1 = next day. index:2 = day after."
+  },
+  "strategy_feasibility": {
+    "strategies": {
+      "S1_calibration_arb": {
+        "name": "Calibration Arbitrage",
+        "description": "Bet on undervalued side when HL pricing is systematically mis-calibrated",
+        "requires": [
+          "K368 calibration data (min N=30 resolution events)",
+          "2+ weeks of snapshots"
+        ],
+        "current_data_n": 4,
+        "current_span_days": 2.04,
+        "gates": {
+          "G1_oos_sharpe": {
+            "status": "PENDING",
+            "reason": "Needs N\u226530 resolved events. Have 4 snapshots, 0 resolutions confirmed.",
+            "target": "K368 calibration 2026-06-22"
+          },
+          "G2_perm_pvalue": {
+            "status": "PENDING",
+            "reason": "No resolutions yet"
+          },
+          "G3_dsr": {
+            "status": "PENDING",
+            "reason": "No resolutions yet"
+          },
+          "G4_walk_forward": {
+            "status": "PENDING",
+            "reason": "Need 4-fold temporal split \u2192 min 120 events"
+          },
+          "G5_corr_check": {
+            "status": "LIKELY_PASS",
+            "reason": "Event-driven, orthogonal to all FR/momentum strategies"
+          },
+          "G6_trade_count": {
+            "status": "CONDITIONAL_PASS",
+            "reason": "BTC daily = 365 bets/yr. Macro = ~10/yr."
+          },
+          "G7_ann_return": {
+            "status": "SPECULATIVE",
+            "reason": "Edge unknown without calibration: assume 2-5%"
+          }
+        },
+        "verdict": "PENDING \u2014 wait for K368 calibration (2026-06-22)",
+        "action": "SCAFFOLD + MONITOR"
+      },
+      "S2_cross_venue_arb": {
+        "name": "Cross-Venue Arbitrage (HL vs Polymarket/Kalshi)",
+        "description": "Bet on spread when HL vs external venue diverges >2%",
+        "requires": [
+          "Real-time Polymarket/Kalshi API integration",
+          "Spread monitoring daemon"
+        ],
+        "current_data_n": 4,
+        "gates": {
+          "G1_oos_sharpe": {
+            "status": "PENDING",
+            "reason": "Need live spread monitoring"
+          },
+          "G2_perm_pvalue": {
+            "status": "PENDING",
+            "reason": "Need N\u226530 arb events"
+          },
+          "G3_dsr": {
+            "status": "PENDING",
+            "reason": "Single strategy, but unproven"
+          },
+          "G4_walk_forward": {
+            "status": "PENDING",
+            "reason": "Need time-series of spread data"
+          },
+          "G5_corr_check": {
+            "status": "LIKELY_PASS",
+            "reason": "Arb is event-driven, low correlation"
+          },
+          "G6_trade_count": {
+            "status": "CONDITIONAL",
+            "reason": "Depends on spread frequency >2%"
+          },
+          "G7_ann_return": {
+            "status": "SPECULATIVE",
+            "reason": "Spread <2% currently; arb edge unknown"
+          }
+        },
+        "k353_finding": "K353 found spreads <2% currently \u2014 below actionable threshold",
+        "verdict": "MONITOR \u2014 deploy only when spread >2% events detected",
+        "action": "MONITOR"
+      },
+      "S3_market_making": {
+        "name": "Market-Making (Liquidity Provision)",
+        "description": "Post bids/asks on both sides, capture spread passively",
+        "requires": [
+          "HL HIP-4 market maker API access",
+          "Inventory risk model",
+          "Adverse selection filter"
+        ],
+        "gates": {
+          "G1_oos_sharpe": {
+            "status": "PENDING",
+            "reason": "No MM backtest data"
+          },
+          "G6_trade_count": {
+            "status": "LIKELY_PASS",
+            "reason": "MM fills continuously"
+          }
+        },
+        "key_risks": [
+          "Adverse selection from informed traders",
+          "Inventory limits",
+          "API access unclear"
+        ],
+        "verdict": "DEFER \u2014 requires dedicated MM infrastructure not in K356",
+        "action": "DEFER"
+      },
+      "S4_event_trading": {
+        "name": "Event Trading (Near-Resolution Markets)",
+        "description": "Bet on near-expiry markets where outcome uncertainty is low",
+        "requires": [
+          "Pricing accuracy at T-1h",
+          "Sufficient liquidity"
+        ],
+        "observations": {
+          "june_fomc_rate_change": {
+            "market": "June Fed rate change",
+            "mid_price": 0.02698,
+            "interpretation": "97.3% probability NO CHANGE \u2014 consensus trade",
+            "edge_assessment": "Very low edge if market is correctly pricing consensus"
+          },
+          "ucl_final": {
+            "market": "Champions League Winner (PSG vs Arsenal)",
+            "mid_price_psg": 0.5853,
+            "resolution_date": "2026-05-31",
+            "edge_assessment": "Sports prediction \u2014 depends on model advantage over market"
+          },
+          "btc_daily_binary": {
+            "description": "index:1 (next day) pricing at 0.937 YES on 2026-05-28",
+            "interpretation": "Market predicts BTC stays above target on 2026-05-29",
+            "edge_assessment": "High confidence pricing \u2192 low edge unless model disagrees"
+          }
+        },
+        "gates": {
+          "G1_oos_sharpe": {
+            "status": "PENDING",
+            "reason": "No backtestable historical resolutions"
+          },
+          "G6_trade_count": {
+            "status": "CONDITIONAL_PASS",
+            "reason": "BTC daily = 365/yr satisfies G6"
+          }
+        },
+        "verdict": "CONDITIONAL \u2014 BTC daily binary is the best candidate; macro events too infrequent",
+        "action": "SCAFFOLD + MONITOR"
+      },
+      "S5_btc_daily_kelly": {
+        "name": "BTC Daily Binary \u2014 Kelly-Sized Bets",
+        "description": "Use HL predicted P vs actual BTC outcome; size position via Kelly criterion",
+        "requires": [
+          "Minimum 14+ daily resolutions for calibration",
+          "Brier score analysis"
+        ],
+        "kelly_framework": {
+          "formula": "f* = |P_HL - 0.5| \u00d7 2   (binary Kelly)",
+          "fractional_kelly": "f/4 recommended (safety factor)",
+          "edge_per_bet": "unknown until calibration",
+          "example_at_p=0.6": {
+            "kelly_full": "0.20 (20% of bankroll)",
+            "kelly_quarter": "0.05 (5% of bankroll)",
+            "note": "Even quarter-Kelly is aggressive for unproven market"
+          }
+        },
+        "btc_binary_structure": {
+          "n_active_per_cycle": 3,
+          "index_0_meaning": "imminent expiry (\u226424h)",
+          "index_1_meaning": "next day (~24-48h)",
+          "index_2_meaning": "day-after (~48-72h)",
+          "observed_prices": {
+            "2026-05-28_index0": 0.002505,
+            "2026-05-28_index1": 0.937295,
+            "2026-05-28_index2": 0.07368
+          },
+          "btc_mark_at_observation": 73633.5
+        },
+        "gates": {
+          "G1_oos_sharpe": {
+            "status": "PENDING",
+            "reason": "Need N\u226530 daily resolutions"
+          },
+          "G2_perm_pvalue": {
+            "status": "PENDING",
+            "reason": "Need resolutions for shuffle test"
+          },
+          "G6_trade_count": {
+            "status": "PASS",
+            "reason": "365 bets/yr >> 50 threshold"
+          },
+          "G7_ann_return": {
+            "status": "SPECULATIVE",
+            "reason": "If edge = 2% per bet \u00d7 365 bets \u00d7 $400K notional = $2.92M/yr potential; HIGHLY SPECULATIVE"
+          }
+        },
+        "verdict": "HIGHEST PRIORITY CANDIDATE \u2014 but requires calibration evidence",
+        "action": "SCAFFOLD + MONITOR \u2192 DEPLOY post-K368"
+      }
+    },
+    "summary": {
+      "scaffold_count": 3,
+      "defer_count": 1,
+      "monitor_count": 1,
+      "top_priority": "S5_btc_daily_kelly",
+      "data_gap": "Only 4 snapshots over 2.04 days. Need 14+ daily resolutions for G1/G2."
+    }
+  },
+  "k266_gates": {
+    "wave": "K453",
+    "strategy": "HL HIP-4 Prediction Market Trading",
+    "data_as_of": "2026-05-30T00:23 JST",
+    "gates": {
+      "G1_oos_sharpe": {
+        "value": null,
+        "threshold": 1.0,
+        "status": "PENDING",
+        "reason": "0 resolved events. Need N\u226530. 4 snapshots over 2.04d."
+      },
+      "G2_perm_pvalue": {
+        "value": null,
+        "threshold": 0.05,
+        "status": "PENDING",
+        "reason": "Requires resolved outcome series for permutation test."
+      },
+      "G3_dsr": {
+        "value": null,
+        "threshold": 0.05,
+        "status": "PENDING",
+        "reason": "5 strategies explored; Bonferroni correction needed once data available.",
+        "n_trials": 5
+      },
+      "G4_walk_forward": {
+        "value": null,
+        "threshold": "all 4 folds positive",
+        "status": "PENDING",
+        "reason": "Need ~120 resolved events for 4-fold split."
+      },
+      "G5_corr_check": {
+        "vs_K280": "~0.0 (event-driven vs momentum)",
+        "vs_K297": "~0.0 (event-driven vs weekend FR)",
+        "vs_K376": "~0.0 (event-driven vs volume spike)",
+        "vs_K449": "~0.0 (event-driven vs FR differential carry)",
+        "status": "STRUCTURAL_PASS",
+        "reason": "Event-driven prediction markets are orthogonal to all current strategies."
+      },
+      "G6_trade_count": {
+        "btc_daily_bets_per_yr": 365,
+        "macro_bets_per_yr": "~10-20 (CPI, FOMC, sports)",
+        "threshold": 50,
+        "status": "PASS_FOR_BTC_DAILY",
+        "reason": "BTC daily binary alone satisfies G6 (365 >> 50/yr)."
+      },
+      "G7_ann_return": {
+        "value_estimate": "2-5% per bet \u00d7 365 bets (highly speculative)",
+        "threshold_pct": 5.0,
+        "status": "SPECULATIVE",
+        "reason": "Edge unknown without calibration. K368 will determine this."
+      }
+    },
+    "overall_verdict": "PENDING_CALIBRATION",
+    "gates_passed_now": 2,
+    "gates_total": 7,
+    "calibration_target": "K368 \u2014 2026-06-22",
+    "decision": "MONITOR / SCAFFOLD"
+  },
+  "profit_estimate": {
+    "aum_usd": 10000000,
+    "sleeve_pct": 0.01,
+    "leverage": 4.0,
+    "notional_usd": 400000.0,
+    "scenarios": [
+      {
+        "label": "bear_case: 1% edge, barely above chance",
+        "edge_pct": 0.01,
+        "win_rate": 0.51,
+        "bets_per_yr": 385,
+        "notional_usd": 400000.0,
+        "gross_ann_usd": 785400.0
+      },
+      {
+        "label": "base_case: 2% edge, mild calibration bias",
+        "edge_pct": 0.02,
+        "win_rate": 0.52,
+        "bets_per_yr": 385,
+        "notional_usd": 400000.0,
+        "gross_ann_usd": 1601600.0
+      },
+      {
+        "label": "bull_case: 5% edge, significant mis-calibration",
+        "edge_pct": 0.05,
+        "win_rate": 0.55,
+        "bets_per_yr": 385,
+        "notional_usd": 400000.0,
+        "gross_ann_usd": 4235000.0
+      }
+    ],
+    "hl_concentration_impact": {
+      "current_hl_pct": 60.5,
+      "hip4_sleeve_pct": 1.0,
+      "new_hl_pct": 61.5,
+      "hl_cap_pct": 65.0,
+      "within_cap": true
+    },
+    "critical_caveat": "ALL profit estimates are HIGHLY SPECULATIVE. Edge depends entirely on HL pricing calibration quality, which is unknown until K368 (2026-06-22). Do NOT deploy capital before K368 calibration confirmation."
+  },
+  "recommendation": {
+    "wave": "K453",
+    "verdict": "MONITOR",
+    "sub_verdict": "SCAFFOLD_READY",
+    "rationale": [
+      "5 snapshots over 2 days \u2014 insufficient for G1/G2/G4 empirical gates.",
+      "BTC daily binary (Recurring market) is highest-priority candidate: 365 bets/yr satisfies G6.",
+      "Structural correlation vs K280/K297/K376/K449 is near-zero (orthogonal alpha source).",
+      "K356 polling daemon already running \u2014 snapshot accumulation ongoing.",
+      "paper-trade scaffold (scripts/hip4_prediction_prototype.py) built in K453.",
+      "Calibration bias analysis blocked until K368 (2026-06-22, min 28 daily resolutions).",
+      "HL concentration: 60.5% \u2192 61.5% at 1% sleeve \u2014 within 65% cap."
+    ],
+    "gates_blocking_deploy": [
+      "G1_oos_sharpe",
+      "G2_perm_pvalue",
+      "G3_dsr",
+      "G4_walk_forward",
+      "G7_ann_return"
+    ],
+    "gates_passing_now": [
+      "G5_corr_check (structural)",
+      "G6_trade_count (BTC daily)"
+    ],
+    "next_milestone": {
+      "wave": "K368",
+      "target_date": "2026-06-22",
+      "trigger": "28+ daily BTC binary resolutions accumulated",
+      "deliverable": "Brier score analysis, calibration plot, G1/G2 empirical gates"
+    },
+    "action_items": [
+      "Continue K356 polling (no change needed)",
+      "Deploy scripts/hip4_prediction_prototype.py as paper-trade observer",
+      "Accumulate resolution events: first UCL final (2026-05-31), then daily BTC binary",
+      "At K368: compute Brier score, calibration plot, OOS Sharpe"
+    ],
+    "do_not": [
+      "Do NOT deploy capital before K368 calibration evidence",
+      "Do NOT size positions based on speculative edge estimates",
+      "Do NOT open new daemon (K356 already covers this)"
+    ],
+    "proposed_v617": "NOT YET \u2014 waiting for K368 calibration"
+  }
+}
