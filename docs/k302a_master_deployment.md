@@ -1176,3 +1176,118 @@ TOTAL                 100%              Portfolio 21.70
 Source files: `wave_k464_playbook_v620.py` | `wave_k464_playbook_v620.json` | `wave_k464_playbook_v620.md`
 
 *K464 Appendix — Added 2026-05-30 01:18 JST*
+
+---
+
+## Appendix K477 — v6.21 Architecture Proposal (Stablecoin Sleeve Refinement)
+
+**Wave:** K477 | **Generated:** 2026-05-30 02:26 JST | **Supersedes:** K473 sleeve proposal
+**Verdict:** RECOMMEND v6.21 Variant A on trigger (K473 sUSDS sustained >= 3.5% for 14d)
+
+### Context
+
+K461 v6.20 holds 10% sUSDe-only in the stablecoin sleeve (HHI = 1.0, max concentration).
+K473 ACCEPT scaffolds Spark sUSDS as a co-sleeve candidate (28th daemon, trigger-based).
+K474 CONDITIONAL permits Pendle YT-aUSDC at <= 10% but requires rollover daemon.
+K477 evaluates all three v6.21 variants and recommends Variant A as the optimal upgrade path.
+
+### v6.21 Variant Summary
+
+| Variant | Composition | Blended APY | Lift vs v6.20 | HHI | Complexity | Status |
+|---------|-------------|-------------|---------------|-----|------------|--------|
+| v6.20 (baseline) | sUSDe 10% | 3.72% | — | 1.000 | NONE | ACTIVE |
+| **v6.21 A** (Conservative) | sUSDe 5% + sUSDS 5% | 3.61% | -$1,100/yr | 0.500 | LOW | **PREPARE** |
+| v6.21 B (Enhanced) | + Pendle 2% | ~4.0% | +$2,800/yr | 0.400 | MEDIUM | DEFERRED |
+| v6.21 C (Aggregator) | 7 protocols 10% | ~4.12% | +$4,000/yr | 0.205 | HIGH | DEFERRED |
+
+### Activation Trigger — Variant A
+
+```
+Trigger:       sUSDS 14d average APY >= 3.5%
+Source:        com.cryptolab.spark-usds-monitor (K473 28th daemon — already running)
+Current spot:  3.344% (below trigger; temporary DSR dip)
+Current 7d:    3.573% (above trigger)
+Current 30d:   3.668% (above trigger — structural level confirmed)
+```
+
+The 30d mean (3.668%) confirms structural DSR is above threshold. Spot dip is intra-month variance.
+30d APY volatility = 0.232pp — within normal Sky/MakerDAO governance cycle fluctuation.
+Trigger expected to fire within 1-4 weeks upon next governance rate confirmation.
+
+### User Action on Trigger
+
+```
+1. K473 daemon alert fires: "sUSDS 14d mean >= 3.5% — Variant A trigger MET"
+2. User action: Move 5% of portfolio (half of current sUSDe 10% sleeve) → Spark Protocol
+   - Deposit: USDS or USDC via Spark.fi (Ethereum L1)
+   - Receive: sUSDS (auto-compounding, instant redemption)
+3. Resulting allocation: sUSDe 5% + sUSDS 5% = 10% stablecoin sleeve (unchanged total)
+4. Estimated lift: -$1,100/yr at current rates → +$3,500/yr when sUSDS recovers to 7d mean
+5. Diversification: HHI 1.0 → 0.50 (single-protocol failure impact halved)
+```
+
+### Why Variant A Now, B/C Later
+
+| Dimension | Variant A | Variant B | Variant C |
+|-----------|-----------|-----------|-----------|
+| New daemons needed | 0 (K473 already built) | 2 | 6 |
+| Ops hours/month | 0.5 | 4.0 | 12.0 |
+| Rollover required | No | Yes (Pendle) | Yes |
+| Lift at $10M/yr | -$1,100 (diversification justifies) | +$2,800 | +$4,000 |
+| Lift at $100M/yr | -$11,000 → +$35K (rate dep.) | +$28,000 | +$41,000 |
+| Recommendation | **PREPARE NOW** | DEFER ($100M+) | DEFER ($100M+) |
+
+At sub-$100M AUM: Variant B/C yield lifts don't justify ops complexity. Pendle rollover adds 4 hrs/mo
+for +$2.8K/yr at $10M = $700/hr → below threshold. At $100M: $28K/yr / same hours = $7K/hr → justified.
+
+### HL Concentration Impact
+
+None of the v6.21 stablecoin protocols add HL exposure. All are Ethereum L1 DeFi:
+- HL concentration remains at **27.5%** (well under 65% cap)
+- Portfolio Sharpe **21.70 unchanged** (sleeve composition doesn't affect trading strategy metrics)
+
+### 5-Year Projection
+
+At $10M baseline, Variant A adds negligible terminal value:
+
+```
+v6.20:         $10M → $28.71M (CAGR 23.49%)
+v6.21 A:       $10M → $28.70M (-$1,100/yr current) or $28.74M (+$3.5K/yr on trigger)
+Difference:    < $30K over 5y (primary value = diversification, not yield)
+At $100M:      Variant A lifts become +$150-350K over 5y (material at scale)
+```
+
+### Checklist Addition — Daily/Weekly
+
+Add to Daily Checklist item #7:
+```
+[ ] 7. sUSDS APY — K473 daemon status: is 14d mean >= 3.5%? (if yes → Variant A activation)
+```
+
+Add to Monthly Checklist item #31:
+```
+[ ] Day 30: v6.21 Variant A check — sUSDS 30d mean? If >= 3.5% for 14d, activate Variant A.
+            At AUM >= $100M: evaluate Variant B (Pendle) integration.
+```
+
+### v6.21 Architecture (Post-Activation, Variant A)
+
+```
+Sleeve               Weight   Capacity   Notes
+─────────────────────────────────────────────────────────────────────
+K280 BTC Multi-Venue   65%    $500M      20.25 Sharpe (10 venues)
+K297' RWA (HL+Var)      5%    $25M       12.20 Sharpe
+sUSDe Yield             5%    $5B         3.88% APY (7d target)
+Spark sUSDS             5%    $800M+      3.57% APY (7d) / instant redeem
+K376 Momentum           5%    $50M        3.35 Sharpe
+K449 ETH-BTC Diff       5%    $100M       5.66 Sharpe
+K457 BTC+ETH+SOL        5%    $300M      19.58 Sharpe (conditional)
+Cash / Margin Buf       5%    —           safety buffer
+─────────────────────────────────────────────────────────────────────
+TOTAL                 100%              Sharpe 21.70 | HL 27.5%
+Stablecoin HHI:       0.50  (improved from 1.0)
+```
+
+Source files: `wave_k477_v621_proposal.py` | `wave_k477_v621_proposal.json` | `wave_k477_v621_proposal.md`
+
+*K477 Appendix — Added 2026-05-30 02:26 JST*

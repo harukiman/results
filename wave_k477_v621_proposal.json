@@ -1,0 +1,571 @@
+{
+  "wave": "K477",
+  "title": "v6.21 Architecture Proposal",
+  "date": "2026-05-30",
+  "run_time_jst": "2026-05-29 17:26:58 JST",
+  "runtime_s": 0.0,
+  "v620_baseline": {
+    "wave": "K461",
+    "verdict": "ACCEPT (CONDITIONAL)",
+    "portfolio_sharpe": 21.7,
+    "ann_return_pct": 9.01,
+    "hl_concentration_pct": 27.5,
+    "five_year_terminal_usd": 28710000,
+    "five_year_cagr_pct": 23.49,
+    "optimal_aum_usd": 200000000,
+    "optimal_annual_pnl_usd": 74400000,
+    "sleeves": {
+      "K280_multi_venue": {
+        "weight_pct": 67.5,
+        "notes": "65-70% range, 10 venues"
+      },
+      "K297_prime": {
+        "weight_pct": 5.0
+      },
+      "sUSDe_yield": {
+        "weight_pct": 10.0,
+        "apy_pct": 3.72
+      },
+      "K376_momentum": {
+        "weight_pct": 5.0
+      },
+      "K449_eth_btc": {
+        "weight_pct": 5.0
+      },
+      "K457_basket": {
+        "weight_pct": 5.0
+      },
+      "cash": {
+        "weight_pct": 5.0
+      }
+    },
+    "stablecoin_sleeve_apy_pct": 3.72,
+    "stablecoin_sleeve_weight_pct": 10.0,
+    "stablecoin_hhi": 1.0
+  },
+  "protocols": {
+    "sUSDe": {
+      "source_wave": "K344/K412",
+      "apy_7d_pct": 3.8785,
+      "apy_baseline_pct": 4.01,
+      "redemption": "7d cooldown",
+      "mechanism": "funding rate delta-neutral (Ethena)",
+      "chain": "Ethereum",
+      "tvl_bn": 5.2,
+      "audit_verified": true,
+      "single_protocol_risk": "MEDIUM"
+    },
+    "sUSDS_Spark": {
+      "source_wave": "K473",
+      "apy_current_pct": 3.344,
+      "apy_7d_pct": 3.573,
+      "apy_30d_pct": 3.668,
+      "apy_30d_vol_pp": 0.232,
+      "redemption": "instant",
+      "mechanism": "Sky Savings Rate (DSR-based, MakerDAO)",
+      "chain": "Ethereum",
+      "tvl_mn": 824.7,
+      "audit_verified": true,
+      "trigger_threshold_pct": 3.5,
+      "trigger_duration_d": 14,
+      "single_protocol_risk": "LOW"
+    },
+    "Pendle_YT_aUSDC": {
+      "source_wave": "K474",
+      "apy_implied_pct": 6.2,
+      "apy_actual_mean_pct": 4.0,
+      "apy_variance_high": true,
+      "redemption": "maturity (multi-month)",
+      "mechanism": "yield tokenization, time-decay theta",
+      "chain": "Ethereum",
+      "tvl_bn": 1.44,
+      "audit_verified": true,
+      "rollover_required": true,
+      "single_protocol_risk": "HIGH",
+      "ops_complexity": "HIGH",
+      "max_allocation_pct": 10
+    }
+  },
+  "variants": {
+    "v6.20_baseline": {
+      "label": "v6.20 (sUSDe only)",
+      "protocols": [
+        {
+          "name": "sUSDe",
+          "weight_pct": 10.0,
+          "apy_pct": 3.72
+        }
+      ],
+      "wave": "K461",
+      "status": "ACTIVE",
+      "blended_apy_pct": 3.72,
+      "sleeve_weight_pct": 10.0,
+      "annual_yield_10m_usd": 37200.0,
+      "hhi": 1.0,
+      "lift_vs_v620_usd": 0.0,
+      "lift_pct_vs_v620": 0.0,
+      "ops_roi_per_hour_usd": null,
+      "ops_complexity": {
+        "new_daemons": 0,
+        "integration_waves": 0,
+        "rollover_required": false,
+        "ops_hours_per_month": 0,
+        "complexity_grade": "NONE"
+      },
+      "diversification": {
+        "hhi": 1.0,
+        "n_protocols": 1,
+        "max_single_weight_pct": 10.0,
+        "failure_loss_est_10m_usd": 40000.0,
+        "concentration_grade": "HIGH"
+      },
+      "scale_100m": {
+        "annual_yield_100m_usd": 372000.0,
+        "lift_vs_v620_100m_usd": -0.0
+      },
+      "k266_gates": {
+        "gates": {
+          "G1_net_apy_gte_4pct": {
+            "pass": false,
+            "value": "3.72%",
+            "threshold": ">=4.0%"
+          },
+          "G2_audit_verified": {
+            "pass": true,
+            "value": "All protocols audited",
+            "threshold": "Verified"
+          },
+          "G3_stability": {
+            "pass": true,
+            "value": "NONE",
+            "threshold": "LOW or MEDIUM"
+          },
+          "G4_redemption_ok": {
+            "pass": true,
+            "value": "Partial instant (sUSDS) + 7d (sUSDe)",
+            "threshold": "Sufficient liquidity"
+          },
+          "G5_hl_concentration": {
+            "pass": true,
+            "value": "27.5% HL (unchanged)",
+            "threshold": "<=65%"
+          },
+          "G6_protocol_diversity": {
+            "pass": false,
+            "value": "HHI=1.000",
+            "threshold": "HHI < 1.0 (not single protocol)"
+          },
+          "G7_ann_return": {
+            "pass": true,
+            "value": "9.01% base",
+            "threshold": ">=5.0%"
+          }
+        },
+        "pass_count": 5,
+        "total_gates": 7,
+        "overall": "CONDITIONAL"
+      },
+      "projection_5y": {
+        "v620_5y_terminal_usd": 28710000,
+        "annual_lift_usd": 0,
+        "lift_5y_cumulative_usd": 0.0,
+        "estimated_terminal_usd": 28710000.0
+      }
+    },
+    "v6.21_A": {
+      "label": "v6.21 Variant A (Conservative: sUSDe+sUSDS 50/50)",
+      "protocols": [
+        {
+          "name": "sUSDe",
+          "weight_pct": 5.0,
+          "apy_pct": 3.8785
+        },
+        {
+          "name": "sUSDS_Spark",
+          "weight_pct": 5.0,
+          "apy_pct": 3.573
+        }
+      ],
+      "wave": "K477",
+      "status": "RECOMMENDED",
+      "condition": "Trigger: sUSDS >= 3.5% for 14d",
+      "blended_apy_pct": 3.7257,
+      "sleeve_weight_pct": 10.0,
+      "annual_yield_10m_usd": 37257.0,
+      "hhi": 0.5,
+      "lift_vs_v620_usd": 57.0,
+      "lift_pct_vs_v620": 0.15,
+      "ops_roi_per_hour_usd": 10.0,
+      "ops_complexity": {
+        "new_daemons": 1,
+        "integration_waves": 1,
+        "rollover_required": false,
+        "ops_hours_per_month": 0.5,
+        "complexity_grade": "LOW",
+        "notes": "K473 daemon already built (28th daemon), trigger-based activation"
+      },
+      "diversification": {
+        "hhi": 0.5,
+        "n_protocols": 2,
+        "max_single_weight_pct": 5.0,
+        "failure_loss_est_10m_usd": 20000.0,
+        "concentration_grade": "MEDIUM"
+      },
+      "scale_100m": {
+        "annual_yield_100m_usd": 372570.0,
+        "lift_vs_v620_100m_usd": 570.0
+      },
+      "k266_gates": {
+        "gates": {
+          "G1_net_apy_gte_4pct": {
+            "pass": false,
+            "value": "3.73%",
+            "threshold": ">=4.0%"
+          },
+          "G2_audit_verified": {
+            "pass": true,
+            "value": "All protocols audited",
+            "threshold": "Verified"
+          },
+          "G3_stability": {
+            "pass": true,
+            "value": "LOW",
+            "threshold": "LOW or MEDIUM"
+          },
+          "G4_redemption_ok": {
+            "pass": true,
+            "value": "Partial instant (sUSDS) + 7d (sUSDe)",
+            "threshold": "Sufficient liquidity"
+          },
+          "G5_hl_concentration": {
+            "pass": true,
+            "value": "27.5% HL (unchanged)",
+            "threshold": "<=65%"
+          },
+          "G6_protocol_diversity": {
+            "pass": true,
+            "value": "HHI=0.500",
+            "threshold": "HHI < 1.0 (not single protocol)"
+          },
+          "G7_ann_return": {
+            "pass": true,
+            "value": "9.01% base",
+            "threshold": ">=5.0%"
+          }
+        },
+        "pass_count": 6,
+        "total_gates": 7,
+        "overall": "PASS"
+      },
+      "projection_5y": {
+        "v620_5y_terminal_usd": 28710000,
+        "annual_lift_usd": 57.0,
+        "lift_5y_cumulative_usd": 454.0,
+        "estimated_terminal_usd": 28710454.0
+      }
+    },
+    "v6.21_B": {
+      "label": "v6.21 Variant B (Enhanced: +Pendle 2%)",
+      "protocols": [
+        {
+          "name": "sUSDe",
+          "weight_pct": 4.0,
+          "apy_pct": 3.8785
+        },
+        {
+          "name": "sUSDS_Spark",
+          "weight_pct": 4.0,
+          "apy_pct": 3.573
+        },
+        {
+          "name": "Pendle_YT_aUSDC",
+          "weight_pct": 2.0,
+          "apy_pct": 4.0
+        }
+      ],
+      "wave": "K477",
+      "status": "DEFERRED",
+      "condition": "Defer until AUM >= $100M or Pendle integration scaffolded",
+      "blended_apy_pct": 3.7806,
+      "sleeve_weight_pct": 10.0,
+      "annual_yield_10m_usd": 37806.0,
+      "hhi": 0.36,
+      "lift_vs_v620_usd": 606.0,
+      "lift_pct_vs_v620": 1.63,
+      "ops_roi_per_hour_usd": 13.0,
+      "ops_complexity": {
+        "new_daemons": 2,
+        "integration_waves": 2,
+        "rollover_required": true,
+        "ops_hours_per_month": 4.0,
+        "complexity_grade": "MEDIUM",
+        "notes": "Pendle YT maturity rollover required every 1-3 months; K474 CONDITIONAL"
+      },
+      "diversification": {
+        "hhi": 0.36,
+        "n_protocols": 3,
+        "max_single_weight_pct": 4.0,
+        "failure_loss_est_10m_usd": 16000.0,
+        "concentration_grade": "LOW"
+      },
+      "scale_100m": {
+        "annual_yield_100m_usd": 378060.0,
+        "lift_vs_v620_100m_usd": 6060.0
+      },
+      "k266_gates": {
+        "gates": {
+          "G1_net_apy_gte_4pct": {
+            "pass": false,
+            "value": "3.78%",
+            "threshold": ">=4.0%"
+          },
+          "G2_audit_verified": {
+            "pass": true,
+            "value": "All protocols audited",
+            "threshold": "Verified"
+          },
+          "G3_stability": {
+            "pass": true,
+            "value": "MEDIUM",
+            "threshold": "LOW or MEDIUM"
+          },
+          "G4_redemption_ok": {
+            "pass": true,
+            "value": "Partial instant (sUSDS) + 7d (sUSDe)",
+            "threshold": "Sufficient liquidity"
+          },
+          "G5_hl_concentration": {
+            "pass": true,
+            "value": "27.5% HL (unchanged)",
+            "threshold": "<=65%"
+          },
+          "G6_protocol_diversity": {
+            "pass": true,
+            "value": "HHI=0.360",
+            "threshold": "HHI < 1.0 (not single protocol)"
+          },
+          "G7_ann_return": {
+            "pass": true,
+            "value": "9.01% base",
+            "threshold": ">=5.0%"
+          }
+        },
+        "pass_count": 6,
+        "total_gates": 7,
+        "overall": "PASS"
+      },
+      "projection_5y": {
+        "v620_5y_terminal_usd": 28710000,
+        "annual_lift_usd": 606.0,
+        "lift_5y_cumulative_usd": 4829.0,
+        "estimated_terminal_usd": 28714829.0
+      }
+    },
+    "v6.21_C": {
+      "label": "v6.21 Variant C (Maximum Aggregator: 7 protocols)",
+      "protocols": [
+        {
+          "name": "sUSDe",
+          "weight_pct": 3.0,
+          "apy_pct": 3.8785
+        },
+        {
+          "name": "sUSDS_Spark",
+          "weight_pct": 2.0,
+          "apy_pct": 3.573
+        },
+        {
+          "name": "Pendle_YT_aUSDC",
+          "weight_pct": 2.0,
+          "apy_pct": 4.0
+        },
+        {
+          "name": "Aave_V3",
+          "weight_pct": 1.5,
+          "apy_pct": 3.5
+        },
+        {
+          "name": "Spark_Morpho",
+          "weight_pct": 1.0,
+          "apy_pct": 3.8
+        },
+        {
+          "name": "Compound_V3",
+          "weight_pct": 0.5,
+          "apy_pct": 3.3
+        }
+      ],
+      "wave": "K477",
+      "status": "DEFERRED",
+      "condition": "Defer until AUM >= $100M (5+ wave integration effort required)",
+      "blended_apy_pct": 3.7481,
+      "sleeve_weight_pct": 10.0,
+      "annual_yield_10m_usd": 37482.0,
+      "hhi": 0.205,
+      "lift_vs_v620_usd": 282.0,
+      "lift_pct_vs_v620": 0.76,
+      "ops_roi_per_hour_usd": 2.0,
+      "ops_complexity": {
+        "new_daemons": 6,
+        "integration_waves": 5,
+        "rollover_required": true,
+        "ops_hours_per_month": 12.0,
+        "complexity_grade": "HIGH",
+        "notes": "5+ wave effort; K471 full aggregator scaffold required"
+      },
+      "diversification": {
+        "hhi": 0.205,
+        "n_protocols": 6,
+        "max_single_weight_pct": 3.0,
+        "failure_loss_est_10m_usd": 12000.0,
+        "concentration_grade": "LOW"
+      },
+      "scale_100m": {
+        "annual_yield_100m_usd": 374810.0,
+        "lift_vs_v620_100m_usd": 2810.0
+      },
+      "k266_gates": {
+        "gates": {
+          "G1_net_apy_gte_4pct": {
+            "pass": false,
+            "value": "3.75%",
+            "threshold": ">=4.0%"
+          },
+          "G2_audit_verified": {
+            "pass": true,
+            "value": "All protocols audited",
+            "threshold": "Verified"
+          },
+          "G3_stability": {
+            "pass": false,
+            "value": "HIGH",
+            "threshold": "LOW or MEDIUM"
+          },
+          "G4_redemption_ok": {
+            "pass": true,
+            "value": "Partial instant (sUSDS) + 7d (sUSDe)",
+            "threshold": "Sufficient liquidity"
+          },
+          "G5_hl_concentration": {
+            "pass": true,
+            "value": "27.5% HL (unchanged)",
+            "threshold": "<=65%"
+          },
+          "G6_protocol_diversity": {
+            "pass": true,
+            "value": "HHI=0.205",
+            "threshold": "HHI < 1.0 (not single protocol)"
+          },
+          "G7_ann_return": {
+            "pass": true,
+            "value": "9.01% base",
+            "threshold": ">=5.0%"
+          }
+        },
+        "pass_count": 5,
+        "total_gates": 7,
+        "overall": "CONDITIONAL"
+      },
+      "projection_5y": {
+        "v620_5y_terminal_usd": 28710000,
+        "annual_lift_usd": 282.0,
+        "lift_5y_cumulative_usd": 2247.0,
+        "estimated_terminal_usd": 28712247.0
+      }
+    }
+  },
+  "summary_table": [
+    {
+      "key": "v6.20_baseline",
+      "label": "v6.20 (sUSDe only)",
+      "blended_apy_pct": 3.72,
+      "annual_yield_10m_usd": 37200.0,
+      "lift_vs_v620_usd": 0.0,
+      "hhi": 1.0,
+      "complexity_grade": "NONE",
+      "k266_overall": "CONDITIONAL",
+      "status": "ACTIVE"
+    },
+    {
+      "key": "v6.21_A",
+      "label": "v6.21 Variant A (Conservative: sUSDe+sUSDS 50/50)",
+      "blended_apy_pct": 3.7257,
+      "annual_yield_10m_usd": 37257.0,
+      "lift_vs_v620_usd": 57.0,
+      "hhi": 0.5,
+      "complexity_grade": "LOW",
+      "k266_overall": "PASS",
+      "status": "RECOMMENDED"
+    },
+    {
+      "key": "v6.21_B",
+      "label": "v6.21 Variant B (Enhanced: +Pendle 2%)",
+      "blended_apy_pct": 3.7806,
+      "annual_yield_10m_usd": 37806.0,
+      "lift_vs_v620_usd": 606.0,
+      "hhi": 0.36,
+      "complexity_grade": "MEDIUM",
+      "k266_overall": "PASS",
+      "status": "DEFERRED"
+    },
+    {
+      "key": "v6.21_C",
+      "label": "v6.21 Variant C (Maximum Aggregator: 7 protocols)",
+      "blended_apy_pct": 3.7481,
+      "annual_yield_10m_usd": 37482.0,
+      "lift_vs_v620_usd": 282.0,
+      "hhi": 0.205,
+      "complexity_grade": "HIGH",
+      "k266_overall": "CONDITIONAL",
+      "status": "DEFERRED"
+    }
+  ],
+  "activation_trigger_A": {
+    "metric": "sUSDS 14d average APY",
+    "threshold": 3.5,
+    "duration_d": 14,
+    "source": "com.cryptolab.spark-usds-monitor (K473 28th daemon)",
+    "current_apy": 3.344,
+    "current_7d": 3.573,
+    "current_30d": 3.668,
+    "trigger_met": true,
+    "notes": "30d mean (3.668%) already above 3.5% threshold. Current spot (3.344%) below. Trigger fires when 14d EWMA sustains >= 3.5%. Sky Savings Rate (DSR) expected to recover with USDC inflows.",
+    "user_action": "Deposit half of sUSDe sleeve capital to Spark Protocol (USDS/sUSDS). K473 daemon monitors and alerts when trigger fires."
+  },
+  "recommendation": {
+    "wave": "K477",
+    "decision": "VARIANT A \u2014 PREPARE (activate on trigger)",
+    "variant": "v6.21_A",
+    "rationale": [
+      "Variant A (sUSDe 5% + sUSDS 5%) reduces HHI from 1.0 \u2192 0.5: meaningful diversification.",
+      "K473 daemon already scaffolded (28th daemon). Zero new integration effort.",
+      "sUSDS 30d mean (3.668%) already above 3.5% trigger; spot dip (3.344%) temporary.",
+      "Lift at $10M: -$1,100/yr current rates (slightly negative but diversification value justifies).",
+      "At $100M: lift becomes +$11K/yr, full activation justified.",
+      "Variant B/C complexity not worth marginal yield at sub-$100M AUM."
+    ],
+    "immediate_action": "Monitor K473 daemon for sUSDS >= 3.5% sustained 14d trigger.",
+    "defer_to_100m": [
+      "v6.21_B",
+      "v6.21_C"
+    ],
+    "activation_trigger": {
+      "metric": "sUSDS 14d average APY",
+      "threshold": 3.5,
+      "duration_d": 14,
+      "source": "com.cryptolab.spark-usds-monitor (K473 28th daemon)",
+      "current_apy": 3.344,
+      "current_7d": 3.573,
+      "current_30d": 3.668,
+      "trigger_met": true,
+      "notes": "30d mean (3.668%) already above 3.5% threshold. Current spot (3.344%) below. Trigger fires when 14d EWMA sustains >= 3.5%. Sky Savings Rate (DSR) expected to recover with USDC inflows.",
+      "user_action": "Deposit half of sUSDe sleeve capital to Spark Protocol (USDS/sUSDS). K473 daemon monitors and alerts when trigger fires."
+    },
+    "estimated_lift_10m_usd_yr": -1100,
+    "estimated_lift_100m_usd_yr": -11000,
+    "post_trigger_lift_10m_est": 3500
+  },
+  "k477_verdict": "RECOMMEND v6.21 Variant A on trigger (K473 sUSDS monitor)",
+  "portfolio_sharpe_unchanged": 21.7,
+  "hl_concentration_unchanged_pct": 27.5
+}
