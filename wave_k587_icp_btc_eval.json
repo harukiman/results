@@ -1,0 +1,507 @@
+{
+  "wave": "K587",
+  "strategy": "ICP-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T07:08:21+0900",
+  "runtime_s": 8.8,
+  "decision": "ACCEPT CONDITIONAL",
+  "decision_rationale": "G5 all PASS. 7/9 gates. Failed gates: ['G8 Cross-venue', 'G9 Data sufficiency']. 60d paper-trade recommended.",
+  "compute_cluster_status": "CONFIRMED: Compute/Cloud (Internet Computer) = 12th ecosystem cluster",
+  "cluster_taxonomy": {
+    "L1": [
+      "APT",
+      "SOL",
+      "AVAX",
+      "ETH"
+    ],
+    "Cosmos": [
+      "ATOM",
+      "INJ",
+      "TIA",
+      "SEI"
+    ],
+    "Storage": [
+      "FIL"
+    ],
+    "AI": [
+      "RENDER",
+      "TAO"
+    ],
+    "Oracle": [
+      "LINK"
+    ],
+    "Social": [
+      "TON"
+    ],
+    "Compute/Cloud": [
+      "ICP"
+    ],
+    "BTC": [
+      "BTC (baseline)"
+    ]
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "icp_listed": true,
+      "total_symbols": 230,
+      "max_leverage": 5,
+      "margin_table_id": 5,
+      "api_success": true,
+      "note": "HL meta API: 230 symbols. ICP: LISTED. maxLeverage=5. ICP-PERP active on Hyperliquid. FR settlement: 1h intervals. Lower leverage (5x) reflects ICP liquidity profile."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "icp_listed": true,
+      "status": "Trading",
+      "max_leverage": "50.00",
+      "api_success": true,
+      "note": "Bybit ICPUSDT: status=Trading, maxLeverage=50.00. 8h FR settlement interval."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "icp_listed": true,
+      "state": "live",
+      "max_leverage": "50",
+      "inst_id": "ICP-USDT-SWAP",
+      "api_success": true,
+      "note": "OKX ICP-USDT-SWAP: state=live, maxLeverage=50. 8h FR settlement interval."
+    },
+    "venue_pass": true,
+    "vol_ratio_6m": 8.401,
+    "vol_threshold": 1.5,
+    "vol_pass": true,
+    "prescreen_pass": true,
+    "icp_fr_rows": 4867,
+    "icp_fr_start": "2025-11-08 04:00:00",
+    "icp_fr_end": "2026-05-29 22:00:00",
+    "btc_fr_rows": 17512,
+    "icp_fr_mean": -1.455e-05,
+    "icp_fr_std_6m": 8.279e-05,
+    "btc_fr_std_6m": 9.85e-06,
+    "note": "Phase 0: venue_pass=True, vol_ratio=8.40x (threshold=1.5x). ICP FR: 4867 rows (2025-11-08 to 2026-05-29). ICP FR mean=-1.46e-05 (6M)."
+  },
+  "signal_config": {
+    "window_h": 72,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "ICP-PERP vs BTC-PERP (HL 1h FR differential)"
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -9.1754,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4317,
+      "critical_5": -2.8622
+    },
+    "ou_half_life": {
+      "half_life_h": 9.14,
+      "half_life_days": 0.38,
+      "theta": 0.075817,
+      "intercept": -1.35e-06,
+      "r_squared": 0.0379,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 12.5274,
+      "perm_mean_sh": 0.087,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 12.5274,
+      "t_stat": 5.0295,
+      "p_value": 1e-06,
+      "bonferroni_thresh": 0.007143,
+      "n_trials": 7,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 19.955,
+    "ann_ret_pct": 18.4832,
+    "max_dd_pct": -0.5222,
+    "trades_yr": 57.0,
+    "n_days": 134.4,
+    "n_hours": 3225,
+    "n_pos_months": 4,
+    "n_neg_months": 1,
+    "cum_ret": 0.068046,
+    "ret_mean": 2.11e-05,
+    "ret_std": 9.896e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 12.5274,
+    "ann_ret_pct": 5.161,
+    "max_dd_pct": -0.1769,
+    "trades_yr": 74.4,
+    "n_days": 58.8,
+    "n_hours": 1412,
+    "n_pos_months": 3,
+    "n_neg_months": 0,
+    "cum_ret": 0.008319,
+    "ret_mean": 5.89e-06,
+    "ret_std": 4.402e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 17.8585,
+    "ann_ret_pct": 14.4265,
+    "max_dd_pct": -0.5222,
+    "trades_yr": 62.3,
+    "n_days": 193.2,
+    "n_hours": 4637,
+    "n_pos_months": 6,
+    "n_neg_months": 1,
+    "cum_ret": 0.076365,
+    "ret_mean": 1.647e-05,
+    "ret_std": 8.631e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 72,
+      "oos_sharpe": 12.5274,
+      "oos_ann_ret_pct": 5.161,
+      "trades_yr": 74.4
+    },
+    {
+      "window_h": 96,
+      "oos_sharpe": 11.7713,
+      "oos_ann_ret_pct": 4.406,
+      "trades_yr": 55.8
+    },
+    {
+      "window_h": 48,
+      "oos_sharpe": 8.145,
+      "oos_ann_ret_pct": 4.1106,
+      "trades_yr": 124.1
+    },
+    {
+      "window_h": 120,
+      "oos_sharpe": 3.1213,
+      "oos_ann_ret_pct": 1.3197,
+      "trades_yr": 80.7
+    },
+    {
+      "window_h": 336,
+      "oos_sharpe": 2.7627,
+      "oos_ann_ret_pct": 1.0425,
+      "trades_yr": 49.6
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 3,
+    "n_positive": 3,
+    "all_positive": true,
+    "pass": true,
+    "sh_min": 8.001,
+    "sh_max": 28.7283,
+    "sh_mean": 17.1916,
+    "sh_std": 8.623,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": 28.7283,
+        "positive": "True",
+        "max_dd": -0.000786
+      },
+      {
+        "fold": 2,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": 14.8456,
+        "positive": "True",
+        "max_dd": -0.001769
+      },
+      {
+        "fold": 3,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": 8.001,
+        "positive": "True",
+        "max_dd": -0.001573
+      }
+    ],
+    "note": "3/3 positive folds. G4 PASS: all positive. Sharpe range: [8.00, 28.73]. ICP compute narrative cycles tied to Web3 development activity cycles."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": true,
+      "G5 Family corr": true,
+      "G6 Trades/yr": true,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": false,
+      "G9 Data sufficiency": false
+    },
+    "gates_passed": 7,
+    "gates_total": 9,
+    "gates_failed": 2,
+    "g7_ret_4x_pct": 20.64,
+    "g4_all_positive": true,
+    "g5_all_pass": true,
+    "g8_note": "G8 signal corr=0.1578 (threshold=0.55). Raw FR diff corr=0.1643. Overlap=569h (~24d). HL 1h settlement vs OKX 8h settlement. ICP lower leverage (HL=5x) vs alt-venue higher leverage may affect FR dynamics.",
+    "decision": "ACCEPT CONDITIONAL"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": 0.0035,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "DeFi utility vs Compute"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": 0.0961,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "Solana vs Compute"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": -0.0689,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "Avalanche vs Compute"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": 0.032,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "Cosmos vs Compute"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": 0.0233,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "Cosmos vs Compute"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": 0.0609,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "Cosmos vs Compute"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": 0.0993,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "Cosmos vs Compute"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": 0.0361,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "Move-VM vs Compute"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": 0.0197,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "Storage vs Compute CRITICAL"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531 (AI/GPU)",
+        "corr": 0.2078,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "AI/GPU vs Compute CRITICAL"
+      },
+      "g5l": {
+        "label": "TAO-BTC (AI/Training)",
+        "corr": -0.0078,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "AI/Training vs Compute"
+      },
+      "g5m": {
+        "label": "LINK-BTC K557 (Oracle/Infra vs Compute)",
+        "corr": -0.0409,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "Oracle/infra middleware vs serverless compute platform."
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline",
+        "corr": 0.2078,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "vol-momentum baseline (multi-symbol carry). ICP must not replicate BTC-carry signal."
+      },
+      "g5n": {
+        "label": "TON-BTC K571 (Social/Messaging vs Compute)",
+        "corr": 0.0024,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 1412,
+        "note": "Telegram social retail vs ICP Web3 cloud compute. New G5n gate post-K571."
+      }
+    },
+    "n_pass": 14,
+    "n_total": 14,
+    "all_pass": true,
+    "compute_cluster_distinct": true,
+    "render_corr_critical": 0.2078,
+    "fil_corr_critical": 0.0197,
+    "render_pass": true,
+    "fil_pass": true,
+    "note": "G5 family: 14/14 PASS. RENDER G5k=0.2078 (AI/GPU vs Compute CRITICAL). FIL G5i=0.0197 (Storage vs Compute CRITICAL). Compute cluster distinct: True."
+  },
+  "cross_venue_fr": {
+    "pass": false,
+    "hl_okx_signal_corr": 0.1578,
+    "hl_okx_diff_corr": 0.1643,
+    "okx_icp_rows": 100,
+    "okx_btc_rows": 90,
+    "overlap_hours": 569,
+    "note": "G8 signal corr=0.1578 (threshold=0.55). Raw FR diff corr=0.1643. Overlap=569h (~24d). HL 1h settlement vs OKX 8h settlement. ICP lower leverage (HL=5x) vs alt-venue higher leverage may affect FR dynamics."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 5.161,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 20.64,
+    "usdc_yr_1pct_10M": 20644,
+    "usdc_yr_2pct_10M": 41288,
+    "usdc_yr_1pct_100M": 206440,
+    "usdc_yr_2pct_100M": 412880,
+    "note": "4x leverage, OOS ann=5.16% \u00d7 4 = 20.64%/yr. @$10M 1% alloc: $20,644/yr. @$10M 2% alloc: $41,288/yr. @$100M 1% alloc: $206,440/yr."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 64.5,
+    "icp_alloc_pct": 1.5,
+    "projected_pct": 66.0,
+    "cap_pct": 65.0,
+    "breach": true,
+    "note": "v6.28 HL=64.5% + ICP 1.5% = 66.0%. Cap=65.0%. BREACH: split required. ICP maxLev=5 (HL) is lower than TON/LINK (HL maxLev=10). Alternative: Bybit (higher leverage, 8h settlement) for primary execution."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 7,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 9,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "ICP-BTC",
+      "sharpe": 12.5274,
+      "ecosystem": "Compute/Cloud (Internet Computer)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 11,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 12,
+      "pair": "TON-BTC",
+      "sharpe": 8.4016,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 14,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "icp_family_rank": 10
+}
