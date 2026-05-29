@@ -1,0 +1,373 @@
+{
+  "wave": "K485",
+  "title": "Multi-Account Scaling Activation Playbook ($30M→$200M ceiling, +$XM/yr lift phased)",
+  "generated_utc": "2026-05-29T18:05:12Z",
+  "generated_jst": "2026-05-30 03:05 JST",
+  "source_waves": ["K431", "K454", "K458", "K461", "K464", "K479", "K481", "K483"],
+  "mandate": "feedback_profit_max_priority axis #5 — Multi-account scaling capacity expansion playbook",
+
+  "executive_summary": {
+    "key_finding": "Multi-account on SAME venue provides ZERO capacity benefit and violates HL/Bybit ToS (for CEX). HL is a non-KYC DEX — multiple wallets are technically unrestricted, but share the same order book (same slippage). The correct expansion path is multi-WALLET multi-VENUE: separate EOA wallets on permissionless DEXes + Bybit sub-accounts for CEX.",
+    "k431_correction": "K431 incorrectly flagged HL as NOT PERMITTED using CEX logic. HL is non-KYC DEX. Multiple wallets are technically OK. Real constraint = market impact (same OB).",
+    "profit_usdc_10M_baseline": 2084265,
+    "profit_usdc_25M_phase1a": 4282980,
+    "profit_usdc_50M_phase2": 5446720,
+    "profit_usdc_100M_phase3": 48177045,
+    "profit_usdc_200M_phase4": 74449008,
+    "lift_phase1a_usd": 2198715,
+    "lift_phase1a_pct": 105.5,
+    "lift_phase2_usd": 3362455,
+    "lift_phase2_pct": 161.3,
+    "lift_phase3_usd": 46092780,
+    "lift_phase3_pct": 2211.5,
+    "lift_phase4_usd": 72364743,
+    "lift_phase4_pct": 3471.8
+  },
+
+  "profit_lift_table": [
+    {
+      "phase": "Baseline",
+      "label": "$10M single HL (v6.13d)",
+      "aum_usd": 10000000,
+      "venues": ["HL"],
+      "n_wallets": 1,
+      "n_venues": 1,
+      "net_annual_usd": 2084265,
+      "net_annual_ret_pct": 20.84,
+      "lift_vs_baseline_usd": 0,
+      "lift_pct": 0,
+      "capacity_flag": "ORANGE",
+      "source": "K431 confirmed",
+      "note": "K297p: PAXG OI 24%, SPX OI 30%. Approaching single-venue limit."
+    },
+    {
+      "phase": "Phase 1A",
+      "label": "$25M HL primary + Bybit sub (2 venues)",
+      "aum_usd": 25000000,
+      "venues": ["HL", "Bybit"],
+      "n_wallets": 2,
+      "n_venues": 2,
+      "net_annual_usd": 4282980,
+      "net_annual_ret_pct": 17.13,
+      "lift_vs_baseline_usd": 2198715,
+      "lift_pct": 105.5,
+      "capacity_flag": "YELLOW",
+      "source": "K431 multi-venue 2-venue $25M scenario",
+      "note": "Bybit sub-account. 30-min setup + 7d paper. True OB separation = real slippage relief."
+    },
+    {
+      "phase": "Phase 1B",
+      "label": "$10M HL W1+W2 strategy isolation (same OB)",
+      "aum_usd": 10000000,
+      "venues": ["HL_W1", "HL_W2"],
+      "n_wallets": 2,
+      "n_venues": 1,
+      "net_annual_usd": 2288635,
+      "net_annual_ret_pct": 22.89,
+      "lift_vs_baseline_usd": 204370,
+      "lift_pct": 9.8,
+      "capacity_flag": "GREEN",
+      "source": "K431 2-account $10M (stagger benefit modeled at 30% slip reduction)",
+      "note": "W2 = K449+K476 strategy isolation. SAME HL OB — no OI capacity gain. Benefit = cleaner margin + execution isolation."
+    },
+    {
+      "phase": "Phase 2",
+      "label": "$50M HL+Bybit+dYdX (3 venues)",
+      "aum_usd": 50000000,
+      "venues": ["HL", "Bybit", "dYdX"],
+      "n_wallets": 3,
+      "n_venues": 3,
+      "net_annual_usd": 5446720,
+      "net_annual_ret_pct": 10.89,
+      "lift_vs_baseline_usd": 3362455,
+      "lift_pct": 161.3,
+      "capacity_flag": "YELLOW",
+      "source": "K431 3-venue $50M confirmed",
+      "note": "Requires K460 dYdX daemon active. Gate: K449+K457 60d paper-trade."
+    },
+    {
+      "phase": "Phase 3 v6.20",
+      "label": "$100M 7-venue + K458 depth allocator",
+      "aum_usd": 100000000,
+      "venues": ["HL", "Bybit", "OKX", "Aevo", "dYdX", "Lighter", "Vertex"],
+      "n_wallets": 5,
+      "n_venues": 7,
+      "net_annual_usd": 48177045,
+      "net_annual_ret_pct": 48.18,
+      "lift_vs_baseline_usd": 46092780,
+      "lift_pct": 2211.5,
+      "capacity_flag": "GREEN",
+      "source": "K454 phase9 profit table (depth-aware allocator model)",
+      "note": "K458 depth-aware allocator required. K461 accepted conditional. M6-M9 timeline."
+    },
+    {
+      "phase": "Phase 4 v6.20 optimal",
+      "label": "$200M 10-venue optimal (K461)",
+      "aum_usd": 200000000,
+      "venues": ["HL", "Bybit", "OKX", "Aevo", "dYdX", "Lighter", "Vertex", "Drift", "Binance", "KuCoin"],
+      "n_wallets": 5,
+      "n_venues": 10,
+      "net_annual_usd": 74449008,
+      "net_annual_ret_pct": 37.22,
+      "lift_vs_baseline_usd": 72364743,
+      "lift_pct": 3471.8,
+      "capacity_flag": "GREEN",
+      "source": "K454 phase7 max sustainable AUM (optimal ceiling $200M)",
+      "note": "K461 ACCEPT (conditional). DO NOT FORCE. Paper-trade gates + K458 required."
+    }
+  ],
+
+  "venue_policy_table": [
+    {
+      "venue": "Hyperliquid (HL)",
+      "type": "DEX (non-KYC, permissionless L1)",
+      "kyc_required": false,
+      "multi_wallet_permitted": true,
+      "multi_wallet_verdict": "PERMITTED",
+      "sub_account_feature": "Vault sub-accounts + agent wallet pattern supported",
+      "tos_risk": "NONE",
+      "k431_correction": "K431 flagged as NOT PERMITTED using CEX logic. CORRECTED: HL is non-KYC DEX. Multiple wallets unrestricted.",
+      "capacity_benefit": "NONE (same HL OB). Use for strategy isolation only.",
+      "recommended_path": "W2 wallet for K449+K476 paired-trade isolation. Fund small ($2M). 5-min setup.",
+      "slippage_note": "CRITICAL: W1 + W2 both on HL = same order book. Total slippage = combined notional. Zero OI relief."
+    },
+    {
+      "venue": "Bybit",
+      "type": "CEX (KYC required)",
+      "kyc_required": true,
+      "multi_wallet_permitted": false,
+      "multi_wallet_verdict": "PROHIBITED for personal duplicate accounts",
+      "sub_account_feature": "PERMITTED — Bybit Master + up to 20 sub-accounts. Sub inherits master KYC.",
+      "tos_risk": "HIGH if duplicate personal accounts. NONE if using sub-account system.",
+      "sub_account_steps": [
+        "Bybit UI: Account & Security → Sub Accounts → Create Sub Account (Standard)",
+        "Generate trade-only API key with IP restriction",
+        "Export BYBIT_SUB1_API_KEY and BYBIT_SUB1_SECRET to ~/.zshrc (NOT git)"
+      ],
+      "capacity_benefit": "REAL — separate Bybit OB from HL. Genuine OI relief.",
+      "recommended_path": "Bybit Sub #1 for K297p overflow at $15M+ AUM. Paper-trade 7 days first.",
+      "margin_isolation": "Each sub-account has independent margin pool. Margin call NOT cross-sub."
+    },
+    {
+      "venue": "OKX",
+      "type": "CEX (KYC required)",
+      "kyc_required": true,
+      "multi_wallet_permitted": false,
+      "multi_wallet_verdict": "PROHIBITED for personal duplicate accounts",
+      "sub_account_feature": "PERMITTED — OKX Master + up to 30 sub-accounts.",
+      "tos_section": "OKX User Agreement §3.1",
+      "tos_risk": "HIGH if duplicate personal. NONE if sub-account system.",
+      "capacity_benefit": "REAL — separate OKX OB (3rd largest perp venue globally).",
+      "recommended_path": "K456 Action #16 — OKX sub for K208 3rd venue at $20M+ AUM."
+    },
+    {
+      "venue": "Aevo",
+      "type": "DEX (OP Stack L2, non-KYC)",
+      "kyc_required": false,
+      "multi_wallet_permitted": true,
+      "multi_wallet_verdict": "PERMITTED",
+      "sub_account_feature": "N/A (wallet = account)",
+      "tos_risk": "NONE",
+      "capacity_benefit": "REAL — separate Aevo OB. 1-hour funding cycle (vs 8h HL).",
+      "recommended_path": "K460 Action #17. Already scaffolded."
+    },
+    {
+      "venue": "dYdX v4",
+      "type": "DEX (Cosmos chain, non-KYC)",
+      "kyc_required": false,
+      "multi_wallet_permitted": true,
+      "multi_wallet_verdict": "PERMITTED",
+      "sub_account_feature": "YES — native sub-account index within Cosmos address",
+      "tos_risk": "NONE",
+      "capacity_benefit": "REAL — Cosmos chain, completely separate OB.",
+      "recommended_path": "K460 Action #18. Already scaffolded. DYDX_MNEMONIC env var."
+    },
+    {
+      "venue": "Lighter",
+      "type": "DEX (zkSync-based, non-KYC)",
+      "kyc_required": false,
+      "multi_wallet_permitted": true,
+      "multi_wallet_verdict": "PERMITTED",
+      "tos_risk": "NONE",
+      "capacity_benefit": "REAL but limited by Lighter OB depth (smaller venue).",
+      "recommended_path": "K465 25th daemon."
+    },
+    {
+      "venue": "Vertex",
+      "type": "DEX (Arbitrum L2, non-KYC)",
+      "kyc_required": false,
+      "multi_wallet_permitted": true,
+      "multi_wallet_verdict": "PERMITTED",
+      "tos_risk": "NONE",
+      "capacity_benefit": "REAL — Arbitrum L2, cross-margin perps.",
+      "recommended_path": "K465 26th daemon."
+    }
+  ],
+
+  "k431_tos_correction": {
+    "k431_original_verdict": "HL flagged as NOT PERMITTED for multi-account",
+    "k485_correction": "K431 applied CEX logic incorrectly. HL is a non-KYC DEX. Multiple wallets technically unrestricted. Real constraint = market impact (same OB = same slippage regardless of wallet count).",
+    "practical_implication": "Multiple HL wallets OK for strategy isolation. For capacity expansion: separate venues (Bybit/dYdX/Aevo) required for genuine OB separation.",
+    "bybit_verdict_unchanged": "Bybit personal duplicate accounts remain PROHIBITED. Use Bybit sub-account system (explicitly supported feature)."
+  },
+
+  "tax_legal_assessment": {
+    "hl_multiple_wallets": {
+      "kyc_issue": "NONE — HL is non-KYC",
+      "tax_treatment": "Each wallet address = separate accounting entity",
+      "tools": "Koinly / CoinTracker support multi-address aggregation"
+    },
+    "bybit_sub_account": {
+      "kyc_issue": "NONE — sub inherits master KYC",
+      "tax_treatment": "Sub typically aggregated under master holder. Verify with local CPA.",
+      "bybit_tax_reports": "Bybit provides per-sub tax export"
+    },
+    "family_member_accounts": {
+      "legality": "Different natural person with own KYC = separate legal entity. Fully legal.",
+      "not_ok": "Operating under another person's account = likely ToS violation",
+      "tax_separation": "Family member account = their profits/losses. No commingling."
+    },
+    "wash_sale_multi_wallet": {
+      "risk": "Selling at loss in W1 and rebuying in W2 may trigger wash sale in many jurisdictions",
+      "mitigation": "Consult local tax advisor before cross-wallet loss harvesting"
+    }
+  },
+
+  "operational_wallet_scheme": {
+    "W1_HL_primary": {
+      "env_var": "HL_PRIVATE_KEY",
+      "strategies": ["K280 (FR carry 75%)", "K297p (PAXG/SPX HIP-3 20%)", "sUSDe (5%)"],
+      "aum_target_usd": 10000000,
+      "venue": "HL",
+      "security": "Hardware wallet recommended (large AUM)"
+    },
+    "W2_HL_strategy_iso": {
+      "env_var": "HL_PRIVATE_KEY_W2",
+      "strategies": ["K449 (ETH-BTC)", "K476 (SOL-BTC)"],
+      "aum_target_usd": 2000000,
+      "venue": "HL",
+      "note": "SAME HL OB. Strategy isolation only. NOT capacity expansion.",
+      "security": "MetaMask with passphrase"
+    },
+    "W3_Bybit_sub1": {
+      "env_var": "BYBIT_SUB1_API_KEY",
+      "env_var_secret": "BYBIT_SUB1_SECRET",
+      "strategies": ["K208 Bybit leg", "K297p overflow"],
+      "aum_target_usd": 7500000,
+      "venue": "Bybit",
+      "note": "Bybit Master + Sub #1. Trade-only API. Independent margin pool.",
+      "security": "Trade-only API key + IP restriction (no withdrawal scope)"
+    },
+    "W4_dYdX_cosmos": {
+      "env_var": "DYDX_MNEMONIC",
+      "strategies": ["K208 dYdX leg"],
+      "aum_target_usd": 2500000,
+      "venue": "dYdX v4",
+      "note": "Cosmos chain. K460 already scaffolded."
+    },
+    "W5_Aevo_evm": {
+      "env_var": "AEVO_PRIVATE_KEY",
+      "strategies": ["K208 Aevo leg"],
+      "aum_target_usd": 2500000,
+      "venue": "Aevo",
+      "note": "EVM wallet OP Stack. K460 already scaffolded."
+    }
+  },
+
+  "capital_allocation": {
+    "phase_1_25M": {
+      "W1_HL": "50% = $12.5M",
+      "W3_Bybit": "30% = $7.5M",
+      "W4_dYdX": "10% = $2.5M",
+      "W5_Aevo": "10% = $2.5M"
+    },
+    "phase_2_50M": {
+      "W1_HL": "40% = $20M",
+      "W3_Bybit": "30% = $15M",
+      "W4_dYdX": "15% = $7.5M",
+      "W5_Aevo": "15% = $7.5M"
+    },
+    "phase_3_100M": {
+      "W1_HL": "30% = $30M",
+      "W3_Bybit": "25% = $25M",
+      "W4_dYdX": "15% = $15M",
+      "W5_Aevo": "15% = $15M",
+      "W6_OKX_sub": "10% = $10M",
+      "W7_others": "5% = $5M"
+    }
+  },
+
+  "hl_concentration_rule": {
+    "rule": "HL% = (W1_HL + W2_HL) / Total_AUM <= 65%",
+    "current_k479": "53% (12pp headroom)",
+    "phase_1_example": "W1 $12.5M + W2 $2M / $25M total = 58%. OK.",
+    "monitoring": "multi_account_orchestrator.py reports hl_concentration_pct in real-time"
+  },
+
+  "implementation_roadmap": [
+    {
+      "id": "K485-1",
+      "title": "HL W2 wallet creation (strategy isolation for K449+K476)",
+      "timeline": "Day 1 (~5 minutes)",
+      "complexity": "TRIVIAL",
+      "lift_usd_yr": 204370,
+      "risk": "ZERO"
+    },
+    {
+      "id": "K485-2",
+      "title": "Bybit sub-account activation + 7d paper gate",
+      "timeline": "Day 2-3 (30 min) + 7 days paper",
+      "complexity": "LOW",
+      "lift_usd_yr": 2198715,
+      "risk": "LOW"
+    },
+    {
+      "id": "K485-3",
+      "title": "scripts/multi_account_orchestrator.py + cross-wallet monitoring dashboard",
+      "timeline": "Day 3-5 (~3 hours)",
+      "complexity": "MEDIUM",
+      "lift_usd_yr": 0,
+      "risk": "LOW (operational only)"
+    },
+    {
+      "id": "K485-4",
+      "title": "dYdX + Aevo wallet setup (Phase 2 preparation)",
+      "timeline": "Month 1 (~15 min each)",
+      "complexity": "TRIVIAL",
+      "lift_usd_yr": 0,
+      "risk": "TRIVIAL (unlocks Phase 2 gates)"
+    },
+    {
+      "id": "K485-5",
+      "title": "Capital scaling Phase 1 to Phase 2 to Phase 3 (conditional on paper gates)",
+      "timeline": "Month 1 to Month 3 to Month 6+",
+      "complexity": "OPERATIONAL",
+      "lift_usd_yr": 3362455,
+      "risk": "MEDIUM (phased, each phase validated)"
+    }
+  ],
+
+  "do_not_do": [
+    "Do NOT open duplicate personal Bybit/OKX accounts (ToS violation — account freeze risk)",
+    "Do NOT expect HL multi-wallet to reduce slippage (same order book, zero OI benefit)",
+    "Do NOT store private keys in git, HTML reports, or env files committed to repo",
+    "Do NOT force Phase 2+ before K449+K457 paper-trade gates pass (K461 condition)",
+    "Do NOT exceed 65% HL combined concentration (measure CROSS-WALLET W1+W2)",
+    "Do NOT commingle family member account funds without proper documentation"
+  ],
+
+  "decision": {
+    "phase1_recommendation": "IMMEDIATE — HL W2 strategy isolation + Bybit sub activation. 5-14 day setup. +$2.20M/yr lift at $25M total AUM.",
+    "phase2_recommendation": "CONDITIONAL — After K449+K457 60d paper-trade gates. dYdX v4 + Aevo. $50M ceiling.",
+    "phase3_recommendation": "LONG-TERM — K458 depth-aware + all 7 venues. $100M viable. M6-M9 timeline.",
+    "user_action_number": 24
+  },
+
+  "files_generated": [
+    "wave_k485_multi_account_scaling.py",
+    "wave_k485_multi_account_scaling.json",
+    "wave_k485_multi_account_scaling.md",
+    "docs/k302a_master_deployment.md (Appendix K485 appended, User Action #24)",
+    "scripts/multi_account_orchestrator.py (design draft ~250 LOC)"
+  ]
+}

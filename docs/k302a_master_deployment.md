@@ -1532,4 +1532,123 @@ Alert threshold: < 50% of conservative for 3+ consecutive days.
 
 Source files: `wave_k481_builder_rebate_activation.py` | `wave_k481_builder_rebate_activation.json` | `wave_k481_builder_rebate_activation.md`
 
+---
+
+## Appendix K485 — Multi-Account Scaling Activation Playbook (User Action #24)
+
+**Wave:** K485 | **Added:** 2026-05-30 02:54 JST | **Classification:** Capacity expansion axis, profit-max #5
+
+### Summary
+
+Multi-account scaling activation playbook: $10M → $25M → $50M → $100M → $200M ceiling via multi-wallet multi-venue architecture. Key finding: multiple HL wallets are technically permissible (non-KYC DEX) but provide ZERO slippage relief (same OB). Real capacity expansion requires separate venues (Bybit sub-account, dYdX, Aevo). K431 ToS verdict corrected.
+
+### User Action #24: Multi-Account Scaling Activation (M0–M6, Phased)
+
+| # | Action | Time | Expected Annual ROI | Risk |
+|---|--------|------|---------------------|------|
+| 24a | HL W2 wallet creation (strategy isolation for K449+K476) | 5 min | +$210K/yr | ZERO |
+| 24b | Bybit sub-account activation + 7d paper gate | 30 min + 7d | **+$2.2M/yr** at $25M AUM | LOW |
+| 24c | multi_account_orchestrator.py + cross-wallet dashboard | 3 hr | Operational clarity | LOW |
+| 24d | dYdX + Aevo wallet setup (Phase 2 preparation) | 15 min each | Unlock Phase 2 gates | TRIVIAL |
+| 24e | Capital scaling Phase 1→2→3 (conditional on paper gates) | Monthly | +$3.37M/yr at $50M | MEDIUM |
+
+> **Action #24b (Bybit sub): +$2.2M/yr at $25M total AUM with 30-minute setup. Do this second (after Action #23 builder rebate).**
+
+### Profit Lift by Phase
+
+| Phase | AUM | Architecture | Net/yr | Lift vs $10M baseline |
+|-------|-----|-------------|--------|-----------------------|
+| Baseline | $10M | Single HL (v6.13d) | $2.08M/yr | — |
+| Phase 1A | $25M | HL + Bybit sub (2 venues) | **$4.28M/yr** | **+$2.20M (+106%)** |
+| Phase 1B | $10M | HL W1+W2 (strategy iso) | $2.29M/yr | +$210K (+10%) |
+| Phase 2 | $50M | HL + Bybit + dYdX (3 venues) | **$5.45M/yr** | **+$3.37M (+162%)** |
+| Phase 3 | $100M | v6.20 7-venue + K458 depth allocator | $48.2M/yr | +$46.1M (+2216%) |
+| Phase 4 | $200M | v6.20 10-venue optimal (K461) | **$74.4M/yr** | **+$72.4M (+3479%)** |
+
+### K431 ToS Correction
+
+K431 incorrectly flagged HL as "NOT PERMITTED" for multiple accounts. **K485 correction:** HL is a non-KYC permissionless DEX — multiple wallets are technically unrestricted. The real constraint is **market impact** (same HL order book = same slippage regardless of wallet count). For capacity expansion, separate venues (Bybit/dYdX/Aevo) are required.
+
+### Per-Venue Policy Summary
+
+| Venue | KYC | Multi-wallet | Sub-account | Recommended Path |
+|-------|-----|-------------|-------------|-----------------|
+| HL | No | PERMITTED (DEX) | Vault/agent sub-account | W2 for strategy isolation (K449/K476) |
+| Bybit | Yes | PROHIBITED (personal) | PERMITTED (up to 20 subs) | Sub #1 for K297p overflow at $15M+ |
+| OKX | Yes | PROHIBITED (personal) | PERMITTED (up to 30 subs) | Sub for K208 3rd venue (K456 Action #16) |
+| Aevo | No | PERMITTED (DEX) | N/A (wallet=account) | K460 Action #17 |
+| dYdX v4 | No | PERMITTED (DEX, Cosmos) | YES (sub-account index) | K460 Action #18 |
+| Lighter | No | PERMITTED (DEX) | N/A | K465 25th daemon |
+| Vertex | No | PERMITTED (DEX, Arbitrum) | N/A | K465 26th daemon |
+
+### Step-by-Step: Phase 1 Activation (Days 1–14)
+
+**Day 1 (~5 min): HL W2 Strategy Isolation**
+```bash
+# MetaMask → Add Account → Create Account → label "K485-W2-strategy-iso"
+# Export private key (store in 1Password or macOS Keychain, NOT git)
+export HL_PRIVATE_KEY_W2="0x<YOUR_W2_KEY>"  # add to ~/.zshrc (NOT committed)
+# Update K449/K476 daemon plists to use HL_PRIVATE_KEY_W2
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k449-eth-btc.plist
+# (edit plist EnvironmentVariables)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k449-eth-btc.plist
+```
+
+**Day 2–3 (~30 min): Bybit Sub-Account**
+```bash
+# Bybit UI: Account & Security → Sub Accounts → Create Sub Account (Standard)
+# Generate trade-only API key + IP restriction
+export BYBIT_SUB1_API_KEY="<key>"   # add to ~/.zshrc (NOT committed)
+export BYBIT_SUB1_SECRET="<secret>" # add to ~/.zshrc (NOT committed)
+# Paper-trade K297p on Bybit sub for 7 days before live capital
+```
+
+**Day 3–5 (~3 hr): Orchestrator + Dashboard**
+```bash
+python3 scripts/multi_account_orchestrator.py --dry-run --wallets=all
+python3 scripts/multi_account_orchestrator.py --config-check
+# Verify all wallet connections before any capital transfer
+```
+
+**Week 2: Live Bybit Sub**
+```bash
+# After 7-day paper gate passes:
+# Bybit: transfer $3–5M from master to sub #1 (Account → Transfer → Sub Account)
+# Activate K297p live on Bybit sub
+```
+
+### HL Concentration Rule (Cross-Wallet)
+
+```
+HL combined = W1_HL_equity + W2_HL_equity
+Total AUM   = HL + Bybit + dYdX + Aevo + ...
+HL% = HL_combined / Total_AUM ≤ 65%  (K358 rule, measured cross-wallet)
+
+Current (K479 v6.22): 53%. 12pp headroom.
+At $25M (W1=$12.5M HL, W3=$12.5M Bybit): HL% = 50%. Safe.
+```
+
+### Do NOT Do
+
+1. Do NOT open duplicate personal Bybit/OKX accounts — ToS violation, account freeze risk
+2. Do NOT expect HL multi-wallet to reduce slippage — same order book, zero OI benefit
+3. Do NOT store private keys in git, HTML reports, or env files committed to repo
+4. Do NOT force Phase 2+ before K449+K457 paper-trade gates pass (K461 condition)
+5. Do NOT exceed 65% HL combined concentration (measure across ALL HL wallets)
+
+### Updated Profit Projection Summary
+
+| Parameter | K481 (previous) | K485 (this wave) |
+|-----------|----------------|-----------------|
+| Total user actions | 23 | **24** |
+| Annual profit @ $10M (con.) | ~$1,465K | **~$1,675K (+ W2 strategy iso $210K)** |
+| Annual profit @ $25M (con.) | — | **~$4,280K (+ Bybit sub Phase 1A)** |
+| Annual profit @ $200M optimal | $74.4M | **$74.4M + $2.2M builder rebate = ~$76.6M** |
+| Bybit sub setup time | — | **30 min + 7d paper gate** |
+| ROI/hr for Phase 1B (Bybit sub) | — | **~$4,400/hr** (30 min → $2.2M/yr lift) |
+
+Source files: `wave_k485_multi_account_scaling.py` | `wave_k485_multi_account_scaling.json` | `wave_k485_multi_account_scaling.md` | `scripts/multi_account_orchestrator.py`
+
+*K485 Appendix — Added 2026-05-30 02:54 JST*
+
 *K481 Appendix — Added 2026-05-30 02:44 JST*
