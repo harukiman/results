@@ -3342,3 +3342,72 @@ HL post-K560: **64.5%** (Phase A Bybit-only, 0.5pp headroom to 65% hard cap)
 Source files: `wave_k560_k512_week5_live.{py,json,md}`
 
 *K560 Appendix — Added 2026-05-30 06:31 JST*
+
+---
+
+## K572 v6.30 Architecture Proposal — K521 Options Skew Addition
+
+**Wave:** K572 | **Version:** 6.30 | **Added:** 2026-05-30 06:53 JST
+**Status:** CANDIDATE — D180 activation pending K521 90d paper gate (G3)
+
+### v6.30 Delta vs v6.29
+
+| Sleeve | v6.29 | v6.30 | Delta | Venue |
+|--------|-------|-------|-------|-------|
+| K280_multi_venue | 35% | **32%** | **-3pp** | HL+Bybit |
+| K521_options_skew | 0% | **3%** | **+3pp** | HL+Bybit (split) |
+| All others | unchanged | unchanged | — | — |
+| **TOTAL** | **100%** | **100%** | — | — |
+
+**K521 split:** 1.5% HL + 1.5% Bybit — HL net delta = 0pp
+
+### v6.30 K523 Profit Range @$10M
+
+| Scenario | v6.29 | K521 Add | v6.30 | vs v6.29 |
+|----------|-------|---------|-------|---------|
+| Conservative | $1,810,250 | +$200,000 | **$2,010,250** | +$200,000 |
+| Mid | $2,502,000 | +$295,000 | **$2,797,000** | +$295,000 |
+| Optimistic | $2,725,000 | +$494,000 | **$3,219,000** | +$494,000 |
+
+**K523 Range: $2,010,250 – $3,219,000/yr @$10M (mid $2,797,000)**
+**5y central @$10M: $33,642,000 (+$3.1M vs v6.29 $30.5M)**
+
+### v6.30 HL Concentration
+
+| Scenario | HL % | Cap | Status |
+|----------|------|-----|--------|
+| K376 active | 62.5% | 65% | **PASS (2.5pp headroom)** |
+| K376 paused | 54.5% | 65% | **PASS (10.5pp headroom)** |
+
+### v6.30 §6 Gate Summary
+
+| Gate | Status | Note |
+|------|--------|------|
+| G1 HL concentration | **PASS** | 62.5% < 65% cap |
+| G2 OOS back-test | **PASS** | K521 OOS Sh 1.019 (K565) |
+| G3 Paper gate | **PENDING** | 90d paper required (D180 eval) |
+| G4 Negative fold | **PASS** | Convex options skew profile |
+| G5 Correlation | **PASS** | Max corr 0.199 << 0.40 |
+| G6 Live gate | **PENDING** | Gated on G3 D180 |
+| G7 Ann return | **PASS** | 28% ARR >> 15% |
+| HL cap | **PASS** | 62.5% < 65% |
+
+### v6.30 Activation Timeline
+
+```
+D0-D150  v6.29 full activation (K555 playbook)
+D150     K521 90d paper gate evaluation (G3/G6)
+D180     v6.30 ACTIVATE: K280 35%→32%, K521 1.5%HL+1.5%Bybit load
+```
+
+### Architecture Version History (K572 Update)
+
+| Architecture | Status | @$10M mid | Activation |
+|-------------|--------|-----------|-----------|
+| v6.13d | LIVE baseline | $400K-$1M | Now |
+| v6.29 (K555) | CANDIDATE | $2,502,000 | D0-D150 |
+| **v6.30 (K572)** | **CANDIDATE** | **$2,797,000** | **D180** |
+
+Source: `wave_k572_v630_proposal.{py,json,md}`
+
+*K572 v6.30 Appendix — Added 2026-05-30 06:53 JST*
