@@ -196,6 +196,27 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="depth_allocator",
         expected_html_status="SCAFFOLD-READY",  # K458: plist in repo root (gitignored); activate after v6.20 go-live + AUM >$10M
     ),
+    DaemonSpec(
+        label="com.cryptolab.k457-basket",
+        purpose="K457 BTC+ETH+SOL Multi-Asset Basket FR Carry (K459 scaffold, inv-vol weights, DAR(2,1) gate, 6 legs, HL+Bybit, 4x leverage, 5% sleeve v6.20, 60d paper-trade gate, 22nd daemon)",
+        scripts=["scripts/k457_basket_run.py"],
+        log_basename="k457_basket",
+        expected_html_status="SCAFFOLD-READY",  # K459: plist in repo root (gitignored); activate after 60d paper-trade gate + OOS Sharpe >=15 + fill_rate >=65%
+    ),
+    DaemonSpec(
+        label="com.cryptolab.aevo-fr-monitor",
+        purpose="K460 Aevo FR Monitor (K454 v6.20 wave 5/7, 4th K208 venue, 14-symbol FR poll, 1h cycle, cross-venue arb HL/Bybit/OKX/Aevo, api.aevo.xyz, 23rd daemon)",
+        scripts=["scripts/aevo_fr_fetcher.py"],
+        log_basename="aevo_fr_monitor",
+        expected_html_status="SCAFFOLD-READY",  # K460: plist in repo root (gitignored); activate after Aevo API keys configured + v6.20 go-live
+    ),
+    DaemonSpec(
+        label="com.cryptolab.dydx-v4-fr-monitor",
+        purpose="K460 dYdX v4 FR Monitor (K454 v6.20 wave 6/7, 5th K208 venue, Cosmos chain, 18-symbol FR poll, 1h cycle, indexer.dydx.trade, 24th daemon)",
+        scripts=["scripts/dydx_v4_fr_fetcher.py"],
+        log_basename="dydx_v4_fr_monitor",
+        expected_html_status="SCAFFOLD-READY",  # K460: plist in repo root (gitignored); activate after Cosmos signing impl + v6.20 go-live
+    ),
 ]
 
 

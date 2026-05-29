@@ -206,6 +206,45 @@ def fetch_balance(user: str, dry_run: bool = False) -> Dict:
 # 2. Exit Plan Builder
 # ─────────────────────────────────────────────────────────────────────────────
 
+def _detect_k457_basket_positions(positions: List[Dict]) -> Optional[Dict]:
+    """
+    K459 Phase 6: Detect K457 multi-asset basket positions (BTC/ETH/SOL on HL + Bybit).
+
+    K457 basket = up to 6 legs: BTC long+short, ETH long+short, SOL long+short
+    across HL and Bybit venues simultaneously.
+
+    Returns a dict describing detected basket legs if found, or None.
+    Used to ensure short legs are closed first (avoid uncovered short window).
+
+    Sequential close: short legs first, then long legs (per K459 Phase 6 protocol).
+    """
+    K457_SYMBOLS = {"BTC", "ETH", "SOL"}
+    basket_positions = [p for p in positions if p.get("coin", "").upper() in K457_SYMBOLS]
+
+    if not basket_positions:
+        return None
+
+    longs  = [p for p in basket_positions if p.get("side") == "long"]
+    shorts = [p for p in basket_positions if p.get("side") == "short"]
+
+    if not (longs and shorts):
+        return None  # need at least one long and one short to be a basket
+
+    return {
+        "detected":         True,
+        "strategy":         "K457 BTC+ETH+SOL multi-asset basket",
+        "long_legs":        [{"coin": p["coin"], "value_usd": p["value_usd"], "size": p["size"]}
+                             for p in longs],
+        "short_legs":       [{"coin": p["coin"], "value_usd": p["value_usd"], "size": p["size"]}
+                             for p in shorts],
+        "long_count":       len(longs),
+        "short_count":      len(shorts),
+        "total_notional":   sum(p["value_usd"] for p in basket_positions),
+        "close_protocol":   "SHORT LEGS FIRST (avoid uncovered short), then LONG LEGS",
+        "note":             "K457 basket — close all short legs before long legs per K459 Phase 6",
+    }
+
+
 def _detect_k449_paired_positions(positions: List[Dict]) -> Optional[Dict]:
     """
     K450 Phase 11: Detect K449 paired positions (ETH long + BTC short, or reverse).
@@ -268,14 +307,63 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
     """
     cancel_list = [(o["coin"], o["oid"]) for o in orders]
 
-    # K450: detect K449 paired positions
+    # K450: detect K449 paired positions (ETH/BTC)
     k449_pair = _detect_k449_paired_positions(positions)
     k449_coins = set()
     if k449_pair:
         k449_coins = {k449_pair["long_symbol"], k449_pair["short_symbol"]}
 
+    # K459: detect K457 basket positions (BTC/ETH/SOL)
+    k457_basket = _detect_k457_basket_positions(positions)
+    k457_coins: set = set()
+    if k457_basket:
+        k457_coins = {"BTC", "ETH", "SOL"}
+
     close_list = []
     total_notional = 0.0
+
+    # K459 basket positions: close ALL short legs first, then long legs
+    if k457_basket:
+        close_order = 0
+        # Phase 1: close all shorts (buy-to-cover)
+        for leg in k457_basket.get("short_legs", []):
+            coin = leg["coin"]
+            short_pos = next((p for p in positions if p["coin"].upper() == coin.upper()
+                              and p["side"] == "short"), None)
+            if short_pos:
+                close_order += 1
+                close_list.append({
+                    "coin":             short_pos["coin"],
+                    "size":             short_pos["size"],
+                    "side_to_close":    "buy",   # covering short
+                    "value_usd":        short_pos["value_usd"],
+                    "current_side":     "short",
+                    "k457_basket":      True,
+                    "k457_close_order": close_order,
+                    "close_phase":      "SHORTS_FIRST",
+                    "note":             f"K457 basket short leg {coin} — cover first (avoid uncovered short)",
+                })
+                total_notional += short_pos["value_usd"]
+
+        # Phase 2: close all longs (sell)
+        for leg in k457_basket.get("long_legs", []):
+            coin = leg["coin"]
+            long_pos = next((p for p in positions if p["coin"].upper() == coin.upper()
+                             and p["side"] == "long"), None)
+            if long_pos:
+                close_order += 1
+                close_list.append({
+                    "coin":             long_pos["coin"],
+                    "size":             long_pos["size"],
+                    "side_to_close":    "sell",
+                    "value_usd":        long_pos["value_usd"],
+                    "current_side":     "long",
+                    "k457_basket":      True,
+                    "k457_close_order": close_order,
+                    "close_phase":      "LONGS_SECOND",
+                    "note":             f"K457 basket long leg {coin} — sell second",
+                })
+                total_notional += long_pos["value_usd"]
 
     # K449 paired positions: close short first (avoid uncovered short window)
     if k449_pair:
@@ -313,10 +401,11 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
             })
             total_notional += long_pos["value_usd"]
 
-    # Non-K449 positions: close in any order
+    # All other positions: close in any order (non-K449, non-K457)
+    handled_coins = k449_coins | k457_coins
     for p in positions:
         coin = p.get("coin", "").upper()
-        if coin in k449_coins:
+        if coin in handled_coins:
             continue   # already handled above
         side_to_close = "sell" if p["side"] == "long" else "buy"
         close_list.append({
@@ -326,6 +415,7 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
             "value_usd":     p["value_usd"],
             "current_side":  p["side"],
             "k449_paired":   False,
+            "k457_basket":   False,
         })
         total_notional += p["value_usd"]
 
@@ -333,15 +423,17 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
     slippage_usd = total_notional * (SLIPPAGE_ESTIMATE_PCT / 100.0)
 
     return {
-        "cancel_orders":       cancel_list,
-        "close_positions":     close_list,
-        "total_notional_usd":  total_notional,
-        "estimated_time_s":    ESTIMATED_TIME_PER_POS * n_pos,
-        "slippage_estimate_usd": slippage_usd,
-        "position_count":      n_pos,
-        "order_count":         len(cancel_list),
-        "k449_paired_detected": k449_pair is not None,
-        "k449_pair_detail":    k449_pair,
+        "cancel_orders":          cancel_list,
+        "close_positions":        close_list,
+        "total_notional_usd":     total_notional,
+        "estimated_time_s":       ESTIMATED_TIME_PER_POS * n_pos,
+        "slippage_estimate_usd":  slippage_usd,
+        "position_count":         n_pos,
+        "order_count":            len(cancel_list),
+        "k449_paired_detected":   k449_pair is not None,
+        "k449_pair_detail":       k449_pair,
+        "k457_basket_detected":   k457_basket is not None,
+        "k457_basket_detail":     k457_basket,
     }
 
 
@@ -1096,6 +1188,103 @@ def close_okx_positions(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# 7d. Aevo Close-All (K460 Aevo integration scaffold — 4th venue)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def close_aevo_positions(
+    api_key:    str,
+    api_secret: str,
+    dry_run:    bool,
+    logger:     logging.Logger,
+) -> bool:
+    """
+    K460 scaffold: close all Aevo perpetual positions.
+
+    TODO: Full implementation when Aevo API auth is added post-K460.
+    Aevo REST base: https://api.aevo.xyz
+    Read-only (no auth): /funding, /markets, /orderbook.
+    Trading auth: API key + HMAC-SHA256 signature (TODO post-K460).
+
+    Current scope: STUB — read-only scaffold only.
+    Activate: when AEVO_API_KEY + AEVO_API_SECRET env vars are configured
+              and v6.20 Aevo trading integration is live.
+
+    Returns True on dry-run (safe). Returns False stub in live mode (not implemented).
+    """
+    if dry_run:
+        logger.info(
+            "  [DRY-RUN] close_aevo_positions — STUB (K460 scaffold, read-only). "
+            "No API call made."
+        )
+        logger.info(
+            "    Aevo trading auth TODO: implement after API auth phase (post-K460). "
+            "Dashboard: data/aevo_dashboard.json | Fetcher: scripts/aevo_fr_fetcher.py"
+        )
+        return True
+
+    # STUB: live Aevo close not yet implemented (K460 read-only scope)
+    logger.warning(
+        "close_aevo_positions: STUB — not yet implemented (K460 read-only scaffold). "
+        "Set --no-aevo to skip. Full auth implementation planned post-K460 when "
+        "AEVO_API_KEY + AEVO_API_SECRET are configured."
+    )
+    logger.warning(
+        "  Manual action required: close Aevo positions via https://app.aevo.xyz "
+        "if any exist. Aevo fetcher: scripts/aevo_fr_fetcher.py"
+    )
+    return False
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 7e. dYdX v4 Close-All (K460 dYdX v4 integration scaffold — 5th venue)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def close_dydx_positions(
+    dry_run: bool,
+    logger:  logging.Logger,
+) -> bool:
+    """
+    K460 scaffold: close all dYdX v4 Cosmos perpetual positions.
+
+    TODO: Full implementation when dYdX v4 Cosmos signing is added post-K460.
+    dYdX v4 is a Cosmos appchain — trading requires Cosmos SDK transaction signing
+    (NOT EVM). Requires dYdX Python client or Cosmos protobuf construction.
+
+    Indexer (read-only, no auth): https://indexer.dydx.trade/v4
+    Trading (Cosmos signing required — TODO):
+      - dYdX SDK: https://github.com/dydxprotocol/v4-clients
+      - Requires DYDX_MNEMONIC or DYDX_PRIVATE_KEY env var (Cosmos format, not EVM)
+
+    Current scope: STUB — read-only scaffold only.
+    Returns True on dry-run (safe). Returns False stub in live mode (not implemented).
+    """
+    if dry_run:
+        logger.info(
+            "  [DRY-RUN] close_dydx_positions — STUB (K460 scaffold, read-only). "
+            "No API call made."
+        )
+        logger.info(
+            "    dYdX v4 is Cosmos chain (not EVM) — signing requires Cosmos SDK (TODO post-K460). "
+            "Indexer (read-only): https://indexer.dydx.trade/v4 | "
+            "Dashboard: data/dydx_v4_dashboard.json | Fetcher: scripts/dydx_v4_fr_fetcher.py"
+        )
+        return True
+
+    # STUB: live dYdX v4 close not yet implemented (K460 read-only scope)
+    logger.warning(
+        "close_dydx_positions: STUB — not yet implemented (K460 read-only scaffold). "
+        "dYdX v4 requires Cosmos SDK signing (not EVM). "
+        "Set --no-dydx to skip. Full implementation planned post-K460."
+    )
+    logger.warning(
+        "  Manual action required: close dYdX v4 positions via https://dydx.trade "
+        "if any exist. Indexer (read positions): "
+        "GET https://indexer.dydx.trade/v4/addresses/{address}/subaccountNumber/0/openPositions"
+    )
+    return False
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # 8. Interactive Confirm (--EXECUTE guard)
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -1153,7 +1342,9 @@ def main() -> int:
         description=(
             "K357 Emergency HyperLiquid Exit Script (K355 critical gap mitigation)\n"
             "K380: --include-bybit flag added (K378 Phase 6 Bybit gap fix)\n"
-            "K456: --include-okx flag added (3rd venue, OKX SWAP perpetuals)"
+            "K456: --include-okx flag added (3rd venue, OKX SWAP perpetuals)\n"
+            "K460: --include-aevo flag added (4th venue, STUB scaffold)\n"
+            "K460: --include-dydx flag added (5th venue, Cosmos chain STUB scaffold)"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
@@ -1266,6 +1457,68 @@ USDY sleeve emergency guidance (K415 §21.6):
             "WARNING: USDY is T-bill backed — safer to HOLD through HL/Bybit crisis. "
             "Redemption: 1 business day (post 40-day lock only). Cannot be rushed. "
             "Only flag if you explicitly want to redeem USDY after HL/Bybit exit."
+        ),
+    )
+
+    # K460: Aevo emergency exit flag (stub scaffold — 4th venue)
+    aevo_group = parser.add_mutually_exclusive_group()
+    aevo_group.add_argument(
+        "--include-aevo",
+        dest="include_aevo",
+        action="store_true",
+        default=False,
+        help=(
+            "K460: Include Aevo close-all in emergency exit (4th venue, STUB scaffold). "
+            "STUB only at K460 — full auth TODO post-K460. "
+            "Dry-run: prints guidance. Live: warns manual action required at app.aevo.xyz. "
+            "See: docs/k302a_runbook.md §33.5"
+        ),
+    )
+    aevo_group.add_argument(
+        "--no-aevo",
+        dest="include_aevo",
+        action="store_false",
+        help="Skip Aevo close-all (default — Aevo not yet live at K460)",
+    )
+
+    # K460: dYdX v4 emergency exit flag (stub scaffold — 5th venue, Cosmos chain)
+    dydx_group = parser.add_mutually_exclusive_group()
+    dydx_group.add_argument(
+        "--include-dydx",
+        dest="include_dydx",
+        action="store_true",
+        default=False,
+        help=(
+            "K460: Include dYdX v4 close-all in emergency exit (5th venue, Cosmos chain STUB). "
+            "STUB only at K460 — Cosmos signing TODO post-K460. "
+            "Dry-run: prints guidance. Live: warns manual action required at dydx.trade. "
+            "See: docs/k302a_runbook.md §33.6"
+        ),
+    )
+    dydx_group.add_argument(
+        "--no-dydx",
+        dest="include_dydx",
+        action="store_false",
+        help="Skip dYdX v4 close-all (default — dYdX trading not yet live at K460)",
+    )
+
+    # K459: K457 basket emergency exit flag
+    # K457 = BTC+ETH+SOL simultaneous carry basket (HL+Bybit legs)
+    # Sequential close: short legs first (avoid uncovered short), then long legs.
+    # Default: off (basket positions are auto-detected via _detect_k457_basket_positions).
+    # Use --include-k457 to print K457-specific close summary and ensure sequential ordering.
+    parser.add_argument(
+        "--include-k457",
+        dest="include_k457",
+        action="store_true",
+        default=False,
+        help=(
+            "K459: Include K457 BTC+ETH+SOL basket-specific close summary and protocol note "
+            "during emergency exit. K457 basket positions (HL+Bybit, 6 legs) are detected "
+            "automatically; this flag just prints the structured close plan explicitly. "
+            "Close protocol: short legs first (avoid uncovered short), then long legs. "
+            "Requires: K457 basket daemon running (com.cryptolab.k457-basket). "
+            "See: docs/k302a_runbook.md §32"
         ),
     )
 
@@ -1427,6 +1680,32 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "Use --include-okx when OKX trading positions exist (post v6.20)."
             )
 
+        # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)
+        # K457 basket positions (BTC/ETH/SOL HL+Bybit) are included in the main HL exit.
+        # This flag adds a structured summary of the K457-specific close protocol.
+        if args.include_k457:
+            logger.info("=== K457 BASKET CLOSE SUMMARY (K459 §32) ===")
+            k457_detail = plan.get("k457_basket_detail")
+            if k457_detail:
+                logger.info(f"  K457 basket detected: {k457_detail.get('long_count', 0)} long legs, "
+                            f"{k457_detail.get('short_count', 0)} short legs")
+                logger.info(f"  Total basket notional: ${k457_detail.get('total_notional', 0):,.0f}")
+                logger.info(f"  Close protocol: {k457_detail.get('close_protocol', 'SHORTS_FIRST → LONGS')}")
+                for leg in k457_detail.get("short_legs", []):
+                    logger.info(f"    [PHASE 1 - SHORT] BUY-COVER {leg['coin']} ${leg['value_usd']:,.0f}")
+                for leg in k457_detail.get("long_legs", []):
+                    logger.info(f"    [PHASE 2 - LONG]  SELL      {leg['coin']} ${leg['value_usd']:,.0f}")
+            else:
+                logger.info("  No K457 basket positions detected (basket may be NEUTRAL or 60d paper-trade).")
+            logger.info("  K457 basket positions included in main HL exit plan above.")
+            logger.info("  See: docs/k302a_runbook.md §32 (K457 basket strategy playbook)")
+        else:
+            if plan.get("k457_basket_detected"):
+                logger.info(
+                    "K457 basket positions detected in plan — included in HL exit above. "
+                    "Use --include-k457 to print detailed basket close summary (§32)."
+                )
+
         # K415: USDY emergency documentation (NOT a redemption execution)
         # USDY redemption is intentionally NOT automated here.
         # Rationale: T-bill yield = safe harbor during HL/Bybit crisis. Hold is optimal.
@@ -1473,7 +1752,43 @@ USDY sleeve emergency guidance (K415 §21.6):
         else:
             logger.warning("Post-check skipped by --skip-postcheck flag")
 
-        overall_success = success and bybit_success and okx_success
+        # K460: Aevo emergency close-all (4th venue, STUB scaffold)
+        aevo_success = True
+        if args.include_aevo:
+            logger.info("=== AEVO EMERGENCY CLOSE-ALL (K460 4th venue STUB scaffold) ===")
+            aevo_api_key    = os.environ.get("AEVO_API_KEY", "")
+            aevo_api_secret = os.environ.get("AEVO_API_SECRET", "")
+            aevo_success = close_aevo_positions(
+                api_key=aevo_api_key,
+                api_secret=aevo_api_secret,
+                dry_run=False,
+                logger=logger,
+            )
+            if aevo_success:
+                logger.info("Aevo close-all: STUB returned OK (no actual API call yet).")
+            else:
+                logger.warning(
+                    "Aevo close-all: STUB not implemented. Manual close required at app.aevo.xyz."
+                )
+        else:
+            logger.info("Aevo close-all skipped (--no-aevo, default at K460 scaffold).")
+
+        # K460: dYdX v4 emergency close-all (5th venue, Cosmos chain STUB scaffold)
+        dydx_success = True
+        if args.include_dydx:
+            logger.info("=== dYdX v4 EMERGENCY CLOSE-ALL (K460 5th venue Cosmos STUB scaffold) ===")
+            dydx_success = close_dydx_positions(dry_run=False, logger=logger)
+            if dydx_success:
+                logger.info("dYdX v4 close-all: STUB returned OK (no actual Cosmos tx yet).")
+            else:
+                logger.warning(
+                    "dYdX v4 close-all: STUB not implemented (Cosmos signing TODO). "
+                    "Manual close required at dydx.trade."
+                )
+        else:
+            logger.info("dYdX v4 close-all skipped (--no-dydx, default at K460 scaffold).")
+
+        overall_success = success and bybit_success and okx_success and aevo_success and dydx_success
         return 0 if overall_success else 1
 
     # Dry-run success
@@ -1483,10 +1798,14 @@ USDY sleeve emergency guidance (K415 §21.6):
     logger.info("  1. Verify the plan above is correct")
     logger.info("  2. Export HL_USER_ADDRESS, HL_PRIVATE_KEY, BYBIT_API_KEY, BYBIT_API_SECRET env vars")
     logger.info("  3. For OKX (v6.20): export OKX_API_KEY, OKX_API_SECRET, OKX_PASSPHRASE env vars")
-    logger.info("  4. Run: python3 scripts/emergency_hl_exit.py --EXECUTE")
+    logger.info("  4. Aevo (v6.20, K460): export AEVO_API_KEY, AEVO_API_SECRET (STUB — TODO post-K460)")
+    logger.info("  5. dYdX v4 (v6.20, K460): Cosmos SDK signing required (STUB — TODO post-K460)")
+    logger.info("  6. Run: python3 scripts/emergency_hl_exit.py --EXECUTE")
     logger.info("     (adds Bybit close-all by default; use --no-bybit to skip)")
     logger.info("     (adds OKX close-all with --include-okx; default off at K456 scaffold)")
-    logger.info("  5. Confirm both interactive prompts")
+    logger.info("     (adds Aevo close-all with --include-aevo; STUB at K460 scaffold)")
+    logger.info("     (adds dYdX v4 close-all with --include-dydx; STUB at K460 scaffold)")
+    logger.info("  7. Confirm both interactive prompts")
     if args.include_bybit:
         logger.info("  [DRY-RUN] Bybit close-all would be attempted (--include-bybit=True)")
     else:
@@ -1495,6 +1814,14 @@ USDY sleeve emergency guidance (K415 §21.6):
         logger.info("  [DRY-RUN] OKX close-all would be attempted (--include-okx)")
     else:
         logger.info("  [DRY-RUN] OKX close-all would be skipped (default --no-okx at K456 scaffold)")
+    if args.include_aevo:
+        logger.info("  [DRY-RUN] Aevo close-all STUB would be attempted (--include-aevo)")
+    else:
+        logger.info("  [DRY-RUN] Aevo close-all would be skipped (default --no-aevo at K460 scaffold)")
+    if args.include_dydx:
+        logger.info("  [DRY-RUN] dYdX v4 close-all STUB would be attempted (--include-dydx)")
+    else:
+        logger.info("  [DRY-RUN] dYdX v4 close-all would be skipped (default --no-dydx at K460 scaffold)")
 
     # K415: USDY dry-run note
     logger.info("")
@@ -1503,6 +1830,15 @@ USDY sleeve emergency guidance (K415 §21.6):
     logger.info("    Redemption: 1 business day post 40-day lock. Cannot be rushed.")
     logger.info("    Redeem at ondo.finance only if capital needed after HL+Bybit exit.")
     logger.info("    Use --include-usdy to see USDY guidance during --EXECUTE mode.")
+
+    # K459: K457 basket dry-run note
+    logger.info("")
+    logger.info("  [K457 basket — K459 §32] BTC+ETH+SOL basket emergency guidance:")
+    logger.info("    K457 basket positions (HL+Bybit, up to 6 legs) auto-detected in plan.")
+    logger.info("    Close protocol: SHORT LEGS FIRST (avoid uncovered short), then LONG LEGS.")
+    logger.info("    Basket is in 60d paper-trade — no real positions until v6.20 activation.")
+    logger.info("    Use --include-k457 to print structured basket close summary.")
+    logger.info("    See: docs/k302a_runbook.md §32")
 
     return 0
 

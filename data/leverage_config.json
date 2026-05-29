@@ -10,7 +10,42 @@
     "K297_SPX": 5.0,
     "sUSDe": 1.0,
     "K449_ETH_BTC": 4.0,
-    "K280_K208_OKX": 3.0
+    "K280_K208_OKX": 3.0,
+    "K457_basket": 4.0,
+    "K280_K208_Aevo": 3.0,
+    "K280_K208_dYdX": 3.0
+  },
+  "k457_basket_notes": {
+    "sleeve_pct": 0.05,
+    "leverage": 4.0,
+    "assets": ["BTC", "ETH", "SOL"],
+    "max_legs": 6,
+    "margin_calc": "4x × 5% sleeve × $10M = $2M notional total / 4x = $500K margin",
+    "margin_pct_of_aum_10M": "5.0%",
+    "hl_exposure_cap": "65% per K355 concentration rules",
+    "inv_vol_weights": "30d realized vol normalization (approx BTC:0.37, ETH:0.36, SOL:0.27)",
+    "dar_filter": "DAR(2,1) per asset — rejects noisy/alternating spreads",
+    "activation": "SCAFFOLD-READY — 60d paper-trade gate (OOS Sharpe ≥15 + fill_rate ≥65%)",
+    "v620_target": "K457 sleeve at 5% AUM after 60d gate passage",
+    "wave": "K459"
+  },
+  "k460_aevo_notes": {
+    "venue": "Aevo",
+    "wave": "K460",
+    "leverage_cap": 3.0,
+    "rationale": "Conservative 3x cap (Aevo supports up to 10x). 1h funding cycle — normalize x8 for 8h comparison.",
+    "funding_period_h": 1,
+    "activation": "SCAFFOLD-READY — activate when Aevo trading keys configured + v6.20 go-live"
+  },
+  "k460_dydx_notes": {
+    "venue": "dYdX v4",
+    "wave": "K460",
+    "leverage_cap": 3.0,
+    "rationale": "Conservative 3x cap. Cosmos chain — additional operational complexity warrants conservative start. Trading requires Cosmos SDK signing (TODO post-K460).",
+    "chain": "Cosmos (dYdX v4 appchain)",
+    "funding_period_h": 1,
+    "trading_auth": "Cosmos SDK signing required (dYdX SDK) — TODO post-K460 auth phase",
+    "activation": "SCAFFOLD-READY — activate when Cosmos signing implemented + v6.20 go-live"
   },
   "k456_okx_notes": {
     "venue": "OKX",

@@ -4271,3 +4271,228 @@ python3 scripts/depth_aware_allocator.py --symbol BTC --target 20000000 --dry-ru
 ---
 
 *K458 §31 -- Depth-aware allocator (21st daemon, K454 v6.20 phase 5 HIGH priority, $100M+ slippage rescue) -- 2026-05-30*
+
+---
+
+## §32. K457 BTC+ETH+SOL Multi-Asset Basket FR Carry (22nd Daemon, K459 Scaffold)
+
+**Wave:** K459 | **Status:** SCAFFOLD-READY (60d paper-trade) | **Daemon:** 22nd
+
+---
+
+### §32.1 Strategy Overview
+
+K457 implements a 3-asset simultaneous K208-style funding-rate carry basket across BTC, ETH, and SOL. Unlike K449 (2-asset ETH-BTC pair), K457 applies independent carry signals per asset, producing up to 6 simultaneous legs (3 longs + 3 shorts across 2 venues).
+
+**Key design properties:**
+- Each asset trades independently (BTC, ETH, SOL)
+- For each asset: long lower-FR venue, short higher-FR venue (HL vs Bybit)
+- Inverse-volatility weights reduce basket variance vs equal-weight
+- DAR(2,1) filter per asset prevents noisy/flip signals
+- K430 leverage cap: 4x (matches K449, per leverage_config.json)
+- K355 HL concentration cap: ≤65% of total basket notional
+
+**OOS backtest result (CONDITIONAL ACCEPT):**
+- OOS Sharpe: **19.58** (highest standalone single-strategy wave)
+- 60d paper-trade required before v6.20 sleeve activation
+- v6.20 sleeve target: **5% of AUM**
+
+---
+
+### §32.2 Inv-Vol Weighting Mechanics
+
+Inverse-volatility weighting prevents the highest-vol asset (typically SOL) from dominating the basket.
+
+**Algorithm:**
+```
+1. Load 30d FR spread history per asset (HL FR − Bybit FR)
+2. Compute realized std(spread) per asset:
+   vol_i = std(spread_i[-30d])
+3. Inv-vol weight: weight_i = (1/vol_i) / sum(1/vol_j)
+4. Normalize: sum(weights) = 1.0
+```
+
+**Typical weights (30d approximation at K459 scaffold):**
+| Asset | Approx Weight | Rationale |
+|-------|-------------|-----------|
+| BTC   | 36.9%       | Lowest spread vol (deepest market) |
+| ETH   | 35.7%       | Mid spread vol |
+| SOL   | 27.4%       | Highest spread vol → smallest weight |
+
+**Rebalance cadence:** Weights are updated each 8h cycle from the FR history JSONL.
+
+---
+
+### §32.3 DAR(2,1) Filter Integration
+
+Each asset's FR spread series is gated through a DAR(2,1) filter before entering a position.
+
+**DAR(2,1) conditions (all must pass):**
+1. `|spread_latest| > SIGNAL_THRESHOLD` (0.00001 as fraction of notional)
+2. Sign persistence: `sign(spread[-1]) == sign(spread[-2])` (no flip)
+3. MA-dampened confirmation: smoothed lag `(spread[-2] + spread[-3]) / 2` also exceeds threshold and same sign
+
+**Behavior:**
+- Returns `True` → enter/hold position for this asset
+- Returns `False` → skip this asset (NEUTRAL) for this cycle
+
+DAR(2,1) rejects high-noise periods where spread alternates direction each cycle, which historically cause FR carry strategies to lose on reversion.
+
+---
+
+### §32.4 Multi-Asset Execution Playbook
+
+#### 6-Leg Execution (K439 POST_ONLY triple-leg extended)
+
+For each active asset in basket:
+1. Submit LONG leg POST_ONLY on lower-FR venue
+2. Submit SHORT leg POST_ONLY on higher-FR venue
+3. Wait 5 minutes (IOC_TIMEOUT_SEC = 300)
+4. Any unfilled legs → submit IOC fallback
+
+**Signal-to-venue mapping:**
+| Condition | Long venue | Short venue |
+|-----------|-----------|------------|
+| HL FR > Bybit FR (spread > 0) | Bybit | HL |
+| Bybit FR > HL FR (spread < 0) | HL | Bybit |
+
+#### K355 HL Concentration Cap
+
+After computing all 6 leg directions, if HL legs exceed 65% of total legs, the lowest-weight asset is suppressed (set to NEUTRAL) to restore compliance.
+
+#### K434 Smart Router Integration
+
+For each `(asset, venue)` combination, the smart router scores FRs, rebates, and depth before confirming the direction. Concentration caps are applied at the smart router layer.
+
+---
+
+### §32.5 Sleeve Sizing at v6.20 Activation
+
+At 5% sleeve + 4x leverage + $10M AUM (equal weights as example):
+
+| Asset | Weight | Sleeve $ | Notional/leg | 2-leg total |
+|-------|--------|----------|-------------|-------------|
+| BTC   | 36.9%  | $18,450  | $36,900     | $73,800 |
+| ETH   | 35.7%  | $17,850  | $35,700     | $71,400 |
+| SOL   | 27.4%  | $13,700  | $27,400     | $54,800 |
+| **Total** | 100% | **$50,000** | — | **$200,000** |
+
+Basket total notional: $200,000 at $10M AUM (2% of AUM utilized).
+Margin required: $200,000 / 4x = **$50,000** (0.5% of AUM).
+
+---
+
+### §32.6 Emergency Exit Protocol (K357 Extension)
+
+K459 Phase 6 adds `--include-k457` to `emergency_hl_exit.py`.
+
+**Sequential close order (mandatory — prevent uncovered short):**
+1. Phase 1: Close ALL short legs (buy-to-cover) across BTC/ETH/SOL
+2. Wait 2s for settlement
+3. Phase 2: Close ALL long legs (sell) across BTC/ETH/SOL
+
+**Auto-detection:** `_detect_k457_basket_positions()` automatically identifies BTC/ETH/SOL long+short pairs and marks them for sequential close in `plan_exit()`.
+
+**Emergency exit command:**
+```bash
+# Dry-run with K457 summary:
+python3 scripts/emergency_hl_exit.py --dry-run --include-k457 --user 0x...
+
+# Live execution (all venues including K457 basket):
+python3 scripts/emergency_hl_exit.py --EXECUTE --include-k457 --include-bybit
+```
+
+---
+
+### §32.7 Dashboard
+
+**Path:** `data/k457_basket_dashboard.json`
+
+```json
+{
+  "last_poll_jst": "...",
+  "current_signals": {"BTC": "LONG_HL_SHORT_BYBIT" | null, "ETH": ..., "SOL": ...},
+  "inv_vol_weights_30d": {"BTC": 0.369, "ETH": 0.357, "SOL": 0.274},
+  "open_positions_per_asset": {"BTC": {"long_venue": "HL", "size": 36900}, ...},
+  "daily_pnl_per_asset": {"BTC": ..., "ETH": ..., "SOL": ...},
+  "fill_rate_60d": null,
+  "paper_trade_status": {"days_elapsed": 0, "target_60d": 60, "OOS_sharpe_60d": null}
+}
+```
+
+---
+
+### §32.8 60d Paper-Trade Activation Criteria
+
+After 60 calendar days of paper-trade operation:
+
+| Gate | Threshold | Status |
+|------|-----------|--------|
+| G1: OOS Sharpe | ≥ 15.0 (60d paper) | PENDING |
+| G8: Fill rate | ≥ 65% (all 6 legs, 60d) | PENDING |
+| Backtest OOS Sharpe | 19.58 (K457 acceptance basis) | CONFIRMED |
+
+**Pass → activate:** `v6.20 K457 basket sleeve at 5% AUM`
+**Fail → extend:** 30 additional paper-trade days, or reject
+
+**Activation command (when 60d gate passes):**
+```bash
+# 1. Confirm gate passage (check dashboard OOS_sharpe_60d + fill_rate_60d)
+python3 scripts/k457_basket_run.py --status
+
+# 2. Copy plist to LaunchAgents
+cp com.cryptolab.k457-basket.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k457-basket.plist
+
+# 3. Verify deployment
+python3 scripts/verify_deployment_status.py
+```
+
+---
+
+### §32.9 Daemon Configuration
+
+```
+Label:          com.cryptolab.k457-basket
+Script:         scripts/k457_basket_run.py --dry-run
+StartInterval:  28800 (8 hours — matches FR settlement cycle)
+RunAtLoad:      false
+Log:            logs/k457_basket.log
+Err:            logs/k457_basket.err
+Plist:          com.cryptolab.k457-basket.plist (gitignored, repo root)
+Dashboard:      data/k457_basket_dashboard.json
+FR history:     cache/k457_basket_fr_history.jsonl
+Trade log:      cache/k457_basket_paper_trades.jsonl
+```
+
+**Manual test:**
+```bash
+python3 scripts/k457_basket_run.py --dry-run
+python3 scripts/k457_basket_run.py --status
+python3 scripts/k457_basket_run.py --rebalance
+```
+
+**Verify deployment (22 daemons):**
+```bash
+python3 scripts/verify_deployment_status.py
+# Expected: 0 mismatches, 22 daemons, K457 basket = SCAFFOLD-READY
+```
+
+---
+
+### §32.10 References
+
+| Wave | Content |
+|------|---------|
+| K459 | This section — K457 basket scaffold (22nd daemon, 60d paper-trade, v6.20 5% sleeve) |
+| K457 | K457 backtest: OOS Sharpe 19.58 (CONDITIONAL ACCEPT) — highest standalone FR basket |
+| K449 | K449 ETH-BTC paired-trade (19th daemon, 3% sleeve, same DAR(2,1) architecture) |
+| K434 | Smart router (cross-venue scoring reused by K457 basket venue selection) |
+| K439 | POST_ONLY order manager (6-leg execution protocol extended from K439) |
+| K430 | Leverage management (4x cap per K457 basket, matches K449) |
+| K355 | HL concentration risk cap (≤65%, enforced per cycle) |
+| K208 | Funding rate carry base strategy (K457 extends to 3 assets × 2 venues) |
+
+---
+
+*K459 §32 -- K457 BTC+ETH+SOL basket FR carry (22nd daemon, CONDITIONAL ACCEPT OOS Sh 19.58, 60d paper-trade gate, v6.20 5% sleeve) -- 2026-05-25*

@@ -54,6 +54,7 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K297_PAXG":       10.0,
     "K297_SPX":        5.0,
     "sUSDe":           1.0,
+    "K457_basket":     4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
 # ── v6.13d sleeve weights (K348) ──────────────────────────────────────────────
@@ -63,6 +64,7 @@ SLEEVE_WEIGHTS: Dict[str, float] = {
     "K297":   0.20,   # K302a satellite (PAXG 60% + SPX 40%)
     "sUSDe":  0.05,   # sUSDe OC sleeve
     "K449":   0.03,   # K449 ETH-BTC FR differential paired-trade (K450 scaffold)
+    "K457":   0.00,   # K457 BTC+ETH+SOL basket (K459 scaffold, 5% target at v6.20 activation)
 }
 
 # v6.16 candidate weights (proposed in K450 — not yet active)
@@ -171,6 +173,7 @@ def compute_position_size(
         "K297":   "K297_PAXG",
         "sUSDe":  "sUSDe",
         "K449":   "K449_ETH_BTC",   # K450: 4x cap for paired-trade sleeve
+        "K457":   "K457_basket",    # K459: 4x cap for BTC+ETH+SOL basket
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)
@@ -219,6 +222,7 @@ def compute_margin_required(
         "K297":   "K297_PAXG",      # PAXG dominates margin (60% weight)
         "sUSDe":  "sUSDe",
         "K449":   "K449_ETH_BTC",   # K450: 4x cap paired-trade
+        "K457":   "K457_basket",    # K459: 4x cap BTC+ETH+SOL basket
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)
@@ -272,7 +276,7 @@ def check_margin_health(
     sleeves_margin: Dict[str, float] = {}
     total_margin   = 0.0
 
-    for sleeve in ["K280", "K297", "sUSDe", "K449"]:
+    for sleeve in ["K280", "K297", "sUSDe", "K449", "K457"]:
         m = compute_margin_required(sleeve, leverage, current_aum, deployment_pct)
         sleeves_margin[sleeve] = round(m, 2)
         total_margin += m
@@ -456,7 +460,7 @@ if __name__ == "__main__":
     # Show position sizes at $10M for reference
     aum = 10_000_000
     print(f"\n  Position sizes @ ${aum/1e6:.0f}M AUM ({lev}x leverage):")
-    for sleeve in ["K280", "K297", "sUSDe", "K449"]:
+    for sleeve in ["K280", "K297", "sUSDe", "K449", "K457"]:
         notional = compute_position_size(sleeve, aum)
         margin   = compute_margin_required(sleeve, lev, aum)
         print(f"    {sleeve:8s}: notional=${notional:>12,.0f}  margin=${margin:>12,.0f}")

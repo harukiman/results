@@ -1,0 +1,82 @@
+{
+  "wave": "K459",
+  "title": "K457 BTC+ETH+SOL Multi-Asset Basket FR Carry Production Scaffold",
+  "date_jst": "2026-05-25",
+  "status": "SCAFFOLD-READY",
+  "k457_result": {
+    "decision": "CONDITIONAL_ACCEPT",
+    "oos_sharpe": 19.58,
+    "gate_status": "60d paper-trade required",
+    "note": "Highest standalone single-strategy FR basket wave. OOS Sharpe 19.58 significantly exceeds §6 gate of 15."
+  },
+  "deliverables": {
+    "scripts/k457_basket_run.py": {
+      "status": "NEW",
+      "lines_approx": 300,
+      "description": "K457 3-asset basket main script — 8h cron, inv-vol weights, DAR(2,1), 6-leg execution"
+    },
+    "com.cryptolab.k457-basket.plist": {
+      "status": "NEW",
+      "description": "launchd plist for 22nd daemon (StartInterval 28800 = 8h, gitignored)"
+    },
+    "scripts/verify_deployment_status.py": {
+      "status": "UPDATED",
+      "change": "22nd daemon K457 basket added to REGISTRY"
+    },
+    "data/k457_basket_dashboard.json": {
+      "status": "NEW",
+      "description": "Initial scaffold dashboard with inv-vol weights BTC:0.369/ETH:0.357/SOL:0.274"
+    },
+    "scripts/emergency_hl_exit.py": {
+      "status": "UPDATED",
+      "change": "--include-k457 flag, _detect_k457_basket_positions(), sequential short-first close"
+    },
+    "scripts/leverage_manager.py": {
+      "status": "UPDATED",
+      "change": "K457_basket 4x cap in DEFAULT_EXCHANGE_CAPS, cap_key_map, SLEEVE_WEIGHTS, check_margin_health"
+    },
+    "data/leverage_config.json": {
+      "status": "UPDATED",
+      "change": "K457_basket: 4.0 added to exchange_caps + k457_basket_notes section"
+    },
+    "docs/k302a_runbook.md": {
+      "status": "UPDATED",
+      "change": "§32 K457 basket strategy overview, inv-vol mechanics, DAR filter, 6-leg playbook, 60d gate criteria"
+    },
+    "report.html": {
+      "status": "UPDATED",
+      "change": "K457 row in Live Monitoring (22nd daemon, SCAFFOLD-READY), v6.20 progress 4/7, banner update"
+    }
+  },
+  "daemon_registry": {
+    "total_after_k459": 22,
+    "22nd": {
+      "label": "com.cryptolab.k457-basket",
+      "start_interval_s": 28800,
+      "strategy": "K457 BTC+ETH+SOL basket FR carry",
+      "status": "SCAFFOLD-READY"
+    }
+  },
+  "paper_trade_gate_60d": {
+    "oos_sharpe_target": 15.0,
+    "fill_rate_target_pct": 65,
+    "oos_sharpe_backtest": 19.58,
+    "action_pass": "Activate v6.20 K457 sleeve at 5% AUM",
+    "action_fail": "Extend paper-trade or reject"
+  },
+  "v620_progress": {
+    "total_waves": 7,
+    "completed": 4,
+    "wave_list": [
+      {"wave": "K456", "description": "OKX FR Monitor (3rd K208 venue, 20th daemon)"},
+      {"wave": "K457", "description": "BTC+ETH+SOL basket FR carry (CONDITIONAL ACCEPT, OOS Sh 19.58)"},
+      {"wave": "K458", "description": "Depth-Aware Allocator ($100M+ slippage rescue, 21st daemon)"},
+      {"wave": "K459", "description": "K457 basket production scaffold (22nd daemon, this wave)"}
+    ]
+  },
+  "k339_security": {
+    "repo_root_pattern": "Path(__file__).resolve().parent.parent",
+    "no_user_literals": true,
+    "stdlib_only": true
+  }
+}
