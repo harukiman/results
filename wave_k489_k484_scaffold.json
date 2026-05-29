@@ -1,0 +1,73 @@
+{
+  "wave": "K489",
+  "title": "K484 AVAX-BTC FR Differential Production Scaffold",
+  "date": "2026-05-30",
+  "status": "COMPLETE",
+  "strategy": "K484",
+  "strategy_type": "AVAX-BTC funding rate differential paired-trade",
+  "oos_sharpe": 43.89,
+  "ann_return_usd_10M": 75700,
+  "sleeve_pct": 0.03,
+  "leverage": 4.0,
+  "venue": "HL-only (K434 smart router Phase 2)",
+  "execution": "POST_ONLY parallel (K439)",
+  "gate_score": "7/10 §6 gates ACCEPT",
+  "daemon_number": 30,
+  "plist_label": "com.cryptolab.k484-avax-btc",
+  "deliverables": {
+    "new_script": "scripts/k484_avax_btc_run.py",
+    "plist": "com.cryptolab.k484-avax-btc.plist",
+    "dashboard": "data/k484_dashboard.json",
+    "runbook_section": "docs/k302a_runbook.md §38c",
+    "verify_updated": "scripts/verify_deployment_status.py (30th daemon)",
+    "emergency_exit_updated": "scripts/emergency_hl_exit.py (--include-k484 flag)",
+    "leverage_config_updated": "data/leverage_config.json (K484_AVAX_BTC = 4.0)",
+    "leverage_manager_updated": "scripts/leverage_manager.py (K484 sleeve + v6.23 weights)",
+    "report_html_updated": "report.html (K484 Live Monitoring row + v6.23 banner + 30 daemons)"
+  },
+  "oos_performance": {
+    "sharpe": 43.89,
+    "ann_return_usd": 75700,
+    "aum_ref": 10000000,
+    "wave_accept": "K484 7/10 §6 gates",
+    "g5a_corr": 0.3,
+    "hl_cap_pct": 56.0,
+    "family_rank": "#1 (AVAX Sh43.89 > SOL Sh16.30 > BNB Sh8.04(BLOCKED) > ETH Sh5.66)"
+  },
+  "activation_criteria": {
+    "60d_paper_trade_gate": "required",
+    "oos_sharpe_paper_min": 5.0,
+    "fill_rate_min_pct": 60,
+    "max_dd_pct": 15.0,
+    "after_gate": "activate v6.23 K449+K476+K484 11% combined paired-trade sleeve"
+  },
+  "v623_architecture": {
+    "K280": 0.63,
+    "K297_prime": 0.20,
+    "sUSDe": 0.05,
+    "K449": 0.05,
+    "K476": 0.03,
+    "K484": 0.03,
+    "K457": 0.01,
+    "description": "K449 ETH-BTC 5% + K476 SOL-BTC 3% + K484 AVAX-BTC 3% = 11% combined FR differential sleeve",
+    "combined_ann_return_10M": 276000,
+    "hl_concentration_pct": 56.0
+  },
+  "verify_result": {
+    "daemons_total": 30,
+    "mismatches_with_html": 0,
+    "k484_status": "SCAFFOLD-READY"
+  },
+  "dry_run_result": {
+    "cycle": "complete",
+    "signal": "NEUTRAL",
+    "fr_avax": 1.25e-05,
+    "fr_btc": 6.9216e-06,
+    "fr_diff": 5.5784e-06,
+    "notional_per_leg_usdc": 600000,
+    "total_notional_usdc": 1200000,
+    "margin_usdc": 300000,
+    "margin_pct_of_aum": 0.03,
+    "dashboard_written": "data/k484_dashboard.json"
+  }
+}

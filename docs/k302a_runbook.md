@@ -5910,3 +5910,193 @@ print('Regime:',        d.get('current_regime'))
 ---
 
 *K488 §38b -- K376 volume-spike momentum graduation pre-validation (CONDITIONAL ACCEPT, 6/8 gates, $412K/yr @$10M 5% sleeve, activate on BTC bull recovery) -- 2026-05-30*
+
+---
+
+## §38c K484 AVAX-BTC FR Differential Production Scaffold (K489)
+
+**Status:** SCAFFOLD-READY (30th daemon) | **Wave:** K489 | **Date:** 2026-05-30
+
+### §38c.1 Strategy Summary
+
+K484 AVAX-BTC Funding Rate Differential is the #1 ranked strategy in the paired-trade family
+(AVAX OOS Sharpe 43.89 > SOL Sh16.30 > BNB Sh8.04(BLOCKED) > ETH Sh5.66).
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe | 43.89 (#1 paired-trade family) |
+| Net Annual Return | $75,700/yr @ $10M (3% sleeve, 4x leverage) |
+| G5a Correlation (AVAX-ETH) | 0.300 < 0.40 PASS (K480 BNB lesson confirmed) |
+| HL Cap after K484 addition | 56% < 65% (9pp headroom) |
+| §6 Gates passed | 7/10 |
+| Execution venue | HyperLiquid only (K434 smart router HL-only) |
+| Execution mode | POST_ONLY parallel (K439) |
+| Leverage | 4x (K430 cap) |
+| Sleeve | 3% of AUM |
+| Rebalance trigger | 5% delta-neutral drift |
+| Cron cadence | 8h (28800s StartInterval, matches FR settlement) |
+
+**v6.23 architecture path:**
+K449 ETH-BTC 5% + K476 SOL-BTC 3% + K484 AVAX-BTC 3% = 11% combined paired-trade sleeve
+Combined expected: ~$276K/yr @ $10M (~$2.76M/yr @ $100M)
+
+### §38c.2 7d EMA Differential Mechanics
+
+The AVAX-BTC FR differential strategy exploits the structural persistence of funding rate
+spreads between AVAX (smaller-cap alt) and BTC (dominant asset):
+
+1. **Data collection:** 8h FR snapshots from HL `metaAndAssetCtxs` endpoint (AVAX, BTC)
+2. **EMA computation:** 7-day exponential moving average (α = 2/(21+1) for 8h cadence)
+   - 21 data points = 7 days × 3 settlements/day
+3. **Signal generation:**
+   - `ema_7d > +threshold (0.00001)` → AVAX FR > BTC FR → SHORT AVAX / LONG BTC (collect AVAX FR)
+   - `ema_7d < -threshold` → BTC FR > AVAX FR → SHORT BTC / LONG AVAX (collect BTC FR)
+   - `|ema_7d| ≤ threshold` → NEUTRAL (no position)
+4. **Edge hypothesis:** AVAX has higher average FR volatility vs BTC due to smaller market cap
+   and alt-coin carry premium. The 7d EMA filters noise, capturing the persistent differential
+   rather than transient spikes. OOS Sharpe 43.89 confirms the edge is structurally robust.
+
+### §38c.3 Paired Execution Protocol
+
+Following K439 POST_ONLY paired execution protocol:
+
+1. **Entry:** POST_ONLY both legs simultaneously in parallel on HL
+   - Long leg: the lower-FR asset (cheap carry side)
+   - Short leg: the higher-FR asset (collect carry side)
+2. **IOC fallback:** If POST_ONLY times out within 300s (IOC_TIMEOUT_SEC):
+   - Long filled + short timeout → IOC fallback for short leg
+   - Both timeout → retry next 8h cycle (no partial position)
+3. **Rebalance:** If delta-neutral drift exceeds 5% (DRIFT_REBALANCE_PCT):
+   - Fetch current mark prices from HL
+   - Re-size legs proportionally to restore delta-neutrality
+4. **Close:** Sequential — short leg first (cover to avoid uncovered short), then long leg
+   - Emergency: `python3 scripts/emergency_hl_exit.py --dry-run --include-k484`
+   - Scheduled: `python3 scripts/k484_avax_btc_run.py --close "scheduled exit"`
+
+### §38c.4 Sizing at $10M Reference AUM
+
+```
+Sleeve capital   = $10M × 3%          = $300,000
+Notional per leg = $300K × 4x / 2     = $600,000
+Total notional   = $600K × 2 legs     = $1,200,000
+Margin required  = $1.2M / 4x         = $300,000
+Margin/AUM       = $300K / $10M       = 3.0%
+```
+
+**Combined paired-trade sleeve margin at $10M (v6.23 target):**
+- K449 ETH-BTC 5%: margin = $500K (3x notional deployed, 4x cap)
+- K476 SOL-BTC 3%: margin = $300K
+- K484 AVAX-BTC 3%: margin = $300K
+- Combined margin: $1.1M / $10M = 11% (well under 80% circuit breaker threshold)
+
+### §38c.5 60d Paper-Trade Activation Gate
+
+The activation gate requires all three criteria to pass over the 60d paper-trade period:
+
+| Gate | Metric | Threshold | Current |
+|------|--------|-----------|---------|
+| OOS Sharpe (paper) | Rolling Sharpe of paper PnL | ≥ 5.0 | 0.0 (day 0) |
+| Fill rate | Fraction of paired legs fully filled | ≥ 60% | 0.0 (day 0) |
+| Max drawdown | Peak-to-trough paper PnL | < 15% | 0.0% (day 0) |
+
+When all three pass:
+1. User reviews `data/k484_dashboard.json` (gate_metrics section)
+2. Activate by setting `PAPER_TRADE=False` in plist EnvironmentVariables
+3. Reload daemon: `launchctl unload ~/Library/LaunchAgents/com.cryptolab.k484-avax-btc.plist && launchctl load ~/Library/LaunchAgents/com.cryptolab.k484-avax-btc.plist`
+4. Update HTML Live Monitoring badge from SCAFFOLD-READY → ACTIVE
+5. Update `data/leverage_config.json` SLEEVE_WEIGHTS K484 from 0.00 → 0.03
+6. Announce: v6.23 K449+K476+K484 combined paired-trade sleeve live
+
+### §38c.6 v6.23 Architecture Path
+
+After K484 paper-trade gate passes, the v6.23 architecture activates:
+
+```
+v6.23 = v6.22 base + K484 AVAX-BTC 3% addition
+      = K280 63% + K297 20% + sUSDe 5% + K449 5% + K476 3% + K484 3% + K457 1% = 100%
+
+Combined paired-trade sleeve (v6.23):
+  K449 ETH-BTC  5%  →  $187K/yr  (Sh 5.66)
+  K476 SOL-BTC  3%  →  $187K/yr  (Sh 16.30)
+  K484 AVAX-BTC 3%  →  $75.7K/yr (Sh 43.89)
+  ─────────────────────────────────────
+  Total         11%  →  ~$276K/yr @ $10M
+```
+
+Note: K449 weight bumped from 3% to 5% at v6.23 to reflect full ETH-BTC capacity.
+K484 adds 3% new sleeve funded by K280 weight reduction (75% → 63% across v6.16 → v6.23 path).
+
+### §38c.7 Files
+
+| File | Purpose |
+|------|---------|
+| `scripts/k484_avax_btc_run.py` | Main strategy script (~250 LOC, K476 pattern) |
+| `com.cryptolab.k484-avax-btc.plist` | 30th daemon plist (gitignored, StartInterval 28800) |
+| `data/k484_dashboard.json` | Live monitoring dashboard (NEUTRAL initial state) |
+| `scripts/emergency_hl_exit.py` | K484 exit integration (`--include-k484`, `_detect_k484_paired_positions`) |
+| `scripts/leverage_manager.py` | K484_AVAX_BTC 4.0 cap + SLEEVE_WEIGHTS_V623 dict |
+| `data/leverage_config.json` | K484_AVAX_BTC: 4.0 + k484_notes section |
+| `scripts/verify_deployment_status.py` | K484 as 30th daemon registry entry |
+| `wave_k489_k484_scaffold.{py,json,md}` | Wave deliverables |
+
+### §38c.8 Activation Procedure
+
+**Prerequisites:**
+1. K484 paper-trade gate passed (all 3 metrics — see §38c.5)
+2. HL wallet address and private key available
+3. HL concentration check: current HL% + K484 3% ≤ 65% (should be ~56% per K484 analysis)
+4. v6.22 or later baseline is live
+
+**Activation steps:**
+```bash
+# 1. Copy plist to LaunchAgents (K339: REPO_ROOT must be replaced with actual path)
+sed "s|REPO_ROOT|$(pwd)|g" com.cryptolab.k484-avax-btc.plist \
+  > ~/Library/LaunchAgents/com.cryptolab.k484-avax-btc.plist
+
+# 2. Load daemon (paper-trade mode, PAPER_TRADE=True default)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k484-avax-btc.plist
+
+# 3. Verify loaded
+launchctl list | grep k484
+
+# 4. Monitor first cycles
+tail -f logs/k484_avax_btc.log
+
+# 5. After 60d gate: switch to live
+# Edit plist: PAPER_TRADE → False, reload
+# OR: set env var HL_USER_ADDRESS + HL_PRIVATE_KEY
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k484-avax-btc.plist
+# Edit plist PAPER_TRADE=False
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k484-avax-btc.plist
+```
+
+### §38c.9 Leverage Configuration
+
+K484 cap registered in `data/leverage_config.json`:
+
+```json
+"K484_AVAX_BTC": 4.0
+```
+
+The 4x cap matches K449 and K476 (all ETH/SOL/AVAX-BTC paired-trades). At $10M / 3% sleeve / 4x:
+- Sleeve capital: $300,000
+- Total notional: $1,200,000 ($600K/leg × 2 legs)
+- Margin required: $300,000 (3.0% of $10M AUM)
+
+### §38c.10 References
+
+| Wave | Reference |
+|------|-----------|
+| K484 | AVAX-BTC FR differential backtest (OOS Sh 43.89, $75.7K/yr net @$10M, 7/10 §6 gates) |
+| K489 | This section — K484 production scaffold (30th daemon, v6.23 architecture path) |
+| K476 | SOL-BTC FR differential (K478 scaffold, 29th daemon, direct scaffold template) |
+| K449 | ETH-BTC FR differential (K450 scaffold, 19th daemon, family founder) |
+| K480 | BNB-BTC CONDITIONAL (G5a FAIL 0.435>0.40, HL cap BLOCKED — lesson applied to K484) |
+| K434 | Smart router (K484 uses HL-only scoring — Phase 2) |
+| K439 | POST_ONLY paired execution protocol |
+| K430 | Leverage framework (K484_AVAX_BTC 4x cap registered) |
+| K266 | §6 strict gate framework (K484 scored 7/10) |
+
+---
+
+*K489 §38c -- K484 AVAX-BTC FR differential production scaffold (30th daemon, OOS Sh 43.89 #1 family, $75.7K/yr net @$10M, 60d paper-trade gate, v6.23 K449+K476+K484 11% combined sleeve ~$276K/yr) -- 2026-05-30*

@@ -56,7 +56,10 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K297_PAXG":       10.0,
     "K297_SPX":        5.0,
     "sUSDe":           1.0,
-    "K457_basket":     4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
+    "K449_ETH_BTC":   4.0,   # K450: ETH-BTC paired-trade (v6.16 sleeve, HL-only)
+    "K476_SOL_BTC":   4.0,   # K478: SOL-BTC paired-trade (v6.21 candidate, HL-only)
+    "K484_AVAX_BTC":  4.0,   # K489: AVAX-BTC paired-trade (v6.23 candidate, HL-only, OOS Sh 43.89)
+    "K457_basket":    4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
 # ── v6.13d sleeve weights (K348) ──────────────────────────────────────────────
@@ -68,6 +71,7 @@ SLEEVE_WEIGHTS: Dict[str, float] = {
     "K449":   0.03,   # K449 ETH-BTC FR differential paired-trade (K450 scaffold)
     "K457":   0.00,   # K457 BTC+ETH+SOL basket (K459 scaffold, 5% target at v6.20 activation)
     "K476":   0.00,   # K476 SOL-BTC FR differential paired-trade (K478 scaffold, 3% target at v6.21 activation)
+    "K484":   0.00,   # K484 AVAX-BTC FR differential paired-trade (K489 scaffold, 3% target at v6.23 activation)
 }
 
 # v6.21 candidate weights (proposed in K478 — not yet active)
@@ -77,6 +81,18 @@ SLEEVE_WEIGHTS_V621: Dict[str, float] = {
     "sUSDe": 0.05,
     "K449":  0.03,   # ETH-BTC delta-neutral, 4x leverage, HL-only (v6.16 activation)
     "K476":  0.03,   # SOL-BTC delta-neutral, 4x leverage, HL-only (v6.21 addition, K478 scaffold)
+}
+
+# v6.23 candidate weights (proposed in K489 — not yet active)
+# K449 5% + K476 3% + K484 3% = 11% combined paired-trade sleeve, ~$276K/yr @ $10M
+SLEEVE_WEIGHTS_V623: Dict[str, float] = {
+    "K280":  0.63,   # reduced 6pp vs v6.13d to fund combined paired-trade sleeve
+    "K297":  0.20,
+    "sUSDe": 0.05,
+    "K449":  0.05,   # ETH-BTC delta-neutral, 4x leverage, HL-only (v6.16 base, bumped to 5%)
+    "K476":  0.03,   # SOL-BTC delta-neutral, 4x leverage, HL-only (v6.21 addition)
+    "K484":  0.03,   # AVAX-BTC delta-neutral, 4x leverage, HL-only (v6.23 addition, K489 scaffold)
+    "K457":  0.01,   # BTC+ETH+SOL basket (placeholder, reduced from v6.20 5% pending paper gate)
 }
 
 # v6.16 candidate weights (proposed in K450 — not yet active)
@@ -187,6 +203,7 @@ def compute_position_size(
         "K449":   "K449_ETH_BTC",   # K450: 4x cap for ETH-BTC paired-trade sleeve
         "K457":   "K457_basket",    # K459: 4x cap for BTC+ETH+SOL basket
         "K476":   "K476_SOL_BTC",   # K478: 4x cap for SOL-BTC paired-trade sleeve
+        "K484":   "K484_AVAX_BTC",  # K489: 4x cap for AVAX-BTC paired-trade sleeve
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)
@@ -237,6 +254,7 @@ def compute_margin_required(
         "K449":   "K449_ETH_BTC",   # K450: 4x cap ETH-BTC paired-trade
         "K457":   "K457_basket",    # K459: 4x cap BTC+ETH+SOL basket
         "K476":   "K476_SOL_BTC",   # K478: 4x cap SOL-BTC paired-trade
+        "K484":   "K484_AVAX_BTC",  # K489: 4x cap AVAX-BTC paired-trade
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)
@@ -290,7 +308,7 @@ def check_margin_health(
     sleeves_margin: Dict[str, float] = {}
     total_margin   = 0.0
 
-    for sleeve in ["K280", "K297", "sUSDe", "K449", "K457"]:
+    for sleeve in ["K280", "K297", "sUSDe", "K449", "K457", "K476", "K484"]:
         m = compute_margin_required(sleeve, leverage, current_aum, deployment_pct)
         sleeves_margin[sleeve] = round(m, 2)
         total_margin += m

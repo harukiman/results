@@ -252,6 +252,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k476_sol_btc",
         expected_html_status="SCAFFOLD-READY",  # K478: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=5.0 paper + fill_rate >=60%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k484-avax-btc",
+        purpose="K484 AVAX-BTC FR differential paired-trade (delta-neutral, 4x leverage, 8h cycle, HL-only, OOS Sh 43.89 #1 family, $75.7K/yr net @$10M, G5a 0.300 PASS, v6.23 candidate K449+K476+K484 11% combined sleeve ~$276K/yr, 30th daemon)",
+        scripts=["scripts/k484_avax_btc_run.py"],
+        log_basename="k484_avax_btc",
+        expected_html_status="SCAFFOLD-READY",  # K489: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=5.0 paper + fill_rate >=60% + maxDD <15%)
+    ),
 ]
 
 
