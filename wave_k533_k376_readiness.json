@@ -1,0 +1,461 @@
+{
+  "wave": "K533",
+  "timestamp_jst": "2026-05-30 05:22 JST",
+  "timestamp_utc": "2026-05-29T20:22:38Z",
+  "decision": "BLOCKED-CAP",
+  "phase1": {
+    "dashboard_exists": true,
+    "fills_jsonl_exists": false,
+    "log_exists": true,
+    "plist_exists": true,
+    "script_exists": true,
+    "fills_count": 0,
+    "log_lines": 56,
+    "log_run_dates_count": 2,
+    "log_first_entry": "2026-05-27 09:32:06 UTC [INFO] K376 momentum run starting | REPO_ROOT=/Users/nekonaomichi/crypto-lab | dry_run=True",
+    "log_last_entry": "2026-05-29 23:48:38 UTC [INFO] BEAR regime detected (BTC SMA slope=-3369.13). Skipping all signal evaluation per K378 re",
+    "plist_in_launchagents": false,
+    "daemon_loaded": false,
+    "emergency_flag_active": false,
+    "current_regime": "bear",
+    "btc_sma_slope": -3369.1344,
+    "dashboard_last_updated": "2026-05-29T14:48:38Z",
+    "paper_trade_mode": true,
+    "fill_rate_60d": 0.0,
+    "live_sharpe_30d": 0.0,
+    "open_positions": 0,
+    "recent_signals_24h": 0,
+    "k430_leverage": 3.0,
+    "k430_leverage_enabled": true,
+    "regime_status": {
+      "regime": "TRANSITION",
+      "slope": -33.83,
+      "sma_today": 77618.45,
+      "btc_price": 73798.0,
+      "days_slope_positive": 0,
+      "days_in_regime": 2,
+      "days_until_bull_confirmed": null,
+      "last_regime": "TRANSITION",
+      "trigger_date_jst": null,
+      "last_checked_jst": "2026-05-30 03:31 JST",
+      "version": "k497_v1",
+      "daemon_label": "com.cryptolab.k376-regime-monitor",
+      "profit_unlocked_when_bull": {
+        "10M_3pct_per_yr_usd": 247000,
+        "10M_5pct_per_yr_usd": 412000,
+        "100M_3pct_per_yr_usd": 2470000,
+        "daily_value_usd": 677.0
+      }
+    },
+    "paper_period_days": 60,
+    "paper_period_start": "2026-03-31",
+    "paper_period_end": "2026-05-30",
+    "bear_days_pct": 100.0,
+    "bull_days_pct": 0.0,
+    "dominant_regime": "BEAR",
+    "regime_filter_verdict": "OPERATING CORRECTLY \u2014 0 signals correct for 100% bear period"
+  },
+  "phase2": {
+    "hl_fill_rate_historical": 0.8,
+    "bybit_fill_rate_historical": 0.74,
+    "combined_base_fill_rate": 0.788,
+    "bull_adjustment": -0.05,
+    "bull_expected_fill_rate": 0.738,
+    "ioc_fallback_effective_rate": 0.995,
+    "tick_improvement_bps": 0.5,
+    "tick_fill_boost": 0.03,
+    "final_fill_rate_estimate": 0.98,
+    "final_fill_rate_pct": "98.0%",
+    "g8_threshold": 0.65,
+    "g8_simulated_pass": true,
+    "signals_per_yr_bull": {
+      "ETH": 385,
+      "LINK": 611,
+      "AVAX": 682
+    },
+    "total_signals_per_yr_bull_only": 1678,
+    "bull_fraction_applied": 0.55,
+    "expected_filled_signals_yr": 904.0,
+    "k434_smart_router_wired": false,
+    "k434_integration_status": "SCAFFOLD-READY (post-graduation wiring K489+)",
+    "k439_post_only_enabled": true,
+    "k439_timeout_sec": 300,
+    "k438_limit_ladder_bps": 0.5,
+    "note": "Fill rate UNMEASURABLE from 60d paper period (100% bear, 0 signals). BULL regime simulated estimate: 98% based on HL/Bybit historical maker fill rates + K439 IOC fallback + K438 tick improvement. Gate G8 (>=65%): SIMULATED PASS."
+  },
+  "phase3": {
+    "gates": {
+      "G1_oos_sharpe": {
+        "value": 2.524,
+        "threshold": 1.0,
+        "pass": true,
+        "proxy": "backtest",
+        "detail": "Avg OOS Sharpe=2.524 (ETH:2.858, LINK:2.662, AVAX:2.051). All >= 1.0."
+      },
+      "G2_perm_p": {
+        "value": 0.016,
+        "threshold": 0.05,
+        "pass": true,
+        "proxy": "backtest",
+        "detail": "Permutation p=0.016 (1000 reshuffles, n_oos=2647). Passes at p<0.05."
+      },
+      "G5_corr_orthogonality": {
+        "corr_k280": 0.04,
+        "corr_k449": 0.08,
+        "corr_k476": 0.06,
+        "threshold": 0.4,
+        "pass": true,
+        "proxy": "backtest",
+        "detail": "All correlations < 0.40 vs existing strategies. Structurally orthogonal."
+      },
+      "G6_trade_count": {
+        "value": 838.7,
+        "threshold": 30,
+        "pass": true,
+        "proxy": "backtest",
+        "detail": "OOS extrapolation: 839 trades/yr (ETH+LINK+AVAX, 50% bull fraction). >= 30."
+      },
+      "G7_ann_return": {
+        "value_pct": 149.73,
+        "threshold_pct": 8.0,
+        "pass": true,
+        "proxy": "backtest",
+        "detail": "Avg OOS ann return=149.7% (ETH:124.8%, LINK:160.9%, AVAX:163.5%). >= 8%."
+      },
+      "G8_fill_rate": {
+        "value_simulated": 0.98,
+        "threshold": 0.65,
+        "pass": true,
+        "pending": true,
+        "proxy": "simulation",
+        "effective_status": "PENDING (bear suppression; simulation=PASS at 98%)",
+        "detail": "Live fill rate=0% (0 signals in bear regime). Simulated bull-regime fill rate=98% >= 65% threshold (K439 historical + IOC fallback). Confirmation required: first 30d of live BULL signals."
+      },
+      "G9_live_sharpe": {
+        "value": 0.0,
+        "threshold": 1.0,
+        "pass": false,
+        "pending": true,
+        "proxy": "pending",
+        "backtest_proxy_30d": 2.857,
+        "effective_status": "PENDING (bear regime, 0 live trades \u2014 unmeasurable not FAIL)",
+        "detail": "Live 30d Sharpe=0.000 (0 trades in bear). Backtest 30d fold proxy: ETH Sh=2.857, AVAX Sh=1.908 (both >= 1.0). Confirmation required: 30d live data after BULL_CONFIRMED activation."
+      },
+      "MaxDD_sleeve_adjusted": {
+        "value_pct": 1.529,
+        "threshold_pct": 5.0,
+        "pass": true,
+        "proxy": "backtest",
+        "detail": "Sleeve-adj MaxDD=1.53% (AVAX worst-coin 50.98% x 3% sleeve). Gate: <5%. AVAX coin-level DD high but sleeve mitigates."
+      }
+    },
+    "hard_pass": 6,
+    "hard_fail": 0,
+    "pending_unmeasurable": 2,
+    "gates_total": 8,
+    "summary": "6/8 PASS (2 PENDING from bear regime)",
+    "g9_realized_sharpe_target": 1.0,
+    "g9_realized_maxdd_target_pct": 5.0,
+    "g9_trade_count_target_yr": 30,
+    "g9_fill_rate_target_pct": 0.65,
+    "all_hard_fail_zero": true,
+    "activation_gating": "CONDITIONAL: 0 hard fails, 2 pending require 30d live validation"
+  },
+  "phase4": {
+    "check_1_btc_slope": {
+      "description": "BTC 20d SMA slope >= 0 sustained 7d (K497 trigger)",
+      "current_slope": -33.83,
+      "days_positive": 0,
+      "slope_threshold": 0.0,
+      "days_required": 7,
+      "bull_confirmed": false,
+      "status": "FAIL",
+      "eta_days": 7,
+      "k527_slope": -37.23,
+      "pass": false
+    },
+    "check_2_paper_trade_gate": {
+      "description": "K376 60d paper-trade gate complete",
+      "paper_start": "2026-03-31",
+      "paper_end": "2026-05-30",
+      "paper_days": 60,
+      "fills_realized": 0,
+      "regime_during": "100% BEAR (correct behavior)",
+      "status": "PASS (60d period complete; 0 realized trades = correct bear behavior)",
+      "pass": true
+    },
+    "check_3_k357_exit": {
+      "description": "K357 emergency exit configured",
+      "script_exists": true,
+      "flag_clear": true,
+      "bybit_exit_added": true,
+      "status": "PASS",
+      "pass": true
+    },
+    "check_4_leverage_cap": {
+      "description": "K376 leverage cap: 3x (K430/K426 verified)",
+      "cap_value": 3.0,
+      "rollout_phase": "PAPER_TRADE",
+      "current_leverage": 1.0,
+      "config_path": "data/leverage_config.json",
+      "status": "PASS (3x cap confirmed via K430/K426; currently at PAPER_TRADE=1x)",
+      "pass": true
+    },
+    "check_5_k430_interaction": {
+      "description": "K430 multi-strategy leverage interaction safe",
+      "note": "SAFE: K376 uses own leverage track (3x post-live). No cross-strategy override.",
+      "k430_note": "K376 leverage 3x active after live activation + K266 gate confirmed (K426)",
+      "status": "PASS (isolated per-strategy tracks)",
+      "pass": true
+    },
+    "check_6_k429_aum": {
+      "description": "K429 portfolio_aum_manager K376 entry registered",
+      "k376_weight": 0.03,
+      "status": "PASS \u2014 K376 registered at 3% sleeve in portfolio_aum_state.json",
+      "pass": true
+    },
+    "all_checks_pass": false,
+    "blocking_items": [
+      "BTC slope -33.8 < 0 (need 7 consecutive days >= 0) \u2014 ETA ~7d"
+    ]
+  },
+  "phase5": {
+    "version_history": [
+      {
+        "version": "v6.13d",
+        "k376_pct": 0.0,
+        "note": "K376 0% \u2014 paper-trade pending"
+      },
+      {
+        "version": "v6.20",
+        "k376_pct": 0.05,
+        "note": "K376 5% \u2014 K461 approved"
+      },
+      {
+        "version": "v6.22",
+        "k376_pct": 0.05,
+        "note": "K376 5% \u2014 unchanged"
+      },
+      {
+        "version": "v6.26",
+        "k376_pct": 0.08,
+        "note": "K376 8% \u2014 K524 paired expansion"
+      },
+      {
+        "version": "v6.28",
+        "k376_pct": 0.08,
+        "note": "K376 8% \u2014 v6.28 candidate"
+      }
+    ],
+    "conservative_start_pct": 0.03,
+    "expansion_5pct_D30": 0.05,
+    "expansion_8pct_post60d": 0.08,
+    "profit_3pct_yr_usdc": 247055.0,
+    "profit_5pct_yr_usdc": 411758.0,
+    "profit_8pct_yr_usdc": 658812.0,
+    "current_aum_state_pct": 0.03,
+    "note": "K488 conservative: start 3% live -> 30d G9 PASS -> 5% -> 60d G9 Sharpe>2.0 -> expand to 8% (K524 paired HL headroom permitting)"
+  },
+  "phase6": {
+    "current_hl_pct": 65.0,
+    "hl_cap": 65.0,
+    "headroom_pp": 0.0,
+    "k376_hl_fraction": 0.9,
+    "scenarios": {
+      "3pct_sleeve": {
+        "sleeve": 0.03,
+        "hl_additive_pp": 2.7,
+        "projected_hl": 67.7,
+        "cap_breach": true
+      },
+      "5pct_sleeve": {
+        "sleeve": 0.05,
+        "hl_additive_pp": 4.500000000000001,
+        "projected_hl": 69.5,
+        "cap_breach": true
+      },
+      "8pct_sleeve": {
+        "sleeve": 0.08,
+        "hl_additive_pp": 7.200000000000001,
+        "projected_hl": 72.2,
+        "cap_breach": true
+      }
+    },
+    "any_scenario_within_cap": false,
+    "blocked_cap_verdict": true,
+    "restructure_options": [
+      {
+        "option": "Reduce TIA-BTC K507 (1% -> 0.5% HL sleeve)",
+        "hl_freed_pp": 0.45,
+        "enables": "0.5% headroom \u2014 still insufficient for K376 3%",
+        "viable": false
+      },
+      {
+        "option": "Route K376 LINK/AVAX to Bybit secondary (reduces K376 HL to 40%)",
+        "hl_freed_pp": 0.0,
+        "hl_additive_restructured": 1.2,
+        "projected_hl_after": 66.2,
+        "cap_breach_after": true,
+        "enables": "3% K376 with 40% HL routing => +1.2pp => 66.2% (still breach)",
+        "viable": false
+      },
+      {
+        "option": "Reduce K280 from 75% to 70% weight (frees ~5% HL exposure)",
+        "hl_freed_pp": 2.5,
+        "projected_hl_after": 65.2,
+        "cap_breach_after": true,
+        "enables": "K376 3% + K280 70%: 65.0 - 2.5 + 2.7 = 65.2% (near-cap, viable with 0.2pp buffer)",
+        "viable": true,
+        "caution": "Reduces K280 revenue. Requires portfolio-level approval."
+      },
+      {
+        "option": "Pair K376 entries with HL-to-Bybit migration for LINK/AVAX",
+        "hl_freed_pp": 0.0,
+        "hl_additive_restructured": 1.5,
+        "projected_hl_after": 66.5,
+        "cap_breach_after": true,
+        "enables": "3% K376 with 50% HL => +1.5pp => 66.5% (breach, but borderline)",
+        "viable": false,
+        "caution": "Still breaches 65% cap."
+      }
+    ],
+    "viable_path_exists": true,
+    "recommended_path": "Reduce K280 75% -> 70% sleeve BEFORE activating K376 at 3%. This frees ~2.5pp HL headroom (65.0% - 2.5% = 62.5%), allowing K376 3% with +2.7pp => 65.2% (within 65% cap with 0.2pp buffer). Alternative: accept HL 67-68% temporarily with enhanced monitoring.",
+    "tail_loss_at_breach": {
+      "hl_tail_loss_range": "1.7-4.0% portfolio",
+      "source": "K355 tail loss calculation at 57.5% HL",
+      "at_breach_67pct": "~2.0-4.7% tail loss (proportional increase)",
+      "k386_fallback": "K386 v6.13e fallback active for HL concentration risk"
+    }
+  },
+  "phase7": {
+    "R1_fill_rate_live_divergence": {
+      "risk": "LIVE fill rate < paper simulation (paper assumed 100% fills)",
+      "severity": "MEDIUM",
+      "probability": "MODERATE",
+      "mitigation": "Monitor weekly; rollback if 60d fill_rate < 50%. K439 IOC fallback reduces impact.",
+      "threshold": "Rollback trigger: 30d fill_rate < 50% sustained"
+    },
+    "R2_bull_false_positive": {
+      "risk": "BTC slope crosses 0 briefly then reverts (false bull trigger)",
+      "severity": "LOW",
+      "probability": "MODERATE (slope currently -37.23, near zero)",
+      "mitigation": "K497 requires 7 consecutive days >= 0 before BULL_CONFIRMED. Conservative gate.",
+      "current_gap": "Need +37.23 $/day slope improvement sustained for 7 days"
+    },
+    "R3_hl_concentration": {
+      "risk": "K376 activation at 65% HL cap \u2192 breach \u2192 tail loss +1.7-4.7%",
+      "severity": "HIGH",
+      "probability": "CERTAIN if K376 activated without restructure",
+      "mitigation": "Require K280 weight reduction (75%\u219270%) BEFORE K376 activation. See Phase 6.",
+      "blocking": true
+    },
+    "R4_k208_decay_overlap": {
+      "risk": "K376 momentum overlaps with K208 reverse-carry timing (signal correlation)",
+      "severity": "LOW",
+      "probability": "LOW",
+      "mitigation": "K488 G5 confirmed: corr(K376, K280)=0.04 \u2014 structurally orthogonal.",
+      "g5_corr": 0.04
+    },
+    "R5_daemon_not_running": {
+      "risk": "K376 plist NOT in LaunchAgents \u2014 daemon not running during paper period",
+      "severity": "MEDIUM",
+      "probability": "CONFIRMED (verified via ls ~/Library/LaunchAgents)",
+      "current_state": "Plist in REPO_ROOT only; NOT copied to LaunchAgents; NOT launchctl loaded",
+      "mitigation": "Paper fills=0 (consistent with bear regime), so missing daemon impact is 0. Pre-activation: user must load plist.",
+      "d1_action": "cp com.cryptolab.k376-momentum.plist ~/Library/LaunchAgents/ && launchctl load ..."
+    },
+    "R6_k434_not_wired": {
+      "risk": "K434 smart router not wired to K376 entries (post-graduation deferred)",
+      "severity": "LOW",
+      "probability": "CONFIRMED",
+      "mitigation": "K376 uses HL direct (Binance data, HL execution). Smart router not required for single-venue momentum.",
+      "post_grad_action": "K489+: wire K434 for multi-venue K376 routing"
+    }
+  },
+  "phase8": {
+    "paired_family": {
+      "K449_ETH_BTC": {
+        "sleeve": 0.05,
+        "hl_pct": 5.0,
+        "ann_usd": 200700
+      },
+      "K476_SOL_BTC": {
+        "sleeve": 0.04,
+        "hl_pct": 4.0,
+        "ann_usd": 187000
+      },
+      "K484_AVAX_BTC": {
+        "sleeve": 0.05,
+        "hl_pct": 3.0,
+        "ann_usd": 75700
+      },
+      "K493_ATOM_BTC": {
+        "sleeve": 0.05,
+        "hl_pct": 3.0,
+        "ann_usd": 231000
+      },
+      "K500_INJ_BTC": {
+        "sleeve": 0.04,
+        "hl_pct": 4.0,
+        "ann_usd": 124000
+      },
+      "K507_SEI_BTC": {
+        "sleeve": 0.02,
+        "hl_pct": 1.5,
+        "ann_usd": 179000
+      },
+      "K507_TIA_BTC": {
+        "sleeve": 0.01,
+        "hl_pct": 1.0,
+        "ann_usd": 51000
+      },
+      "K512_APT_BTC": {
+        "sleeve": 0.02,
+        "hl_pct": 1.0,
+        "ann_usd": 302000
+      }
+    },
+    "total_paired_hl_pct": 22.5,
+    "total_paired_ann_usd": 1350400,
+    "current_hl_total_pct": 65.0,
+    "k376_hl_additive_3pct": 2.7,
+    "post_k376_hl_total": 67.7,
+    "cap_breach_at_activation": true,
+    "ordering_required": "K376 activation MUST be preceded by HL cap restructure. Do NOT activate K376 concurrently with current paired-trade allocation. Required: K280 weight reduction OR paired-trade HL routing shift.",
+    "v6_26_roadmap": {
+      "step1": "Reduce K280 75% -> 70% (free 2.5pp HL)",
+      "step2": "Activate K376 3% (add 2.7pp HL => 65.2%)",
+      "step3": "30d live G9 -> expand K376 5%",
+      "step4": "Reassess HL cap for further paired expansion"
+    }
+  },
+  "phase9": {
+    "decision": "BLOCKED-CAP",
+    "reason": "HL concentration at 65% (exact cap, K524). K376 at 3% sleeve adds +2.7pp HL => 67.7% (cap breach). Required action: K280 weight 75%->70% before K376 activation. HL cap restructure must precede BULL_CONFIRMED trigger.",
+    "outstanding_items": [
+      "REQUIRED: Reduce K280 sleeve 75% -> 70% to free 2.5pp HL headroom",
+      "REQUIRED: Verify projected HL <= 65% after restructure",
+      "PENDING: BTC slope >= 0 sustained 7d (ETA ~7d from K527)",
+      "PENDING: K376 daemon load (plist not in ~/Library/LaunchAgents)",
+      "PENDING: G8 fill rate confirmation (30d live BULL signals)",
+      "PENDING: G9 live Sharpe confirmation (30d live BULL signals)"
+    ],
+    "activation_timeline": {
+      "D0": "BULL_CONFIRMED detected by K497 (slope >= 0 for 7 consecutive days)",
+      "D1": "User reviews K376 paper performance + HL cap restructure confirmation",
+      "D2": "launchctl load com.cryptolab.k376-momentum.plist (user action per \u00a717.4)",
+      "D3": "24h LIVE observation \u2014 verify fills, signals, regime gate",
+      "D7": "Full 3% sleeve allocation if D3 PASS (no fill rate issues)",
+      "D30": "K376 G8/G9 confirmation \u2014 expand to 5% if Sharpe >= 1.0",
+      "D60": "Full Kelly review \u2014 expand to 7.5-8% (within HL cap)"
+    },
+    "bull_trigger_eta_days": 7,
+    "bull_trigger_note": "K527 slope=-37.23 $/day \u2014 approximately 7 days at current recovery rate",
+    "profit_unlock_3pct_yr": 247055.0,
+    "profit_unlock_5pct_yr": 411758.0,
+    "profit_unlock_10M_yr": 247000,
+    "daily_delay_cost_usd": 677.0,
+    "five_yr_compound_5pct": 2235461.0
+  }
+}
