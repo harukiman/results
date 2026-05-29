@@ -1133,6 +1133,116 @@ window.__renderWhenReady = function(fn, label) {
       </script>
     </div>
 
+    <!-- K439 POST_ONLY Fill Rate Widget (2026-05-29) -->
+    <div class="lm-card" style="margin-bottom:14px;" id="post-only-fill-rate-card">
+      <h3 style="display:flex;align-items:center;gap:8px;">
+        K439 POST_ONLY Fill Rate
+        <span id="post-only-g8-badge" class="lm-badge lm-badge-scaffold" style="font-size:0.78rem;">NO_DATA</span>
+        <span style="font-size:0.7rem;font-weight:400;color:var(--text-secondary);margin-left:auto;" id="post-only-ts">読み込み中...</span>
+      </h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px;">
+        <div style="background:var(--bg-secondary);border-radius:6px;padding:10px;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:2px;">60d Maker Fill Rate</div>
+          <div id="po-fill-rate" style="font-size:1.4rem;font-weight:700;color:#8b949e;">—</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">G8 threshold ≥60%</div>
+        </div>
+        <div style="background:var(--bg-secondary);border-radius:6px;padding:10px;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:2px;">総注文数 (60d)</div>
+          <div id="po-total-orders" style="font-size:1.4rem;font-weight:700;color:var(--accent-blue);">—</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">POST_ONLY attempts</div>
+        </div>
+        <div style="background:var(--bg-secondary);border-radius:6px;padding:10px;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:2px;">IOC Fallbacks</div>
+          <div id="po-ioc-used" style="font-size:1.4rem;font-weight:700;color:var(--accent-orange);">—</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">taker fallbacks</div>
+        </div>
+        <div style="background:var(--bg-secondary);border-radius:6px;padding:10px;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:2px;">G8 Gate Status</div>
+          <div id="po-g8-status" style="font-size:1.1rem;font-weight:700;color:#8b949e;">NO_DATA</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">K378 G8 gate ≥60%</div>
+        </div>
+        <div style="background:var(--bg-secondary);border-radius:6px;padding:10px;">
+          <div style="font-size:0.72rem;color:var(--text-secondary);margin-bottom:2px;">期待年間増益</div>
+          <div style="font-size:1.1rem;font-weight:700;color:#ffd700;">+$23K/yr</div>
+          <div style="font-size:0.68rem;color:var(--text-secondary);">@ $10M AUM (K432)</div>
+        </div>
+      </div>
+      <div style="font-size:0.73rem;color:var(--text-secondary);margin-bottom:6px;" id="po-venue-breakdown"></div>
+      <div style="font-size:0.75rem;color:var(--text-secondary);">
+        <strong>手動実行:</strong>
+        <code style="background:var(--bg-secondary);padding:2px 6px;border-radius:3px;">python3 scripts/post_only_order_manager.py --dry-run</code>
+        &nbsp;|&nbsp;
+        <strong>統計:</strong>
+        <code style="background:var(--bg-secondary);padding:2px 6px;border-radius:3px;">python3 scripts/post_only_order_manager.py --stats</code>
+        &nbsp;|&nbsp;
+        <strong>ランブック:</strong> §26
+        &nbsp;|&nbsp;
+        <strong>K434+K439:</strong> smart router venue + POST_ONLY execution = <span style="color:#ffd700;">+$198K/yr</span>
+      </div>
+      <script>
+        (function() {
+          fetch('data/post_only_dashboard.json?t=' + Date.now())
+            .then(r => r.ok ? r.json() : null)
+            .catch(() => null)
+            .then(d => {
+              if (!d) return;
+              var ts = d.last_poll_jst || '—';
+              document.getElementById('post-only-ts').textContent = ts;
+              var s = d.stats_60d || {};
+              var fillRate = s.post_only_fill_rate;
+              var total    = s.total_orders;
+              var iocUsed  = s.ioc_used;
+              var g8       = s.G8_gate_status || 'NO_DATA';
+              var alert    = s.alert;
+              // Fill rate display
+              var frEl = document.getElementById('po-fill-rate');
+              if (fillRate !== undefined && total > 0) {
+                frEl.textContent = (fillRate * 100).toFixed(1) + '%';
+                frEl.style.color = g8 === 'PASS' ? '#3fb950' : g8 === 'FAIL' ? '#f85149' : '#8b949e';
+              } else {
+                frEl.textContent = '—';
+              }
+              // Total orders
+              var totEl = document.getElementById('po-total-orders');
+              if (total !== undefined) totEl.textContent = total > 0 ? total : '—';
+              // IOC used
+              var iocEl = document.getElementById('po-ioc-used');
+              if (iocUsed !== undefined) iocEl.textContent = iocUsed > 0 ? iocUsed : '—';
+              // G8 badge
+              var g8El = document.getElementById('po-g8-status');
+              var badgeEl = document.getElementById('post-only-g8-badge');
+              g8El.textContent = g8;
+              if (g8 === 'PASS') {
+                g8El.style.color = '#3fb950';
+                badgeEl.className = 'lm-badge lm-badge-active';
+                badgeEl.textContent = 'G8 PASS';
+              } else if (g8 === 'FAIL') {
+                g8El.style.color = '#f85149';
+                badgeEl.className = 'lm-badge lm-badge-warn';
+                badgeEl.textContent = 'G8 FAIL';
+                badgeEl.style.background = '#2d1215';
+                badgeEl.style.color = '#f85149';
+              } else {
+                badgeEl.textContent = 'NO_DATA';
+              }
+              // Per-venue breakdown
+              var byVenue = d.stats_by_venue || {};
+              var parts = [];
+              ['HL','Bybit','OKX'].forEach(function(v) {
+                var vd = byVenue[v];
+                if (vd && vd.total > 0) {
+                  var col = vd.g8_status === 'PASS' ? '#3fb950' : '#f85149';
+                  parts.push('<span style="color:' + col + '">' + v + ': ' + (vd.fill_rate * 100).toFixed(0) + '% (' + vd.total + ')</span>');
+                }
+              });
+              if (parts.length > 0) {
+                document.getElementById('po-venue-breakdown').innerHTML = '<strong>Venue breakdown:</strong> ' + parts.join(' &nbsp;|&nbsp; ');
+              }
+            });
+        })();
+      </script>
+    </div>
+
     <!-- K357 Emergency Exit Status Indicator (2026-05-25) -->
     <div class="lm-card" style="margin-bottom:14px;" id="emergency-exit-card">
       <h3 style="display:flex;align-items:center;gap:8px;">
@@ -11256,7 +11366,7 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
     <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; Research Baseline v4.1 / Production v6.13d K302a (K280 75% + K297' SPX-filtered 20% + sUSDe OC 5%)</p>
-    <p style="margin-top:4px;">更新: 2026-05-29 22:54 JST &nbsp;|&nbsp; <strong style="color:#ffd700;font-size:1.05em;">★★★★★★ K435 K426-K434 PROFIT-DRIVING STACK: $10M → $25.47M 5y Base case (CAGR 20.56%, Sharpe 13.43) — 3x leverage + daily reinvest + HL→Bybit m6 + smart router</strong> &nbsp;|&nbsp; <strong style="color:#ffd700;">★★★ K430 3x leverage SCAFFOLD: +$2.2M/yr @ $10M AUM, PAPER_TRADE→LIVE_1.5X→LIVE_3X, circuit breaker 15th daemon, §23 runbook</strong> &nbsp;|&nbsp; <strong style="color:#ffd700;">★★★ K429 daily reinvest LIVE: AUM tracking $10M, 8% cash buffer, PT1 safety valve — K428 S1 +$3.6M/5y projection (§22 runbook)</strong> &nbsp;|&nbsp; <strong style="color:#39d2c0;">16 daemons confirmed (16th smart router K434 + 15th CB K430 + 14th USDY K415 + 13th sUSDe K412)</strong> &nbsp;|&nbsp; K435 chronicle: K426-K434 9-wave profit-driving stack DOCUMENTED &nbsp;|&nbsp; K416 chronicle: K411-K415 5-wave (memory 44→43, 12 topic sections, 14 daemons, v6.15 pathway) &nbsp;|&nbsp; v6.13d LIVE (K280 75% + K297' G9 20% + sUSDe OC 5%、K360 verified Sh 25.68, EV +0.72pp Clarity Act) &nbsp;|&nbsp; v6.13e BEAR_1 fallback SCAFFOLD-READY (K386) &nbsp;|&nbsp; v6.14 PAPER-TRADE: K376 3% vol-spike momentum, ETH/LINK/AVAX &nbsp;|&nbsp; v6.15a/b CANDIDATE (USDY 5-10%, activation pathway ready) &nbsp;|&nbsp; 手法: flearn.pdf §5 + §6厳密ゲート</p>
+    <p style="margin-top:4px;">更新: 2026-05-29 23:16 JST &nbsp;|&nbsp; <strong style="color:#ffd700;font-size:1.05em;">★★ K439 POST_ONLY Order Manager IMPL: +$23K/yr @ $10M, POST_ONLY→IOC fallback, 60d G8 fill-rate tracker, K208/K297'/K376 integration hooks, §26 runbook</strong> &nbsp;|&nbsp; <strong style="color:#ffd700;font-size:1.05em;">★★★★★★ K435 K426-K434 PROFIT-DRIVING STACK: $10M → $25.47M 5y Base case (CAGR 20.56%, Sharpe 13.43) — 3x leverage + daily reinvest + HL→Bybit m6 + smart router</strong> &nbsp;|&nbsp; <strong style="color:#ffd700;">★★★ K430 3x leverage SCAFFOLD: +$2.2M/yr @ $10M AUM, PAPER_TRADE→LIVE_1.5X→LIVE_3X, circuit breaker 15th daemon, §23 runbook</strong> &nbsp;|&nbsp; <strong style="color:#ffd700;">★★★ K429 daily reinvest LIVE: AUM tracking $10M, 8% cash buffer, PT1 safety valve — K428 S1 +$3.6M/5y projection (§22 runbook)</strong> &nbsp;|&nbsp; <strong style="color:#39d2c0;">16 daemons confirmed (16th smart router K434 + 15th CB K430 + 14th USDY K415 + 13th sUSDe K412)</strong> &nbsp;|&nbsp; K435 chronicle: K426-K434 9-wave profit-driving stack DOCUMENTED &nbsp;|&nbsp; K416 chronicle: K411-K415 5-wave (memory 44→43, 12 topic sections, 14 daemons, v6.15 pathway) &nbsp;|&nbsp; v6.13d LIVE (K280 75% + K297' G9 20% + sUSDe OC 5%、K360 verified Sh 25.68, EV +0.72pp Clarity Act) &nbsp;|&nbsp; v6.13e BEAR_1 fallback SCAFFOLD-READY (K386) &nbsp;|&nbsp; v6.14 PAPER-TRADE: K376 3% vol-spike momentum, ETH/LINK/AVAX &nbsp;|&nbsp; v6.15a/b CANDIDATE (USDY 5-10%, activation pathway ready) &nbsp;|&nbsp; 手法: flearn.pdf §5 + §6厳密ゲート</p>
     <p style="margin-top:8px;font-size:0.75rem;">本レポートは研究目的のみ。過去のバックテストパフォーマンスは将来の結果を保証しない。<br>全ての戦略は全額損失のリスクを伴う。条件付合格の生存者はスケールでのフォワードテスト未実施。<br><strong style="color:var(--accent-yellow);">「日利10%」目標について</strong>: 数学的に1.1^365 ≈ 1.3e15 倍/年で実在しません。バックテストでこれが出たら偽陽性を疑ってください (本研究の最良 ~0.083%/日 ≈ 年率30% / 1x)。</p>
   </footer>
 

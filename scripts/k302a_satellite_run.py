@@ -87,6 +87,26 @@ except Exception as _lev_err_k302a:
     LEVERAGE_K302A = 1.0
     _LEVERAGE_K302A_ENABLED = False
 
+# ── K439: POST_ONLY Order Manager (K297'/PAXG/SPX trade submission hook) ──────
+# K439 POST_ONLY discipline for satellite K297' trades (PAXG / SPX HL perps).
+# K434 smart router chose venue (HL) → K439 chooses order type.
+# Default: POST_ONLY_ENABLED=True; daemons currently paper-trade so no actual orders.
+# CALL SITE SCAFFOLD (K439 Phase 5 — production wiring not yet active):
+#   from post_only_order_manager import execute_trade as _k302a_post_only_execute
+#   result = _k302a_post_only_execute(venue="HL", symbol=coin, side=side,
+#                                     size=position_usd, urgency="LOW")
+# ACTIVATION: POST_ONLY_ENABLED is True by default in post_only_order_manager.py.
+#   Live wiring requires HL exchange adapter (K439 Phase 1 scaffolded).
+POST_ONLY_ORDER_ENABLED_K302A = True   # K439: set False to bypass for K297' trades
+try:
+    import sys as _sys_po_k302a
+    _sys_po_k302a.path.insert(0, str(Path(__file__).resolve().parent))
+    from post_only_order_manager import execute_trade as _k302a_post_only_execute
+    _POST_ONLY_K302A_AVAILABLE = True
+except Exception as _po_k302a_err:
+    _POST_ONLY_K302A_AVAILABLE = False
+    print(f"  [K439] post_only_order_manager import failed ({_po_k302a_err}) — K297' orders unchanged")
+
 # ── Paths ──────────────────────────────────────────────────────────────────────
 BASE  = Path(__file__).resolve().parent.parent  # K339 security rule: no absolute /Users/ paths
 CACHE = BASE / "cache"

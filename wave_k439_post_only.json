@@ -1,0 +1,82 @@
+{
+  "wave": "K439",
+  "title": "POST_ONLY Order Manager + IOC Fallback",
+  "date_jst": "2026-05-29 23:16 JST",
+  "status": "IMPL",
+  "profit_lever": {
+    "at_10M_usd_per_year": 23000,
+    "source": "K432 POST_ONLY lever analysis: maker rebate vs taker fee differential",
+    "combined_with_k434": 198000,
+    "combined_note": "K434 smart router (+$175K/yr) + K439 POST_ONLY (+$23K/yr) = +$198K/yr @ $10M"
+  },
+  "decision_flow": {
+    "step_1": "submit_post_only_order(venue, symbol, side, size, mid_price + 0.5bps tick improvement)",
+    "step_2": "wait_for_fill(timeout=300s) — 5-minute window for maker fill",
+    "step_3_if_filled": "track_fill_rate(post_only=True) → return POST_ONLY result",
+    "step_3_if_timeout": "cancel_unfilled_order() + submit_ioc_fallback(mid + 3bps slip)",
+    "emergency_bypass": "urgency=EMERGENCY → direct IOC, skip POST_ONLY",
+    "margin_guard": "K430 circuit breaker: margin > 80% → REFUSE trade"
+  },
+  "fill_rate_tracking": {
+    "file": "cache/post_only_fills.jsonl",
+    "format": "{timestamp, venue, symbol, side, size, post_only_filled, ioc_used, fill_price}",
+    "window_days": 60,
+    "g8_gate_threshold": 0.60,
+    "k376_gate_threshold": 0.65,
+    "alert": "console ALERT + dashboard G8_gate_status=FAIL if fill_rate < 60%"
+  },
+  "maker_taker_differential_bps": {
+    "HL": 6.0,
+    "Bybit": 3.5,
+    "OKX": 2.5
+  },
+  "deliverables": {
+    "scripts/post_only_order_manager.py": "NEW ~280 LOC — full decision flow, fill rate tracking, dashboard",
+    "scripts/k280_live_fetch.py": "UPDATED — K439 POST_ONLY hook + POST_ONLY_ORDER_ENABLED flag",
+    "scripts/k302a_satellite_run.py": "UPDATED — K439 POST_ONLY hook for K297'/PAXG/SPX",
+    "scripts/k376_momentum_run.py": "UPDATED — K439 POST_ONLY hook for momentum signals",
+    "data/post_only_dashboard.json": "NEW — initial baseline (NO_DATA state)",
+    "docs/k302a_runbook.md": "UPDATED — §26 POST_ONLY strategy overview added",
+    "report.html": "UPDATED — K439 fill rate widget + footer update",
+    "wave_k439_post_only.md": "NEW — wave summary",
+    "wave_k439_post_only.json": "NEW — this file"
+  },
+  "config": {
+    "post_only_enabled": true,
+    "timeout_sec": 300,
+    "tick_improvement_bips": 0.5,
+    "ioc_limit_slip_bips": 3.0,
+    "fill_rate_alert_threshold": 0.60,
+    "max_margin_pct": 0.80
+  },
+  "integration": {
+    "k434_smart_router": "K434 chooses venue, K439 chooses order type — complementary, additive",
+    "k430_circuit_breaker": "Margin guard: refuse trade if margin > 80% AUM (K430 CB integration)",
+    "k376_g8_gate": "K376 graduation requires fill_rate >= 65% (stricter than K439 alert threshold)",
+    "k208_k280": "K208 reverse carry trades via k280_live_fetch.py (scaffold hook added)",
+    "k297_k302a": "K297' PAXG/SPX satellite via k302a_satellite_run.py (scaffold hook added)"
+  },
+  "activation_checklist": [
+    "python3 scripts/post_only_order_manager.py --dry-run",
+    "python3 scripts/post_only_order_manager.py --stats",
+    "verify data/post_only_dashboard.json written",
+    "implement exchange adapter (HL/Bybit/OKX REST) in post_only_order_manager.py",
+    "set POST_ONLY_ORDER_ENABLED=True in production daemons (already True by default)",
+    "optional: load fill-rate monitor plist for hourly dashboard refresh"
+  ],
+  "baseline_state": {
+    "total_orders_60d": 0,
+    "fill_rate_60d": 0.0,
+    "g8_gate_status": "NO_DATA",
+    "comment": "Live baseline builds after daemons go live; paper-trade mode currently"
+  },
+  "dependencies": {
+    "new_packages": false,
+    "uses_stdlib_only": true,
+    "k339_repo_root": true,
+    "k430_leverage_manager": "optional (fail-open if unavailable)"
+  },
+  "runbook_section": "docs/k302a_runbook.md §26",
+  "git_tag": "K439",
+  "commit_message": "K439 POST_ONLY order manager + IOC fallback (+$23K/yr @ $10M, K208/K297'/K376 integration)"
+}

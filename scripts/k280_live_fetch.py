@@ -166,6 +166,26 @@ except Exception as _sr_err:
     _SMART_ROUTER_AVAILABLE = False
     print(f"  [K434] smart_router import failed ({_sr_err}) — K208 routing unchanged")
 
+# ── K439: POST_ONLY Order Manager (K208 trade submission hook) ────────────────
+# K434 chooses venue → K439 chooses order type (POST_ONLY first, IOC fallback).
+# Default: POST_ONLY_ENABLED=True; daemons currently paper-trade so no actual orders.
+# CALL SITE SCAFFOLD (K439 Phase 5 — production wiring not yet active):
+#   from post_only_order_manager import execute_trade as _post_only_execute
+#   result = _post_only_execute(venue=venue, symbol=symbol, side=side,
+#                               size=position_usd, urgency="LOW")
+#   venue = result["venue"]  # "HL" | "Bybit" | "OKX"
+# ACTIVATION: POST_ONLY_ENABLED is True by default in post_only_order_manager.py.
+#   Live wiring requires exchange adapter implementation (K439 Phase 1 scaffolded).
+POST_ONLY_ORDER_ENABLED = True   # K439: set False to bypass POST_ONLY for K208 trades
+try:
+    import sys as _sys_po
+    _sys_po.path.insert(0, str(Path(__file__).resolve().parent))
+    from post_only_order_manager import execute_trade as _post_only_execute
+    _POST_ONLY_AVAILABLE = True
+except Exception as _po_err:
+    _POST_ONLY_AVAILABLE = False
+    print(f"  [K439] post_only_order_manager import failed ({_po_err}) — K208 orders unchanged")
+
 
 def get_k208_venue(symbol: str, side: str, position_usd: float) -> str:
     """

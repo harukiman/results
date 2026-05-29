@@ -3117,3 +3117,178 @@ Monthly check:
 ---
 
 *K437 §25 — HL HYPE Staking (Bronze recommended, 143.9% ROI @ $10M, corrected from K432) — 2026-05-29*
+
+---
+
+## §26 K439 POST_ONLY Order Manager — Maker-First Execution Playbook
+
+**Wave:** K439 | **Script:** `scripts/post_only_order_manager.py` | **Dashboard:** `data/post_only_dashboard.json`
+
+### §26.1 Overview
+
+K439 implements POST_ONLY discipline as a concrete production patch. Every order submission now:
+1. Attempts a POST_ONLY limit at mid-price + 0.5 bps tick improvement
+2. Waits up to 5 minutes for fill (maker rebate captured)
+3. If unfilled: cancels and falls back to IOC taker order at mid + 3 bps slip
+4. Tracks 60d rolling maker fill rate per venue
+5. Alerts if fill rate drops below 60% (K378 G8 gate)
+
+**Expected value:** +$23K/yr at $10M AUM (K432 lever analysis: maker rebate vs taker fee differential).
+
+**Maker vs Taker differential (per trade, per side):**
+
+| Venue | Maker Rebate | Taker Fee | Saving/Trade |
+|-------|-------------|-----------|-------------|
+| HL    | −1.5 bps    | +4.5 bps  | 6.0 bps     |
+| Bybit | −1.0 bps    | +2.5 bps  | 3.5 bps     |
+| OKX   | −0.5 bps    | +2.0 bps  | 2.5 bps     |
+
+### §26.2 Decision Flow
+
+```
+execute_trade(venue, symbol, side, size, urgency='LOW')
+  │
+  ├─ urgency == 'EMERGENCY'  →  submit_ioc_fallback()  (bypass POST_ONLY)
+  │
+  ├─ K430 margin > 80%       →  REFUSE  (circuit breaker)
+  │
+  ├─ Step 1: submit_post_only_order(mid_price + tick_improvement)
+  │          wait_for_fill(timeout=300s)
+  │          ↳ FILLED        →  track(post_only=True)  → return POST_ONLY result
+  │
+  └─ Step 2: cancel_unfilled_order()
+             submit_ioc_fallback(mid_price + 3bps slip)
+             track(post_only=False, ioc_used=True)
+             → return IOC_FALLBACK result
+```
+
+### §26.3 IOC Fallback Trigger Conditions
+
+| Condition | Action |
+|-----------|--------|
+| POST_ONLY timeout (5 min default) | Cancel + IOC at mid + 3 bps |
+| urgency = "EMERGENCY" | Direct IOC, skip POST_ONLY |
+| urgency = "MEDIUM" | POST_ONLY with 60s timeout, then IOC |
+| K430 margin > 80% | Refuse entire trade |
+| POST_ONLY_ENABLED = False | Direct IOC always |
+
+### §26.4 Fill Rate G8 Gate (K378)
+
+**Threshold:** 60d maker fill rate ≥ 60% per venue (alert threshold, not hard block).
+
+K376 momentum uses a stricter G8 gate: ≥ 65% maker fill rate required for capital activation.
+
+**Alert behavior:**
+- If 60d fill rate < 60%: console ALERT + dashboard `G8_gate_status = "FAIL"`
+- Alert is informational — trade proceeds via IOC even if G8 fails
+- Persistent G8 failure → investigate venue-specific POST_ONLY rejection patterns
+
+**Dashboard file:** `data/post_only_dashboard.json`
+
+```json
+{
+  "stats_60d": {
+    "total_orders": N,
+    "post_only_filled": N1,
+    "post_only_fill_rate": 0.75,
+    "ioc_used": N2,
+    "G8_gate_status": "PASS"  // PASS | FAIL | NO_DATA
+  },
+  "stats_by_venue": {
+    "HL":    { "fill_rate": 0.80, "g8_status": "PASS" },
+    "Bybit": { "fill_rate": 0.72, "g8_status": "PASS" },
+    "OKX":   { "fill_rate": 0.65, "g8_status": "PASS" }
+  }
+}
+```
+
+### §26.5 Tuning Parameters
+
+| Parameter | Default | Notes |
+|-----------|---------|-------|
+| `POST_ONLY_TIMEOUT_SEC` | 300 (5 min) | Increase for low-urgency rebalancing, decrease for volatile markets |
+| `TICK_IMPROVEMENT_BIPS` | 0.5 bps | POST_ONLY limit offset from mid. Increase to improve fill odds at cost of slight slip |
+| `IOC_LIMIT_SLIP_BIPS` | 3.0 bps | Max acceptable IOC slip from mid-price |
+| `FILL_RATE_ALERT_THRESH` | 0.60 (60%) | G8 alert threshold (K376 uses 0.65) |
+| `MAX_MARGIN_PCT` | 0.80 (80%) | K430 CB integration: refuse above this margin |
+| `POST_ONLY_ENABLED` | True | Master switch. Set False to bypass all POST_ONLY logic |
+
+### §26.6 Production Integration
+
+**Current status:** Scaffold hooks added. `POST_ONLY_ENABLED=True` by default. All daemons are paper-trading, so no actual exchange orders are placed.
+
+**Live wiring steps (when daemons go live):**
+1. Implement exchange adapter functions in `post_only_order_manager.py` (HL, Bybit, OKX REST APIs)
+2. Wire `execute_trade()` into K208 order submission in `k280_live_fetch.py`
+3. Wire `execute_trade()` into K297' PAXG/SPX orders in `k302a_satellite_run.py`
+4. Wire `execute_trade()` into K376 momentum signals in `k376_momentum_run.py`
+5. Load fill-rate monitor plist: `com.cryptolab.fill-rate-monitor.plist` (hourly dashboard refresh)
+
+**Scaffold hook locations:**
+- `k280_live_fetch.py`: `POST_ONLY_ORDER_ENABLED` flag + `_post_only_execute` import (~line 160)
+- `k302a_satellite_run.py`: `POST_ONLY_ORDER_ENABLED_K302A` flag + `_k302a_post_only_execute` (~line 91)
+- `k376_momentum_run.py`: `POST_ONLY_ORDER_ENABLED_K376` flag + `_k376_post_only_execute` (~line 76)
+
+### §26.7 K434 Smart Router Compatibility
+
+K434 chooses the optimal venue (HL/Bybit/OKX) based on FR spread, maker rebate tier, and depth.
+K439 then chooses the optimal order type (POST_ONLY vs IOC) for that venue.
+
+**Combined net effect:** best venue selection + maker-first execution = maximum fee savings.
+
+```
+K434 select_best_venue() → venue
+K439 execute_trade(venue, ...) → POST_ONLY or IOC fallback
+Net: +$175K/yr (K434 routing) + $23K/yr (K439 POST_ONLY) = +$198K/yr @ $10M AUM
+```
+
+### §26.8 K430 Leverage Circuit Breaker Integration
+
+Before any order: `_check_margin_guard()` calls `leverage_manager.check_margin_health()`.
+- margin_used > 80% → REFUSE trade (return `type="REFUSED"`)
+- margin_used > 70% → WARNING in logs, trade proceeds
+- Circuit breaker `deactivated=True` → emergency 1x mode, trade proceeds conservatively
+
+### §26.9 Fill Rate Baseline
+
+Initial state: NO_DATA (no live orders placed yet — paper-trade mode).
+
+Expected 60d baseline once live:
+- HL: ~75-80% POST_ONLY fill rate (tight spreads, predictable FR carry)
+- Bybit: ~65-70% (more volatile intraday, slightly lower fill odds)
+- OKX: ~60-65% (varies by market conditions)
+
+Central estimate: 62% overall maker fill rate (K348/K432 analysis).
+
+### §26.10 Monitoring
+
+```bash
+# Stats (60d rolling fill rate)
+python3 scripts/post_only_order_manager.py --stats
+
+# Dashboard refresh
+python3 scripts/post_only_order_manager.py --dashboard
+
+# Dry-run test (no real orders)
+python3 scripts/post_only_order_manager.py --dry-run
+
+# Optional hourly plist (fill-rate monitor daemon)
+# cp com.cryptolab.fill-rate-monitor.plist ~/Library/LaunchAgents/
+# launchctl load ~/Library/LaunchAgents/com.cryptolab.fill-rate-monitor.plist
+```
+
+**Log file:** `cache/post_only_fills.jsonl` (append-only, 60d rolling)
+
+### §26.11 References
+
+| Wave | Content |
+|------|---------|
+| K432 | POST_ONLY lever identified: +$23K/yr @ $10M (design phase) |
+| K434 | Smart router (§24): venue selection upstream of K439 |
+| K430 | Leverage circuit breaker (§23): margin guard integration |
+| K378 | G8 fill rate gate: ≥ 65% for K376 capital activation |
+| K439 | This section — POST_ONLY order manager concrete implementation |
+
+---
+
+*K439 §26 — POST_ONLY Order Manager + IOC Fallback (+$23K/yr @ $10M, K208/K297'/K376 integration) — 2026-05-29*

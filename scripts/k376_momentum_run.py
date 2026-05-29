@@ -75,6 +75,26 @@ except Exception as _lev_err_k376:
 # Effective leveraged sleeve pct (used in dashboard; actual sizing applied at activation)
 SLEEVE_PCT_LEVERAGED = SLEEVE_PCT * LEVERAGE_K376
 
+# ── K439: POST_ONLY Order Manager (K376 momentum trade submission hook) ───────
+# K376 executes post-only limit orders (maker) per K378 G8 fill_rate ≥ 65% gate.
+# K439 formalizes the POST_ONLY → IOC fallback discipline for K376 signals.
+# Default: POST_ONLY_ENABLED=True; paper-trade period uses simulated fills only.
+# CALL SITE SCAFFOLD (K439 Phase 5 — production wiring not yet active):
+#   from post_only_order_manager import execute_trade as _k376_post_only_execute
+#   result = _k376_post_only_execute(venue="Bybit", symbol=sym, side="buy",
+#                                    size=position_usd, urgency="LOW")
+# G8 fill rate gate: post_only_order_manager tracks 60d fill rate; K376 graduation
+# requires fill_rate ≥ 65% (K378 G8) confirmed in addition to 60d paper run.
+POST_ONLY_ORDER_ENABLED_K376 = True   # K439: set False to bypass for K376 trades
+try:
+    import sys as _sys_po_k376
+    _sys_po_k376.path.insert(0, str(Path(__file__).resolve().parent))
+    from post_only_order_manager import execute_trade as _k376_post_only_execute
+    _POST_ONLY_K376_AVAILABLE = True
+except Exception as _po_k376_err:
+    _POST_ONLY_K376_AVAILABLE = False
+    # Non-critical — K376 is paper-trade only; scaffold hooks not blocking
+
 # ── File paths ────────────────────────────────────────────────────────────────
 EMERGENCY_FLAG_FILE     = REPO_ROOT / "EMERGENCY_EXIT_TRIGGERED.flag"
 DASHBOARD_JSON          = DATA_DIR  / "k376_momentum_dashboard.json"
