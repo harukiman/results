@@ -1,0 +1,682 @@
+{
+  "wave": "K558",
+  "generated_jst": "2026-05-30 06:20 JST",
+  "description": "K558 Week 2 K476 SOL-BTC + K484 AVAX-BTC dual LIVE activation playbook",
+  "k476": {
+    "strategy": "K476 SOL-BTC FR Differential",
+    "oos_sharpe": 16.3,
+    "ann_return_usd_10M": 187000,
+    "activation_day": "D+7",
+    "sleeve_pct": 0.03,
+    "leverage": 4.0,
+    "notional_usd": 1200000,
+    "margin_usd": 300000,
+    "venue": "HL_PRIMARY",
+    "pass_sharpe": 8.0,
+    "hold_lower": 5.0
+  },
+  "k484": {
+    "strategy": "K484 AVAX-BTC FR Differential",
+    "oos_sharpe": 43.89,
+    "ann_return_usd_10M": 76000,
+    "activation_day": "D+9",
+    "cascade_gap_hours": 48,
+    "sleeve_pct": 0.03,
+    "leverage": 4.0,
+    "notional_usd": 1200000,
+    "margin_usd": 300000,
+    "venue": "HL_PRIMARY",
+    "pass_sharpe": 22.0,
+    "hold_lower": 13.0
+  },
+  "profit": {
+    "week2_combined_ann_usd": 263000,
+    "cumulative_w2_ann_usd": 276000,
+    "at_10M": {
+      "k476": 187000,
+      "k484": 76000,
+      "combined": 263000,
+      "cumulative": 276000
+    },
+    "at_30M": {
+      "k476": 561000,
+      "k484": 228000,
+      "combined": 789000,
+      "cumulative": 828000
+    },
+    "at_100M": {
+      "k476": 1870000,
+      "k484": 760000,
+      "combined": 2630000,
+      "cumulative": 2760000
+    }
+  },
+  "hl_exposure": {
+    "post_week1_pct": 52.0,
+    "post_k476_pct": 55.00000000000001,
+    "post_week2_pct": 57.99999999999999,
+    "cap_pct": 65.0,
+    "headroom_pp": 7.000000000000006
+  },
+  "decision_matrix_d14": {
+    "k476": {
+      "pass_sharpe": 8.0,
+      "hold_lower": 5.0
+    },
+    "k484": {
+      "pass_sharpe": 22.0,
+      "hold_lower": 13.0
+    }
+  },
+  "phases": {
+    "phase1": {
+      "phase": 1,
+      "name": "prereq_checklist",
+      "checks": [
+        {
+          "name": "K449 Week 1 LIVE mode",
+          "status": "WARN",
+          "detail": "WARN: paper_trade_mode=True \u2014 confirm Day 7 PASS first"
+        },
+        {
+          "name": "K280 \u226460% weight (K552 patch)",
+          "status": "FAIL",
+          "detail": "K280 weight=75% (still 75% \u2014 apply K552 first)"
+        },
+        {
+          "name": "K476 plist present",
+          "status": "PASS",
+          "detail": "com.cryptolab.k476-sol-btc.plist"
+        },
+        {
+          "name": "K484 plist present",
+          "status": "PASS",
+          "detail": "com.cryptolab.k484-avax-btc.plist"
+        },
+        {
+          "name": "K476 paper-trade mode",
+          "status": "PASS",
+          "detail": "paper_trade_mode=True (scaffold ready, not yet LIVE)"
+        },
+        {
+          "name": "K476 OOS Sharpe \u22655.0",
+          "status": "PASS",
+          "detail": "OOS Sh=16.3"
+        },
+        {
+          "name": "K484 paper-trade mode",
+          "status": "PASS",
+          "detail": "paper_trade_mode=True (scaffold ready, not yet LIVE)"
+        },
+        {
+          "name": "K484 OOS Sharpe \u22655.0",
+          "status": "PASS",
+          "detail": "OOS Sh=43.89"
+        },
+        {
+          "name": "HL post-Week1 \u226455%",
+          "status": "PASS",
+          "detail": "~52% (adds K476 3pp \u2192 55% \u2192 K484 3pp \u2192 58%, cap 65%)"
+        },
+        {
+          "name": "K498 Phase 1A (optional)",
+          "status": "PASS",
+          "detail": "improves BBO_SELECT routing for K476/K484 \u2014 K434 smart router handles if not done"
+        },
+        {
+          "name": "K357 emergency exit (K476)",
+          "status": "PASS",
+          "detail": "registered at K478 \u2014 verify launchctl list | grep k357"
+        },
+        {
+          "name": "K357 emergency exit (K484)",
+          "status": "PASS",
+          "detail": "registered at K489 \u2014 verify launchctl list | grep k357"
+        }
+      ],
+      "all_pass": false,
+      "total": 12,
+      "passed": 10,
+      "warned": 1,
+      "failed": 1
+    },
+    "phase2": {
+      "phase": 2,
+      "name": "k476_scaffold_audit",
+      "strategy": "K476 SOL-BTC FR Differential",
+      "oos_sharpe": 16.3,
+      "ann_return_usd": 187000,
+      "dashboard": {
+        "last_poll_jst": "2026-05-30 02:37 JST",
+        "current_fr_diff_7d": 0.0,
+        "position_state": "NEUTRAL",
+        "long_notional": 0.0,
+        "short_notional": 0.0,
+        "delta_neutral_drift_pct": 0.0,
+        "rebalance_required": false,
+        "daily_pnl_usdc": 0.0,
+        "60d_sharpe": 0.0,
+        "paper_trade_status": {
+          "days_elapsed": 0,
+          "target_60d": 60
+        },
+        "wave": "K478",
+        "strategy": "K476 SOL-BTC FR Differential",
+        "smart_router": "HL_ONLY",
+        "execution_mode": "POST_ONLY_PARALLEL",
+        "leverage": 4.0,
+        "sleeve_pct": 0.03,
+        "paper_trade_mode": true,
+        "activation_criteria": {
+          "60d_paper_trade_gate": "required",
+          "oos_sharpe_min": 5.0,
+          "fill_rate_min_pct": 60,
+          "status": "PAPER-TRADE",
+          "activation_sleeve_pct": 0.03,
+          "architecture": "v6.21 (K449 3% + K476 3% = 6% cross-asset FR sleeve)"
+        },
+        "oos_performance": {
+          "sharpe": 16.3,
+          "ann_return_usd": 187000,
+          "aum_ref": 10000000,
+          "wave_accept": "K476 9/10 \u00a76 gates"
+        },
+        "fr_sol_current": 1.25e-05,
+        "fr_btc_current": 1.25e-05,
+        "fr_raw_diff": 0.0,
+        "history_points": 2,
+        "total_notional_usdc": 1200000.0,
+        "aum_ref_usdc": 10000000.0,
+        "margin_used_usdc": 300000.0,
+        "margin_pct_of_aum": 0.03
+      }
+    },
+    "phase3": {
+      "phase": 3,
+      "name": "k484_scaffold_audit",
+      "strategy": "K484 AVAX-BTC FR Differential",
+      "oos_sharpe": 43.89,
+      "ann_return_usd": 76000,
+      "dashboard": {
+        "last_poll_jst": "2026-05-30 03:23 JST",
+        "current_fr_diff_7d": 5.9591e-06,
+        "position_state": "NEUTRAL",
+        "signal": "NEUTRAL",
+        "long_notional": 0.0,
+        "short_notional": 0.0,
+        "long_asset": null,
+        "short_asset": null,
+        "signal_strength": 0.0,
+        "delta_neutral_drift_pct": 0.0,
+        "rebalance_required": false,
+        "daily_pnl_usdc": 0.0,
+        "60d_sharpe": 0.0,
+        "fr_avax_current": 1.25e-05,
+        "fr_btc_current": 5.5618e-06,
+        "fr_raw_diff": 6.9382e-06,
+        "history_points": 5,
+        "total_notional_usdc": 1200000.0,
+        "leverage": 4.0,
+        "sleeve_pct": 0.03,
+        "aum_ref_usdc": 10000000.0,
+        "margin_used_usdc": 300000.0,
+        "margin_pct_of_aum": 0.03,
+        "paper_trade_mode": true,
+        "wave": "K489",
+        "strategy": "K484 AVAX-BTC FR Differential",
+        "smart_router": "HL_ONLY",
+        "execution_mode": "POST_ONLY_PARALLEL",
+        "paper_trade_status": {
+          "days_elapsed": 0,
+          "target_60d": 60
+        },
+        "gate_metrics": {
+          "oos_sharpe_target": 5.0,
+          "fill_rate_target_pct": 60,
+          "max_drawdown_pct": 15,
+          "current_oos_sharpe": 0.0,
+          "current_fill_rate": 0.0,
+          "current_max_dd_pct": 0.0,
+          "gate_status": "IN_PROGRESS"
+        },
+        "activation_criteria": {
+          "60d_paper_trade_gate": "required",
+          "oos_sharpe_min": 5.0,
+          "fill_rate_min_pct": 60,
+          "max_drawdown_max_pct": 15,
+          "status": "SCAFFOLD-READY",
+          "activation_sleeve_pct": 0.03,
+          "architecture": "v6.23 (K449 5% + K476 3% + K484 3% = 11% combined paired-trade sleeve)"
+        },
+        "oos_performance": {
+          "sharpe": 43.89,
+          "ann_return_usd": 75700,
+          "aum_ref": 10000000,
+          "wave_accept": "K484 7/10 \u00a76 gates",
+          "g5a_corr": 0.3,
+          "hl_cap_pct": 56.0,
+          "family_rank": "#1 (AVAX Sh43.89 > SOL Sh16.30 > BNB Sh8.04(BLOCKED) > ETH Sh5.66)"
+        },
+        "combined_sleeve": {
+          "K449_eth_btc_sharpe": 5.66,
+          "K476_sol_btc_sharpe": 16.3,
+          "K484_avax_btc_sharpe": 43.89,
+          "K449_ann_return_usd": 187000,
+          "K476_ann_return_usd": 187000,
+          "K484_ann_return_usd": 75700,
+          "combined_ann_return_usd": 276000,
+          "combined_note": "K449 5% + K476 3% + K484 3% = ~$276K/yr @ $10M"
+        }
+      }
+    },
+    "phase4": {
+      "phase": 4,
+      "name": "k476_live_activation",
+      "activation_day": "D+7",
+      "sleeve_pct": 0.03,
+      "leverage": 4.0,
+      "notional_usd": 1200000,
+      "margin_usd": 300000,
+      "ann_return_usd_10M": 187000,
+      "venue": "HL_PRIMARY",
+      "commands": [
+        "cat data/k449_dashboard.json | python3 -c \"import json,sys; d=json.load(sys.stdin); print(not d.get('paper_trade_mode', True))\"",
+        "sed \"s|REPO_ROOT|$(pwd)|g\" com.cryptolab.k476-sol-btc.plist > ~/Library/LaunchAgents/com.cryptolab.k476-sol-btc.plist",
+        "launchctl load ~/Library/LaunchAgents/com.cryptolab.k476-sol-btc.plist",
+        "launchctl list | grep k476-sol-btc",
+        "tail -f logs/k476_sol_btc.log"
+      ]
+    },
+    "phase5": {
+      "phase": 5,
+      "name": "k484_live_activation",
+      "activation_day": "D+9",
+      "cascade_gap_hours": 48,
+      "sleeve_pct": 0.03,
+      "leverage": 4.0,
+      "notional_usd": 1200000,
+      "margin_usd": 300000,
+      "ann_return_usd_10M": 76000,
+      "venue": "HL_PRIMARY",
+      "commands": [
+        "cat data/k476_dashboard.json | python3 -c \"import json,sys; d=json.load(sys.stdin); print('K476 active:', not d.get('paper_trade_mode', True))\"",
+        "sed \"s|REPO_ROOT|$(pwd)|g\" com.cryptolab.k484-avax-btc.plist > ~/Library/LaunchAgents/com.cryptolab.k484-avax-btc.plist",
+        "launchctl load ~/Library/LaunchAgents/com.cryptolab.k484-avax-btc.plist",
+        "launchctl list | grep k484-avax-btc",
+        "tail -f logs/k484_avax_btc.log"
+      ]
+    },
+    "phase6": {
+      "phase": 6,
+      "name": "dual_monitoring",
+      "monitor_window_days": 14,
+      "metrics": [
+        {
+          "metric": "Daily realized Sharpe",
+          "scope": "Both",
+          "gate": "Sh \u2265 50% of OOS target",
+          "method": "rolling 7d window"
+        },
+        {
+          "metric": "Fill rate",
+          "scope": "Both",
+          "gate": "\u2265 60%",
+          "method": "8h interval average"
+        },
+        {
+          "metric": "HL margin health",
+          "scope": "Both",
+          "gate": "margin ratio < 80%",
+          "method": "launchctl + HL API"
+        },
+        {
+          "metric": "Cross-strategy correlation",
+          "scope": "K476+K484",
+          "gate": "G5 check \u2264 0.40",
+          "method": "7d rolling FR diff corr"
+        },
+        {
+          "metric": "Delta-neutral drift",
+          "scope": "Both",
+          "gate": "< 2% per leg",
+          "method": "auto-rebalance trigger"
+        },
+        {
+          "metric": "FR signal fires",
+          "scope": "Both",
+          "gate": "\u2265 1/week minimum",
+          "method": "signal fire count"
+        },
+        {
+          "metric": "HL exposure total",
+          "scope": "Portfolio",
+          "gate": "\u2264 65% hard cap",
+          "method": "K476 + K484 combined"
+        },
+        {
+          "metric": "Funding rate diff (7d avg)",
+          "scope": "Both",
+          "gate": "SOL-BTC > 0 / AVAX-BTC > 0",
+          "method": "8h poll"
+        }
+      ]
+    },
+    "phase7": {
+      "phase": 7,
+      "name": "decision_matrix_d14",
+      "k476": {
+        "oos_sharpe": 16.3,
+        "pass_threshold": 8.0,
+        "hold_lower": 5.0,
+        "pass_action": "expand 3%\u21924%",
+        "hold_action": "hold 3%",
+        "rollback_action": "paper-trade"
+      },
+      "k484": {
+        "oos_sharpe": 43.89,
+        "pass_threshold": 22.0,
+        "hold_lower": 13.0,
+        "pass_action": "expand 3%\u21924%",
+        "hold_action": "hold 3%",
+        "rollback_action": "paper-trade"
+      }
+    },
+    "phase8": {
+      "phase": 8,
+      "name": "hl_exposure_trajectory",
+      "post_week2_hl_pct": 58.0,
+      "cap_pct": 65.0,
+      "headroom_pp": 7.0,
+      "trajectory": [
+        {
+          "phase": "Baseline (v6.13e K280 60%)",
+          "hl_pct": 52.0,
+          "note": "after K449 W1, K280 60% applied"
+        },
+        {
+          "phase": "+ K476 SOL-BTC D+7 (3pp)",
+          "hl_pct": 55.0,
+          "note": "K476 3% sleeve \u00d7 100% HL = +3pp"
+        },
+        {
+          "phase": "+ K484 AVAX-BTC D+9 (3pp)",
+          "hl_pct": 58.0,
+          "note": "K484 3% sleeve \u00d7 100% HL = +3pp"
+        },
+        {
+          "phase": "HL cap hard limit",
+          "hl_pct": 65.0,
+          "note": "never exceed \u2014 K476+K484 OK"
+        },
+        {
+          "phase": "+ K493 ATOM-BTC W3 (2.5pp HL)",
+          "hl_pct": 60.5,
+          "note": "5% sleeve \u00d7 50% HL (Bybit split)"
+        },
+        {
+          "phase": "+ K500+K507 SEI+TIA W4 (est)",
+          "hl_pct": 62.5,
+          "note": "combined ~2pp HL"
+        },
+        {
+          "phase": "+ K512 APT W5 (est)",
+          "hl_pct": 64.0,
+          "note": "~1.5pp HL (Bybit primary)"
+        },
+        {
+          "phase": "v6.28 full live target",
+          "hl_pct": 64.0,
+          "note": "all strategies active"
+        }
+      ]
+    },
+    "phase9": {
+      "phase": 9,
+      "name": "profit_summary_week2",
+      "k449_ann_usd": 13000,
+      "k476_ann_usd": 187000,
+      "k484_ann_usd": 76000,
+      "week2_combined_ann_usd": 263000,
+      "cumulative_w2_ann_usd": 276000,
+      "at_30M": {
+        "k476": 561000,
+        "k484": 228000,
+        "cumulative": 828000
+      },
+      "at_100M": {
+        "k476": 1870000,
+        "k484": 760000,
+        "cumulative": 2760000
+      }
+    },
+    "phase10": {
+      "phase": 10,
+      "name": "risk_register",
+      "risks": [
+        {
+          "risk": "Cascade risk (dual same week)",
+          "level": "MEDIUM",
+          "mitigation": "48h gap D+7/D+9 mitigates (K547 protocol)"
+        },
+        {
+          "risk": "SOL volatility (high vol alt)",
+          "level": "MEDIUM",
+          "mitigation": "4x leverage, delta-neutral both legs \u2014 vol isolated to FR diff"
+        },
+        {
+          "risk": "AVAX subnet ecosystem",
+          "level": "LOW",
+          "mitigation": "subnet-driven FR spikes = edge source; G5 corr=0.28 managed"
+        },
+        {
+          "risk": "HL cap proximity",
+          "level": "LOW",
+          "mitigation": "58% post-W2 vs 65% cap \u2014 7pp headroom for W3-W5"
+        },
+        {
+          "risk": "SOL-AVAX cross-corr spike",
+          "level": "LOW",
+          "mitigation": "G5 design-time corr=0.28 (PASS <0.40); 48h gap adds monitoring"
+        },
+        {
+          "risk": "Fill rate degradation",
+          "level": "MEDIUM",
+          "mitigation": "POST_ONLY_PARALLEL ensures maker; HL_ONLY primary confirmed"
+        },
+        {
+          "risk": "FR regime shift (SOL\u21920)",
+          "level": "LOW",
+          "mitigation": "7d rolling avg gate; position NEUTRAL if SOL-BTC diff < threshold"
+        },
+        {
+          "risk": "FR regime shift (AVAX\u21920)",
+          "level": "LOW",
+          "mitigation": "same gate mechanism; AVAX-BTC diff check"
+        },
+        {
+          "risk": "HL margin call (dual LIVE)",
+          "level": "LOW",
+          "mitigation": "3% margin each \u00d7 4x \u2192 9% total margin; K357 exit registered"
+        },
+        {
+          "risk": "K449 W1 not PASS by D+7",
+          "level": "LOW",
+          "mitigation": "Phase 1 prereq gate; if K449 not LIVE \u2192 delay K476 activation"
+        }
+      ]
+    },
+    "checklist_d7": {
+      "day": "D+7",
+      "strategy": "K476 SOL-BTC",
+      "steps": [
+        {
+          "num": "1",
+          "action": "K449 W1 Day 7 PASS confirm",
+          "cmd": "cat data/k449_dashboard.json | python3 -c \"import json,sys; print(json.load(sys.stdin).get('paper_trade_mode'))\""
+        },
+        {
+          "num": "2",
+          "action": "K476 dashboard fresh check",
+          "cmd": "python3 wave_k558_k476_k484_week2_live.py --phase2"
+        },
+        {
+          "num": "3",
+          "action": "K280 \u226460% weight verify",
+          "cmd": "cat data/k280_live_dashboard.json | python3 -c \"import json,sys; print(json.load(sys.stdin).get('k280_weight_pct'))\""
+        },
+        {
+          "num": "4",
+          "action": "K357 emergency exit alive",
+          "cmd": "launchctl list | grep k357"
+        },
+        {
+          "num": "5",
+          "action": "Env vars set (PAPER_TRADE=False, HL_USER_ADDRESS, HL_PRIVATE_KEY)",
+          "cmd": "export PAPER_TRADE=False; export HL_USER_ADDRESS=<addr>; export HL_PRIVATE_KEY=<key>"
+        },
+        {
+          "num": "6",
+          "action": "Copy plist to LaunchAgents",
+          "cmd": "sed \"s|REPO_ROOT|$(pwd)|g\" com.cryptolab.k476-sol-btc.plist > ~/Library/LaunchAgents/com.cryptolab.k476-sol-btc.plist"
+        },
+        {
+          "num": "7",
+          "action": "launchctl load K476",
+          "cmd": "launchctl load ~/Library/LaunchAgents/com.cryptolab.k476-sol-btc.plist"
+        },
+        {
+          "num": "8",
+          "action": "Verify daemon alive",
+          "cmd": "launchctl list | grep k476-sol-btc"
+        },
+        {
+          "num": "9",
+          "action": "3% sleeve initial position confirm ($300K margin)",
+          "cmd": "tail -20 logs/k476_sol_btc.log"
+        },
+        {
+          "num": "10",
+          "action": "24h monitor window begins",
+          "cmd": "# D+7 \u2192 D+8: fill rate, delta drift, FR polling \u2014 no action unless emergency"
+        }
+      ]
+    },
+    "checklist_d9": {
+      "day": "D+9",
+      "strategy": "K484 AVAX-BTC",
+      "steps": [
+        {
+          "num": "1",
+          "action": "K476 D+2 PASS check (48h gate)",
+          "cmd": "cat data/k476_dashboard.json | python3 -c \"import json,sys; d=json.load(sys.stdin); print('Active:', not d.get('paper_trade_mode', True))\""
+        },
+        {
+          "num": "2",
+          "action": "K476 fill rate > 0% (first 48h)",
+          "cmd": "grep -i 'fill\\|trade\\|position' logs/k476_sol_btc.log | tail -10"
+        },
+        {
+          "num": "3",
+          "action": "HL margin health (post-K476 55%)",
+          "cmd": "launchctl list | grep -E 'k476|k449|k280'"
+        },
+        {
+          "num": "4",
+          "action": "K484 dashboard fresh check",
+          "cmd": "python3 wave_k558_k476_k484_week2_live.py --phase3"
+        },
+        {
+          "num": "5",
+          "action": "Env vars set (PAPER_TRADE=False, HL_USER_ADDRESS, HL_PRIVATE_KEY)",
+          "cmd": "export PAPER_TRADE=False; export HL_USER_ADDRESS=<addr>; export HL_PRIVATE_KEY=<key>"
+        },
+        {
+          "num": "6",
+          "action": "Copy plist to LaunchAgents",
+          "cmd": "sed \"s|REPO_ROOT|$(pwd)|g\" com.cryptolab.k484-avax-btc.plist > ~/Library/LaunchAgents/com.cryptolab.k484-avax-btc.plist"
+        },
+        {
+          "num": "7",
+          "action": "launchctl load K484",
+          "cmd": "launchctl load ~/Library/LaunchAgents/com.cryptolab.k484-avax-btc.plist"
+        },
+        {
+          "num": "8",
+          "action": "Verify daemon alive",
+          "cmd": "launchctl list | grep k484-avax-btc"
+        },
+        {
+          "num": "9",
+          "action": "3% sleeve initial position confirm ($300K margin)",
+          "cmd": "tail -20 logs/k484_avax_btc.log"
+        },
+        {
+          "num": "10",
+          "action": "HL exposure verify (~58%, headroom 7pp)",
+          "cmd": "# K449 52% + K476 3pp + K484 3pp = 58% < 65% cap \u2713"
+        },
+        {
+          "num": "11",
+          "action": "24h monitor window begins",
+          "cmd": "# D+9 \u2192 D+10: dual monitor K476+K484 \u2014 D+14 decision matrix"
+        }
+      ]
+    },
+    "checklist_d14": {
+      "day": "D+14",
+      "both_strategies": true,
+      "steps": [
+        {
+          "num": "1",
+          "action": "K476 realized Sharpe check",
+          "cmd": "cat data/k476_dashboard.json | python3 -c \"import json,sys; print('Sh:', json.load(sys.stdin).get('60d_sharpe', 0))\""
+        },
+        {
+          "num": "2",
+          "action": "K484 realized Sharpe check",
+          "cmd": "cat data/k484_dashboard.json | python3 -c \"import json,sys; print('Sh:', json.load(sys.stdin).get('60d_sharpe', 0))\""
+        },
+        {
+          "num": "3",
+          "action": "K476 fill rate check",
+          "cmd": "grep 'fill_rate' logs/k476_sol_btc.log | tail -5"
+        },
+        {
+          "num": "4",
+          "action": "K484 fill rate check",
+          "cmd": "grep 'fill_rate' logs/k484_avax_btc.log | tail -5"
+        },
+        {
+          "num": "5",
+          "action": "HL margin ratio check",
+          "cmd": "launchctl list | grep -E 'k476|k484|k449|k280|k357'"
+        },
+        {
+          "num": "6",
+          "action": "Apply decision matrix per phase7",
+          "cmd": "python3 wave_k558_k476_k484_week2_live.py --phase7"
+        },
+        {
+          "num": "7",
+          "action": "If PASS (K476 Sh\u22658, K484 Sh\u226522): expand to 4%",
+          "cmd": "# Update portfolio_config.json: k476_sleeve_pct=0.04, k484_sleeve_pct=0.04"
+        },
+        {
+          "num": "8",
+          "action": "If HOLD: maintain 3%, continue to D+21",
+          "cmd": "# No action \u2014 continue monitoring"
+        },
+        {
+          "num": "9",
+          "action": "If ROLLBACK: unload daemon + paper-trade",
+          "cmd": "launchctl unload ~/Library/LaunchAgents/com.cryptolab.k476-sol-btc.plist  # if K476 FAIL"
+        },
+        {
+          "num": "10",
+          "action": "Week 3 K493 ATOM prep (K556 in flight)",
+          "cmd": "python3 wave_k556_k493_week3_live.py --status"
+        }
+      ]
+    }
+  }
+}

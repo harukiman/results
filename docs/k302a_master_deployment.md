@@ -2930,3 +2930,70 @@ K541 3% Bybit-only = +0.0pp HL.
 Source files: `wave_k555_v629_proposal.py` | `wave_k555_v629_proposal.json` | `wave_k555_v629_proposal.md`
 
 *K555 Appendix — Added 2026-05-30 06:10 JST*
+
+---
+
+## K558 Appendix — Week 2 K476+K484 Dual LIVE Activation
+
+**Wave:** K558 | **Generated:** 2026-05-30 06:15 JST  
+**Mandate:** K547 sequenced activation Week 2 — D+7 K476 + D+9 K484 (48h cascade gap)
+
+### K476 SOL-BTC + K484 AVAX-BTC Combined (+$263K/yr @$10M)
+
+| Strategy | Day | OOS Sh | @$10M | @$30M | @$100M | Sleeve | Venue |
+|----------|-----|--------|-------|-------|--------|--------|-------|
+| K476 SOL-BTC FR | D+7 | 16.30 | $187K/yr | $561K/yr | $1,870K/yr | 3% | HL_ONLY |
+| K484 AVAX-BTC FR | D+9 | 43.89 | $76K/yr | $228K/yr | $760K/yr | 3% | HL_ONLY |
+| **Week 2 combined** | — | — | **$263K/yr** | **$789K/yr** | **$2,630K/yr** | 6% | HL |
+
+### Cumulative W1+W2 (+$276K/yr @$10M)
+
+| Strategies | @$10M | @$30M | @$100M |
+|-----------|-------|-------|--------|
+| K449 (W1) + K476+K484 (W2) | **$276K/yr** | **$828K/yr** | **$2,760K/yr** |
+
+### HL Exposure Trajectory
+
+| State | HL% | Note |
+|-------|-----|------|
+| Post-Week 1 (K449 live, K280 60%) | ~52% | K552 patch applied |
+| + K476 D+7 (+3pp) | ~55% | |
+| **+ K484 D+9 (+3pp)** | **~58%** | **Post-Week 2, 7pp headroom to cap** |
+| Cap | 65% | Hard limit — never exceed |
+
+### User Actions Added (K558)
+
+- **Action #35**: K476 SOL-BTC D+7 LIVE activation — OOS Sh 16.30 gate passed → 3% sleeve × 4x HL_ONLY → $187K/yr @$10M | `wave_k558_k476_k484_week2_live.py --checklist-d7`
+- **Action #36**: K484 AVAX-BTC D+9 LIVE activation (48h after K476) — OOS Sh 43.89 → 3% sleeve × 4x HL_ONLY → $76K/yr @$10M | `wave_k558_k476_k484_week2_live.py --checklist-d9`
+
+### Decision Matrix D+14
+
+| Strategy | PASS (→ expand) | HOLD | ROLLBACK |
+|----------|----------------|------|----------|
+| K476 SOL-BTC | Realized Sh ≥ 8.0 (50% OOS) | Sh 5.0–8.0 | Sh < 5.0 |
+| K484 AVAX-BTC | Realized Sh ≥ 22.0 (50% OOS) | Sh 13.0–22.0 | Sh < 13.0 |
+
+```bash
+# D+7: K476 activation
+python3 wave_k558_k476_k484_week2_live.py --checklist-d7
+
+# D+9: K484 activation (48h after K476)
+python3 wave_k558_k476_k484_week2_live.py --checklist-d9
+
+# D+14: decision matrix
+python3 wave_k558_k476_k484_week2_live.py --checklist-d14
+
+# Full playbook
+python3 wave_k558_k476_k484_week2_live.py --all
+```
+
+### Week 3 Prep (post-D+14)
+
+After both D+14 PASS/HOLD:
+- K493 ATOM-BTC Week 3: `python3 wave_k556_k493_week3_live.py --status`
+- HL post-W2 58% → K493 adds 2.5pp (HL-Bybit split) → ~60.5%
+- Remaining headroom: ~4.5pp for W4 K500+K507 + W5 K512
+
+Source files: `wave_k558_k476_k484_week2_live.{py,json,md}`
+
+*K558 Appendix — Added 2026-05-30 06:15 JST*
