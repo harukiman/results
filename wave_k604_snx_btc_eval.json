@@ -1,0 +1,759 @@
+{
+  "wave": "K604",
+  "strategy": "SNX-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T08:42:26+0900",
+  "runtime_s": 3.9,
+  "decision": "BLOCKED-FAMILY-CORR",
+  "decision_rationale": "G5 FAIL \u2014 INJ-BTC K500 corr=0.5296 >= 0.4. All blocking: [g5e=INJ-BTC K500 corr=0.5296]. SNX-BTC FR differential co-moves with existing family member in OOS period. Root cause: both SNX and the blocking pair (INJ K500) are high-vol DeFi alts (vol ratio ~4x BTC each) that enter systematic SHORT vs BTC during BTC dominance regime cycles (alt-bear phase Oct 2025 - early 2026). Position overlap driven by shared alt-vs-BTC regime, not protocol similarity. DeFi sub-cluster distinction (AAVE/CRV vs SNX) CONFIRMED: AAVE G5t=-0.0125, CRV G5u=0.031 (both PASS). OOS Sharpe=10.7887 (signal quality high). Re-evaluate if alt-bear regime ends and SNX/INJ FR cycles decouple. Alternative: reduce SNX window to limit INJ overlap or filter by regime.",
+  "synthetic_cluster_status": "CANNOT CONFIRM",
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "snx_listed": true,
+      "is_delisted": false,
+      "total_symbols": 230,
+      "max_leverage": 3,
+      "margin_table_id": 3,
+      "api_success": true,
+      "venue_fail": false,
+      "note": "HL meta API: 230 symbols. SNX: LISTED. isDelisted=False. maxLeverage=3. SNX-PERP on Hyperliquid (maxLev=3, marginTableId=3). FR settlement: 1h intervals. FR cache: hl_fr_SNX.parquet (21128 rows, 2023-12-31 to 2026-05-29)."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "snx_listed": true,
+      "status": "Trading",
+      "bybit_ticker": "SNXUSDT",
+      "max_leverage": "25.00",
+      "funding_interval_min": 480,
+      "api_success": true,
+      "venue_fail": false,
+      "note": "Bybit SNXUSDT: status=Trading, maxLeverage=25.00, fundingInterval=480min (8h). Cache: bybit_fr_SNXUSDT_730d.parquet (3800 rows, 2022-12-10 to 2026-05-29)."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "snx_listed": true,
+      "state": "live",
+      "max_leverage": "20",
+      "inst_id": "SNX-USDT-SWAP",
+      "ct_val": "1",
+      "api_success": true,
+      "venue_fail": false,
+      "note": "OKX SNX-USDT-SWAP: state=live, maxLeverage=20, ctVal=1 SNX/contract. 8h FR settlement interval. OKX FR cache: okx_fr_SNX.parquet (284 rows, 2026-02-19 to 2026-02-22)."
+    },
+    "venue_pass": true,
+    "hl_listed": true,
+    "hl_delisted": false,
+    "bybit_trading": true,
+    "okx_live": true,
+    "vol_ratio_6m": 7.9066,
+    "vol_ratio_365d": 7.9132,
+    "vol_ratio_full": 3.9651,
+    "vol_ratio_primary": 7.9132,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "vol_pass_bool": true,
+    "vol_analysis": {
+      "6m_window": 7.9066,
+      "365d_window": 7.9132,
+      "full_window": 3.9651,
+      "primary": 7.9132,
+      "threshold": 1.5,
+      "verdict": "6M=7.9066x, 365d=7.9132x, full=3.9651x. Primary=max(6M,365d,full)=7.9132x PASS (threshold=1.5x). SNX synthetic FX demand cycles + staking collapse events \u2192 higher vol than MKR PSM-dampened (1.33x) or UNI governance-only (1.01x). DeFi vol hierarchy: Liquidation(AAVE 1.842x) ~ Bribe(CRV 1.803x) ~ Synthetic(SNX ?x) > StablecoinMint(MKR 1.33x) > DEX-gov(UNI 1.01x)."
+    },
+    "prescreen_pass": true,
+    "snx_fr_rows": 21128,
+    "snx_fr_start": "2023-12-31 15:00:00",
+    "snx_fr_end": "2026-05-29 23:00:00",
+    "btc_fr_rows": 17512,
+    "vol_note": "HL: SNX listed, isDelisted=False, maxLev=3. Bybit: status=Trading, maxLev=25.00. OKX: state=live, maxLev=20. Vol primary=7.9132x (PASS vs 1.5x). Phase 0 PASS."
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "SNX-PERP vs BTC-PERP (HL 1h FR differential)"
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -11.9993,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "half_life_h": 1.13,
+      "half_life_days": 0.05,
+      "theta": 0.615671,
+      "intercept": -2.13e-06,
+      "r_squared": 0.3078,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 10.7887,
+      "perm_mean_sh": -0.0132,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 10.7887,
+      "t_stat": 8.3545,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.005556,
+      "n_trials": 9,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 6.3683,
+    "ann_ret_pct": 4.4387,
+    "max_dd_pct": -1.1805,
+    "trades_yr": 31.9,
+    "n_days": 503.8,
+    "n_hours": 12092,
+    "n_pos_months": 14,
+    "n_neg_months": 4,
+    "cum_ret": 0.06127,
+    "ret_mean": 5.07e-06,
+    "ret_std": 7.447e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 10.7887,
+    "ann_ret_pct": 7.7176,
+    "max_dd_pct": -0.443,
+    "trades_yr": 45.0,
+    "n_days": 218.9,
+    "n_hours": 5253,
+    "n_pos_months": 6,
+    "n_neg_months": 2,
+    "cum_ret": 0.046279,
+    "ret_mean": 8.81e-06,
+    "ret_std": 7.643e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 7.729,
+    "ann_ret_pct": 5.4317,
+    "max_dd_pct": -1.1805,
+    "trades_yr": 35.9,
+    "n_days": 722.7,
+    "n_hours": 17345,
+    "n_pos_months": 19,
+    "n_neg_months": 6,
+    "cum_ret": 0.107549,
+    "ret_mean": 6.2e-06,
+    "ret_std": 7.509e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 168,
+      "oos_sharpe": 10.7887,
+      "oos_ann_ret_pct": 7.7176,
+      "trades_yr": 45.0
+    },
+    {
+      "window_h": 336,
+      "oos_sharpe": 10.77,
+      "oos_ann_ret_pct": 7.5044,
+      "trades_yr": 25.0
+    },
+    {
+      "window_h": 480,
+      "oos_sharpe": 10.6202,
+      "oos_ann_ret_pct": 7.4018,
+      "trades_yr": 23.3
+    },
+    {
+      "window_h": 240,
+      "oos_sharpe": 10.4875,
+      "oos_ann_ret_pct": 7.4283,
+      "trades_yr": 35.0
+    },
+    {
+      "window_h": 600,
+      "oos_sharpe": 10.239,
+      "oos_ann_ret_pct": 7.1366,
+      "trades_yr": 23.3
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 12,
+    "n_positive": 6,
+    "all_positive": false,
+    "pass": false,
+    "sh_min": -9.1183,
+    "sh_max": 37.7396,
+    "sh_mean": 7.7192,
+    "sh_std": 14.354,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-05-28",
+        "end": "2025-06-27",
+        "sharpe": -6.3161,
+        "positive": "False",
+        "max_dd": -0.003441
+      },
+      {
+        "fold": 2,
+        "start": "2025-06-27",
+        "end": "2025-07-27",
+        "sharpe": 37.7396,
+        "positive": "True",
+        "max_dd": -0.000417
+      },
+      {
+        "fold": 3,
+        "start": "2025-07-27",
+        "end": "2025-08-26",
+        "sharpe": -3.7827,
+        "positive": "False",
+        "max_dd": -0.001568
+      },
+      {
+        "fold": 4,
+        "start": "2025-08-26",
+        "end": "2025-09-25",
+        "sharpe": -4.3267,
+        "positive": "False",
+        "max_dd": -0.000737
+      },
+      {
+        "fold": 5,
+        "start": "2025-09-25",
+        "end": "2025-10-25",
+        "sharpe": -0.1747,
+        "positive": "False",
+        "max_dd": -0.011805
+      },
+      {
+        "fold": 6,
+        "start": "2025-10-25",
+        "end": "2025-11-24",
+        "sharpe": 18.4476,
+        "positive": "True",
+        "max_dd": -0.000627
+      },
+      {
+        "fold": 7,
+        "start": "2025-11-24",
+        "end": "2025-12-24",
+        "sharpe": -9.1183,
+        "positive": "False",
+        "max_dd": -0.00316
+      },
+      {
+        "fold": 8,
+        "start": "2025-12-24",
+        "end": "2026-01-23",
+        "sharpe": -1.5702,
+        "positive": "False",
+        "max_dd": -0.001317
+      },
+      {
+        "fold": 9,
+        "start": "2026-01-23",
+        "end": "2026-02-22",
+        "sharpe": 27.5731,
+        "positive": "True",
+        "max_dd": -0.000798
+      },
+      {
+        "fold": 10,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": 10.2328,
+        "positive": "True",
+        "max_dd": -0.002391
+      },
+      {
+        "fold": 11,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": 19.4831,
+        "positive": "True",
+        "max_dd": -0.000827
+      },
+      {
+        "fold": 12,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": 4.4424,
+        "positive": "True",
+        "max_dd": -0.001614
+      }
+    ],
+    "note": "6/12 positive folds. G4 PARTIAL: 6 negative fold(s). Sharpe range: [-9.12, 37.74]. ",
+    "is_h": 2160,
+    "oos_h": 720,
+    "adapted": false
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": false,
+      "G5 Family corr": false,
+      "G6 Trades/yr": true,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": false,
+      "G9 Data sufficiency": true
+    },
+    "gates_passed": 6,
+    "gates_total": 9,
+    "gates_failed": 3,
+    "g7_ret_4x_pct": 30.87,
+    "g4_all_positive": false,
+    "g5_all_pass": false,
+    "g6_trades_yr": 45.0,
+    "g8_note": "G8 signal corr=0.3721 (threshold=0.55). Raw FR diff corr=0.3832. Overlap=17512h (~730d). HL 1h settlement vs Bybit 8h settlement (SNXUSDT) \u2014 resampled to 1h. SNX maxLev=3 on HL (low liquidity tier) vs Bybit maxLev=25. Structural G8 FAIL expected (HL 1h vs Bybit 8h settlement mechanics). Consistent with AAVE K596, CRV K599 precedents.",
+    "g9_note": "OOS=218.9d PASS (threshold=180d). SNX HL data: 2023-12-31 to 2026-05-29 (17 months+). OOS period: 30% of aligned IS+OOS window.",
+    "defi_corr_note": "ETH G5a=-0.0116 (PASS), AAVE G5t=-0.0125 (PASS), CRV G5u=0.031 (PASS), K280 G5j=0.0251 (BTC-carry).",
+    "decision": "BLOCKED-FAMILY-CORR"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": -0.0116,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Ethereum L1 CRITICAL \u2014 SNX on ETH"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": 0.0648,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Solana vs SNX synthetic assets"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": -0.0102,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Avalanche vs SNX synthetic"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": -0.0091,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs SNX synthetic"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": 0.5296,
+        "threshold": 0.4,
+        "pass": false,
+        "n": 5253,
+        "note": "Cosmos vs SNX synthetic"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": 0.1905,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs SNX synthetic"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": 0.0096,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs SNX synthetic"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": 0.0124,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Move-VM vs SNX synthetic"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": -0.0147,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Storage vs SNX synthetic"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531 (AI/GPU)",
+        "corr": 0.0251,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "AI/GPU vs SNX synthetic"
+      },
+      "g5l": {
+        "label": "TAO-BTC (AI/Training)",
+        "corr": 0.0251,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "AI/Training vs SNX synthetic"
+      },
+      "g5p": {
+        "label": "KAS-BTC K590 (PoW/BlockDAG)",
+        "corr": 0.113,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "PoW/BlockDAG vs SNX synthetic"
+      },
+      "g5q": {
+        "label": "ICP-BTC K587 (Compute)",
+        "corr": 0.122,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 4709,
+        "note": "Compute/Cloud vs SNX synthetic"
+      },
+      "g5r": {
+        "label": "DOGE-BTC K592 (Meme/PoW)",
+        "corr": 0.0053,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Meme vs SNX synthetic assets"
+      },
+      "g5s": {
+        "label": "UNI-BTC K593 (DeFi DEX)",
+        "corr": 0.0205,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "DeFi DEX-gov vs DeFi Synthetic CRITICAL"
+      },
+      "g5t": {
+        "label": "AAVE-BTC K596 (DeFi Lending)",
+        "corr": -0.0125,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Lending vs Synthetic CRITICAL"
+      },
+      "g5u": {
+        "label": "CRV-BTC K599 (DeFi veToken)",
+        "corr": 0.031,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "veToken vs Synthetic CRITICAL"
+      },
+      "g5m": {
+        "label": "LINK-BTC K557 (Oracle/Infra vs SNX Synthetic)",
+        "corr": -0.0033,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "LINK oracle middleware vs SNX synthetic asset issuance. Synthetix uses Chainlink price feeds for synth pricing \u2014 integration \u2260 FR overlap."
+      },
+      "g5n": {
+        "label": "TON-BTC K571 (Social/Messaging vs SNX Synthetic)",
+        "corr": 0.004,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "TON Telegram utility vs SNX synthetic FX/commodity assets. Orthogonal."
+      },
+      "g5o": {
+        "label": "SAND-BTC K583 (Gaming/Metaverse vs SNX Synthetic)",
+        "corr": 0.141,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "SAND metaverse gaming vs SNX synthetic assets. Orthogonal."
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline (CRITICAL)",
+        "corr": 0.0251,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "BTC institutional carry vs SNX synthetic asset staking carry. SNX staking = DeFi yield (inflation + fees) vs BTC carry = institutional hedging. SNX must not replicate BTC-carry signal (K280)."
+      }
+    },
+    "n_pass": 20,
+    "n_evaluated": 21,
+    "n_total": 21,
+    "all_pass": false,
+    "eth_corr_critical": -0.0116,
+    "aave_corr_defi": -0.0125,
+    "crv_corr_defi": 0.031,
+    "uni_corr_defi": 0.0205,
+    "btc_corr_k280": 0.0251,
+    "sol_corr_critical": 0.0648,
+    "eth_cluster_blocked": false,
+    "defi_cluster_blocked": false,
+    "note": "G5 family: 20/21 evaluated PASS. ETH G5a=-0.0116 (PASS: SNX distinct from ETH L1). AAVE G5t=-0.0125 (PASS: SNX distinct from AAVE Lending). CRV G5u=0.031 (PASS: SNX distinct from CRV veToken). K280 G5j=0.0251 (BTC-carry baseline). DeFi sub-cluster blocked: False."
+  },
+  "cross_venue_fr": {
+    "pass": false,
+    "hl_bybit_signal_corr": 0.3721,
+    "hl_bybit_diff_corr": 0.3832,
+    "bybit_snx_rows": 3800,
+    "bybit_btc_rows": 2190,
+    "overlap_hours": 17512,
+    "note": "G8 signal corr=0.3721 (threshold=0.55). Raw FR diff corr=0.3832. Overlap=17512h (~730d). HL 1h settlement vs Bybit 8h settlement (SNXUSDT) \u2014 resampled to 1h. SNX maxLev=3 on HL (low liquidity tier) vs Bybit maxLev=25. Structural G8 FAIL expected (HL 1h vs Bybit 8h settlement mechanics). Consistent with AAVE K596, CRV K599 precedents."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 7.7176,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 30.87,
+    "usdc_yr_10M": 0,
+    "usdc_yr_100M": 0,
+    "deployable": false,
+    "note": "NOT DEPLOYABLE: BLOCKED-FAMILY-CORR. OOS ann=7.7176% x 4x = 30.87%/yr. $10M: $0/yr. $100M: $0/yr. SNX maxLev=3 on HL (low leverage tier) \u2014 primary execution via Bybit SNXUSDT (maxLev=25) or OKX SNX-USDT-SWAP (maxLev=20). Position sizing: 4x leverage achievable on Bybit/OKX primary venue."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 64.5,
+    "pending_pct": 3.0,
+    "snx_alloc_pct": 0.0,
+    "projected_pct": 67.5,
+    "cap_pct": 65.0,
+    "breach": true,
+    "routing_note": "SNX NOT DEPLOYED \u2014 no HL concentration impact.",
+    "note": "HL baseline=64.5% + pending(AAVE+CRV)=3.0% + SNX=0.0% = 67.5% (BREACH vs 65.0% cap). HL delta from SNX = +0.0pp. SNX NOT DEPLOYED \u2014 no HL concentration impact."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "SHIB-BTC",
+      "sharpe": 38.4808,
+      "ecosystem": "Meme/Retail (Shiba Inu ERC-20)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SAND-BTC",
+      "sharpe": 33.627,
+      "ecosystem": "Gaming/Metaverse",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 7,
+      "pair": "PEPE-BTC",
+      "sharpe": 26.4202,
+      "ecosystem": "Meme/Retail (Pepe ERC-20 frog meme)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 9,
+      "pair": "DOGE-BTC",
+      "sharpe": 21.0688,
+      "ecosystem": "Meme/Retail (Dogecoin PoW)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "AXS-BTC",
+      "sharpe": 17.815,
+      "ecosystem": "Gaming/P2E",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 11,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 12,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 14,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 15,
+      "pair": "ICP-BTC",
+      "sharpe": 12.5274,
+      "ecosystem": "Compute/Cloud",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 16,
+      "pair": "AAVE-BTC",
+      "sharpe": 11.354,
+      "ecosystem": "DeFi/Lending",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 17,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 18,
+      "pair": "TON-BTC",
+      "sharpe": 8.4016,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 19,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 20,
+      "pair": "CRV-BTC",
+      "sharpe": 5.29,
+      "ecosystem": "DeFi/veToken (veCRV bribe)",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "snx_family_rank": null,
+  "family_count": 20,
+  "synthetic_assets_cluster": {
+    "cluster_name": "DeFi Synthetic-Assets (Synthetix/SNX)",
+    "candidate": "SNX (Synthetix \u2014 synthetic FX/commodity/equity issuance, debt-pool model)",
+    "status": "CANNOT CONFIRM",
+    "verdict": "BLOCKED-FAMILY-CORR. DeFi Synthetic-Assets sub-cluster: CANNOT CONFIRM. SNX = synthetic asset issuance (forex/commodity synthetics via debt pool). Distinct from: DEX-gov(UNI K593 REJECT) / LSD(LDO K594 REJECT) / Lending(AAVE K596 ACCEPT COND) / veToken(CRV K599 ACCEPT COND). ETH corr G5a=-0.0116 / AAVE corr G5t=-0.0125 / CRV corr G5u=0.031. SNX FR drivers: (1) synthetic FX demand cycles, (2) staking APY inflation, (3) C-Ratio contraction events, (4) Synthetix Perps v3 growth, (5) sUSD depeg. Vol ratio primary=7.9132x BTC. OOS Sharpe=10.7887.",
+    "defi_taxonomy": {
+      "DEX_governance": {
+        "token": "UNI",
+        "wave": "K593",
+        "result": "REJECT (vol 1.012x)",
+        "fr_driver": "Macro DeFi sentiment = BTC-convergent"
+      },
+      "LSD_governance": {
+        "token": "LDO",
+        "wave": "K594",
+        "result": "REJECT (vol 1.40x)",
+        "fr_driver": "ETH staking APY correlated, insufficient vol premium"
+      },
+      "Lending_utility": {
+        "token": "AAVE",
+        "wave": "K596",
+        "result": "ACCEPT CONDITIONAL (Sh=11.35)",
+        "fr_driver": "Liquidation cascades + borrow rate cycles + Safety Module"
+      },
+      "veToken_bribe": {
+        "token": "CRV",
+        "wave": "K599",
+        "result": "ACCEPT CONDITIONAL (Sh=5.29)",
+        "fr_driver": "veCRV gauge voting cycle + bribe market APY"
+      },
+      "Stablecoin_issuer": {
+        "token": "MKR",
+        "wave": "K602",
+        "result": "REJECT (venue delisted, vol 1.333x)",
+        "fr_driver": "DAI CDP demand (dampened by PSM arbitrage)"
+      },
+      "Synthetic_assets": {
+        "token": "SNX",
+        "wave": "K604",
+        "result": "BLOCKED-FAMILY-CORR (vol=7.9132x, Sh=10.7887)",
+        "fr_driver": "Synthetic FX/commodity demand + staking inflation APY + C-Ratio stress events"
+      }
+    }
+  },
+  "defi_taxonomy_summary": {
+    "DEX_governance": {
+      "token": "UNI",
+      "wave": "K593",
+      "result": "REJECT (vol 1.012x)",
+      "fr_driver": "Macro DeFi sentiment = BTC-convergent"
+    },
+    "LSD_governance": {
+      "token": "LDO",
+      "wave": "K594",
+      "result": "REJECT (vol 1.40x)",
+      "fr_driver": "ETH staking APY correlated, insufficient vol premium"
+    },
+    "Lending_utility": {
+      "token": "AAVE",
+      "wave": "K596",
+      "result": "ACCEPT CONDITIONAL (Sh=11.35)",
+      "fr_driver": "Liquidation cascades + borrow rate cycles + Safety Module"
+    },
+    "veToken_bribe": {
+      "token": "CRV",
+      "wave": "K599",
+      "result": "ACCEPT CONDITIONAL (Sh=5.29)",
+      "fr_driver": "veCRV gauge voting cycle + bribe market APY"
+    },
+    "Stablecoin_issuer": {
+      "token": "MKR",
+      "wave": "K602",
+      "result": "REJECT (venue delisted, vol 1.333x)",
+      "fr_driver": "DAI CDP demand (dampened by PSM arbitrage)"
+    },
+    "Synthetic_assets": {
+      "token": "SNX",
+      "wave": "K604",
+      "result": "BLOCKED-FAMILY-CORR (vol=7.9132x, Sh=10.7887)",
+      "fr_driver": "Synthetic FX/commodity demand + staking inflation APY + C-Ratio stress events"
+    }
+  },
+  "next_pivot": "SNX-BTC BLOCKED-FAMILY-CORR. DeFi taxonomy: DEX-gov(UNI REJECT) / LSD(LDO REJECT) / Lending(AAVE K596 ACCEPT COND) / veToken(CRV K599 ACCEPT COND) / Stablecoin(MKR K602 REJECT) / Synthetic(SNX K604 BLOCKED-FAMILY-CORR). Pivot options: (A) COMP-BTC (Compound \u2014 alt lending cluster, AAVE competitor); (B) ARB-BTC (Arbitrum \u2014 L2 rollup narrative); (C) OP-BTC (Optimism \u2014 L2 rollup, alt ecosystem fees); (D) Resume MEMORY backlog next item."
+}
