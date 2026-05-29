@@ -4496,3 +4496,257 @@ python3 scripts/verify_deployment_status.py
 ---
 
 *K459 §32 -- K457 BTC+ETH+SOL basket FR carry (22nd daemon, CONDITIONAL ACCEPT OOS Sh 19.58, 60d paper-trade gate, v6.20 5% sleeve) -- 2026-05-25*
+
+---
+
+## §33. K460 Aevo + dYdX v4 Integration Scaffold (23rd + 24th Daemons, K454 v6.20 Waves 5-6/7)
+
+**Wave:** K460 | **Status:** SCAFFOLD-READY | **Daemons:** 23rd (Aevo) + 24th (dYdX v4)
+
+---
+
+### §33.1 Overview
+
+K460 adds Aevo (4th venue) and dYdX v4 (5th venue) to the K208 cross-venue funding rate carry infrastructure. This completes waves 5 and 6 of the K454 v6.20 7-wave plan (K208 venues 3→10).
+
+**v6.20 progress after K460:** 6/7 waves complete.
+- K456: OKX (3rd venue, 8h cycle) — DONE
+- K457: BTC+ETH+SOL basket (K459) — DONE
+- K458: Depth allocator (K459) — DONE
+- K459: K457 scaffold (22nd daemon) — DONE
+- K460: Aevo (4th venue) + dYdX v4 (5th venue) — THIS SECTION
+
+```
+K208 venues after K460:
+  HL        (1st) — 8h funding, EVM, ~$800M BTC OI
+  Bybit     (2nd) — 8h funding, EVM, ~$1.2B BTC OI
+  OKX       (3rd) — 8h funding, EVM, ~$900M BTC OI
+  Aevo      (4th) — 1h funding, EVM-like, ~$80M BTC OI (structured products)
+  dYdX v4   (5th) — 1h funding, Cosmos chain, ~$200M BTC OI
+```
+
+---
+
+### §33.2 Aevo Integration
+
+**REST Base:** `https://api.aevo.xyz`
+**Fetcher:** `scripts/aevo_fr_fetcher.py`
+**Dashboard:** `data/aevo_dashboard.json`
+**Daemon:** `com.cryptolab.aevo-fr-monitor` (23rd daemon)
+**StartInterval:** 3600 (1h — matches Aevo 1h funding cycle)
+
+#### Aevo API Reference
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/funding?instrument_name={sym}` | GET | None | Current funding rate + next_epoch (nanoseconds) |
+| `/markets` | GET | None | All active perps (mark_price, index_price, OI, max_leverage) |
+| `/orderbook?instrument_name={sym}` | GET | None | L2 order book [[price, size], ...] |
+
+**Funding rate format:**
+- `funding_rate`: fractional per 1h (e.g. `0.000008` = 0.0008% per 1h)
+- `next_epoch`: nanosecond Unix timestamp of next settlement
+- Settlement interval: 1h (24 periods/day)
+- Annualized = FR × 24 × 365 × 100
+
+**Cross-venue normalization:**
+```
+Aevo_8h_equiv = Aevo_1h_FR × 8
+```
+Use `Aevo_8h_equiv` for comparison with HL/Bybit/OKX 8h rates.
+
+**K208 symbols:** `BTC-PERP`, `ETH-PERP`, `SOL-PERP`, `ARB-PERP`, `OP-PERP`, `SUI-PERP`, etc.
+
+---
+
+### §33.3 dYdX v4 Integration
+
+**Indexer Base:** `https://indexer.dydx.trade/v4`
+**Fetcher:** `scripts/dydx_v4_fr_fetcher.py`
+**Dashboard:** `data/dydx_v4_dashboard.json`
+**Daemon:** `com.cryptolab.dydx-v4-fr-monitor` (24th daemon)
+**StartInterval:** 3600 (1h — matches dYdX v4 1h funding cycle)
+
+#### dYdX v4 Indexer API Reference
+
+| Endpoint | Method | Auth | Description |
+|----------|--------|------|-------------|
+| `/v4/perpetualMarkets` | GET | None | All markets (nextFundingRate, oraclePrice, OI, status) |
+| `/v4/perpetualMarkets?ticker={sym}` | GET | None | Single market data |
+| `/v4/historicalFunding/{ticker}?limit=N` | GET | None | Historical funding records (effectiveAt ISO 8601) |
+| `/v4/orderbooks/perpetualMarket/{ticker}` | GET | None | L2 order book [{price, size}, ...] |
+
+**Funding rate format:**
+- `nextFundingRate`: fractional per 1h (e.g. `0.0000052`)
+- Timestamps: ISO 8601 UTC (`"2026-05-25T12:00:00.000Z"`) — Cosmos chain time
+- Settlement interval: 1h (24 periods/day)
+- Annualized = FR × 24 × 365 × 100
+
+**Cosmos chain note:**
+- dYdX v4 is a standalone Cosmos appchain (NOT EVM)
+- Indexer = off-chain REST service mirroring on-chain state (public, no auth)
+- Trading = requires Cosmos SDK transaction signing (protobuf MsgPlaceOrder)
+- NOT compatible with HL/Bybit/OKX EVM signing (SECP256K1 ≠ Cosmos format)
+- Python client: https://github.com/dydxprotocol/v4-clients (TODO post-K460)
+
+**K208 symbols:** `BTC-USD`, `ETH-USD`, `SOL-USD`, `XRP-USD`, `DOGE-USD`, etc.
+
+---
+
+### §33.4 POST_ONLY Order Parameters
+
+**Aevo:**
+- Standard REST order endpoint (auth required — TODO post-K460)
+- POST_ONLY flag: `post_only=true` in order payload
+- Scaffold read-only at K460; full auth when `AEVO_API_KEY` + `AEVO_API_SECRET` configured
+
+**dYdX v4:**
+- Cosmos protobuf order: `MsgPlaceOrder` with `TimeInForce: POST_ONLY` (type 1)
+- Requires: dYdX Python client, Cosmos mnemonic/private key
+- NOT EVM: cannot reuse HL signing code
+- Scaffold read-only at K460; Cosmos signing TODO post-K460
+
+---
+
+### §33.5 Emergency Exit — Aevo
+
+**Flag:** `--include-aevo` (default OFF at K460 scaffold)
+**Function:** `close_aevo_positions()` in `scripts/emergency_hl_exit.py`
+**Status:** STUB — returns guidance only (no live API call)
+
+```bash
+# Dry-run (prints guidance):
+python3 scripts/emergency_hl_exit.py --dry-run --include-aevo --user 0x...
+
+# Live (STUB — manual action required):
+python3 scripts/emergency_hl_exit.py --EXECUTE --include-aevo --user 0x...
+```
+
+**Manual emergency action (until auth implemented):**
+1. Navigate to https://app.aevo.xyz
+2. Go to Portfolio → Positions
+3. Close all PERP positions at market
+
+---
+
+### §33.6 Emergency Exit — dYdX v4
+
+**Flag:** `--include-dydx` (default OFF at K460 scaffold)
+**Function:** `close_dydx_positions()` in `scripts/emergency_hl_exit.py`
+**Status:** STUB — returns guidance only (no live Cosmos tx)
+
+```bash
+# Dry-run (prints guidance):
+python3 scripts/emergency_hl_exit.py --dry-run --include-dydx --user 0x...
+
+# Live (STUB — manual action required):
+python3 scripts/emergency_hl_exit.py --EXECUTE --include-dydx --user 0x...
+```
+
+**Manual emergency action (until Cosmos signing implemented):**
+1. Navigate to https://dydx.trade
+2. Go to Portfolio → Positions
+3. Close all perpetual positions at market
+4. Or: use dYdX SDK CLI `npx @dydxprotocol/v4-client-js cancel-all-orders`
+
+**Check positions (read-only, no auth):**
+```bash
+curl "https://indexer.dydx.trade/v4/addresses/{address}/subaccountNumber/0/openPositions"
+```
+
+---
+
+### §33.7 Leverage Configuration
+
+Both venues added to `data/leverage_config.json`:
+
+| Key | Cap | Rationale |
+|-----|-----|-----------|
+| `K280_K208_Aevo` | 3.0x | Conservative match to HL/Bybit/OKX. Aevo max ~10x. |
+| `K280_K208_dYdX` | 3.0x | Conservative match. Cosmos complexity warrants lower start. |
+
+---
+
+### §33.8 Smart Router Configuration
+
+Both venues added to `data/smart_router_config.json`:
+
+| Field | Aevo | dYdX v4 |
+|-------|------|---------|
+| enabled | true | true |
+| taker_fee_bps | 5.0 | 5.0 |
+| maker_rebate_bps | 0.0 | 0.0 |
+| funding_period_h | 1 | 1 |
+| funding_normalization_factor | 8 | 8 |
+| min_depth_usd | 50,000 | 100,000 |
+| concentration_cap | 15% | 15% |
+
+---
+
+### §33.9 Depth Allocator Configuration
+
+Both venues added to `VENUE_CONFIG` in `scripts/depth_aware_allocator.py`:
+- `Aevo`: enabled=True, max_pct_of_oi=5%, slippage_bps_per_pct=15.0
+- `dYdX_v4`: enabled=True, max_pct_of_oi=5%, slippage_bps_per_pct=12.0
+
+FALLBACK_OI_USD updated with Aevo + dYdX v4 conservative estimates.
+Live depth fetch: `fetch_aevo_depth()` + `fetch_dydx_v4_depth()` (K460 implemented, falls back to OI proxy).
+
+---
+
+### §33.10 Activation Playbook
+
+**Aevo activation (when ready):**
+```bash
+# 1. Configure API keys
+export AEVO_API_KEY=...
+export AEVO_API_SECRET=...
+
+# 2. Test read-only fetch
+python3 scripts/aevo_fr_fetcher.py --all
+
+# 3. Activate daemon
+cp com.cryptolab.aevo-fr-monitor.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.aevo-fr-monitor.plist
+
+# 4. Verify
+python3 scripts/verify_deployment_status.py
+```
+
+**dYdX v4 activation (when Cosmos signing implemented):**
+```bash
+# 1. Install dYdX Python client
+pip install dydx-v4-client  # when available
+
+# 2. Configure Cosmos credentials
+export DYDX_MNEMONIC="word1 word2 ... word24"
+
+# 3. Test read-only fetch (no auth needed)
+python3 scripts/dydx_v4_fr_fetcher.py --all
+
+# 4. Activate daemon
+cp com.cryptolab.dydx-v4-fr-monitor.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.dydx-v4-fr-monitor.plist
+
+# 5. Verify
+python3 scripts/verify_deployment_status.py
+```
+
+---
+
+### §33.11 References
+
+| Wave | Content |
+|------|---------|
+| K460 | This section — Aevo + dYdX v4 scaffold (23rd + 24th daemons, K454 v6.20 waves 5-6/7) |
+| K456 | OKX integration (20th daemon, K454 v6.20 wave 1/7, 3rd K208 venue) |
+| K458 | Depth-aware allocator (21st daemon, both venues added to VENUE_CONFIG) |
+| K434 | Smart router (both venues added to smart_router_config.json) |
+| K439 | POST_ONLY order manager (Aevo: standard POST_ONLY; dYdX: Cosmos MsgPlaceOrder TODO) |
+| K430 | Leverage management (Aevo 3x + dYdX 3x caps added to leverage_config.json) |
+| K357 | Emergency exit (--include-aevo + --include-dydx stubs added) |
+| K208 | Funding rate carry strategy (K460 expands to 5 venues) |
+
+---
+
+*K460 §33 -- Aevo + dYdX v4 integration scaffold (23rd + 24th daemons, K454 v6.20 waves 5-6/7, 24 daemons confirmed) -- 2026-05-25*

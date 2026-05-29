@@ -1,0 +1,116 @@
+{
+  "wave": "K460",
+  "title": "Aevo + dYdX v4 Venue Integration Scaffold",
+  "date": "2026-05-25",
+  "v620_progress": "6/7",
+  "daemon_count": 24,
+  "new_daemons": [
+    {
+      "number": 23,
+      "label": "com.cryptolab.aevo-fr-monitor",
+      "venue": "Aevo",
+      "script": "scripts/aevo_fr_fetcher.py",
+      "start_interval_s": 3600,
+      "funding_period_h": 1,
+      "api_base": "https://api.aevo.xyz",
+      "auth_required_read": false,
+      "auth_required_trading": true,
+      "trading_auth_todo": "AEVO_API_KEY + AEVO_API_SECRET (post-K460)",
+      "symbols": ["BTC-PERP", "ETH-PERP", "SOL-PERP", "ARB-PERP", "OP-PERP", "AEVO-PERP", "SUI-PERP", "ATOM-PERP", "APE-PERP", "DOGE-PERP", "AVAX-PERP", "LINK-PERP", "BNB-PERP", "XRP-PERP"],
+      "status": "SCAFFOLD-READY"
+    },
+    {
+      "number": 24,
+      "label": "com.cryptolab.dydx-v4-fr-monitor",
+      "venue": "dYdX v4",
+      "chain": "Cosmos (dYdX v4 appchain)",
+      "script": "scripts/dydx_v4_fr_fetcher.py",
+      "start_interval_s": 3600,
+      "funding_period_h": 1,
+      "api_base": "https://indexer.dydx.trade",
+      "auth_required_read": false,
+      "auth_required_trading": true,
+      "trading_auth_todo": "Cosmos SDK signing via dYdX v4-clients (post-K460)",
+      "symbols": ["BTC-USD", "ETH-USD", "SOL-USD", "XRP-USD", "DOGE-USD", "AVAX-USD", "LINK-USD", "MATIC-USD", "ADA-USD", "APT-USD", "SUI-USD", "OP-USD", "ARB-USD", "ATOM-USD", "NEAR-USD", "LTC-USD", "UNI-USD", "DOT-USD"],
+      "status": "SCAFFOLD-READY"
+    }
+  ],
+  "deliverables": {
+    "new_scripts": [
+      "scripts/aevo_fr_fetcher.py",
+      "scripts/dydx_v4_fr_fetcher.py"
+    ],
+    "new_plists": [
+      "com.cryptolab.aevo-fr-monitor.plist",
+      "com.cryptolab.dydx-v4-fr-monitor.plist"
+    ],
+    "new_dashboards": [
+      "data/aevo_dashboard.json",
+      "data/dydx_v4_dashboard.json"
+    ],
+    "updated_configs": [
+      "data/smart_router_config.json",
+      "data/leverage_config.json"
+    ],
+    "updated_scripts": [
+      "scripts/verify_deployment_status.py",
+      "scripts/emergency_hl_exit.py",
+      "scripts/depth_aware_allocator.py",
+      "scripts/leverage_manager.py"
+    ],
+    "updated_docs": [
+      "docs/k302a_runbook.md (§33 added)",
+      "report.html (Live Monitoring 2 new rows + v6.20 banner)"
+    ]
+  },
+  "api_research": {
+    "Aevo": {
+      "base_url": "https://api.aevo.xyz",
+      "funding_endpoint": "GET /funding?instrument_name={symbol}",
+      "markets_endpoint": "GET /markets",
+      "orderbook_endpoint": "GET /orderbook?instrument_name={symbol}",
+      "funding_rate_field": "funding_rate",
+      "next_settlement_field": "next_epoch (nanoseconds)",
+      "funding_period_h": 1,
+      "auth_for_public": false,
+      "symbol_format": "BTC-PERP",
+      "annualized_formula": "FR × 24 × 365 × 100"
+    },
+    "dYdX_v4": {
+      "base_url": "https://indexer.dydx.trade",
+      "markets_endpoint": "GET /v4/perpetualMarkets",
+      "single_market_endpoint": "GET /v4/perpetualMarkets?ticker={sym}",
+      "historical_endpoint": "GET /v4/historicalFunding/{ticker}?limit=N",
+      "orderbook_endpoint": "GET /v4/orderbooks/perpetualMarket/{ticker}",
+      "funding_rate_field": "nextFundingRate",
+      "timestamp_format": "ISO 8601 UTC (Cosmos chain time)",
+      "funding_period_h": 1,
+      "auth_for_public": false,
+      "symbol_format": "BTC-USD",
+      "chain": "Cosmos (NOT EVM)",
+      "trading_note": "Requires Cosmos SDK protobuf signing (MsgPlaceOrder) — NOT compatible with EVM SECP256K1",
+      "annualized_formula": "FR × 24 × 365 × 100"
+    }
+  },
+  "leverage_caps_added": {
+    "K280_K208_Aevo": 3.0,
+    "K280_K208_dYdX": 3.0
+  },
+  "concentration_caps_added": {
+    "Aevo_pct_of_total": 0.15,
+    "dYdX_v4_pct_of_total": 0.15
+  },
+  "emergency_exit_stubs": {
+    "close_aevo_positions": "STUB — manual close at app.aevo.xyz until AEVO_API_KEY configured",
+    "close_dydx_positions": "STUB — manual close at dydx.trade until Cosmos SDK signing implemented",
+    "flags": ["--include-aevo", "--include-dydx"]
+  },
+  "v620_venue_map": {
+    "1st": "HL (8h)",
+    "2nd": "Bybit (8h)",
+    "3rd": "OKX (8h, K456)",
+    "4th": "Aevo (1h, K460)",
+    "5th": "dYdX v4 (1h, K460, Cosmos)"
+  },
+  "k339_security": "REPO_ROOT from __file__ in all new scripts. No /Users/ literals. No credentials in code."
+}

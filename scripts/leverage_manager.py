@@ -50,6 +50,8 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K280_K208_HL":    3.0,
     "K280_K208_Bybit": 3.0,
     "K280_K208_OKX":   3.0,   # K456: OKX 3rd venue (conservative 3x, OKX supports 100x for BTC)
+    "K280_K208_Aevo":  3.0,   # K460: Aevo 4th venue (conservative 3x, Aevo max ~10x, 1h cycle)
+    "K280_K208_dYdX":  3.0,   # K460: dYdX v4 5th venue (conservative 3x, Cosmos chain, TODO Cosmos signing)
     "K280_K276b":      3.0,
     "K297_PAXG":       10.0,
     "K297_SPX":        5.0,

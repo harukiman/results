@@ -100,20 +100,35 @@ VENUE_CONFIG: Dict[str, dict] = {
         "taker_fee_bps": 5.0,
     },
     "Aevo": {
-        "enabled":  False,  # future scaffold
+        "enabled":  True,   # K460 scaffold: enabled for read-only FR fetch + OI placeholder
         "max_pct_of_oi": 0.05,
-        "min_depth_usd": 100_000,
+        "min_depth_usd": 50_000,
         "slippage_bps_per_pct_of_oi": 15.0,
         "maker_rebate_bps": 0.0,
         "taker_fee_bps": 5.0,
+        "_k460_note": (
+            "4th venue (K460). Aevo REST: api.aevo.xyz. "
+            "1h funding cycle (normalize x8 for 8h comparison). "
+            "Fetcher: scripts/aevo_fr_fetcher.py. Dashboard: data/aevo_dashboard.json. "
+            "Depth fetch: GET /orderbook?instrument_name={SYMBOL}-PERP. "
+            "OI: use FALLBACK_OI_USD until live API confirmed. "
+            "Trading auth TODO post-K460."
+        ),
     },
     "dYdX_v4": {
-        "enabled":  False,  # future scaffold
+        "enabled":  True,   # K460 scaffold: enabled for read-only FR fetch + OI placeholder
         "max_pct_of_oi": 0.05,
         "min_depth_usd": 100_000,
         "slippage_bps_per_pct_of_oi": 12.0,
         "maker_rebate_bps": 0.0,
         "taker_fee_bps": 5.0,
+        "_k460_note": (
+            "5th venue (K460). Cosmos chain (dYdX v4 appchain). "
+            "Indexer: indexer.dydx.trade/v4 (public, no auth). "
+            "1h funding cycle. Depth: GET /v4/orderbooks/perpetualMarket/{ticker}. "
+            "Fetcher: scripts/dydx_v4_fr_fetcher.py. Dashboard: data/dydx_v4_dashboard.json. "
+            "Trading requires Cosmos SDK signing (TODO post-K460)."
+        ),
     },
 }
 
@@ -136,23 +151,24 @@ HL_TICKER_MAP: Dict[str, str] = {
 SIM_SYMBOLS = ["BTC", "ETH", "SOL", "XRP", "SUI", "OP", "APT", "AXS", "JTO", "IMX"]
 
 # ── Estimated OI baselines (USD) for dry-run when API unavailable ──────────────
-# Source: K456 research + public data 2026-05
+# Source: K456/K460 research + public data 2026-05
+# Aevo + dYdX_v4: conservative estimates (smaller venues than HL/Bybit/OKX)
 FALLBACK_OI_USD: Dict[str, Dict[str, float]] = {
-    "BTC":  {"HL": 800_000_000, "Bybit": 1_200_000_000, "OKX": 900_000_000},
-    "ETH":  {"HL": 400_000_000, "Bybit": 600_000_000,   "OKX": 500_000_000},
-    "SOL":  {"HL": 200_000_000, "Bybit": 300_000_000,   "OKX": 250_000_000},
-    "XRP":  {"HL": 80_000_000,  "Bybit": 150_000_000,   "OKX": 120_000_000},
-    "SUI":  {"HL": 60_000_000,  "Bybit": 90_000_000,    "OKX": 70_000_000},
-    "OP":   {"HL": 30_000_000,  "Bybit": 50_000_000,    "OKX": 40_000_000},
-    "APT":  {"HL": 25_000_000,  "Bybit": 40_000_000,    "OKX": 35_000_000},
-    "AXS":  {"HL": 15_000_000,  "Bybit": 25_000_000,    "OKX": 20_000_000},
-    "JTO":  {"HL": 20_000_000,  "Bybit": 35_000_000,    "OKX": 25_000_000},
-    "IMX":  {"HL": 18_000_000,  "Bybit": 30_000_000,    "OKX": 22_000_000},
-    "SAND": {"HL": 12_000_000,  "Bybit": 20_000_000,    "OKX": 15_000_000},
-    "ADA":  {"HL": 40_000_000,  "Bybit": 80_000_000,    "OKX": 60_000_000},
-    "DOGE": {"HL": 50_000_000,  "Bybit": 100_000_000,   "OKX": 80_000_000},
-    "AVAX": {"HL": 45_000_000,  "Bybit": 80_000_000,    "OKX": 65_000_000},
-    "LINK": {"HL": 35_000_000,  "Bybit": 60_000_000,    "OKX": 50_000_000},
+    "BTC":  {"HL": 800_000_000, "Bybit": 1_200_000_000, "OKX": 900_000_000, "Aevo": 80_000_000,  "dYdX_v4": 200_000_000},
+    "ETH":  {"HL": 400_000_000, "Bybit": 600_000_000,   "OKX": 500_000_000, "Aevo": 40_000_000,  "dYdX_v4": 100_000_000},
+    "SOL":  {"HL": 200_000_000, "Bybit": 300_000_000,   "OKX": 250_000_000, "Aevo": 15_000_000,  "dYdX_v4": 50_000_000},
+    "XRP":  {"HL": 80_000_000,  "Bybit": 150_000_000,   "OKX": 120_000_000, "Aevo": 5_000_000,   "dYdX_v4": 25_000_000},
+    "SUI":  {"HL": 60_000_000,  "Bybit": 90_000_000,    "OKX": 70_000_000,  "Aevo": 5_000_000,   "dYdX_v4": 10_000_000},
+    "OP":   {"HL": 30_000_000,  "Bybit": 50_000_000,    "OKX": 40_000_000,  "Aevo": 3_000_000,   "dYdX_v4": 8_000_000},
+    "APT":  {"HL": 25_000_000,  "Bybit": 40_000_000,    "OKX": 35_000_000,  "Aevo": 2_000_000,   "dYdX_v4": 5_000_000},
+    "AXS":  {"HL": 15_000_000,  "Bybit": 25_000_000,    "OKX": 20_000_000,  "Aevo": 1_000_000,   "dYdX_v4": 3_000_000},
+    "JTO":  {"HL": 20_000_000,  "Bybit": 35_000_000,    "OKX": 25_000_000,  "Aevo": 1_000_000,   "dYdX_v4": 5_000_000},
+    "IMX":  {"HL": 18_000_000,  "Bybit": 30_000_000,    "OKX": 22_000_000,  "Aevo": 1_000_000,   "dYdX_v4": 3_000_000},
+    "SAND": {"HL": 12_000_000,  "Bybit": 20_000_000,    "OKX": 15_000_000,  "Aevo": 500_000,     "dYdX_v4": 2_000_000},
+    "ADA":  {"HL": 40_000_000,  "Bybit": 80_000_000,    "OKX": 60_000_000,  "Aevo": 3_000_000,   "dYdX_v4": 10_000_000},
+    "DOGE": {"HL": 50_000_000,  "Bybit": 100_000_000,   "OKX": 80_000_000,  "Aevo": 3_000_000,   "dYdX_v4": 15_000_000},
+    "AVAX": {"HL": 45_000_000,  "Bybit": 80_000_000,    "OKX": 65_000_000,  "Aevo": 3_000_000,   "dYdX_v4": 10_000_000},
+    "LINK": {"HL": 35_000_000,  "Bybit": 60_000_000,    "OKX": 50_000_000,  "Aevo": 2_000_000,   "dYdX_v4": 8_000_000},
 }
 
 
@@ -360,27 +376,122 @@ def fetch_drift_depth(symbol: str) -> dict:
 
 
 def fetch_aevo_depth(symbol: str) -> dict:
-    """Aevo: future scaffold. Mocked."""
-    return {
-        "oi_usd":        0.0,
-        "bid_depth_usd": 0.0,
-        "ask_depth_usd": 0.0,
+    """
+    K460: Aevo depth fetch via public REST API.
+    GET https://api.aevo.xyz/orderbook?instrument_name={SYMBOL}-PERP
+
+    Falls back to FALLBACK_OI_USD × 0.5% proxy depth if API unavailable.
+    Aevo OI not directly available on public REST — uses depth proxy.
+    """
+    fallback_oi = FALLBACK_OI_USD.get(symbol, {}).get("Aevo", 5_000_000.0)
+    result: dict = {
+        "oi_usd":        fallback_oi,
+        "bid_depth_usd": fallback_oi * 0.005,
+        "ask_depth_usd": fallback_oi * 0.005,
         "mark_px":       0.0,
-        "source":        "Aevo_SCAFFOLD",
-        "note":          "Aevo: future integration",
+        "source":        "Aevo_fallback",
+        "note":          "K460 scaffold — using FALLBACK_OI_USD (conservative Aevo estimates)",
     }
+
+    # Try real API
+    inst_name = f"{symbol}-PERP"
+    ob_url    = f"https://api.aevo.xyz/orderbook?instrument_name={inst_name}"
+    raw = _http_get(ob_url, timeout=8)
+    if raw is not None:
+        try:
+            bids = raw.get("bids", [])
+            asks = raw.get("asks", [])
+            # Aevo format: [[price, size], ...] (strings)
+            bid_d = sum(float(b[0]) * float(b[1]) for b in bids[:10] if len(b) >= 2)
+            ask_d = sum(float(a[0]) * float(a[1]) for a in asks[:10] if len(a) >= 2)
+            if bid_d > 0 or ask_d > 0:
+                result["bid_depth_usd"] = bid_d
+                result["ask_depth_usd"] = ask_d
+                result["oi_usd"]        = max(bid_d + ask_d, fallback_oi)
+                result["source"]        = "Aevo_live"
+                result["note"]          = f"K460 live depth via api.aevo.xyz ({inst_name})"
+        except (TypeError, ValueError, IndexError):
+            pass
+
+    # Fetch mark price from markets
+    mkt_url = "https://api.aevo.xyz/markets"
+    mkt_raw = _http_get(mkt_url, timeout=8)
+    if mkt_raw:
+        items = mkt_raw if isinstance(mkt_raw, list) else mkt_raw.get("markets", [])
+        for item in items:
+            if item.get("instrument_name") == inst_name:
+                try:
+                    result["mark_px"] = float(item.get("mark_price", 0) or 0)
+                except (TypeError, ValueError):
+                    pass
+                break
+
+    return result
 
 
 def fetch_dydx_v4_depth(symbol: str) -> dict:
-    """dYdX v4: future scaffold. Mocked."""
-    return {
-        "oi_usd":        0.0,
-        "bid_depth_usd": 0.0,
-        "ask_depth_usd": 0.0,
+    """
+    K460: dYdX v4 depth fetch via public Indexer REST API.
+    GET https://indexer.dydx.trade/v4/orderbooks/perpetualMarket/{ticker}
+    GET https://indexer.dydx.trade/v4/perpetualMarkets?ticker={ticker} (OI + price)
+
+    Falls back to FALLBACK_OI_USD × 0.5% proxy depth if API unavailable.
+    """
+    ticker       = f"{symbol}-USD"
+    fallback_oi  = FALLBACK_OI_USD.get(symbol, {}).get("dYdX_v4", 10_000_000.0)
+    result: dict = {
+        "oi_usd":        fallback_oi,
+        "bid_depth_usd": fallback_oi * 0.005,
+        "ask_depth_usd": fallback_oi * 0.005,
         "mark_px":       0.0,
-        "source":        "dYdX_v4_SCAFFOLD",
-        "note":          "dYdX v4: future integration",
+        "source":        "dYdX_v4_fallback",
+        "note":          "K460 scaffold — using FALLBACK_OI_USD (conservative dYdX v4 estimates)",
     }
+
+    # Try live orderbook
+    ob_url = f"https://indexer.dydx.trade/v4/orderbooks/perpetualMarket/{ticker}"
+    raw    = _http_get(ob_url, timeout=8)
+    if raw is not None:
+        try:
+            bids = raw.get("bids", [])
+            asks = raw.get("asks", [])
+            # dYdX format: [{"price": "X", "size": "Y"}, ...]
+            bid_d = sum(float(b["price"]) * float(b["size"]) for b in bids[:10]
+                        if "price" in b and "size" in b)
+            ask_d = sum(float(a["price"]) * float(a["size"]) for a in asks[:10]
+                        if "price" in a and "size" in a)
+            if bid_d > 0 or ask_d > 0:
+                result["bid_depth_usd"] = bid_d
+                result["ask_depth_usd"] = ask_d
+                result["source"]        = "dYdX_v4_live"
+                result["note"]          = f"K460 live depth via indexer.dydx.trade ({ticker})"
+        except (TypeError, ValueError, KeyError):
+            pass
+
+    # Try market data for OI + oracle price
+    mkt_url = f"https://indexer.dydx.trade/v4/perpetualMarkets?ticker={ticker}"
+    mkt_raw = _http_get(mkt_url, timeout=8)
+    if mkt_raw:
+        market = mkt_raw.get("markets", {}).get(ticker)
+        if market:
+            try:
+                oracle_px = float(market.get("oraclePrice", 0) or 0)
+                oi_base   = float(market.get("openInterest", 0) or 0)
+                if oracle_px > 0 and oi_base > 0:
+                    oi_usd = oracle_px * oi_base
+                    result["oi_usd"]  = max(oi_usd, fallback_oi)
+                    result["mark_px"] = oracle_px
+                elif oracle_px > 0:
+                    result["mark_px"] = oracle_px
+            except (TypeError, ValueError):
+                pass
+
+    # Proxy depth from OI if book depth is still 0
+    if result["oi_usd"] > 0 and result["bid_depth_usd"] == fallback_oi * 0.005:
+        result["bid_depth_usd"] = result["oi_usd"] * 0.005
+        result["ask_depth_usd"] = result["oi_usd"] * 0.005
+
+    return result
 
 
 VENUE_FETCHERS = {

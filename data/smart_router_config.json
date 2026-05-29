@@ -1,7 +1,7 @@
 {
-  "_comment": "K434 Smart Router Config — cross-venue HL/Bybit/OKX routing for K208 trades",
-  "_wave": "K434",
-  "_updated": "2026-05-29",
+  "_comment": "K460 Smart Router Config \u2014 cross-venue HL/Bybit/OKX/Aevo/dYdX_v4 routing for K208 trades",
+  "_wave": "K460",
+  "_updated": "2026-05-25",
   "venues": {
     "HL": {
       "enabled": true,
@@ -9,7 +9,8 @@
       "maker_rebate_bps": 0.3,
       "taker_fee_bps": 4.5,
       "min_depth_usd": 100000,
-      "max_position_pct_of_depth": 0.10
+      "max_position_pct_of_depth": 0.1,
+      "funding_period_h": 8
     },
     "Bybit": {
       "enabled": true,
@@ -17,7 +18,8 @@
       "maker_rebate_bps": 1.0,
       "taker_fee_bps": 3.2,
       "min_depth_usd": 100000,
-      "max_position_pct_of_depth": 0.10
+      "max_position_pct_of_depth": 0.1,
+      "funding_period_h": 8
     },
     "OKX": {
       "enabled": true,
@@ -25,7 +27,31 @@
       "maker_rebate_bps": 0.5,
       "taker_fee_bps": 4.0,
       "min_depth_usd": 100000,
-      "max_position_pct_of_depth": 0.10
+      "max_position_pct_of_depth": 0.1,
+      "funding_period_h": 8
+    },
+    "Aevo": {
+      "enabled": true,
+      "user_tier": "default",
+      "maker_rebate_bps": 0.0,
+      "taker_fee_bps": 5.0,
+      "min_depth_usd": 50000,
+      "max_position_pct_of_depth": 0.05,
+      "funding_period_h": 1,
+      "funding_normalization_factor": 8,
+      "_note": "K460 scaffold \u2014 4th venue. 1h funding cycle. Activate after Aevo trading keys configured + v6.20 go-live. Fetcher: scripts/aevo_fr_fetcher.py. Dashboard: data/aevo_dashboard.json."
+    },
+    "dYdX_v4": {
+      "enabled": true,
+      "user_tier": "default",
+      "maker_rebate_bps": 0.0,
+      "taker_fee_bps": 5.0,
+      "min_depth_usd": 100000,
+      "max_position_pct_of_depth": 0.05,
+      "funding_period_h": 1,
+      "funding_normalization_factor": 8,
+      "chain": "Cosmos",
+      "_note": "K460 scaffold \u2014 5th venue. Cosmos appchain. 1h funding cycle. Trading requires Cosmos SDK signing (TODO post-K460). Indexer: indexer.dydx.trade (public read-only). Fetcher: scripts/dydx_v4_fr_fetcher.py. Dashboard: data/dydx_v4_dashboard.json."
     }
   },
   "default_post_only": true,
@@ -33,7 +59,16 @@
   "blacklist_symbols": [],
   "concentration_caps": {
     "HL_pct_of_total": 0.65,
-    "Bybit_pct_of_total": 0.50,
-    "OKX_pct_of_total": 0.30
+    "Bybit_pct_of_total": 0.5,
+    "OKX_pct_of_total": 0.3,
+    "Aevo_pct_of_total": 0.15,
+    "dYdX_v4_pct_of_total": 0.15
+  },
+  "k460_notes": {
+    "wave": "K460",
+    "new_venues": ["Aevo", "dYdX_v4"],
+    "v620_progress": "5/7 waves",
+    "daemon_count": 24,
+    "funding_comparison_note": "Aevo and dYdX v4 use 1h cycles. Normalize to 8h basis before cross-venue FR comparison. Multiply 1h rate x 8 for direct HL/Bybit/OKX comparison."
   }
 }
