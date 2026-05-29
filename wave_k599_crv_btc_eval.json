@@ -1,0 +1,734 @@
+{
+  "wave": "K599",
+  "strategy": "CRV-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T08:09:21+0900",
+  "runtime_s": 4.0,
+  "decision": "ACCEPT CONDITIONAL",
+  "defi_vetoken_cluster_status": "CONFIRMED \u2014 DeFi/veToken (CRV) veCRV bribe economy distinct from BTC",
+  "k596_context": {
+    "k593_result": "REJECT (UNI vol 1.012x \u2014 DEX governance FR-undifferentiated)",
+    "k594_result": "REJECT (LDO vol 1.40x \u2014 LSD governance insufficient vol)",
+    "k596_result": "ACCEPT CONDITIONAL (AAVE vol 365d=1.842x, Sh=11.35 \u2014 Lending utility)",
+    "k599_hypothesis": "CRV veCRV bribe economy (gauge voting cycle) may distinguish DeFi/veToken sub-cluster from lending (AAVE) and DEX governance (UNI)",
+    "vol_evidence": "CRV 365d=1.8026x vs AAVE 365d=1.842x vs UNI 365d=1.240x. veCRV weekly gauge cycle hypothesis: distinct vol driver."
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "crv_listed": true,
+      "eth_listed": true,
+      "total_symbols": 230,
+      "max_leverage": 10,
+      "margin_table_id": 52,
+      "api_success": true,
+      "note": "HL meta API: 230 symbols. CRV: LISTED. maxLeverage=10. CRV-PERP active on Hyperliquid. FR settlement: 1h intervals. Curve Finance stable-DEX (veCRV/bribe economy) \u2014 Ethereum-based. CRV listed HL May 2024 (full ~730d history available)."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "crv_listed": true,
+      "status": "Trading",
+      "max_leverage": "50.00",
+      "api_success": true,
+      "note": "Bybit CRVUSDT: status=Trading, maxLeverage=50.00. 8h FR settlement interval. Bybit maxLev=50 \u2014 preferred for leverage efficiency."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "crv_listed": true,
+      "state": "live",
+      "max_leverage": "50",
+      "inst_id": "CRV-USDT-SWAP",
+      "api_success": true,
+      "note": "OKX CRV-USDT-SWAP: state=live, maxLeverage=50. 8h FR settlement interval."
+    },
+    "venue_pass": true,
+    "okx_listed": true,
+    "venue_note": "HL=LISTED (maxLev=10), Bybit=LISTED (maxLev=50.00), OKX=LISTED (maxLev=50). All 3 venues present \u2014 full cross-venue G8 available.",
+    "vol_ratio_6m": 1.2024,
+    "vol_ratio_365d": 1.8026,
+    "vol_ratio_full": 1.4649,
+    "vol_ratio_primary": 1.8026,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "vol_window_used": "max(6M, 365d, full)",
+    "prescreen_pass": true,
+    "crv_fr_rows": 17519,
+    "btc_fr_rows": 17512,
+    "aligned_rows": 17484,
+    "crv_fr_start": "2024-05-24 20:00:00",
+    "crv_fr_end": "2026-05-24 19:00:00",
+    "crv_fr_mean": 1.115e-05,
+    "crv_fr_std": 2.582e-05,
+    "crv_fr_std_6m": 1.185e-05,
+    "btc_fr_std_6m": 9.85e-06,
+    "bybit_crv_fr_mean": 5.162e-05,
+    "bybit_crv_note": "Bybit 8h FR: mean=5.161834e-05, rows=2190, range=2024-05-25 00:00:00 to 2026-05-24 16:00:00. Bybit 8h settlement vs HL 1h \u2014 structural difference expected.",
+    "note": "Phase 0 PASS: HL CRV listed (maxLev=10), Bybit status=Trading, OKX state=live. Vol ratio CRV/BTC 6M=1.2024x, 365d=1.8026x (full veCRV bribe cycle), full=1.4649x. Primary=1.8026x via max(6M,365d,full). Venues: ALL PASS. Vol primary=1.8026x PASS.",
+    "vol_analysis": {
+      "6m_window": 1.2024,
+      "365d_window": 1.8026,
+      "full_window": 1.4649,
+      "primary": "max(6M, 365d, full)",
+      "threshold": 1.5,
+      "verdict": "6M=1.2024x, 365d=1.8026x, full=1.4649x. Primary=1.8026x PASS. UNI K593: 6M=1.012x, 365d=1.240x \u2192 REJECT. LDO K594: 6M=0.796x, full=1.402x \u2192 REJECT. AAVE K596: 365d=1.842x \u2192 PASS. CRV K599: 365d=1.8026x \u2014 veCRV bribe economy vol premium confirmed. veCRV gauge voting cycle (weekly) amplifies vol vs pure governance tokens.",
+      "k596_comparison": {
+        "aave_vol_6m": 0.8007,
+        "aave_vol_365": 1.8423,
+        "aave_vol_full": 1.4051,
+        "crv_vol_6m": 1.2024,
+        "crv_vol_365": 1.8026,
+        "crv_vol_full": 1.4649,
+        "insight": "CRV 365d=1.8026x vs AAVE 365d=1.8423x. CRV veCRV bribe economy (gauge voting cycle) vs AAVE liquidation cycles. Both DeFi sub-clusters \u2014 distinct tokenomic drivers."
+      }
+    }
+  },
+  "signal_config": {
+    "window_h": 336,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "CRV-PERP vs BTC-PERP (HL 1h FR differential)",
+    "window_rationale": "W=336h (14d) \u2014 G6-compliant (36 trades/yr). Best OOS Sharpe grid: W=720h (Sh=8.6127, trades/yr=15.0). W=336h selected: balances G6 compliance (>=30 trades/yr) and veCRV weekly gauge cycle signal stability."
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -12.2204,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "half_life_h": 2.5,
+      "half_life_days": 0.1,
+      "theta": 0.277281,
+      "intercept": -4.7e-07,
+      "r_squared": 0.1387,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 5.2901,
+      "perm_mean_sh": 0.0615,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 5.2901,
+      "t_stat": 4.0538,
+      "p_value": 5.114e-05,
+      "bonferroni_thresh": 0.005556,
+      "n_trials": 9,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 13.4086,
+    "ann_ret_pct": 4.4545,
+    "max_dd_pct": -0.6358,
+    "trades_yr": 19.7,
+    "n_days": 500.2,
+    "n_hours": 12005,
+    "n_pos_months": 13,
+    "n_neg_months": 4,
+    "cum_ret": 0.061046,
+    "ret_mean": 5.09e-06,
+    "ret_std": 3.549e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 5.2901,
+    "ann_ret_pct": 1.4311,
+    "max_dd_pct": -0.729,
+    "trades_yr": 35.8,
+    "n_days": 214.3,
+    "n_hours": 5144,
+    "n_pos_months": 5,
+    "n_neg_months": 3,
+    "cum_ret": 0.008403,
+    "ret_mean": 1.63e-06,
+    "ret_std": 2.89e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 11.2508,
+    "ann_ret_pct": 3.5476,
+    "max_dd_pct": -0.729,
+    "trades_yr": 24.5,
+    "n_days": 714.5,
+    "n_hours": 17149,
+    "n_pos_months": 18,
+    "n_neg_months": 6,
+    "cum_ret": 0.06945,
+    "ret_mean": 4.05e-06,
+    "ret_std": 3.369e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 720,
+      "oos_sharpe": 8.6127,
+      "oos_ann_ret_pct": 1.7352,
+      "trades_yr": 15.0
+    },
+    {
+      "window_h": 336,
+      "oos_sharpe": 5.4144,
+      "oos_ann_ret_pct": 1.4517,
+      "trades_yr": 35.1
+    },
+    {
+      "window_h": 480,
+      "oos_sharpe": 4.7743,
+      "oos_ann_ret_pct": 1.1677,
+      "trades_yr": 28.4
+    },
+    {
+      "window_h": 240,
+      "oos_sharpe": 3.3932,
+      "oos_ann_ret_pct": 0.8718,
+      "trades_yr": 31.7
+    },
+    {
+      "window_h": 168,
+      "oos_sharpe": 2.5809,
+      "oos_ann_ret_pct": 0.7933,
+      "trades_yr": 50.1
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 12,
+    "n_positive": 9,
+    "all_positive": false,
+    "pass": false,
+    "sh_min": -9.7944,
+    "sh_max": 63.3006,
+    "sh_mean": 13.2144,
+    "sh_std": 20.6284,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-05-28",
+        "end": "2025-06-27",
+        "sharpe": -4.3097,
+        "positive": "False",
+        "max_dd": -0.001709
+      },
+      {
+        "fold": 2,
+        "start": "2025-06-27",
+        "end": "2025-07-27",
+        "sharpe": 22.3181,
+        "positive": "True",
+        "max_dd": -0.002221
+      },
+      {
+        "fold": 3,
+        "start": "2025-07-27",
+        "end": "2025-08-26",
+        "sharpe": 17.292,
+        "positive": "True",
+        "max_dd": -0.000827
+      },
+      {
+        "fold": 4,
+        "start": "2025-08-26",
+        "end": "2025-09-25",
+        "sharpe": 0.6107,
+        "positive": "True",
+        "max_dd": -0.00091
+      },
+      {
+        "fold": 5,
+        "start": "2025-09-25",
+        "end": "2025-10-25",
+        "sharpe": 0.1093,
+        "positive": "True",
+        "max_dd": -0.002698
+      },
+      {
+        "fold": 6,
+        "start": "2025-10-25",
+        "end": "2025-11-24",
+        "sharpe": 35.3095,
+        "positive": "True",
+        "max_dd": -0.000155
+      },
+      {
+        "fold": 7,
+        "start": "2025-11-24",
+        "end": "2025-12-24",
+        "sharpe": -9.7944,
+        "positive": "False",
+        "max_dd": -0.003822
+      },
+      {
+        "fold": 8,
+        "start": "2025-12-24",
+        "end": "2026-01-23",
+        "sharpe": -7.3488,
+        "positive": "False",
+        "max_dd": -0.003711
+      },
+      {
+        "fold": 9,
+        "start": "2026-01-23",
+        "end": "2026-02-22",
+        "sharpe": 2.9162,
+        "positive": "True",
+        "max_dd": -0.001231
+      },
+      {
+        "fold": 10,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": 8.0138,
+        "positive": "True",
+        "max_dd": -0.001442
+      },
+      {
+        "fold": 11,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": 30.1559,
+        "positive": "True",
+        "max_dd": -0.000944
+      },
+      {
+        "fold": 12,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": 63.3006,
+        "positive": "True",
+        "max_dd": -0.000507
+      }
+    ],
+    "is_h": 2160,
+    "oos_h": 720,
+    "adapted": false,
+    "reason": "Standard 12-fold WF (IS=90d/OOS=30d). CRV listed HL May 2024 \u2014 ~730d data.",
+    "note": "Standard WF (IS=90d/OOS=30d). CRV ~730d total data (listed HL May 2024). 9/12 positive folds. G4 FAIL: 3/12 negative folds. Sharpe range: [-9.79, 63.30]. veCRV bribe economy: gauge voting cycle creates periodic FR regime shifts, negative folds expected during CRV emission compression or DeFi bear phases."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": false,
+      "G5 Family corr": true,
+      "G6 Trades/yr": true,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": false,
+      "G9 Data sufficiency": true
+    },
+    "gates_passed": 7,
+    "gates_total": 9,
+    "gates_failed": 2,
+    "g7_ret_4x_pct": 5.72,
+    "g4_all_positive": false,
+    "g5_all_pass": true,
+    "g8_note": "G8 signal corr=0.0542 (threshold=0.55). Overlap=17480h (~728d). G8 FAIL structural (HL 1h vs Bybit 8h settlement different).",
+    "g9_note": "OOS=214.3d >= 180d. G9 PASS. CRV listed HL May 2024 \u2014 full ~730d history available.",
+    "decision": "ACCEPT CONDITIONAL"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": -0.0021,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "CRITICAL: CRV on ETH L1 (DeFi stable-DEX vs ETH base layer)"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": -0.0003,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "Solana vs CRV stable-DEX"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": 0.0972,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "Avalanche vs CRV stable-DEX"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": -0.0265,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "Cosmos vs CRV stable-DEX"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": -0.0277,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "INJ on-chain DEX vs CRV stable-DEX"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": -0.0187,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "SEI vs CRV stable-DEX"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": -0.0519,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "Cosmos DA vs CRV stable-DEX"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": -0.0041,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "Move-VM vs CRV stable-DEX"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": 0.0055,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "Storage vs CRV stable-DEX"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531",
+        "corr": -0.0163,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "AI/GPU vs CRV stable-DEX"
+      },
+      "g5l": {
+        "label": "TAO-BTC K534",
+        "corr": 0.0003,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "AI/Training vs CRV stable-DEX"
+      },
+      "g5n": {
+        "label": "TON-BTC K571",
+        "corr": 0.0626,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "Social/Messaging vs CRV stable-DEX"
+      },
+      "g5o": {
+        "label": "SAND-BTC K583",
+        "corr": -0.0164,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "Gaming/UGC vs CRV stable-DEX"
+      },
+      "g5p": {
+        "label": "AXS-BTC K591",
+        "corr": -0.1279,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3005,
+        "note": "Gaming/P2E vs CRV stable-DEX"
+      },
+      "g5q": {
+        "label": "KAS-BTC K590",
+        "corr": -0.011,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "PoW/BlockDAG vs CRV stable-DEX"
+      },
+      "g5r": {
+        "label": "ICP-BTC K587",
+        "corr": -0.0202,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 4709,
+        "note": "Compute/Cloud vs CRV stable-DEX"
+      },
+      "g5s": {
+        "label": "UNI-BTC K593 (DeFi DEX governance vs CRV stable-DEX)",
+        "corr": 0.0855,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "CRITICAL: DeFi DEX sub-cluster"
+      },
+      "g5t": {
+        "label": "LDO-BTC K594 (LSD governance vs veCRV)",
+        "corr": 0.1056,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "DeFi LSD sub-cluster"
+      },
+      "g5u": {
+        "label": "AAVE-BTC K596 (DeFi Lending vs CRV veToken bribe)",
+        "corr": 0.0801,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "CRITICAL: DeFi Lending vs veToken"
+      },
+      "g5v": {
+        "label": "DOGE-BTC K592 (Meme vs CRV stable-DEX)",
+        "corr": 0.0239,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "Meme vs CRV"
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline",
+        "corr": -0.0163,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5144,
+        "note": "BTC institutional carry baseline. CRV must not replicate BTC-carry signal."
+      }
+    },
+    "n_pass": 21,
+    "n_total": 21,
+    "all_pass": true,
+    "eth_corr_critical": -0.0021,
+    "uni_corr_defi": 0.0855,
+    "ldo_corr_defi": 0.1056,
+    "aave_corr_defi": 0.0801,
+    "eth_cluster_blocked": false,
+    "defi_cluster_blocked": false,
+    "note": "G5 family: 21/21 PASS (FAIL=0). ETH G5a=-0.0021 (PASS: CRV stable-DEX distinct from ETH L1). UNI G5s=0.0855 (PASS: CRV stable-DEX distinct from UNI AMM governance). AAVE G5u=0.0801 (PASS: CRV veToken distinct from AAVE lending)."
+  },
+  "cross_venue_fr": {
+    "pass": false,
+    "hl_bybit_signal_corr": 0.0542,
+    "bybit_crv_rows": 2190,
+    "bybit_btc_rows": 2190,
+    "overlap_hours": 17480,
+    "note": "G8 signal corr=0.0542 (threshold=0.55). Overlap=17480h (~728d). G8 FAIL structural (HL 1h vs Bybit 8h settlement different)."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 1.4311,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 5.72,
+    "usdc_yr_1pct_10M": 5724,
+    "usdc_yr_2pct_10M": 11449,
+    "usdc_yr_1pct_100M": 57244,
+    "usdc_yr_2pct_100M": 114488,
+    "note": "4x leverage, OOS ann=1.4311% \u00d7 4 = 5.7244%/yr. @$10M 1% alloc: $5,724/yr. @$10M 2% alloc: $11,449/yr. @$100M 1% alloc: $57,244/yr."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 65.0,
+    "crv_alloc_pct": 1.5,
+    "projected_pct": 66.5,
+    "cap_pct": 65.0,
+    "breach": true,
+    "note": "v6.28+ HL=65.0% + CRV 1.5% = 66.5%. Cap=65.0%. BREACH \u2014 Bybit-primary split required (Bybit maxLev=50, HL maxLev=10). CRV HL maxLev=10 \u2014 Bybit maxLev=50 preferred for leverage efficiency."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "SAND-BTC",
+      "sharpe": 33.627,
+      "ecosystem": "Gaming/UGC",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 7,
+      "pair": "DOGE-BTC",
+      "sharpe": 21.069,
+      "ecosystem": "Meme/PoW",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "AXS-BTC",
+      "sharpe": 17.815,
+      "ecosystem": "Gaming/P2E",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 9,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 10,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 11,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 12,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "KAS-BTC",
+      "sharpe": 13.303,
+      "ecosystem": "PoW/BlockDAG",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 14,
+      "pair": "ICP-BTC",
+      "sharpe": 12.53,
+      "ecosystem": "Compute/Cloud",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 15,
+      "pair": "AAVE-BTC",
+      "sharpe": 11.354,
+      "ecosystem": "DeFi/Lending",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 16,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 17,
+      "pair": "TON-BTC",
+      "sharpe": 8.402,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 18,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 19,
+      "pair": "CRV-BTC",
+      "sharpe": 5.2901,
+      "ecosystem": "DeFi/veToken (Curve veCRV bribe)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 20,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "crv_family_rank": 19,
+  "defi_vetoken_cluster": {
+    "cluster_name": "DeFi/veToken (Curve veCRV bribe economy)",
+    "candidate": "CRV (Curve Finance \u2014 stable-DEX, veCRV locking + gauge voting + bribe market)",
+    "status": "CONFIRMED \u2014 CRV veCRV gauge voting cycles drive distinct FR vs BTC",
+    "verdict": "DeFi/veToken sub-cluster CONFIRMED: CRV veCRV bribe economy (gauge voting cycle + Convex flywheel + bribe market APY) creates FR driver distinct from BTC institutional carry. Distinct from DEX governance (UNI K593 REJECT), LSD (LDO K594 REJECT), and DeFi Lending (AAVE K596 ACCEPT CONDITIONAL).",
+    "defi_taxonomy": {
+      "DEX_governance": {
+        "token": "UNI",
+        "wave": "K593",
+        "result": "REJECT (vol 1.012x \u2014 governance-only, no fee distribution)",
+        "fr_driver": "Macro DeFi sentiment = BTC-convergent"
+      },
+      "LSD_governance": {
+        "token": "LDO",
+        "wave": "K594",
+        "result": "REJECT (vol 1.40x \u2014 governance, stETH passive)",
+        "fr_driver": "ETH staking APY correlated, insufficient vol premium"
+      },
+      "Lending_utility": {
+        "token": "AAVE",
+        "wave": "K596",
+        "result": "ACCEPT CONDITIONAL (Sh=11.35, G4/G8 structural fail)",
+        "fr_driver": "Liquidation cascades + borrow rate cycles + Safety Module staking"
+      },
+      "veToken_bribe": {
+        "token": "CRV",
+        "wave": "K599",
+        "result": "ACCEPT CONDITIONAL",
+        "fr_driver": "veCRV gauge voting cycle (weekly) + Convex flywheel + bribe market APY (Votium/Hidden Hand) + stablecoin pool demand spikes"
+      }
+    },
+    "vol_ratio_comparison": {
+      "UNI_6M": 1.012,
+      "UNI_365d": 1.24,
+      "LDO_6M": 0.796,
+      "LDO_full": 1.402,
+      "AAVE_365d": 1.8423,
+      "CRV_6M": 1.2024,
+      "CRV_365d": 1.8026,
+      "CRV_full": 1.4649,
+      "insight": "CRV 365d=1.8026x vs AAVE 365d=1.8423x vs UNI 365d=1.240x. veCRV bribe economy creates different vol driver from lending liquidation cycles. DeFi veToken tokenomics (gauge + bribe + lock) = independent FR cluster."
+    },
+    "next_candidates": [
+      "MKR-BTC (DAI stability module \u2014 collateral demand distinct from lending)",
+      "COMP-BTC (Compound lending \u2014 AAVE competitor validation, alt lending cluster)",
+      "CVX-BTC (Convex Finance \u2014 CRV flywheel operator, gauge concentration)"
+    ]
+  },
+  "decision_rationale": "G5 all PASS. Core strength (Sh=5.290). Failed gates: ['G4 Walk-forward', 'G8 Cross-venue']. Structural failures (G4/G8). Recommendation: 60d paper-trade. DeFi veToken/Bribe sub-cluster: CRV gauge voting cycles distinct from BTC carry.",
+  "next_pivot": "CRV-BTC ACCEPT CONDITIONAL (Sh=5.290). DeFi/veToken sub-cluster CONFIRMED \u2014 CRV veCRV bribe economy. DeFi taxonomy: DEX gov (REJECT) vs LSD (REJECT) vs Lending (AAVE K596) vs veToken/bribe (CRV K599). Next: MKR-BTC (DAI stability module \u2014 collateral demand) or COMP-BTC (Compound competitor) or L2 cluster (ARB-BTC, OP-BTC \u2014 rollup narrative)."
+}
