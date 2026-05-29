@@ -560,3 +560,77 @@ com.cryptolab.leverage-circuit-breaker.plist — K430 CB daemon
 *K436 Master Deployment Playbook — Generated 2026-05-29 22:59 JST*
 *Single source of truth: supersedes all per-wave activation notes*
 *Next update: K450 (after Month 6 Bybit integration milestone)*
+
+---
+
+## Appendix K440 — Updated Profit Projection (2026-05-29)
+
+**Wave:** K440 | **Supersedes:** K433 base projections | **Source:** wave_k440_revised_projection.md
+
+### Corrected 5-Year Projection Table
+
+| Case | K433 Baseline | K438 Lift | **K440 Revised** | CAGR |
+|------|--------------|-----------|-----------------|------|
+| Conservative | $13,484,015 | +$1,632,449 | **$15,116,464** | 8.62% |
+| **Base** | $25,472,463 | **+$3,083,837** | **$28,556,300** | **23.35%** |
+| Aggressive | $29,561,725 | +$3,578,906 | **$33,140,631** | 27.08% |
+
+### K437 HYPE Correction
+
+**Action 8 in §1 (10-Action Priority Ranking) is CORRECTED:**
+
+| | Old (K432) | Corrected (K437) |
+|--|-----------|-----------------|
+| Tier | Gold (10K HYPE) | **Bronze (100 HYPE)** |
+| Cost | $13,000 (at $1.30/HYPE) | **$5,900 (at $59/HYPE)** |
+| Annual benefit | $2,534 | **$8,623** |
+| ROI | 19.5% | **143.9%** |
+| Verdict | Based on 2024 airdrop price | HYPE 45x'd → Gold costs $590K, ROI only 2.9% |
+
+**Do NOT buy Gold tier at $10M AUM.** Bronze dominates. Upgrade to Silver at $50M AUM (ROI 87%).
+
+### K438 K208 Alpha Lift
+
+- K208 limit ladder + predictedFR signal integrated
+- K280 OOS Sharpe: 20.25 → **22.12** (+1.87)
+- 5-year terminal: $25.47M → **$28.56M** (+$3.08M)
+- §6 gates: **PASS 7/7**
+- Implementation: ~230 LOC across `scripts/predicted_fr_signal.py` + `scripts/k280_live_fetch.py`
+
+### Uncaptured Upside (NOT in $28.56M)
+
+| Item | Annual Lift | Action Required |
+|------|-------------|----------------|
+| K434 Smart router | +$175,500 | Load daemon (5 min, $0 cost) |
+| K432 Bybit VIP5 | +$154,264 | Fund Bybit $2M+ |
+| K437 HYPE Bronze | +$8,623 | Buy 100 HYPE ≈ $5,900 |
+| K370 Builder rebate | +$94K–$472K | approveBuilderFee on HL |
+
+**True Base with router + builder low: $10M → ~$31M (CAGR ~25%)**
+
+### K280 Sharpe Trajectory
+
+| Milestone | K280 Sharpe | Portfolio Sharpe |
+|-----------|------------|-----------------|
+| K433 Base | 20.25 | 13.43 |
+| K438 Refined | **22.12** | ~14.83 |
+
+### Expected Outcomes (Updated §7)
+
+| Phase | Timeline | AUM Target | Notes |
+|-------|----------|------------|-------|
+| Year 1 | Day 365 | ~$12.3M | K438 trajectory |
+| Year 2 | Day 730 | ~$15.2M | Bybit live integration active |
+| Year 3 | Day 1095 | ~$18.8M | |
+| Year 4 | Day 1460 | ~$23.2M | |
+| **Year 5** | **Day 1825** | **~$28.6M** | **Base CAGR 23.35%** |
+
+### Decision
+
+- **CONFIRMED Base: $28.56M** (conservative, K438 fully integrated)
+- **OPTIMISTIC Base: $30–32M** (with smart router + builder rebate activated)
+- **Aggressive: $33–35M** (+ K431 multi-venue scaling at AUM $30–50M y3+)
+
+Source files: `wave_k440_revised_projection.py` | `wave_k440_revised_projection.json` | `wave_k440_revised_projection.md`
+
+*K440 Appendix — Added 2026-05-29 23:19 JST*
