@@ -1941,3 +1941,126 @@ means 6% weight may not convert to live immediately. Range $28-35M with K492E ac
 Source files: `wave_k511_v626_emergency_recompute.py` | `wave_k511_v626_emergency_recompute.json` | `wave_k511_v626_emergency_recompute.md`
 
 *K511 Appendix — Added 2026-05-30 04:08 JST*
+
+---
+
+## K516 v6.28 Architecture Proposal
+
+**Version:** 6.28 | **Generated:** 2026-05-30 04:25 JST | **Wave:** K516
+**Status:** CANDIDATE — APT + SEI + TIA family additions (batch K511+K507+K512, skip v6.27)
+
+### v6.28 Executive Summary
+
+| Metric | v6.26 | v6.28 | Delta |
+|--------|-------|-------|-------|
+| Ann Yield @ $10M | $1,996K | **$2,304K** | **+$308K** |
+| Ann Yield @ $100M | $19.95M | **$23.03M** | +$3.08M |
+| 5y Terminal @ $10M | $24.9M | **$28.2M** | **+$3.3M** |
+| HL Concentration | 62.5% | **64.0%** | +1.5pp |
+| Family ACCEPTs | 5 | **8** | +3 |
+| Family Combined @ $10M | $863K/yr | **$1,467K/yr** | +$604K/yr |
+
+v6.28 + K492E: **$2,527K/yr @ $10M** | 5y: **$30.8M**
+
+### Family Rank (K516) — 8 ACCEPTs
+
+| Rank | Symbol | Wave | Sharpe | Ann @$10M | Status |
+|------|--------|------|--------|-----------|--------|
+| 1 | APT-BTC | K512 | 51.10 | $302K | ACCEPT **NEW** |
+| 2 | ATOM-BTC | K493 | 50.79 | $231K | ACCEPT |
+| 3 | SEI-BTC | K507 | 48.10 | $179K | ACCEPT **NEW** |
+| 4 | AVAX-BTC | K484 | 43.89 | $76K | ACCEPT |
+| 5 | SOL-BTC | K476 | 16.30 | $187K | ACCEPT |
+| 6 | TIA-BTC | K507 | 14.44 | $51K | ACCEPT **NEW** |
+| 7 | INJ-BTC | K500 | 11.23 | $124K | ACCEPT |
+| 8 | ETH-BTC | K449 | 5.66 | $13K | ACCEPT |
+| **—** | **Combined** | — | — | **$1,163K** | **8 ACCEPTs** |
+
+### v6.28 Composition (v6.26 → v6.28)
+
+| Sleeve | v6.26 | v6.28 | Δ pp | Rank | Note |
+|--------|-------|-------|------|------|------|
+| K280 multi-venue | 40% | **38%** | -2 | core | decay-adj $234K/yr |
+| K297' | 5% | 5% | 0 | — | |
+| sUSDe | 8% | **7%** | -1 | — | |
+| Spark sUSDS | 8% | **7%** | -1 | — | |
+| K376 momentum | 8% | 8% | 0 | — | bull-gated |
+| K449 ETH-BTC | 5% | 5% | 0 | #8 | |
+| K476 SOL-BTC | 4% | 4% | 0 | #5 | |
+| K484 AVAX-BTC | 5% | 5% | 0 | #4 | |
+| K493 ATOM-BTC | 5% | 5% | 0 | #2 | |
+| K500 INJ-BTC | 4% | 4% | 0 | #7 | |
+| **K512 APT-BTC** | **0%** | **2%** | **+2** | **#1 NEW** | 1% HL + 1% Bybit |
+| **K507 SEI-BTC** | **0%** | **2%** | **+2** | **#3 NEW** | 1% HL + 1% Bybit |
+| **K507 TIA-BTC** | **0%** | **1%** | **+1** | **#6 NEW** | 1% HL primary |
+| K495 DEX-CEX | 6% | 6% | 0 | — | orthogonal |
+| K457 basket | 1% | **0%** | -1 | — | DROP |
+| Cash | 1% | 1% | 0 | — | |
+| **TOTAL** | **100%** | **100%** | — | — | — |
+
+### HL Concentration (v6.28)
+
+| Component | HL Exposure |
+|-----------|-------------|
+| K280 (50% × 38%) | 19.0% |
+| K297' | 5.0% |
+| K376 | 8.0% |
+| K449 | 5.0% |
+| K476 | 4.0% |
+| K484 | 5.0% |
+| K493 | 5.0% |
+| K500 | 4.0% |
+| K512 APT (split 50%) | 1.0% |
+| K507 SEI (split 50%) | 1.0% |
+| K507 TIA (HL primary) | 1.0% |
+| K495 DEX-CEX | 6.0% |
+| **TOTAL** | **64.0% < 65% cap ✓** |
+
+### Profit @ $10M / $100M / $200M
+
+| AUM | v6.28 Ann Yield | CAGR ~23% | 5y Terminal |
+|-----|-----------------|-----------|-------------|
+| $10M | $2,304K/yr | 23.0% | $28.2M |
+| $100M | $23.0M/yr | 23.0% | $281.5M |
+| $200M | $46.1M/yr | 23.0% | $563.1M |
+
+v6.28 + K492E @ $10M: **$2,527K/yr | 5y: $30.8M**
+
+### 5-Year Projection @ $10M
+
+| Scenario | CAGR | 5y Terminal | vs v6.26 |
+|----------|------|-------------|----------|
+| v6.26 (K511) | 20.0% | $24.9M | baseline |
+| **v6.28** | **23.0%** | **$28.2M** | **+$3.3M** |
+| v6.28 + K492E | 25.3% | $30.8M | +$5.9M |
+
+### §6 Gate Summary
+
+| Gate | v6.28 | Status |
+|------|-------|--------|
+| HL cap ≤ 65% | 64.0% | ✓ PASS (1pp headroom) |
+| G5 APT-SOL cross-corr | 0.488 | ⚠ MARGINAL (alt-L1) |
+| G5 APT-SEI cross-corr | 0.419 | ⚠ MARGINAL (parallel exec) |
+| G5 all others | < 0.40 | ✓ PASS |
+| G7 ann return | ~23% | ✓ PASS (≥15%) |
+| K208 decay maintained | K280 38% decay-adj | ✓ PASS |
+
+### Implementation Timeline
+
+| Phase | Timeline | Key Milestone |
+|-------|----------|---------------|
+| 1 | Now (done) | v6.26 LIVE, K280 40%, K495 paper |
+| 2 | Day 0–30 | K492E activate, K514 SEI scaffold |
+| 3 | Day 30–60 | K493/K484/K500 live gate, K517 APT scaffold, TIA scaffold |
+| 4 | Day 60–90 | K495 live, SEI live (paper gate pass) |
+| **5** | **Day 90–120** | **v6.28 FULL LIVE: APT+TIA live, K457 drop → $2,304K/yr** |
+
+### User Actions Added (K516)
+
+- **Action #26**: K517 APT-BTC scaffold + 60d paper → +$201K/yr @ $10M (2% sleeve, HL+Bybit split)
+- **Action #27**: K514 SEI-BTC scaffold + 60d paper → +$119K/yr @ $10M (2% sleeve, HL+Bybit split)
+- **Action #28**: K507 TIA scaffold + 60d paper → +$17K/yr @ $10M (1% sleeve, HL primary)
+
+Source files: `wave_k516_v628_proposal.py` | `wave_k516_v628_proposal.json` | `wave_k516_v628_proposal.md`
+
+*K516 Appendix — Added 2026-05-30 04:25 JST*
