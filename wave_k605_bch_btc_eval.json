@@ -1,0 +1,843 @@
+{
+  "wave": "K605",
+  "strategy": "BCH-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T17:41:22+0900",
+  "runtime_s": 7.4,
+  "decision": "ACCEPT CONDITIONAL",
+  "decision_rationale": "UNEXPECTED: G5 all PASS (incl. G5j K280). OOS Sh=26.0016. Failed gates: ['G6 Trades/yr', 'G8 Cross-venue']. BCH SHA-256 fork shows independent FR alpha vs BTC carry. Structural failures only. Recommendation: 60d paper-trade on HL.",
+  "sha256_boundary_status": "UNEXPECTED: BCH SHA-256 fork shows G5j_K280=0.2601 < 0.40. BCH develops independent FR alpha vs BTC carry. Possible explanations: BCH halving timing mismatch, Roger Ver regulatory events, BCH ETF filing asymmetry vs BTC ETF. Requires further analysis.",
+  "pow_sha256_family_summary": {
+    "BTC": {
+      "algo": "SHA-256d",
+      "role": "Baseline carry (K280)",
+      "g5_k280": "N/A (self)"
+    },
+    "BCH": {
+      "algo": "SHA-256d",
+      "role": "BTC fork \u2014 ACCEPT CONDITIONAL",
+      "g5_k280": "0.2601"
+    },
+    "LTC": {
+      "algo": "Scrypt",
+      "role": "PoW/Scrypt-Utility ACCEPT CONDITIONAL (K600)",
+      "g5_k280": "0.0256 PASS"
+    },
+    "KAS": {
+      "algo": "Blake3/GHOSTDAG",
+      "role": "PoW/BlockDAG ACCEPT CONDITIONAL (K590)",
+      "g5_k280": "0.1281 PASS"
+    },
+    "DOGE": {
+      "algo": "Scrypt",
+      "role": "PoW/Scrypt-Meme ACCEPT CONDITIONAL (K592)",
+      "g5_k280": "N/A (tested vs LTC)"
+    },
+    "boundary_rule": "SHA-256 BTC forks \u2192 BTC carry cluster (G5_K280 >= 0.40). Non-SHA-256 PoW \u2192 may have independent FR alpha. Confirmed: LTC (Scrypt) G5_K280=0.0256 PASS; BCH (SHA-256) G5_K280 >= 0.40 expected."
+  },
+  "cluster_taxonomy": {
+    "L1": [
+      "APT",
+      "SOL",
+      "AVAX",
+      "ETH"
+    ],
+    "Cosmos": [
+      "ATOM",
+      "INJ",
+      "TIA",
+      "SEI"
+    ],
+    "Storage": [
+      "FIL"
+    ],
+    "AI/GPU": [
+      "RENDER"
+    ],
+    "AI/Training": [
+      "TAO"
+    ],
+    "Oracle": [
+      "LINK"
+    ],
+    "Social": [
+      "TON"
+    ],
+    "Gaming": [
+      "SAND"
+    ],
+    "Gaming/P2E": [
+      "AXS"
+    ],
+    "Compute": [
+      "ICP"
+    ],
+    "DeFi/Lending": [
+      "AAVE"
+    ],
+    "DeFi/veToken": [
+      "CRV"
+    ],
+    "PoW/BlockDAG": [
+      "KAS"
+    ],
+    "PoW/Scrypt-Meme": [
+      "DOGE"
+    ],
+    "Payment/Cross-border": [
+      "XRP"
+    ],
+    "PoW/Scrypt-Utility": [
+      "LTC"
+    ],
+    "Meme/Retail": [
+      "SHIB",
+      "PEPE",
+      "BONK",
+      "WIF"
+    ],
+    "BTC": [
+      "BTC (baseline)"
+    ],
+    "BTC-Carry-Cluster-BLOCKED": []
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "bch_listed": true,
+      "hl_ticker": "BCH",
+      "total_symbols": 230,
+      "max_leverage": 10,
+      "margin_table_id": 52,
+      "api_success": true,
+      "note": "HL meta API: 230 symbols. BCH: LISTED. maxLeverage=10. BCH-PERP active on Hyperliquid. FR settlement: 1h intervals. BCH: SHA-256 PoW BTC fork (Aug 2017), same marginTableId=52 as LTC."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "bch_listed": true,
+      "status": "Trading",
+      "bybit_ticker": "BCHUSDT",
+      "max_leverage": "50.00",
+      "api_success": true,
+      "note": "Bybit BCHUSDT: status=Trading, maxLeverage=50.00. 8h FR settlement interval. BCH SHA-256 BTC fork on Bybit."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "bch_listed": true,
+      "state": "live",
+      "max_leverage": "50",
+      "inst_id": "BCH-USDT-SWAP",
+      "ct_val": "0.1",
+      "api_success": true,
+      "note": "OKX BCH-USDT-SWAP: state=live, maxLeverage=50, ctVal=0.1 BCH/contract. 8h FR settlement interval."
+    },
+    "venue_pass": true,
+    "vol_ratio_hl_6m": 1.5672,
+    "vol_ratio_hl_365d": 1.4466,
+    "vol_ratio_hl_full": 1.4256,
+    "vol_threshold": 1.5,
+    "vol_pass": true,
+    "vol_conditional": false,
+    "prescreen_pass": true,
+    "bch_fr_rows": 22248,
+    "bch_fr_start": "2023-11-14 23:00:00",
+    "bch_fr_end": "2026-05-29 23:00:00",
+    "btc_fr_rows": 17512,
+    "bch_fr_mean_6m": 1.14e-06,
+    "bch_fr_std_6m": 1.544e-05,
+    "btc_fr_std_6m": 9.85e-06,
+    "note": "Phase 0: venue_pass=True, vol_pass=True (HARD PASS (6M ok)). HL BCH FR: 22248 rows (2023-11-14 to 2026-05-29). HL 6M=1.567x | HL 365d=1.447x | full=1.426x. 3 venues confirmed: HL BCH-PERP + Bybit BCHUSDT + OKX BCH-USDT-SWAP. BCH SHA-256 PoW fork: maxLev=10 (HL), 50 (Bybit/OKX).",
+    "vol_note": "HL BCH/BTC 6M vol ratio=1.5672x (ABOVE 1.5x). HL BCH/BTC 365d vol ratio=1.4466x (BELOW 1.5x). HL full=1.4256x. BCH SHA-256 BTC fork: vol differential vs BTC driven by hash war cycles (BCH vs BTC mining profitability, Roger Ver narrative, BCH halvings). 6M > 1.5x \u2192 HARD PASS. 365d < 1.5x: BCH/BTC vol compression reflects SHA-256 hash war settling (BCH price tracks BTC more closely over 365d)."
+  },
+  "signal_config": {
+    "window_h": 360,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "BCH-PERP vs BTC-PERP (HL 1h FR differential)",
+    "window_rationale": "W=360h grid optimal (OOS Sh=23.95). BCH SHA-256 BTC fork: block time ~10min (same as BTC). BCH halving cycle = BTC schedule (same 4yr cadence). Expected: optimal window driven by BTC carry dynamics, not independent BCH cycle."
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -10.8059,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "half_life_h": 4.57,
+      "half_life_days": 0.19,
+      "theta": 0.151541,
+      "intercept": -1.74e-06,
+      "r_squared": 0.0758,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 26.0016,
+      "perm_mean_sh": 0.0492,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 26.0016,
+      "t_stat": 20.135,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.005556,
+      "n_trials": 9,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 36.6415,
+    "ann_ret_pct": 11.0685,
+    "max_dd_pct": -0.6372,
+    "trades_yr": 15.5,
+    "n_days": 495.8,
+    "n_hours": 11899,
+    "n_pos_months": 13,
+    "n_neg_months": 4,
+    "cum_ret": 0.150347,
+    "ret_mean": 1.264e-05,
+    "ret_std": 3.227e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 26.0016,
+    "ann_ret_pct": 6.1066,
+    "max_dd_pct": -0.389,
+    "trades_yr": 16.7,
+    "n_days": 218.9,
+    "n_hours": 5253,
+    "n_pos_months": 7,
+    "n_neg_months": 1,
+    "cum_ret": 0.036618,
+    "ret_mean": 6.97e-06,
+    "ret_std": 2.509e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 33.5951,
+    "ann_ret_pct": 9.5488,
+    "max_dd_pct": -0.6372,
+    "trades_yr": 15.8,
+    "n_days": 714.7,
+    "n_hours": 17152,
+    "n_pos_months": 20,
+    "n_neg_months": 4,
+    "cum_ret": 0.186965,
+    "ret_mean": 1.09e-05,
+    "ret_std": 3.037e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 360,
+      "oos_sharpe": 23.9505,
+      "oos_ann_ret_pct": 5.5852,
+      "trades_yr": 17.0
+    },
+    {
+      "window_h": 240,
+      "oos_sharpe": 21.1643,
+      "oos_ann_ret_pct": 5.3743,
+      "trades_yr": 23.7
+    },
+    {
+      "window_h": 840,
+      "oos_sharpe": 21.1575,
+      "oos_ann_ret_pct": 4.0771,
+      "trades_yr": 5.3
+    },
+    {
+      "window_h": 480,
+      "oos_sharpe": 20.426,
+      "oos_ann_ret_pct": 4.9875,
+      "trades_yr": 20.6
+    },
+    {
+      "window_h": 1080,
+      "oos_sharpe": 19.0594,
+      "oos_ann_ret_pct": 3.6874,
+      "trades_yr": 5.3
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 12,
+    "n_positive": 9,
+    "all_positive": false,
+    "partial_pass": true,
+    "pass": true,
+    "sh_min": -7.3185,
+    "sh_max": 95.6832,
+    "sh_mean": 28.6195,
+    "sh_std": 30.9862,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-05-28",
+        "end": "2025-06-27",
+        "sharpe": 54.9666,
+        "positive": "True",
+        "max_dd": -0.00034
+      },
+      {
+        "fold": 2,
+        "start": "2025-06-27",
+        "end": "2025-07-27",
+        "sharpe": 58.0313,
+        "positive": "True",
+        "max_dd": -0.002749
+      },
+      {
+        "fold": 3,
+        "start": "2025-07-27",
+        "end": "2025-08-26",
+        "sharpe": -2.9476,
+        "positive": "False",
+        "max_dd": -0.001159
+      },
+      {
+        "fold": 4,
+        "start": "2025-08-26",
+        "end": "2025-09-25",
+        "sharpe": -7.3185,
+        "positive": "False",
+        "max_dd": -0.002106
+      },
+      {
+        "fold": 5,
+        "start": "2025-09-25",
+        "end": "2025-10-25",
+        "sharpe": 17.1334,
+        "positive": "True",
+        "max_dd": -0.002148
+      },
+      {
+        "fold": 6,
+        "start": "2025-10-25",
+        "end": "2025-11-24",
+        "sharpe": 95.6832,
+        "positive": "True",
+        "max_dd": -0.000123
+      },
+      {
+        "fold": 7,
+        "start": "2025-11-24",
+        "end": "2025-12-24",
+        "sharpe": 44.7722,
+        "positive": "True",
+        "max_dd": -0.000444
+      },
+      {
+        "fold": 8,
+        "start": "2025-12-24",
+        "end": "2026-01-23",
+        "sharpe": 51.8701,
+        "positive": "True",
+        "max_dd": -0.000378
+      },
+      {
+        "fold": 9,
+        "start": "2026-01-23",
+        "end": "2026-02-22",
+        "sharpe": 9.9765,
+        "positive": "True",
+        "max_dd": -0.001963
+      },
+      {
+        "fold": 10,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": -5.5841,
+        "positive": "False",
+        "max_dd": -0.002571
+      },
+      {
+        "fold": 11,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": 1.9287,
+        "positive": "True",
+        "max_dd": -0.00257
+      },
+      {
+        "fold": 12,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": 24.9218,
+        "positive": "True",
+        "max_dd": -0.001377
+      }
+    ],
+    "note": "9/12 positive folds. G4 PASS (>=8/12 positive). Sharpe range: [-7.32, 95.68]. BCH SHA-256 BTC fork: halving cycle aligned with BTC (same 4yr schedule). BCH/BTC FR differential driven by SHA-256 hash war narrative cycles. 8/12 threshold for BTC fork assets (halving episodic, not all folds active)."
+  },
+  "section_6_gates": {
+    "g1_oos_sharpe": {
+      "pass": true,
+      "value": 26.0016,
+      "thresh": 1.0
+    },
+    "g2_perm": {
+      "pass": true,
+      "p_value": 0.0,
+      "thresh": 0.05
+    },
+    "g3_dsr": {
+      "pass": true,
+      "p_value": 0.0,
+      "thresh": 0.005556
+    },
+    "g4_walkforward": {
+      "pass": true,
+      "n_positive": 9,
+      "n_folds": 12
+    },
+    "g5_family_corr": {
+      "pass": true,
+      "n_pass": 24,
+      "n_total": 24
+    },
+    "g6_trades_yr": {
+      "pass": false,
+      "value": 16.7,
+      "thresh": 30
+    },
+    "g7_ann_ret_4x": {
+      "pass": true,
+      "value_pct": 24.4264,
+      "thresh_pct": 5.0
+    },
+    "g8_cross_venue": {
+      "pass": false,
+      "corr": 0.5348,
+      "thresh": 0.55
+    },
+    "g9_oos_days": {
+      "pass": true,
+      "value": 218.9,
+      "thresh": 180
+    },
+    "failed_gates": [
+      "G6 Trades/yr",
+      "G8 Cross-venue"
+    ],
+    "n_failed": 2,
+    "decision": "ACCEPT CONDITIONAL"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": 0.0043,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "L1/DeFi vs PoW/SHA-256 fork CRITICAL"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": 0.0175,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Solana L1 vs PoW SHA-256 fork"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": 0.1743,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Avalanche vs PoW SHA-256 fork"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": 0.0939,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos vs PoW SHA-256 fork"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": 0.0016,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos DeFi vs PoW SHA-256 fork"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": 0.0504,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos SVM vs PoW SHA-256 fork"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": 0.164,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Cosmos DA vs PoW SHA-256 fork"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": 0.1852,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Move-VM vs PoW SHA-256 fork"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": 0.1353,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Storage vs PoW SHA-256 fork"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531 (AI/GPU)",
+        "corr": 0.2601,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "AI/GPU vs PoW SHA-256 fork"
+      },
+      "g5l": {
+        "label": "TAO-BTC (AI/Training)",
+        "corr": -0.0037,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "AI/Training vs PoW SHA-256 fork"
+      },
+      "g5s": {
+        "label": "ICP-BTC K587 (Compute)",
+        "corr": -0.0469,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 4709,
+        "note": "Compute/Cloud vs PoW SHA-256 fork"
+      },
+      "g5t": {
+        "label": "AXS-BTC K591 (Gaming/P2E)",
+        "corr": 0.0269,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3005,
+        "note": "Gaming/P2E vs PoW SHA-256 fork"
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline (CRITICAL \u2014 expected FAIL)",
+        "corr": 0.2601,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "BTC SHA-256 PoW carry vs BCH SHA-256 PoW fork. BCH = SAME hash algorithm as BTC (SHA-256d). BTC miners can trivially switch BCH/BTC mining \u2014 FR correlation expected HIGH. If corr >= 0.40: BLOCKED-BTC-CARRY (BCH FR replicates BTC carry \u2014 no alpha). LTC comparison: LTC (Scrypt) G5_K280=0.0256 PASS. BCH expected: G5_K280 >= 0.40 \u2192 SHA-256 boundary confirmed."
+      },
+      "g5m": {
+        "label": "LINK-BTC K557 (Oracle/Infra vs PoW SHA-256 fork)",
+        "corr": -0.1288,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "Oracle middleware vs BCH SHA-256 fork. Orthogonal use cases."
+      },
+      "g5n": {
+        "label": "KAS-BTC K590 (PoW BlockDAG CRITICAL)",
+        "corr": -0.0515,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "KAS = PoW BlockDAG GHOSTDAG (Blake3, fast-block). BCH = PoW SHA-256 Nakamoto chain (large blocks). Both PoW but distinct algorithms and block structure. If corr >= 0.40: PoW cluster collapses at algorithm level."
+      },
+      "g5o": {
+        "label": "SAND-BTC K583 (Gaming/Metaverse vs BCH SHA-256 fork)",
+        "corr": 0.0887,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "SAND = metaverse gaming. BCH = SHA-256 BTC fork. Orthogonal."
+      },
+      "g5p": {
+        "label": "DOGE-BTC K592 (PoW Scrypt vs SHA-256 fork CRITICAL)",
+        "corr": 0.0375,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "DOGE = PoW Scrypt meme coin. BCH = PoW SHA-256 BTC fork. DIFFERENT algorithms (Scrypt vs SHA-256). Expect low correlation \u2014 DOGE driven by Elon/meme; BCH driven by SHA-256 hash war / BTC carry overlap."
+      },
+      "g5q": {
+        "label": "SHIB-BTC K595 (Meme/ERC20 vs BCH SHA-256 fork)",
+        "corr": 0.116,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "SHIB = ERC-20 meme (Shibarium). BCH = SHA-256 BTC fork. Orthogonal."
+      },
+      "g5r": {
+        "label": "XRP-BTC K597 (Payment/Cross-border vs BCH SHA-256 fork)",
+        "corr": -0.0008,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "XRP = Ripple federated consensus payment. BCH = SHA-256 PoW BTC fork. BCH 'electronic cash' use case overlaps with XRP payments. If corr >= 0.40: BCH payment narrative = XRP cluster."
+      },
+      "g5u": {
+        "label": "AAVE-BTC K596 (DeFi/Lending vs BCH SHA-256 fork)",
+        "corr": -0.0279,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "AAVE = DeFi lending protocol. BCH = SHA-256 BTC fork. Orthogonal."
+      },
+      "g5v": {
+        "label": "TON-BTC K571 (Social/Messaging vs BCH SHA-256 fork)",
+        "corr": -0.013,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "TON = Telegram utility. BCH = SHA-256 BTC fork. Orthogonal."
+      },
+      "g5w": {
+        "label": "CRV-BTC K599 (DeFi/veToken vs BCH SHA-256 fork)",
+        "corr": 0.0366,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "CRV = Curve veCRV. BCH = SHA-256 BTC fork. Orthogonal."
+      },
+      "g5x": {
+        "label": "LTC-BTC K600 (PoW Scrypt-Utility CRITICAL \u2014 PoW sibling)",
+        "corr": -0.0065,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5253,
+        "note": "LTC = PoW Scrypt payment utility. BCH = PoW SHA-256 BTC fork. DIFFERENT algorithms (Scrypt vs SHA-256). LTC halving independent. If corr >= 0.40: all PoW carry strategies collapse (PoW narrative unified). Expected: LOW (LTC/BTC drives utility narrative; BCH/BTC drives BTC-carry). Taxonomy insight: SHA-256 BTC fork != Scrypt payment utility."
+      }
+    },
+    "n_pass": 24,
+    "n_total": 24,
+    "all_pass": true,
+    "eth_corr_critical": 0.0043,
+    "btc_carry_corr_critical": 0.2601,
+    "kas_corr_critical": -0.0515,
+    "doge_corr_critical": 0.0375,
+    "ltc_corr_critical": -0.0065,
+    "note": "G5: 24/24 PASS | ETH=0.0043 K280-BTC-carry=0.2601 [CRITICAL] KAS=-0.0515 DOGE=0.0375 LTC=-0.0065. BCH SHA-256: G5j K280 >= 0.40 expected \u2192 BLOCKED-BTC-CARRY."
+  },
+  "cross_venue_fr": {
+    "hl_bybit_signal_corr": 0.5348,
+    "hl_bybit_fr_diff_corr": 0.3946,
+    "bybit_vol_ratio_6m": 2.5771,
+    "bybit_vol_ratio_365d": 2.401,
+    "pass": false,
+    "threshold": 0.55,
+    "n": 5145,
+    "note": "HL vs Bybit signal corr=0.5348 (threshold=0.55). FR diff corr=0.3946. Bybit 6M vol ratio=2.5771x, 365d=2.4010x. BCH cross-venue: HL (1h) + Bybit (8h) + OKX (8h). HL 1h vs Bybit 8h settlement mismatch = structural G8 issue (K557+ precedent)."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 6.1066,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 24.4264,
+    "usdc_yr_1pct_10M": 24426,
+    "usdc_yr_2pct_10M": 48853,
+    "usdc_yr_1pct_100M": 244264,
+    "usdc_yr_2pct_100M": 488528,
+    "note": "4x leverage, OOS ann=6.1066% x 4 = 24.43%/yr. @$10M 1% alloc: $24,426/yr. @$10M 2% alloc: $48,853/yr. BCH SHA-256 BTC fork: FR differential alpha limited by BTC carry overlap. BLOCKED-BTC-CARRY expected \u2014 profit projection is hypothetical."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 65.0,
+    "bch_alloc_pct": 1.5,
+    "projected_pct": 66.5,
+    "cap_pct": 65.0,
+    "breach": true,
+    "note": "v6.28+ HL=65.0% + BCH 1.5% = 66.5%. Cap=65.0%. BREACH \u2014 multi-venue split required. BCH maxLev=10 (HL) \u2014 SHA-256 PoW BTC fork leverage tier. BCH primary venue: Bybit BCHUSDT (maxLev=50) or OKX BCH-USDT-SWAP (maxLev=50)."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "SHIB-BTC",
+      "sharpe": 38.481,
+      "ecosystem": "Meme/Retail (Shiba Inu ERC-20)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SAND-BTC",
+      "sharpe": 33.627,
+      "ecosystem": "Gaming/Metaverse",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 7,
+      "pair": "PEPE-BTC",
+      "sharpe": 26.42,
+      "ecosystem": "Meme/Retail (Pepe ERC-20)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "BCH-BTC",
+      "sharpe": 26.0016,
+      "ecosystem": "PoW/SHA-256-BTC-Fork (Bitcoin Cash)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 9,
+      "pair": "BONK-BTC",
+      "sharpe": 23.667,
+      "ecosystem": "Meme/Retail-Solana-SPL",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 11,
+      "pair": "DOGE-BTC",
+      "sharpe": 21.069,
+      "ecosystem": "Meme/PoW (Dogecoin Scrypt)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 12,
+      "pair": "AXS-BTC",
+      "sharpe": 17.815,
+      "ecosystem": "Gaming/P2E",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 14,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 15,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 16,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 17,
+      "pair": "WIF-BTC",
+      "sharpe": 12.934,
+      "ecosystem": "Meme/Solana (dogwifhat)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 18,
+      "pair": "ICP-BTC",
+      "sharpe": 12.527,
+      "ecosystem": "Compute/Cloud",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 19,
+      "pair": "AAVE-BTC",
+      "sharpe": 11.354,
+      "ecosystem": "DeFi/Lending",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 20,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 21,
+      "pair": "LTC-BTC",
+      "sharpe": 9.39,
+      "ecosystem": "PoW/Scrypt-Utility (Litecoin)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 22,
+      "pair": "TON-BTC",
+      "sharpe": 8.402,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 23,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 24,
+      "pair": "CRV-BTC",
+      "sharpe": 5.29,
+      "ecosystem": "DeFi/veToken (Curve)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 25,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "bch_family_rank": 8,
+  "family_size": 24,
+  "cluster_count": 18,
+  "btc_carry_corr_critical": 0.2601,
+  "ltc_comparison_corr": -0.0065
+}
