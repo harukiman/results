@@ -1,0 +1,567 @@
+{
+  "wave": "K591",
+  "strategy": "AXS-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T07:25:22+0900",
+  "runtime_s": 2.0,
+  "decision": "ACCEPT CONDITIONAL",
+  "gaming_subcluster_status": "CONFIRMED: Gaming/P2E (AXS) distinct from Gaming/UGC (SAND)",
+  "k583_pivot_context": {
+    "k583_result": "ACCEPT CONDITIONAL (Gaming/Metaverse 9th cluster CONFIRMED)",
+    "gaming_cluster_confirmed": "Gaming/Metaverse (The Sandbox) = 9th ecosystem cluster",
+    "k583_pivot": "AXS = Gaming/P2E sub-cluster confirmation (K591)",
+    "g5o_sand_axs_k583": "0.204 PASS (SAND perspective \u2192 gaming separable hint)",
+    "k591_pivot": "AXS-BTC \u2014 full Gaming/P2E sub-cluster eval",
+    "confirmed_clusters_post_k583": {
+      "L1": [
+        "APT",
+        "SOL",
+        "AVAX",
+        "ETH"
+      ],
+      "Cosmos": [
+        "ATOM",
+        "INJ",
+        "TIA",
+        "SEI"
+      ],
+      "Storage": [
+        "FIL"
+      ],
+      "AI/GPU": [
+        "RENDER"
+      ],
+      "AI/Training": [
+        "TAO"
+      ],
+      "Oracle": [
+        "LINK"
+      ],
+      "Social/Messaging": [
+        "TON"
+      ],
+      "Gaming/UGC": [
+        "SAND"
+      ]
+    },
+    "gaming_p2e_candidate": "Gaming/P2E (AXS = Axie Infinity)"
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "axs_listed": true,
+      "sand_listed": true,
+      "total_symbols": 230,
+      "axs_max_leverage": 5,
+      "axs_margin_table": 5,
+      "sand_max_leverage": 5,
+      "api_success": true,
+      "note": "HL meta API: 230 symbols. AXS: LISTED. maxLeverage=5. AXS-PERP active on Hyperliquid. FR settlement: 1h intervals. Gaming/P2E (Axie Infinity) \u2014 SEA retail + P2E yield demand. AXS listed HL Jan 2026 (125d data window)."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "axs_listed": true,
+      "status": "Trading",
+      "max_leverage": "50.00",
+      "api_success": true,
+      "note": "Bybit AXSUSDT: status=Trading, maxLeverage=50.00. 8h FR settlement interval. 3184 rows cached (2024-05-25 to 2026-05-24)."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "axs_listed": true,
+      "state": "live",
+      "max_leverage": "20",
+      "inst_id": "AXS-USDT-SWAP",
+      "api_success": true,
+      "note": "OKX AXS-USDT-SWAP: state=live, maxLeverage=20. 8h FR settlement interval."
+    },
+    "venue_pass": true,
+    "vol_ratio_6m": 49.491,
+    "vol_threshold": 1.5,
+    "vol_pass": true,
+    "prescreen_pass": true,
+    "axs_fr_rows": 3040,
+    "axs_fr_start": "2026-01-18 04:00:00",
+    "axs_fr_end": "2026-05-24 19:00:00",
+    "btc_fr_rows": 17512,
+    "axs_fr_mean": -0.00027891,
+    "axs_fr_std": 0.00050471,
+    "btc_fr_std_6m": 1.024e-05,
+    "axs_listing_note": "AXS listed on HL Jan 2026 \u2014 only ~125d of HL FR history. Extreme negative FR bias (P2E token, retail long demand).",
+    "note": "Phase 0 PASS: HL AXS listed (maxLev=5), Bybit status=Trading, OKX state=live. Vol ratio AXS/BTC 6M=49.49x (threshold=1.5x). AXS 3040 rows (2026-01-18 to 2026-05-24). Gaming/P2E (Axie Infinity) \u2014 extreme FR vol driven by P2E yield demand, SEA retail speculation, battle game cycles."
+  },
+  "signal_config": {
+    "window_h": 48,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "AXS-PERP vs BTC-PERP (HL 1h FR differential)"
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -4.7303,
+      "p_value": 7.4e-05,
+      "stationary": true,
+      "critical_1": -3.4325,
+      "critical_5": -2.8625
+    },
+    "ou_half_life": {
+      "half_life_h": 14.59,
+      "half_life_days": 0.61,
+      "theta": 0.047517,
+      "intercept": -1.271e-05,
+      "r_squared": 0.0251,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 17.815,
+      "perm_mean_sh": 0.1754,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 17.815,
+      "t_stat": 5.7134,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.007143,
+      "n_trials": 7,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 64.635,
+    "ann_ret_pct": 318.6295,
+    "max_dd_pct": -0.2323,
+    "trades_yr": 17.0,
+    "n_days": 85.7,
+    "n_hours": 2057,
+    "n_pos_months": 4,
+    "n_neg_months": 0,
+    "cum_ret": 0.748197,
+    "ret_mean": 0.00036373,
+    "ret_std": 0.0005267
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 17.815,
+    "ann_ret_pct": 18.6172,
+    "max_dd_pct": -0.1829,
+    "trades_yr": 77.8,
+    "n_days": 37.5,
+    "n_hours": 901,
+    "n_pos_months": 1,
+    "n_neg_months": 1,
+    "cum_ret": 0.019149,
+    "ret_mean": 2.125e-05,
+    "ret_std": 0.00011166
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 51.5851,
+    "ann_ret_pct": 227.2465,
+    "max_dd_pct": -0.2323,
+    "trades_yr": 35.5,
+    "n_days": 123.2,
+    "n_hours": 2958,
+    "n_pos_months": 4,
+    "n_neg_months": 1,
+    "cum_ret": 0.767346,
+    "ret_mean": 0.00025941,
+    "ret_std": 0.00047067
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 168,
+      "oos_sharpe": 18.8458,
+      "oos_ann_ret_pct": 18.9871,
+      "trades_yr": 19.4
+    },
+    {
+      "window_h": 240,
+      "oos_sharpe": 18.1035,
+      "oos_ann_ret_pct": 18.2839,
+      "trades_yr": 19.4
+    },
+    {
+      "window_h": 48,
+      "oos_sharpe": 17.815,
+      "oos_ann_ret_pct": 18.6172,
+      "trades_yr": 77.8
+    },
+    {
+      "window_h": 72,
+      "oos_sharpe": 16.4839,
+      "oos_ann_ret_pct": 17.3022,
+      "trades_yr": 77.8
+    },
+    {
+      "window_h": 336,
+      "oos_sharpe": 16.2152,
+      "oos_ann_ret_pct": 16.6537,
+      "trades_yr": 38.9
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 3,
+    "n_positive": 3,
+    "all_positive": true,
+    "pass": true,
+    "sh_min": 3.0817,
+    "sh_max": 75.3279,
+    "sh_mean": 34.4984,
+    "sh_std": 30.236,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2026-03-24",
+        "end": "2026-04-13",
+        "sharpe": 75.3279,
+        "positive": "True",
+        "max_dd": -0.000298
+      },
+      {
+        "fold": 2,
+        "start": "2026-04-13",
+        "end": "2026-05-03",
+        "sharpe": 25.0857,
+        "positive": "True",
+        "max_dd": -0.001808
+      },
+      {
+        "fold": 3,
+        "start": "2026-05-03",
+        "end": "2026-05-23",
+        "sharpe": 3.0817,
+        "positive": "True",
+        "max_dd": -0.001304
+      }
+    ],
+    "is_h": 1440,
+    "oos_h": 480,
+    "adapted": true,
+    "reason": "AXS listed HL Jan 2026 \u2014 only 125d total. 12-fold (IS=90d/OOS=30d) impossible. Adapted to 3-fold (IS=60d/OOS=20d).",
+    "note": "Adapted WF (IS=60d/OOS=20d) due to AXS ~125d total data (listed Jan 2026). 3/3 positive folds. G4 PASS: all positive. Sharpe range: [3.08, 75.33]. P2E narrative cycles create persistent negative AXS FR (short bias)."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": true,
+      "G5 Family corr": true,
+      "G6 Trades/yr": true,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": true,
+      "G9 Data sufficiency": false
+    },
+    "gates_passed": 8,
+    "gates_total": 9,
+    "gates_failed": 1,
+    "g7_ret_4x_pct": 74.47,
+    "g4_all_positive": true,
+    "g5_all_pass": true,
+    "g8_note": "G8 signal corr=0.6275 (threshold=0.55). Raw FR diff corr=0.6939. Overlap=3005h (~125d). HL 1h vs Bybit 8h settlement \u2014 different settlement mechanics. Bybit AXS: 3184 rows (8h). Bybit BTC: 2190 rows. G8 PASS: signal_corr=0.6275 vs threshold=0.55.",
+    "g9_note": "OOS=37.5d < 180d threshold. Structural: AXS listed HL Jan 2026 \u2014 only 125d total data. G9 FAIL = new-listing structural (same as K571 TON G9 precedent). Not an edge failure \u2014 insufficient listing history on HL.",
+    "decision": "ACCEPT CONDITIONAL"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": -0.0268,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "DeFi utility vs P2E gaming"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": 0.0905,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "Solana vs P2E gaming"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": -0.0706,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "Avalanche vs P2E gaming"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": -0.068,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "Cosmos vs P2E gaming"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": 0.029,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "Cosmos vs P2E gaming"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": 0.0457,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "Cosmos vs P2E gaming"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": 0.1902,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "Cosmos vs P2E gaming"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": -0.0549,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "Move-VM vs P2E gaming"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": -0.0502,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "Storage vs P2E gaming"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531 (AI/GPU)",
+        "corr": -0.0091,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "AI/GPU vs P2E gaming"
+      },
+      "g5l": {
+        "label": "TAO-BTC (AI/Training)",
+        "corr": 0.0643,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "AI/Training vs P2E gaming"
+      },
+      "g5m": {
+        "label": "LINK-BTC K557 (Oracle/infra vs P2E gaming)",
+        "corr": -0.0874,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "Oracle infra vs P2E gaming economy. Distinct use case expected."
+      },
+      "g5n": {
+        "label": "TON-BTC K571 (Social/Messaging vs P2E gaming)",
+        "corr": -0.0343,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "AXS (P2E battle game) vs TON (social messaging). G5n < 0.40 \u2192 P2E gaming distinct from Social/Messaging."
+      },
+      "g5o": {
+        "label": "SAND-BTC K583 (Gaming sub-cluster CRITICAL: P2E vs UGC/Land)",
+        "corr": 0.0191,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "CRITICAL: AXS (Axie Infinity P2E battle) vs SAND (The Sandbox UGC/Land). If G5o >= 0.40 \u2192 BLOCKED-GAMING-SUBCLUSTER (same gaming FR signal). If G5o < 0.40 \u2192 Gaming cluster has 2 distinct sub-narratives: P2E economy (AXS) + Virtual Land/UGC (SAND). K583 G5o SAND-AXS = 0.204 PASS (from SAND perspective) \u2192 cross-validation."
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline",
+        "corr": -0.0091,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 901,
+        "note": "vol-momentum baseline. AXS must not replicate BTC-carry signal."
+      }
+    },
+    "n_pass": 15,
+    "n_total": 15,
+    "all_pass": true,
+    "gaming_subcluster_distinct": true,
+    "eth_corr_critical": -0.0268,
+    "ton_corr_critical": -0.0343,
+    "sand_corr_critical": 0.0191,
+    "note": "G5 family: 15/15 PASS (FAIL=0). ETH G5a=-0.0268 (DeFi vs P2E). TON G5n=-0.0343 (Social vs P2E). SAND G5o=0.0191 (Gaming sub-cluster test: P2E vs UGC/Land). Gaming sub-cluster distinct: True."
+  },
+  "cross_venue_fr": {
+    "pass": true,
+    "hl_bybit_signal_corr": 0.6275,
+    "hl_bybit_diff_corr": 0.6939,
+    "bybit_axs_rows": 3184,
+    "bybit_btc_rows": 2190,
+    "overlap_hours": 3005,
+    "note": "G8 signal corr=0.6275 (threshold=0.55). Raw FR diff corr=0.6939. Overlap=3005h (~125d). HL 1h vs Bybit 8h settlement \u2014 different settlement mechanics. Bybit AXS: 3184 rows (8h). Bybit BTC: 2190 rows. G8 PASS: signal_corr=0.6275 vs threshold=0.55."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 18.6172,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 74.47,
+    "usdc_yr_1pct_10M": 74469,
+    "usdc_yr_2pct_10M": 148938,
+    "usdc_yr_1pct_100M": 744688,
+    "usdc_yr_2pct_100M": 1489376,
+    "note": "4x leverage, OOS ann=18.62% \u00d7 4 = 74.47%/yr. @$10M 1% alloc: $74,469/yr. @$10M 2% alloc: $148,938/yr. @$100M 1% alloc: $744,688/yr."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 64.5,
+    "sand_paper_pct": 1.0,
+    "axs_alloc_pct": 1.5,
+    "projected_pct": 66.0,
+    "projected_with_sand": 67.0,
+    "cap_pct": 65.0,
+    "breach_solo": true,
+    "breach_joint": true,
+    "note": "v6.28 HL=64.5% + AXS 1.5% = 66.0% (solo). With SAND paper 1% = 67.0%. Cap=65.0%. Solo: BREACH \u2014 split to Bybit/OKX required. Joint (SAND+AXS gaming): BREACH \u2014 gaming allocation must split venues. Recommendation: AXS 1% \u2192 HL=65.5% marginal breach. Alternative: split AXS to OKX (maxLev=20) or Bybit (maxLev=50) to keep HL <65%. Gaming sub-cluster split: SAND@HL 1% + AXS@Bybit 1%."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "SAND-BTC",
+      "sharpe": 33.627,
+      "ecosystem": "Gaming/Metaverse",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 7,
+      "pair": "AXS-BTC",
+      "sharpe": 17.815,
+      "ecosystem": "Gaming/P2E (Axie Infinity)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 9,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 11,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 12,
+      "pair": "ICP-BTC",
+      "sharpe": 12.53,
+      "ecosystem": "Decentralized Web",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 14,
+      "pair": "TON-BTC",
+      "sharpe": 8.402,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 15,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 16,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "axs_family_rank": 7,
+  "gaming_subcluster": {
+    "status": "CONFIRMED: Gaming/P2E (AXS) distinct from Gaming/UGC (SAND)",
+    "p2e_cluster": {
+      "members": [
+        "AXS"
+      ],
+      "description": "Gaming/P2E (Axie Infinity) \u2014 P2E battle economics, scholarship, SEA retail demand"
+    },
+    "ugc_land_cluster": {
+      "members": [
+        "SAND"
+      ],
+      "description": "Gaming/UGC (The Sandbox) \u2014 virtual land, UGC creation, metaverse speculative demand",
+      "status": "ACCEPT CONDITIONAL (K583)"
+    },
+    "sand_axs_corr": 0.0191,
+    "subclusters_distinct": true,
+    "k583_g5o_cross_check": "K583 SAND-eval: G5o SAND-AXS = 0.204 PASS. K591 AXS-eval: G5o AXS-SAND = 0.0191 PASS. Cross-validation CONFIRMS gaming sub-cluster separability.",
+    "ecosystem_note": "Gaming/Metaverse = TWO distinct sub-clusters: P2E economy (AXS, battle game tokenomics, yield farming) + Virtual Land/UGC (SAND, metaverse real estate, creator economy). FR drivers differ: AXS driven by P2E yield cycles, SEA retail, game update events. SAND driven by metaverse narrative cycles, NFT market, virtual land speculation."
+  },
+  "decision_rationale": "G5 all PASS. Core strength (Sh=17.815). Failed gates: ['G9 Data sufficiency']. Structural failures (G4 limited data 125d / G9 new-listing / G8 settlement diff). Precedent: K557 LINK, K571 TON, K583 SAND identical pattern \u2192 ACCEPT CONDITIONAL. Recommendation: 60d paper-trade on HL. Gaming/P2E sub-cluster CONFIRMED.",
+  "next_pivot": "AXS ACCEPT CONDITIONAL \u2192 60d paper-trade. Gaming/P2E sub-cluster CONFIRMED. Gaming taxonomy: P2E (AXS) + UGC/Land (SAND) = 2 distinct Gaming sub-clusters. Next: IMX-BTC (Immutable \u2014 gaming L2 infrastructure), GOD/MANA-BTC (alternative gaming ecosystem), or pivot to DeFi cluster (UNI-BTC, AAVE-BTC)."
+}
