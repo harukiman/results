@@ -1,0 +1,56 @@
+{
+  "wave": "K444",
+  "date_jst": "2026-05-29",
+  "title": "Loss Harvesting Automation + Tax-Aware Tracking (18th Daemon)",
+  "status": "SCAFFOLD-READY",
+  "informational_only": true,
+  "key_finding": "K442 loss harvesting $2-41K/yr tax retention infrastructure implemented as 18th daemon",
+  "deliverables": {
+    "scripts/loss_harvester.py": "Main script: load_taxable_events_ytd, compute_realized_gains/losses, identify_harvest_candidates, estimate_tax_liability, generate_annual_report",
+    "com.cryptolab.loss-harvester.plist": "Annual cron Dec 28 06:00 JST (gitignored)",
+    "scripts/verify_deployment_status.py": "18th daemon entry added to REGISTRY",
+    "data/portfolio_aum_state.json": "Tax fields backfilled: taxable_events_ytd, realized gains/losses, user_tax_rate_pct, jurisdiction, tax_year_start",
+    "data/loss_harvester_dashboard.json": "HTML widget data (initial zero state)",
+    "docs/k302a_runbook.md": "§28 added: loss harvesting overview, usage, annual procedure, jurisdiction table, estimated savings",
+    "report.html": "K444 daemon row (18th), YTD tax stats widget, banner + footer updated to 18 daemons"
+  },
+  "phase_11_test": {
+    "inputs": {
+      "realized_gains_ytd_usd": 1000000,
+      "realized_losses_ytd_usd": 50000,
+      "user_tax_rate_pct": 37
+    },
+    "expected_liability_usd": 351500.0,
+    "formula": "max(0, 1000000 - 50000) * 0.37 = 351500",
+    "verification": "PASS"
+  },
+  "estimated_tax_savings": {
+    "at_10M_aum_est_gain_1.72M_yr": {
+      "harvestable_loss_est_5pct": 86000,
+      "US_STCG_37pct": 31820,
+      "JP_55pct": 47300,
+      "SG_0pct": 0
+    },
+    "at_50M_aum_est_gain_6M_yr": {
+      "harvestable_loss_est_5pct": 300000,
+      "US_STCG_37pct": 111000,
+      "JP_55pct": 165000,
+      "SG_0pct": 0
+    }
+  },
+  "event_taxonomy": {
+    "K208_fr_cycle": "~1095/yr (3 cycles/day x 365)",
+    "K297_spx_filter": "~26/yr per coin",
+    "K376_momentum": "~10733/yr at full 50-coin universe",
+    "susde_yield": "ordinary income (separate category)"
+  },
+  "architecture": {
+    "daemon_number": 18,
+    "cron_schedule": "Annual Dec 28 06:00 JST",
+    "run_at_load": false,
+    "activation": "python3 scripts/loss_harvester.py --set-rate <RATE> --set-jurisdiction <JURIS>, then cp plist to LaunchAgents",
+    "k339_compliant": true
+  },
+  "prev_wave": "K443",
+  "next_wave": "K445"
+}

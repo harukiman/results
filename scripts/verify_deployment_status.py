@@ -168,6 +168,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k443_variational_paper",
         expected_html_status="SCAFFOLD-READY",  # K443: plist in repo root (gitignored); activate when Variational trading API released
     ),
+    DaemonSpec(
+        label="com.cryptolab.loss-harvester",
+        purpose="K444 Loss harvesting annual cron (Dec 28 06:00 JST, tax-aware tracking, $2-41K/yr tax savings INFORMATIONAL ONLY, 18th daemon)",
+        scripts=["scripts/loss_harvester.py"],
+        log_basename="loss_harvester",
+        expected_html_status="SCAFFOLD-READY",  # K444: plist in repo root (gitignored); fires annually Dec 28; user activates after setting TAX_RATE_PCT
+    ),
 ]
 
 

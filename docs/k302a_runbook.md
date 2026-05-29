@@ -3479,3 +3479,182 @@ K297'' Variational uses K363 FR snapshots (`cache/variational_fr_snapshots/`).
 ---
 
 *K443 §27 — Variational K297'' paper-trade scaffold (17th daemon, capacity expansion $25M+, Q3 API trigger) — 2026-05-25*
+
+---
+
+## §28 K444 Loss Harvesting Automation — Tax-Aware Tracking (18th Daemon)
+
+> **INFORMATIONAL ONLY — This section does not constitute tax advice.**
+> All information in §28 is for educational and planning purposes only.
+> Consult a licensed tax professional before taking any action based on this material.
+
+### §28.1 Overview
+
+K444 builds infrastructure to retain $2–41K/yr in after-tax profit (K442 finding) by
+systematically tracking taxable realization events and identifying year-end loss
+harvesting opportunities.
+
+**Key fact (K442):** Crypto derivatives on HL/Bybit generate extremely high event counts:
+
+| Strategy | Annual events (est.) | Event type |
+|----------|---------------------|------------|
+| K208 8h FR cycle | ~1,095/yr | TRADE_CLOSE |
+| K297' SPX filter | ~26/yr per coin | TRADE_CLOSE |
+| K376 momentum 4h | ~10,733/yr (full universe) | TRADE_CLOSE |
+| sUSDe yield | Continuous accrual | ORDINARY_INCOME (separate) |
+
+Loss harvesting = closing losing positions before Dec 31 to realize the loss, reducing
+net taxable gains for the year. No re-entry wash-sale restriction currently applies to
+US crypto (as of 2026; confirm with advisor).
+
+### §28.2 Architecture
+
+```
+scripts/loss_harvester.py          <- main script (K339 REPO_ROOT pattern)
+com.cryptolab.loss-harvester.plist <- annual cron Dec 28 06:00 JST (gitignored)
+data/portfolio_aum_state.json      <- extended with tax fields (Phase 4)
+data/loss_harvester_dashboard.json <- HTML Live Monitoring widget data (Phase 5)
+```
+
+Tax fields added to `data/portfolio_aum_state.json`:
+```json
+{
+  "taxable_events_ytd": 0,
+  "estimated_realized_gain_ytd_usd": 0.0,
+  "estimated_realized_loss_ytd_usd": 0.0,
+  "user_tax_rate_pct": null,
+  "estimated_tax_liability_usd": 0.0,
+  "loss_harvesting_opportunities": [],
+  "jurisdiction": "UNKNOWN",
+  "tax_year_start": "2026-01-01"
+}
+```
+
+### §28.3 Usage
+
+#### Initial setup (one-time)
+```bash
+# Set your tax rate (consult advisor first)
+python3 scripts/loss_harvester.py --set-rate 37 --set-jurisdiction US_STCG
+
+# OR via environment variable
+export TAX_RATE_PCT=37
+export TAX_JURISDICTION=US_STCG
+```
+
+#### Daily / on-demand status
+```bash
+python3 scripts/loss_harvester.py --status
+# Prints: events YTD, gains, losses, net PnL, estimated liability
+# Also writes: data/loss_harvester_dashboard.json
+```
+
+#### Record a realization event (from sleeve scripts)
+```python
+from loss_harvester import record_realization_event
+record_realization_event(pnl_usd=-3500.0, strategy="K376", coin="ETH")
+```
+
+#### Year-end harvest plan (Dec 28-31)
+```bash
+python3 scripts/loss_harvester.py --realize-losses
+# Lists all currently losing positions
+# Estimates tax savings
+# Outputs plan for advisor review
+# DOES NOT execute any trades
+```
+
+#### Annual report (full year summary)
+```bash
+python3 scripts/loss_harvester.py --annual-report
+# JSON output with full year stats, event breakdown, harvest candidates
+# Save or print for advisor review
+```
+
+#### Activate annual cron (optional)
+```bash
+cp com.cryptolab.loss-harvester.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.loss-harvester.plist
+# Fires Dec 28 06:00 JST annually (RunAtLoad: false)
+```
+
+### §28.4 Tax-Aware Tracking Principles
+
+1. **Event counting:** Every position close is a taxable realization event. High-frequency
+   strategies (K376: ~10,733 events/yr) generate the most tax complexity.
+
+2. **Gain/loss netting:** Net realized PnL = realized gains YTD - realized losses YTD.
+   Tax liability estimated on net positive amount only.
+
+3. **sUSDe yield:** Staking/lending yield is classified as **ordinary income** (separate
+   from capital gains) in most jurisdictions. Tracked separately.
+
+4. **Paper-trade mode:** Current system is paper-trade. Tax fields track estimated PnL
+   from paper trades. When going live, actual realized PnL feeds directly via
+   `record_realization_event()`.
+
+5. **K429 integration:** `record_realization_event()` is additive to AUM tracking --
+   calling it does not affect AUM state PnL fields; it only updates tax counters.
+
+### §28.5 Annual Report Procedure
+
+1. **Nov 30:** Run `--status` to see YTD estimate. Identify any large unrealized losses.
+2. **Dec 25:** Review `--status` for year-end planning. Consult tax advisor.
+3. **Dec 28-31:** Run `--realize-losses` to generate harvest plan. Execute only if
+   advisor approves. Close identified positions before Dec 31 close.
+4. **Jan 1-15:** Run `--annual-report` for final year summary. Provide to tax preparer.
+
+### §28.6 Jurisdiction Notes (per K442)
+
+| Jurisdiction | Key rate | Wash-sale | Notes |
+|---|---|---|---|
+| US_STCG | Up to 37% federal + state | Not applicable to crypto (2026) | FR income = ordinary income |
+| US_LTCG | 0/15/20% | Not applicable | Most crypto derivatives < 1yr = STCG |
+| JP | 15-55% (miscellaneous income) | No equivalent | Progressive; all crypto = misc income |
+| SG | 0% (no CGT) | N/A | Investment-held crypto; trading income differs |
+| DE | 0% if held > 1yr | N/A | < 1yr = personal income rate (up to 45%) |
+
+### §28.7 Estimated Tax Savings (INFORMATIONAL ONLY)
+
+Based on K442 framework and K440 profit projections:
+
+| AUM | Est. gross gains/yr | Harvestable loss est. (5%) | US (37%) | JP (55%) | SG (0%) |
+|-----|---------------------|---------------------------|-----------|----------|---------|
+| $10M | $1.72M | ~$86K | ~$32K/yr | ~$47K/yr | $0 |
+| $50M | $6.0M | ~$300K | ~$111K/yr | ~$165K/yr | $0 |
+
+*Estimates only. Actual savings depend on realized losses, holding periods, and jurisdiction.*
+
+### §28.8 User Responsibility
+
+- **You are responsible for all tax filings.** This script provides estimates only.
+- **Do not rely on this system for legal tax advice.** Consult a licensed CPA or tax attorney.
+- **Verify event counts** with actual brokerage/exchange statements.
+- **Update jurisdiction and rate** when your situation changes.
+- **K339 security:** Never hardcode personal details; use env vars or direct JSON edit.
+
+### §28.9 File Locations
+
+| File | Purpose |
+|------|---------|
+| `scripts/loss_harvester.py` | Main script (K444) |
+| `com.cryptolab.loss-harvester.plist` | Annual cron (gitignored, repo root) |
+| `data/portfolio_aum_state.json` | AUM state + tax fields |
+| `data/loss_harvester_dashboard.json` | HTML widget data |
+| `logs/loss_harvester.log` | Daemon stdout log |
+| `logs/loss_harvester.err` | Daemon stderr/error log |
+
+### §28.10 References
+
+| Wave | Content |
+|------|---------|
+| K442 | Loss harvesting analysis: $2-41K/yr tax savings estimate |
+| K376 | Momentum strategy -- highest event count (10,733/yr) |
+| K208 | 8h FR cycle -- 1,095 events/yr |
+| K297' | SPX filter -- 26 events/yr |
+| K429 | AUM tracking infrastructure (data/portfolio_aum_state.json) |
+| K444 | This section -- loss harvesting automation (18th daemon) |
+
+---
+
+*K444 §28 -- Loss harvesting automation + tax-aware tracking (18th daemon, INFORMATIONAL ONLY) -- 2026-05-29*
