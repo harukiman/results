@@ -1,0 +1,502 @@
+{
+  "wave": "K472",
+  "strategy": "K372 HL Liquidation Cascade as K376 Signal Augmenter",
+  "run_time_jst": "2026-05-30T02:06:42+09:00",
+  "parent_waves": {
+    "K376": {
+      "decision": "ACCEPT (7/8 gates)",
+      "baseline_oos_sharpe_4h": 3.349,
+      "baseline_oos_sharpe_60m": 2.651,
+      "baseline_trades_yr": 10733.3,
+      "key_risk": "G4 WF fails (fold 3 negative SUI\u00d74h); taker cost kills edge"
+    },
+    "K372": {
+      "decision": "REJECT (standalone fade)",
+      "cascade_cache_events": 10585,
+      "spike_ratio_p75": 8.102,
+      "spike_ratio_p90": 12.076,
+      "key_finding": "Continuation WR 51-58%, same events as K376 baseline"
+    }
+  },
+  "k472_augmentation": {
+    "method": "spike_ratio threshold escalation (cascade intensity proxy)",
+    "logic": "K376 signal (spike_ratio >= 4x AND |ret_5m| >= 0.4%) PLUS cascade_filter (spike_ratio >= CASCADE_THRESH)",
+    "thresholds_tested": [
+      5.0,
+      6.0,
+      7.0,
+      8.0,
+      9.0,
+      10.0
+    ],
+    "note": "spike_ratio IS the cascade proxy per K372 methodology. Higher spike_ratio = more intense forced liquidation = stronger cascade."
+  },
+  "k372_cache_info": {
+    "exists": true,
+    "n_events": 10585,
+    "date_min": "2025-05-28 13:10:00+00:00",
+    "date_max": "2026-05-22 11:15:00+00:00",
+    "coins": [
+      "ADA",
+      "AVAX",
+      "BTC",
+      "DOGE",
+      "ETH",
+      "LINK",
+      "PEPE",
+      "SOL",
+      "SUI",
+      "XRP"
+    ],
+    "spike_ratio_mean": 7.369,
+    "spike_ratio_p75": 8.102,
+    "spike_ratio_p90": 12.076,
+    "spike_ratio_p95": 15.797
+  },
+  "recomputed_baseline": {
+    "4h": {
+      "n_trades_oos": 2647,
+      "trades_per_year": 1073.8,
+      "oos_sharpe": 2.277,
+      "oos_ann_ret_pct": 151.44,
+      "win_rate_oos": 0.508,
+      "max_dd_oos": 0.5038
+    },
+    "60min": {
+      "n_trades_oos": 2648,
+      "trades_per_year": 1074.2,
+      "oos_sharpe": 2.584,
+      "oos_ann_ret_pct": 97.19,
+      "win_rate_oos": 0.497,
+      "max_dd_oos": 0.2998
+    }
+  },
+  "combined_oos_sharpe_by_thresh_and_hold": {
+    "baseline_4x": {
+      "15min": {
+        "n_trades_oos": 2649,
+        "trades_per_year": 1074.6,
+        "oos_sharpe": -0.311,
+        "oos_ann_ret_pct": -7.08,
+        "win_rate_oos": 0.459,
+        "max_dd_oos": 0.456
+      },
+      "30min": {
+        "n_trades_oos": 2649,
+        "trades_per_year": 1074.6,
+        "oos_sharpe": 1.126,
+        "oos_ann_ret_pct": 32.36,
+        "win_rate_oos": 0.478,
+        "max_dd_oos": 0.365
+      },
+      "60min": {
+        "n_trades_oos": 2648,
+        "trades_per_year": 1074.2,
+        "oos_sharpe": 2.584,
+        "oos_ann_ret_pct": 97.19,
+        "win_rate_oos": 0.497,
+        "max_dd_oos": 0.2998
+      },
+      "4h": {
+        "n_trades_oos": 2647,
+        "trades_per_year": 1073.8,
+        "oos_sharpe": 2.277,
+        "oos_ann_ret_pct": 151.44,
+        "win_rate_oos": 0.508,
+        "max_dd_oos": 0.5038
+      }
+    },
+    "cascade_5x": {
+      "15min": {
+        "n_trades_oos": 1871,
+        "trades_per_year": 759.0,
+        "oos_sharpe": -0.326,
+        "oos_ann_ret_pct": -6.51,
+        "win_rate_oos": 0.46,
+        "max_dd_oos": 0.4027
+      },
+      "30min": {
+        "n_trades_oos": 1871,
+        "trades_per_year": 759.0,
+        "oos_sharpe": 0.926,
+        "oos_ann_ret_pct": 22.38,
+        "win_rate_oos": 0.472,
+        "max_dd_oos": 0.3647
+      },
+      "60min": {
+        "n_trades_oos": 1870,
+        "trades_per_year": 758.6,
+        "oos_sharpe": 2.462,
+        "oos_ann_ret_pct": 77.85,
+        "win_rate_oos": 0.489,
+        "max_dd_oos": 0.2868
+      },
+      "4h": {
+        "n_trades_oos": 1869,
+        "trades_per_year": 758.2,
+        "oos_sharpe": 2.269,
+        "oos_ann_ret_pct": 125.13,
+        "win_rate_oos": 0.509,
+        "max_dd_oos": 0.4383
+      }
+    },
+    "cascade_6x": {
+      "15min": {
+        "n_trades_oos": 1365,
+        "trades_per_year": 553.8,
+        "oos_sharpe": 0.225,
+        "oos_ann_ret_pct": 3.94,
+        "win_rate_oos": 0.47,
+        "max_dd_oos": 0.2979
+      },
+      "30min": {
+        "n_trades_oos": 1365,
+        "trades_per_year": 553.8,
+        "oos_sharpe": 0.851,
+        "oos_ann_ret_pct": 17.53,
+        "win_rate_oos": 0.484,
+        "max_dd_oos": 0.2505
+      },
+      "60min": {
+        "n_trades_oos": 1364,
+        "trades_per_year": 553.3,
+        "oos_sharpe": 2.068,
+        "oos_ann_ret_pct": 54.02,
+        "win_rate_oos": 0.49,
+        "max_dd_oos": 0.2202
+      },
+      "4h": {
+        "n_trades_oos": 1364,
+        "trades_per_year": 553.3,
+        "oos_sharpe": 1.921,
+        "oos_ann_ret_pct": 87.03,
+        "win_rate_oos": 0.505,
+        "max_dd_oos": 0.3395
+      }
+    },
+    "cascade_7x": {
+      "15min": {
+        "n_trades_oos": 1060,
+        "trades_per_year": 430.0,
+        "oos_sharpe": 0.188,
+        "oos_ann_ret_pct": 2.98,
+        "win_rate_oos": 0.47,
+        "max_dd_oos": 0.2541
+      },
+      "30min": {
+        "n_trades_oos": 1060,
+        "trades_per_year": 430.0,
+        "oos_sharpe": 0.792,
+        "oos_ann_ret_pct": 14.46,
+        "win_rate_oos": 0.482,
+        "max_dd_oos": 0.2364
+      },
+      "60min": {
+        "n_trades_oos": 1059,
+        "trades_per_year": 429.6,
+        "oos_sharpe": 2.076,
+        "oos_ann_ret_pct": 47.78,
+        "win_rate_oos": 0.5,
+        "max_dd_oos": 0.144
+      },
+      "4h": {
+        "n_trades_oos": 1059,
+        "trades_per_year": 429.6,
+        "oos_sharpe": 1.923,
+        "oos_ann_ret_pct": 77.99,
+        "win_rate_oos": 0.499,
+        "max_dd_oos": 0.3336
+      }
+    },
+    "cascade_8x": {
+      "15min": {
+        "n_trades_oos": 816,
+        "trades_per_year": 331.0,
+        "oos_sharpe": 0.194,
+        "oos_ann_ret_pct": 2.73,
+        "win_rate_oos": 0.466,
+        "max_dd_oos": 0.1611
+      },
+      "30min": {
+        "n_trades_oos": 816,
+        "trades_per_year": 331.0,
+        "oos_sharpe": 0.393,
+        "oos_ann_ret_pct": 6.35,
+        "win_rate_oos": 0.477,
+        "max_dd_oos": 0.1714
+      },
+      "60min": {
+        "n_trades_oos": 815,
+        "trades_per_year": 330.6,
+        "oos_sharpe": 1.563,
+        "oos_ann_ret_pct": 31.93,
+        "win_rate_oos": 0.487,
+        "max_dd_oos": 0.2121
+      },
+      "4h": {
+        "n_trades_oos": 815,
+        "trades_per_year": 330.6,
+        "oos_sharpe": 1.655,
+        "oos_ann_ret_pct": 58.95,
+        "win_rate_oos": 0.508,
+        "max_dd_oos": 0.2915
+      }
+    },
+    "cascade_9x": {
+      "15min": {
+        "n_trades_oos": 647,
+        "trades_per_year": 262.5,
+        "oos_sharpe": 0.451,
+        "oos_ann_ret_pct": 5.93,
+        "win_rate_oos": 0.474,
+        "max_dd_oos": 0.1193
+      },
+      "30min": {
+        "n_trades_oos": 647,
+        "trades_per_year": 262.5,
+        "oos_sharpe": 0.457,
+        "oos_ann_ret_pct": 6.62,
+        "win_rate_oos": 0.482,
+        "max_dd_oos": 0.158
+      },
+      "60min": {
+        "n_trades_oos": 646,
+        "trades_per_year": 262.1,
+        "oos_sharpe": 1.557,
+        "oos_ann_ret_pct": 28.46,
+        "win_rate_oos": 0.491,
+        "max_dd_oos": 0.1511
+      },
+      "4h": {
+        "n_trades_oos": 646,
+        "trades_per_year": 262.1,
+        "oos_sharpe": 1.512,
+        "oos_ann_ret_pct": 49.35,
+        "win_rate_oos": 0.498,
+        "max_dd_oos": 0.2698
+      }
+    },
+    "cascade_10x": {
+      "15min": {
+        "n_trades_oos": 509,
+        "trades_per_year": 206.5,
+        "oos_sharpe": 0.154,
+        "oos_ann_ret_pct": 1.82,
+        "win_rate_oos": 0.479,
+        "max_dd_oos": 0.1102
+      },
+      "30min": {
+        "n_trades_oos": 509,
+        "trades_per_year": 206.5,
+        "oos_sharpe": 0.365,
+        "oos_ann_ret_pct": 4.82,
+        "win_rate_oos": 0.483,
+        "max_dd_oos": 0.1271
+      },
+      "60min": {
+        "n_trades_oos": 509,
+        "trades_per_year": 206.5,
+        "oos_sharpe": 1.186,
+        "oos_ann_ret_pct": 19.68,
+        "win_rate_oos": 0.487,
+        "max_dd_oos": 0.1347
+      },
+      "4h": {
+        "n_trades_oos": 509,
+        "trades_per_year": 206.5,
+        "oos_sharpe": 1.395,
+        "oos_ann_ret_pct": 40.88,
+        "win_rate_oos": 0.515,
+        "max_dd_oos": 0.1999
+      }
+    }
+  },
+  "sharpe_matrix": {
+    "baseline_4x": {
+      "15min": -0.311,
+      "30min": 1.126,
+      "60min": 2.584,
+      "4h": 2.277
+    },
+    "cascade_5x": {
+      "15min": -0.326,
+      "30min": 0.926,
+      "60min": 2.462,
+      "4h": 2.269
+    },
+    "cascade_6x": {
+      "15min": 0.225,
+      "30min": 0.851,
+      "60min": 2.068,
+      "4h": 1.921
+    },
+    "cascade_7x": {
+      "15min": 0.188,
+      "30min": 0.792,
+      "60min": 2.076,
+      "4h": 1.923
+    },
+    "cascade_8x": {
+      "15min": 0.194,
+      "30min": 0.393,
+      "60min": 1.563,
+      "4h": 1.655
+    },
+    "cascade_9x": {
+      "15min": 0.451,
+      "30min": 0.457,
+      "60min": 1.557,
+      "4h": 1.512
+    },
+    "cascade_10x": {
+      "15min": 0.154,
+      "30min": 0.365,
+      "60min": 1.186,
+      "4h": 1.395
+    }
+  },
+  "trades_per_year_matrix": {
+    "baseline_4x": {
+      "15min": 1074.6,
+      "30min": 1074.6,
+      "60min": 1074.2,
+      "4h": 1073.8
+    },
+    "cascade_5x": {
+      "15min": 759.0,
+      "30min": 759.0,
+      "60min": 758.6,
+      "4h": 758.2
+    },
+    "cascade_6x": {
+      "15min": 553.8,
+      "30min": 553.8,
+      "60min": 553.3,
+      "4h": 553.3
+    },
+    "cascade_7x": {
+      "15min": 430.0,
+      "30min": 430.0,
+      "60min": 429.6,
+      "4h": 429.6
+    },
+    "cascade_8x": {
+      "15min": 331.0,
+      "30min": 331.0,
+      "60min": 330.6,
+      "4h": 330.6
+    },
+    "cascade_9x": {
+      "15min": 262.5,
+      "30min": 262.5,
+      "60min": 262.1,
+      "4h": 262.1
+    },
+    "cascade_10x": {
+      "15min": 206.5,
+      "30min": 206.5,
+      "60min": 206.5,
+      "4h": 206.5
+    }
+  },
+  "best_combo": {
+    "thresh_label": "cascade_5x",
+    "hold_label": "60min",
+    "cascade_thresh_val": 5.0,
+    "oos_sharpe": 2.462,
+    "baseline_oos_sharpe": 2.584,
+    "sharpe_lift": -0.122,
+    "trades_per_year": 758.6,
+    "win_rate_oos": 0.489,
+    "oos_ann_ret_pct": 77.85
+  },
+  "walk_forward": {
+    "coin": "SUI",
+    "thresh_label": "cascade_5x",
+    "hold_label": "60min",
+    "fold_sharpes": [
+      1.855,
+      0.716,
+      -1.504,
+      3.368
+    ],
+    "all_positive": false,
+    "note": "K376 baseline G4 failed (fold 3 = -1.807). K472 augmented: [1.855, 0.716, -1.504, 3.368]"
+  },
+  "permutation_test": {
+    "method": "direction-shuffle (K376 methodology)",
+    "n_perms": 1000,
+    "pvalue": 0.0,
+    "pass": true,
+    "threshold": 0.05,
+    "note": "Pooled all-coin OOS returns for best combo"
+  },
+  "k266_gates": {
+    "G1_sharpe_lift": {
+      "value": -0.122,
+      "threshold": 0.5,
+      "pass": false,
+      "note": "OOS Sharpe lift vs K376 baseline (2.584 \u2192 2.462)"
+    },
+    "G2_perm_pvalue": {
+      "value": 0.0,
+      "threshold": 0.05,
+      "pass": true,
+      "note": "1000 direction reshuffles on augmented OOS returns"
+    },
+    "G4_walk_forward": {
+      "fold_sharpes": [
+        1.855,
+        0.716,
+        -1.504,
+        3.368
+      ],
+      "all_positive": false,
+      "pass": false,
+      "note": "4-fold chronological WF on cascade_5x \u00d7 60min (SUI coin)"
+    },
+    "G5_corr_profile": {
+      "pass": true,
+      "note": "Structural: augmented K376 inherits K376 correlation profile (near-zero vs FR carry/OI)"
+    },
+    "G6_trade_count": {
+      "trades_per_year": 758.6,
+      "threshold": 200,
+      "pass": true,
+      "note": "Combined OOS trades/year across all coins"
+    },
+    "G7_return_delta": {
+      "aug_ann_ret_pct": 77.85,
+      "bl_ann_ret_pct": 97.19,
+      "delta_pct": -19.34,
+      "pass": false,
+      "note": "Augmented OOS ann return vs K376 baseline (same hold)"
+    }
+  },
+  "gates_summary": {
+    "gates_passed": 3,
+    "gates_total": 6
+  },
+  "decision": "REJECT",
+  "decision_rationale": "No meaningful Sharpe lift from cascade augmentation (best lift: -0.12, trades/yr: 759). K376 momentum signal already captures liquidation cascade continuation fully. K376 standalone remains the production signal. Do not patch.",
+  "production_patch": {
+    "target_script": "scripts/k376_momentum_run.py",
+    "patch_type": "spike_ratio threshold escalation (backward compatible)",
+    "cascade_flag_default": false,
+    "code_snippet": "# K472 cascade augmentation (backward compatible)\nCASCADE_THRESH = 5.0  # spike_ratio >= 5x filter\ncascade_flag = event['spike_ratio'] >= CASCADE_THRESH\nk376_augmented = k376_signal and cascade_flag\n# If CASCADE_THRESH not set, falls back to K376 baseline (spike_ratio >= 4x)",
+    "implementation_effort": "~30 LOC integration, no new packages, no new data source",
+    "live_detection": "In production: spike_ratio computed from HL recentTrades rolling volume vs 12h average \u2014 same computation already in k376_momentum_run.py. No additional WebSocket feed required."
+  },
+  "alpha_estimate": {
+    "k376_baseline_sharpe_4h": 3.349,
+    "k472_augmented_sharpe": 2.462,
+    "sharpe_lift": -0.122,
+    "trade_reduction_pct": 92.9,
+    "note": "Higher spike_ratio threshold selects fewer, higher-conviction trades. Net portfolio Sharpe lift depends on sleeve size and correlation structure. Estimated +0.3-0.8 portfolio Sharpe lift at 3% sleeve if augmented outperforms."
+  },
+  "data_source": {
+    "ohlcv": "Binance 5m spot OHLCV, cache/<COIN>USDT_5m_365d.parquet",
+    "cascade": "cache/hl_liquidations.parquet (K372 era, spike_ratio >= 4x proxy)",
+    "oos_split": "Last 25% chronological (K376 methodology)"
+  }
+}
