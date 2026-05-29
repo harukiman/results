@@ -1,0 +1,251 @@
+{
+  "wave": "K442",
+  "title": "Tax Optimization Analysis — Multi-Jurisdiction Crypto Trader (INFORMATIONAL ONLY)",
+  "generated_at": "2026-05-29T23:25:28+0900",
+  "disclaimer": "INFORMATIONAL ONLY. NOT TAX ADVICE. Consult a licensed tax professional in your jurisdiction before making any decisions.",
+  "k440_base_case": {
+    "initial_aum_usd": 10000000.0,
+    "terminal_5y_usd": 28556299.66,
+    "gross_gain_usd": 18556299.66,
+    "cagr_pct": 23.3503
+  },
+  "jurisdiction_table": [
+    {
+      "jurisdiction": "Singapore",
+      "tax_rate_pct": 0.0,
+      "tax_type": "No capital gains tax. Crypto trading may be income if business intent. Private investors: 0%.",
+      "effective_rate_fr_trading_pct": 0.0,
+      "retained_gain_usd": 18556299.66,
+      "total_retained_usd": 28556299.66,
+      "notes": "MAS-regulated environment. Resident individuals not taxed on capital gains. High-frequency trading risk: IRAS may classify as trading income (marginal rate up to 22%). Entity structure (Pte Ltd) at 17% corporate rate may be preferable for large volumes.",
+      "residency_complexity": "LOW",
+      "entity_risk": "MEDIUM — frequency of K208 trades may trigger business classification"
+    },
+    {
+      "jurisdiction": "UAE (Dubai)",
+      "tax_rate_pct": 0.0,
+      "tax_type": "No personal income tax. No capital gains tax. Federal corporate tax 9% (above AED375K profit) applies to entities.",
+      "effective_rate_fr_trading_pct": 0.0,
+      "retained_gain_usd": 18556299.66,
+      "total_retained_usd": 28556299.66,
+      "notes": "VARA-regulated crypto environment. Individuals: 0%. Free zone entities (DMCC, ADGM) may qualify for 0% corporate rate. No VAT on crypto-to-crypto swaps. Strong banking infrastructure for high-volume traders.",
+      "residency_complexity": "LOW-MEDIUM",
+      "entity_risk": "LOW — VARA framework specifically accommodates crypto trading businesses"
+    },
+    {
+      "jurisdiction": "Germany (hold >1 year)",
+      "tax_rate_pct": 0.0,
+      "tax_type": "Private sales (Privatveraeusserungsgeschaeft): 0% if held >1 year. Flat tax (Abgeltungsteuer) 26.375% if <1 year.",
+      "effective_rate_fr_trading_pct": 26.375,
+      "retained_gain_usd": 13661198.73,
+      "total_retained_usd": 23661198.73,
+      "notes": "CRITICAL: K208 strategy closes positions every 8 hours (1095 events/yr). Every position close is a realization event. <1yr hold = 26.375% flat. Germany >1yr exemption NOT achievable for FR/K208 strategy. K297' PAXG positions may qualify if held statically >1yr.",
+      "residency_complexity": "LOW (EU resident)",
+      "entity_risk": "HIGH — K208 8h cycle makes 0% rate impossible for main strategy"
+    },
+    {
+      "jurisdiction": "Germany (hold <1 year)",
+      "tax_rate_pct": 26.375,
+      "tax_type": "Flat tax (Abgeltungsteuer) 26.375% including solidarity surcharge.",
+      "effective_rate_fr_trading_pct": 26.375,
+      "retained_gain_usd": 13661198.73,
+      "total_retained_usd": 23661198.73,
+      "notes": "Applicable to all K208 FR trades. Annual loss offset permitted. €600/yr tax-free allowance. Church tax not included.",
+      "residency_complexity": "LOW",
+      "entity_risk": "LOW"
+    },
+    {
+      "jurisdiction": "Portugal",
+      "tax_rate_pct": 28.0,
+      "tax_type": "Since 2023: 28% flat tax on crypto gains (< 1yr hold). >1yr hold: 0%. Professional trading: marginal rates up to 48%.",
+      "effective_rate_fr_trading_pct": 28.0,
+      "retained_gain_usd": 13360535.76,
+      "total_retained_usd": 23360535.76,
+      "notes": "Pre-2023 0% regime ended. Now 28% flat for short-term. K208 8h cycle = all short-term. NHR (Non-Habitual Resident) regime may offer partial relief for new residents. Professional traders may face higher marginal rates.",
+      "residency_complexity": "LOW-MEDIUM",
+      "entity_risk": "MEDIUM"
+    },
+    {
+      "jurisdiction": "Switzerland",
+      "tax_rate_pct": 0.0,
+      "tax_type": "0% capital gains for private investors (federal). Wealth tax on crypto holdings. Professional trader status triggers income tax (up to 40%+).",
+      "effective_rate_fr_trading_pct": 15.0,
+      "retained_gain_usd": 15772854.71,
+      "total_retained_usd": 25772854.71,
+      "notes": "Professional trader criteria: 5 criteria (frequency, holding period, leverage, income dependence, financing). K208 1095 trades/yr + 3x leverage = HIGH professional trader risk. If classified: income tax up to 40%+ + social security. Cantonal variation significant (Zug, Schwyz most favorable). Wealth tax ~0.3-0.7% annually on total holdings.",
+      "residency_complexity": "MEDIUM",
+      "entity_risk": "HIGH — 5-criteria test likely triggered by K208"
+    },
+    {
+      "jurisdiction": "Hong Kong",
+      "tax_rate_pct": 0.0,
+      "tax_type": "No capital gains tax. Profits tax 15-16.5% if trading is a 'trade or business'. Personal investment: 0%.",
+      "effective_rate_fr_trading_pct": 0.0,
+      "retained_gain_usd": 18556299.66,
+      "total_retained_usd": 28556299.66,
+      "notes": "HKMA/SFC regulatory framework for crypto. High-frequency trading may be classified as trade (not investment). VASP licensing requirements for exchanges. Personal investment holding: 0%. Risk: IRD may classify K208 volume as trade income.",
+      "residency_complexity": "LOW",
+      "entity_risk": "MEDIUM — HKEX classification risk for systematic algo trading"
+    },
+    {
+      "jurisdiction": "South Korea",
+      "tax_rate_pct": 22.0,
+      "tax_type": "22% flat tax on crypto gains above KRW 2.5M (~$1.7K USD) threshold. Since January 2025.",
+      "effective_rate_fr_trading_pct": 22.0,
+      "retained_gain_usd": 14473673.54,
+      "total_retained_usd": 24473673.54,
+      "notes": "Virtual Asset User Protection Act in effect. 22% (20% income + 2% local) on gains above annual KRW 2.5M threshold. Loss carryforward 5 years. All K208 realization events are taxable. Residency-based system.",
+      "residency_complexity": "LOW",
+      "entity_risk": "LOW"
+    },
+    {
+      "jurisdiction": "United States (long-term LTCG)",
+      "tax_rate_pct": 20.0,
+      "tax_type": "20% federal LTCG rate (top bracket) + 3.8% NIIT = 23.8% effective for high earners. State tax additional.",
+      "effective_rate_fr_trading_pct": 37.0,
+      "retained_gain_usd": 11690469.09,
+      "total_retained_usd": 21690469.09,
+      "notes": "CRITICAL: LTCG requires >1yr hold. K208 8h cycle = all short-term. Effective rate is 37% short-term for K208. K297' PAXG positions may qualify for LTCG 20% if held >1yr. Wash sale rules may apply. Mark-to-market election (Section 475) available for dealers.",
+      "residency_complexity": "N/A (citizenship-based taxation)",
+      "entity_risk": "HIGH — citizenship-based system follows US persons globally"
+    },
+    {
+      "jurisdiction": "United States (short-term STCG)",
+      "tax_rate_pct": 37.0,
+      "tax_type": "37% marginal federal rate + 3.8% NIIT. Applicable to all trades held <1yr. State tax additional (0–13.3%).",
+      "effective_rate_fr_trading_pct": 37.0,
+      "retained_gain_usd": 11690469.09,
+      "total_retained_usd": 21690469.09,
+      "notes": "Applicable to all K208 FR cycles. 1095+ realization events/yr. IRS Form 8949 required per trade. Estimated 37% federal only; CA adds 13.3% = ~50% effective. Loss harvesting from K376 momentum stop-outs can offset.",
+      "residency_complexity": "HIGH",
+      "entity_risk": "HIGH"
+    },
+    {
+      "jurisdiction": "Japan",
+      "tax_rate_pct": 55.0,
+      "tax_type": "Crypto treated as 'Miscellaneous income' (zatsushotoku). National income tax 45% (top bracket, income >JPY 40M ~$300K) + 10% local inhabitant tax = 55% effective.",
+      "effective_rate_fr_trading_pct": 55.0,
+      "retained_gain_usd": 8350334.85,
+      "total_retained_usd": 18350334.85,
+      "notes": "Highest-burden jurisdiction. No flat tax option. No long-term exemption. Each K208 position close is a realization event. 1095 events/yr at $28.56M gain terminal = catastrophic tax drag. 2.1% reconstruction surtax also applies. Annual tax filing mandatory. No loss carryforward to next year.",
+      "residency_complexity": "HIGH (exit tax applies for >500M JPY assets)",
+      "entity_risk": "MEDIUM — offshore entity may help but CFC rules apply"
+    }
+  ],
+  "k208_realization_analysis": {
+    "strategy": "K208 / K280 Funding Rate Arbitrage (8h cycle)",
+    "fr_cycles_per_year": 1095,
+    "round_trips_per_year": 26,
+    "positions_per_day": 3,
+    "each_fr_cycle_is_taxable_event": true,
+    "k428_daily_reinvest_tax_deferral": false,
+    "k428_note": "K428 daily reinvest does NOT defer tax. Each K208 position close is a realization event in most jurisdictions. Reinvest of post-close balance is a new deployment, not a tax deferral mechanism.",
+    "annual_estimated_gain_at_terminal_yr5": 9000000.0,
+    "annual_events_requiring_reporting": 1095,
+    "implications_by_strategy": {
+      "K280_K208_FR_cycle": "ALL realization events. No long-term treatment possible. Tax drag most severe.",
+      "K297_PAXG_SPX": "Can hold positions statically >1yr for long-term treatment. Germany 0% potentially achievable.",
+      "sUSDe_yield": "Passive yield — typically interest income category. Different tax treatment in some jurisdictions.",
+      "K376_momentum_4h": "Always short-term. Stop-outs provide loss harvesting opportunities."
+    }
+  },
+  "loss_harvesting_analysis": {
+    "primary_source": "K376 momentum stop-outs",
+    "secondary_source": "K297' SPX filter exits near year-end",
+    "tertiary_source": "K280 losing FR cycles (rare given Sharpe 22.1)",
+    "estimated_annual_losses_available_usd": {
+      "conservative": 10000,
+      "base": 30000,
+      "optimistic": 75000
+    },
+    "estimated_tax_savings_usd": {
+      "at_22pct_rate": {
+        "conservative": 2200,
+        "base": 6600,
+        "optimistic": 16500
+      },
+      "at_37pct_rate_us": {
+        "conservative": 3700,
+        "base": 11100,
+        "optimistic": 27750
+      },
+      "at_55pct_rate_jp": {
+        "conservative": 5500,
+        "base": 16500,
+        "optimistic": 41250
+      }
+    },
+    "year_end_loss_harvesting_window": "Nov 15 - Dec 31",
+    "note": "Loss harvesting impact small relative to $18.56M gain. Strategic jurisdiction selection has 10-20x larger impact."
+  },
+  "entity_structures": {
+    "disclaimer": "Entity structures have complex legal, banking, and substance requirements. Independent legal advice required.",
+    "individual": {
+      "description": "Simplest. All gains taxed personally.",
+      "recommended_jurisdictions": ["Singapore", "UAE", "Hong Kong"],
+      "not_recommended": ["Japan", "US"]
+    },
+    "singapore_pte_ltd": {
+      "corp_tax_rate_pct": 17.0,
+      "description": "Singapore company. 17% corporate rate. Dividend distributions may trigger home country tax.",
+      "benefit": "Corporate rate 17% vs individual marginal. Substance requirements apply.",
+      "risk": "IRAS may classify as trading company (vs investment). Economic substance required."
+    },
+    "cayman_llc": {
+      "corp_tax_rate_pct": 0.0,
+      "description": "0% Cayman entity. US CFC rules apply for US shareholders. UK CFC rules apply for UK shareholders.",
+      "risk": "US persons: PFIC/CFC regime essentially transparent. Non-US: clean 0% if substance established."
+    },
+    "bvi_company": {
+      "corp_tax_rate_pct": 0.0,
+      "description": "BVI: 0% for all operations. Popular for crypto funds.",
+      "risk": "Banking access difficult post-2020. Substance requirements increasingly enforced."
+    },
+    "uae_free_zone": {
+      "corp_tax_rate_pct": 0.0,
+      "description": "DMCC / ADGM free zone entity. 0% rate for qualifying activities. VARA crypto license available.",
+      "risk": "Low. VARA framework purpose-built for crypto trading businesses."
+    }
+  },
+  "jurisdiction_comparison_summary": {
+    "tier_1_optimal": {
+      "jurisdictions": ["Singapore", "UAE", "Hong Kong"],
+      "retained_5y_gain_usd": 18556299.66,
+      "total_terminal_usd": 28556299.66,
+      "caveat": "Risk of business classification for high-frequency K208 trading. Individual basis may be challenged."
+    },
+    "tier_2_moderate": {
+      "jurisdictions": ["South Korea", "Germany (<1yr)", "Portugal"],
+      "retained_5y_gain_range_usd": [13360535.76, 14473673.54],
+      "total_terminal_range_usd": [23360535.76, 24473673.54]
+    },
+    "tier_3_high_tax": {
+      "jurisdictions": ["US (short-term)", "Japan"],
+      "retained_5y_gain_range_usd": [8350334.85, 11690469.09],
+      "total_terminal_range_usd": [18350334.85, 21690469.09]
+    },
+    "max_spread_usd": 10205964.81,
+    "max_spread_note": "Singapore/UAE vs Japan: $10.2M difference at $18.56M gain. Equivalent to 55pp tax rate difference."
+  },
+  "portfolio_aum_additions": {
+    "description": "New fields for portfolio_aum_state.json integration",
+    "fields": {
+      "taxable_events_ytd": "integer — count of K208/K280 position closes this calendar year",
+      "estimated_realized_gain_ytd_usd": "float — sum of closed PnL in USD terms",
+      "estimated_tax_liability_usd": "float — realized_gain_ytd * user_tax_rate",
+      "user_tax_rate_pct": "float — user-configurable effective tax rate (default: 0.0 for 0% jurisdiction)",
+      "loss_harvesting_opportunities": "list of positions with unrealized_pnl < -100 USD",
+      "jurisdiction": "string — user's tax jurisdiction code (e.g. 'SGP', 'UAE', 'JPN', 'USA', 'DEU')"
+    }
+  },
+  "action_items": [
+    "1. Identify your tax residency and confirm classification (individual investor vs. trader).",
+    "2. Consult a LICENSED tax professional (CPA or tax lawyer) in your jurisdiction.",
+    "3. If resident in Japan or US: urgently evaluate Singapore/UAE residence (if practical and legal).",
+    "4. If low-tax jurisdiction: continue K428 full reinvest. No special action needed.",
+    "5. Configure user_tax_rate in portfolio_aum_state.json for real-time liability tracking.",
+    "6. Implement year-end (Nov-Dec) K376 stop-out loss harvesting for offset.",
+    "7. For K297' PAXG positions: consider extending hold periods to qualify for long-term treatment.",
+    "8. Annual review of realized PnL from K429 cumulative jsonl (cumulative_pnl_usdc)."
+  ]
+}
