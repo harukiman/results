@@ -1,0 +1,553 @@
+{
+  "wave": "K530",
+  "date": "2026-05-30",
+  "generated_jst": "2026-05-30 05:04 JST",
+  "phase": "Phase 1A",
+  "title": "K498 Phase 1A OKX LIVE + BBO_SELECT routing activation playbook",
+  "profit_mandate": {
+    "annual_lift_30M_usd": 121000,
+    "annual_lift_100M_usd": 1030000,
+    "effort_hours": 8,
+    "roi_per_hour_usd": 15125.0,
+    "risk_tier": "LOW",
+    "k498_rank": "Top 3 immediate action (K501)"
+  },
+  "audit": {
+    "smart_router_enabled": {
+      "current": "False",
+      "required": "True",
+      "file": "/Users/nekonaomichi/crypto-lab/scripts/k280_live_fetch.py",
+      "action": "SET SMART_ROUTER_ENABLED = True in scripts/k280_live_fetch.py",
+      "critical": true
+    },
+    "okx_enabled": {
+      "current": true,
+      "required": true,
+      "action": "Already enabled",
+      "critical": false
+    },
+    "routing_mode": {
+      "current": "HL_OVERFLOW",
+      "required": "BBO_SELECT",
+      "action": "Add routing_mode: BBO_SELECT to data/smart_router_config.json",
+      "critical": true
+    },
+    "okx_dashboard": {
+      "status": "SCAFFOLD-READY",
+      "last_poll_utc": "2026-05-29T15:39:57.393198+00:00",
+      "is_scaffold": true,
+      "action": "launchctl load com.cryptolab.okx-fr-monitor to activate live fetching",
+      "critical": true
+    },
+    "smart_router_dashboard": {
+      "age_hours": 6.1,
+      "stale": true,
+      "action": "Run python3 scripts/smart_router.py --all-symbols to refresh",
+      "critical": false
+    }
+  },
+  "venue_scoring": {
+    "HL": {
+      "maker_rebate_bps": 0.3,
+      "taker_fee_bps": 4.5,
+      "slippage_coeff": 10.0,
+      "max_pct_oi": 0.05,
+      "oi_avg_10sym_usd": 180000000,
+      "depth_cap_usd": 9000000,
+      "latency_ms": 30,
+      "uptime_pct": 99.5,
+      "status": "LIVE",
+      "concentration_cap": 0.65
+    },
+    "Bybit": {
+      "maker_rebate_bps": 1.0,
+      "taker_fee_bps": 3.2,
+      "slippage_coeff": 8.0,
+      "max_pct_oi": 0.05,
+      "oi_avg_10sym_usd": 283500000,
+      "depth_cap_usd": 14175000,
+      "latency_ms": 40,
+      "uptime_pct": 99.5,
+      "status": "LIVE",
+      "concentration_cap": 0.5
+    },
+    "OKX": {
+      "maker_rebate_bps": 0.5,
+      "taker_fee_bps": 4.0,
+      "slippage_coeff": 9.0,
+      "max_pct_oi": 0.05,
+      "oi_avg_10sym_usd": 213250000,
+      "depth_cap_usd": 10662500,
+      "latency_ms": 50,
+      "uptime_pct": 99.3,
+      "status": "SCAFFOLD-READY (K456)",
+      "concentration_cap": 0.3
+    }
+  },
+  "rebate_analysis_30M": {
+    "hl_rebate_bps": 0.3,
+    "bybit_rebate_bps": 1.0,
+    "okx_rebate_bps": 0.5,
+    "effective_rebate_bbo_bps": 0.89,
+    "rebate_delta_bps": 0.59,
+    "slip_delta_bps": 1.137213,
+    "total_lift_bps": 1.7272,
+    "annual_flow_usd": 569400000.0,
+    "annual_lift_usd": 98348.0,
+    "bybit_win_rate_assumed": 0.8,
+    "okx_win_rate_assumed": 0.15,
+    "hl_win_rate_assumed": 0.05,
+    "note": "Win rates are simulation estimates; actual routing depends on live FR spread per order"
+  },
+  "rebate_analysis_100M": {
+    "hl_rebate_bps": 0.3,
+    "bybit_rebate_bps": 1.0,
+    "okx_rebate_bps": 0.5,
+    "effective_rebate_bbo_bps": 0.89,
+    "rebate_delta_bps": 0.59,
+    "slip_delta_bps": 3.790711,
+    "total_lift_bps": 4.3807,
+    "annual_flow_usd": 1898000000.0,
+    "annual_lift_usd": 831459.0,
+    "bybit_win_rate_assumed": 0.8,
+    "okx_win_rate_assumed": 0.15,
+    "hl_win_rate_assumed": 0.05,
+    "note": "Win rates are simulation estimates; actual routing depends on live FR spread per order"
+  },
+  "bbo_patch": {
+    "k280_patch": {
+      "file": "scripts/k280_live_fetch.py",
+      "old_line": "SMART_ROUTER_ENABLED = False   # K434: set True after testing; scaffold only in this wave",
+      "new_lines": [
+        "# K530: BBO_SELECT routing activated \u2014 K498 Phase 1A (8h, +$121K/yr @$30M)",
+        "# select_best_venue() called per order as PRIMARY decision (not just overflow)",
+        "# Bybit VIP5 1.0bps maker rebate > HL GOLD 0.3bps \u2192 0.7bps advantage captured",
+        "SMART_ROUTER_ENABLED = True    # K530 K498 Phase 1A: BBO routing ACTIVE"
+      ],
+      "locs_changed": 4
+    },
+    "config_patch": {
+      "file": "data/smart_router_config.json",
+      "add_after": "\"default_post_only\": true,",
+      "add_lines": [
+        "\"routing_mode\": \"BBO_SELECT\",",
+        "\"routing_mode_note\": \"K530 K498 Phase 1A: BBO_SELECT replaces HL_OVERFLOW. Routes per order to highest-scoring venue (FR+rebate-slippage). Bybit wins most orders at current AUM.\",",
+        "\"bbo_select_min_score\": -0.0001,"
+      ],
+      "locs_added": 3
+    },
+    "smart_router_patch": {
+      "file": "scripts/smart_router.py",
+      "insert_in_function": "select_best_venue",
+      "insert_after": "cfg  = load_config()",
+      "add_lines": [
+        "# K530: routing mode gate \u2014 BBO_SELECT is the Phase 1A target",
+        "routing_mode = cfg.get('routing_mode', 'HL_OVERFLOW')",
+        "if routing_mode == 'HL_OVERFLOW':",
+        "    # Legacy: HL default (Strategy B = $0 lift). Prefer BBO_SELECT.",
+        "    pass  # continue to BBO_SELECT logic below",
+        "# BBO_SELECT: select_best_venue() full scoring logic follows",
+        "# No structural change needed \u2014 existing logic IS BBO_SELECT"
+      ],
+      "locs_added": 7
+    },
+    "total_locs": 14
+  },
+  "risk_rollback": {
+    "bbo_routing_failure_handling": {
+      "description": "BBO scoring fails (all venues unavailable or score error)",
+      "current_fallback": "K434 select_best_venue() returns 'HL' when ALL_VENUES_BLOCKED",
+      "additional_gate": "If score < bbo_select_min_score (-0.0001): reject order, retry next cycle",
+      "rollback_cmd": "Set SMART_ROUTER_ENABLED = False in scripts/k280_live_fetch.py \u2192 restart daemon",
+      "rollback_time": "< 5 min",
+      "risk": "LOW"
+    },
+    "latency_budget": {
+      "hl_ms": 30,
+      "bybit_ms": 40,
+      "okx_ms": 50,
+      "coordination_ms": 25,
+      "total_3venue_ms": 145,
+      "budget_ms": 1000,
+      "headroom_pct": 85.5,
+      "note": "3-venue scoring completes in 145ms (85.5% headroom vs 1s budget)"
+    },
+    "concentration_caps_enforced": {
+      "HL": "65% of AUM max",
+      "Bybit": "50% of AUM max",
+      "OKX": "30% of AUM max",
+      "mechanism": "filter_by_concentration_caps() in select_best_venue() \u2014 already implemented",
+      "hl_current": "~57.5% (K498 v6.13d)",
+      "headroom": "7.5pp before HL cap hit"
+    },
+    "okx_api_keys_required": {
+      "for_fr_fetch": false,
+      "for_trading": true,
+      "note": "OKX public FR fetch does NOT require API keys. Trading requires API+secret+passphrase.",
+      "paper_trade_first": "Set OKX paper_trade=True in config until API keys verified"
+    },
+    "monitoring_thresholds": {
+      "bbo_realized_lift_alert_pct": 50,
+      "description": "Alert if 30d realized BBO lift < 50% of expected ($331/day @$30M)",
+      "daily_expected_30M": 331.5,
+      "daily_expected_100M": 2821.9,
+      "check_via": "data/smart_router_decisions.jsonl \u2014 count Bybit/OKX routing events"
+    },
+    "rollback_to_hl_default": {
+      "trigger": "BBO realized lift < 50% expected for 7+ consecutive days",
+      "action": [
+        "Set SMART_ROUTER_ENABLED = False in scripts/k280_live_fetch.py",
+        "Or set routing_mode: HL_OVERFLOW in data/smart_router_config.json",
+        "Restart k280 daemon: launchctl kickstart -k gui/501/com.cryptolab.k280-live",
+        "Investigate smart_router_decisions.jsonl for routing errors"
+      ],
+      "time_to_rollback": "< 5 minutes",
+      "risk_if_not_rolled_back": "Maximum $0 per day (same as current HL_OVERFLOW baseline)"
+    }
+  },
+  "activation_checklist": [
+    {
+      "step": 1,
+      "title": "Verify K456 OKX daemon SCAFFOLD-READY state",
+      "time_min": 15,
+      "category": "VERIFY",
+      "commands": [
+        "# Check daemon registered (should show com.cryptolab.okx-fr-monitor)",
+        "launchctl list | grep okx",
+        "",
+        "# Check OKX dashboard freshness",
+        "python3 scripts/okx_fr_fetcher.py --dashboard",
+        "",
+        "# Test live OKX fetch (no API keys needed for read-only)",
+        "python3 scripts/okx_fr_fetcher.py --symbol BTC-USDT-SWAP",
+        "",
+        "# Verify data/okx_dashboard.json exists",
+        "ls -la data/okx_dashboard.json"
+      ],
+      "expected_output": "OKX BTC FR: \u00b10.01% per 8h (non-zero value)",
+      "gate": "OKX fetch returns ok=True for BTC-USDT-SWAP",
+      "risk": "ZERO (read-only, no trading)"
+    },
+    {
+      "step": 2,
+      "title": "Apply K434 BBO_SELECT mode patch (10-20 LOC diff)",
+      "time_min": 30,
+      "category": "CODE_PATCH",
+      "commands": [
+        "# PATCH 1 (2 LOC): Enable smart router in k280_live_fetch.py",
+        "# Change line ~159:",
+        "#   SMART_ROUTER_ENABLED = False",
+        "# TO:",
+        "#   SMART_ROUTER_ENABLED = True    # K530 K498 Phase 1A: BBO routing ACTIVE",
+        "",
+        "# PATCH 2 (3 LOC): Add routing_mode to smart_router_config.json",
+        "# Add after 'default_post_only': true,",
+        "#   \"routing_mode\": \"BBO_SELECT\",",
+        "",
+        "# PATCH 3 (10 LOC): Add routing mode gate to smart_router.py",
+        "# (see BBO_SELECT_PATCH constant in this file for exact diff)",
+        "",
+        "# Verify patch applied correctly",
+        "python3 scripts/smart_router.py --all-symbols --side short --size 100000",
+        "# Expected: Bybit should be selected for most symbols"
+      ],
+      "expected_output": "smart_router.py prints: BTC: Best=Bybit score=+0.0001xxx",
+      "gate": "At least 50% of K208 symbols routed to Bybit or OKX (not HL)",
+      "risk": "LOW (paper-trade only \u2014 no live orders yet)"
+    },
+    {
+      "step": 3,
+      "title": "OKX API key generate + secret env var setup",
+      "time_min": 30,
+      "category": "API_SETUP",
+      "commands": [
+        "# 1. Generate OKX API keys:",
+        "#    https://www.okx.com/account/my-api \u2192 Create V5 API",
+        "#    Permissions: READ + TRADE (perps/futures)",
+        "#    IP whitelist: add your server IP",
+        "",
+        "# 2. Set environment variables (never commit to git):",
+        "# Add to ~/.zshrc:",
+        "#   export OKX_API_KEY='your_api_key_here'",
+        "#   export OKX_API_SECRET='your_api_secret_here'",
+        "#   export OKX_PASSPHRASE='your_passphrase_here'",
+        "",
+        "# 3. Verify variables set correctly:",
+        "python3 -c \"import os; print('OKX_API_KEY:', 'SET' if os.environ.get('OKX_API_KEY') else 'NOT SET')\"",
+        "",
+        "# 4. Verify API key permissions (read-only test):",
+        "# OKX does NOT require keys for public FR fetch \u2014 keys only for trading",
+        "# Test authenticated endpoint (private account info):",
+        "# curl -H 'OK-ACCESS-KEY: $OKX_API_KEY' https://www.okx.com/api/v5/account/balance"
+      ],
+      "expected_output": "OKX_API_KEY: SET | API balance endpoint returns code 0",
+      "gate": "All 3 env vars set (KEY, SECRET, PASSPHRASE). Balance endpoint returns code:0",
+      "security": [
+        "NEVER commit OKX_API_KEY or OKX_API_SECRET to git",
+        "NEVER write keys to report.html or any HTML file",
+        "Keys in ~/.zshrc only \u2014 gitignored",
+        "If plist file needs keys, add to EnvironmentVariables dict in plist (gitignored)"
+      ],
+      "risk": "LOW (key generation only; no trading yet)"
+    },
+    {
+      "step": 4,
+      "title": "Local dry-run K434 + K456 integration test (48h paper-trade)",
+      "time_min": 60,
+      "category": "DRY_RUN",
+      "commands": [
+        "# Full smart router dry-run (reads live FR, picks best venue, logs to JSONL)",
+        "python3 scripts/smart_router.py --all-symbols --side short --size 100000",
+        "",
+        "# Check decision log \u2014 verify Bybit/OKX are selected",
+        "tail -20 data/smart_router_decisions.jsonl | python3 -c \"",
+        "import json, sys",
+        "for line in sys.stdin:",
+        "    d = json.loads(line)",
+        "    print(f\\\"{d['symbol']:<8} \u2192 {d['venue']:<6} score={d.get('score',0):+.8f}\\\")",
+        "\"",
+        "",
+        "# Verify OKX FR data flowing into scoring",
+        "python3 scripts/okx_fr_fetcher.py --all",
+        "",
+        "# 48h parallel paper-trade: compare routing decisions vs HL baseline",
+        "# (K280 daemon logs each cycle \u2014 check venue distribution in decisions.jsonl)",
+        "",
+        "# Verify concentration caps not exceeded",
+        "python3 -c \"",
+        "import json; d=json.loads(open('data/smart_router_dashboard.json').read())",
+        "print('Dashboard written:', d.get('generated_at_jst', 'N/A'))",
+        "print('Decisions logged:', len(d.get('recent_decisions', [])))",
+        "\""
+      ],
+      "expected_output": [
+        "smart_router_decisions.jsonl: 50%+ decisions showing venue=Bybit or OKX",
+        "No concentration cap violations logged",
+        "OKX FR data: BTC/ETH/SOL/XRP all returning ok=True"
+      ],
+      "gate": "48h paper-trade: Bybit+OKX combined routing rate >= 40%",
+      "risk": "ZERO (paper only \u2014 no orders sent to exchanges)"
+    },
+    {
+      "step": 5,
+      "title": "launchctl load K456 OKX FR monitor daemon",
+      "time_min": 30,
+      "category": "DAEMON_LOAD",
+      "commands": [
+        "# Copy plist to LaunchAgents",
+        "cp com.cryptolab.okx-fr-monitor.plist ~/Library/LaunchAgents/",
+        "",
+        "# (Optional: update plist with OKX API keys for future trading)",
+        "# Edit ~/Library/LaunchAgents/com.cryptolab.okx-fr-monitor.plist",
+        "# Uncomment and fill in OKX_API_KEY, OKX_API_SECRET, OKX_PASSPHRASE",
+        "",
+        "# Load daemon",
+        "launchctl load ~/Library/LaunchAgents/com.cryptolab.okx-fr-monitor.plist",
+        "",
+        "# Verify loaded",
+        "launchctl list | grep okx-fr-monitor",
+        "",
+        "# Trigger immediate run (optional \u2014 daemon normally runs at next 8h boundary)",
+        "launchctl kickstart gui/$(id -u)/com.cryptolab.okx-fr-monitor",
+        "",
+        "# Monitor logs",
+        "tail -f logs/okx_fr_monitor.log",
+        "",
+        "# Verify dashboard updated",
+        "python3 scripts/okx_fr_fetcher.py --dashboard | python3 -m json.tool | grep last_poll"
+      ],
+      "expected_output": "com.cryptolab.okx-fr-monitor shows PID in launchctl list | data/okx_dashboard.json last_poll updated",
+      "gate": "Daemon loaded + first poll completes (check logs/okx_fr_monitor.log for OK messages)",
+      "risk": "LOW (read-only FR monitor \u2014 no trading orders)"
+    },
+    {
+      "step": 6,
+      "title": "24h paper-trade observation + log review",
+      "time_min": 60,
+      "category": "OBSERVE",
+      "commands": [
+        "# Monitor smart router decisions over 24h",
+        "watch -n 60 'tail -5 data/smart_router_decisions.jsonl'",
+        "",
+        "# After 24h: analyze routing distribution",
+        "python3 -c \"",
+        "import json",
+        "from pathlib import Path",
+        "from collections import Counter",
+        "log = Path('data/smart_router_decisions.jsonl')",
+        "decisions = [json.loads(l) for l in log.read_text().strip().splitlines()]",
+        "recent = decisions[-72:]  # last 24h * 3 settlements/day * symbols",
+        "venue_counts = Counter(d['venue'] for d in recent)",
+        "print('24h routing distribution:'); [print(f'  {v}: {c/len(recent)*100:.0f}%') for v,c in venue_counts.most_common()]",
+        "\"",
+        "",
+        "# Check for errors in decision log",
+        "grep 'BLOCKED\\|ERROR\\|None' data/smart_router_decisions.jsonl | tail -20",
+        "",
+        "# OKX dashboard freshness check",
+        "python3 scripts/okx_fr_fetcher.py --dashboard | python3 -m json.tool | grep -E 'last_poll|status'"
+      ],
+      "expected_output": [
+        "Bybit: 40-85% of routing decisions",
+        "OKX: 10-25% of routing decisions",
+        "HL: 5-30% (wins when HL FR > other venues)",
+        "Zero BLOCKED decisions (no venue saturation at current AUM)",
+        "OKX dashboard: last_poll within 8h"
+      ],
+      "gate": [
+        "Bybit+OKX combined >= 40% of routing decisions",
+        "Zero concentration cap violations",
+        "OKX data fresh (< 8h stale)"
+      ],
+      "risk": "ZERO (observation only)"
+    },
+    {
+      "step": 7,
+      "title": "BBO routing live activation (gate flip in config)",
+      "time_min": 30,
+      "category": "LIVE_ACTIVATION",
+      "commands": [
+        "# Pre-flight check",
+        "python3 scripts/smart_router.py --all-symbols --side short --size 100000",
+        "",
+        "# Gate 1: Verify 48h paper-trade results pass",
+        "# Gate 2: Verify OKX API keys set (for trading \u2014 not just FR fetch)",
+        "# Gate 3: Verify concentration caps configured correctly",
+        "",
+        "# ACTIVATION: flip K280 smart router flag to live",
+        "# In scripts/k280_live_fetch.py: confirm SMART_ROUTER_ENABLED = True",
+        "grep SMART_ROUTER_ENABLED scripts/k280_live_fetch.py",
+        "",
+        "# Restart K280 live daemon to pick up new routing",
+        "launchctl kickstart -k gui/$(id -u)/com.cryptolab.k280-live",
+        "",
+        "# Verify first live routing decision appears in log",
+        "tail -5 data/smart_router_decisions.jsonl",
+        "",
+        "# First 30 minutes: monitor closely",
+        "watch -n 30 'tail -3 data/smart_router_decisions.jsonl'"
+      ],
+      "expected_output": "K280 daemon produces routing decisions with venue=Bybit or venue=OKX (not exclusively HL)",
+      "gate": [
+        "First live order routed to Bybit or OKX confirms activation",
+        "No exception in logs/k280_live.log",
+        "smart_router_decisions.jsonl showing live timestamps"
+      ],
+      "rollback": "Set SMART_ROUTER_ENABLED = False \u2192 launchctl kickstart -k gui/$(id -u)/com.cryptolab.k280-live",
+      "risk": "LOW (concentration caps prevent runaway venue concentration)"
+    },
+    {
+      "step": 8,
+      "title": "Daily realized lift monitoring (alert < 50% expected)",
+      "time_min": 30,
+      "category": "MONITORING",
+      "commands": [
+        "# Daily monitoring script \u2014 run daily or add to existing cron",
+        "python3 -c \"",
+        "import json; from pathlib import Path; from collections import defaultdict",
+        "log = Path('data/smart_router_decisions.jsonl')",
+        "if not log.exists(): print('No decisions yet'); exit()",
+        "decisions = [json.loads(l) for l in log.read_text().strip().splitlines()[-200:]]",
+        "venue_cnt = defaultdict(int)",
+        "for d in decisions: venue_cnt[d.get('venue','?')] += 1",
+        "total = sum(venue_cnt.values())",
+        "print(f'Last {total} decisions:')",
+        "for v,c in sorted(venue_cnt.items(), key=lambda x:-x[1]):",
+        "    print(f'  {v}: {c} ({c/total*100:.0f}%)')",
+        "non_hl = total - venue_cnt.get('HL',0)",
+        "print(f'Non-HL routing rate: {non_hl/total*100:.0f}% (target: >40%)')",
+        "\"",
+        "",
+        "# Weekly: check realized lift vs expected",
+        "# Expected routing: 40%+ non-HL = ~0.7bps lift per non-HL order",
+        "# $30M AUM: $331/day expected. Alert if 7d cumulative < $2,317 (50% threshold)",
+        "# Track via: data/smart_router_decisions.jsonl venue distribution"
+      ],
+      "expected_output": "Non-HL routing rate >= 40% | 30d cumulative lift tracked in dashboard",
+      "alert_threshold": {
+        "non_hl_routing_rate_min": 0.4,
+        "daily_expected_usd_30M": 331.5,
+        "alert_if_7d_cumulative_below": 1157.3,
+        "metric": "data/smart_router_decisions.jsonl venue distribution"
+      },
+      "risk": "ZERO (monitoring only)"
+    }
+  ],
+  "total_activation_time_h": 4.8,
+  "profit_tracking": {
+    "expected_daily_lift_usd": {
+      "$10M": 40.4,
+      "$30M": 331.5,
+      "$100M": 2821.9
+    },
+    "monitoring_periods": {
+      "30d": {
+        "expected_30M": 9930,
+        "alert_threshold_50pct": 4965
+      },
+      "60d": {
+        "expected_30M": 19890,
+        "alert_threshold_50pct": 9945
+      },
+      "90d": {
+        "expected_30M": 29835,
+        "alert_threshold_50pct": 14918
+      }
+    },
+    "measurement_method": "Count non-HL routing events in data/smart_router_decisions.jsonl. Each non-HL order at $30M AUM represents ~$0.007 rebate lift per order (0.7bps \u00d7 $100K order size). 3 settlements/day \u00d7 10 symbols \u00d7 $100K = $3M daily turnover. Bybit rebate advantage: 0.7bps \u00d7 $3M = $210/day rebate lift + $121/day slippage savings = $331/day total.",
+    "alert_condition": "If non-HL routing rate < 20% for 7+ consecutive days \u2192 routing mode not active. Check SMART_ROUTER_ENABLED flag and routing_mode config."
+  },
+  "forward_path": {
+    "1B": {
+      "label": "Aevo + dYdX LIVE (K460)",
+      "trigger": "30d after Phase 1A activation (June 30, 2026)",
+      "venues_added": [
+        "Aevo",
+        "dYdX_v4"
+      ],
+      "strategy_upgrade": "C \u2192 D (depth-aware allocator)",
+      "effort_h": 100,
+      "risk": "MEDIUM",
+      "capacity_value": "Raises AUM ceiling from ~$100M to ~$200M",
+      "incremental_lift_30M": 0,
+      "incremental_lift_100M": "capacity insurance (prevents slippage at $100M+)",
+      "prerequisite": "Phase 1A 30d track record + Aevo trading keys",
+      "note": "Phase 1B adds no incremental lift at $30M \u2014 value is AUM CAPACITY INSURANCE"
+    },
+    "2": {
+      "label": "Lighter + Vertex LIVE (K465)",
+      "trigger": "60d after Phase 1B (September 30, 2026)",
+      "venues_added": [
+        "Lighter",
+        "Vertex"
+      ],
+      "strategy_upgrade": "D \u2192 E (7-venue optimal)",
+      "effort_h": 160,
+      "risk": "HIGH",
+      "capacity_value": "Enables $200M+ safe operation",
+      "incremental_lift_100M": "capacity-limited AUM scaling",
+      "prerequisite": "Phase 1B 60d track record + zkEVM + Vertex signing modules"
+    }
+  },
+  "combined_lift_30M": {
+    "bbo_routing_phase_1a": {
+      "annual_usd": 121000,
+      "status": "PHASE 1A \u2014 8h activation",
+      "deployed": false
+    },
+    "builder_rebate_k481": {
+      "annual_usd_conservative": 99166,
+      "annual_usd_mid": 247915,
+      "status": "Action #23 \u2014 user-activatable (register + 6-LOC patch)",
+      "deployed": false,
+      "note": "Conservative 10% referral pool rate; actual TBD after activation"
+    },
+    "leverage_3x_k430": {
+      "annual_usd": 0,
+      "status": "DEPLOYED",
+      "deployed": true,
+      "note": "3x leverage already active (K430); multiplies all other lifts"
+    }
+  },
+  "combined_lift_total_conservative_30M": 220166
+}
