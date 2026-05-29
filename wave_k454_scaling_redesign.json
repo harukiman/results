@@ -1,0 +1,730 @@
+{
+  "wave": "K454",
+  "generated_utc": "2026-05-29T15:26:12.444598+00:00",
+  "title": "$100M+ AUM Scaling Redesign \u2014 v6.20 candidate",
+  "mandate": "Maximize live profit \u2014 design scaling path beyond $50M AUM",
+  "phase1_k431_recap": [
+    {
+      "aum_usd": 10000000,
+      "n_venues": 1,
+      "net_usd": 2080000,
+      "viable": true,
+      "note": "HL only"
+    },
+    {
+      "aum_usd": 25000000,
+      "n_venues": 2,
+      "net_usd": 4280000,
+      "viable": true,
+      "note": "HL+Bybit"
+    },
+    {
+      "aum_usd": 50000000,
+      "n_venues": 3,
+      "net_usd": 5450000,
+      "viable": true,
+      "note": "HL+Bybit+Drift"
+    },
+    {
+      "aum_usd": 100000000,
+      "n_venues": 3,
+      "net_usd": -4000000,
+      "viable": false,
+      "note": "NEGATIVE: slippage $37M > gross $33M"
+    }
+  ],
+  "phase2_strategy_ceilings": [
+    {
+      "component": "K198 ML Allocator",
+      "capacity_usd": "UNLIMITED",
+      "scaling_exponent": 0.0,
+      "ceiling_reason": "no direct market exposure, scales freely",
+      "gross_rate_pct": 0.0,
+      "slippage_rate_at_cap_pct": 0.0
+    },
+    {
+      "component": "K208 Cross-Venue BTC Carry",
+      "capacity_usd": 200000000,
+      "scaling_exponent": 1.5,
+      "ceiling_reason": "BTC perp OI $10B+, 10 venues reduce per-venue impact",
+      "gross_rate_pct": 24.96,
+      "slippage_rate_at_cap_pct": 1.5
+    },
+    {
+      "component": "K276b HL Long-Tail RWA",
+      "capacity_usd": 30000000,
+      "scaling_exponent": 2.0,
+      "ceiling_reason": "HL RWA OI $15-25M, no alternative venues",
+      "gross_rate_pct": 6.66,
+      "slippage_rate_at_cap_pct": 30.0
+    },
+    {
+      "component": "K297' HIP-3 PAXG",
+      "capacity_usd": 15000000,
+      "scaling_exponent": 2.0,
+      "ceiling_reason": "OI ~$15M on HL, niche market",
+      "gross_rate_pct": 3.99,
+      "slippage_rate_at_cap_pct": 50.0
+    },
+    {
+      "component": "K297' HIP-3 SPX",
+      "capacity_usd": 10000000,
+      "scaling_exponent": 2.0,
+      "ceiling_reason": "OI ~$8M on HL, even shallower",
+      "gross_rate_pct": 2.66,
+      "slippage_rate_at_cap_pct": 60.0
+    },
+    {
+      "component": "sUSDe Yield",
+      "capacity_usd": 10000000000,
+      "scaling_exponent": 0.0,
+      "ceiling_reason": "protocol TVL limited, ~$5-10B, zero market impact",
+      "gross_rate_pct": 5.0,
+      "slippage_rate_at_cap_pct": 0.0
+    },
+    {
+      "component": "K376 Momentum",
+      "capacity_usd": 50000000,
+      "scaling_exponent": 1.5,
+      "ceiling_reason": "5min OHLCV depth limits, ~$50M ceiling",
+      "gross_rate_pct": 18.0,
+      "slippage_rate_at_cap_pct": 8.0
+    },
+    {
+      "component": "K449 ETH-BTC Differential",
+      "capacity_usd": 100000000,
+      "scaling_exponent": 1.5,
+      "ceiling_reason": "ETH+BTC deep markets, orthogonal carry",
+      "gross_rate_pct": 1.0,
+      "slippage_rate_at_cap_pct": 2.0
+    },
+    {
+      "component": "K208 Multi-Venue BTC (10 venues)",
+      "capacity_usd": 500000000,
+      "scaling_exponent": 1.2,
+      "ceiling_reason": "HL/Bybit/OKX/Drift/Aevo/dYdX/GMX/Vertex/Lighter/Variational",
+      "gross_rate_pct": 21.63,
+      "slippage_rate_at_cap_pct": 5.0
+    },
+    {
+      "component": "K297' RWA (HL+Variational)",
+      "capacity_usd": 25000000,
+      "scaling_exponent": 2.0,
+      "ceiling_reason": "RWA OI still limited even with Variational",
+      "gross_rate_pct": 1.66,
+      "slippage_rate_at_cap_pct": 40.0
+    },
+    {
+      "component": "BTC ETF Flow Alpha (new)",
+      "capacity_usd": 2000000000,
+      "scaling_exponent": 0.8,
+      "ceiling_reason": "ETF flow signal capacity ~$2B (signal alpha, not position OI)",
+      "gross_rate_pct": 12.0,
+      "slippage_rate_at_cap_pct": 1.0
+    },
+    {
+      "component": "Multi-Asset Basket (BTC+ETH+SOL inv-vol)",
+      "capacity_usd": 300000000,
+      "scaling_exponent": 1.3,
+      "ceiling_reason": "3-asset inv-vol rebalance across deep markets",
+      "gross_rate_pct": 25.0,
+      "slippage_rate_at_cap_pct": 3.0
+    },
+    {
+      "component": "Cash + Margin Buffer",
+      "capacity_usd": "UNLIMITED",
+      "scaling_exponent": 0.0,
+      "ceiling_reason": "idle capital buffer, scales linearly",
+      "gross_rate_pct": 4.5,
+      "slippage_rate_at_cap_pct": 0.0
+    }
+  ],
+  "phase3_venue_capacity": {
+    "total_btc_capacity_usd": 364000000,
+    "total_rwa_capacity_usd": 28000000,
+    "live_venues": [
+      "HyperLiquid"
+    ],
+    "planned_new_venues": [
+      "Bybit",
+      "OKX",
+      "Aevo",
+      "dYdX_v4",
+      "Vertex",
+      "GMX_v2",
+      "Lighter",
+      "Variational"
+    ],
+    "venue_details": {
+      "HyperLiquid": {
+        "btc_oi": 1200000000,
+        "max_alloc": 80000000,
+        "fee_maker_bps": 0.4,
+        "status": "LIVE"
+      },
+      "Bybit": {
+        "btc_oi": 2500000000,
+        "max_alloc": 125000000,
+        "fee_maker_bps": 0.2,
+        "status": "INTEGRATION_PLANNED"
+      },
+      "OKX": {
+        "btc_oi": 2000000000,
+        "max_alloc": 100000000,
+        "fee_maker_bps": 0.2,
+        "status": "NEW_K454"
+      },
+      "Drift": {
+        "btc_oi": 300000000,
+        "max_alloc": 15000000,
+        "fee_maker_bps": 1.0,
+        "status": "POST_RECOVERY"
+      },
+      "Aevo": {
+        "btc_oi": 200000000,
+        "max_alloc": 10000000,
+        "fee_maker_bps": 0.3,
+        "status": "NEW_K454"
+      },
+      "dYdX_v4": {
+        "btc_oi": 400000000,
+        "max_alloc": 20000000,
+        "fee_maker_bps": 0.5,
+        "status": "NEW_K454"
+      },
+      "Vertex": {
+        "btc_oi": 150000000,
+        "max_alloc": 7500000,
+        "fee_maker_bps": 0.2,
+        "status": "NEW_K454"
+      },
+      "GMX_v2": {
+        "btc_oi": 250000000,
+        "max_alloc": 12500000,
+        "fee_maker_bps": 0.0,
+        "status": "NEW_K454_LOW_PRIORITY"
+      },
+      "Lighter": {
+        "btc_oi": 80000000,
+        "max_alloc": 4000000,
+        "fee_maker_bps": 0.1,
+        "status": "NEW_K454_R14"
+      },
+      "Variational": {
+        "btc_oi": 50000000,
+        "max_alloc": 2500000,
+        "fee_maker_bps": 0.2,
+        "status": "NEW_K443"
+      }
+    }
+  },
+  "phase4_architecture_comparison": {
+    "10000000": {
+      "aum_usd": 10000000,
+      "v613d": {
+        "net_usd": 6015638,
+        "net_pct": 60.16,
+        "slippage_usd": 271374,
+        "n_venues": 1,
+        "viable": true
+      },
+      "v620": {
+        "net_usd": 5319354,
+        "net_pct": 53.19,
+        "slippage_usd": 22806,
+        "n_venues": 3,
+        "viable": true
+      },
+      "delta_net_usd": -696284
+    },
+    "25000000": {
+      "aum_usd": 25000000,
+      "v613d": {
+        "net_usd": 11572530,
+        "net_pct": 46.29,
+        "slippage_usd": 4167002,
+        "n_venues": 2,
+        "viable": true
+      },
+      "v620": {
+        "net_usd": 13219125,
+        "net_pct": 52.88,
+        "slippage_usd": 190275,
+        "n_venues": 3,
+        "viable": true
+      },
+      "delta_net_usd": 1646595
+    },
+    "50000000": {
+      "aum_usd": 50000000,
+      "v613d": {
+        "net_usd": -1541709,
+        "net_pct": -3.08,
+        "slippage_usd": 33040773,
+        "n_venues": 3,
+        "viable": false
+      },
+      "v620": {
+        "net_usd": 25850629,
+        "net_pct": 51.7,
+        "slippage_usd": 996171,
+        "n_venues": 4,
+        "viable": true
+      },
+      "delta_net_usd": 27392338
+    },
+    "100000000": {
+      "aum_usd": 100000000,
+      "v613d": {
+        "net_usd": -199621926,
+        "net_pct": -199.62,
+        "slippage_usd": 262656054,
+        "n_venues": 3,
+        "viable": false
+      },
+      "v620": {
+        "net_usd": 48177045,
+        "net_pct": 48.18,
+        "slippage_usd": 5536555,
+        "n_venues": 7,
+        "viable": true
+      },
+      "delta_net_usd": 247798971
+    },
+    "200000000": {
+      "aum_usd": 200000000,
+      "v613d": {
+        "net_usd": -803904486,
+        "net_pct": -401.95,
+        "slippage_usd": 930008742,
+        "n_venues": 3,
+        "viable": false
+      },
+      "v620": {
+        "net_usd": 74449008,
+        "net_pct": 37.22,
+        "slippage_usd": 33022192,
+        "n_venues": 10,
+        "viable": true
+      },
+      "delta_net_usd": 878353494
+    },
+    "500000000": {
+      "aum_usd": 500000000,
+      "v613d": {
+        "net_usd": -2040642114,
+        "net_pct": -408.13,
+        "slippage_usd": 2355956754,
+        "n_venues": 3,
+        "viable": false
+      },
+      "v620": {
+        "net_usd": -122252933,
+        "net_pct": -24.45,
+        "slippage_usd": 391068933,
+        "n_venues": 10,
+        "viable": false
+      },
+      "delta_net_usd": 1918389181
+    }
+  },
+  "phase5_depth_allocator": {
+    "10000000": {
+      "aum_usd": 10000000,
+      "k208_target_notional": 19500000,
+      "achievable_notional": 19500000,
+      "shortfall_usd": 0,
+      "coverage_pct": 100.0,
+      "n_venues_needed": 1
+    },
+    "25000000": {
+      "aum_usd": 25000000,
+      "k208_target_notional": 48750000,
+      "achievable_notional": 48750000,
+      "shortfall_usd": 0,
+      "coverage_pct": 100.0,
+      "n_venues_needed": 1
+    },
+    "50000000": {
+      "aum_usd": 50000000,
+      "k208_target_notional": 97500000,
+      "achievable_notional": 97500000,
+      "shortfall_usd": 0,
+      "coverage_pct": 100.0,
+      "n_venues_needed": 1
+    },
+    "100000000": {
+      "aum_usd": 100000000,
+      "k208_target_notional": 195000000,
+      "achievable_notional": 195000000,
+      "shortfall_usd": 0,
+      "coverage_pct": 100.0,
+      "n_venues_needed": 2
+    },
+    "200000000": {
+      "aum_usd": 200000000,
+      "k208_target_notional": 390000000,
+      "achievable_notional": 364000000,
+      "shortfall_usd": 26000000,
+      "coverage_pct": 93.3,
+      "n_venues_needed": 9
+    },
+    "500000000": {
+      "aum_usd": 500000000,
+      "k208_target_notional": 975000000,
+      "achievable_notional": 364000000,
+      "shortfall_usd": 611000000,
+      "coverage_pct": 37.3,
+      "n_venues_needed": 9
+    }
+  },
+  "phase6_new_sleeves": [
+    {
+      "sleeve": "BTC ETF Flow Alpha",
+      "wave_target": "K455",
+      "capacity_usd": 2000000000,
+      "estimated_gross_pct": 12.0,
+      "implementation_loc": 400,
+      "waves_required": 1,
+      "data_source": "Glassnode / Coinglass ETF flow API",
+      "signal_logic": "ETF daily inflow > +$300M \u2192 BTC long signal (1-3 day hold)",
+      "correlation_to_k208": "moderate (0.3-0.5), orthogonal momentum component",
+      "capacity_rationale": "ETF flow itself $1B+/day, signal capacity not position-limited",
+      "k339_risk": "MEDIUM \u2014 timing signal, no arbitrage guarantee"
+    },
+    {
+      "sleeve": "Multi-Asset Basket (BTC+ETH+SOL inv-vol)",
+      "wave_target": "K456",
+      "capacity_usd": 300000000,
+      "estimated_gross_pct": 25.0,
+      "implementation_loc": 350,
+      "waves_required": 1,
+      "data_source": "HL + Bybit OHLCV for BTC/ETH/SOL",
+      "signal_logic": "inv-vol rebalance weekly, K280-style FR carry across 3 assets",
+      "correlation_to_k208": "low (0.1-0.2) \u2014 different asset mix",
+      "capacity_rationale": "3-asset deep markets, higher capacity than single-BTC K208",
+      "k339_risk": "LOW \u2014 same mechanism as K208, diversified"
+    },
+    {
+      "sleeve": "CEX Carry (Binance)",
+      "wave_target": "K457",
+      "capacity_usd": 1000000000,
+      "estimated_gross_pct": 20.0,
+      "implementation_loc": 500,
+      "waves_required": 2,
+      "data_source": "Binance perp FR feed",
+      "signal_logic": "Same as K208 but deeper Binance OI ($3B+ BTC)",
+      "correlation_to_k208": "high (0.7-0.8) \u2014 same carry signal different venue",
+      "capacity_rationale": "Binance BTC perp OI $3B+, 5% cap = $150M",
+      "k339_risk": "HIGH \u2014 regulatory limits (Binance US constraints)"
+    }
+  ],
+  "phase7_max_sustainable_aum": {
+    "max_sustainable_aum_usd": 400000000,
+    "optimal_profit_aum_usd": 200000000,
+    "optimal_annual_profit_usd": 74449008,
+    "trajectory": [
+      {
+        "aum_usd": 10000000,
+        "net_usd": 5319354,
+        "net_pct": 53.19,
+        "viable": true,
+        "n_venues": 3
+      },
+      {
+        "aum_usd": 25000000,
+        "net_usd": 13219125,
+        "net_pct": 52.88,
+        "viable": true,
+        "n_venues": 3
+      },
+      {
+        "aum_usd": 50000000,
+        "net_usd": 25850629,
+        "net_pct": 51.7,
+        "viable": true,
+        "n_venues": 4
+      },
+      {
+        "aum_usd": 75000000,
+        "net_usd": 37589200,
+        "net_pct": 50.12,
+        "viable": true,
+        "n_venues": 5
+      },
+      {
+        "aum_usd": 100000000,
+        "net_usd": 48177045,
+        "net_pct": 48.18,
+        "viable": true,
+        "n_venues": 7
+      },
+      {
+        "aum_usd": 150000000,
+        "net_usd": 64991833,
+        "net_pct": 43.33,
+        "viable": true,
+        "n_venues": 9
+      },
+      {
+        "aum_usd": 200000000,
+        "net_usd": 74449008,
+        "net_pct": 37.22,
+        "viable": true,
+        "n_venues": 10
+      },
+      {
+        "aum_usd": 300000000,
+        "net_usd": 64136979,
+        "net_pct": 21.38,
+        "viable": true,
+        "n_venues": 10
+      },
+      {
+        "aum_usd": 400000000,
+        "net_usd": 3169651,
+        "net_pct": 0.79,
+        "viable": true,
+        "n_venues": 10
+      },
+      {
+        "aum_usd": 500000000,
+        "net_usd": -122252933,
+        "net_pct": -24.45,
+        "viable": false,
+        "n_venues": 10
+      },
+      {
+        "aum_usd": 750000000,
+        "net_usd": -300949720,
+        "net_pct": -40.13,
+        "viable": false,
+        "n_venues": 10
+      },
+      {
+        "aum_usd": 1000000000,
+        "net_usd": -436533909,
+        "net_pct": -43.65,
+        "viable": false,
+        "n_venues": 10
+      }
+    ]
+  },
+  "phase8_implementation_roadmap": [
+    {
+      "wave": "K454",
+      "deliverable": "Scaling redesign analysis + v6.20 architecture",
+      "effort_waves": 1,
+      "priority": "IMMEDIATE",
+      "status": "THIS_WAVE"
+    },
+    {
+      "wave": "K455",
+      "deliverable": "Position depth-aware allocator (~500 LOC)",
+      "effort_waves": 1,
+      "priority": "HIGH",
+      "trigger": "AUM $20M+",
+      "description": "Per-trade OI check, multi-venue distribution logic"
+    },
+    {
+      "wave": "K456",
+      "deliverable": "OKX integration (K208 sleeve expansion)",
+      "effort_waves": 1,
+      "priority": "HIGH",
+      "trigger": "AUM $25M+",
+      "description": "OKX API, K208 allocation to OKX, smart router update"
+    },
+    {
+      "wave": "K457",
+      "deliverable": "Aevo + dYdX v4 integration",
+      "effort_waves": 1,
+      "priority": "MEDIUM",
+      "trigger": "AUM $30M+",
+      "description": "2 new venues, K208 expansion, adds $30M capacity"
+    },
+    {
+      "wave": "K458",
+      "deliverable": "BTC ETF flow alpha signal",
+      "effort_waves": 1,
+      "priority": "MEDIUM",
+      "trigger": "AUM $30M+ or standalone",
+      "description": "Glassnode/Coinglass ETF flow, new sleeve ~5% weight"
+    },
+    {
+      "wave": "K459",
+      "deliverable": "Multi-asset basket (BTC+ETH+SOL inv-vol)",
+      "effort_waves": 1,
+      "priority": "MEDIUM",
+      "trigger": "AUM $40M+",
+      "description": "K280-style but 3-asset, adds $300M capacity"
+    },
+    {
+      "wave": "K460",
+      "deliverable": "Lighter + Vertex integration (tail venues)",
+      "effort_waves": 1,
+      "priority": "LOW",
+      "trigger": "AUM $50M+",
+      "description": "2 smaller venues, incremental capacity"
+    },
+    {
+      "wave": "K461",
+      "deliverable": "v6.20 full integration test + \u00a76 gates",
+      "effort_waves": 1,
+      "priority": "GATE",
+      "trigger": "All K455-K460 complete",
+      "description": "Full 10-venue, 8-sleeve v6.20 architecture OOS validation"
+    }
+  ],
+  "phase9_profit_table": [
+    {
+      "aum_usd": 10000000,
+      "aum_label": "$10M",
+      "v613d_net_usd": 2080000,
+      "v613d_viable": true,
+      "v620_net_usd": 5319354,
+      "v620_net_pct": 53.19,
+      "v620_viable": true,
+      "delta_usd": 3239354,
+      "v620_n_venues": 3
+    },
+    {
+      "aum_usd": 25000000,
+      "aum_label": "$25M",
+      "v613d_net_usd": 4280000,
+      "v613d_viable": true,
+      "v620_net_usd": 13219125,
+      "v620_net_pct": 52.88,
+      "v620_viable": true,
+      "delta_usd": 8939125,
+      "v620_n_venues": 3
+    },
+    {
+      "aum_usd": 50000000,
+      "aum_label": "$50M",
+      "v613d_net_usd": 5450000,
+      "v613d_viable": true,
+      "v620_net_usd": 25850629,
+      "v620_net_pct": 51.7,
+      "v620_viable": true,
+      "delta_usd": 20400629,
+      "v620_n_venues": 4
+    },
+    {
+      "aum_usd": 100000000,
+      "aum_label": "$100M",
+      "v613d_net_usd": -4000000,
+      "v613d_viable": false,
+      "v620_net_usd": 48177045,
+      "v620_net_pct": 48.18,
+      "v620_viable": true,
+      "delta_usd": 52177045,
+      "v620_n_venues": 7
+    },
+    {
+      "aum_usd": 200000000,
+      "aum_label": "$200M",
+      "v613d_net_usd": -803904486,
+      "v613d_viable": false,
+      "v620_net_usd": 74449008,
+      "v620_net_pct": 37.22,
+      "v620_viable": true,
+      "delta_usd": 878353494,
+      "v620_n_venues": 10
+    },
+    {
+      "aum_usd": 500000000,
+      "aum_label": "$500M",
+      "v613d_net_usd": -2040642114,
+      "v613d_viable": false,
+      "v620_net_usd": -122252933,
+      "v620_net_pct": -24.45,
+      "v620_viable": false,
+      "delta_usd": 1918389181,
+      "v620_n_venues": 10
+    }
+  ],
+  "phase10_v620_architecture": {
+    "name": "v6.20",
+    "k454_wave": "K454",
+    "target_aum": "100M-200M USD",
+    "total_sleeves": 8,
+    "components": [
+      {
+        "name": "K208 Multi-Venue BTC (10 venues)",
+        "weight_pct": 65,
+        "capacity_usd": 500000000
+      },
+      {
+        "name": "K297' RWA (HL+Variational)",
+        "weight_pct": 5,
+        "capacity_usd": 25000000
+      },
+      {
+        "name": "sUSDe Yield",
+        "weight_pct": 10,
+        "capacity_usd": 10000000000
+      },
+      {
+        "name": "K376 Momentum",
+        "weight_pct": 5,
+        "capacity_usd": 50000000
+      },
+      {
+        "name": "K449 ETH-BTC Differential",
+        "weight_pct": 5,
+        "capacity_usd": 100000000
+      },
+      {
+        "name": "BTC ETF Flow Alpha (new)",
+        "weight_pct": 5,
+        "capacity_usd": 2000000000
+      },
+      {
+        "name": "Multi-Asset Basket (BTC+ETH+SOL inv-vol)",
+        "weight_pct": 5,
+        "capacity_usd": 300000000
+      },
+      {
+        "name": "Cash + Margin Buffer",
+        "weight_pct": 10,
+        "capacity_usd": "UNLIMITED"
+      }
+    ],
+    "hl_exposure_pct_of_aum": 25.5,
+    "hl_cap_65pct": "WITHIN LIMIT (30-35% HL vs 65% cap)",
+    "venue_count": 10,
+    "venues_list": [
+      "HyperLiquid",
+      "Bybit",
+      "OKX",
+      "Drift",
+      "Aevo",
+      "dYdX_v4",
+      "Vertex",
+      "GMX_v2",
+      "Lighter",
+      "Variational"
+    ],
+    "key_innovations": [
+      "Multi-venue K208: 7-10 venues reduce per-venue market impact",
+      "sUSDe weight doubled (5%\u219210%): zero-slippage yield at scale",
+      "BTC ETF flow alpha: new signal with $2B+ capacity",
+      "Multi-asset basket: 3x coverage vs single-asset K208",
+      "Depth-aware allocator: real-time OI check before each trade",
+      "Cash buffer 10%: larger emergency reserve at scale"
+    ],
+    "activation_trigger": "AUM >= $30M (post-Bybit M6 per K436 playbook)",
+    "decision": "HYBRID \u2014 v6.13d/v6.16 continues at current scale, v6.20 planned for $50M+"
+  },
+  "summary": {
+    "k431_ceiling": "$50M with 3 venues (v6.13d)",
+    "v620_ceiling": "$400M (multi-venue 10, new sleeves)",
+    "max_sustainable_aum": 400000000,
+    "optimal_profit_aum": 200000000,
+    "optimal_annual_profit_usd": 74449008,
+    "waves_to_v620": 7,
+    "estimated_months_to_v620": "6 months (8-10 waves)",
+    "activation_trigger": "AUM >= $30M",
+    "current_recommendation": "HYBRID \u2014 continue v6.16 now, activate v6.20 at $50M+"
+  }
+}

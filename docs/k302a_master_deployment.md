@@ -710,3 +710,95 @@ launchctl list | grep k449
 `wave_k451_v616_projection.py` | `wave_k451_v616_projection.json` | `wave_k451_v616_projection.md`
 
 *K440 Appendix — Added 2026-05-29 23:19 JST*
+
+---
+
+## Appendix K454 — $100M+ AUM Scaling Redesign (v6.20 Candidate, 2026-05-30)
+
+**Wave:** K454 | **Supersedes:** K431 multi-venue analysis | **Source:** wave_k454_scaling_redesign.md
+
+### Problem Statement
+
+K431 confirmed the current v6.13d/v6.16 strategy flips **negative at $100M AUM**:
+- Slippage: $37M/yr (quadratic, K297' shallow markets)
+- Gross profit: $33M/yr
+- Net: **-$4M/yr** — strategy unviable above $50M
+
+### Root Cause
+
+Linear AUM scaling → quadratic slippage in shallow OI markets (K297' RWA, K276b long-tail).
+At $100M, K297' notional ($60M) vs PAXG OI ($15M) = 4× ratio → 28+ bps impact per trade.
+
+### v6.20 Solution: Multi-Venue + Sleeve Rebalance
+
+**Architecture (8 sleeves, 10 venues):**
+
+| Sleeve | Weight | Capacity | Change from v6.13d |
+|--------|--------|----------|-------------------|
+| K208 BTC Multi-Venue (10 venues) | 65% | $500M | HL/Bybit/OKX/Drift/Aevo/dYdX/Vertex/Lighter/Variational |
+| K297' RWA (HL+Variational) | **5%** | $25M | **20% → 5% (removes quadratic drag)** |
+| sUSDe Yield | **10%** | $10B | **5% → 10% (zero slippage)** |
+| K376 Momentum | 5% | $50M | New in v6.20 |
+| K449 ETH-BTC Differential | 5% | $100M | v6.16 → v6.20 |
+| BTC ETF Flow Alpha | **5%** | $2B | **NEW sleeve (K458)** |
+| Multi-Asset Basket (BTC+ETH+SOL) | **5%** | $300M | **NEW sleeve (K459)** |
+| Cash + Margin Buffer | **10%** | — | Increased for scale |
+
+**HL exposure: ~27.5% of AUM** (well within 65% cap)
+
+### Profit Projections (v6.20)
+
+| AUM | v6.13d Net | v6.20 Net | v6.20 Viable |
+|-----|-----------|----------|-------------|
+| $10M | +$2.08M/yr | +$5.32M/yr | YES |
+| $25M | +$4.28M/yr | +$13.22M/yr | YES |
+| $50M | +$5.45M/yr | +$25.85M/yr | YES |
+| $100M | **-$4.00M/yr** | **+$48.18M/yr** | **YES (rescue)** |
+| $200M | NEGATIVE | **+$74.45M/yr** | **YES (optimal)** |
+| $400M | NEGATIVE | +$3.20M/yr | YES (marginal) |
+| $500M | NEGATIVE | -$122.25M/yr | NO |
+
+### Maximum Sustainable AUM
+
+- **v6.20 ceiling: $400M** (last viable tier)
+- **Optimal profit: $200M AUM** ($74.4M/yr net, 37.2% net rate)
+- **Beyond $400M:** multi-entity structure required (2× $200M entities)
+- **$500M+ ceiling** with multi-entity (separate legal/ops per entity)
+
+### 8-Wave Implementation Roadmap
+
+| Wave | Deliverable | Trigger |
+|------|-------------|---------|
+| K454 | Scaling redesign + v6.20 blueprint | NOW |
+| K455 | Position depth-aware allocator (~500 LOC) | AUM $20M+ |
+| K456 | OKX integration (K208 3rd major venue) | AUM $25M+ |
+| K457 | Aevo + dYdX v4 integration | AUM $30M+ |
+| K458 | BTC ETF flow alpha (new sleeve) | AUM $30M+ |
+| K459 | Multi-asset basket BTC+ETH+SOL | AUM $40M+ |
+| K460 | Lighter + Vertex (tail venues) | AUM $50M+ |
+| K461 | v6.20 full §6 gate validation | K455-K460 complete |
+
+**Timeline: ~6 months | ~2,500 new LOC | 7 additional waves**
+
+### Activation Triggers
+
+```
+Primary: AUM >= $30M (1 month post-Bybit M6 per K436 playbook)
+Secondary: Aggressive deployment timeline approved by user
+Gate: K461 §6 must pass before full v6.20 production deploy
+```
+
+### Decision
+
+**HYBRID:**
+- Continue v6.13d/v6.16 unchanged at current scale (<$30M)
+- Plan v6.20 for $50M+ AUM (6 months out)
+- No immediate production change
+
+**New Sleeves Queued:**
+- K458: BTC ETF flow alpha (Glassnode/Coinglass data, $2B capacity, ~12% gross)
+- K459: Multi-asset basket BTC+ETH+SOL inv-vol ($300M capacity, ~25% gross)
+
+Source files: `wave_k454_scaling_redesign.py` | `wave_k454_scaling_redesign.json` | `wave_k454_scaling_redesign.md`
+
+*K454 Appendix — Added 2026-05-30 00:22 JST*
