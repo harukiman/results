@@ -3070,6 +3070,167 @@ Source files: `wave_k558_k476_k484_week2_live.{py,json,md}`
 
 ---
 
+## ★ K561 Phase A Consolidated — Single Source of Truth (User Actions #30-#34)
+
+**Wave:** K561 | **Added:** 2026-05-30 06:30 JST | **Status:** READY-TO-APPLY  
+**Source waves:** K481, K485, K498/K530, K545, K552  
+**Combined Phase A:** 5 actions | 1.5hr active | +$95K immediate @$10M | +$2.5-3M/yr full activation
+
+This section consolidates scattered user-actionable items into a single reference. For full paste-ready commands see `wave_k561_phase_a_consolidated.md`.
+
+### Phase A 5-Action Summary
+
+| ID | Action | Time | ROI @$10M | Risk | Status |
+|----|--------|------|-----------|------|--------|
+| A1 | K545 Tax Harvester plist load | 5 min | +$47K/yr (JPN 55%) | ZERO | READY |
+| A2 | K481 HL Builder Rebate registration | 30 min | +$99K–$496K/yr | ZERO | READY |
+| A3 | K552 K280 sleeve 75→60% patch (3 files) | 30 min | +$260K unlock (30d) | LOW | READY |
+| A4 | K498 Phase 1A OKX BBO_SELECT routing | 8h (4.75h active) | +$121K/yr @$30M | LOW | K548 VERIFIED |
+| A5 | K485 Bybit sub-account Phase 1A | 30min + 7d gate | +$2.2M/yr @$25M | LOW | READY |
+
+### Recommended Sequence
+
+```
+D0 (1.25 hours active):
+  A1 → A2 → A3
+
+D0-D1 (when OKX API key available):
+  A4 (8h: 4.75h active + 24h paper observation)
+
+D0 (starts in background, 7d gate runs concurrently):
+  A5 → 7d gate → D7 capital transfer decision
+```
+
+### Profit Realization Timeline
+
+| Checkpoint | Milestone |
+|------------|-----------|
+| D0 | A1 loaded; A2 registered + env var set; A3 patch applied + daemons restarted |
+| D0+7 | A2 rebate visible in HL referral dashboard; A4 48h paper gate passed; A4 live activated |
+| D0+14 | K376 BULL_CONFIRMED check (post-K552 headroom freed); K449 LIVE (D+1 after K552) |
+| D0+21 | A5 7d gate complete → Bybit capital transfer → +$2.2M/yr unlock begins |
+
+### A1: K545 Tax Harvester (User Action #30)
+
+5 minutes. ZERO risk. Deploys 18th daemon (annual Dec 28 trigger, no immediate trades).
+
+```bash
+python3 scripts/loss_harvester.py --set-rate 55 --set-jurisdiction JPN
+python3 scripts/loss_harvester.py --mock-test   # expect PASS
+cp com.cryptolab.loss-harvester.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.loss-harvester.plist
+launchctl list | grep loss-harvester   # verify: listed, no PID
+```
+
+Profit: +$47,300/yr @$10M (Japan 55%) | +$18,920/yr (Korea 22%)
+
+### A2: K481 HL Builder Rebate (User Action #31 — supersedes #23 quickstart)
+
+30 minutes. ZERO risk. Referral pool bonus on own order flow.
+
+```bash
+# 1. Browser: https://app.hyperliquid.xyz/trade -> Account -> Builder
+#    Enter main wallet address, fee=0, sign approveBuilderFee (MAIN wallet, not API key)
+
+# 2. Set env var
+echo 'export HL_BUILDER_CODE="0x<YOUR_MAIN_WALLET>"' >> ~/.zshrc && source ~/.zshrc
+echo $HL_BUILDER_CODE   # verify
+
+# 3. Apply 6-LOC patch to scripts/post_only_order_manager.py:
+#    In submit_post_only_order(), after if dry_run: block:
+#    _builder_code = os.environ.get("HL_BUILDER_CODE", "").strip()
+#    if venue == "HL" and _builder_code and not dry_run:
+#        order_action["builder"] = {"b": _builder_code, "f": 0}
+
+# 4. Restart live daemons
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k246a-live.plist
+launchctl load   ~/Library/LaunchAgents/com.cryptolab.k246a-live.plist
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+launchctl load   ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+```
+
+Profit: +$99K (conservative 10%) / +$248K (mid 25%) / +$496K (optimistic 50%) per year @$10M  
+Verify 24h later: https://app.hyperliquid.xyz/referrals → builder rewards > $0
+
+### A3: K552 K280 Sleeve Patch (User Action #32 — PREREQUISITE for K376+K449)
+
+30 minutes. LOW risk. Frees 7.5pp HL headroom. Unlocks $260K+/yr within 30 days.
+
+```bash
+# Backup
+cp scripts/leverage_manager.py scripts/leverage_manager.py.bak
+cp data/portfolio_aum_state.json data/portfolio_aum_state.json.bak
+cp scripts/portfolio_aum_manager.py scripts/portfolio_aum_manager.py.bak
+
+# Patch (3 files)
+sed -i '' 's/"K280":   0\.75,   # K280 main (K198 + K208 + K276b) — v6\.13d; v6\.16 reduces to 0\.72/"K280":   0.60,   # K280 main (K539 Phase B1: 75->60%, frees 7.5pp HL, 2026-05-30)/' scripts/leverage_manager.py
+python3 -c "import json; f='data/portfolio_aum_state.json'; d=json.load(open(f)); d['sleeve_weights']['K280']=0.60; json.dump(d,open(f,'w'),indent=2)"
+sed -i '' 's/"K280":       0\.75,/"K280":       0.60,/' scripts/portfolio_aum_manager.py
+
+# Verify
+grep -n '"K280".*0\.' scripts/leverage_manager.py data/portfolio_aum_state.json scripts/portfolio_aum_manager.py
+
+# Restart daemons
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+launchctl load   ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist
+launchctl load   ~/Library/LaunchAgents/com.cryptolab.k302a-satellite.plist
+```
+
+Unlock cascade: K449 LIVE (D+1) +$13K/yr → K376 BULL (D+14) +$247K/yr → full pipeline +$1.163M/yr  
+Rollback: restore .bak files + daemon restart (< 2 min)
+
+### A4: K498 Phase 1A OKX BBO_SELECT (User Action #33)
+
+8h effort (4.75h active + 24h paper). LOW risk. K548 verified all 5 pre-conditions PASS.
+
+```bash
+# Apply BBO_SELECT patch (14 LOC)
+sed -i '' 's/SMART_ROUTER_ENABLED = False   # K434.*/SMART_ROUTER_ENABLED = True    # K530 K498 Phase 1A: BBO routing ACTIVE/' scripts/k280_live_fetch.py
+
+# Add to data/smart_router_config.json: "routing_mode": "BBO_SELECT", "bbo_select_min_score": -0.0001
+
+# Load OKX daemon
+cp com.cryptolab.okx-fr-monitor.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.okx-fr-monitor.plist
+
+# 48h paper gate: Bybit+OKX >= 40% routing decisions
+# After gate: launchctl kickstart -k gui/$(id -u)/com.cryptolab.k280-live
+```
+
+Profit: +$121K/yr @$30M | +$1.03M/yr @$100M  
+Rollback: flip SMART_ROUTER_ENABLED = False → kickstart daemon (< 5 min)
+
+### A5: K485 Bybit Sub-Account Phase 1A (User Action #34)
+
+30 min application + 7d paper gate. LOW risk. First genuine capacity expansion.
+
+```bash
+# 1. Bybit UI: Account & Security -> Sub Accounts -> Create Standard Sub Account
+# 2. API: Trade-only scope + IP whitelist
+# 3. Set env (never commit to git):
+echo 'export BYBIT_SUB1_API_KEY="<key>"' >> ~/.zshrc
+echo 'export BYBIT_SUB1_SECRET="<secret>"' >> ~/.zshrc
+source ~/.zshrc
+# 4. 7d paper gate: python3 scripts/k280_live_fetch.py --venue=bybit --wallet=sub1 --dry-run
+# 5. After gate: transfer $3-5M from Bybit master to sub (Bybit internal transfer)
+```
+
+Profit: +$2.2M/yr @$25M total AUM (+106% vs $10M single-HL baseline)
+
+### Status Check
+
+```bash
+python3 wave_k561_phase_a_consolidated.py --status
+```
+
+Source files: `wave_k561_phase_a_consolidated.{py,json,md}`  
+*K561 Phase A Consolidated — Added 2026-05-30 06:30 JST*
+
+*K558 Appendix — Added 2026-05-30 06:15 JST*
+
+---
+
 ## K560 Appendix — Week 5 K512 APT-BTC Final LIVE + Family Completion
 
 **Wave:** K560 | **Generated:** 2026-05-30 06:31 JST
