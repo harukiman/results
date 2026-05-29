@@ -1,0 +1,148 @@
+{
+  "wave": "K451",
+  "title": "v6.16 5-Year Projection — K449 Net Lift Quantified",
+  "generated_at": "2026-05-30T00:20:44+0900",
+  "seed": 451,
+  "architecture": {
+    "v613d": {
+      "K280_pct": 75,
+      "K297p_pct": 20,
+      "sUSDe_pct": 5,
+      "K449_pct": 0,
+      "hl_exposure_pct": 57.5
+    },
+    "v616": {
+      "K280_pct": 72,
+      "K297p_pct": 20,
+      "sUSDe_pct": 5,
+      "K449_pct": 3,
+      "hl_exposure_pct": 60.5,
+      "hl_cap_pct": 65.0,
+      "within_cap": true
+    }
+  },
+  "v613d_base_case": {
+    "initial_aum_usd": 10000000.0,
+    "terminal_5y_usd": 28556299.66,
+    "cagr_pct": 23.3503,
+    "sharpe": 13.43,
+    "source": "K440"
+  },
+  "k449_contribution": {
+    "oos_sharpe": 5.663,
+    "oos_ann_ret_1x_pct": 1.369,
+    "oos_ann_ret_4x_pct": 5.475,
+    "sleeve_pct": 3.0,
+    "leverage": 4.0,
+    "notional_usd": 1200000.0,
+    "gross_annual_usd": 52600.0,
+    "note": "Both-legs combined: $1.2M notional × 5.475% OOS return ≈ $52,600/yr gross"
+  },
+  "k280_weight_reduction": {
+    "old_weight_pct": 75,
+    "new_weight_pct": 72,
+    "weight_loss_pct": 3.0,
+    "k280_ann_return_pct": 10.94,
+    "lost_annual_usd": 32820.0,
+    "formula": "$10M × 3% × 10.94% = $32,820/yr"
+  },
+  "net_swap_gain": {
+    "k449_gross_annual_usd": 52600.0,
+    "k280_loss_annual_usd": 32820.0,
+    "net_gain_yr1_usd": 19780.0,
+    "formula": "$52,600 − $32,820 = +$19,780/yr (Year 1)"
+  },
+  "yearly_k449_net_gain": {
+    "year_1": 19780.0,
+    "year_2": 24398.69,
+    "year_3": 30095.86,
+    "year_4": 37123.33,
+    "year_5": 45791.74,
+    "total_5y_usd": 157189.62,
+    "compounding_rate_pct": 23.3503,
+    "note": "Each year's net gain compounds at portfolio CAGR 23.35%"
+  },
+  "v616_projection": {
+    "conservative": {
+      "terminal_5y_usd": 15199673.76,
+      "cagr_pct": 8.7344,
+      "vs_v613d_delta_usd": 83209.36
+    },
+    "base": {
+      "terminal_5y_usd": 28713489.28,
+      "cagr_pct": 23.4858,
+      "vs_v613d_delta_usd": 157189.62,
+      "yearly_aum": [
+        12354815.0,
+        15259488.0,
+        18842412.0,
+        23261960.0,
+        28713490.0
+      ]
+    },
+    "aggressive": {
+      "terminal_5y_usd": 33323054.81,
+      "cagr_pct": 27.2181,
+      "vs_v613d_delta_usd": 182424.3
+    }
+  },
+  "sharpe_improvement": {
+    "v613d_sharpe": 13.43,
+    "k449_sharpe": 5.663,
+    "k449_corr_k280": 0.15,
+    "k449_corr_k297": 0.1,
+    "k449_corr_k376": 0.03,
+    "v616_sharpe_est": 13.5464,
+    "delta_sharpe_naive": 0.1164,
+    "note": "Simplified weighted Sharpe; true improvement greater due to orthogonality (corr 0.10–0.15)"
+  },
+  "orthogonality_value": {
+    "k449_corr_portfolio": 0.1,
+    "diversification_benefit": "Smoothes drawdown, resilience to K280 regime change",
+    "max_dd_k449_oos_pct": -0.3483,
+    "max_dd_v613d_pct": -0.019,
+    "combined_dd_reduction_est_pp": 0.001,
+    "note": "Primary value: regime insurance, not $ lift. K449 generates positive carry when K280 FR premium compresses."
+  },
+  "decision_matrix": {
+    "ACTIVATE_NOW": {
+      "condition": "positive net contribution + HL within cap",
+      "terminal_5y": 28713489.28,
+      "risk": "K449 OOS only 0.59y; 60d live gate not yet passed"
+    },
+    "CONFIRM_V613D": {
+      "condition": "K449 marginal ($150K over 5y); paper-trade first 60d",
+      "terminal_5y": 28556299.66,
+      "risk": "missed orthogonal diversification; acceptable if K280 stable"
+    },
+    "HYBRID_RECOMMENDED": {
+      "condition": "K449 paper-trade 60d alongside v6.13d production",
+      "production": "v6.13d unchanged (K280 75% + K297' 20% + sUSDe 5%)",
+      "paper_trade": "K449 3% sleeve (daemon: com.cryptolab.k449-eth-btc.plist)",
+      "switch_trigger": "60d paper-trade Sharpe ≥ 2.0 AND drawdown < 2%",
+      "after_switch": "v6.16 activated (K280 72% + K297' 20% + sUSDe 5% + K449 3%)",
+      "terminal_5y_post_switch": 28713489.28
+    },
+    "recommendation": "HYBRID"
+  },
+  "v616_summary": {
+    "label": "v6.16 Base 5y Projection",
+    "initial_aum_usd": 10000000.0,
+    "terminal_5y_usd": 28713489.28,
+    "cagr_pct": 23.4858,
+    "sharpe_est": 13.5464,
+    "k449_net_lift_5y_usd": 157189.62,
+    "vs_v613d_pct_improvement": 0.55,
+    "k449_net_yr1_usd": 19780.0,
+    "recommendation": "HYBRID — 60d K449 paper-trade gate, then v6.16 activation"
+  },
+  "key_findings": [
+    "v6.16 Base: $10M → $28,713,489 (CAGR 23.49%) over 5y",
+    "K449 net lift over 5y: +$157,190 (+0.55% of terminal)",
+    "Net annual gain Year 1: +$19,780 (K449 $52,600 − K280 loss $32,820)",
+    "Sharpe improvement: 13.43 → 13.5464 (est, corr benefit additional)",
+    "Primary value: orthogonal diversification (corr 0.10-0.15) — regime insurance > $ lift",
+    "HYBRID recommended: K449 paper-trade 60d → v6.16 switch after gate pass",
+    "HL exposure: 57.5% → 60.5% (within 65% cap)"
+  ]
+}

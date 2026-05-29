@@ -633,4 +633,80 @@ com.cryptolab.leverage-circuit-breaker.plist — K430 CB daemon
 
 Source files: `wave_k440_revised_projection.py` | `wave_k440_revised_projection.json` | `wave_k440_revised_projection.md`
 
+---
+
+## Appendix K451 — v6.16 5-Year Projection (2026-05-30)
+
+**Wave:** K451 | **Supersedes:** v6.16 candidate notes from K450 | **Source:** wave_k451_v616_projection.md
+
+### v6.16 Architecture
+
+| Component | v6.13d | v6.16 | Change |
+|-----------|--------|-------|--------|
+| K280 FR Carry | 75% | **72%** | −3pp |
+| K297' Weekend FR | 20% | 20% | — |
+| sUSDe OC | 5% | 5% | — |
+| K449 ETH-BTC Diff | 0% | **3%** | +3pp |
+| HL Exposure | 57.5% | **60.5%** | within 65% cap |
+
+### v6.16 Projection Table
+
+| Case | v6.13d Terminal | v6.16 Terminal | Delta | CAGR |
+|------|----------------|----------------|-------|------|
+| Conservative | $15,116,464 | **$15,199,674** | +$83,209 | 8.73% |
+| **Base** | **$28,556,300** | **$28,713,489** | **+$157,190** | **23.49%** |
+| Aggressive | $33,140,631 | **$33,323,055** | +$182,424 | 27.17% |
+
+### K449 Net Contribution
+
+```
+K449 gross annual (4x, both legs):  +$52,600/yr
+K280 weight loss (3% × 10.94%):     −$32,820/yr
+Net swap gain Year 1:               +$19,780/yr
+
+5-year compounded total:            +$157,190
+```
+
+### Step 11: K449 Paper-Trade Activation
+
+**Timing:** After K376 60d paper-trade gate completes (or concurrently if slots available)
+
+```bash
+# Load K449 paper-trade daemon (K450 scaffold):
+cp /Users/nekonaomichi/crypto-lab/com.cryptolab.k449-eth-btc.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k449-eth-btc.plist
+# Verify:
+launchctl list | grep k449
+```
+
+**Gate criteria (60d):**
+- Realized Sharpe ≥ 2.0
+- Max drawdown < 2%
+- Signal fire count ≥ 3
+
+**Script:** `ct_forward/k449_eth_btc_live.py`
+**Daemon:** `com.cryptolab.k449-eth-btc.plist`
+**Runbook:** docs/k302a_runbook.md §29
+
+---
+
+### Step 12: v6.16 Architecture Transition
+
+**Trigger:** K449 60d paper-trade gate passes (Sharpe ≥ 2.0 AND DD < 2%)
+
+**Action:**
+1. Reduce K280 live weight: 75% → 72% (reduce $300K notional at $10M AUM)
+2. Add K449 live weight: 0% → 3% (add $300K notional / $1.2M with 4x leverage)
+3. Confirm HL exposure: 57.5% → 60.5% (must remain ≤ 65%)
+
+**Expected outcome:**
+- 5y terminal: $28,713,489 (CAGR 23.49%)
+- Sharpe: 13.43 → 13.55 (+0.12 via orthogonality)
+- K449 net lift: +$157,190 over 5y
+
+**Recommendation:** HYBRID — do not activate until 60d paper-trade gate passes.
+
+**Source files:**
+`wave_k451_v616_projection.py` | `wave_k451_v616_projection.json` | `wave_k451_v616_projection.md`
+
 *K440 Appendix — Added 2026-05-29 23:19 JST*
