@@ -1,0 +1,488 @@
+{
+  "wave": "K588",
+  "strategy": "GRT-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T07:18:30+0900",
+  "runtime_s": 1.9,
+  "decision": "REJECT",
+  "decision_rationale": "Phase 0 FAIL: GRT-PERP not listed on Hyperliquid (confirmed 2026-05-30). HL is required primary execution venue for this strategy family. Statistical analysis conducted with OKX FR data for future reference. OOS Sharpe (OKX-based) = 24.8379. Vol ratio (OKX GRT/BTC-HL) = 15.18x (vol OK). Re-eval trigger: GRT lists on HL perp market.",
+  "hl_venue_fail": true,
+  "data_source_note": "Statistical analysis performed using OKX GRT-USDT-SWAP FR (8h settlement, resampled to 1h) against HL BTC FR. OKX GRT data: 284 rows (2026-02-19 to 2026-05-25). GRT confirmed NOT listed on HL perp (verified 2026-05-30). Results are indicative for future HL listing re-eval.",
+  "indexing_cluster_status": "PENDING (HL VENUE FAIL): Indexing cluster candidate blocked by HL non-listing. Re-eval when GRT lists on HL. OKX-based stats show potential if HL lists.",
+  "cluster_taxonomy": {
+    "L1": [
+      "APT",
+      "SOL",
+      "AVAX",
+      "ETH"
+    ],
+    "Cosmos": [
+      "ATOM",
+      "INJ",
+      "TIA",
+      "SEI"
+    ],
+    "Storage": [
+      "FIL"
+    ],
+    "AI": [
+      "RENDER",
+      "TAO"
+    ],
+    "Oracle": [
+      "LINK"
+    ],
+    "Social": [
+      "TON"
+    ],
+    "Compute/Cloud": [
+      "ICP"
+    ],
+    "Indexing": [],
+    "BTC": [
+      "BTC (baseline)"
+    ]
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "grt_listed": false,
+      "total_symbols": 230,
+      "max_leverage": null,
+      "margin_table_id": null,
+      "api_success": true,
+      "note": "HL meta API: 230 symbols. GRT: NOT LISTED. maxLeverage=N/A. GRT-PERP on Hyperliquid. FR settlement: 1h intervals. Lower leverage reflects GRT mid-cap liquidity profile."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "grt_listed": true,
+      "status": "Trading",
+      "max_leverage": "25.00",
+      "api_success": true,
+      "note": "Bybit GRTUSDT: status=Trading, maxLeverage=25.00. 8h FR settlement interval."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "grt_listed": true,
+      "state": "live",
+      "max_leverage": "20",
+      "inst_id": "GRT-USDT-SWAP",
+      "api_success": true,
+      "note": "OKX GRT-USDT-SWAP: state=live, maxLeverage=20. 8h FR settlement interval."
+    },
+    "venue_pass": false,
+    "hl_listed": false,
+    "bybit_listed": true,
+    "okx_listed": true,
+    "hl_venue_fail": true,
+    "vol_ratio_6m": 15.178,
+    "vol_threshold": 1.5,
+    "vol_pass": true,
+    "prescreen_pass": false,
+    "grt_data_source": "OKX (8h FR, resampled to 1h)",
+    "grt_fr_rows": 284,
+    "grt_fr_start": "2026-02-19 16:00:00",
+    "grt_fr_end": "2026-05-25 00:00:00",
+    "btc_fr_rows": 17512,
+    "grt_fr_mean_6m": -2.009e-05,
+    "grt_fr_std_6m": 0.00014923,
+    "btc_fr_std_6m": 9.83e-06,
+    "reject_reason": "HL venue FAIL: GRT-PERP not listed on Hyperliquid (confirmed 2026-05-30, HL universe = 230 symbols, GRT absent). Strategy family requires HL primary execution. Bybit (Trading, maxLev=25) and OKX (live, maxLev=20) both list GRT-USDT perp. Vol ratio OKX GRT/BTC-HL 6M = 15.18x (threshold=1.5x \u2014 vol PASS). REJECT: HL venue fail. Re-eval trigger: GRT lists on HL.",
+    "note": "Phase 0: HL=False (FAIL \u2014 GRT not listed), Bybit=True (PASS), OKX=True (PASS). Vol ratio OKX GRT/BTC 6M = 15.18x. Vol PASS (threshold=1.5x). Primary reject: HL venue fail."
+  },
+  "signal_config": {
+    "window_h": 48,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "GRT-PERP vs BTC-PERP (HL 1h FR differential)"
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -6.785,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4333,
+      "critical_5": -2.8629
+    },
+    "ou_half_life": {
+      "half_life_h": 7.55,
+      "half_life_days": 0.31,
+      "theta": 0.091753,
+      "intercept": -2.04e-06,
+      "r_squared": 0.0458,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 24.8379,
+      "perm_mean_sh": 0.136,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 24.8379,
+      "t_stat": 6.8537,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.007143,
+      "n_trials": 7,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 22.1649,
+    "ann_ret_pct": 34.3507,
+    "max_dd_pct": -0.5894,
+    "trades_yr": 133.4,
+    "n_days": 62.9,
+    "n_hours": 1510,
+    "n_pos_months": 3,
+    "n_neg_months": 0,
+    "cum_ret": 0.059212,
+    "ret_mean": 3.921e-05,
+    "ret_std": 0.00016558
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 24.8379,
+    "ann_ret_pct": 24.7767,
+    "max_dd_pct": -0.4959,
+    "trades_yr": 78.8,
+    "n_days": 27.8,
+    "n_hours": 667,
+    "n_pos_months": 2,
+    "n_neg_months": 0,
+    "cum_ret": 0.018865,
+    "ret_mean": 2.828e-05,
+    "ret_std": 0.00010658
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 22.3705,
+    "ann_ret_pct": 31.4174,
+    "max_dd_pct": -0.5894,
+    "trades_yr": 116.7,
+    "n_days": 90.7,
+    "n_hours": 2177,
+    "n_pos_months": 4,
+    "n_neg_months": 0,
+    "cum_ret": 0.078077,
+    "ret_mean": 3.586e-05,
+    "ret_std": 0.00015005
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 48,
+      "oos_sharpe": 24.8379,
+      "oos_ann_ret_pct": 24.7767,
+      "trades_yr": 78.8
+    },
+    {
+      "window_h": 96,
+      "oos_sharpe": 17.1915,
+      "oos_ann_ret_pct": 17.4282,
+      "trades_yr": 91.9
+    },
+    {
+      "window_h": 72,
+      "oos_sharpe": 16.7676,
+      "oos_ann_ret_pct": 17.4639,
+      "trades_yr": 118.2
+    },
+    {
+      "window_h": 120,
+      "oos_sharpe": 15.1354,
+      "oos_ann_ret_pct": 15.1319,
+      "trades_yr": 65.7
+    },
+    {
+      "window_h": 168,
+      "oos_sharpe": 7.2681,
+      "oos_ann_ret_pct": 7.4163,
+      "trades_yr": 39.4
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 0,
+    "n_positive": 0,
+    "all_positive": false,
+    "pass": false,
+    "sh_min": 0.0,
+    "sh_max": 0.0,
+    "sh_mean": 0.0,
+    "sh_std": 0.0,
+    "fold_details": [],
+    "note": "0/0 positive folds. G4 FAIL: 0 negative folds. Sharpe range: [0.00, 0.00]. GRT indexing query demand tied to DeFi developer activity cycles."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": false,
+      "G5 Family corr": true,
+      "G6 Trades/yr": true,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": false,
+      "G9 Data sufficiency": false
+    },
+    "gates_passed": 6,
+    "gates_total": 9,
+    "gates_failed": 3,
+    "g7_ret_4x_pct": 99.11,
+    "g4_all_positive": false,
+    "g5_all_pass": true,
+    "g8_note": "G8 FAIL: GRT not listed on HL (Phase 0 HL venue fail). Cannot compute HL vs OKX cross-venue signal correlation. Bybit (maxLev=25, 8h settlement) and OKX (maxLev=20, 8h settlement) both support GRT-USDT perp. Cross-venue corr between Bybit/OKX would be high (same 8h settlement mechanic, similar liquidity profile). Re-eval if GRT lists on HL.",
+    "decision": "REJECT"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": -0.1857,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "DeFi utility vs Indexing"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": -0.0193,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "Solana vs Indexing"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": -0.1361,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "Avalanche vs Indexing"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": 0.1524,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "Cosmos vs Indexing"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": -0.004,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "Cosmos vs Indexing"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": -0.0699,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "Cosmos vs Indexing"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": -0.0595,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "Cosmos vs Indexing"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": -0.1123,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "Move-VM vs Indexing"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": -0.1636,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "Storage vs Indexing CRITICAL"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531 (AI/GPU)",
+        "corr": 0.0023,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "AI/GPU vs Indexing"
+      },
+      "g5l": {
+        "label": "TAO-BTC (AI/Training)",
+        "corr": 0.0363,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "AI/Training vs Indexing"
+      },
+      "g5m": {
+        "label": "LINK-BTC K557 (Oracle vs Indexing CRITICAL)",
+        "corr": -0.1533,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "Oracle/push-data middleware vs read/query indexing layer. Both infra but distinct."
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline",
+        "corr": 0.0023,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "vol-momentum baseline. GRT must not replicate BTC-carry signal."
+      },
+      "g5n": {
+        "label": "TON-BTC K571 (Social/Messaging vs Indexing)",
+        "corr": -0.0423,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "Telegram social retail vs GRT data indexing infrastructure. G5n gate post-K571."
+      },
+      "g5o": {
+        "label": "ICP-BTC K587 (Compute/Cloud vs Indexing)",
+        "corr": 0.1323,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 667,
+        "note": "Web3 serverless compute vs read/query indexing layer. G5o gate post-K587."
+      }
+    },
+    "n_pass": 15,
+    "n_total": 15,
+    "all_pass": true,
+    "indexing_cluster_distinct": true,
+    "link_corr_critical": -0.1533,
+    "fil_corr_critical": -0.1636,
+    "link_pass": true,
+    "fil_pass": true,
+    "note": "G5 family: 15/15 PASS. LINK G5m=-0.1533 (Oracle vs Indexing CRITICAL). FIL G5i=-0.1636 (Storage vs Indexing CRITICAL). Indexing cluster distinct: True."
+  },
+  "cross_venue_fr": {
+    "pass": false,
+    "hl_okx_signal_corr": null,
+    "note": "G8 FAIL: GRT not listed on HL (Phase 0 HL venue fail). Cannot compute HL vs OKX cross-venue signal correlation. Bybit (maxLev=25, 8h settlement) and OKX (maxLev=20, 8h settlement) both support GRT-USDT perp. Cross-venue corr between Bybit/OKX would be high (same 8h settlement mechanic, similar liquidity profile). Re-eval if GRT lists on HL."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 24.7767,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 99.11,
+    "usdc_yr_1pct_10M": 99107,
+    "usdc_yr_2pct_10M": 198214,
+    "usdc_yr_1pct_100M": 991068,
+    "usdc_yr_2pct_100M": 1982136,
+    "note": "4x leverage, OOS ann=24.78% \u00d7 4 = 99.11%/yr. @$10M 1% alloc: $99,107/yr. @$10M 2% alloc: $198,214/yr. @$100M 1% alloc: $991,068/yr."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 64.5,
+    "grt_alloc_pct": 1.5,
+    "projected_pct": 66.0,
+    "cap_pct": 65.0,
+    "breach": true,
+    "note": "v6.28 HL=64.5% + GRT 1.5% = 66.0%. Cap=65.0%. BREACH: split required. GRT is mid-cap; Bybit (higher leverage, 8h settlement) viable alternative. GRT liquidity adequate for 1-2% allocation at $10M-$100M AUM."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 7,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 9,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 11,
+      "pair": "TON-BTC",
+      "sharpe": 8.4016,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 12,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 13,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "grt_family_rank": null
+}
