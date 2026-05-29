@@ -1,0 +1,502 @@
+{
+  "wave": "K432",
+  "task": "Execution edge optimization (VIP tiers + slippage + smart routing)",
+  "generated_at": "2026-05-29T13:49:41.472981+00:00",
+  "runtime_s": 0.0008,
+  "data_sources": {
+    "hl_fees": "https://hyperliquid.gitbook.io/hyperliquid-docs/trading/fees (fetched 2026-05-29)",
+    "bybit_fees": "https://www.coinperps.com/learn/bybit-vip-program + datawallet.com (fetched 2026-05-29)"
+  },
+  "fee_schedules": {
+    "hl_volume_tiers": [
+      {
+        "tier": 0,
+        "name": "Tier0",
+        "vol_threshold_14d_usd": 0,
+        "taker_bps": 4.5,
+        "maker_bps": 1.5
+      },
+      {
+        "tier": 1,
+        "name": "Tier1",
+        "vol_threshold_14d_usd": 5000000,
+        "taker_bps": 4.0,
+        "maker_bps": 1.2
+      },
+      {
+        "tier": 2,
+        "name": "Tier2",
+        "vol_threshold_14d_usd": 25000000,
+        "taker_bps": 3.5,
+        "maker_bps": 0.8
+      },
+      {
+        "tier": 3,
+        "name": "Tier3",
+        "vol_threshold_14d_usd": 100000000,
+        "taker_bps": 3.0,
+        "maker_bps": 0.4
+      },
+      {
+        "tier": 4,
+        "name": "Tier4",
+        "vol_threshold_14d_usd": 500000000,
+        "taker_bps": 2.8,
+        "maker_bps": 0.0
+      },
+      {
+        "tier": 5,
+        "name": "Tier5",
+        "vol_threshold_14d_usd": 2000000000,
+        "taker_bps": 2.6,
+        "maker_bps": 0.0
+      },
+      {
+        "tier": 6,
+        "name": "Tier6",
+        "vol_threshold_14d_usd": 7000000000,
+        "taker_bps": 2.4,
+        "maker_bps": 0.0
+      }
+    ],
+    "hl_hype_staking": [
+      {
+        "tier": "None",
+        "hype_required": 0,
+        "discount_pct": 0.0
+      },
+      {
+        "tier": "Wood",
+        "hype_required": 10,
+        "discount_pct": 5.0
+      },
+      {
+        "tier": "Bronze",
+        "hype_required": 100,
+        "discount_pct": 10.0
+      },
+      {
+        "tier": "Silver",
+        "hype_required": 1000,
+        "discount_pct": 15.0
+      },
+      {
+        "tier": "Gold",
+        "hype_required": 10000,
+        "discount_pct": 20.0
+      },
+      {
+        "tier": "Platinum",
+        "hype_required": 100000,
+        "discount_pct": 30.0
+      },
+      {
+        "tier": "Diamond",
+        "hype_required": 500000,
+        "discount_pct": 40.0
+      }
+    ],
+    "hl_hip3_fee_reduction_pct": 90.0,
+    "bybit_vip_tiers": [
+      {
+        "tier": "VIP0",
+        "vol_30d_usd": 0,
+        "assets_usd": 0,
+        "maker_bps": 2.0,
+        "taker_bps": 5.5
+      },
+      {
+        "tier": "VIP1",
+        "vol_30d_usd": 10000000,
+        "assets_usd": 100000,
+        "maker_bps": 1.8,
+        "taker_bps": 4.0
+      },
+      {
+        "tier": "VIP2",
+        "vol_30d_usd": 25000000,
+        "assets_usd": 250000,
+        "maker_bps": 1.6,
+        "taker_bps": 3.75
+      },
+      {
+        "tier": "VIP3",
+        "vol_30d_usd": 50000000,
+        "assets_usd": 500000,
+        "maker_bps": 1.4,
+        "taker_bps": 3.5
+      },
+      {
+        "tier": "VIP4",
+        "vol_30d_usd": 100000000,
+        "assets_usd": 1000000,
+        "maker_bps": 1.2,
+        "taker_bps": 3.2
+      },
+      {
+        "tier": "VIP5",
+        "vol_30d_usd": 250000000,
+        "assets_usd": 2000000,
+        "maker_bps": 1.0,
+        "taker_bps": 3.2
+      },
+      {
+        "tier": "Supreme",
+        "vol_30d_usd": 500000000,
+        "assets_usd": 0,
+        "maker_bps": 0.0,
+        "taker_bps": 3.0
+      }
+    ]
+  },
+  "volume_estimation": {
+    "model_params": {
+      "leverage": 3.0,
+      "k208_weight_of_aum": 0.5625,
+      "k297p_weight_of_aum": 0.2,
+      "k208_roundtrips_per_year": 26,
+      "k297p_roundtrips_per_year": 4,
+      "maker_fill_rate_base": 0.62,
+      "maker_fill_rate_optimistic": 0.8,
+      "maker_fill_rate_pessimistic": 0.45
+    },
+    "k208_10m_aum": {
+      "aum_usd": 10000000,
+      "strategy": "K208",
+      "notional_deployed_usd": 16875000.0,
+      "roundtrips_per_year": 26,
+      "annual_volume_usd": 877500000.0,
+      "monthly_volume_usd": 73125000.0
+    },
+    "k208_50m_aum": {
+      "aum_usd": 50000000,
+      "strategy": "K208",
+      "notional_deployed_usd": 84375000.0,
+      "roundtrips_per_year": 26,
+      "annual_volume_usd": 4387500000.0,
+      "monthly_volume_usd": 365625000.0
+    },
+    "k297p_10m_aum": {
+      "aum_usd": 10000000,
+      "strategy": "K297p",
+      "notional_deployed_usd": 6000000.0,
+      "roundtrips_per_year": 4,
+      "annual_volume_usd": 48000000.0,
+      "monthly_volume_usd": 4000000.0
+    },
+    "k297p_50m_aum": {
+      "aum_usd": 50000000,
+      "strategy": "K297p",
+      "notional_deployed_usd": 30000000.0,
+      "roundtrips_per_year": 4,
+      "annual_volume_usd": 240000000.0,
+      "monthly_volume_usd": 20000000.0
+    }
+  },
+  "vip_qualification": {
+    "bybit_10m_aum": {
+      "monthly_vol_usd": 73125000.0,
+      "qualified_tier": "VIP5",
+      "maker_bps": 1.0,
+      "taker_bps": 3.2
+    },
+    "bybit_50m_aum": {
+      "monthly_vol_usd": 365625000.0,
+      "qualified_tier": "VIP5",
+      "maker_bps": 1.0,
+      "taker_bps": 3.2
+    },
+    "hl_10m_aum": {
+      "vol_14d_usd": 33750000.0,
+      "qualified_tier": "Tier2",
+      "maker_bps": 0.8,
+      "taker_bps": 3.5
+    },
+    "hl_50m_aum": {
+      "vol_14d_usd": 168750000.0,
+      "qualified_tier": "Tier3",
+      "maker_bps": 0.4,
+      "taker_bps": 3.0
+    }
+  },
+  "fee_savings_analysis": {
+    "k208_bybit_10m": {
+      "aum_usd": 10000000,
+      "strategy": "K208",
+      "venue": "Bybit",
+      "annual_volume_usd": 877500000.0,
+      "tier_base": "VIP0",
+      "tier_qualified": "VIP5",
+      "monthly_vol_usd": 73125000.0,
+      "base_blended_bps": 3.33,
+      "current_blended_bps": 1.836,
+      "savings_bps_per_rt": 1.494,
+      "annual_fee_savings_usd": 131098.0,
+      "post_only_additional_usd": 23166.0,
+      "total_fee_optimization_usd": 154264.0,
+      "maker_bps": 1.0,
+      "taker_bps": 3.2
+    },
+    "k208_bybit_50m": {
+      "aum_usd": 50000000,
+      "strategy": "K208",
+      "venue": "Bybit",
+      "annual_volume_usd": 4387500000.0,
+      "tier_base": "VIP0",
+      "tier_qualified": "VIP5",
+      "monthly_vol_usd": 365625000.0,
+      "base_blended_bps": 3.33,
+      "current_blended_bps": 1.836,
+      "savings_bps_per_rt": 1.494,
+      "annual_fee_savings_usd": 655492.0,
+      "post_only_additional_usd": 115830.0,
+      "total_fee_optimization_usd": 771322.0,
+      "maker_bps": 1.0,
+      "taker_bps": 3.2
+    },
+    "k297p_hl_10m": {
+      "aum_usd": 10000000,
+      "strategy": "K297p",
+      "venue": "HL",
+      "annual_volume_usd": 48000000.0,
+      "tier_base": "Tier0",
+      "tier_qualified": "Tier0",
+      "vol_14d_proxy_usd": 1846154.0,
+      "base_blended_bps": 2.64,
+      "current_blended_bps": 2.64,
+      "savings_bps": 0.0,
+      "annual_fee_savings_usd": 0.0,
+      "hype_gold_additional_usd": 2534.0,
+      "total_fee_optimization_usd": 2534.0
+    },
+    "k297p_hl_50m": {
+      "aum_usd": 50000000,
+      "strategy": "K297p",
+      "venue": "HL",
+      "annual_volume_usd": 240000000.0,
+      "tier_base": "Tier0",
+      "tier_qualified": "Tier1",
+      "vol_14d_proxy_usd": 9230769.0,
+      "base_blended_bps": 2.64,
+      "current_blended_bps": 2.264,
+      "savings_bps": 0.376,
+      "annual_fee_savings_usd": 9024.0,
+      "hype_gold_additional_usd": 10867.0,
+      "total_fee_optimization_usd": 19891.0
+    }
+  },
+  "slippage_model": {
+    "model": "square_root_almgren_chriss",
+    "eta": 10.0,
+    "paxg_oi_usd": 15000000,
+    "spx_oi_usd": 8000000,
+    "paxg_daily_vol_proxy_usd": 4500000.0,
+    "spx_daily_vol_proxy_usd": 2400000.0,
+    "limit_ladder_save_bps": 2.0,
+    "at_10m_aum": {
+      "aum_usd": 10000000,
+      "k297p_notional_usd": 6000000.0,
+      "paxg_position_usd": 3600000.0,
+      "spx_position_usd": 2400000.0,
+      "paxg_oi_pct": 24.0,
+      "spx_oi_pct": 30.0,
+      "paxg_impact_bps_per_trade": 8.94,
+      "spx_impact_bps_per_trade": 10.0,
+      "weighted_impact_bps_per_trade": 9.37,
+      "annual_gross_slippage_usd": 44960.0,
+      "limit_ladder_savings_usd": 9600.0,
+      "net_slippage_after_ladder_usd": 35360.0
+    },
+    "at_50m_aum": {
+      "aum_usd": 50000000,
+      "k297p_notional_usd": 30000000.0,
+      "paxg_position_usd": 18000000.0,
+      "spx_position_usd": 12000000.0,
+      "paxg_oi_pct": 120.0,
+      "spx_oi_pct": 150.0,
+      "paxg_impact_bps_per_trade": 20.0,
+      "spx_impact_bps_per_trade": 22.36,
+      "weighted_impact_bps_per_trade": 20.94,
+      "annual_gross_slippage_usd": 502663.0,
+      "limit_ladder_savings_usd": 48000.0,
+      "net_slippage_after_ladder_usd": 454663.0
+    }
+  },
+  "smart_routing": {
+    "description": "Distribute K208 BTC perp entries across HL + Bybit + OKX, selecting venue by current FR + best maker rebate",
+    "benefit_bps_low": 1.0,
+    "benefit_bps_high": 3.0,
+    "at_10m_aum": {
+      "aum_usd": 10000000,
+      "k208_annual_volume_usd": 877500000.0,
+      "smart_routing_benefit_low_usd": 87750.0,
+      "smart_routing_benefit_mid_usd": 175500.0,
+      "smart_routing_benefit_high_usd": 263250.0,
+      "implementation_effort_loc": 300,
+      "implementation_effort_waves": 1
+    },
+    "at_50m_aum": {
+      "aum_usd": 50000000,
+      "k208_annual_volume_usd": 4387500000.0,
+      "smart_routing_benefit_low_usd": 438750.0,
+      "smart_routing_benefit_mid_usd": 877500.0,
+      "smart_routing_benefit_high_usd": 1316250.0,
+      "implementation_effort_loc": 300,
+      "implementation_effort_waves": 1
+    }
+  },
+  "aggregate_lift": {
+    "at_10m_aum": {
+      "aum_usd": 10000000,
+      "components": {
+        "bybit_vip_tier_k208_usd": 154264.0,
+        "bybit_tier_qualified": "VIP5",
+        "hl_volume_tier_hype_stake_k297p_usd": 2534.0,
+        "hl_tier_qualified": "Tier0",
+        "slippage_ladder_k297p_usd": 9600.0,
+        "smart_routing_k208_usd": 175500.0
+      },
+      "total_execution_lift_usd_yr": 341898.0,
+      "pct_of_aum": 3.419,
+      "bybit_monthly_vol_usd": 73125000.0,
+      "k208_bybit_detail": {
+        "aum_usd": 10000000,
+        "strategy": "K208",
+        "venue": "Bybit",
+        "annual_volume_usd": 877500000.0,
+        "tier_base": "VIP0",
+        "tier_qualified": "VIP5",
+        "monthly_vol_usd": 73125000.0,
+        "base_blended_bps": 3.33,
+        "current_blended_bps": 1.836,
+        "savings_bps_per_rt": 1.494,
+        "annual_fee_savings_usd": 131098.0,
+        "post_only_additional_usd": 23166.0,
+        "total_fee_optimization_usd": 154264.0,
+        "maker_bps": 1.0,
+        "taker_bps": 3.2
+      },
+      "k297p_hl_detail": {
+        "aum_usd": 10000000,
+        "strategy": "K297p",
+        "venue": "HL",
+        "annual_volume_usd": 48000000.0,
+        "tier_base": "Tier0",
+        "tier_qualified": "Tier0",
+        "vol_14d_proxy_usd": 1846154.0,
+        "base_blended_bps": 2.64,
+        "current_blended_bps": 2.64,
+        "savings_bps": 0.0,
+        "annual_fee_savings_usd": 0.0,
+        "hype_gold_additional_usd": 2534.0,
+        "total_fee_optimization_usd": 2534.0
+      },
+      "slippage_detail": {
+        "aum_usd": 10000000,
+        "k297p_notional_usd": 6000000.0,
+        "paxg_position_usd": 3600000.0,
+        "spx_position_usd": 2400000.0,
+        "paxg_oi_pct": 24.0,
+        "spx_oi_pct": 30.0,
+        "paxg_impact_bps_per_trade": 8.94,
+        "spx_impact_bps_per_trade": 10.0,
+        "weighted_impact_bps_per_trade": 9.37,
+        "annual_gross_slippage_usd": 44960.0,
+        "limit_ladder_savings_usd": 9600.0,
+        "net_slippage_after_ladder_usd": 35360.0
+      },
+      "routing_detail": {
+        "aum_usd": 10000000,
+        "k208_annual_volume_usd": 877500000.0,
+        "smart_routing_benefit_low_usd": 87750.0,
+        "smart_routing_benefit_mid_usd": 175500.0,
+        "smart_routing_benefit_high_usd": 263250.0,
+        "implementation_effort_loc": 300,
+        "implementation_effort_waves": 1
+      }
+    },
+    "at_50m_aum": {
+      "aum_usd": 50000000,
+      "components": {
+        "bybit_vip_tier_k208_usd": 771322.0,
+        "bybit_tier_qualified": "VIP5",
+        "hl_volume_tier_hype_stake_k297p_usd": 19891.0,
+        "hl_tier_qualified": "Tier1",
+        "slippage_ladder_k297p_usd": 48000.0,
+        "smart_routing_k208_usd": 877500.0
+      },
+      "total_execution_lift_usd_yr": 1716713.0,
+      "pct_of_aum": 3.4334,
+      "bybit_monthly_vol_usd": 365625000.0,
+      "k208_bybit_detail": {
+        "aum_usd": 50000000,
+        "strategy": "K208",
+        "venue": "Bybit",
+        "annual_volume_usd": 4387500000.0,
+        "tier_base": "VIP0",
+        "tier_qualified": "VIP5",
+        "monthly_vol_usd": 365625000.0,
+        "base_blended_bps": 3.33,
+        "current_blended_bps": 1.836,
+        "savings_bps_per_rt": 1.494,
+        "annual_fee_savings_usd": 655492.0,
+        "post_only_additional_usd": 115830.0,
+        "total_fee_optimization_usd": 771322.0,
+        "maker_bps": 1.0,
+        "taker_bps": 3.2
+      },
+      "k297p_hl_detail": {
+        "aum_usd": 50000000,
+        "strategy": "K297p",
+        "venue": "HL",
+        "annual_volume_usd": 240000000.0,
+        "tier_base": "Tier0",
+        "tier_qualified": "Tier1",
+        "vol_14d_proxy_usd": 9230769.0,
+        "base_blended_bps": 2.64,
+        "current_blended_bps": 2.264,
+        "savings_bps": 0.376,
+        "annual_fee_savings_usd": 9024.0,
+        "hype_gold_additional_usd": 10867.0,
+        "total_fee_optimization_usd": 19891.0
+      },
+      "slippage_detail": {
+        "aum_usd": 50000000,
+        "k297p_notional_usd": 30000000.0,
+        "paxg_position_usd": 18000000.0,
+        "spx_position_usd": 12000000.0,
+        "paxg_oi_pct": 120.0,
+        "spx_oi_pct": 150.0,
+        "paxg_impact_bps_per_trade": 20.0,
+        "spx_impact_bps_per_trade": 22.36,
+        "weighted_impact_bps_per_trade": 20.94,
+        "annual_gross_slippage_usd": 502663.0,
+        "limit_ladder_savings_usd": 48000.0,
+        "net_slippage_after_ladder_usd": 454663.0
+      },
+      "routing_detail": {
+        "aum_usd": 50000000,
+        "k208_annual_volume_usd": 4387500000.0,
+        "smart_routing_benefit_low_usd": 438750.0,
+        "smart_routing_benefit_mid_usd": 877500.0,
+        "smart_routing_benefit_high_usd": 1316250.0,
+        "implementation_effort_loc": 300,
+        "implementation_effort_waves": 1
+      }
+    }
+  },
+  "decision": {
+    "accept": true,
+    "rationale": "High ROI execution optimization. $10M lift ~+1% additional yield, $50M lift ~+1.3% additional yield.",
+    "total_lift_10m_usd_yr": 341898.0,
+    "total_lift_50m_usd_yr": 1716713.0,
+    "total_lift_10m_pct_aum": 3.419,
+    "total_lift_50m_pct_aum": 3.4334,
+    "k433_priority": [
+      "K433: Smart router daemon (K208 cross-venue best-fee routing, ~300 LOC)",
+      "K434: Bybit VIP tier tracking + alert when tier changes",
+      "K435: HL HYPE stake optimizer (stake sizing vs opportunity cost)",
+      "K436: POST_ONLY order manager with IOC fallback for K208/K297p"
+    ]
+  }
+}
