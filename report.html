@@ -13129,6 +13129,102 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 
   <hr class="divider">
 
+  <!-- ==================== K548 OKX PRE-CONDITIONS VERIFICATION ==================== -->
+  <section id="k548-okx-preconditions" style="padding:24px 0;">
+    <div class="card" style="border-left:4px solid #39d2c0;background:linear-gradient(135deg,rgba(57,210,192,0.08),rgba(57,210,192,0.02));">
+      <h2 style="color:#39d2c0;">Wave K548 — K498 OKX Pre-conditions Verification</h2>
+      <p style="color:#aaa;margin-top:4px;">2026-05-30 06:15 JST | VERDICT: <strong style="color:#39d2c0;">✓ ALL 5 ITEMS CONFIRMED — K530 PLAYBOOK ACTIONABLE</strong></p>
+      <details open>
+        <summary><strong>✓ K548: All 5 pre-conditions confirmed. K530 14-LOC patch READY FOR IMMEDIATE ACTIVATION.</strong></summary>
+        <div style="margin-top:12px;font-family:'SF Mono','Fira Code',monospace;font-size:0.9em;">
+          <p><strong>Phase 1: Direct File State Verification</strong></p>
+          <table style="width:100%;border-collapse:collapse;margin:8px 0;background:var(--bg-card);border:1px solid var(--border);">
+            <tr style="background:var(--bg-tertiary);border-bottom:1px solid var(--border);">
+              <th style="padding:8px;text-align:left;color:#39d2c0;">Item</th>
+              <th style="padding:8px;text-align:left;">Expected</th>
+              <th style="padding:8px;text-align:left;">Actual</th>
+              <th style="padding:8px;text-align:left;">Status</th>
+              <th style="padding:8px;text-align:left;">Evidence</th>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px;color:#39d2c0;"><strong>1. SMART_ROUTER_ENABLED</strong></td>
+              <td style="padding:8px;">False</td>
+              <td style="padding:8px;color:#3fb950;"><strong>False</strong></td>
+              <td style="padding:8px;color:#3fb950;">✓ CONFIRMED</td>
+              <td style="padding:8px;color:#aaa;">k280_live_fetch.py:159 = False</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px;color:#39d2c0;"><strong>2. routing_mode field</strong></td>
+              <td style="padding:8px;">MISSING</td>
+              <td style="padding:8px;color:#3fb950;"><strong>MISSING</strong></td>
+              <td style="padding:8px;color:#3fb950;">✓ CONFIRMED</td>
+              <td style="padding:8px;color:#aaa;">smart_router_config.json (defaults to HL_OVERFLOW)</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px;color:#39d2c0;"><strong>3. OKX daemon status</strong></td>
+              <td style="padding:8px;">SCAFFOLD-READY</td>
+              <td style="padding:8px;color:#3fb950;"><strong>SCAFFOLD-READY</strong></td>
+              <td style="padding:8px;color:#3fb950;">✓ CONFIRMED</td>
+              <td style="padding:8px;color:#aaa;">okx_dashboard.json status field | last_poll 2026-05-30 00:39 JST</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:8px;color:#39d2c0;"><strong>4. Plist file exists</strong></td>
+              <td style="padding:8px;">EXISTS</td>
+              <td style="padding:8px;color:#3fb950;"><strong>EXISTS</strong></td>
+              <td style="padding:8px;color:#3fb950;">✓ CONFIRMED</td>
+              <td style="padding:8px;color:#aaa;">com.cryptolab.okx-fr-monitor.plist (47 lines, K456)</td>
+            </tr>
+            <tr>
+              <td style="padding:8px;color:#39d2c0;"><strong>5. launchctl NOT loaded</strong></td>
+              <td style="padding:8px;">NOT LOADED</td>
+              <td style="padding:8px;color:#3fb950;"><strong>NOT LOADED</strong></td>
+              <td style="padding:8px;color:#3fb950;">✓ CONFIRMED</td>
+              <td style="padding:8px;color:#aaa;">Not in ~/Library/LaunchAgents (expected pre-activation)</td>
+            </tr>
+          </table>
+
+          <p style="margin-top:12px;"><strong>Phase 2: K530 Claim Verification</strong></p>
+          <ul style="margin-left:20px;">
+            <li style="margin:6px 0;">✓ <strong>SMART_ROUTER_ENABLED = False:</strong> Exact match. K434 testing gate confirmed (awaits activation by K530).</li>
+            <li style="margin:6px 0;">✓ <strong>routing_mode missing:</strong> Exact match. Defaults to implicit HL_OVERFLOW. K530 patch adds: <code>"routing_mode": "BBO_SELECT"</code></li>
+            <li style="margin:6px 0;">✓ <strong>OKX SCAFFOLD-READY:</strong> Exact match. K456 integration complete. All symbols returning ok=True. Ready for daemon activation (Step 5).</li>
+            <li style="margin:6px 0;">✓ <strong>Plist file valid:</strong> ProgramArguments=[python3, scripts/okx_fr_fetcher.py, --daemon] | StartInterval=28800 (8h, matches OKX cycle) | WorkingDirectory=/Users/nekonaomichi/crypto-lab</li>
+            <li style="margin:6px 0;">✓ <strong>Pre-activation state clean:</strong> Plist exists in repo, not yet installed in LaunchAgents. Ready for Step 5: <code>cp plist ~/Library/LaunchAgents/ && launchctl load</code></li>
+          </ul>
+
+          <p style="margin-top:12px;"><strong>Phase 3: Readiness Scoring</strong></p>
+          <ul style="margin-left:20px;">
+            <li style="margin:6px 0;"><strong>Critical items (1-3) all match K530:</strong> 3/3 PASS ✓</li>
+            <li style="margin:6px 0;"><strong>Plist + launchctl state:</strong> 2/2 PASS ✓</li>
+            <li style="margin:6px 0;"><strong>Overall readiness:</strong> <strong style="color:#3fb950;">100% (READY FOR ACTIVATION)</strong></li>
+          </ul>
+
+          <p style="margin-top:12px;"><strong>Phase 4: K530 vs K548 Consistency</strong></p>
+          <ul style="margin-left:20px;">
+            <li style="margin:6px 0;"><strong>K530 timestamp:</strong> 2026-05-30 05:08 JST</li>
+            <li style="margin:6px 0;"><strong>K548 timestamp:</strong> 2026-05-30 06:15 JST</li>
+            <li style="margin:6px 0;"><strong>Time delta:</strong> 67 minutes (recent, within acceptable drift)</li>
+            <li style="margin:6px 0;"><strong>State changed:</strong> NO — All 5 items unchanged from K530 expectations</li>
+            <li style="margin:6px 0;"><strong>Conclusion:</strong> <strong style="color:#3fb950;">K530 claims verified accurate. Playbook ready for immediate user activation.</strong></li>
+          </ul>
+
+          <p style="margin-top:12px;"><strong>K530 Playbook Actionability</strong></p>
+          <div style="background:var(--bg-tertiary);border-left:4px solid #39d2c0;padding:12px;margin:8px 0;border-radius:4px;">
+            <p><strong style="color:#39d2c0;">Status: YES — READY FOR IMMEDIATE ACTIVATION</strong></p>
+            <p style="margin-top:6px;">All 5 pre-conditions confirmed as of K548 verification timestamp. K530 14-LOC patch is accurate and actionable. User can proceed immediately with Steps 2-8 of the 8-step activation checklist.</p>
+            <p style="margin-top:6px;"><strong>Next steps:</strong> Apply K530 patch (Step 2) → API key setup (Step 3) → 48h dry-run (Step 4) → daemon load (Step 5) → 24h observation (Step 6) → live activation (Step 7) → monitoring (Step 8)</p>
+            <p style="margin-top:6px;"><strong>Effort:</strong> 8 hours total | <strong style="color:#39d2c0;">ROI: $15,125/hr</strong> | <strong style="color:#3fb950;">Expected lift: +$121K/yr @ $30M AUM | +$1.03M/yr @ $100M AUM</strong></p>
+          </div>
+        </div>
+      </details>
+    </div>
+    <div style="margin-top:10px;color:#6e7681;font-size:0.72rem;text-align:right;">
+      K548 OKX pre-conditions verification | 2026-05-30 06:15 JST | wave_k548_okx_preconditions_verify.{py,json,md}
+    </div>
+  </section>
+
+  <hr class="divider">
+
   <!-- ==================== FOOTER ==================== -->
   <footer class="report-footer">
     <p>Systematic Alpha Discovery in MEXC Perpetual Futures &nbsp;|&nbsp; crypto-lab &nbsp;|&nbsp; Research Baseline v4.1 / Production v6.13d K302a (K280 75% + K297' SPX-filtered 20% + sUSDe OC 5%)</p>
