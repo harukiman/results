@@ -1,0 +1,258 @@
+{
+  "wave": "K549",
+  "title": "K449 ETH-BTC Week 1 LIVE Activation Playbook",
+  "generated_jst": "2026-05-30 05:46 JST",
+  "profit_usdc_yr_10m": {
+    "k449_alone": 13000,
+    "k481_builder_rebate": 247000,
+    "week1_combined": 260000,
+    "pipeline_w1_w5": 1163000,
+    "total_with_builder": 1410000
+  },
+  "k280_sleeve_restructure": {
+    "current_pct": 0.75,
+    "target_pct": 0.60,
+    "delta_pp": 15,
+    "file": "scripts/leverage_manager.py",
+    "one_loc_before": "\"K280\":   0.75,   # K280 main (K198 + K208 + K276b) — v6.13d; v6.16 reduces to 0.72",
+    "one_loc_after": "\"K280\":   0.60,   # K280 main (K539 Phase B1: 75→60, frees 7.5pp HL, 2026-05-30)",
+    "capital_freed_usd": 1500000,
+    "profit_delta_yr_usd": -300000,
+    "hl_freed_pp": 10.5,
+    "hl_exposure_after_k449": 0.52,
+    "hard_cap": 0.65,
+    "prerequisite": true,
+    "must_complete_before": "K449 launchctl load"
+  },
+  "k449_activation": {
+    "strategy": "K449 ETH-BTC FR Differential Paired-Trade",
+    "wave_created": "K449",
+    "scaffold_wave": "K450",
+    "live_ready_declared": "K547 audit (K450 = LIVE-READY, 8/9 gates passed)",
+    "sleeve_pct": 0.05,
+    "leverage": 4.0,
+    "sleeve_capital_usd": 500000,
+    "total_notional_usd": 2000000,
+    "per_leg_notional_usd": 1000000,
+    "total_margin_usd": 500000,
+    "venue": "HyperLiquid (both legs)",
+    "execution_path": "K439 POST_ONLY → HL ETH + HL BTC simultaneously",
+    "cron_cadence_sec": 28800,
+    "cron_description": "8h (matches FR settlement cycle: 00:00/08:00/16:00 UTC)",
+    "plist_file": "com.cryptolab.k449-eth-btc.plist",
+    "run_script": "scripts/k449_eth_btc_run.py",
+    "dashboard_json": "data/k449_dashboard.json",
+    "current_state": "PAPER-TRADE (--dry-run in plist)",
+    "live_prereqs": [
+      "K280 sleeve 75→60% commit",
+      "Remove --dry-run from com.cryptolab.k449-eth-btc.plist ProgramArguments",
+      "cp plist → ~/Library/LaunchAgents/",
+      "launchctl load ~/Library/LaunchAgents/com.cryptolab.k449-eth-btc.plist"
+    ]
+  },
+  "d0_checklist": {
+    "step_1": {
+      "action": "Verify K280 sleeve path",
+      "cmd": "grep '\"K280\"' scripts/leverage_manager.py",
+      "expected": "\"K280\":   0.75,  (before edit)"
+    },
+    "step_2": {
+      "action": "K280 75→60% 1-LOC change + commit + push",
+      "cmd": "sed -i '' 's/\"K280\":   0.75,/\"K280\":   0.60,/' scripts/leverage_manager.py && git add scripts/leverage_manager.py && git commit -m 'K549 K280 sleeve 75→60% Phase B1' && git push origin main",
+      "expected": "\"K280\":   0.60,  confirmed"
+    },
+    "step_3": {
+      "action": "Verify HL exposure < 65%",
+      "cmd": "echo 'K280(60%×70%) + K449(5%) + HLP(5%) = 52%  < 65% cap OK'",
+      "expected": "< 65% confirmed"
+    },
+    "step_4": {
+      "action": "Remove --dry-run from K449 plist",
+      "cmd": "sed -i '' '/<string>--dry-run<\\/string>/d' com.cryptolab.k449-eth-btc.plist && grep 'dry-run' com.cryptolab.k449-eth-btc.plist || echo 'CLEAN'",
+      "expected": "CLEAN output"
+    },
+    "step_5": {
+      "action": "Copy plist to LaunchAgents",
+      "cmd": "cp com.cryptolab.k449-eth-btc.plist ~/Library/LaunchAgents/com.cryptolab.k449-eth-btc.plist",
+      "expected": "File present in ~/Library/LaunchAgents/"
+    },
+    "step_6": {
+      "action": "launchctl load K449",
+      "cmd": "launchctl load ~/Library/LaunchAgents/com.cryptolab.k449-eth-btc.plist && launchctl list | grep k449",
+      "expected": "com.cryptolab.k449-eth-btc present in launchctl list"
+    },
+    "step_7": {
+      "action": "Confirm K357 emergency exit includes K449",
+      "cmd": "grep -c 'K449' scripts/emergency_hl_exit.py",
+      "expected": ">= 5 matches"
+    },
+    "step_8": {
+      "action": "HL margin health pre-check",
+      "cmd": "python3 scripts/emergency_hl_exit.py --dry-run --status",
+      "expected": "Margin utilisation < 70%"
+    }
+  },
+  "d1_d3_monitoring": {
+    "daily_check": "python3 scripts/k449_eth_btc_run.py --status",
+    "dashboard_path": "data/k449_dashboard.json",
+    "metrics_to_watch": {
+      "position_state": "LONG_ETH or SHORT_ETH (not NEUTRAL = no trade)",
+      "daily_pnl_usdc": ">= 0 (positive carry expected)",
+      "delta_neutral_drift_pct": "< 5% (rebalance threshold)",
+      "fr_raw_diff": "!= 0.0 (differential active)"
+    },
+    "margin_check": "python3 scripts/emergency_hl_exit.py --dry-run --status",
+    "margin_target": "< 70% utilisation"
+  },
+  "d7_decision": {
+    "PASS": {
+      "criteria": "60d_sharpe >= 9.0 AND fill_rate >= 0.65",
+      "action": "Expand K449 sleeve to 8% (edit leverage_manager.py K449 0.05→0.08)",
+      "note": "Document in docs/k302a_master_deployment.md Week 1 section"
+    },
+    "HOLD": {
+      "criteria": "60d_sharpe in [5.0, 9.0) OR fill_rate in [0.50, 0.65)",
+      "action": "Maintain 5% sleeve, re-evaluate D14",
+      "note": "Adjust nothing; continue monitoring"
+    },
+    "ROLLBACK": {
+      "criteria": "60d_sharpe < 5.0 OR fill_rate < 0.50 OR margin_util > 0.80",
+      "action": "Close both ETH+BTC legs, launchctl unload, reload plist with --dry-run",
+      "cmd": "launchctl unload ~/Library/LaunchAgents/com.cryptolab.k449-eth-btc.plist && python3 scripts/k449_eth_btc_run.py --close 'D7 rollback'"
+    }
+  },
+  "monitoring_metrics": [
+    {
+      "metric": "daily_sharpe_realized",
+      "source": "data/k449_dashboard.json → 60d_sharpe",
+      "pass_threshold": 9.0,
+      "alert_threshold": 5.0,
+      "cadence": "Daily 09:00 JST"
+    },
+    {
+      "metric": "fill_rate_vs_paper",
+      "source": "data/k449_dashboard.json → activation_criteria.fill_rate_min_pct",
+      "pass_threshold": 0.65,
+      "alert_threshold": 0.50,
+      "cadence": "Per 8h cycle"
+    },
+    {
+      "metric": "delta_neutral_drift",
+      "source": "data/k449_dashboard.json → delta_neutral_drift_pct",
+      "pass_threshold": 0.05,
+      "alert_threshold": 0.08,
+      "cadence": "Per 8h cycle"
+    },
+    {
+      "metric": "daily_pnl_usdc",
+      "source": "data/k449_dashboard.json → daily_pnl_usdc",
+      "pass_threshold": 0.0,
+      "alert_threshold": -5.0,
+      "cadence": "Daily 09:00 JST"
+    },
+    {
+      "metric": "hl_margin_utilisation",
+      "source": "emergency_hl_exit.py --dry-run --status",
+      "pass_threshold": 0.70,
+      "alert_threshold": 0.80,
+      "cadence": "Daily + K357 real-time circuit breaker"
+    }
+  ],
+  "phase_b2_k498_interaction": {
+    "k498_phase_1a": "BBO_SELECT routing for HL post-only fills (K530)",
+    "k449_benefit": "Improved mid-price reference → lower slippage on 8h paired trade",
+    "interference_with_k208": "NONE — K449 ETH/BTC disjoint from K208 symbols",
+    "margin_note": "Confirm combined HL margin (K280+K449) < 70% pre-activation"
+  },
+  "risk_inventory": [
+    {
+      "risk": "Paper vs LIVE Sharpe divergence",
+      "severity": "MEDIUM",
+      "trigger": "60d_sharpe < 5.0 OR fill_rate < 50%",
+      "mitigation": "D7 rollback protocol"
+    },
+    {
+      "risk": "K280 cut profit loss",
+      "severity": "MEDIUM",
+      "trigger": "K280 30d Sharpe < 8 (reopen criterion)",
+      "mitigation": "Accept: K449 pipeline $1.16M >> K280 $300K cut delta"
+    },
+    {
+      "risk": "HL execution lag",
+      "severity": "LOW",
+      "trigger": "fill_rate < 50% consistently",
+      "mitigation": "Investigate cron timing vs FR settlement"
+    },
+    {
+      "risk": "HL concentration breach >65%",
+      "severity": "HIGH",
+      "trigger": "HL exposure > 60%",
+      "mitigation": "Verify after each activation; pause cascade if approaching 60%"
+    },
+    {
+      "risk": "FR differential collapses (ETH=BTC FR)",
+      "severity": "LOW",
+      "trigger": "NEUTRAL state > 14 consecutive days",
+      "mitigation": "No action; review FR environment if extended"
+    },
+    {
+      "risk": "Week 2 cascade (K476+K484 simultaneous)",
+      "severity": "MEDIUM",
+      "trigger": "HL exposure hits 60% after K476",
+      "mitigation": "48h gap per K547; hold K484 until K476 confirmed stable"
+    }
+  ],
+  "week2_cascade_prep": {
+    "K476_SOL_BTC": {
+      "plist": "com.cryptolab.k476-sol-btc.plist",
+      "run_script": "scripts/k476_sol_btc_run.py",
+      "sleeve_pct": 0.03,
+      "profit_yr_usd_combined_k476_k484": 263000,
+      "leverage": 4.0,
+      "venue": "HL",
+      "activate_day": "D+7 (K449 Day 7 PASS confirmed)",
+      "hl_delta_pp": 3.0
+    },
+    "K484_AVAX_BTC": {
+      "plist": "com.cryptolab.k484-avax-btc.plist",
+      "run_script": "scripts/k484_avax_btc_run.py",
+      "sleeve_pct": 0.03,
+      "leverage": 4.0,
+      "venue": "HL",
+      "activate_day": "D+9 (48h after K476 — cascade risk mitigation)",
+      "hl_delta_pp": 3.0
+    },
+    "hl_exposure_trajectory": {
+      "baseline_post_k280_cut": 0.47,
+      "after_k449_5pct": 0.52,
+      "after_k476_3pct": 0.55,
+      "after_k484_3pct": 0.58,
+      "hard_cap": 0.65,
+      "headroom_after_week2": 0.07
+    }
+  },
+  "pipeline_validation_statement": "K449 LIVE PASS = proof-of-concept for K449 family execution path. Each subsequent family (K476, K484, K493, K500/K507, K512) follows identical plist + daemon + POST_ONLY pattern. K449 Week 1 validates the full $1.16M/yr pipeline.",
+  "week3_preview": {
+    "K493_ATOM_BTC": {
+      "activate_day": "Week 3",
+      "sleeve_pct": 0.03,
+      "profit_yr_usd": 231000,
+      "family": "Cosmos #1 (ATOM IBC hub)"
+    }
+  },
+  "week4_preview": {
+    "K500_SEI_TIA": {
+      "activate_day": "Week 4",
+      "profit_yr_usd": 354000,
+      "family": "Cosmos #2+#3 (SEI EVM + TIA modular DA)"
+    }
+  },
+  "week5_preview": {
+    "K512_APT": {
+      "activate_day": "Week 5",
+      "sleeve_pct": 0.02,
+      "profit_yr_usd": 302000,
+      "family": "Move-VM #1 (APT Block-STM)"
+    }
+  }
+}

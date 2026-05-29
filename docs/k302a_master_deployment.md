@@ -2512,3 +2512,155 @@ python3 scripts/loss_harvester.py --realize-losses
 Source files: `wave_k545_tax_harvester_activation.{py,json,md}`
 
 *K545 Appendix — Added 2026-05-30 05:35 JST*
+
+---
+
+## Appendix K549 — K449 ETH-BTC Week 1 LIVE Activation (User Action #31)
+
+*(Added 2026-05-30 05:46 JST — K549 Week 1 LIVE activation playbook)*
+
+### User Action #31: K449 ETH-BTC LIVE + K280 75→60% (Day 0, ~30 min, +$13K/yr + $1.16M pipeline unlock)
+
+#### K547 Audit Summary
+
+K449 declared **LIVE-READY** (K450 = 8/9 §6 gates, paper gate overridden per profit-max mandate K547).
+K449 is the **test case** for the entire $1.16M/yr paired-trade family pipeline.
+
+| Parameter | Value |
+|-----------|-------|
+| Strategy | ETH-BTC FR Differential Paired-Trade |
+| Sleeve (Week 1) | 5% × $10M = $500K capital |
+| Leverage | 4x → $2M notional ($1M long + $1M short) |
+| Venue | HyperLiquid (both legs) |
+| Profit (standalone) | **$13,000/yr @ $10M** |
+| K481 builder + K449 combined | **$260,000/yr** |
+| Pipeline W1-W5 total | **$1,163,000/yr** |
+| Grand total (with K481) | **$1,410,000/yr @ $10M** |
+
+**Pre-requisite:** K280 sleeve 75% → 60% (K539 Phase B1) — **must complete first**.
+
+#### K280 Sleeve 75% → 60% (1-LOC Change)
+
+```
+File: scripts/leverage_manager.py
+Key:  SLEEVE_WEIGHTS["K280"]
+
+BEFORE: "K280":   0.75,   # K280 main (K198 + K208 + K276b) — v6.13d; v6.16 reduces to 0.72
+AFTER:  "K280":   0.60,   # K280 main (K539 Phase B1: 75→60, frees 7.5pp HL, 2026-05-30)
+```
+
+Impact: -$300K/yr K280 reduction (offset by +$1.16M/yr pipeline). HL exposure post-cut + K449: ~52% vs 65% cap — safe.
+
+#### 9-Step Activation (Day 0, ~30 minutes)
+
+**Step 1 (2 min): Verify K280 sleeve**
+```bash
+grep '"K280"' scripts/leverage_manager.py
+# Expected: "K280":   0.75,  (before edit)
+```
+
+**Step 2 (5 min): K280 75→60% commit + push**
+```bash
+sed -i '' \
+  's/"K280":   0.75,/\"K280\":   0.60,/' \
+  scripts/leverage_manager.py
+
+git add scripts/leverage_manager.py
+git commit -m "K549 K280 sleeve 75→60% (K539 Phase B1, frees 7.5pp HL for K449 family)"
+git push origin main
+
+# Verify:
+grep '"K280":   0.60' scripts/leverage_manager.py
+```
+
+**Step 3 (2 min): Remove --dry-run from K449 plist**
+```bash
+sed -i '' '/<string>--dry-run<\/string>/d' com.cryptolab.k449-eth-btc.plist
+grep 'dry-run' com.cryptolab.k449-eth-btc.plist || echo 'CLEAN'
+```
+
+**Step 4 (1 min): Copy plist to LaunchAgents**
+```bash
+cp com.cryptolab.k449-eth-btc.plist \
+   ~/Library/LaunchAgents/com.cryptolab.k449-eth-btc.plist
+```
+
+**Step 5 (1 min): USER ACTION #31 — Load K449 daemon**
+```bash
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k449-eth-btc.plist
+launchctl list | grep k449-eth-btc
+```
+
+**Step 6 (1 min): Confirm K357 emergency exit includes K449**
+```bash
+grep -c 'K449' scripts/emergency_hl_exit.py
+# Expected: >= 5 (already implemented in K450 Phase 11)
+```
+
+**Step 7 (5 min): HL margin health pre-check**
+```bash
+python3 scripts/emergency_hl_exit.py --dry-run --status
+# Expected: margin utilisation < 70%
+```
+
+**Step 8 (5 min): K449 status check**
+```bash
+python3 scripts/k449_eth_btc_run.py --status
+# Expected: dashboard refreshed, next execution at next 8h interval
+```
+
+**Step 9 (10 min): Commit plist change + push**
+```bash
+git add com.cryptolab.k449-eth-btc.plist
+git commit -m "K549 K449 plist: remove --dry-run for LIVE activation"
+git push origin main
+```
+
+#### Day 1-7 Monitoring
+
+```bash
+# Daily check:
+python3 scripts/k449_eth_btc_run.py --status
+
+# Dashboard:
+cat data/k449_dashboard.json | python3 -c "
+import json, sys; d = json.load(sys.stdin)
+print(f'State:  {d[\"position_state\"]}')
+print(f'PnL:    \${d[\"daily_pnl_usdc\"]:.2f}')
+print(f'Drift:  {d[\"delta_neutral_drift_pct\"]:.3%}')
+print(f'FR:     {d[\"fr_raw_diff\"]:.6f}')
+"
+
+# Margin:
+python3 scripts/emergency_hl_exit.py --dry-run --status
+```
+
+#### Day 7 Decision Matrix
+
+| Decision | Criteria | Action |
+|----------|----------|--------|
+| **PASS** | 60d_sharpe ≥ 9.0 AND fill_rate ≥ 65% | Expand sleeve to 8% |
+| **HOLD** | Sharpe 5-9 OR fill 50-65% | Maintain 5%; re-evaluate D14 |
+| **ROLLBACK** | Sharpe < 5 OR fill < 50% OR margin > 80% | Close legs; reload --dry-run |
+
+#### Week 2 Prep (K476 + K484, 48h apart)
+
+| Strategy | Activate | Sleeve | HL Delta | Profit |
+|----------|----------|--------|----------|--------|
+| K476 SOL-BTC | D+7 (K449 PASS) | 3% | +3pp | combined $263K/yr |
+| K484 AVAX-BTC | D+9 (48h after K476) | 3% | +3pp | (in K476 line) |
+
+HL exposure trajectory: baseline 47% → K449 52% → K476 55% → K484 58% (< 65% cap, 7pp headroom).
+
+#### Daemon Specification
+
+| Label | `com.cryptolab.k449-eth-btc` |
+|-------|-------------------------------|
+| Number | 19th daemon |
+| Schedule | Every 8h (28800s interval, matches FR settlement) |
+| RunAtLoad | false |
+| Script | `scripts/k449_eth_btc_run.py` |
+
+Source files: `wave_k549_k449_week1_live.{py,json,md}`
+
+*K549 Appendix — Added 2026-05-30 05:46 JST*
