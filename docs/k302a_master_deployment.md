@@ -1707,4 +1707,121 @@ Source files: `wave_k485_multi_account_scaling.py` | `wave_k485_multi_account_sc
 
 *K485 Appendix — Added 2026-05-30 02:54 JST*
 
+---
+
+## K505 v6.25 Architecture — User Action #25 + Profit Lift
+
+**Version:** 6.25 candidate | **Generated:** 2026-05-30 03:49 JST | **Wave:** K505
+
+### v6.25 Summary
+
+K500 INJ-BTC ACCEPT (10/13 §6 gates, OOS Sharpe 11.23) → v6.25 candidate activated.  
+Option A: v6.24 + K500 INJ-BTC 3% sleeve, Cash reduced from 1% → −2%.  
+Combined paired-trade family: $631K/yr @ $10M (+$124K vs v6.24 $507K/yr).  
+Total portfolio: $1,794K/yr @ $10M (+$123K vs v6.24 $1,671K/yr).
+
+### v6.25 Composition
+
+| Sleeve | Weight | HL% Contribution | $K/yr @$10M |
+|--------|--------|-----------------|-------------|
+| K280 multi-venue | 65% | 32.5% | $1,000K |
+| K297' satellite | 5% | 5.0% | $50K |
+| sUSDe | 5% | 0% | $18.6K |
+| Spark sUSDS | 5% | 0% | $16.7K |
+| K376 momentum | 5% | 5.0% | $30K (paper) |
+| K449 ETH-BTC | 5% | 5.0% | $13K |
+| K476 SOL-BTC | 3% | 3.0% | $187K |
+| K484 AVAX-BTC | 3% | 3.0% | $76K |
+| K493 ATOM-BTC | 3% | 3.0% | $231K |
+| **K500 INJ-BTC NEW** | **3%** | **3.0%** | **$124K** |
+| K457 basket | 5% | 2.5% | $50K (paper) |
+| Cash | −2% | 0% | −$2K |
+| **Total** | **100%** | **62.0%** | **$1,794K** |
+
+**HL concentration: 62.0% < 65% cap ✓ | Headroom: 3pp**
+
+### Paired-Trade Family Rank (v6.25)
+
+| Rank | Sleeve | OOS Sharpe | $K/yr @$10M | Status |
+|------|--------|-----------|-------------|--------|
+| 1 | K493 ATOM-BTC | 50.79 | $231K | ACCEPT |
+| 2 | K484 AVAX-BTC | 43.89 | $76K | ACCEPT |
+| 3 | K476 SOL-BTC | 16.30 | $187K | ACCEPT |
+| **4** | **K500 INJ-BTC** | **11.23** | **$124K** | **ACCEPT NEW** |
+| 5 | K449 ETH-BTC | 5.66 | $13K | ACCEPT |
+| BLOCKED | K480 BNB-BTC | 8.04 | — | G5a FAIL + HL cap |
+| COND | K491 ARB-BTC | 0.51 | — | G1/G3/G7 FAIL |
+| REJECT | K490 SUI-BTC | −1.18 | — | OOS collapse |
+
+### Annual Profit USDC (v6.25)
+
+| AUM | Annual Profit | vs v6.24 |
+|-----|--------------|----------|
+| **$10M** | **$1,794,300/yr** | **+$123,000** |
+| **$100M** | **$17,943,000/yr** | **+$1,240,000** |
+| **$200M** | **$35,886,000/yr** | **+$2,480,000** |
+
+K500 INJ-BTC alone: $124K/yr @$10M | $1.24M/yr @$100M | $2.48M/yr @$200M
+
+### 5-Year Projection Update
+
+| Scenario | 5y Terminal @$10M | K500 5y delta |
+|----------|------------------|---------------|
+| v6.24 | ~$29.9M | — |
+| **v6.25** | **~$31.4M** | **+$1.5M** |
+| @$100M (K500 5y) | — | +$6-8M |
+| @$200M (K500 5y) | — | +$12-15M |
+
+### User Action #25: K500 INJ-BTC Daemon Load (M11)
+
+| Parameter | Value |
+|-----------|-------|
+| Action | Load K500 INJ-BTC daemon |
+| Timing | M11 (after 60d paper-trade gate pass) |
+| Time to setup | 5 min (after scaffold wave K506) |
+| Risk | LOW (HL 62% < 65%, G5d Cosmos 0.2893 < 0.40) |
+| Prerequisite | v6.24 LIVE + K500 60d paper gate |
+| Expected ROI | **+$124K/yr @ $10M** |
+
+```bash
+# M11 activation (after K506 scaffold created):
+cp /Users/nekonaomichi/crypto-lab/com.cryptolab.k500-inj-btc.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k500-inj-btc.plist
+launchctl list | grep k500
+# Verify:
+python3 scripts/k500_inj_btc_run.py --dry-run
+```
+
+**Gate conditions before activation:**
+- K500 paper-trade OOS Sharpe ≥ 1.0 (60d window)
+- HL cross-wallet combined ≤ 65% at activation time
+- Cash −2% leverage within circuit breaker parameters
+
+### Deployment Timeline (updated)
+
+| Month | Version | Event |
+|-------|---------|-------|
+| M0 | v6.13d | LIVE (current) |
+| M3 | v6.20 | 10-venue K208 multi-venue |
+| M5 | v6.22 | Spark sUSDS split |
+| M7 | v6.23 | K484 AVAX-BTC live |
+| M9 | v6.24 | K493 ATOM-BTC live |
+| **M11** | **v6.25** | **K500 INJ-BTC live ← NEW TARGET** |
+
+### Updated Totals (v6.25)
+
+| Parameter | K501 (previous) | K505 (v6.25) |
+|-----------|----------------|--------------|
+| Total user actions | 24 | **25** |
+| Annual profit @ $10M | ~$1,671K | **~$1,794K (+$123K)** |
+| Annual profit @ $100M | ~$16.7M | **~$17.9M (+$1.24M)** |
+| Annual profit @ $200M | ~$33.4M | **~$35.9M (+$2.48M)** |
+| 5y terminal @ $10M | ~$29.9M | **~$31.4M (+$1.5M)** |
+| HL concentration | 59% | **62% (<65% cap ✓)** |
+| M11 LIVE | — | **K500 INJ 60d paper pass** |
+
+Source files: `wave_k505_v625_proposal.py` | `wave_k505_v625_proposal.json` | `wave_k505_v625_proposal.md`
+
+*K505 Appendix — Added 2026-05-30 03:49 JST*
+
 *K481 Appendix — Added 2026-05-30 02:44 JST*
