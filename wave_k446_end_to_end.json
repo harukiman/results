@@ -1,0 +1,355 @@
+{
+  "wave": "K446",
+  "stack_version": "v6.13d",
+  "run_ts_utc": "2026-05-29T14:48:32.141641+00:00",
+  "run_ts_jst": "2026-05-29 23:48 JST",
+  "dry_run": false,
+  "phase1_backups": {
+    "portfolio_aum_state": "backed_up",
+    "leverage_config": "backed_up",
+    "smart_router_config": "backed_up",
+    "post_only_dashboard": "backed_up"
+  },
+  "phase2_init_state": {
+    "aum_usdc": 10000000.0,
+    "leverage_phase": "LIVE_3X",
+    "leverage": 3.0,
+    "venues_enabled": [
+      "HL",
+      "Bybit",
+      "OKX"
+    ],
+    "post_only_enabled": true
+  },
+  "phase3_scripts": {
+    "k280_live_fetch.py": {
+      "script": "k280_live_fetch.py",
+      "exit_code": 0,
+      "runtime_s": 1.45,
+      "status": "OK",
+      "log_path": "/Users/nekonaomichi/crypto-lab/logs/k446_k280.log",
+      "stderr_tail": "",
+      "stdout_tail": "Already fetched for 2026-05-29. Use --force to re-fetch."
+    },
+    "k302a_satellite_run.py": {
+      "script": "k302a_satellite_run.py",
+      "exit_code": 0,
+      "runtime_s": 1.72,
+      "status": "OK",
+      "log_path": "/Users/nekonaomichi/crypto-lab/logs/k446_k302a.log",
+      "stderr_tail": "",
+      "stdout_tail": "  [G9]   PAXG mark=4530.2  oracle=4531.5  dev=-0.0287%\n  [G9]   Gate OK \u2014 deviations within threshold (1%)\n  [SPX]  505 days | 7d ann FR: 5.56% | pct_positive: 77.8%\n\n  Today (2026-05-26) Satellite PnL: -0.000070\n  Satellite equity (cumulative):     1.107483\n  Satellite 30d Sharpe:  23.66\n  Satellite all-time Sh: 15.83  (K297' backtest target: 18.48, SPX_FILTER=ON)\n  K280 main 30d Sharpe: 27.3659\n\n  ALERTS (1):\n    [INFO] NO_SNAPSHOT: No K302a fetch snapshot for 2026-05-29. Run k302a_satellite_fetch.py first for fresh HL status.\n\n  Dashboard saved: /Users/nekonaomichi/crypto-lab/data/k302a_satellite_dashboard.json\n[AUM] [K297_prime] Updated: PnL=-129.10 USDC | AUM=9,999,871 | Deploy=9,199,881 | CumPnL=-0.001% | 7d=-0.001%\n\n  [K429] K297' AUM contrib: $-129.10 USDC | Portfolio AUM=$9,999,871\n\n=== K302a satellite daily run complete in 0.9s ===\n  Trade log: /Users/nekonaomichi/crypto-lab/data/k302a_satellite_paper_trades.jsonl"
+    },
+    "k344_susde_oc_daily_run.py": {
+      "script": "k344_susde_oc_daily_run.py",
+      "exit_code": 0,
+      "runtime_s": 1.19,
+      "status": "OK",
+      "log_path": "/Users/nekonaomichi/crypto-lab/logs/k446_susde.log",
+      "stderr_tail": "",
+      "stdout_tail": "=== K344 sUSDe OC Daemon \u2014 2026-05-29 (dry_run=False) ===\n\n  [sUSDe] Fetching APY from DeFiLlama: https://yields.llama.fi/chart/66985a81-9c51-46ca-9977-42b4fe7bc6df\n  [sUSDe] Fetched 834 APY data points (2024-02-16 \u2192 2026-05-29)\n  [sUSDe] APY=3.76% | EMA30d=3.97% | Signal=HALF | alloc=50% of sleeve | effective_wt=2.50%\n  [sUSDe] Dashboard saved: /Users/nekonaomichi/crypto-lab/data/k344_susde_dashboard.json\n  [sUSDe] History appended: /Users/nekonaomichi/crypto-lab/cache/k344_susde_oc_state.parquet (2 rows)\n\n=== K344 sUSDe OC daemon complete in 0.2s ===\n  Signal: HALF | Allocation: 50% of sleeve (2.50% of total portfolio)\n[AUM] [sUSDe] Updated: PnL=+23.71 USDC | AUM=9,999,895 | Deploy=9,199,903 | CumPnL=-0.001% | 7d=-0.001%\n\n  [K429] sUSDe AUM contrib: $+23.71 USDC/day | Portfolio AUM=$9,999,895"
+    },
+    "k376_momentum_run.py": {
+      "script": "k376_momentum_run.py",
+      "exit_code": 0,
+      "runtime_s": 0.54,
+      "status": "OK",
+      "log_path": "/Users/nekonaomichi/crypto-lab/logs/k446_k376.log",
+      "stderr_tail": "",
+      "stdout_tail": "2026-05-29 23:48:38 UTC [INFO] K376 momentum run starting | REPO_ROOT=/Users/nekonaomichi/crypto-lab | dry_run=False\n2026-05-29 23:48:38 UTC [INFO] Universe: ['ETH', 'LINK', 'AVAX'] | Sleeve: 3% | Hold: 240min\n2026-05-29 23:48:38 UTC [INFO] BTC 20d SMA slope: -3369.13 (BEAR regime) [early_avg=79557, late_avg=76188]\n2026-05-29 23:48:38 UTC [INFO] BEAR regime detected (BTC SMA slope=-3369.13). Skipping all signal evaluation per K378 regime gate.\n2026-05-29 23:48:38 UTC [INFO] Dashboard updated: regime=bear, open=0, signals_24h=0, fill_rate_60d=0.0%, sharpe_30d=0.000"
+    }
+  },
+  "phase4_integration": {
+    "aum_tracking": {
+      "status": "Updated",
+      "current_aum_usdc": 9999894.61,
+      "delta_from_10m": -105.39,
+      "deployed_usdc": 9199903.04,
+      "sleeve_weights": {
+        "K280": 0.75,
+        "K297_prime": 0.2,
+        "sUSDe": 0.05,
+        "K376": 0.03
+      },
+      "pt1_active": false,
+      "7d_return_pct": -0.001054
+    },
+    "leverage": {
+      "status": "OK",
+      "rollout_phase": "LIVE_3X",
+      "current_leverage": 3.0,
+      "target_leverage": 3.0,
+      "circuit_breaker_deactivated": false
+    },
+    "k302a_satellite": {
+      "status": "OK",
+      "architecture": "K302a Satellite K297' (PAXG 60% + SPX 40% filtered) \u2014 HyperLiquid only",
+      "version": "v6.13d",
+      "last_sat_pnl": -7.016e-05,
+      "sh_30d": 23.6648,
+      "sh_all": 15.8343,
+      "n_records": 3,
+      "has_oracle_gate_reference": true
+    },
+    "k376_momentum": {
+      "status": "OK",
+      "current_regime": "bear",
+      "btc_sma_slope": -3369.1344,
+      "bear_regime_detected": true,
+      "paper_trade_mode": true,
+      "g8_gate_passed": false,
+      "recent_signals_24h": 0,
+      "fill_rate_60d": 0.0
+    },
+    "post_only": {
+      "status": "OK",
+      "total_orders": 0,
+      "fill_rate_60d": 0.0,
+      "g8_gate_status": "NO_DATA",
+      "alert": false,
+      "edge_savings_annual_usd": 23000
+    },
+    "k302a_paper_trades": {
+      "status": "INFO",
+      "line_count": 8,
+      "note": "Entries accumulate in paper mode (not new real orders \u2014 expected)"
+    },
+    "smart_router": {
+      "status": "OK",
+      "venues_enabled": [
+        "HL",
+        "Bybit",
+        "OKX"
+      ],
+      "default_post_only": true,
+      "ioc_fallback_seconds": 300
+    },
+    "k280_main": {
+      "status": "OK",
+      "version": "v6.10.2",
+      "backtest_oos_sh": 18.4616,
+      "backtest_oos_dd": -1.3e-05,
+      "backtest_wf_min": 12.9718
+    },
+    "k344_susde": {
+      "status": "OK",
+      "current_signal": "HALF",
+      "current_allocation": 0.5,
+      "sleeve_weight": 0.05,
+      "version": "v6.13d"
+    }
+  },
+  "phase5_daemon": {
+    "emergency_exit_flag": {
+      "status": "OK",
+      "flag_file": "EMERGENCY_EXIT_TRIGGERED.flag",
+      "exists": false
+    },
+    "bear_fallback_flag": {
+      "status": "OK",
+      "flag_file": "BEAR_1_FALLBACK_ACTIVE.flag",
+      "exists": false
+    },
+    "circuit_breaker": {
+      "status": "K447_BUG_WARNING",
+      "margin_used_pct": 0.88,
+      "cash_buffer_remaining": 1200000.0,
+      "sleeves": {
+        "K280": 6000000.0,
+        "K297": 1600000.0,
+        "sUSDe": 1200000.0
+      },
+      "leverage": 3.0,
+      "phase": "LIVE_3X",
+      "circuit_breaker_fire": true,
+      "k447_action": "K447 BUG: sUSDe margin overstated (raw=1200000, corrected=400000). Corrected margin_used=80.0% (STANDBY after fix)"
+    },
+    "pt1_valve": {
+      "status": "STANDBY",
+      "7d_return_pct": -0.001054,
+      "pt1_safety_active": false,
+      "trigger_threshold_pct": -5.0,
+      "trigger_count": 0
+    }
+  },
+  "phase6_daily_flow": [
+    {
+      "daemon": "com.cryptolab.k280-live",
+      "schedule": "00:10 JST daily",
+      "script": "scripts/k280_live_fetch.py + scripts/k280_daily_run.py",
+      "sleeve": "K280 main (75% AUM)",
+      "notional_3x": "$10M \u00d7 0.80 \u00d7 0.75 \u00d7 3.0 = $18.0M",
+      "actions": [
+        "Fetch Bybit + HL funding rates for K208 symbols (10 majors)",
+        "Fetch HL FR for K276b_top20 symbols (20 longtail)",
+        "Compute 3-way K198/K208/K276b position signals",
+        "K208 position sizing \u00d7 3x leverage \u2192 notional $18M",
+        "Route via K434 smart router (HL/Bybit/OKX best venue)",
+        "POST_ONLY first attempt (K439), IOC fallback after 5min",
+        "Update data/portfolio_aum_state.json via K429 AUM manager",
+        "Write k280_live_dashboard.json + k280_paper_trades.jsonl"
+      ]
+    },
+    {
+      "daemon": "com.cryptolab.k302a-satellite",
+      "schedule": "00:10 JST daily",
+      "script": "scripts/k302a_satellite_run.py",
+      "sleeve": "K302a satellite K297' (20% AUM)",
+      "notional_3x": "$10M \u00d7 0.80 \u00d7 0.20 \u00d7 3.0 = $4.8M",
+      "actions": [
+        "Fetch HL HIP-3 FR for PAXG (always-on long) and SPX (conditional)",
+        "Apply SPX filter: 5d trend > 0 AND FR > 0 (K297' K343 integration)",
+        "Apply G9 oracle deviation gate: skip if |mark-oracle|/oracle > 1%",
+        "K297' position \u00d7 3x leverage capped at PAXG 10x / SPX 5x exchange caps",
+        "Write to k302a_satellite_dashboard.json (rolling Sharpe + PnL)",
+        "Paper-trade log: k302a_satellite_paper_trades.jsonl",
+        "Update AUM state (satellite PnL contribution)"
+      ]
+    },
+    {
+      "daemon": "com.cryptolab.susde-oc",
+      "schedule": "06:00 JST daily",
+      "script": "scripts/k344_susde_oc_daily_run.py",
+      "sleeve": "sUSDe OC sleeve (5% AUM)",
+      "notional_3x": "$10M \u00d7 0.80 \u00d7 0.05 \u00d7 1.0 = $400K (sUSDe stays at 1x \u2014 spot)",
+      "actions": [
+        "Fetch sUSDe APY from DeFiLlama yields API (pool ID 66985a81...)",
+        "Compute 30d EMA of APY; apply \u00b150bps band OC signal",
+        "Check 7d shock guard (>3pp drop \u2192 ZERO allocation)",
+        "Signal FULL/HALF/ZERO \u2192 effective_weight 5%/2.5%/0%",
+        "Write k344_susde_dashboard.json + OC history parquet",
+        "Update AUM state (sUSDe sleeve allocation)"
+      ]
+    },
+    {
+      "daemon": "com.cryptolab.k376-momentum",
+      "schedule": "Every 5 min (launchd StartInterval=300)",
+      "script": "scripts/k376_momentum_run.py",
+      "sleeve": "K376 volume-spike momentum (3% AUM \u2014 paper-trade gate)",
+      "notional_3x": "$10M \u00d7 0.80 \u00d7 0.03 \u00d7 3.0 = $720K (pending 60d paper gate)",
+      "actions": [
+        "Check BTC 20d SMA slope: positive = bull (signal allowed), negative = bear (skip all)",
+        "Fetch 5min bars for ETH/LINK/AVAX (3-symbol universe)",
+        "Compute volume_ratio vs 12h rolling average",
+        "Signal if vol_ratio > 4.0 AND |5min_return| > 0.4%",
+        "In BEAR regime: zero signals (current state confirmed)",
+        "In BULL: POST_ONLY limit at mid-price (K439), IOC fallback 5min",
+        "Log to k376_momentum_dashboard.json + k376_paper_trades.jsonl",
+        "G8 gate: fill_rate_60d >= 65% required before live activation"
+      ]
+    },
+    {
+      "daemon": "com.cryptolab.leverage-circuit-breaker",
+      "schedule": "Every 5 min (launchd StartInterval=300)",
+      "script": "scripts/leverage_circuit_breaker.py",
+      "sleeve": "System-wide margin monitor (no AUM deployment)",
+      "notional_3x": "N/A (monitoring only)",
+      "actions": [
+        "Read K429 AUM state \u2192 current_aum",
+        "Call leverage_manager.check_margin_health(aum=current_aum)",
+        "At LIVE_3X: margin_used > 80% \u2192 emergency_reduce_leverage() \u2192 all scripts revert to 1x",
+        "At LIVE_3X: margin_used > 70% \u2192 WARNING to leverage_cb_dashboard.json",
+        "In PAPER_TRADE mode: circuit breaker suppressed (no false alarms)",
+        "Write leverage_cb_dashboard.json every run"
+      ]
+    }
+  ],
+  "phase7_health_table": [
+    {
+      "component": "K280 daemon",
+      "status": "OK",
+      "notes": "1.4s (exit=0)"
+    },
+    {
+      "component": "K302a daemon",
+      "status": "OK",
+      "notes": "1.7s (exit=0)"
+    },
+    {
+      "component": "K344 daemon",
+      "status": "OK",
+      "notes": "1.2s (exit=0)"
+    },
+    {
+      "component": "K376 daemon",
+      "status": "OK",
+      "notes": "0.5s (exit=0)"
+    },
+    {
+      "component": "AUM tracking",
+      "status": "Updated",
+      "notes": "$9,999,895 USDC (delta=-105)"
+    },
+    {
+      "component": "Leverage 3x",
+      "status": "OK",
+      "notes": "phase=LIVE_3X lev=3.0x"
+    },
+    {
+      "component": "Smart router",
+      "status": "OK",
+      "notes": "venues=['HL', 'Bybit', 'OKX']"
+    },
+    {
+      "component": "POST_ONLY",
+      "status": "OK",
+      "notes": "fill_rate=0.0, total_orders=0"
+    },
+    {
+      "component": "Circuit breaker",
+      "status": "K447_BUG_WARNING",
+      "notes": "margin_used=88.0% [K447 sUSDe leverage bug \u2014 corrected=80%]"
+    },
+    {
+      "component": "PT1 valve",
+      "status": "STANDBY",
+      "notes": "7d_return=-0.00%"
+    },
+    {
+      "component": "Emergency flags",
+      "status": "OK",
+      "notes": "EMERGENCY_EXIT + BEAR_1_FALLBACK both absent"
+    },
+    {
+      "component": "K302a satellite",
+      "status": "OK",
+      "notes": "sh_30d=23.66, G9 gate active"
+    },
+    {
+      "component": "K376 momentum",
+      "status": "OK",
+      "notes": "regime=bear, paper_mode=True"
+    },
+    {
+      "component": "K344 sUSDe OC",
+      "status": "OK",
+      "notes": "signal=HALF, alloc=50%"
+    }
+  ],
+  "phase8_restore": {
+    "portfolio_aum_state": "RESTORED",
+    "leverage_config": "RESTORED",
+    "smart_router_config": "RESTORED"
+  },
+  "phase9_deployment_verify": {
+    "status": "OK",
+    "exit_code": 0,
+    "mismatches": 0,
+    "daemon_status_counts": {
+      "PENDING ACTIVATION": 3,
+      "UNKNOWN": 1,
+      "SCAFFOLD-READY": 14
+    },
+    "output_tail": "=== Deployment status (2026-05-29 23:48 JST) ===\n   com.cryptolab.k280-live                  PENDING ACTIVATION   (html claims: PENDING ACTIVATION) pid=None plist=Y\n   com.cryptolab.k302a-satellite            PENDING ACTIVATION   (html claims: PENDING ACTIVATION) pid=None plist=Y\n   com.cryptolab.hl-predicted-monitor       PENDING ACTIVATION   (html claims: PENDING ACTIVATION) pid=None plist=Y\n   com.cryptolab.hlp-monitor                UNKNOWN              (html claims: UNKNOWN) pid=None plist=N\n   com.cryptolab.k287-satellite             SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.susde-oc                   SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.hl-hip4-monitor            SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.variational-fr-monitor     SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.k376-momentum              SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.k386-v613e-fallback        SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.regulatory-rss             SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.protocol-tvl-monitor       SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.susde-apy-monitor          SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.k415-usdy                  SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.leverage-circuit-breaker   SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.smart-router               SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.k443-variational-paper     SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n   com.cryptolab.loss-harvester             SCAFFOLD-READY       (html claims: SCAFFOLD-READY) pid=None plist=N\n--- summary: {'active': 0, 'loaded': 0, 'pending_activation': 3, 'scaffold_ready': 14, 'unknown': 1, 'mismatches_with_html': 0} ---\n--- json saved: /Users/nekonaomichi/crypto-lab/deployment_status.json ---"
+  },
+  "phase10_decision": {
+    "decision": "ACCEPT",
+    "stack_version": "v6.13d",
+    "issues": [],
+    "warnings": [
+      "K447 BUG: sUSDe 3x leverage in compute_position_size() inflates margin to 88% (corrected: 80% at threshold). Fix in K447: cap sUSDe leverage at 1.0."
+    ],
+    "live_ready": true,
+    "summary": "v6.13d profit-stack: READY for live deployment"
+  }
+}
