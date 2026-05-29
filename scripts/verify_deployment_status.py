@@ -245,6 +245,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k473_spark_usds",
         expected_html_status="SCAFFOLD-READY",  # K473: plist in repo root (gitignored); weekly StartInterval (604800) via launchd; activate after K266 gate review + sUSDS position funded
     ),
+    DaemonSpec(
+        label="com.cryptolab.k476-sol-btc",
+        purpose="K476 SOL-BTC FR differential paired-trade (delta-neutral, 4x leverage, 8h cycle, HL-only, OOS Sh 16.30, $187K/yr @$10M, v6.21 candidate K449+K476 6% combined sleeve, 29th daemon)",
+        scripts=["scripts/k476_sol_btc_run.py"],
+        log_basename="k476_sol_btc",
+        expected_html_status="SCAFFOLD-READY",  # K478: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=5.0 paper + fill_rate >=60%)
+    ),
 ]
 
 

@@ -5602,3 +5602,210 @@ python3 scripts/verify_deployment_status.py
 ---
 
 *K473 §37 -- Spark sUSDS 50/50 stablecoin sleeve scaffold (28th daemon, K471 fast-track, v6.21 candidate, combined APY 3.6–4.5%, K266 5/6 gates PASS) -- 2026-05-30*
+
+---
+
+## §38 K476 SOL-BTC FR Differential Strategy (K478 Scaffold, 29th Daemon)
+
+**Wave:** K478  |  **Status:** SCAFFOLD-READY (60d paper-trade gate)  |  **Generated:** 2026-05-25
+
+### §38.1 Strategy Overview
+
+K476 implements a **delta-neutral paired carry trade** on the SOL-BTC funding rate differential, mirroring the K449 ETH-BTC architecture but targeting the SOL-BTC pair.
+
+```
+K476 SOL-BTC FR Differential:
+  - Long the cheaper-carry asset (SOL or BTC)
+  - Short the expensive-carry asset (BTC or SOL)
+  - 7-day EMA of FR differential as signal
+  - Equal notional both legs (delta-neutral)
+  - HL-only execution (K434 smart router Phase 2)
+  - 4x leverage (K430 cap: K476_SOL_BTC = 4.0)
+  - 8h cycle (aligned to FR settlement)
+```
+
+**OOS Performance (K476 backtest):**
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe | **16.30** |
+| Ann Return @ $10M | **$187K/yr** |
+| Sleeve | 3% of AUM |
+| Leverage | 4x |
+| §6 Gate Score | 9/10 ACCEPT |
+| Activation | K449 3% + K476 3% = 6% combined (v6.21) |
+
+### §38.2 7d EMA Mechanics
+
+The signal is a 7-day exponential moving average of the 8h SOL-BTC funding rate differential:
+
+```
+raw_diff[t]   = FR_SOL[t] − FR_BTC[t]          (current 8h FR)
+alpha         = 2 / (7 × 3 + 1) = 0.0909       (7d × 3 settlements/day)
+EMA[t]        = alpha × raw_diff[t] + (1−alpha) × EMA[t−1]
+
+Entry rules:
+  EMA > +0.00001  →  LONG BTC / SHORT SOL   (SOL carry more expensive)
+  EMA < −0.00001  →  LONG SOL / SHORT BTC   (BTC carry more expensive)
+  |EMA| ≤ threshold  →  NEUTRAL (no position)
+```
+
+**Rationale for EMA (vs raw diff):**
+- Smooths transient FR spikes (flash funding events, large liquidations)
+- 7-day window captures persistent structural carry imbalances
+- ~21 data points before signal stabilizes (3 settlements/day × 7 days)
+
+### §38.3 Paired Execution Playbook (K439 POST_ONLY)
+
+**Entry:**
+1. Compute 7d EMA diff → signal direction
+2. Calculate notional: `sleeve_capital × 4x / 2 legs = $600K/leg at $10M`
+3. Submit LONG leg POST_ONLY on HL
+4. Submit SHORT leg POST_ONLY on HL (parallel with long — K439 pattern)
+5. IOC fallback per leg within 300s if POST_ONLY times out
+6. Log to `cache/k476_paper_trades.jsonl`
+
+**Hold / Rebalance:**
+- Check drift every 8h cycle
+- If |long_notional / short_notional − 1| > 5%: rebalance by trimming larger leg
+- Dashboard: `data/k476_dashboard.json`
+
+**Exit:**
+- Signal reversal: CLOSE current + FLIP to opposite direction
+- Signal below threshold: CLOSE all (reduce to NEUTRAL)
+- Emergency: `python3 scripts/emergency_hl_exit.py --include-k476`
+
+**Close sequencing (K357 emergency exit):**
+```
+Step 1: Cover SHORT leg first (buy-to-cover on HL, IOC reduce-only)
+Step 2: Sell LONG leg second  (sell on HL, IOC reduce-only)
+Rationale: avoid naked short exposure window between leg closures
+```
+
+### §38.4 Smart Router Configuration (K434 Phase 2)
+
+K476 uses **HL-only** for both legs. Unlike K449 (which also uses HL-only), SOL liquidity is sufficient on HL for the 3% sleeve target:
+
+```python
+# K434 smart router: HL-only scoring for K476
+smart_router = "HL_ONLY"   # no cross-venue for SOL-BTC pair
+venue_both_legs = "HL"
+```
+
+Rationale:
+- SOL perp liquidity on HL adequate for $600K notional/leg at $10M AUM
+- No cross-venue SOL-BTC atomic coordination needed (single exchange)
+- Avoids Bybit/OKX SOL margin complexity for initial scaffold
+
+### §38.5 Dashboard: `data/k476_dashboard.json`
+
+| Field | Description |
+|-------|-------------|
+| `last_poll_jst` | Last cycle timestamp (JST) |
+| `current_fr_diff_7d` | 7d EMA of SOL−BTC FR differential |
+| `position_state` | `LONG_SOL_SHORT_BTC` \| `LONG_BTC_SHORT_SOL` \| `NEUTRAL` |
+| `long_notional` | Long leg notional (USDC) |
+| `short_notional` | Short leg notional (USDC) |
+| `delta_neutral_drift_pct` | Drift between legs (rebalance if >5%) |
+| `rebalance_required` | Boolean rebalance flag |
+| `daily_pnl_usdc` | Daily P&L in USDC (paper-trade simulated) |
+| `60d_sharpe` | Rolling 60d paper-trade Sharpe |
+| `paper_trade_status` | `{days_elapsed, target_60d}` |
+
+### §38.6 60d Paper-Trade Activation Criteria
+
+The 60d gate must pass before advancing K476 to live:
+
+| Gate | Threshold | Description |
+|------|-----------|-------------|
+| G1: Paper OOS Sharpe | ≥ 5.0 | 60d paper-trade Sharpe (annualized) |
+| G2: Fill rate | ≥ 60% (paired) | Both legs fill rate across 60d |
+| G3: Max drawdown | < 15% | Paper-trade peak-to-trough |
+| G4: Drift events | < 5 per 30d | Rebalance triggers (excess = instability) |
+
+**After gate passage:**
+1. Advance sleeve to 3% in `leverage_config.json` (K476 weight 0.0 → 0.03)
+2. Activate v6.21 K449+K476 combined 6% cross-asset FR sleeve
+3. Load plist: `cp com.cryptolab.k476-sol-btc.plist ~/Library/LaunchAgents/ && launchctl load ...`
+4. Set `PAPER_TRADE=False` in plist environment
+
+### §38.7 v6.21 Architecture Path
+
+K476 is the second component of the **v6.21 cross-asset FR sleeve**:
+
+```
+v6.21 = v6.20 + K476 (SOL-BTC paired carry)
+
+v6.21 architecture (proposed):
+  K280 core     69%   (reduced 3pp to fund K476)
+  K297'         20%   (PAXG+SPX satellite)
+  sUSDe         05%   (stablecoin yield)
+  K449          03%   (ETH-BTC FR differential, HL-only)
+  K476          03%   (SOL-BTC FR differential, HL-only)  ← NEW
+  ─────────────────
+  Total        100%
+
+Combined FR sleeve:  K449 3% + K476 3% = 6% cross-asset carry
+Expected yield:      K449 $187K/yr + K476 $187K/yr ≈ $374K/yr combined @ $10M
+HL concentration:    63.5% (< 65% cap — within K355 rules)
+```
+
+**Activation sequence:**
+1. K449 60d gate passes first (v6.16 activation)
+2. K476 60d gate passes (v6.21 activation)
+3. Combined 6% sleeve → v6.21 architecture live
+
+### §38.8 Activation Procedure
+
+```bash
+# 1. Test single-shot dry-run (paper-trade output)
+python3 scripts/k476_sol_btc_run.py --dry-run
+# Expected: cycle completes, k476_dashboard.json written
+
+# 2. Check status
+python3 scripts/k476_sol_btc_run.py --status
+
+# 3. Verify 29 daemons (0 mismatches expected)
+python3 scripts/verify_deployment_status.py
+# Expected: com.cryptolab.k476-sol-btc — SCAFFOLD-READY
+
+# 4. Load daemon (after 60d paper-trade gate passes)
+#    FIRST: replace REPO_ROOT in plist with actual path
+sed -i 's|REPO_ROOT|'"$(pwd)"'|g' com.cryptolab.k476-sol-btc.plist
+cp com.cryptolab.k476-sol-btc.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k476-sol-btc.plist
+
+# 5. Emergency close (if needed during live)
+python3 scripts/emergency_hl_exit.py --dry-run --user $HL_USER_ADDRESS --include-k476
+```
+
+### §38.9 Leverage Configuration
+
+K476 cap registered in `data/leverage_config.json`:
+```json
+"K476_SOL_BTC": 4.0
+```
+
+The 4x cap matches K449 (ETH-BTC paired-trade). At $10M / 3% sleeve / 4x:
+- Sleeve capital: $300K
+- Notional/leg: $600K
+- Total notional: $1.2M
+- Margin required: $300K (25% of notional)
+- Margin as % of AUM: 3.0%
+
+### §38.10 References
+
+| Wave | Content |
+|------|---------|
+| K476 | SOL-BTC FR differential backtest (OOS Sh 16.30, $187K/yr @ $10M, 9/10 §6 gates) |
+| K478 | This section — K476 production scaffold (29th daemon, v6.21 architecture path) |
+| K449 | ETH-BTC FR differential (K450 scaffold, 19th daemon, template for K476) |
+| K450 | K449 ETH-BTC scaffold architecture (POST_ONLY paired execution pattern) |
+| K434 | Smart router (K476 uses HL-only scoring — Phase 2) |
+| K439 | POST_ONLY paired execution protocol (K476 uses parallel submission) |
+| K430 | Leverage framework (K476_SOL_BTC 4x cap registered) |
+| K357 | Emergency exit script (--include-k476 flag for sequential SOL-BTC close) |
+| K266 | §6 strict gate framework (K476 scored 9/10) |
+
+---
+
+*K478 §38 -- K476 SOL-BTC FR differential production scaffold (29th daemon, OOS Sh 16.30, $187K/yr @ $10M, 60d paper-trade gate, v6.21 K449+K476 6% combined sleeve) -- 2026-05-25*

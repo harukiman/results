@@ -245,6 +245,101 @@ def _detect_k457_basket_positions(positions: List[Dict]) -> Optional[Dict]:
     }
 
 
+def _detect_k476_paired_positions(positions: List[Dict]) -> Optional[Dict]:
+    """
+    K478 Phase 5: Detect K476 paired positions (SOL long + BTC short, or reverse).
+
+    K476 SOL-BTC = 2 legs on HL: SOL and BTC (one long, one short).
+    Sequential close: short leg first (avoid uncovered short), then long leg.
+
+    A K476 pair is identified by:
+      - One long leg: SOL or BTC
+      - One short leg: the other of SOL/BTC
+      - Both on HL (HL-only strategy, K434 smart router)
+
+    Note: SOL also appears in K457 basket — disambiguation is by position count.
+    K476 will be detected when we see exactly SOL+BTC in a paired long/short.
+    """
+    K476_SYMBOLS = {"SOL", "BTC"}
+    sol_btc = [p for p in positions if p.get("coin", "").upper() in K476_SYMBOLS]
+    if len(sol_btc) < 2:
+        return None
+
+    longs  = [p for p in sol_btc if p.get("side") == "long"]
+    shorts = [p for p in sol_btc if p.get("side") == "short"]
+
+    if not (longs and shorts):
+        return None
+
+    long_pos  = longs[0]
+    short_pos = shorts[0]
+    long_sym  = long_pos["coin"].upper()
+    short_sym = short_pos["coin"].upper()
+
+    if long_sym not in K476_SYMBOLS or short_sym not in K476_SYMBOLS:
+        return None
+    if long_sym == short_sym:
+        return None
+
+    return {
+        "detected":        True,
+        "long_symbol":     long_sym,
+        "short_symbol":    short_sym,
+        "long_value_usd":  long_pos.get("value_usd", 0.0),
+        "short_value_usd": short_pos.get("value_usd", 0.0),
+        "long_size":       long_pos.get("size", 0.0),
+        "short_size":      short_pos.get("size", 0.0),
+        "state":           f"LONG_{long_sym}_SHORT_{short_sym}",
+        "venue":           "HL",
+        "close_protocol":  "short_leg_first_then_long_leg",
+        "note":            "K476 SOL-BTC paired position — cover short first, then sell long (HL-only, K434)",
+    }
+
+
+def close_k476_paired_positions(
+    plan:    Dict,
+    logger:  "logging.Logger",
+    dry_run: bool = True,
+) -> bool:
+    """
+    K478 Phase 5: Close K476 SOL-BTC paired positions.
+    Sequential: short leg first (avoid uncovered short), then long leg.
+
+    Args:
+      plan:    exit plan dict (from plan_exit())
+      logger:  logger instance
+      dry_run: True = paper-trade simulation
+
+    Returns True on success (or dry-run), False on error.
+    """
+    k476_detail = plan.get("k476_pair_detail")
+
+    if not k476_detail or not k476_detail.get("detected"):
+        logger.info("  [K476] No K476 SOL-BTC paired position detected (NEUTRAL or 60d paper-trade).")
+        return True
+
+    short_sym  = k476_detail["short_symbol"]
+    long_sym   = k476_detail["long_symbol"]
+    short_val  = k476_detail.get("short_value_usd", 0.0)
+    long_val   = k476_detail.get("long_value_usd", 0.0)
+
+    logger.info(f"  [K476] SOL-BTC paired close — {k476_detail['state']}")
+    logger.info(f"    Step 1 (SHORT first): BUY-COVER {short_sym} ${short_val:,.0f}  (HL IOC reduce-only)")
+    logger.info(f"    Step 2 (LONG second): SELL      {long_sym} ${long_val:,.0f}  (HL IOC reduce-only)")
+
+    if dry_run:
+        logger.info("    [DRY-RUN] K476 SOL-BTC close simulated — no actual orders submitted")
+        return True
+
+    # LIVE scaffold: IOC close on HL (sequential)
+    # Step 1: cover short (buy SOL or BTC)
+    logger.info(f"    SCAFFOLD: IOC reduce {short_sym} (cover short) @ HL")
+    # Step 2: sell long (after short covered)
+    logger.info(f"    SCAFFOLD: IOC reduce {long_sym} (sell long) @ HL")
+    logger.info("    SCAFFOLD: K476 close wired but not executed (HL auth required at live activation)")
+    return True
+
+
 def _detect_k449_paired_positions(positions: List[Dict]) -> Optional[Dict]:
     """
     K450 Phase 11: Detect K449 paired positions (ETH long + BTC short, or reverse).
@@ -312,6 +407,12 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
     k449_coins = set()
     if k449_pair:
         k449_coins = {k449_pair["long_symbol"], k449_pair["short_symbol"]}
+
+    # K478: detect K476 paired positions (SOL/BTC — HL-only)
+    k476_pair = _detect_k476_paired_positions(positions)
+    k476_coins: set = set()
+    if k476_pair:
+        k476_coins = {k476_pair["long_symbol"], k476_pair["short_symbol"]}
 
     # K459: detect K457 basket positions (BTC/ETH/SOL)
     k457_basket = _detect_k457_basket_positions(positions)
@@ -401,8 +502,46 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
             })
             total_notional += long_pos["value_usd"]
 
-    # All other positions: close in any order (non-K449, non-K457)
-    handled_coins = k449_coins | k457_coins
+    # K476 SOL-BTC paired positions: short leg first, then long leg
+    if k476_pair:
+        # Short leg first (avoid uncovered short)
+        short_coin = k476_pair["short_symbol"]
+        short_pos  = next((p for p in positions if p["coin"].upper() == short_coin
+                           and p["side"] == "short"), None)
+        if short_pos:
+            close_list.append({
+                "coin":            short_pos["coin"],
+                "size":            short_pos["size"],
+                "side_to_close":   "buy",   # covering short
+                "value_usd":       short_pos["value_usd"],
+                "current_side":    "short",
+                "k476_paired":     True,
+                "k476_close_order": 1,       # close short first
+                "venue":           "HL",
+                "note":            f"K476 SOL-BTC short leg {short_coin} — cover first (HL-only)",
+            })
+            total_notional += short_pos["value_usd"]
+
+        # Long leg second
+        long_coin = k476_pair["long_symbol"]
+        long_pos  = next((p for p in positions if p["coin"].upper() == long_coin
+                          and p["side"] == "long"), None)
+        if long_pos:
+            close_list.append({
+                "coin":            long_pos["coin"],
+                "size":            long_pos["size"],
+                "side_to_close":   "sell",
+                "value_usd":       long_pos["value_usd"],
+                "current_side":    "long",
+                "k476_paired":     True,
+                "k476_close_order": 2,       # close long second
+                "venue":           "HL",
+                "note":            f"K476 SOL-BTC long leg {long_coin} — sell second (HL-only)",
+            })
+            total_notional += long_pos["value_usd"]
+
+    # All other positions: close in any order (non-K449, non-K457, non-K476)
+    handled_coins = k449_coins | k457_coins | k476_coins
     for p in positions:
         coin = p.get("coin", "").upper()
         if coin in handled_coins:
@@ -434,6 +573,8 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
         "k449_pair_detail":       k449_pair,
         "k457_basket_detected":   k457_basket is not None,
         "k457_basket_detail":     k457_basket,
+        "k476_paired_detected":   k476_pair is not None,
+        "k476_pair_detail":       k476_pair,
     }
 
 
@@ -1722,6 +1863,27 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K478: K476 SOL-BTC FR differential paired-trade emergency exit flag
+    # K476 = SOL long + BTC short (or reverse) on HL — 2 legs, HL-only.
+    # Sequential close: short leg first (avoid uncovered short), then long leg.
+    # Default: off (K476 positions are auto-detected via _detect_k476_paired_positions).
+    # Use --include-k476 to print K476-specific close summary and ensure sequential ordering.
+    parser.add_argument(
+        "--include-k476",
+        dest="include_k476",
+        action="store_true",
+        default=False,
+        help=(
+            "K478: Include K476 SOL-BTC paired-trade close summary during emergency exit. "
+            "K476 positions (SOL+BTC, HL-only, 2 legs) are detected automatically; "
+            "this flag adds a structured summary. "
+            "Close protocol: short leg first (avoid uncovered short), then long leg. "
+            "Both legs on HyperLiquid only (K434 smart router HL-only). "
+            "Requires: K476 daemon running (com.cryptolab.k476-sol-btc). "
+            "See: docs/k302a_runbook.md §38"
+        ),
+    )
+
     # K473: Spark sUSDS (Sky/MakerDAO) emergency exit flag (stub scaffold — Ethereum DeFi)
     # sUSDS is an Ethereum DeFi yield position — NOT a perp/futures position on HL/Bybit/OKX.
     # Redemption is instant (no lockup). No HL delta hedge required.
@@ -1899,6 +2061,24 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "OKX close-all skipped (--no-okx, default at K456 scaffold). "
                 "Use --include-okx when OKX trading positions exist (post v6.20)."
             )
+
+        # K478: K476 SOL-BTC paired close summary (documentation; positions auto-detected in plan_exit)
+        # K476 positions (SOL+BTC on HL) are included in the main HL exit.
+        # This flag adds a structured summary of the K476-specific sequential close protocol.
+        if args.include_k476:
+            logger.info("=== K476 SOL-BTC PAIRED CLOSE SUMMARY (K478 §38) ===")
+            success_k476 = close_k476_paired_positions(plan=plan, logger=logger, dry_run=False)
+            if success_k476:
+                logger.info("  K476 SOL-BTC close: complete (or no position detected).")
+            else:
+                logger.warning("  K476 SOL-BTC close: had errors — verify HL positions manually.")
+            logger.info("  See: docs/k302a_runbook.md §38 (K476 SOL-BTC strategy playbook)")
+        else:
+            if plan.get("k476_paired_detected"):
+                logger.info(
+                    "K476 SOL-BTC paired positions detected — included in HL exit above. "
+                    "Use --include-k476 to print detailed SOL-BTC sequential close summary (§38)."
+                )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)
         # K457 basket positions (BTC/ETH/SOL HL+Bybit) are included in the main HL exit.

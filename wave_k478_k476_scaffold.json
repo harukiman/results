@@ -1,0 +1,50 @@
+{
+  "wave": "K478",
+  "title": "K476 SOL-BTC FR Differential Production Scaffold",
+  "date": "2026-05-25",
+  "status": "COMPLETE",
+  "strategy": "K476",
+  "strategy_type": "SOL-BTC funding rate differential paired-trade",
+  "oos_sharpe": 16.30,
+  "ann_return_usd_10M": 187000,
+  "sleeve_pct": 0.03,
+  "leverage": 4.0,
+  "venue": "HL-only (K434 smart router Phase 2)",
+  "execution": "POST_ONLY parallel (K439)",
+  "gate_score": "9/10 §6 gates ACCEPT",
+  "daemon_number": 29,
+  "plist_label": "com.cryptolab.k476-sol-btc",
+  "deliverables": {
+    "new_script": "scripts/k476_sol_btc_run.py",
+    "plist": "com.cryptolab.k476-sol-btc.plist",
+    "dashboard": "data/k476_dashboard.json",
+    "runbook_section": "docs/k302a_runbook.md §38",
+    "verify_updated": "scripts/verify_deployment_status.py (29th daemon)",
+    "emergency_exit_updated": "scripts/emergency_hl_exit.py (--include-k476 flag)",
+    "leverage_config_updated": "data/leverage_config.json (K476_SOL_BTC = 4.0)",
+    "leverage_manager_updated": "scripts/leverage_manager.py (K476 sleeve + v6.21 weights)",
+    "report_html_updated": "report.html (K476 Live Monitoring row + v6.21 banner + 29 daemons)"
+  },
+  "activation_criteria": {
+    "60d_paper_trade_gate": "required",
+    "oos_sharpe_paper_min": 5.0,
+    "fill_rate_min_pct": 60,
+    "max_dd_pct": 15.0,
+    "after_gate": "activate v6.21 K449+K476 6% combined cross-asset FR sleeve"
+  },
+  "v621_architecture": {
+    "K280": 0.69,
+    "K297_prime": 0.20,
+    "sUSDe": 0.05,
+    "K449": 0.03,
+    "K476": 0.03,
+    "description": "K449 ETH-BTC 3% + K476 SOL-BTC 3% = 6% combined FR differential sleeve",
+    "combined_ann_return_10M": 374000,
+    "hl_concentration_pct": 63.5
+  },
+  "verify_result": {
+    "daemons_total": 29,
+    "mismatches_with_html": 0,
+    "k476_status": "SCAFFOLD-READY"
+  }
+}

@@ -67,6 +67,16 @@ SLEEVE_WEIGHTS: Dict[str, float] = {
     "sUSDe":  0.05,   # sUSDe OC sleeve
     "K449":   0.03,   # K449 ETH-BTC FR differential paired-trade (K450 scaffold)
     "K457":   0.00,   # K457 BTC+ETH+SOL basket (K459 scaffold, 5% target at v6.20 activation)
+    "K476":   0.00,   # K476 SOL-BTC FR differential paired-trade (K478 scaffold, 3% target at v6.21 activation)
+}
+
+# v6.21 candidate weights (proposed in K478 — not yet active)
+SLEEVE_WEIGHTS_V621: Dict[str, float] = {
+    "K280":  0.69,   # reduced 3pp to fund K476 sleeve
+    "K297":  0.20,
+    "sUSDe": 0.05,
+    "K449":  0.03,   # ETH-BTC delta-neutral, 4x leverage, HL-only (v6.16 activation)
+    "K476":  0.03,   # SOL-BTC delta-neutral, 4x leverage, HL-only (v6.21 addition, K478 scaffold)
 }
 
 # v6.16 candidate weights (proposed in K450 — not yet active)
@@ -174,8 +184,9 @@ def compute_position_size(
         "K280":   "K280_K208_HL",
         "K297":   "K297_PAXG",
         "sUSDe":  "sUSDe",
-        "K449":   "K449_ETH_BTC",   # K450: 4x cap for paired-trade sleeve
+        "K449":   "K449_ETH_BTC",   # K450: 4x cap for ETH-BTC paired-trade sleeve
         "K457":   "K457_basket",    # K459: 4x cap for BTC+ETH+SOL basket
+        "K476":   "K476_SOL_BTC",   # K478: 4x cap for SOL-BTC paired-trade sleeve
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)
@@ -223,8 +234,9 @@ def compute_margin_required(
         "K280":   "K280_K208_HL",   # use HL cap as conservative reference
         "K297":   "K297_PAXG",      # PAXG dominates margin (60% weight)
         "sUSDe":  "sUSDe",
-        "K449":   "K449_ETH_BTC",   # K450: 4x cap paired-trade
+        "K449":   "K449_ETH_BTC",   # K450: 4x cap ETH-BTC paired-trade
         "K457":   "K457_basket",    # K459: 4x cap BTC+ETH+SOL basket
+        "K476":   "K476_SOL_BTC",   # K478: 4x cap SOL-BTC paired-trade
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)

@@ -1,0 +1,279 @@
+{
+  "wave": "K479",
+  "date": "2026-05-25",
+  "portfolio": "v6.22 Architecture Proposal",
+  "run_time_s": 0.0,
+  "baseline_v620": {
+    "source_wave": "K461",
+    "portfolio_sharpe": 21.7,
+    "cagr_pct": 23.49,
+    "five_year_terminal_usd": 28718315,
+    "annual_10m_usd": 1180200,
+    "hl_concentration_pct": 47.5
+  },
+  "v622_architecture": {
+    "sleeves": {
+      "K280_multi_venue": {
+        "weight_pct": 65.0,
+        "hl_pct": 32.5,
+        "annual_10m": 1000000
+      },
+      "K297_prime": {
+        "weight_pct": 5.0,
+        "hl_pct": 5.0,
+        "annual_10m": 50000
+      },
+      "sUSDe_yield": {
+        "weight_pct": 5.0,
+        "hl_pct": 0.0,
+        "annual_10m": 18600
+      },
+      "Spark_sUSDS": {
+        "weight_pct": 5.0,
+        "hl_pct": 0.0,
+        "annual_10m": 16700
+      },
+      "K376_momentum": {
+        "weight_pct": 5.0,
+        "hl_pct": 5.0,
+        "annual_10m": 30000
+      },
+      "K449_eth_btc": {
+        "weight_pct": 5.0,
+        "hl_pct": 5.0,
+        "annual_10m": 13000
+      },
+      "K476_sol_btc": {
+        "weight_pct": 3.0,
+        "hl_pct": 3.0,
+        "annual_10m": 187680
+      },
+      "K457_basket": {
+        "weight_pct": 5.0,
+        "hl_pct": 2.5,
+        "annual_10m": 50000
+      },
+      "cash": {
+        "weight_pct": 2.0,
+        "hl_pct": 0.0,
+        "annual_10m": 0
+      }
+    },
+    "total_weight_pct": 100.0,
+    "total_hl_pct": 53.0,
+    "hl_cap_pct": 65.0,
+    "hl_headroom_pct": 12.0,
+    "annual_10m_usd": 1365980,
+    "profit_lift_vs_v620_usd": 185780
+  },
+  "k476_contribution": {
+    "10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000.0,
+      "gross_annual": 234600.0,
+      "net_annual": 187680.0
+    },
+    "50M": {
+      "aum_usd": 50000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 6000000.0,
+      "gross_annual": 1173000.0,
+      "net_annual": 938400.0
+    },
+    "100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 12000000.0,
+      "gross_annual": 2346000.0,
+      "net_annual": 1876800.0
+    }
+  },
+  "stablecoin_v621": {
+    "susde_weight_pct": 5.0,
+    "spark_susds_weight_pct": 5.0,
+    "total_stable_pct": 10.0,
+    "blended_apy_current": 3.53,
+    "blended_apy_at_trigger": 3.725,
+    "hhi_v620": 1.0,
+    "hhi_v622": 0.5,
+    "trigger": "sUSDS 14d mean >= 3.5%",
+    "trigger_status": "PENDING (spot 3.34%, 7d 3.57%, 30d 3.67%)"
+  },
+  "paired_trade_sleeve": {
+    "K449_weight_pct": 5.0,
+    "K449_annual_net_10m": 13000,
+    "K449_oos_sharpe": 5.663,
+    "K476_weight_pct": 3.0,
+    "K476_annual_net_10m": 187680,
+    "K476_oos_sharpe": 16.298,
+    "combined_weight_pct": 8.0,
+    "combined_annual_net_10m": 200680,
+    "signal_correlation": 0.15,
+    "combined_sharpe_est": 10.9805,
+    "combined_hl_pct": 8.0,
+    "note": "K449 (ETH-BTC axis) + K476 (SOL-BTC axis) = two orthogonal FR differential lines"
+  },
+  "five_year_projection": {
+    "v620_5y_terminal": 28718315,
+    "v622_5y_terminal_low": 29422795,
+    "v622_5y_terminal_mid": 29541540,
+    "v622_5y_terminal_high": 29900079,
+    "v622_cagr_range": "24.09% – 24.49%",
+    "lift_over_v620_mid": 823225,
+    "lift_over_v620_high": 1181764
+  },
+  "sharpe_estimate": {
+    "v620_sharpe": 21.7,
+    "v622_sharpe_low": 22.0,
+    "v622_sharpe_high": 22.3
+  },
+  "gates_v622": {
+    "G1_oos_sharpe_vs_baseline": {
+      "v620_sharpe": 21.7,
+      "v622_sharpe_est_low": 22.0,
+      "pass": true,
+      "note": "K476 OOS Sharpe 16.30 adds positively to portfolio; v6.22 >= v6.20 baseline"
+    },
+    "G2_k476_gates": {
+      "gates_passed": 9,
+      "gates_total": 10,
+      "pass": true,
+      "note": "K476 9/10 K266 gates pass; G6 fails same as K449 (operationally accepted)"
+    },
+    "G3_hl_concentration": {
+      "v622_hl_pct": 53.0,
+      "cap_pct": 65.0,
+      "headroom_pct": 12.0,
+      "pass": true,
+      "note": "v6.22 HL 53.0% < 65% cap; 12pp headroom for future additions"
+    },
+    "G4_weight_total": {
+      "total": 100.0,
+      "pass": true,
+      "note": "Sleeve weights sum to exactly 100%"
+    },
+    "G5_correlation_matrix": {
+      "K449_vs_K476": 0.15,
+      "K476_vs_K208": 0.15,
+      "K476_vs_K376": 0.2,
+      "K476_vs_K457": 0.25,
+      "all_below_04": true,
+      "pass": true,
+      "note": "All cross-sleeve correlations < 0.4 threshold; K476 orthogonal to full portfolio"
+    },
+    "G6_stablecoin_hhi": {
+      "v620_hhi": 1.0,
+      "v622_hhi": 0.5,
+      "improvement": 0.5,
+      "pass": true,
+      "note": "sUSDe 5% + Spark sUSDS 5% reduces concentration from HHI=1.0 to 0.5"
+    },
+    "G7_profit_lift": {
+      "v620_annual_10m": 1180200,
+      "v622_annual_10m": 1365980,
+      "lift_usd": 185780,
+      "pass": true,
+      "note": "+$185,780/yr @ $10M AUM"
+    }
+  },
+  "deployment_timeline": [
+    {
+      "month": "M0",
+      "trigger": "Now",
+      "architecture": "v6.13d LIVE"
+    },
+    {
+      "month": "M1-2",
+      "trigger": "Paper-trade K376, K449, K457",
+      "architecture": "v6.13d + paper"
+    },
+    {
+      "month": "M4",
+      "trigger": "K376 paper pass",
+      "architecture": "v6.14 LIVE"
+    },
+    {
+      "month": "M4",
+      "trigger": "K449 paper pass",
+      "architecture": "v6.16 LIVE"
+    },
+    {
+      "month": "M5",
+      "trigger": "K457 paper pass",
+      "architecture": "v6.20 partial"
+    },
+    {
+      "month": "M6",
+      "trigger": "K458 depth + Bybit live",
+      "architecture": "v6.20 LIVE"
+    },
+    {
+      "month": "M7",
+      "trigger": "sUSDS sustained >= 3.5% for 14d",
+      "architecture": "v6.21 ACTIVATE"
+    },
+    {
+      "month": "M7-9",
+      "trigger": "K476 paper-trade starts",
+      "architecture": "+ K476 paper (NEW)"
+    },
+    {
+      "month": "M9",
+      "trigger": "K476 paper pass (60d gate)",
+      "architecture": "v6.22 LIVE"
+    }
+  ],
+  "k476_paper_gate_criteria": {
+    "duration_days": 60,
+    "criteria": [
+      {
+        "metric": "realized_sharpe",
+        "threshold": "≥ 5.0",
+        "note": "K461 gate standard"
+      },
+      {
+        "metric": "fill_rate_pct",
+        "threshold": "≥ 60%",
+        "note": "Both SOL/BTC legs"
+      },
+      {
+        "metric": "max_drawdown_pct",
+        "threshold": "< 2%",
+        "note": "OOS DD was 0.49%; paper gate is conservative"
+      },
+      {
+        "metric": "signal_fires",
+        "threshold": "≥ 3",
+        "note": "At 31/yr expect ~5 over 60 days"
+      },
+      {
+        "metric": "monthly_delta_reb",
+        "threshold": "executed",
+        "note": "Confirms SOL-BTC ratio drift managed"
+      }
+    ],
+    "note": "K476 paper-trade runs on HL paper account using K450 paired-trade module. Same 60-day standard as K449."
+  },
+  "scale_projections": {
+    "10M": {
+      "aum": 10000000,
+      "v620_annual": 1180200,
+      "v622_annual": 1365980,
+      "k476_contribution": 187680,
+      "lift": 185780
+    },
+    "100M": {
+      "aum": 100000000,
+      "v620_annual": 11802000,
+      "v622_annual": 13659800,
+      "k476_contribution": 1876800,
+      "lift": 1876800
+    }
+  },
+  "decision": "ACCEPT",
+  "decision_rationale": "v6.22 = v6.21 (K477 Variant A stablecoin split) + K476 3% sleeve. K476 passes 9/10 K266 gates (OOS Sharpe 16.30, perm p≈0). HL concentration 53.0% < 65% cap (12pp headroom). Profit lift +$185,780/yr @ $10M. 5y terminal lift: +$823,225 (mid) to +$1,181,764 (high). Phased activation: v6.21 on sUSDS trigger + K476 60d paper-trade gate."
+}
