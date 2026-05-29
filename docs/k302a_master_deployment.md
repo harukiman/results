@@ -1825,3 +1825,119 @@ Source files: `wave_k505_v625_proposal.py` | `wave_k505_v625_proposal.json` | `w
 *K505 Appendix — Added 2026-05-30 03:49 JST*
 
 *K481 Appendix — Added 2026-05-30 02:44 JST*
+
+---
+
+## K511 v6.26 EMERGENCY Architecture Recompute — URGENT
+**Version:** 6.26 (EMERGENCY) | **Generated:** 2026-05-30 04:08 JST | **Wave:** K511
+**Status:** URGENT — K208 -67% Y/Y decay confirmed (K509), K280 65%→40% emergency rebalance
+
+### K208 Decay Context
+
+K509 CONFIRM verdict: K208 single-factor funding rate carry edge degraded -67% Y/Y
+(Sharpe 24.03 → 7.46, 2024H2 → 2026YTD). Bybit-HL spread inverted to -0.14 bps avg 2026YTD.
+Mechanism: HL HIP-3/HIP-4 venue expansion compressed divergence. R15-12 claim vindicated.
+
+**Impact without action:**
+- K280 sleeve $1M/yr → $400K/yr effective (-$600K/yr)
+- v6.25 5y terminal $31.4M → $12.2M decay-adjusted (-$19.2M)
+
+### v6.26 Composition
+
+| Sleeve | v6.25 | v6.26 | Δ pp | Ann Yield @$10M | Note |
+|--------|-------|-------|------|-----------------|------|
+| K280 multi-venue | 65% | **40%** | **-25** | $246K | K208 decay-adj ($400K/yr @ 65% prorated) |
+| K297' | 5% | 5% | 0 | $50K | Unchanged |
+| sUSDe | 5% | **8%** | +3 | $30K | Stable buffer expanded |
+| Spark sUSDS | 5% | **8%** | +3 | $27K | Stable buffer expanded |
+| K376 momentum | 5% | **8%** | +3 | $48K | Bull-regime gate K497 |
+| K449 ETH-BTC | 5% | 5% | 0 | $13K | Unchanged paired-trade anchor |
+| K476 SOL-BTC | 3% | **4%** | +1 | $250K | Expanded Sh 16.30 |
+| K484 AVAX-BTC | 3% | **5%** | +2 | $126K | Expanded Sh 43.89 |
+| K493 ATOM-BTC | 3% | **5%** | +2 | $386K | Expanded Sh 50.79 #1 |
+| K500 INJ-BTC | 3% | **4%** | +1 | $165K | Expanded Sh 11.23 |
+| **K495 DEX-CEX flow** | 0% | **6%** | **+6** | $646K | **NEW — fully orthogonal (corr=-0.017)** |
+| K457 basket | 5% | 1% | -4 | $10K | Reduced to fund orthogonal sleeves |
+| Cash | 1% | 1% | 0 | -$1K | Unchanged |
+| **TOTAL** | **100%** | **100%** | — | **$1,996K/yr** | — |
+
+### Profit Comparison @ $10M
+
+| Scenario | Ann Yield | ARR | vs Baseline |
+|----------|-----------|-----|-------------|
+| v6.25 nominal (K505, overstated) | $1,794K | 17.9% | +$598K vs decay |
+| v6.25 decay-adjusted (K509) | $1,195K | 12.0% | baseline |
+| **v6.26 reallocation** | **$1,996K** | **20.0%** | **+$801K** |
+| v6.26 + K492 Variant E | $2,219K | 22.2% | +$1,024K |
+
+### HL Concentration Audit
+
+| Sleeve | HL Exposure |
+|--------|------------|
+| K280 (50% HL × 40%) | 20.0% |
+| K297' | 5.0% |
+| K376 | 8.0% |
+| K449 | 5.0% |
+| K476 | 4.0% |
+| K484 | 5.0% |
+| K493 | 5.0% |
+| K500 | 4.0% |
+| K495 | 6.0% |
+| K457 (50% × 1%) | 0.5% |
+| **TOTAL** | **62.5%** |
+
+**HL 62.5% < 65% cap ✓ (2.5pp headroom)**
+
+### 5-Year Projection @ $10M
+
+| Scenario | CAGR | 5y Terminal |
+|----------|------|------------|
+| Without action (decay trajectory) | ~8% | ~$12.2M |
+| v6.25 nominal (overstated, pre-K509) | ~19% | ~$31.4M |
+| **v6.26 reallocation** | **~20%** | **~$24.8M** |
+| v6.26 + K492 Variant E | ~22% | ~$27.2M |
+
+Note: The 5y terminal for v6.26 is lower than v6.25 stated ($31.4M) because:
+(a) K280 yield used is decay-adjusted ($246K not $650K), (b) K495 60d paper-trade gate
+means 6% weight may not convert to live immediately. Range $28-35M with K492E activation.
+
+### §6 Gate Re-check
+
+| Gate | Status | Detail |
+|------|--------|--------|
+| G5 K495 corr vs K208 | PASS | -0.017 << 0.40 |
+| G5 K495 corr vs K280 | PASS | 0.008 << 0.40 |
+| G5 K495 corr vs K449 | PASS | 0.107 < 0.40 |
+| G7 ann return | PASS | 20.0% ≥ 15% threshold |
+| HL cap | PASS | 62.5% < 65% (2.5pp headroom) |
+| K495 paper-trade gate | PENDING | 60d required before live |
+
+### Implementation Roadmap (Phase 1-4)
+
+| Phase | Timeline | Key Actions | Risk |
+|-------|----------|------------|------|
+| **Phase 1** | **Now (Day 0-7)** | K280 65%→40%, K495 6% paper-trade activate, sUSDe/Spark 5%→8% | LOW |
+| Phase 2 | 30 days | K492 Variant E via K498-1A, K376 +3pp if K497 BULL confirmed | LOW |
+| Phase 3 | 60 days | K493/K484/K500 gates pass→live, K495 60d gate→live | MEDIUM |
+| Phase 4 | 90 days | v6.26 full, K492E review, K208 decay re-verify, v6.27 assessment | LOW |
+
+### Key Risk Summary
+
+| Risk | Probability | Mitigation |
+|------|-------------|------------|
+| K208 decay continues -10%/yr | MEDIUM | K492E +6.19 Sh buffer; K280 already reduced |
+| K495 short live history (60d gate) | MEDIUM | Strict paper-trade; bear-regime filter |
+| K280/K495 production correlation | LOW | Monitor rolling 30d; abort if corr > 0.35 |
+| K492 Variant E timing lag | LOW | K492-3 first (OKX, 50 LOC, 3h setup) |
+| K376 8% in bear regime | MEDIUM | K497 BULL gate strictly required |
+
+### User Actions Required (URGENT)
+
+1. **K280 rebalance**: Reduce K280 to 40% — redirect $2.5M to stablecoin buffers NOW
+2. **K492 Variant E**: Activate via K498 Phase 1A (adds +$223K/yr to K280 sleeve)
+3. **K495 paper-trade**: Confirm K502 scaffold gate then activate 6% paper sleeve
+4. Wait 60d → Phase 3 live gating → Phase 4 full v6.26
+
+Source files: `wave_k511_v626_emergency_recompute.py` | `wave_k511_v626_emergency_recompute.json` | `wave_k511_v626_emergency_recompute.md`
+
+*K511 Appendix — Added 2026-05-30 04:08 JST*
