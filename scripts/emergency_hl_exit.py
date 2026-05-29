@@ -1284,6 +1284,75 @@ def close_dydx_positions(
     return False
 
 
+def close_jlp_positions(
+    dry_run: bool,
+    logger:  logging.Logger,
+) -> bool:
+    """
+    K468 scaffold: close Jupiter Perpetuals JLP (Solana LP) position.
+
+    JLP is a Solana-based liquidity provider token for Jupiter Perpetuals.
+    It is NOT a HL/Bybit/OKX/Aevo/dYdX position — it lives on Solana.
+
+    K467 analysis:
+      - JLP current APY: ~1.68% (K467 baseline)
+      - Break-even APY: ~21% (IL + hedge cost + basis risk)
+      - Entry trigger: >= 25% gross APY (K468 monitor fires alert)
+      - Reduce trigger: < 15% APY (exit half)
+      - Exit trigger: < 10% sustained 14d (exit all)
+
+    To close JLP manually:
+      1. Go to https://jup.ag/perp (Jupiter Perpetuals UI) or
+         https://jupresear.ch (Jupiter Explorer)
+      2. Connect Solana wallet (Phantom, Backpack, etc.)
+      3. Navigate to "Earn" / "JLP" tab
+      4. Click "Withdraw" to redeem JLP tokens for underlying assets
+      5. Swap underlying assets (BTC/ETH/SOL/USDC/USDT) to USDC via Jupiter swap
+
+    Hedge leg (if JLP was hedged on HL per §36 runbook):
+      - Close the corresponding short position on HL (delta hedge)
+      - Run: python3 scripts/emergency_hl_exit.py --EXECUTE --user <addr>
+
+    NOTE: Solana wallet API signing is a USER responsibility.
+    This script does NOT have access to Solana private keys.
+    Full automation planned post-K468 when Solana wallet SDK integrated.
+
+    Current scope: STUB — guidance only.
+    Returns True on dry-run (safe). Returns False in live mode (not implemented).
+    """
+    if dry_run:
+        logger.info(
+            "  [DRY-RUN] close_jlp_positions — K468 STUB (Solana LP, guidance only). "
+            "No API call made."
+        )
+        logger.info(
+            "    JLP is Solana-based — NOT on HL/Bybit/OKX. Manual close required."
+        )
+        logger.info(
+            "    Close via Jupiter UI: https://jup.ag/perp → Earn → JLP → Withdraw."
+        )
+        logger.info(
+            "    Then close HL delta hedge short (if hedged) via main HL exit."
+        )
+        logger.info(
+            "    Dashboard: data/jlp_apy_dashboard.json | Monitor: scripts/jlp_apy_monitor.py | "
+            "Runbook: docs/k302a_runbook.md §36"
+        )
+        return True
+
+    # STUB: live JLP close not yet implemented (K468 scaffold — Solana wallet required)
+    logger.warning(
+        "close_jlp_positions: STUB — Solana wallet signing not implemented (K468 scaffold). "
+        "JLP must be closed manually via Jupiter UI: https://jup.ag/perp → Earn → JLP → Withdraw."
+    )
+    logger.warning(
+        "  After JLP withdrawal: swap underlying tokens to USDC via jup.ag. "
+        "Close HL delta hedge (if active) via standard HL exit. "
+        "See: docs/k302a_runbook.md §36 for full JLP exit procedure."
+    )
+    return False
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # 8. Interactive Confirm (--EXECUTE guard)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1567,6 +1636,25 @@ USDY sleeve emergency guidance (K415 §21.6):
         help="Skip Vertex close-all (default — Vertex not yet live at K465)",
     )
 
+    # K468: JLP (Jupiter Perpetuals LP) emergency exit flag (stub scaffold — Solana venue)
+    # JLP is a Solana-based LP position — NOT a HL/Bybit/OKX position.
+    # Requires Solana wallet management (user responsibility). CANNOT be automated here.
+    # Entry only when JLP APY >= 25% trigger fires (K468 monitor). Exit at < 15% (reduce) / < 10% sustained (full exit).
+    parser.add_argument(
+        "--include-jlp",
+        dest="include_jlp",
+        action="store_true",
+        default=False,
+        help=(
+            "K468: Print JLP (Jupiter Perpetuals LP) emergency exit guidance (Solana STUB scaffold). "
+            "STUB only — Solana wallet signing required (user responsibility). "
+            "JLP is NOT on HL/Bybit/OKX — manual close required at jup.ag or Jupiter UI. "
+            "K467 analysis: break-even 21%%, entry trigger >=25%%, reduce <15%%, exit <10%%. "
+            "K468 monitor: scripts/jlp_apy_monitor.py (weekly DefiLlama poll). "
+            "See: docs/k302a_runbook.md §36"
+        ),
+    )
+
     args = parser.parse_args()
 
     # Determine mode
@@ -1833,7 +1921,25 @@ USDY sleeve emergency guidance (K415 §21.6):
         else:
             logger.info("dYdX v4 close-all skipped (--no-dydx, default at K460 scaffold).")
 
-        overall_success = success and bybit_success and okx_success and aevo_success and dydx_success
+        # K468: JLP (Jupiter Perpetuals LP) emergency exit — Solana STUB scaffold
+        jlp_success = True
+        if args.include_jlp:
+            logger.info("=== JLP EMERGENCY CLOSE GUIDANCE (K468 Solana LP STUB scaffold) ===")
+            jlp_success = close_jlp_positions(dry_run=False, logger=logger)
+            if jlp_success:
+                logger.info("JLP close: STUB returned OK (no actual Solana tx — manual close required).")
+            else:
+                logger.warning(
+                    "JLP close: STUB not implemented (Solana wallet signing required). "
+                    "Manual close: https://jup.ag/perp → Earn → JLP → Withdraw."
+                )
+        else:
+            logger.info(
+                "JLP close skipped (--include-jlp not set, default off at K468 scaffold). "
+                "Use --include-jlp to print JLP guidance if JLP position is active."
+            )
+
+        overall_success = success and bybit_success and okx_success and aevo_success and dydx_success and jlp_success
         return 0 if overall_success else 1
 
     # Dry-run success
@@ -1884,6 +1990,21 @@ USDY sleeve emergency guidance (K415 §21.6):
     logger.info("    Basket is in 60d paper-trade — no real positions until v6.20 activation.")
     logger.info("    Use --include-k457 to print structured basket close summary.")
     logger.info("    See: docs/k302a_runbook.md §32")
+
+    # K468: JLP (Jupiter Perpetuals LP) dry-run note
+    logger.info("")
+    logger.info("  [JLP — K468 §36] Jupiter Perpetuals LP emergency guidance:")
+    logger.info("    JLP is Solana-based (NOT on HL/Bybit/OKX) — manual close required.")
+    logger.info("    Close: https://jup.ag/perp → Earn → JLP → Withdraw. Then swap to USDC.")
+    logger.info("    Entry only when K468 monitor fires ENTRY_READY (gross APY >= 25%).")
+    logger.info("    K467: current APY 1.68% << break-even 21% — no position expected now.")
+    logger.info("    If position active: close JLP on Solana, then close HL delta hedge short.")
+    logger.info("    Use --include-jlp to print JLP guidance during --EXECUTE mode.")
+    logger.info("    See: docs/k302a_runbook.md §36 | Monitor: data/jlp_apy_dashboard.json")
+    if args.include_jlp:
+        logger.info("  [DRY-RUN] JLP close guidance STUB would be printed (--include-jlp)")
+    else:
+        logger.info("  [DRY-RUN] JLP close would be skipped (default --no-jlp at K468 scaffold)")
 
     return 0
 

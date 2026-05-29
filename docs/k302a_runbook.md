@@ -5308,4 +5308,144 @@ launchctl list | grep -E "lighter|vertex"
 
 ---
 
+## §36. K468 JLP APY Trigger Monitor — Jupiter Perpetuals LP (27th Daemon)
+
+**Wave:** K468 | **Status:** SCAFFOLD-READY | **Activation:** When JLP APY >= 25% trigger fires
+
+### §36.1 Strategy Overview
+
+JLP (Jupiter Perpetuals Liquidity Provider) is a Solana-based LP token backing the Jupiter Perpetuals protocol. JLP earns protocol fees from perpetuals trading (open/close fees, liquidation fees, borrowing fees).
+
+**K467 analysis:**
+- Current gross APY: ~1.68% (K467 baseline, 2026-05-25)
+- Estimated IL (impermanent loss) cost: ~5-8%/yr (5-asset pool: BTC/ETH/SOL/USDC/USDT, BTC/ETH/SOL exposure)
+- Estimated hedge cost (delta-neutral HL short): ~6-9%/yr (funding + basis risk)
+- Break-even APY: ~21% gross (14-17pp cost absorbed by LP yield)
+- Estimated net APY at current 1.68%: **−14.4pp** (unprofitable)
+
+**Current recommendation:** Hold cash. Wait for ≥25% entry trigger.
+
+### §36.2 Trigger Thresholds (K468)
+
+| Trigger | Threshold | Action |
+|---------|-----------|--------|
+| ENTRY_READY | Gross APY >= 25% | Enter JLP — set up Solana wallet, open HL delta hedge |
+| ACTIVE | 21% <= APY < 25% | Hold if position active; no new entry |
+| BELOW_BREAK_EVEN | 15% <= APY < 21% | Hold cash; wait for trigger |
+| REDUCE_WARNING | 10% <= APY < 15% | If position active: exit half immediately |
+| EXIT | APY < 10% (sustained 14d) | Exit all JLP positions; close HL hedge |
+
+### §36.3 K468 Monitor Daemon
+
+- **Script:** `scripts/jlp_apy_monitor.py`
+- **plist:** `com.cryptolab.jlp-apy-monitor.plist` (in repo root, gitignored)
+- **Schedule:** Weekly (StartInterval: 604800) via launchd
+- **Data source:** DefiLlama yields API (`api.llama.fi/yields`, Jupiter Perpetuals filter)
+- **Dashboard:** `data/jlp_apy_dashboard.json`
+- **Alerts:** `cache/jlp_apy_alerts.jsonl`
+- **Logs:** `logs/jlp_apy_monitor.log` / `.err`
+- **ntfy topic:** `cryptolab-jlp-apy` (optional, set `NTFY_TOPIC` in script)
+
+**Dashboard JSON schema (K468):**
+```json
+{
+  "last_poll_jst": "...",
+  "current_apy": 1.68,
+  "apy_7d_mean": null,
+  "apy_30d_mean": null,
+  "apy_30d_slope": null,
+  "break_even_apy": 21.0,
+  "entry_trigger_threshold": 25.0,
+  "reduce_trigger_threshold": 15.0,
+  "exit_trigger_threshold": 10.0,
+  "alert_status": "BELOW_BREAK_EVEN",
+  "recommended_action": "Hold cash. JLP currently 1.68% < break-even 21%. Wait for >=25% trigger.",
+  "estimated_net_apy_if_entered": -19.32,
+  "vector_to_break_even": "+19.32pp required",
+  "vector_to_entry": "+23.32pp required to reach 25.0% entry"
+}
+```
+
+### §36.4 Activation Procedure (When ENTRY_READY Fires)
+
+When `jlp_apy_dashboard.json` shows `alert_status = "ENTRY_READY"`:
+
+1. **Verify the trigger:** Check DefiLlama manually at https://defillama.com/yields?project=jupiter to confirm APY
+2. **Solana wallet setup (user responsibility):**
+   - Install Phantom or Backpack wallet
+   - Fund with USDC (amount = intended JLP allocation)
+   - Go to https://jup.ag/perp → Earn → JLP → Deposit
+3. **Delta hedge construction on HyperLiquid:**
+   - JLP contains ~50% BTC+ETH+SOL (volatile assets) → short corresponding notional on HL
+   - Typical hedge ratio: short 0.4x BTC + 0.2x ETH + 0.2x SOL per $1 of JLP
+   - Use `scripts/emergency_hl_exit.py --dry-run` to understand position sizing
+4. **Position sizing:**
+   - Recommended: ≤5% of total AUM for JLP sleeve
+   - Higher concentration increases Solana chain risk and IL exposure
+5. **Monitoring:**
+   - K468 daemon polls weekly; dashboard at `data/jlp_apy_dashboard.json`
+   - Manual check: https://defillama.com/yields?project=jupiter
+   - Alert on REDUCE_WARNING or EXIT trigger — act within 48h
+
+### §36.5 Emergency Exit Procedure
+
+If JLP position is active and emergency exit needed:
+
+**Step 1: Close JLP on Solana (user action — cannot be automated)**
+1. Open Phantom/Backpack wallet connected to Solana
+2. Go to https://jup.ag/perp → Earn → JLP → Withdraw
+3. Withdraw all JLP tokens → receive BTC/ETH/SOL/USDC/USDT mix
+4. Swap all non-USDC assets to USDC via https://jup.ag (Jupiter swap)
+
+**Step 2: Close HL delta hedge**
+```bash
+python3 scripts/emergency_hl_exit.py --dry-run --user $HL_USER_ADDRESS --include-jlp
+# Verify the plan, then:
+python3 scripts/emergency_hl_exit.py --EXECUTE --user $HL_USER_ADDRESS --include-jlp
+```
+
+**Step 3: Verify positions are closed**
+- Solana: check Phantom wallet balance (USDC)
+- HL: check `clearinghouseState` via API or UI
+
+**Note:** The `--include-jlp` flag on `emergency_hl_exit.py` prints Solana guidance but cannot execute Solana transactions. Solana signing is always a user action.
+
+### §36.6 Risk Factors
+
+| Risk | Description | Mitigation |
+|------|-------------|------------|
+| Solana chain risk | Solana downtime / validator issues | HL hedge remains open if Solana halts; unwind when Solana resumes |
+| IL (impermanent loss) | BTC/ETH/SOL price divergence from entry | Delta hedge on HL reduces directional risk; residual IL remains |
+| Basis risk | JLP price vs hedge price slippage | Size hedge conservatively (0.8x directional exposure) |
+| APY decay | JLP APY may drop below break-even after entry | K468 weekly poll + ntfy alert on REDUCE_WARNING |
+| Jupiter protocol risk | Smart contract vulnerability | Limit to ≤5% AUM; do not concentrate |
+| Funding cost blowout | HL funding rates spike on hedge side | Monitor HL FR dashboard; if annualized hedge cost >15% pp, reassess |
+
+### §36.7 Activation Command
+
+```bash
+# Load daemon (after confirming ENTRY_READY trigger fires)
+cp com.cryptolab.jlp-apy-monitor.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.jlp-apy-monitor.plist
+
+# Test single-shot
+python3 scripts/jlp_apy_monitor.py
+
+# Verify deployment
+python3 scripts/verify_deployment_status.py
+# Expected: com.cryptolab.jlp-apy-monitor — SCAFFOLD-READY → PENDING ACTIVATION → ACTIVE
+```
+
+### §36.8 References
+
+| Wave | Content |
+|------|---------|
+| K468 | This section — JLP APY trigger monitor (27th daemon) |
+| K467 | JLP APY analysis (CONDITIONAL: entry trigger >=25%, break-even 21%, current 1.68%) |
+| K465 | Lighter + Vertex scaffold (25th + 26th daemons, §35) |
+| K412 | sUSDe APY monitor pattern (K344 sleeve, same architecture as K468) |
+| K407 | TVL trajectory monitor pattern (weekly DefiLlama poll, same StartInterval) |
+
+---
+
 *K465 §35 -- Lighter + Vertex integration scaffold (25th + 26th daemons, v6.20 7-venue K208 mesh COMPLETE, 26 daemons confirmed, conservative tier 3x/0.03 OI cap) -- 2026-05-30*

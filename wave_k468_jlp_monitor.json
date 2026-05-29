@@ -1,0 +1,140 @@
+{
+  "wave": "K468",
+  "title": "JLP APY Trigger Monitor — Jupiter Perpetuals LP (27th Daemon)",
+  "date": "2026-05-30",
+  "timestamp_jst": "2026-05-30 01:49 JST",
+  "status": "COMPLETE",
+  "mandate": "K467 CONDITIONAL trigger-based activation — weekly DefiLlama poll, entry >=25% APY",
+  "daemon_count": 27,
+
+  "summary": {
+    "k467_current_apy_pct": 1.68,
+    "break_even_apy_pct": 21.0,
+    "entry_trigger_pct": 25.0,
+    "reduce_trigger_pct": 15.0,
+    "exit_trigger_pct": 10.0,
+    "current_status": "BELOW_BREAK_EVEN",
+    "current_net_apy_if_entered_pp": -19.32,
+    "vector_to_break_even": "+19.32pp required",
+    "vector_to_entry": "+23.32pp required to reach 25% entry",
+    "data_source": "DefiLlama yields API (api.llama.fi/yields, Jupiter Perpetuals filter)",
+    "daemon_label": "com.cryptolab.jlp-apy-monitor",
+    "start_interval_sec": 604800,
+    "runbook_section": "§36"
+  },
+
+  "deliverables": {
+    "new_files": [
+      "scripts/jlp_apy_monitor.py",
+      "com.cryptolab.jlp-apy-monitor.plist",
+      "data/jlp_apy_dashboard.json",
+      "wave_k468_jlp_monitor.md",
+      "wave_k468_jlp_monitor.json"
+    ],
+    "modified_files": [
+      "scripts/verify_deployment_status.py",
+      "scripts/emergency_hl_exit.py",
+      "docs/k302a_runbook.md",
+      "report.html"
+    ]
+  },
+
+  "phases": {
+    "phase1_script": {
+      "file": "scripts/jlp_apy_monitor.py",
+      "lines": "~200",
+      "status": "COMPLETE",
+      "features": [
+        "REPO_ROOT pattern (K339)",
+        "DefiLlama /yields API fetch (Jupiter Perpetuals filter)",
+        "DefiLlama /chart/{pool_id} historical APY series",
+        "7d/30d mean computation (pure stdlib)",
+        "Linear slope estimation (pure stdlib, no numpy)",
+        "Trigger detection: ENTRY_READY / ACTIVE / BELOW_BREAK_EVEN / REDUCE_WARNING / EXIT",
+        "cache/jlp_apy_alerts.jsonl append",
+        "data/jlp_apy_dashboard.json write",
+        "ntfy.sh optional notification",
+        "catch-all exception → exit 0"
+      ]
+    },
+    "phase2_dashboard_json": {
+      "file": "data/jlp_apy_dashboard.json",
+      "status": "WRITTEN",
+      "alert_status": "BELOW_BREAK_EVEN",
+      "current_apy": 1.68
+    },
+    "phase3_plist": {
+      "file": "com.cryptolab.jlp-apy-monitor.plist",
+      "status": "CREATED",
+      "start_interval": 604800,
+      "gitignored": true
+    },
+    "phase4_verify": {
+      "file": "scripts/verify_deployment_status.py",
+      "status": "UPDATED",
+      "daemon_count": 27,
+      "mismatches": 0,
+      "new_entry": "com.cryptolab.jlp-apy-monitor"
+    },
+    "phase5_runbook": {
+      "file": "docs/k302a_runbook.md",
+      "section": "§36",
+      "status": "ADDED",
+      "contents": [
+        "§36.1 Strategy overview (JLP pool, K467 analysis)",
+        "§36.2 Trigger threshold table",
+        "§36.3 K468 monitor daemon spec + dashboard schema",
+        "§36.4 Activation procedure (ENTRY_READY fires)",
+        "§36.5 Emergency exit procedure (--include-jlp)",
+        "§36.6 Risk factors (Solana chain, IL, basis, APY decay, Jupiter protocol)",
+        "§36.7 Activation commands",
+        "§36.8 References table"
+      ]
+    },
+    "phase6_emergency_exit": {
+      "file": "scripts/emergency_hl_exit.py",
+      "status": "UPDATED",
+      "changes": [
+        "close_jlp_positions() stub function added (Solana guidance, ~60 LOC)",
+        "--include-jlp CLI flag added",
+        "JLP handling in execute path (jlp_success tracking)",
+        "JLP dry-run note in DRY-RUN COMPLETE section",
+        "overall_success includes jlp_success"
+      ]
+    },
+    "phase7_test": {
+      "status": "VERIFIED",
+      "results": {
+        "script_exit_code": 0,
+        "alert_status": "BELOW_BREAK_EVEN",
+        "current_apy": 1.68,
+        "dashboard_written": true,
+        "verify_deployment_mismatches": 0,
+        "verify_deployment_daemon_count": 27
+      }
+    },
+    "phase8_html": {
+      "file": "report.html",
+      "status": "UPDATED",
+      "changes": [
+        "K468 JLP APY monitor row added (27th daemon)",
+        "Banner updated: '★ K468 JLP APY monitor 27th daemon (current 1.68% < 21% break-even, wait for 25% trigger)'",
+        "last-update timestamp: 2026-05-30 01:49 JST"
+      ]
+    }
+  },
+
+  "k467_analysis_summary": {
+    "jlp_pool": "Jupiter Perpetuals JLP (Solana)",
+    "jlp_composition": "BTC ~28% + ETH ~22% + SOL ~20% + USDC ~22% + USDT ~8%",
+    "gross_apy_current": 1.68,
+    "il_cost_annual_pct": "5-8",
+    "hedge_cost_annual_pct": "6-9",
+    "basis_risk_pct": "2-3",
+    "total_cost_estimate_pct": "14-17",
+    "break_even_gross_apy": 21.0,
+    "verdict": "CONDITIONAL — entry only when gross APY >= 25%",
+    "current_status": "BELOW_BREAK_EVEN (-19.32pp net if entered)",
+    "historical_peak_apy": "~30-60% during high-volatility periods (2023-2024)"
+  }
+}

@@ -231,6 +231,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="vertex_fr_monitor",
         expected_html_status="SCAFFOLD-READY",  # K465: plist in repo root (gitignored); activate after Vertex trading keys configured + v6.20 go-live
     ),
+    DaemonSpec(
+        label="com.cryptolab.jlp-apy-monitor",
+        purpose="K468 JLP APY trigger monitor (K467 CONDITIONAL trigger-based, Jupiter Perpetuals LP, break-even 21%, entry trigger >=25%, weekly DefiLlama poll, 27th daemon)",
+        scripts=["scripts/jlp_apy_monitor.py"],
+        log_basename="jlp_apy_monitor",
+        expected_html_status="SCAFFOLD-READY",  # K468: plist in repo root (gitignored); weekly StartInterval (604800) via launchd; activate when JLP entry trigger fires (>=25% APY)
+    ),
 ]
 
 
