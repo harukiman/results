@@ -148,14 +148,28 @@ def compute_position_size(
 
     Example at 3x (K280, $10M AUM, 80% deployment):
         notional = $10M × 0.80 × 0.75 × 3.0 = $18M
+
+    K448: Apply per-sleeve exchange caps (e.g. sUSDe capped at 1x).
     """
     cfg = _load_config()
-    leverage = get_current_leverage()
+    raw_leverage = get_current_leverage()
+
+    # K448: cap leverage by exchange limit per sleeve
+    cap_key_map = {
+        "K280":   "K280_K208_HL",
+        "K297":   "K297_PAXG",
+        "sUSDe":  "sUSDe",
+    }
+    cap_key = cap_key_map.get(sleeve_name, sleeve_name)
+    exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)
+    sleeve_cap = float(exchange_caps.get(cap_key, raw_leverage))
+    effective_leverage = min(raw_leverage, sleeve_cap)
+
     sleeve_weight = SLEEVE_WEIGHTS.get(sleeve_name, 0.0)
     if deployment_pct is None:
         deployment_pct = float(cfg.get("deployment_pct", 0.80))
 
-    return current_aum * deployment_pct * sleeve_weight * leverage
+    return current_aum * deployment_pct * sleeve_weight * effective_leverage
 
 
 def compute_margin_required(

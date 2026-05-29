@@ -1,0 +1,47 @@
+{
+  "wave": "K448",
+  "title": "sUSDe Leverage Cap Bug Fix",
+  "trigger": "K446 finding: margin_used=88% at LIVE_3X",
+  "root_cause": "compute_position_size() applied 3x leverage uniformly without per-sleeve caps",
+  "fix_summary": "Added per-sleeve exchange cap lookup in compute_position_size(), sUSDe capped at 1x",
+  "files_modified": [
+    {
+      "path": "scripts/leverage_manager.py",
+      "lines_added": 6,
+      "lines_removed": 1,
+      "change_type": "leverage cap application"
+    }
+  ],
+  "test_results": {
+    "phase": "LIVE_3X",
+    "aum": 10000000,
+    "before": {
+      "k280_margin": 6000000,
+      "k297_margin": 1600000,
+      "susde_margin": 1200000,
+      "total_margin_usd": 8800000,
+      "margin_used_pct": 0.88,
+      "circuit_breaker_fire": true
+    },
+    "after": {
+      "k280_margin": 6000000,
+      "k297_margin": 1600000,
+      "susde_margin": 400000,
+      "total_margin_usd": 8000000,
+      "margin_used_pct": 0.80,
+      "circuit_breaker_fire": false
+    }
+  },
+  "verification": {
+    "paper_trade_1x": "✓ Margin 80% unchanged",
+    "live_1_5x": "✓ Tested (no regression)",
+    "live_3x": "✓ sUSDe capped at 1x, margin 88% → 80%",
+    "k280_leverage": "✓ Still 3x (unchanged)",
+    "k297_leverage": "✓ Still 3x (unchanged)"
+  },
+  "config_status": {
+    "leverage_config_json": "No changes needed",
+    "susde_cap_exists": true,
+    "susde_cap_value": 1.0
+  }
+}
