@@ -147,6 +147,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k415_usdy_sleeve",
         expected_html_status="SCAFFOLD-READY",  # K415: plist in repo root (gitignored); activate only after user non-US confirm + USDY purchase
     ),
+    DaemonSpec(
+        label="com.cryptolab.leverage-circuit-breaker",
+        purpose="K430 3x leverage circuit breaker (5-min margin health monitor, margin>80% fires emergency 1x reduce, margin>70% warning, 15th daemon)",
+        scripts=["scripts/leverage_circuit_breaker.py", "scripts/leverage_manager.py"],
+        log_basename="leverage_circuit_breaker",
+        expected_html_status="SCAFFOLD-READY",  # K430: plist in repo root (gitignored); activate when advancing to LIVE_1.5X/LIVE_3X rollout phase
+    ),
 ]
 
 

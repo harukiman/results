@@ -115,6 +115,27 @@ BUILDER_CODE_ENABLED   = False                           # K370 AX-01: True afte
 BUILDER_WALLET_ADDRESS = _os.environ.get("HL_BUILDER_WALLET", "")   # registered HL wallet
 BUILDER_FEE_F          = 0             # tenths of bp extra cost to user (0 = self-rebate, free)
 
+# ── K430: Leverage application (additive — LEVERAGE=1.0 at default PAPER_TRADE) ─
+# Import leverage_manager from same scripts/ directory.
+# At default phase (PAPER_TRADE), LEVERAGE=1.0 → behaviour UNCHANGED.
+# User advances phase via: python3 scripts/leverage_manager.py --advance
+try:
+    import sys as _sys_lev
+    _sys_lev.path.insert(0, str(Path(__file__).resolve().parent))
+    from leverage_manager import (
+        get_current_leverage   as _get_leverage,
+        compute_margin_required as _compute_margin,
+        check_margin_health    as _check_margin_health,
+    )
+    LEVERAGE = _get_leverage()
+    _LEVERAGE_ENABLED = True
+except Exception as _lev_err:
+    print(f"  [K430] leverage_manager import failed ({_lev_err}) — defaulting to 1x")
+    LEVERAGE = 1.0
+    _LEVERAGE_ENABLED = False
+
+MAX_MARGIN_PCT = 0.80   # refuse trade if portfolio margin > 80% AUM (K430 circuit breaker)
+
 # HL API
 HL_API_URL   = "https://api.hyperliquid.xyz/info"
 # Bybit public REST v5 — no auth needed
@@ -702,6 +723,9 @@ def build_snapshot(date_str: str, refresh_k276b: bool = True) -> Dict:
         "hlp_balance":    hlp_data,
         "hlp_alert":      hlp_data.get("alert", "OK"),
         "ethena_tvl":     ethena_data,
+        # K430 leverage metadata (additive; LEVERAGE=1.0 at default PAPER_TRADE)
+        "k430_leverage":  LEVERAGE,
+        "k430_leverage_enabled": _LEVERAGE_ENABLED,
     }
 
     # ── Save JSON snapshot ────────────────────────────────────────────────────

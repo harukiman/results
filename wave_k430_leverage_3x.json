@@ -1,0 +1,80 @@
+{
+  "wave": "K430",
+  "title": "K426 3x Leverage IMPLEMENTATION (+$2.2M/yr @ $10M, 3-step rollout, circuit breaker, 15th daemon)",
+  "date": "2026-05-25",
+  "implemented_at": "2026-05-29T22:41:07 JST",
+  "source_wave": "K426",
+  "status": "SCAFFOLD-READY",
+  "rollout_phase": "PAPER_TRADE",
+  "current_leverage": 1.0,
+  "target_leverage": 3.0,
+  "expected_annual_lift_usd": 2200000,
+  "expected_annual_lift_note": "K426 finding: 3x leverage on $10M AUM at v6.13d architecture",
+  "deliverables": {
+    "new_files": [
+      "scripts/leverage_manager.py",
+      "scripts/leverage_circuit_breaker.py",
+      "data/leverage_config.json",
+      "com.cryptolab.leverage-circuit-breaker.plist",
+      "wave_k430_leverage_3x.json",
+      "wave_k430_leverage_3x.md"
+    ],
+    "patched_files": [
+      "scripts/k280_live_fetch.py",
+      "scripts/k302a_satellite_run.py",
+      "scripts/k376_momentum_run.py",
+      "scripts/verify_deployment_status.py",
+      "docs/k302a_runbook.md",
+      "report.html"
+    ]
+  },
+  "rollout_phases": {
+    "PAPER_TRADE": {
+      "leverage": 1.0,
+      "status": "ACTIVE (current default)",
+      "description": "All scripts at 1x — behaviour unchanged. Verify dashboards show k430_leverage field."
+    },
+    "LIVE_1.5X": {
+      "leverage": 1.5,
+      "status": "PENDING USER ACTION",
+      "description": "Advance via: python3 scripts/leverage_manager.py --advance",
+      "prerequisites": "7d PAPER_TRADE with no CB alerts, load circuit breaker daemon"
+    },
+    "LIVE_3X": {
+      "leverage": 3.0,
+      "status": "PENDING USER ACTION",
+      "description": "Advance via: python3 scripts/leverage_manager.py --advance (from LIVE_1.5X)",
+      "prerequisites": "7d LIVE_1.5X, margin < 70%, Sharpe > 20, consider deployment_pct reduction to 0.75"
+    }
+  },
+  "circuit_breaker": {
+    "daemon_label": "com.cryptolab.leverage-circuit-breaker",
+    "script": "scripts/leverage_circuit_breaker.py",
+    "schedule_sec": 300,
+    "fire_threshold_pct": 0.80,
+    "warning_threshold_pct": 0.70,
+    "action_on_fire": "emergency_reduce_leverage() -> all scripts revert to 1x",
+    "log_file": "logs/leverage_circuit_breaker.log",
+    "err_file": "logs/leverage_circuit_breaker.err"
+  },
+  "margin_analysis_at_3x": {
+    "aum": 10000000,
+    "deployment_pct": 0.80,
+    "sleeves": {
+      "K280": {"notional": 18000000, "margin": 6000000, "pct_aum": 0.60},
+      "K297_prime": {"notional": 4800000, "margin": 1600000, "pct_aum": 0.16},
+      "sUSDe": {"notional": 400000, "margin": 400000, "pct_aum": 0.04}
+    },
+    "total_margin_pct": 0.80,
+    "recommendation": "Use deployment_pct=0.75 at 3x for 5-10% headroom below 80% CB threshold"
+  },
+  "additive_safety": {
+    "default_lever": 1.0,
+    "unchanged_at_default": true,
+    "k266_gates_confirmed": "K426 verified all §6 gates pass at 3x",
+    "emergency_reduce_cmd": "python3 scripts/leverage_manager.py --emergency-reduce",
+    "restore_cmd": "python3 scripts/leverage_manager.py --restore PAPER_TRADE"
+  },
+  "daemon_count": 15,
+  "runbook_section": "docs/k302a_runbook.md §23"
+}
