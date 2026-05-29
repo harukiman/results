@@ -3658,3 +3658,171 @@ Based on K442 framework and K440 profit projections:
 ---
 
 *K444 §28 -- Loss harvesting automation + tax-aware tracking (18th daemon, INFORMATIONAL ONLY) -- 2026-05-29*
+
+---
+
+## §29. K449 ETH-BTC FR Differential Paired-Trade Strategy (19th Daemon)
+
+**Wave:** K450 | **Status:** SCAFFOLD-READY (PAPER-TRADE) | **Added:** 2026-05-30
+
+### §29.1 Strategy Overview
+
+K449 implements a delta-neutral carry trade based on the funding rate (FR)
+differential between ETH and BTC on HyperLiquid.
+
+| Parameter | Value |
+|-----------|-------|
+| Strategy type | Paired trade (delta-neutral carry) |
+| Universe | ETH-PERP + BTC-PERP (HL only) |
+| Signal | 7d EMA of BTC FR − ETH FR |
+| Entry threshold | ±0.00001 (8h fraction) |
+| Sleeve allocation | 3% of AUM |
+| Leverage | 4x (K449 analysis: minimum for 5%+ ann return) |
+| Notional/leg | 3% × 4x ÷ 2 = 6% of AUM each leg |
+| Total notional | 12% of AUM (equal long + short) |
+| Margin required | 3% of AUM (notional ÷ 4x leverage) |
+| Settlement cycle | 8h (matches HL FR) |
+| Exchange | HL only (K449 design constraint) |
+
+**At $10M AUM:**
+- Sleeve capital: $300,000
+- Notional per leg: $600,000 (long ETH + short BTC, or reverse)
+- Total notional: $1,200,000
+- Margin used: $300,000 (3% of AUM)
+- Expected annual return: 5%+ per sleeve capital (per K449 analysis)
+
+### §29.2 Trade Logic
+
+```
+BTC FR 7d EMA > ETH FR 7d EMA + threshold:
+  → LONG ETH + SHORT BTC (collect BTC's higher FR as short)
+  → state = LONG_ETH_SHORT_BTC
+
+ETH FR 7d EMA > BTC FR 7d EMA + threshold:
+  → LONG BTC + SHORT ETH (collect ETH's higher FR as short)
+  → state = LONG_BTC_SHORT_ETH
+
+|EMA diff| <= threshold:
+  → NEUTRAL (no position)
+```
+
+### §29.3 Delta-Neutral Hedge Mechanics
+
+**Initial entry:** Equal notional on both legs ($X long ETH, $X short BTC).
+
+**Drift monitoring (daily):**
+1. Mark-to-market both legs at current prices
+2. Compute `drift = |long_value/short_value - 1|`
+3. If `drift > 5%` → rebalance hedge (buy/sell delta to restore balance)
+
+**Rebalance execution:**
+- Calculate delta required: `Δ = (long_value - short_value) / 2`
+- Reduce the larger leg by `Δ` via IOC order
+- Target: restore to equal notional within 0.5% tolerance
+
+### §29.4 Paired Trade Execution Protocol
+
+Sequential submission with leg-orphan protection:
+
+```
+Step 1: Submit long leg POST_ONLY (K439 pattern)
+Step 2: Wait up to 5 minutes for long fill
+
+  If long fills:
+    Step 3: Submit short leg POST_ONLY
+    Step 4: Wait up to 5 minutes for short fill
+      If short fills: BOTH_POST_ONLY (optimal, pays maker rebate both legs)
+      If short times out: Cancel short POST_ONLY → submit IOC fallback
+                          (avoids uncovered long exposure > 5 min)
+
+  If long doesn't fill:
+    Cancel long order → retry next 8h cycle
+    (no position opened = no orphan risk)
+```
+
+**Leg orphan risk mitigation:**
+- Long leg times out → cancel immediately (no position opened)
+- Short leg times out → IOC fallback ensures delta-neutral within 5 min
+- Emergency exit → K357 handles both legs (short first to avoid naked short)
+
+### §29.5 v6.16 Architecture Proposal
+
+**v6.16 candidate (proposed, pending 60d paper-trade gate):**
+
+| Sleeve | Weight | Notes |
+|--------|--------|-------|
+| K280 | 72% | Reduced 3pp to fund K449 |
+| K297' | 20% | SPX filter + G9 oracle |
+| sUSDe | 5% | OC sleeve unchanged |
+| K449 | 3% | ETH-BTC FR differential NEW |
+| **Total** | **100%** | |
+
+**HL exposure with K449:** 60.5% (K280 HL leg ~37.5% + K297 20% + K449 3%)
+
+**Alternative:** K280 75% + K297' 17% + sUSDe 5% + K449 3% = 100%
+(preserves K280 weight, reduces K297' instead)
+
+### §29.6 Activation Criteria
+
+K449 must complete 60d paper-trade before live activation:
+
+| Gate | Requirement | Check |
+|------|-------------|-------|
+| G1 Paper-trade duration | ≥ 60 calendar days | `data/k449_dashboard.json` entry_ts |
+| G2 Fill rate (paired) | ≥ 65% both legs POST_ONLY | `cache/k449_paired_fills.jsonl` |
+| G3 Sharpe (paper) | ≥ 2.0 (60d) | `data/k449_dashboard.json` 60d_sharpe |
+| G4 Max drift | ≤ 10% during paper period | dashboard delta_neutral_drift_pct |
+| G5 Margin health | Combined margin < 80% AUM | `leverage_manager.check_margin_health()` |
+
+### §29.7 Rollback Procedure
+
+1. Run `python3 scripts/k449_eth_btc_run.py --close "manual_deactivation"`
+2. Verify both legs closed: `python3 scripts/k449_eth_btc_run.py --status`
+3. Confirm position_state = NEUTRAL in dashboard
+4. Unload plist: `launchctl unload ~/Library/LaunchAgents/com.cryptolab.k449-eth-btc.plist`
+5. Revert architecture to v6.13d (K449 sleeve returns to K280 if applicable)
+
+### §29.8 Emergency Exit Integration (K357)
+
+K357 emergency exit (emergency_hl_exit.py) auto-detects K449 paired positions:
+- Detects LONG_ETH_SHORT_BTC or LONG_BTC_SHORT_ETH in position list
+- Closes **short leg first** (to avoid uncovered short exposure during exit)
+- Then closes long leg
+- Marked as `k449_paired: True` in exit plan for audit trail
+
+### §29.9 Daemon Configuration
+
+```
+Label:          com.cryptolab.k449-eth-btc
+Script:         scripts/k449_eth_btc_run.py --dry-run
+StartInterval:  28800 (8 hours — matches HL FR settlement cycle)
+RunAtLoad:      false
+Log:            logs/k449_eth_btc.log
+Err:            logs/k449_eth_btc.err
+Plist:          com.cryptolab.k449-eth-btc.plist (gitignored, repo root)
+Dashboard:      data/k449_dashboard.json
+FR history:     cache/k449_fr_history.jsonl
+Trade log:      cache/k449_paper_trades.jsonl
+Fill rate log:  cache/k449_paired_fills.jsonl
+```
+
+**Activation (after all gates pass):**
+```bash
+cp com.cryptolab.k449-eth-btc.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k449-eth-btc.plist
+```
+
+### §29.10 References
+
+| Wave | Content |
+|------|---------|
+| K449 | ETH-BTC FR differential analysis: 8/9 §6 gates pass |
+| K450 | This section — production scaffold (19th daemon) |
+| K439 | POST_ONLY order manager (base for paired execution) |
+| K434 | Smart router (extended for multi-leg in K450) |
+| K430 | Leverage management (K449_ETH_BTC: 4.0 cap added) |
+| K357 | Emergency exit (K449 paired close added in K450) |
+
+---
+
+*K450 §29 -- K449 ETH-BTC paired-trade scaffold (19th daemon, delta-neutral, 4x, v6.16 candidate) -- 2026-05-30*

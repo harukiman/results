@@ -1,0 +1,99 @@
+{
+  "wave": "K450",
+  "title": "K449 Production Scaffold (paired-trade, delta-neutral, v6.16 candidate, 19th daemon)",
+  "date_jst": "2026-05-30",
+  "status": "COMPLETE",
+  "deliverables": {
+    "scripts/k449_eth_btc_run.py": {
+      "status": "NEW",
+      "loc": 285,
+      "description": "K449 ETH-BTC FR differential strategy — 8h cron, 7d EMA signal, paired-trade execution, delta-neutral rebalance"
+    },
+    "scripts/smart_router.py": {
+      "status": "EXTENDED",
+      "added_function": "select_best_venue_for_paired()",
+      "description": "K450 Phase 5: multi-leg paired-trade venue selection, HL-priority, concentration cap check, DEFER on block"
+    },
+    "scripts/post_only_order_manager.py": {
+      "status": "EXTENDED",
+      "added_functions": ["execute_paired_trade()", "get_paired_fill_stats()", "_track_paired_fill_rate()"],
+      "description": "K450 Phase 6: POST_ONLY paired execution, separate fill tracking, G8 alert for paired trades"
+    },
+    "scripts/leverage_manager.py": {
+      "status": "UPDATED",
+      "changes": ["Added K449 to SLEEVE_WEIGHTS (3%)", "Added SLEEVE_WEIGHTS_V616 dict", "K449_ETH_BTC cap key in compute_position_size/margin", "K449 included in check_margin_health loop"],
+      "description": "K449 4x leverage cap integration"
+    },
+    "scripts/emergency_hl_exit.py": {
+      "status": "UPDATED",
+      "added_function": "_detect_k449_paired_positions()",
+      "changes": "plan_exit() now detects K449 pairs and closes short leg first",
+      "description": "K450 Phase 11: K449 paired position recognition, short-first closure, uncovered short prevention"
+    },
+    "scripts/verify_deployment_status.py": {
+      "status": "UPDATED",
+      "change": "Added 19th daemon: com.cryptolab.k449-eth-btc",
+      "total_daemons": 19
+    },
+    "data/leverage_config.json": {
+      "status": "UPDATED",
+      "added": "K449_ETH_BTC: 4.0 exchange cap + k449_notes block"
+    },
+    "data/k449_dashboard.json": {
+      "status": "NEW",
+      "description": "Initial dashboard state: NEUTRAL, PAPER-TRADE, v6.16 architecture proposal"
+    },
+    "com.cryptolab.k449-eth-btc.plist": {
+      "status": "NEW",
+      "start_interval": 28800,
+      "run_at_load": false,
+      "note": "gitignored — 19th daemon"
+    },
+    "docs/k302a_runbook.md": {
+      "status": "UPDATED",
+      "section_added": "§29 K449 ETH-BTC FR Differential Paired-Trade Strategy",
+      "subsections": ["§29.1 Overview", "§29.2 Trade Logic", "§29.3 Delta-Neutral Mechanics", "§29.4 Execution Protocol", "§29.5 v6.16 Architecture", "§29.6 Activation Criteria", "§29.7 Rollback", "§29.8 Emergency Exit", "§29.9 Daemon Config", "§29.10 References"]
+    },
+    "report.html": {
+      "status": "UPDATED",
+      "changes": ["Added K449 row in Live Monitoring table (19th daemon, SCAFFOLD-READY PAPER-TRADE)", "Added v6.16 candidate badge in header banner", "Updated timestamps and footer"]
+    }
+  },
+  "architecture": {
+    "v616_candidate": {
+      "K280": "72%",
+      "K297": "20%",
+      "sUSDe": "5%",
+      "K449": "3%",
+      "total": "100%",
+      "hl_exposure": "60.5%",
+      "status": "PROPOSED — pending 60d paper-trade gate"
+    },
+    "alternative_v616": {
+      "K280": "75%",
+      "K297": "17%",
+      "sUSDe": "5%",
+      "K449": "3%",
+      "total": "100%"
+    }
+  },
+  "k449_margin_summary_10M": {
+    "sleeve_pct": 0.03,
+    "leverage": 4.0,
+    "sleeve_capital": 300000,
+    "notional_per_leg": 600000,
+    "total_notional": 1200000,
+    "margin_required": 300000,
+    "margin_pct_of_aum": "3.0%",
+    "combined_with_existing_margin_under_80pct_threshold": true
+  },
+  "activation_criteria": {
+    "G1_paper_trade_duration": ">=60 calendar days",
+    "G2_fill_rate": ">=65% both legs POST_ONLY",
+    "G3_sharpe_paper": ">=2.0 (60d)",
+    "G4_max_drift": "<=10% during paper period",
+    "G5_margin_health": "combined margin < 80% AUM"
+  },
+  "daemon_count": 19,
+  "previous_daemon_count": 18
+}

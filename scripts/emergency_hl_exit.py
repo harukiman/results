@@ -206,6 +206,53 @@ def fetch_balance(user: str, dry_run: bool = False) -> Dict:
 # 2. Exit Plan Builder
 # ─────────────────────────────────────────────────────────────────────────────
 
+def _detect_k449_paired_positions(positions: List[Dict]) -> Optional[Dict]:
+    """
+    K450 Phase 11: Detect K449 paired positions (ETH long + BTC short, or reverse).
+
+    Returns a dict describing the paired position if found, or None.
+    Used to ensure both legs are closed together (avoid uncovered short).
+
+    A K449 pair is identified by:
+      - One long leg: ETH or BTC
+      - One short leg: the other of ETH/BTC
+    """
+    K449_SYMBOLS = {"ETH", "BTC"}
+    eth_btc = [p for p in positions if p.get("coin", "").upper() in K449_SYMBOLS]
+    if len(eth_btc) < 2:
+        return None
+
+    # Check if we have one long and one short in ETH/BTC
+    longs  = [p for p in eth_btc if p.get("side") == "long"]
+    shorts = [p for p in eth_btc if p.get("side") == "short"]
+
+    if not (longs and shorts):
+        return None
+
+    long_pos  = longs[0]
+    short_pos = shorts[0]
+    long_sym  = long_pos["coin"].upper()
+    short_sym = short_pos["coin"].upper()
+
+    # Both must be in K449_SYMBOLS and be different symbols
+    if long_sym not in K449_SYMBOLS or short_sym not in K449_SYMBOLS:
+        return None
+    if long_sym == short_sym:
+        return None
+
+    return {
+        "detected":        True,
+        "long_symbol":     long_sym,
+        "short_symbol":    short_sym,
+        "long_value_usd":  long_pos.get("value_usd", 0.0),
+        "short_value_usd": short_pos.get("value_usd", 0.0),
+        "long_size":       long_pos.get("size", 0.0),
+        "short_size":      short_pos.get("size", 0.0),
+        "state":           f"LONG_{long_sym}_SHORT_{short_sym}",
+        "note":            "K449 paired position — must close both legs simultaneously to avoid uncovered short",
+    }
+
+
 def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
     """
     Produce a structured exit plan:
@@ -214,12 +261,63 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
       total_notional:   float (USD)
       estimated_time:   int (seconds)
       slippage_estimate_usd: float
+
+    K450 Phase 11: Detects K449 paired positions (ETH/BTC) and marks them
+    for simultaneous closure to avoid creating an uncovered short exposure.
+    Short leg is closed first, then long (safer sequencing).
     """
     cancel_list = [(o["coin"], o["oid"]) for o in orders]
 
+    # K450: detect K449 paired positions
+    k449_pair = _detect_k449_paired_positions(positions)
+    k449_coins = set()
+    if k449_pair:
+        k449_coins = {k449_pair["long_symbol"], k449_pair["short_symbol"]}
+
     close_list = []
     total_notional = 0.0
+
+    # K449 paired positions: close short first (avoid uncovered short window)
+    if k449_pair:
+        # Short leg first
+        short_coin = k449_pair["short_symbol"]
+        short_pos  = next((p for p in positions if p["coin"].upper() == short_coin
+                           and p["side"] == "short"), None)
+        if short_pos:
+            close_list.append({
+                "coin":           short_pos["coin"],
+                "size":           short_pos["size"],
+                "side_to_close":  "buy",   # covering short
+                "value_usd":      short_pos["value_usd"],
+                "current_side":   "short",
+                "k449_paired":    True,
+                "k449_close_order": 1,      # close short first
+                "note":           "K449 paired short leg — cover first",
+            })
+            total_notional += short_pos["value_usd"]
+
+        # Long leg second
+        long_coin = k449_pair["long_symbol"]
+        long_pos  = next((p for p in positions if p["coin"].upper() == long_coin
+                          and p["side"] == "long"), None)
+        if long_pos:
+            close_list.append({
+                "coin":           long_pos["coin"],
+                "size":           long_pos["size"],
+                "side_to_close":  "sell",
+                "value_usd":      long_pos["value_usd"],
+                "current_side":   "long",
+                "k449_paired":    True,
+                "k449_close_order": 2,      # close long second
+                "note":           "K449 paired long leg — sell second",
+            })
+            total_notional += long_pos["value_usd"]
+
+    # Non-K449 positions: close in any order
     for p in positions:
+        coin = p.get("coin", "").upper()
+        if coin in k449_coins:
+            continue   # already handled above
         side_to_close = "sell" if p["side"] == "long" else "buy"
         close_list.append({
             "coin":          p["coin"],
@@ -227,6 +325,7 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
             "side_to_close": side_to_close,
             "value_usd":     p["value_usd"],
             "current_side":  p["side"],
+            "k449_paired":   False,
         })
         total_notional += p["value_usd"]
 
@@ -241,6 +340,8 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
         "slippage_estimate_usd": slippage_usd,
         "position_count":      n_pos,
         "order_count":         len(cancel_list),
+        "k449_paired_detected": k449_pair is not None,
+        "k449_pair_detail":    k449_pair,
     }
 
 

@@ -175,6 +175,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="loss_harvester",
         expected_html_status="SCAFFOLD-READY",  # K444: plist in repo root (gitignored); fires annually Dec 28; user activates after setting TAX_RATE_PCT
     ),
+    DaemonSpec(
+        label="com.cryptolab.k449-eth-btc",
+        purpose="K449 ETH-BTC FR differential paired-trade (delta-neutral, 4x leverage, 8h cycle, HL-only, v6.16 candidate 3% sleeve, 19th daemon)",
+        scripts=["scripts/k449_eth_btc_run.py"],
+        log_basename="k449_eth_btc",
+        expected_html_status="SCAFFOLD-READY",  # K450: plist in repo root (gitignored); activate after 60d paper-trade gate + fill_rate>=65%
+    ),
 ]
 
 

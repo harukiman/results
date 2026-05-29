@@ -700,6 +700,252 @@ def execute_trade(
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# K450 Phase 6 — Paired-trade POST_ONLY execution (K449 multi-leg)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Separate fill-rate tracking for paired trades
+PAIRED_FILLS_JSONL = CACHE_DIR / "k449_paired_fills.jsonl"
+
+
+def _track_paired_fill_rate(
+    venue: str,
+    long_symbol: str,
+    short_symbol: str,
+    size: float,
+    long_post_only_filled: bool,
+    short_post_only_filled: bool,
+    long_ioc_used: bool,
+    short_ioc_used: bool,
+) -> None:
+    """Track fill rate for K449 paired trades separately from single-leg K208."""
+    record = {
+        "timestamp":              datetime.now(timezone.utc).isoformat(),
+        "venue":                  venue,
+        "long_symbol":            long_symbol,
+        "short_symbol":           short_symbol,
+        "size_per_leg":           size,
+        "long_post_only_filled":  long_post_only_filled,
+        "short_post_only_filled": short_post_only_filled,
+        "long_ioc_used":          long_ioc_used,
+        "short_ioc_used":         short_ioc_used,
+        "both_post_only":         long_post_only_filled and short_post_only_filled,
+    }
+    with open(PAIRED_FILLS_JSONL, "a") as f:
+        f.write(json.dumps(record) + "\n")
+
+
+def get_paired_fill_stats(window_days: int = FILL_RATE_WINDOW_DAYS) -> Dict:
+    """
+    Compute fill rate statistics for K449 paired trades.
+    Separate from single-leg K208 stats.
+
+    Returns:
+      {
+        "total_paired_trades":  int,
+        "both_post_only":       int,
+        "both_post_only_rate":  float,
+        "G8_paired_status":     "PASS" | "FAIL" | "NO_DATA",
+        "window_days":          int,
+      }
+    """
+    if not PAIRED_FILLS_JSONL.exists():
+        return {
+            "total_paired_trades": 0,
+            "both_post_only":      0,
+            "both_post_only_rate": 0.0,
+            "G8_paired_status":    "NO_DATA",
+            "window_days":         window_days,
+        }
+    cutoff  = datetime.now(timezone.utc) - timedelta(days=window_days)
+    records = []
+    for line in PAIRED_FILLS_JSONL.read_text().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            rec = json.loads(line)
+            ts_str = rec.get("timestamp", "")
+            if ts_str:
+                ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+                if ts >= cutoff:
+                    records.append(rec)
+        except (json.JSONDecodeError, ValueError):
+            continue
+
+    total  = len(records)
+    both   = sum(1 for r in records if r.get("both_post_only"))
+    rate   = both / total if total > 0 else 0.0
+    g8     = "PASS" if rate >= FILL_RATE_ALERT_THRESH else ("NO_DATA" if total == 0 else "FAIL")
+
+    return {
+        "total_paired_trades": total,
+        "both_post_only":      both,
+        "both_post_only_rate": round(rate, 4),
+        "G8_paired_status":    g8,
+        "window_days":         window_days,
+    }
+
+
+def execute_paired_trade(
+    long_leg: Dict,
+    short_leg: Dict,
+    urgency: str = "LOW",
+    dry_run: bool = False,
+) -> Dict:
+    """
+    K449 paired-trade POST_ONLY execution (K450 Phase 6).
+
+    Submits both legs using POST_ONLY maker orders.
+    Protocol:
+      1. POST_ONLY long leg
+      2. On long fill: POST_ONLY short leg simultaneously
+      3. If short POST_ONLY times out: cancel + IOC short fallback
+      4. If long POST_ONLY times out: cancel long, abort (retry next 8h cycle)
+
+    Fill rate tracked separately in k449_paired_fills.jsonl (not mixed with K208).
+
+    Args:
+      long_leg:  {"venue": "HL", "symbol": "ETH", "size": 600000.0}
+      short_leg: {"venue": "HL", "symbol": "BTC", "size": 600000.0}
+      urgency:   "LOW" (default) | "MEDIUM" | "EMERGENCY"
+      dry_run:   if True, simulate without API calls
+
+    Returns:
+      {
+        "status":             "BOTH_POST_ONLY" | "SHORT_IOC" | "ABORTED" | "DRY_RUN",
+        "long_filled":        bool,
+        "short_filled":       bool,
+        "long_order":         dict,
+        "short_order":        dict,
+        "paired_fill_rate":   float,  # running 60d rate
+        "ts_utc":             str,
+      }
+    """
+    ts = datetime.now(timezone.utc).isoformat()
+    urgency = urgency.upper()
+
+    venue      = long_leg.get("venue", "HL")
+    long_sym   = long_leg.get("symbol", "ETH")
+    short_sym  = short_leg.get("symbol", "BTC")
+    long_size  = float(long_leg.get("size", 0.0))
+    short_size = float(short_leg.get("size", 0.0))
+
+    # K430 margin guard
+    margin_ok = _check_margin_guard(venue)
+    if not margin_ok:
+        return {
+            "status":       "REFUSED",
+            "reason":       "K430_MARGIN_EXCEEDED",
+            "long_filled":  False,
+            "short_filled": False,
+            "ts_utc":       ts,
+        }
+
+    # Timeout based on urgency
+    timeout = (
+        0    if urgency == "EMERGENCY"  else
+        60   if urgency == "MEDIUM"     else
+        POST_ONLY_TIMEOUT_SEC
+    )
+
+    print(f"\n  [K449 PAIRED] execute_paired_trade: {venue}  "
+          f"LONG {long_sym} ${long_size:,.0f} / SHORT {short_sym} ${short_size:,.0f}  "
+          f"urgency={urgency}")
+
+    # ── EMERGENCY: bypass POST_ONLY for both legs ─────────────────────────────
+    if urgency == "EMERGENCY":
+        print(f"  [K449 PAIRED] EMERGENCY: IOC direct for both legs")
+        long_ioc  = submit_ioc_fallback(venue, long_sym,  "buy",  long_size,  dry_run=dry_run)
+        short_ioc = submit_ioc_fallback(venue, short_sym, "sell", short_size, dry_run=dry_run)
+        _track_paired_fill_rate(venue, long_sym, short_sym, long_size,
+                                False, False, True, True)
+        return {
+            "status":       "EMERGENCY_IOC",
+            "long_filled":  long_ioc.get("filled", False),
+            "short_filled": short_ioc.get("filled", False),
+            "long_order":   long_ioc,
+            "short_order":  short_ioc,
+            "ts_utc":       ts,
+        }
+
+    # ── Step 1: POST_ONLY long leg ─────────────────────────────────────────────
+    long_mid   = get_mid_price(venue, long_sym)
+    long_price = _tick_adjusted_price(long_mid, "buy", venue)
+    print(f"  [K449 PAIRED] Step 1: POST_ONLY LONG {long_sym} @ {long_price:.6f}  timeout={timeout}s")
+
+    long_order = submit_post_only_order(venue, long_sym, "buy", long_size, long_price, dry_run=dry_run)
+    long_oid   = long_order.get("order_id", long_order.get("id", ""))
+    long_filled = wait_for_fill(long_oid, timeout_sec=timeout, dry_run=dry_run)
+
+    if not long_filled:
+        # Long didn't fill — cancel and abort
+        cancel_unfilled_order(long_oid, venue=venue, dry_run=dry_run)
+        print(f"  [K449 PAIRED] Long timeout — aborting, retry next 8h cycle")
+        _track_paired_fill_rate(venue, long_sym, short_sym, long_size,
+                                False, False, False, False)
+        return {
+            "status":       "ABORTED",
+            "reason":       "LONG_TIMEOUT",
+            "long_filled":  False,
+            "short_filled": False,
+            "long_order":   long_order,
+            "short_order":  None,
+            "ts_utc":       ts,
+        }
+
+    # ── Step 2: POST_ONLY short leg (long filled) ──────────────────────────────
+    short_mid   = get_mid_price(venue, short_sym)
+    short_price = _tick_adjusted_price(short_mid, "sell", venue)
+    print(f"  [K449 PAIRED] Step 2: POST_ONLY SHORT {short_sym} @ {short_price:.6f}  timeout={timeout}s")
+
+    short_order = submit_post_only_order(venue, short_sym, "sell", short_size, short_price, dry_run=dry_run)
+    short_oid   = short_order.get("order_id", short_order.get("id", ""))
+    short_filled = wait_for_fill(short_oid, timeout_sec=timeout, dry_run=dry_run)
+
+    if short_filled:
+        # Both legs filled as POST_ONLY
+        print(f"  [K449 PAIRED] Both legs POST_ONLY filled")
+        _track_paired_fill_rate(venue, long_sym, short_sym, long_size,
+                                True, True, False, False)
+        _check_paired_fill_rate_alert()
+        return {
+            "status":       "BOTH_POST_ONLY",
+            "long_filled":  True,
+            "short_filled": True,
+            "long_order":   long_order,
+            "short_order":  short_order,
+            "ts_utc":       ts,
+        }
+
+    # Short POST_ONLY timed out — IOC fallback for short only
+    print(f"  [K449 PAIRED] Short POST_ONLY timeout → IOC fallback (avoid uncovered long)")
+    cancel_unfilled_order(short_oid, venue=venue, dry_run=dry_run)
+    short_ioc = submit_ioc_fallback(venue, short_sym, "sell", short_size, dry_run=dry_run)
+
+    _track_paired_fill_rate(venue, long_sym, short_sym, long_size,
+                            True, False, False, True)
+    _check_paired_fill_rate_alert()
+
+    return {
+        "status":       "SHORT_IOC",
+        "long_filled":  True,
+        "short_filled": short_ioc.get("filled", False),
+        "long_order":   long_order,
+        "short_order":  short_ioc,
+        "ts_utc":       ts,
+    }
+
+
+def _check_paired_fill_rate_alert() -> None:
+    """Alert if paired trade fill rate drops below G8 threshold."""
+    stats = get_paired_fill_stats()
+    if stats["G8_paired_status"] == "FAIL":
+        print(f"  [K449 PAIRED] ALERT: 60d paired fill rate = "
+              f"{stats['both_post_only_rate']:.1%} < {FILL_RATE_ALERT_THRESH:.0%} "
+              f"(K378 G8 gate FAIL)")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # CLI Entry Point
 # ─────────────────────────────────────────────────────────────────────────────
 

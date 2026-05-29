@@ -695,5 +695,160 @@ def main() -> int:
     return 0
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# K450 Phase 5 — Multi-leg paired-trade venue selection
+# ─────────────────────────────────────────────────────────────────────────────
+
+def select_best_venue_for_paired(
+    long_symbol: str,
+    short_symbol: str,
+    size: float,
+    venue_state: Optional[Dict[str, Dict[str, dict]]] = None,
+    current_allocation: Optional[Dict[str, float]] = None,
+    total_aum: float = 10_000_000.0,
+) -> dict:
+    """
+    K449 multi-leg router: select venue for a paired long+short trade.
+
+    Both legs must be routable on the same venue (K449 design: HL-only).
+    If HL is concentration-blocked, defer the trade to next cycle.
+
+    Logic:
+      1. Score long_symbol (long side) on each venue
+      2. Score short_symbol (short side) on each venue
+      3. Find venue where BOTH legs are routable (score > -100)
+      4. Prefer HL (K449 design constraint)
+      5. If HL concentration-blocked → DEFER
+
+    Returns:
+      {
+        "venue":              "HL" | None,
+        "long_symbol":        str,
+        "short_symbol":       str,
+        "size_per_leg":       float,
+        "long_score":         float,
+        "short_score":        float,
+        "combined_score":     float,
+        "action":             "EXECUTE" | "DEFER" | "BLOCKED",
+        "reason":             str,
+        "timestamp_utc":      str,
+      }
+    """
+    cfg   = load_config()
+    ts    = datetime.now(timezone.utc).isoformat()
+
+    # Fetch venue state for both symbols if not provided
+    if venue_state is None:
+        symbols = list({long_symbol, short_symbol})
+        venue_state = fetch_all_venue_state(symbols)
+
+    if current_allocation is None:
+        current_allocation = {"HL": 0.0, "Bybit": 0.0, "OKX": 0.0}
+
+    enabled_venues = [v for v, vcfg in cfg["venues"].items() if vcfg.get("enabled", True)]
+
+    # K449: prefer HL (both legs on HL for funding rate capture)
+    # Try HL first; fall back to others only if HL blocked
+    venue_order = ["HL"] + [v for v in enabled_venues if v != "HL"]
+
+    for venue in venue_order:
+        vstate = venue_state.get(venue, {})
+
+        # Score long leg
+        long_score, long_detail = score_venue(
+            venue, long_symbol, "long", size, vstate, cfg
+        )
+        # Score short leg
+        short_score, short_detail = score_venue(
+            venue, short_symbol, "short", size, vstate, cfg
+        )
+
+        # Check if venue is viable for both legs (no hard blocks)
+        long_ok  = long_score > -100.0
+        short_ok = short_score > -100.0
+
+        if not (long_ok and short_ok):
+            block_reason = []
+            if not long_ok:
+                block_reason.append(f"long_{long_symbol} blocked ({long_detail.get('reason','')})")
+            if not short_ok:
+                block_reason.append(f"short_{short_symbol} blocked ({short_detail.get('reason','')})")
+            if venue == "HL":
+                # HL blocked → DEFER (K449 HL-only constraint)
+                return {
+                    "venue":          None,
+                    "long_symbol":    long_symbol,
+                    "short_symbol":   short_symbol,
+                    "size_per_leg":   size,
+                    "long_score":     long_score,
+                    "short_score":    short_score,
+                    "combined_score": long_score + short_score,
+                    "action":         "DEFER",
+                    "reason":         f"HL blocked for paired trade: {'; '.join(block_reason)}",
+                    "timestamp_utc":  ts,
+                }
+            continue  # try next venue
+
+        # Check concentration caps for both legs (combined notional = 2×size)
+        caps       = cfg.get("concentration_caps", {})
+        cap_pct    = caps.get(f"{venue}_pct_of_total", 1.0)
+        current    = current_allocation.get(venue, 0.0)
+        # Each leg adds `size` to venue concentration
+        projected  = current + size * 2
+        if projected / total_aum > cap_pct:
+            if venue == "HL":
+                return {
+                    "venue":          None,
+                    "long_symbol":    long_symbol,
+                    "short_symbol":   short_symbol,
+                    "size_per_leg":   size,
+                    "long_score":     long_score,
+                    "short_score":    short_score,
+                    "combined_score": long_score + short_score,
+                    "action":         "DEFER",
+                    "reason": (
+                        f"HL concentration cap: projected {projected/total_aum:.1%} "
+                        f"> {cap_pct:.0%} with paired ${size*2:,.0f} notional"
+                    ),
+                    "timestamp_utc":  ts,
+                }
+            continue
+
+        # Viable venue found
+        combined = long_score + short_score
+        return {
+            "venue":          venue,
+            "long_symbol":    long_symbol,
+            "short_symbol":   short_symbol,
+            "size_per_leg":   size,
+            "long_score":     round(long_score, 8),
+            "short_score":    round(short_score, 8),
+            "combined_score": round(combined, 8),
+            "long_detail":    long_detail,
+            "short_detail":   short_detail,
+            "action":         "EXECUTE",
+            "reason": (
+                f"Paired trade viable at {venue}: "
+                f"long={long_score:+.6f}, short={short_score:+.6f}, "
+                f"combined={combined:+.6f}"
+            ),
+            "timestamp_utc":  ts,
+        }
+
+    # No venue viable
+    return {
+        "venue":          None,
+        "long_symbol":    long_symbol,
+        "short_symbol":   short_symbol,
+        "size_per_leg":   size,
+        "long_score":     0.0,
+        "short_score":    0.0,
+        "combined_score": 0.0,
+        "action":         "BLOCKED",
+        "reason":         "All venues blocked for paired trade",
+        "timestamp_utc":  ts,
+    }
+
+
 if __name__ == "__main__":
     sys.exit(main())
