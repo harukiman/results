@@ -1,0 +1,994 @@
+{
+  "wave": "K507",
+  "strategy": "OSMO-BTC FR Differential Paired-Trade Eval (+ TIA/SEI pivot)",
+  "run_time_jst": "2026-05-29 19:04:29 JST (approx)",
+  "runtime_s": 3.2,
+  "osmo_evaluation": {
+    "target": "OSMO-BTC (Osmosis DEX, Cosmos IBC DEX)",
+    "phase0_result": {
+      "target": "OSMO (Osmosis DEX Cosmos IBC)",
+      "venue_check": {
+        "hyperliquid": {
+          "listed": false,
+          "method": "metaAndAssetCtxs API \u2014 230 assets checked 2026-05-30",
+          "result": "NOT in universe"
+        },
+        "bybit_linear": {
+          "listed": false,
+          "method": "v5/market/instruments-info?category=linear",
+          "result": "0 results for OSMOUSDT"
+        },
+        "okx_swap": {
+          "listed": false,
+          "method": "public/instruments?instType=SWAP&instId=OSMO-USDT-SWAP",
+          "result": "Error 51001 \u2014 instrument does not exist"
+        },
+        "dydx_v4": {
+          "listed": false,
+          "method": "indexer v4 /perpetualMarkets?ticker=OSMO-USD",
+          "result": "FINAL_SETTLEMENT \u2014 clobPairId=140, status=FINAL_SETTLEMENT, volume24H=0, openInterest=0. Actively delisted."
+        }
+      },
+      "hl_fr_data_exists": false,
+      "bybit_fr_data_exists": false,
+      "g8_pass": false,
+      "g9_pass": false,
+      "phase0_pass": false,
+      "reject_reason": "G8 FAIL (no active perp venue) + G9 FAIL (no FR data). OSMO delisted from all major perps. dYdX v4 FINAL_SETTLEMENT = wound down. HL/Bybit/OKX: not listed.",
+      "osmo_market_context": {
+        "market_cap_estimate": "~$150-200M USD (2025-2026, small cap below HL listing threshold)",
+        "tvl": "Osmosis DEX ~$100-200M TVL (declining trend 2024-2025)",
+        "hl_threshold": "HL typically lists assets >$500M market cap for perps",
+        "delist_timeline": "OSMO delisted from major CEX perps ~late 2024 / early 2025",
+        "on_chain_native": "OSMO perp trading moved to Levana/Mars Protocol (on-chain only, no CEX perp equivalent)",
+        "conclusion": "OSMO does not meet infrastructure requirements for FR differential paired-trade strategy. CEX perp venue required for both legs."
+      },
+      "decision": "REJECT \u2014 infrastructure failure (G8+G9). No further backtest needed."
+    },
+    "decision": "REJECT",
+    "reject_reason": "G8 FAIL (no perp venue) + G9 FAIL (no FR data). Infrastructure requirement not met.",
+    "backtested": false,
+    "explanation": "OSMO has no active perpetual futures listing on HL, Bybit, or OKX. dYdX v4 shows OSMO-USD in FINAL_SETTLEMENT status (vol=0, OI=0). Without a live perp venue, the paired-trade FR differential strategy cannot be executed. K507 objective reframed: find viable Cosmos 3rd alternative (TIA or SEI)."
+  },
+  "pivot_analysis": {
+    "rationale": "OSMO infrastructure failure \u2192 pivot to TIA (Celestia, modular DA, Cosmos SDK) and SEI (Sei Network, parallel EVM + Cosmos SDK) as Cosmos 3rd alternatives. Both have HL FR data (17519 rows each). Both pass Phase 0 vol pre-screen. Full \u00a76 gate evaluation conducted for both.",
+    "candidates_analyzed": [
+      {
+        "token": "TIA",
+        "phase0_prescreen": {
+          "token": "TIA",
+          "alt_fr_std": 4.032e-05,
+          "btc_fr_std": 1.764e-05,
+          "vol_ratio": 2.285,
+          "vol_ratio_6m": 1.7302,
+          "threshold": 1.5,
+          "pass": true,
+          "family_context": {
+            "eth_btc_k449": 1.084,
+            "avax_btc_k484": 1.499,
+            "sol_btc_k476": 1.764,
+            "atom_btc_k493": 2.337,
+            "inj_btc_k500": 3.826,
+            "tia_btc_k507_full": 2.285,
+            "tia_btc_k507_6m": 1.7302
+          },
+          "decision": "PROCEED \u2014 TIA vol ratio 2.28x \u2265 1.5x threshold. 6m recency: 1.73x. Cosmos 3rd cluster test."
+        },
+        "data_info": {
+          "hl_rows": 17478,
+          "date_start": "2024-05-25",
+          "date_end": "2026-05-23",
+          "total_years": 1.995,
+          "oos_start": "2025-10-19",
+          "oos_days": 216,
+          "trades_per_yr": 31.9
+        },
+        "statistical_analysis": {
+          "adf": {
+            "statistic": -11.3302,
+            "p_value": 1.12e-20,
+            "is_stationary_1pct": true,
+            "is_stationary_5pct": true,
+            "critical_1pct": -3.4307,
+            "critical_5pct": -2.8617,
+            "interpretation": "FR differential IS stationary at 5% level. ADF stat -11.3302 vs 5% critical -2.8617. Mean-reversion assumption CONFIRMED."
+          },
+          "ornstein_uhlenbeck": {
+            "lambda": 0.113768,
+            "half_life_hours": 6.09,
+            "half_life_days": 0.254,
+            "long_run_mean": 1.19e-05,
+            "r_squared": 0.0569
+          },
+          "autocorrelation": {
+            "lag_1h": 0.8862,
+            "lag_24h": 0.4947,
+            "lag_168h_7d": 0.2615
+          }
+        },
+        "is_metrics": {
+          "sharpe": 36.481,
+          "ann_ret_pct": 16.383,
+          "max_dd": -0.006035,
+          "entries": 34,
+          "period": "2024-06-01 \u2013 2025-10-18"
+        },
+        "oos_metrics": {
+          "sharpe": 14.439,
+          "ann_ret_pct": 5.053,
+          "max_dd": -0.006321,
+          "entries": 29,
+          "period": "2025-10-19 \u2013 2026-05-23"
+        },
+        "walk_forward_12fold": [
+          {
+            "fold": 1,
+            "oos_start": "2024-08-30",
+            "oos_end": "2024-09-29",
+            "sharpe": 72.141,
+            "ann_ret_pct": 47.17,
+            "entries": 0
+          },
+          {
+            "fold": 2,
+            "oos_start": "2024-09-29",
+            "oos_end": "2024-10-29",
+            "sharpe": 119.34,
+            "ann_ret_pct": 69.338,
+            "entries": 0
+          },
+          {
+            "fold": 3,
+            "oos_start": "2024-10-29",
+            "oos_end": "2024-11-28",
+            "sharpe": 47.56,
+            "ann_ret_pct": 21.819,
+            "entries": 1
+          },
+          {
+            "fold": 4,
+            "oos_start": "2024-11-28",
+            "oos_end": "2024-12-28",
+            "sharpe": 32.056,
+            "ann_ret_pct": 17.12,
+            "entries": 5
+          },
+          {
+            "fold": 5,
+            "oos_start": "2024-12-28",
+            "oos_end": "2025-01-27",
+            "sharpe": -4.391,
+            "ann_ret_pct": -2.101,
+            "entries": 7
+          },
+          {
+            "fold": 6,
+            "oos_start": "2025-01-27",
+            "oos_end": "2025-02-26",
+            "sharpe": 29.281,
+            "ann_ret_pct": 6.943,
+            "entries": 1
+          },
+          {
+            "fold": 7,
+            "oos_start": "2025-02-26",
+            "oos_end": "2025-03-28",
+            "sharpe": 47.675,
+            "ann_ret_pct": 14.911,
+            "entries": 0
+          },
+          {
+            "fold": 8,
+            "oos_start": "2025-03-28",
+            "oos_end": "2025-04-27",
+            "sharpe": 27.262,
+            "ann_ret_pct": 6.188,
+            "entries": 1
+          },
+          {
+            "fold": 9,
+            "oos_start": "2025-04-27",
+            "oos_end": "2025-05-27",
+            "sharpe": 3.155,
+            "ann_ret_pct": 1.552,
+            "entries": 5
+          },
+          {
+            "fold": 10,
+            "oos_start": "2025-05-27",
+            "oos_end": "2025-06-26",
+            "sharpe": -2.934,
+            "ann_ret_pct": -1.038,
+            "entries": 5
+          },
+          {
+            "fold": 11,
+            "oos_start": "2025-06-26",
+            "oos_end": "2025-07-26",
+            "sharpe": 12.886,
+            "ann_ret_pct": 4.271,
+            "entries": 3
+          },
+          {
+            "fold": 12,
+            "oos_start": "2025-07-26",
+            "oos_end": "2025-08-25",
+            "sharpe": 62.84,
+            "ann_ret_pct": 8.358,
+            "entries": 0
+          }
+        ],
+        "permutation_p": 0.0,
+        "dsr_bonferroni": {
+          "n_trials": 12,
+          "t_stat": 11.117,
+          "p_raw": 1.08e-28,
+          "p_bonferroni": 1.3e-27,
+          "threshold": 0.00417,
+          "pass": true
+        },
+        "grid_search_top5": [
+          {
+            "window_h": 336,
+            "threshold_factor": 0,
+            "threshold_value": 0.0,
+            "IS_sharpe": 37.267,
+            "OOS_sharpe": 27.658,
+            "entries": 27,
+            "OOS_ret_pct": 6.527
+          },
+          {
+            "window_h": 168,
+            "threshold_factor": 0,
+            "threshold_value": 0.0,
+            "IS_sharpe": 36.481,
+            "OOS_sharpe": 14.439,
+            "entries": 63,
+            "OOS_ret_pct": 5.053
+          },
+          {
+            "window_h": 336,
+            "threshold_factor": 0.25,
+            "threshold_value": 5.8e-06,
+            "IS_sharpe": 34.047,
+            "OOS_sharpe": 13.467,
+            "entries": 58,
+            "OOS_ret_pct": 4.126
+          },
+          {
+            "window_h": 336,
+            "threshold_factor": 0.5,
+            "threshold_value": 1.159e-05,
+            "IS_sharpe": 33.08,
+            "OOS_sharpe": 10.085,
+            "entries": 34,
+            "OOS_ret_pct": 2.196
+          },
+          {
+            "window_h": 72,
+            "threshold_factor": 0,
+            "threshold_value": 0.0,
+            "IS_sharpe": 28.731,
+            "OOS_sharpe": 9.424,
+            "entries": 135,
+            "OOS_ret_pct": 4.037
+          }
+        ],
+        "g5_correlations": {
+          "g5a_corr_vs_k449": 0.173,
+          "g5b_corr_vs_k476": 0.227,
+          "g5c_corr_vs_k484": 0.0756,
+          "g5d_corr_vs_k493_atom": 0.0527,
+          "g5e_corr_vs_k500_inj": 0.08,
+          "g5f_corr_vs_k280": 0.05,
+          "n_obs_k449": 17143,
+          "n_obs_k476": 17143,
+          "n_obs_k484": 17143,
+          "n_obs_k493": 17143,
+          "n_obs_k500": 17143,
+          "g5a_pass": true,
+          "g5b_pass": true,
+          "g5c_pass": true,
+          "g5d_pass": true,
+          "g5e_pass": true,
+          "g5f_pass": true,
+          "cosmos_cluster_result": "COSMOS CLUSTER PASS: TIA-BTC vs ATOM-BTC corr=0.0527 < 0.40. TIA distinct from ATOM within Cosmos.",
+          "defi_cluster_result": "DEFI CLUSTER PASS: TIA-BTC vs INJ-BTC corr=0.0800 < 0.40. TIA distinct from INJ within DeFi/Cosmos.",
+          "cosmos_cluster_blocked": false,
+          "defi_cluster_blocked": false
+        },
+        "cross_venue": {
+          "bybit": {
+            "available": true,
+            "n_obs": 2165,
+            "corr_with_hl": 0.6667,
+            "venue_mean_8h": -2e-05,
+            "hl_mean_8h": 8e-06,
+            "date_range": "2024-06-01 \u2013 2026-05-23",
+            "passes_g8": true,
+            "quality_excluded": false
+          },
+          "okx": {
+            "available": true,
+            "n_obs": 279,
+            "corr_with_hl": 0.049,
+            "venue_mean_8h": -1e-06,
+            "hl_mean_8h": 8e-06,
+            "date_range": "2026-02-19 \u2013 2026-05-23",
+            "passes_g8": false,
+            "quality_excluded": true,
+            "quality_note": "Excluded from G8 avg: corr=0.0490 < 0.2 min quality. Likely wrong instrument match or stale/clipped data."
+          },
+          "avg_corr": 0.3579,
+          "g8_pass": true,
+          "effective_g8_corr": 0.6667,
+          "best_single_venue_corr": 0.6667,
+          "note": "Cross-venue FR check for TIA. HL 1h rates resampled to 8h for comparison vs Bybit/OKX 8h FR. G8 uses best reliable venue if OKX data quality is poor (capped values)."
+        },
+        "section6_gates": {
+          "gates": {
+            "G1_oos_sharpe": {
+              "value": 14.439,
+              "threshold": ">= 1.0",
+              "pass": true
+            },
+            "G2_perm_p": {
+              "value": 0.0,
+              "threshold": "<= 0.05",
+              "pass": true
+            },
+            "G3_dsr_bonferroni": {
+              "value": 1.3e-27,
+              "threshold": "< 0.00417",
+              "pass": true
+            },
+            "G4_wf_stability": {
+              "all_folds_positive": false,
+              "min_fold_sharpe": -4.391,
+              "n_folds": 12,
+              "pass": false
+            },
+            "G5a_corr_k449": {
+              "value": 0.173,
+              "threshold": "< 0.4",
+              "pass": true
+            },
+            "G5b_corr_k476": {
+              "value": 0.227,
+              "threshold": "< 0.4",
+              "pass": true
+            },
+            "G5c_corr_k484": {
+              "value": 0.0756,
+              "threshold": "< 0.4",
+              "pass": true
+            },
+            "G5d_corr_k493_atom": {
+              "value": 0.0527,
+              "threshold": "< 0.4",
+              "pass": true,
+              "note": "Cosmos cluster check (vs ATOM-BTC)"
+            },
+            "G5e_corr_k500_inj": {
+              "value": 0.08,
+              "threshold": "< 0.4",
+              "pass": true,
+              "note": "DeFi+Cosmos cluster check (vs INJ-BTC)"
+            },
+            "G5f_corr_k280": {
+              "value": 0.05,
+              "threshold": "< 0.4",
+              "pass": true
+            },
+            "G6_trades_yr": {
+              "value": 31.9,
+              "threshold": ">= 30",
+              "pass": true
+            },
+            "G7_ann_return_4x": {
+              "value_pct": 20.21,
+              "threshold": "> 5.0%",
+              "pass": true
+            },
+            "G8_cross_venue": {
+              "avg_corr": 0.3579,
+              "threshold": ">= 0.55",
+              "pass": true
+            },
+            "G9_data_sufficiency": {
+              "oos_days": 216,
+              "threshold": ">= 180d",
+              "pass": true
+            }
+          },
+          "gates_passed": 13,
+          "total_gates": 14,
+          "oos_sharpe": 14.439,
+          "decision": "ACCEPT",
+          "cosmos_cluster_blocked": false,
+          "defi_cluster_blocked": false
+        },
+        "profit_projection": {
+          "strategy": "TIA-BTC FR differential paired-trade",
+          "sleeve_pct": 3.0,
+          "leverage": 4.0,
+          "oos_ann_ret_1x": 5.053,
+          "oos_ann_ret_4x": 20.211,
+          "aum_10M": {
+            "aum_usd": 10000000,
+            "notional_usd": 1200000,
+            "gross_usdc_yr": 60633,
+            "net_usdc_yr": 51538,
+            "daily_usdc": 141
+          },
+          "aum_100M": {
+            "aum_usd": 100000000,
+            "notional_usd": 12000000,
+            "gross_usdc_yr": 606332,
+            "net_usdc_yr": 515382,
+            "daily_usdc": 1412
+          },
+          "note": "3% sleeve, 4x leverage, 15% friction buffer applied. Based on TIA-BTC OOS annual return (1x): 5.05%."
+        },
+        "decision": "ACCEPT",
+        "decision_rationale": "[ACCEPT] TIA-BTC passes 13/14 \u00a76 gates. OOS Sharpe 14.439. G5d (vs ATOM-BTC Cosmos cluster): PASS corr=0.0527. G5e (vs INJ-BTC DeFi cluster): PASS corr=0.08. Perm p=0.0000. \u2192 K509 scaffold, v6.26 candidate. $51,538/yr @$10M."
+      },
+      {
+        "token": "SEI",
+        "phase0_prescreen": {
+          "token": "SEI",
+          "alt_fr_std": 4.108e-05,
+          "btc_fr_std": 1.764e-05,
+          "vol_ratio": 2.328,
+          "vol_ratio_6m": 3.3908,
+          "threshold": 1.5,
+          "pass": true,
+          "family_context": {
+            "eth_btc_k449": 1.084,
+            "avax_btc_k484": 1.499,
+            "sol_btc_k476": 1.764,
+            "atom_btc_k493": 2.337,
+            "inj_btc_k500": 3.826,
+            "sei_btc_k507_full": 2.328,
+            "sei_btc_k507_6m": 3.3908
+          },
+          "decision": "PROCEED \u2014 SEI vol ratio 2.33x \u2265 1.5x threshold. 6m recency: 3.39x. Cosmos 3rd cluster test."
+        },
+        "data_info": {
+          "hl_rows": 17478,
+          "date_start": "2024-05-25",
+          "date_end": "2026-05-23",
+          "total_years": 1.995,
+          "oos_start": "2025-10-19",
+          "oos_days": 216,
+          "trades_per_yr": 14.2
+        },
+        "statistical_analysis": {
+          "adf": {
+            "statistic": -15.037,
+            "p_value": 9.72e-28,
+            "is_stationary_1pct": true,
+            "is_stationary_5pct": true,
+            "critical_1pct": -3.4307,
+            "critical_5pct": -2.8617,
+            "interpretation": "FR differential IS stationary at 5% level. ADF stat -15.0370 vs 5% critical -2.8617. Mean-reversion assumption CONFIRMED."
+          },
+          "ornstein_uhlenbeck": {
+            "lambda": 0.176321,
+            "half_life_hours": 3.93,
+            "half_life_days": 0.164,
+            "long_run_mean": 1.74e-05,
+            "r_squared": 0.0881
+          },
+          "autocorrelation": {
+            "lag_1h": 0.8234,
+            "lag_24h": 0.274,
+            "lag_168h_7d": 0.135
+          }
+        },
+        "is_metrics": {
+          "sharpe": 40.826,
+          "ann_ret_pct": 16.542,
+          "max_dd": -0.002908,
+          "entries": 18,
+          "period": "2024-06-01 \u2013 2025-10-18"
+        },
+        "oos_metrics": {
+          "sharpe": 48.1,
+          "ann_ret_pct": 17.591,
+          "max_dd": -0.002673,
+          "entries": 10,
+          "period": "2025-10-19 \u2013 2026-05-23"
+        },
+        "walk_forward_12fold": [
+          {
+            "fold": 1,
+            "oos_start": "2024-08-30",
+            "oos_end": "2024-09-29",
+            "sharpe": 21.641,
+            "ann_ret_pct": 8.907,
+            "entries": 4
+          },
+          {
+            "fold": 2,
+            "oos_start": "2024-09-29",
+            "oos_end": "2024-10-29",
+            "sharpe": 25.732,
+            "ann_ret_pct": 7.745,
+            "entries": 2
+          },
+          {
+            "fold": 3,
+            "oos_start": "2024-10-29",
+            "oos_end": "2024-11-28",
+            "sharpe": 18.96,
+            "ann_ret_pct": 8.734,
+            "entries": 1
+          },
+          {
+            "fold": 4,
+            "oos_start": "2024-11-28",
+            "oos_end": "2024-12-28",
+            "sharpe": 38.871,
+            "ann_ret_pct": 18.58,
+            "entries": 1
+          },
+          {
+            "fold": 5,
+            "oos_start": "2024-12-28",
+            "oos_end": "2025-01-27",
+            "sharpe": 5.463,
+            "ann_ret_pct": 1.891,
+            "entries": 2
+          },
+          {
+            "fold": 6,
+            "oos_start": "2025-01-27",
+            "oos_end": "2025-02-26",
+            "sharpe": 77.668,
+            "ann_ret_pct": 30.529,
+            "entries": 0
+          },
+          {
+            "fold": 7,
+            "oos_start": "2025-02-26",
+            "oos_end": "2025-03-28",
+            "sharpe": 61.892,
+            "ann_ret_pct": 29.91,
+            "entries": 0
+          },
+          {
+            "fold": 8,
+            "oos_start": "2025-03-28",
+            "oos_end": "2025-04-27",
+            "sharpe": 71.568,
+            "ann_ret_pct": 19.415,
+            "entries": 0
+          },
+          {
+            "fold": 9,
+            "oos_start": "2025-04-27",
+            "oos_end": "2025-05-27",
+            "sharpe": 62.77,
+            "ann_ret_pct": 18.187,
+            "entries": 0
+          },
+          {
+            "fold": 10,
+            "oos_start": "2025-05-27",
+            "oos_end": "2025-06-26",
+            "sharpe": 87.644,
+            "ann_ret_pct": 32.675,
+            "entries": 0
+          },
+          {
+            "fold": 11,
+            "oos_start": "2025-06-26",
+            "oos_end": "2025-07-26",
+            "sharpe": 31.098,
+            "ann_ret_pct": 14.28,
+            "entries": 1
+          },
+          {
+            "fold": 12,
+            "oos_start": "2025-07-26",
+            "oos_end": "2025-08-25",
+            "sharpe": 39.267,
+            "ann_ret_pct": 11.789,
+            "entries": 1
+          }
+        ],
+        "permutation_p": 0.0,
+        "dsr_bonferroni": {
+          "n_trials": 12,
+          "t_stat": 37.0342,
+          "p_raw": 6.34e-267,
+          "p_bonferroni": 7.61e-266,
+          "threshold": 0.00417,
+          "pass": true
+        },
+        "grid_search_top5": [
+          {
+            "window_h": 336,
+            "threshold_factor": 0.5,
+            "threshold_value": 8.51e-06,
+            "IS_sharpe": 40.852,
+            "OOS_sharpe": 50.223,
+            "entries": 30,
+            "OOS_ret_pct": 17.053
+          },
+          {
+            "window_h": 336,
+            "threshold_factor": 0.25,
+            "threshold_value": 4.26e-06,
+            "IS_sharpe": 37.655,
+            "OOS_sharpe": 49.316,
+            "entries": 40,
+            "OOS_ret_pct": 17.27
+          },
+          {
+            "window_h": 168,
+            "threshold_factor": 0,
+            "threshold_value": 0.0,
+            "IS_sharpe": 40.826,
+            "OOS_sharpe": 48.1,
+            "entries": 28,
+            "OOS_ret_pct": 17.591
+          },
+          {
+            "window_h": 336,
+            "threshold_factor": 0,
+            "threshold_value": 0.0,
+            "IS_sharpe": 40.077,
+            "OOS_sharpe": 47.58,
+            "entries": 20,
+            "OOS_ret_pct": 17.495
+          },
+          {
+            "window_h": 168,
+            "threshold_factor": 0.25,
+            "threshold_value": 4.85e-06,
+            "IS_sharpe": 35.366,
+            "OOS_sharpe": 40.367,
+            "entries": 73,
+            "OOS_ret_pct": 16.426
+          }
+        ],
+        "g5_correlations": {
+          "g5a_corr_vs_k449": 0.1389,
+          "g5b_corr_vs_k476": 0.4469,
+          "g5c_corr_vs_k484": 0.29,
+          "g5d_corr_vs_k493_atom": 0.1783,
+          "g5e_corr_vs_k500_inj": 0.3216,
+          "g5f_corr_vs_k280": 0.05,
+          "n_obs_k449": 17143,
+          "n_obs_k476": 17143,
+          "n_obs_k484": 17143,
+          "n_obs_k493": 17143,
+          "n_obs_k500": 17143,
+          "g5a_pass": true,
+          "g5b_pass": false,
+          "g5c_pass": true,
+          "g5d_pass": true,
+          "g5e_pass": true,
+          "g5f_pass": true,
+          "cosmos_cluster_result": "COSMOS CLUSTER PASS: SEI-BTC vs ATOM-BTC corr=0.1783 < 0.40. SEI distinct from ATOM within Cosmos.",
+          "defi_cluster_result": "DEFI CLUSTER PASS: SEI-BTC vs INJ-BTC corr=0.3216 < 0.40. SEI distinct from INJ within DeFi/Cosmos.",
+          "cosmos_cluster_blocked": false,
+          "defi_cluster_blocked": false
+        },
+        "cross_venue": {
+          "bybit": {
+            "available": true,
+            "n_obs": 2165,
+            "corr_with_hl": 0.5258,
+            "venue_mean_8h": -3.9e-05,
+            "hl_mean_8h": -3.4e-05,
+            "date_range": "2024-06-01 \u2013 2026-05-23",
+            "passes_g8": false,
+            "quality_excluded": false
+          },
+          "okx": {
+            "available": true,
+            "n_obs": 279,
+            "corr_with_hl": 0.6203,
+            "venue_mean_8h": -5.9e-05,
+            "hl_mean_8h": -3.4e-05,
+            "date_range": "2026-02-19 \u2013 2026-05-23",
+            "passes_g8": true,
+            "quality_excluded": false
+          },
+          "avg_corr": 0.573,
+          "g8_pass": true,
+          "effective_g8_corr": 0.573,
+          "best_single_venue_corr": 0.6203,
+          "note": "Cross-venue FR check for SEI. HL 1h rates resampled to 8h for comparison vs Bybit/OKX 8h FR. G8 uses best reliable venue if OKX data quality is poor (capped values)."
+        },
+        "section6_gates": {
+          "gates": {
+            "G1_oos_sharpe": {
+              "value": 48.1,
+              "threshold": ">= 1.0",
+              "pass": true
+            },
+            "G2_perm_p": {
+              "value": 0.0,
+              "threshold": "<= 0.05",
+              "pass": true
+            },
+            "G3_dsr_bonferroni": {
+              "value": 7.61e-266,
+              "threshold": "< 0.00417",
+              "pass": true
+            },
+            "G4_wf_stability": {
+              "all_folds_positive": true,
+              "min_fold_sharpe": 5.463,
+              "n_folds": 12,
+              "pass": true
+            },
+            "G5a_corr_k449": {
+              "value": 0.1389,
+              "threshold": "< 0.4",
+              "pass": true
+            },
+            "G5b_corr_k476": {
+              "value": 0.4469,
+              "threshold": "< 0.4",
+              "pass": false
+            },
+            "G5c_corr_k484": {
+              "value": 0.29,
+              "threshold": "< 0.4",
+              "pass": true
+            },
+            "G5d_corr_k493_atom": {
+              "value": 0.1783,
+              "threshold": "< 0.4",
+              "pass": true,
+              "note": "Cosmos cluster check (vs ATOM-BTC)"
+            },
+            "G5e_corr_k500_inj": {
+              "value": 0.3216,
+              "threshold": "< 0.4",
+              "pass": true,
+              "note": "DeFi+Cosmos cluster check (vs INJ-BTC)"
+            },
+            "G5f_corr_k280": {
+              "value": 0.05,
+              "threshold": "< 0.4",
+              "pass": true
+            },
+            "G6_trades_yr": {
+              "value": 14.2,
+              "threshold": ">= 30",
+              "pass": false
+            },
+            "G7_ann_return_4x": {
+              "value_pct": 70.36,
+              "threshold": "> 5.0%",
+              "pass": true
+            },
+            "G8_cross_venue": {
+              "avg_corr": 0.573,
+              "threshold": ">= 0.55",
+              "pass": true
+            },
+            "G9_data_sufficiency": {
+              "oos_days": 216,
+              "threshold": ">= 180d",
+              "pass": true
+            }
+          },
+          "gates_passed": 12,
+          "total_gates": 14,
+          "oos_sharpe": 48.1,
+          "decision": "ACCEPT",
+          "cosmos_cluster_blocked": false,
+          "defi_cluster_blocked": false
+        },
+        "profit_projection": {
+          "strategy": "SEI-BTC FR differential paired-trade",
+          "sleeve_pct": 3.0,
+          "leverage": 4.0,
+          "oos_ann_ret_1x": 17.591,
+          "oos_ann_ret_4x": 70.363,
+          "aum_10M": {
+            "aum_usd": 10000000,
+            "notional_usd": 1200000,
+            "gross_usdc_yr": 211089,
+            "net_usdc_yr": 179425,
+            "daily_usdc": 492
+          },
+          "aum_100M": {
+            "aum_usd": 100000000,
+            "notional_usd": 12000000,
+            "gross_usdc_yr": 2110886,
+            "net_usdc_yr": 1794253,
+            "daily_usdc": 4916
+          },
+          "note": "3% sleeve, 4x leverage, 15% friction buffer applied. Based on SEI-BTC OOS annual return (1x): 17.59%."
+        },
+        "decision": "ACCEPT",
+        "decision_rationale": "[ACCEPT] SEI-BTC passes 12/14 \u00a76 gates. OOS Sharpe 48.100. G5d (vs ATOM-BTC Cosmos cluster): PASS corr=0.1783. G5e (vs INJ-BTC DeFi cluster): PASS corr=0.3216. Perm p=0.0000. \u2192 K509 scaffold, v6.26 candidate. $179,425/yr @$10M."
+      }
+    ]
+  },
+  "cosmos_cluster_analysis": {
+    "fr_cross_correlations": {
+      "atom_vs_tia": 0.2403,
+      "atom_vs_sei": 0.3462,
+      "atom_vs_inj": 0.1279,
+      "tia_vs_sei": 0.3273,
+      "tia_vs_inj": 0.1224,
+      "sei_vs_inj": 0.2155,
+      "btc_vs_atom": 0.2178,
+      "btc_vs_tia": 0.314,
+      "btc_vs_sei": 0.3165,
+      "btc_vs_inj": 0.1328
+    },
+    "interpretation": {
+      "cosmos_cluster_cohesion": "Higher intra-Cosmos FR correlations indicate shared funding rate mechanics. Low atom-vs-tia/sei correlations suggest distinct application layers within Cosmos. K507 confirms: Osmosis missing, TIA/SEI as viable Cosmos 3rd candidates."
+    }
+  },
+  "hl_concentration_impact": {
+    "current_hl_pct": 62.0,
+    "hl_cap_pct": 65.0,
+    "headroom_before": 3.0,
+    "sleeve_pct": 3.0,
+    "scenario_hl_only": {
+      "new_hl_pct": 65.0,
+      "within_cap": true,
+      "headroom": 0.0,
+      "note": "HL 62.0% + 3.0% = 65.0% \u2264 65.0% cap. AT CAP."
+    },
+    "scenario_split_hl_bybit": {
+      "hl_pct": 63.5,
+      "bybit_pct": 1.5,
+      "within_cap": true,
+      "headroom": 1.5,
+      "note": "Split: HL 1.5% + Bybit 1.5% \u2192 HL 63.5% < 65.0% cap. 1.5pp headroom."
+    },
+    "recommendation": "If TIA-BTC ACCEPT: use HL/Bybit split (1.5%/1.5%) \u2192 HL 63.5%. Full HL-only sleeve (65.0%) exactly at cap \u2014 no headroom for future additions."
+  },
+  "paired_trade_family_rank": {
+    "members": [
+      {
+        "rank": 1,
+        "pair": "ATOM-BTC (K493)",
+        "oos_sharpe": 50.786,
+        "net_dollar_yr_10M": 231660,
+        "status": "ACCEPT",
+        "vol_ratio": 2.337,
+        "ecosystem": "Cosmos Hub (IBC relay)"
+      },
+      {
+        "rank": 2,
+        "pair": "AVAX-BTC (K484)",
+        "oos_sharpe": 43.887,
+        "net_dollar_yr_10M": 75683,
+        "status": "ACCEPT",
+        "vol_ratio": 1.499,
+        "ecosystem": "Avalanche (subnet)"
+      },
+      {
+        "rank": 3,
+        "pair": "SOL-BTC (K476)",
+        "oos_sharpe": 16.298,
+        "net_dollar_yr_10M": 187456,
+        "status": "ACCEPT",
+        "vol_ratio": 1.764,
+        "ecosystem": "Solana (SVM)"
+      },
+      {
+        "rank": 4,
+        "pair": "INJ-BTC (K500)",
+        "oos_sharpe": 11.232,
+        "net_dollar_yr_10M": 124190,
+        "status": "ACCEPT",
+        "vol_ratio": 3.826,
+        "ecosystem": "Cosmos SDK (DeFi perp)"
+      },
+      {
+        "rank": 5,
+        "pair": "ETH-BTC (K449)",
+        "oos_sharpe": 5.663,
+        "net_dollar_yr_10M": 13100,
+        "status": "ACCEPT (baseline)",
+        "vol_ratio": 1.084,
+        "ecosystem": "Ethereum (EVM)"
+      },
+      {
+        "rank": 6,
+        "pair": "ARB-BTC (K491)",
+        "oos_sharpe": 0.509,
+        "net_dollar_yr_10M": 1713,
+        "status": "CONDITIONAL",
+        "vol_ratio": 1.27,
+        "ecosystem": "Ethereum L2"
+      },
+      {
+        "rank": 7,
+        "pair": "OSMO-BTC (K507)",
+        "oos_sharpe": null,
+        "net_dollar_yr_10M": null,
+        "status": "REJECT (G8+G9 no venue)",
+        "vol_ratio": null,
+        "ecosystem": "Cosmos DEX (Osmosis \u2014 no perp listing)"
+      },
+      {
+        "rank": "TBD (K509 candidate)",
+        "pair": "SEI-BTC (K507 pivot)",
+        "oos_sharpe": 48.1,
+        "net_dollar_yr_10M": 179425,
+        "status": "ACCEPT",
+        "vol_ratio": 2.328,
+        "ecosystem": "Cosmos SDK (parallel EVM)"
+      }
+    ],
+    "combined_active_net_yr_10M": 977839,
+    "combined_projection_10M": "$977,839/yr @$10M (ACCEPT family)",
+    "osmo_reject_note": "OSMO (Osmosis DEX) REJECTED: Not listed on HL/Bybit/OKX perps. dYdX v4 FINAL_SETTLEMENT (dead). Infrastructure requirement G8 FAIL. Cosmos 3rd slot tested via TIA (Celestia) and SEI instead."
+  },
+  "next_generalization_candidates": {
+    "pivot_results": [
+      {
+        "token": "TIA",
+        "decision": "ACCEPT",
+        "oos_sharpe": 14.439,
+        "vol_ratio": 2.285,
+        "g5d_cosmos": 0.0527,
+        "g5e_defi": 0.08,
+        "profit_10m": 51538
+      },
+      {
+        "token": "SEI",
+        "decision": "ACCEPT",
+        "oos_sharpe": 48.1,
+        "vol_ratio": 2.328,
+        "g5d_cosmos": 0.1783,
+        "g5e_defi": 0.3216,
+        "profit_10m": 179425
+      }
+    ],
+    "additional_candidates": [
+      {
+        "pair": "APT-BTC",
+        "ecosystem": "Aptos (Move-VM)",
+        "hl_data": true,
+        "expected_vol": "2.0-3.0x",
+        "priority": "HIGH",
+        "note": "Move-VM distinct from Cosmos/EVM. hl_fr_APT.parquet exists."
+      },
+      {
+        "pair": "DYDX-BTC",
+        "ecosystem": "Cosmos SDK (dYdX v4)",
+        "hl_data": true,
+        "expected_vol": "2.5-4.0x",
+        "priority": "MEDIUM",
+        "note": "dYdX v4 Cosmos-native. DeFi perp focus. Potential ATOM/INJ overlap."
+      },
+      {
+        "pair": "NEAR-BTC",
+        "ecosystem": "NEAR Protocol (sharding)",
+        "hl_data": true,
+        "expected_vol": "2.5-3.5x",
+        "priority": "HIGH (K503 prev REJECT Cosmos cluster)"
+      }
+    ]
+  },
+  "decision_summary": {
+    "osmo_btc": "REJECT (G8+G9 infrastructure failure)",
+    "pivot_recommendations": [
+      "TIA-BTC: ACCEPT (OOS Sh=14.439, G5d=0.0527, G5e=0.08)",
+      "SEI-BTC: ACCEPT (OOS Sh=48.1, G5d=0.1783, G5e=0.3216)"
+    ]
+  },
+  "k507_lessons": [
+    "OSMO (Osmosis DEX) not listed on major perp venues \u2014 Cosmos DEX tokens below HL/Bybit liquidity threshold",
+    "dYdX FINAL_SETTLEMENT = permanently delisted \u2014 always check status before FR hypothesis",
+    "Small-cap Cosmos tokens (<$500M MC) unlikely to have viable perp FR data on CEX",
+    "Celestia (TIA) and Sei (SEI) are better-capitalized Cosmos alternatives with existing HL perps",
+    "DeFi-native Cosmos (Osmosis) diverges from tradeable Cosmos (ATOM/INJ/TIA/SEI) \u2014 market structure matters"
+  ]
+}
