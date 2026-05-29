@@ -1,0 +1,712 @@
+{
+  "wave": "K594",
+  "strategy": "LDO-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T07:46:48+0900",
+  "runtime_s": 2.8,
+  "decision": "REJECT (BLOCKED-ETH-CLUSTER + BLOCKED-DEFI-CLUSTER + Phase0 vol FAIL)",
+  "decision_rationale": "Phase 0 FAIL (vol=1.39x < 1.5x). G5a ETH=+0.4357 FAIL (BLOCKED-ETH-CLUSTER). G5q UNI=+0.5025 FAIL (BLOCKED-DEFI-CLUSTER). OOS Sh=-3.817 (all windows negative). 1/9 gates. LSD cluster REJECTED: LDO-BTC FR is a derivative of ETH ecosystem sentiment, not an independent liquid staking narrative cycle.",
+  "lsd_cluster_status": "REJECTED",
+  "lsd_cluster_analysis": {
+    "lsd_cluster_hypothesis": "REJECTED",
+    "lsd_vs_eth_corr": 0.4357,
+    "lsd_vs_uni_corr": 0.5025,
+    "lsd_vs_eth_distinct": false,
+    "lsd_vs_defi_distinct": false,
+    "root_cause_analysis": "LDO-BTC FR differential is NOT a distinct ecosystem cluster. Fundamental reasons: (1) ETH coupling: LDO governs Ethereum staking \u2014 FR is driven by ETH sentiment cycles (corr=0.44 vs ETH-BTC K449). LDO is an ETH derivative, not an independent protocol. (2) DeFi cluster overlap: LDO governance correlates with UNI governance (corr=0.50). Both tokens respond to the same DeFi sentiment cycle \u2014 VC unlock schedules, regulatory DeFi risk (Uniswap/Lido SEC scrutiny), TVL rotation. (3) Vol compression: 2025Q4-2026 BTC dominance regime compressed LDO FR vol below BTC FR vol (ratio=0.80x), making the differential signal-noise unfavorable. (4) Regime flip: LDO historically in contango vs BTC (2024), but flipped to backwardation in 2025Q1 onwards \u2014 no persistent directional bias for trend-following.",
+    "k595_pivot_recommendation": "LSD cluster NOT viable as standalone FR differential cluster. Next candidates outside DeFi/ETH domain: (A) MATIC/POL-BTC (Polygon, L2 rollup cluster) \u2014 if L2 distinct from ETH L1 (B) ARB-BTC (Arbitrum, L2 governance) \u2014 same L2 test (C) OP-BTC (Optimism, L2) \u2014 L2 sub-cluster candidate (D) DOGE-BTC (PoW alt-coin, meme) \u2014 PoW meme distinct from KAS GHOSTDAG (E) BNB-BTC (CEX token, ecosystem) \u2014 BSC ecosystem Priority: test L2 cluster (ARB/OP/MATIC) as ETH-adjacent but distinct from ETH L1.",
+    "defi_cluster_note": "DeFi cluster (LDO+UNI both FAIL): suggests DeFi governance tokens as a group are correlated in FR space. K593 UNI in-flight decision matters: if UNI ACCEPT, then LDO would add no marginal alpha (DeFi sub-cluster saturated). DeFi FR alpha may be captured by a basket approach rather than individual pairs."
+  },
+  "cluster_taxonomy": {
+    "L1": [
+      "APT",
+      "SOL",
+      "AVAX",
+      "ETH"
+    ],
+    "Cosmos": [
+      "ATOM",
+      "INJ",
+      "TIA",
+      "SEI"
+    ],
+    "Storage": [
+      "FIL"
+    ],
+    "AI/GPU": [
+      "RENDER"
+    ],
+    "AI/Training": [
+      "TAO"
+    ],
+    "Oracle": [
+      "LINK"
+    ],
+    "Social/Messaging": [
+      "TON"
+    ],
+    "Compute/Cloud": [
+      "ICP"
+    ],
+    "PoW/BlockDAG": [
+      "KAS"
+    ],
+    "Gaming/P2E": [
+      "AXS"
+    ],
+    "DeFi/DEX": [
+      "UNI (K593 in-flight)"
+    ],
+    "BTC": [
+      "BTC (baseline)"
+    ],
+    "LSD": [
+      "LDO (K594 REJECTED \u2014 ETH+DeFi cluster overlap)"
+    ]
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "ldo_listed": true,
+      "total_symbols": 230,
+      "max_leverage": 5,
+      "margin_table_id": 5,
+      "api_success": true,
+      "note": "HL meta: 230 symbols. LDO: LISTED. maxLeverage=5. LDO-PERP listed on HL. 1h FR settlement. LSD tier (maxLev=5, lower than typical)."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "ldo_listed": true,
+      "status": "Trading",
+      "max_leverage": "50.00",
+      "api_success": true,
+      "note": "Bybit LDOUSDT: status=Trading, maxLeverage=50.00. 8h FR."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "ldo_listed": true,
+      "total_swaps": 351,
+      "api_success": true,
+      "note": "OKX SWAP search: 351 instruments. LDO-USDT-SWAP: LISTED."
+    },
+    "venue_pass": true,
+    "okx_listed": true,
+    "venue_note": "HL=LISTED (maxLev=5), Bybit=LISTED (maxLev=50.00), OKX=LISTED. All 3 venues present \u2014 venue PASS.",
+    "vol_ratio_6m": 0.7961,
+    "vol_ratio_1yr": 1.1412,
+    "vol_ratio_full": 1.3894,
+    "vol_ratio_used": 1.3894,
+    "vol_threshold": 1.5,
+    "vol_pass": false,
+    "vol_note": "Vol ratios: 6mo=0.80x, 12mo=1.14x, full(2yr)=1.39x. Using full=1.39x vs threshold 1.5x \u2192 FAIL. LDO vol regime: 2024Q4 was 1.85x (pre-bull market), 2025Q3=1.52x, 2025Q4-2026=0.71-0.80x (BTC dominance regime: alts compressed). Full-period 1.40x just below threshold. 6mo 0.80x far below. Interpretation: LDO entered structural vol compression under ETH-BTC dominance shift.",
+    "prescreen_pass": false,
+    "ldo_fr_rows": 17519,
+    "btc_fr_rows": 17512,
+    "aligned_rows": 17484,
+    "ldo_fr_start": "2024-05-24 20:00:00",
+    "ldo_fr_end": "2026-05-24 19:00:00",
+    "ldo_fr_mean": 1.82e-05,
+    "ldo_fr_std_6m": 7.85e-06,
+    "btc_fr_std_6m": 9.85e-06,
+    "note": "Phase 0: venue=PASS, vol=1.39x < 1.5x \u2192 FAIL. LDO FR: 17519 rows 2024-05-24 20:00:00 to 2026-05-24 19:00:00. LDO mean FR=1.8205e-05. Phase 0 FAIL \u2192 REJECT triggered."
+  },
+  "signal_config": {
+    "window_h": 336,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "LDO-PERP vs BTC-PERP (HL 1h FR differential)"
+  },
+  "data_info": {
+    "ldo_fr_rows": 17519,
+    "ldo_fr_start": "2024-05-24 20:00:00",
+    "ldo_fr_end": "2026-05-24 19:00:00",
+    "btc_fr_rows": 17512,
+    "aligned_rows": 17484,
+    "oos_start": "2025-10-16 20:00:00",
+    "oos_end": "2026-05-23 08:00:00",
+    "oos_days": 218.5,
+    "note": "HL LDO-PERP: 1h FR settlement. Data: cache/k163_hl/hl_fr_LDO.parquet. BTC HL FR: cache/k163_hl/hl_fr_BTC.parquet. Cross-venue G8: OKX LDO-USDT-SWAP (8h settlement)."
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -18.4471,
+      "p_value": 0.0,
+      "stationary": "True",
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "half_life_h": 3.25,
+      "half_life_days": 0.14,
+      "theta": 0.213444,
+      "intercept": 1.07e-06,
+      "r_squared": 0.1067,
+      "mean_reverting": "True"
+    },
+    "permutation": {
+      "real_sharpe": -3.8166,
+      "perm_mean_sh": 0.0004,
+      "perm_p_value": 1.0,
+      "n_perm": 500,
+      "pass": false
+    },
+    "dsr": {
+      "oos_sharpe": -3.8166,
+      "t_stat": -2.9532,
+      "p_value": 0.99842766,
+      "bonferroni_thresh": 0.007143,
+      "n_trials": 7,
+      "pass": false
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": -4.6402,
+    "ann_ret_pct": -1.2192,
+    "max_dd_pct": -1.6941,
+    "trades_yr": 27.2,
+    "n_days": 510.0,
+    "n_hours": 12239,
+    "cum_ret": -0.016895,
+    "ret_mean": -1.39e-06,
+    "ret_std": 2.807e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": -3.8166,
+    "ann_ret_pct": -0.6843,
+    "max_dd_pct": -0.4255,
+    "trades_yr": 16.7,
+    "n_days": 218.5,
+    "n_hours": 5245,
+    "cum_ret": -0.00409,
+    "ret_mean": -7.8e-07,
+    "ret_std": 1.916e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": -4.6193,
+    "ann_ret_pct": -1.1428,
+    "max_dd_pct": -2.2719,
+    "trades_yr": 26.1,
+    "n_days": 728.5,
+    "n_hours": 17484,
+    "cum_ret": -0.022557,
+    "ret_mean": -1.3e-06,
+    "ret_std": 2.643e-05
+  },
+  "grid_search_all_windows": [
+    {
+      "window_h": 336,
+      "oos_sharpe": -3.8166,
+      "oos_ann_ret_pct": -0.6843,
+      "trades_yr": 16.7
+    },
+    {
+      "window_h": 168,
+      "oos_sharpe": -3.8857,
+      "oos_ann_ret_pct": -0.7007,
+      "trades_yr": 16.7
+    },
+    {
+      "window_h": 240,
+      "oos_sharpe": -3.8881,
+      "oos_ann_ret_pct": -0.7057,
+      "trades_yr": 16.7
+    },
+    {
+      "window_h": 120,
+      "oos_sharpe": -5.0947,
+      "oos_ann_ret_pct": -1.1219,
+      "trades_yr": 26.7
+    },
+    {
+      "window_h": 96,
+      "oos_sharpe": -6.3485,
+      "oos_ann_ret_pct": -1.6821,
+      "trades_yr": 40.1
+    },
+    {
+      "window_h": 72,
+      "oos_sharpe": -7.7319,
+      "oos_ann_ret_pct": -2.3939,
+      "trades_yr": 56.8
+    },
+    {
+      "window_h": 48,
+      "oos_sharpe": -10.6596,
+      "oos_ann_ret_pct": -4.4479,
+      "trades_yr": 105.2
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 12,
+    "n_positive": 0,
+    "all_positive": false,
+    "pass": false,
+    "sh_min": -9.3997,
+    "sh_max": -2.2877,
+    "sh_mean": -4.3855,
+    "sh_std": 2.1206,
+    "fold_details": [
+      {
+        "fold": 12,
+        "start": "2025-05-28",
+        "end": "2025-06-27",
+        "sharpe": -3.0509,
+        "positive": "False",
+        "max_dd": -0.000426
+      },
+      {
+        "fold": 11,
+        "start": "2025-06-27",
+        "end": "2025-07-27",
+        "sharpe": -2.2877,
+        "positive": "False",
+        "max_dd": -0.000538
+      },
+      {
+        "fold": 10,
+        "start": "2025-07-27",
+        "end": "2025-08-26",
+        "sharpe": -2.8352,
+        "positive": "False",
+        "max_dd": -0.000451
+      },
+      {
+        "fold": 9,
+        "start": "2025-08-26",
+        "end": "2025-09-25",
+        "sharpe": -3.3027,
+        "positive": "False",
+        "max_dd": -0.0004
+      },
+      {
+        "fold": 8,
+        "start": "2025-09-25",
+        "end": "2025-10-25",
+        "sharpe": -8.0474,
+        "positive": "False",
+        "max_dd": -0.00248
+      },
+      {
+        "fold": 7,
+        "start": "2025-10-25",
+        "end": "2025-11-24",
+        "sharpe": -9.3997,
+        "positive": "False",
+        "max_dd": -0.002867
+      },
+      {
+        "fold": 6,
+        "start": "2025-11-24",
+        "end": "2025-12-24",
+        "sharpe": -4.6883,
+        "positive": "False",
+        "max_dd": -0.000856
+      },
+      {
+        "fold": 5,
+        "start": "2025-12-24",
+        "end": "2026-01-23",
+        "sharpe": -4.7284,
+        "positive": "False",
+        "max_dd": -0.00086
+      },
+      {
+        "fold": 4,
+        "start": "2026-01-23",
+        "end": "2026-02-22",
+        "sharpe": -5.0074,
+        "positive": "False",
+        "max_dd": -0.000896
+      },
+      {
+        "fold": 3,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": -3.0346,
+        "positive": "False",
+        "max_dd": -0.000489
+      },
+      {
+        "fold": 2,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": -3.2681,
+        "positive": "False",
+        "max_dd": -0.000439
+      },
+      {
+        "fold": 1,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": -2.9761,
+        "positive": "False",
+        "max_dd": -0.00047
+      }
+    ],
+    "note": "0/12 positive folds. G4 FAIL \u2014 majority negative. Sharpe range: [-9.40, -2.29]. LDO-BTC FR differential: no consistent direction across time. Regime flip: 2024 (LDO > BTC contango) \u2192 2025H2 (LDO < BTC, BTC dominance). Walk-forward confirms absence of stable directional edge."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": false,
+      "G2 Perm p": false,
+      "G3 DSR Bonferroni": false,
+      "G4 Walk-forward": false,
+      "G5 Family corr": false,
+      "G6 Trades/yr": false,
+      "G7 Ann return 4x": false,
+      "G8 Cross-venue": false,
+      "G9 Data sufficiency": true
+    },
+    "gates_passed": 1,
+    "gates_total": 9,
+    "gates_failed": 8,
+    "g7_ret_4x_pct": -2.74,
+    "g4_all_positive": false,
+    "g5_all_pass": false,
+    "g5_eth_fail": true,
+    "g5_uni_fail": true,
+    "g8_note": "G8: HL LDO FR vs OKX LDO FR corr=0.0829 (threshold=0.55). FAIL. HL=1h settlement, OKX=8h settlement. Note: moot given Phase 0 FAIL and G5 FAIL \u2014 strategy is REJECT regardless.",
+    "decision": "REJECT (BLOCKED-ETH-CLUSTER + BLOCKED-DEFI-CLUSTER + Phase0 vol FAIL)"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": 0.4357,
+        "threshold": 0.4,
+        "pass": false,
+        "n": 17484,
+        "note": "ETH L1 staking origin \u2014 CRITICAL for LSD"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": 0.2444,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 17484,
+        "note": "PoS L1 vs LSD"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": 0.4044,
+        "threshold": 0.4,
+        "pass": false,
+        "n": 17484,
+        "note": "L1 vs LSD"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": 0.2387,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 17484,
+        "note": "Cosmos vs LSD"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": 0.1579,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 17484,
+        "note": "Cosmos DeFi vs LSD"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": 0.2963,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 17478,
+        "note": "Cosmos vs LSD"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": 0.3297,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 17478,
+        "note": "Cosmos DA vs LSD"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": 0.2543,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 17484,
+        "note": "Move-VM L1 vs LSD"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": 0.3279,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 17484,
+        "note": "Storage vs LSD"
+      },
+      "g5j": {
+        "label": "RENDER-BTC K531",
+        "corr": 0.2555,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 17484,
+        "note": "AI/GPU vs LSD"
+      },
+      "g5k": {
+        "label": "TAO-BTC K534",
+        "corr": 0.2519,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 17484,
+        "note": "AI/Training vs LSD"
+      },
+      "g5l": {
+        "label": "TON-BTC K571",
+        "corr": 0.3496,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 17484,
+        "note": "Social/Messaging vs LSD"
+      },
+      "g5m": {
+        "label": "ICP-BTC K587",
+        "corr": 0.0116,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 4709,
+        "note": "Compute/Cloud vs LSD"
+      },
+      "g5n": {
+        "label": "KAS-BTC K590",
+        "corr": 0.402,
+        "threshold": 0.4,
+        "pass": false,
+        "n": 17484,
+        "note": "PoW BlockDAG vs LSD"
+      },
+      "g5o": {
+        "label": "AXS-BTC K591",
+        "corr": 0.1594,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3005,
+        "note": "Gaming/P2E vs LSD"
+      },
+      "g5p": {
+        "label": "K280 BTC-carry baseline",
+        "corr": -0.2904,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 17484,
+        "note": "BTC-carry K280 vs LDO-BTC differential. LSD yield vs BTC carry \u2014 expect low corr."
+      },
+      "g5q": {
+        "label": "UNI-BTC K593 (DeFi/DEX sub-cluster CRITICAL)",
+        "corr": 0.5025,
+        "threshold": 0.4,
+        "pass": false,
+        "n": 17484,
+        "note": "CRITICAL: LDO (LSD governance) vs UNI (DEX governance). corr=0.5025. FAIL \u2014 BLOCKED-DEFI-CLUSTER: LSD/DEX DeFi governance overlap"
+      }
+    },
+    "n_pass": 13,
+    "n_total": 17,
+    "all_pass": false,
+    "eth_cluster_distinct": false,
+    "defi_cluster_distinct": false,
+    "eth_corr_critical": 0.4357,
+    "uni_corr_defi": 0.5025,
+    "eth_pass": false,
+    "uni_pass": false,
+    "failed_checks": [
+      {
+        "key": "g5a",
+        "label": "ETH-BTC K449",
+        "corr": 0.4357
+      },
+      {
+        "key": "g5c",
+        "label": "AVAX-BTC K484",
+        "corr": 0.4044
+      },
+      {
+        "key": "g5n",
+        "label": "KAS-BTC K590",
+        "corr": 0.402
+      },
+      {
+        "key": "g5q",
+        "label": "UNI-BTC K593 (DeFi/DEX sub-cluster CRITICAL)",
+        "corr": 0.5025
+      }
+    ],
+    "note": "G5 family: 13/17 PASS. G5a ETH=0.4357 (FAIL \u2014 BLOCKED-ETH-CLUSTER). G5q UNI=0.5025 (FAIL \u2014 BLOCKED-DEFI-CLUSTER). Failed: ['g5a=0.4357', 'g5c=0.4044', 'g5n=0.402', 'g5q=0.5025']. LDO-BTC differential is structurally correlated with ETH-BTC (staking origin) and UNI-BTC (DeFi governance). LSD cluster NOT distinct from existing family."
+  },
+  "cross_venue_fr": {
+    "pass": false,
+    "venue": "OKX",
+    "hl_okx_corr": 0.0829,
+    "n_overlap": 256,
+    "okx_rows": 271,
+    "note": "G8: HL LDO FR vs OKX LDO FR corr=0.0829 (threshold=0.55). FAIL. HL=1h settlement, OKX=8h settlement. Note: moot given Phase 0 FAIL and G5 FAIL \u2014 strategy is REJECT regardless."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": -0.6843,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": -2.7372,
+    "usdc_yr_1pct_10M": 0,
+    "usdc_yr_2pct_10M": 0,
+    "usdc_yr_1pct_100M": 0,
+    "note": "REJECT: OOS ann=-0.68% (negative). 4x leverage = -2.74%/yr. $0/yr @$10M \u2014 strategy not deployed. LDO-BTC FR differential produces no profit in OOS period."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 64.5,
+    "ldo_alloc_pct": 0.0,
+    "projected_pct": 64.5,
+    "cap_pct": 65.0,
+    "breach": false,
+    "note": "REJECT: LDO not allocated. HL concentration unchanged at 64.5%."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM/L1",
+      "wave": "K512",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "wave": "K493",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "wave": "K507",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche/L1",
+      "wave": "K484",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "wave": "K517",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana/L1",
+      "wave": "K476",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 7,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "wave": "K531",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "wave": "K507",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 9,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "wave": "K557",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "KAS-BTC",
+      "sharpe": 13.303,
+      "ecosystem": "PoW BlockDAG",
+      "wave": "K590",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 11,
+      "pair": "ICP-BTC",
+      "sharpe": 12.527,
+      "ecosystem": "Compute/Cloud",
+      "wave": "K587",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 12,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "wave": "K500",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 13,
+      "pair": "AXS-BTC",
+      "sharpe": 9.81,
+      "ecosystem": "Gaming/P2E",
+      "wave": "K591",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 14,
+      "pair": "TON-BTC",
+      "sharpe": 8.402,
+      "ecosystem": "Social/Messaging",
+      "wave": "K571",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 15,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum/L1",
+      "wave": "K449",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 16,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "wave": "K534",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 17,
+      "pair": "UNI-BTC",
+      "sharpe": null,
+      "ecosystem": "DeFi/DEX",
+      "wave": "K593",
+      "status": "IN FLIGHT"
+    }
+  ],
+  "ldo_family_rank": -1,
+  "family_unchanged": true,
+  "family_note": "REJECT: Family rank unchanged. 17 members (16 active + UNI in-flight)."
+}
