@@ -5007,3 +5007,305 @@ python3 scripts/verify_deployment_status.py --check-positions
 ---
 
 *K461 §34 -- v6.20 architecture §6 ACCEPTED (K454 7/7 complete, Portfolio Sharpe 21.70, $200M optimal +$74.4M/yr, HL 47.5% < 65%, CONDITIONAL on K449+K457 60d gates) -- 2026-05-30*
+
+---
+
+## §35. K465 Lighter + Vertex Integration Scaffold (25th + 26th Daemons, K454 v6.20 7-Venue K208 Mesh)
+
+*K465 §35 -- Lighter + Vertex integration scaffold (25th + 26th daemons, 7-venue K208 mesh COMPLETE, v6.20 redundancy) -- 2026-05-30*
+
+### §35.1 Overview
+
+Wave K465 completes the v6.20 7-venue K208 mesh by adding Lighter (6th venue) and Vertex (7th venue):
+
+```
+K208 7-Venue Mesh (K465 COMPLETE):
+  1. HyperLiquid  (HL)       — primary, 8h cycle, GOLD tier
+  2. Bybit                   — primary, 8h cycle, VIP5
+  3. OKX                     — K456, 8h cycle, VIP1
+  4. Aevo                    — K460, 1h cycle, structured products
+  5. dYdX v4                 — K460, 1h cycle, Cosmos chain
+  6. Lighter (NEW K465)      — zkEVM perps, 8h cycle, conservative tier
+  7. Vertex  (NEW K465)      — spot+perp AMM, USDC margin, 8h cycle, conservative tier
+
+Daemon count: 26 total (25th=Lighter, 26th=Vertex)
+Status: SCAFFOLD-READY (read-only fetch; trading auth TODO post-K465)
+```
+
+**Conservative tier** (Lighter + Vertex as new venues):
+- `max_pct_of_oi = 0.03` (vs 0.05 for established venues)
+- `min_depth_usd = 25,000` (vs 50K–100K for established venues)
+- Leverage cap: 3.0x (matching other K208 venues)
+
+### §35.2 Lighter Integration
+
+**Venue:** Lighter Protocol — zkEVM perpetual exchange (ZK proof settlement)  
+**Chain:** zkEVM (Ethereum-compatible, ZK rollup settlement)  
+**Colocation:** AWS Tokyo ap-northeast-1a (apne1-az4) recommended
+
+#### Lighter API Reference
+
+| Field | Value |
+|-------|-------|
+| Base URL | `https://mainnet.zklighter.elliot.ai` |
+| FR endpoint | `GET /api/v1/funding-rates` (all markets) |
+| Markets | `GET /api/v1/markets` |
+| Order books | `GET /api/v1/orderBooks?market={SYMBOL}` |
+| OB details | `GET /api/v1/orderBookDetails` |
+| Exchange metrics | `GET /api/v1/exchangeMetrics?market={SYMBOL}` |
+| Exchange stats | `GET /api/v1/exchangeStats` |
+| System status | `GET /api/v1/status` |
+| Auth required | NOT for public read-only endpoints |
+| Funding period | 8h (conservative default — verify via /api/v1/markets) |
+| Docs | https://apidocs.lighter.xyz/docs/get-started |
+
+#### Lighter Symbol Format
+
+Lighter uses base symbols (e.g., `"BTC"`, `"ETH"`) — not `BTC-PERP` format.
+Verify available markets via `GET /api/v1/markets`.
+
+#### Lighter Rate Limits
+
+Rate limits not explicitly documented in public API. Script uses:
+- `time.sleep(0.3)` between individual symbol fetches
+- Bulk `/api/v1/funding-rates` endpoint preferred (fewer requests)
+
+#### Lighter K208 Universe (14 symbols)
+
+```python
+K208_SYMBOLS_LIGHTER = [
+    "BTC", "ETH", "SOL", "ARB", "OP", "SUI", "AVAX",
+    "LINK", "XRP", "DOGE", "BNB", "ATOM", "APT", "TIA",
+]
+```
+
+#### Lighter Funding Comparison (8h basis)
+
+Lighter uses 8h funding cycles — **direct comparison** with HL/Bybit/OKX.
+No normalization factor needed (unlike Aevo/dYdX v4 which use 1h cycles).
+
+```
+Annualized % = funding_rate_per_8h × 3 × 365 × 100
+```
+
+### §35.3 Vertex Integration
+
+**Venue:** Vertex Protocol — spot + perpetual AMM hybrid  
+**Chain:** Arbitrum (EVM-compatible, off-chain order book + on-chain settlement)  
+**Margin currency:** USDC
+
+#### Vertex API Reference
+
+| Field | Value |
+|-------|-------|
+| Gateway base URL | `https://gateway.prod.vertexprotocol.com/v1` |
+| Archive base URL | `https://archive.prod.vertexprotocol.com/v1` |
+| FR query | `POST /query {"type": "funding_rates", "product_ids": [2, 4, ...]}` |
+| All products | `POST /query {"type": "all_products"}` |
+| Market snapshots | `POST /query {"type": "market_snapshots", "product_ids": [...]}` |
+| Historical FR | `POST /indexer {"funding_rates": {"product_id": N, "limit": L}}` |
+| System status | `GET /status` |
+| Auth required | NOT for public read-only query endpoints |
+| Funding period | 8h (aligns with HL/Bybit/OKX) |
+| Docs | https://docs.vertexprotocol.com/ |
+
+#### Vertex Product IDs
+
+```python
+VERTEX_PRODUCT_ID_MAP = {
+    "BTC": 2, "ETH": 4, "ARB": 6, "BNB": 8, "XRP": 10,
+    "SOL": 12, "OP": 14, "MATIC": 16, "AVAX": 18, "LINK": 20,
+    "SUI": 22, "APT": 24, "ATOM": 26, "DOGE": 28, "TIA": 30,
+}
+# NOTE: Verify via: python3 scripts/vertex_fr_fetcher.py --products
+```
+
+Even product IDs = spot; odd = perpetual. BTC-PERP = 2, ETH-PERP = 4.
+
+#### Vertex Historical Data
+
+Vertex **has** a public historical funding rate endpoint via the Archive:
+```
+POST https://archive.prod.vertexprotocol.com/v1/indexer
+Body: {"funding_rates": {"product_id": 2, "limit": 100}}
+```
+This is a key advantage over Aevo/Lighter (which require accumulation).
+
+#### Vertex Funding Comparison (8h basis)
+
+Vertex uses 8h funding cycles — **direct comparison** with HL/Bybit/OKX.
+```
+Annualized % = funding_rate_per_8h × 3 × 365 × 100
+```
+
+### §35.4 POST_ONLY Order Parameters (Future Auth Phase)
+
+Both Lighter and Vertex require authenticated sessions for trading.
+No auth required for the read-only scaffold (K465 scope).
+
+**Lighter trading (TODO post-K465):**
+- API keys: create via Lighter web UI (up to 253 keys per account)
+- Auth tokens: `create_auth_token_with_expiry()` (max 8h TTL)
+- Nonce management: handled by SDK automatically
+- Colocation: AWS Tokyo ap-northeast-1a recommended for low latency
+
+**Vertex trading (TODO post-K465):**
+- Wallet-based signing (Ethereum private key)
+- POST to Gateway `/execute` endpoint
+- USDC margin: ensure USDC deposited to Vertex account before trading
+- Product IDs must be confirmed via `--products` flag before live orders
+
+### §35.5 Emergency Exit — Lighter
+
+**Trigger:** `python3 scripts/emergency_hl_exit.py --dry-run --include-lighter`
+
+At K465 SCAFFOLD stage, Lighter positions are **STUB only** — manual action required:
+
+1. Navigate to https://lighter.xyz (Lighter web UI)
+2. Connect wallet (same account used for trading)
+3. Close all perpetual positions manually
+4. Confirm zero balance in Lighter account
+
+**Script stub behavior:**
+- `--dry-run --include-lighter`: prints manual guidance above
+- `--EXECUTE --include-lighter`: warns "Lighter auth not configured — manual close required at lighter.xyz"
+
+**Post-K465 auth phase:** Implement Lighter SDK close using API key + auth token.
+
+### §35.6 Emergency Exit — Vertex
+
+**Trigger:** `python3 scripts/emergency_hl_exit.py --dry-run --include-vertex`
+
+At K465 SCAFFOLD stage, Vertex positions are **STUB only** — manual action required:
+
+1. Navigate to https://app.vertexprotocol.com
+2. Connect wallet (Ethereum wallet with Vertex positions)
+3. Close all perpetual positions manually
+4. Confirm USDC returned to wallet
+
+**Script stub behavior:**
+- `--dry-run --include-vertex`: prints manual guidance above
+- `--EXECUTE --include-vertex`: warns "Vertex auth not configured — manual close required at app.vertexprotocol.com"
+
+**Post-K465 auth phase:** Implement Vertex SDK close using wallet signing + Gateway `/execute`.
+
+### §35.7 Leverage Configuration
+
+Both Lighter and Vertex leverage caps added to `data/leverage_config.json`:
+
+```json
+"K280_K208_Lighter": 3.0,
+"K280_K208_Vertex":  3.0
+```
+
+Rationale:
+- 3x conservative cap (same as all K208 venues)
+- Lighter supports higher leverage but new venue warrants caution
+- Vertex: USDC margin — verify margin requirements per market before advancing cap
+
+### §35.8 Smart Router Configuration
+
+Both venues added to `data/smart_router_config.json`:
+
+| Field | Lighter | Vertex |
+|-------|---------|--------|
+| enabled | true | true |
+| user_tier | default | default |
+| maker_rebate_bps | 0.0 | 0.0 |
+| taker_fee_bps | 5.0 | 5.0 |
+| min_depth_usd | 25,000 | 25,000 |
+| max_position_pct_of_depth | 0.03 | 0.03 |
+| funding_period_h | 8 | 8 |
+| concentration_cap | 10% | 10% |
+
+### §35.9 Depth Allocator Configuration
+
+Both venues added to `scripts/depth_aware_allocator.py` VENUE_CONFIG:
+
+```python
+"Lighter": {
+    "enabled": True,
+    "max_pct_of_oi": 0.03,    # conservative (new venue)
+    "min_depth_usd": 25_000,
+    "slippage_bps_per_pct_of_oi": 18.0,
+    ...
+},
+"Vertex": {
+    "enabled": True,
+    "max_pct_of_oi": 0.03,    # conservative (new venue)
+    "min_depth_usd": 25_000,
+    "slippage_bps_per_pct_of_oi": 18.0,
+    ...
+},
+```
+
+FALLBACK_OI_USD updated for all 15 symbols with Lighter + Vertex conservative estimates.
+
+### §35.10 Activation Playbook
+
+#### Phase A: Scaffold Verification (K465, current)
+
+```bash
+# Test Lighter fetcher (public endpoints):
+python3 scripts/lighter_fr_fetcher.py --status
+python3 scripts/lighter_fr_fetcher.py --all --json
+cat data/lighter_dashboard.json
+
+# Test Vertex fetcher (public endpoints):
+python3 scripts/vertex_fr_fetcher.py --status
+python3 scripts/vertex_fr_fetcher.py --products
+python3 scripts/vertex_fr_fetcher.py --all --json
+cat data/vertex_dashboard.json
+
+# Verify 26 daemons (0 mismatches expected):
+python3 scripts/verify_deployment_status.py
+```
+
+#### Phase B: Plist Activation (after API connectivity confirmed)
+
+```bash
+# Lighter daemon (25th):
+REPO=$(python3 -c "import pathlib; print(pathlib.Path('.').resolve())")
+sed "s|REPO_ROOT|${REPO}|g" com.cryptolab.lighter-fr-monitor.plist > /tmp/lighter.plist
+cp /tmp/lighter.plist ~/Library/LaunchAgents/com.cryptolab.lighter-fr-monitor.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.lighter-fr-monitor.plist
+
+# Vertex daemon (26th):
+sed "s|REPO_ROOT|${REPO}|g" com.cryptolab.vertex-fr-monitor.plist > /tmp/vertex.plist
+cp /tmp/vertex.plist ~/Library/LaunchAgents/com.cryptolab.vertex-fr-monitor.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.vertex-fr-monitor.plist
+
+# Verify both loaded:
+launchctl list | grep -E "lighter|vertex"
+```
+
+#### Phase C: Live Trading Auth (post-K465, TODO)
+
+**Lighter:**
+1. Create API key via Lighter web UI (lighter.xyz)
+2. Set env vars: `LIGHTER_API_KEY`, `LIGHTER_API_SECRET`
+3. Implement POST-only order submission using Lighter SDK
+4. Test with small paper position before live
+
+**Vertex:**
+1. Deposit USDC to Vertex account
+2. Set env var: `VERTEX_PRIVATE_KEY` (Ethereum wallet)
+3. Implement signed POST `/execute` to Gateway
+4. Verify product IDs via `--products` flag
+5. Test with small paper position before live
+
+### §35.11 References
+
+| Wave | Content |
+|------|---------|
+| K465 | This section — Lighter + Vertex scaffold (25th + 26th daemons, 7-venue K208 mesh COMPLETE) |
+| K460 | Aevo + dYdX v4 scaffold (§33, 23rd + 24th daemons) |
+| K461 | v6.20 §6 gate validation (§34, ACCEPTED CONDITIONAL) |
+| K458 | Depth-aware allocator (§31, 21st daemon, 5% OI cap per venue) |
+| K456 | OKX scaffold (§30, 20th daemon) |
+| K454 | v6.20 architecture blueprint (venues 3→10 plan) |
+| K208 | BTC FR carry base strategy (K280 core — short-highest-FR / long-lowest-FR) |
+
+---
+
+*K465 §35 -- Lighter + Vertex integration scaffold (25th + 26th daemons, v6.20 7-venue K208 mesh COMPLETE, 26 daemons confirmed, conservative tier 3x/0.03 OI cap) -- 2026-05-30*

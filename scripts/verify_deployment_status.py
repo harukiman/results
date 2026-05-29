@@ -217,6 +217,20 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="dydx_v4_fr_monitor",
         expected_html_status="SCAFFOLD-READY",  # K460: plist in repo root (gitignored); activate after Cosmos signing impl + v6.20 go-live
     ),
+    DaemonSpec(
+        label="com.cryptolab.lighter-fr-monitor",
+        purpose="K465 Lighter FR Monitor (K454 v6.20 6th K208 venue, zkEVM perps, 14-symbol FR poll, 8h cycle, mainnet.zklighter.elliot.ai, conservative tier, 25th daemon)",
+        scripts=["scripts/lighter_fr_fetcher.py"],
+        log_basename="lighter_fr_monitor",
+        expected_html_status="SCAFFOLD-READY",  # K465: plist in repo root (gitignored); activate after Lighter trading keys configured + v6.20 go-live
+    ),
+    DaemonSpec(
+        label="com.cryptolab.vertex-fr-monitor",
+        purpose="K465 Vertex FR Monitor (K454 v6.20 7th K208 venue, spot+perp AMM, USDC margin, 14-symbol FR poll, 8h cycle, gateway.prod.vertexprotocol.com/v1, conservative tier, 26th daemon — 7-venue K208 mesh COMPLETE)",
+        scripts=["scripts/vertex_fr_fetcher.py"],
+        log_basename="vertex_fr_monitor",
+        expected_html_status="SCAFFOLD-READY",  # K465: plist in repo root (gitignored); activate after Vertex trading keys configured + v6.20 go-live
+    ),
 ]
 
 

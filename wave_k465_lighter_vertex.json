@@ -1,0 +1,100 @@
+{
+  "wave": "K465",
+  "date": "2026-05-30",
+  "title": "Lighter + Vertex Integration Scaffold (v6.20 7-Venue K208 Mesh)",
+  "status": "COMPLETE",
+  "summary": {
+    "objective": "Extend K208 cross-venue FR arb mesh from 5 to 7 venues by adding Lighter (zkEVM) and Vertex (spot+perp AMM) as 25th+26th daemons",
+    "result": "7-venue K208 mesh SCAFFOLD-READY. Both venues integrated with read-only public fetch, conservative tier allocation, and gitignored plists.",
+    "daemon_count": 26,
+    "venues_7": ["HL", "Bybit", "OKX", "Aevo", "dYdX_v4", "Lighter", "Vertex"]
+  },
+  "deliverables": {
+    "new_scripts": [
+      "scripts/lighter_fr_fetcher.py",
+      "scripts/vertex_fr_fetcher.py"
+    ],
+    "new_plists": [
+      "com.cryptolab.lighter-fr-monitor.plist",
+      "com.cryptolab.vertex-fr-monitor.plist"
+    ],
+    "new_data": [
+      "data/lighter_dashboard.json",
+      "data/vertex_dashboard.json"
+    ],
+    "updated_scripts": [
+      "scripts/verify_deployment_status.py",
+      "scripts/emergency_hl_exit.py",
+      "scripts/depth_aware_allocator.py"
+    ],
+    "updated_data": [
+      "data/smart_router_config.json",
+      "data/leverage_config.json"
+    ],
+    "updated_docs": [
+      "docs/k302a_runbook.md"
+    ],
+    "updated_html": [
+      "report.html"
+    ]
+  },
+  "api_research": {
+    "Lighter": {
+      "base_url": "https://mainnet.zklighter.elliot.ai",
+      "fr_endpoint": "GET /api/v1/funding-rates",
+      "markets_endpoint": "GET /api/v1/markets",
+      "order_book_endpoint": "GET /api/v1/orderBooks?market={SYMBOL}",
+      "auth_required": false,
+      "funding_period_h": 8,
+      "chain": "zkEVM (ZK proof settlement)",
+      "colocation": "AWS Tokyo ap-northeast-1a (apne1-az4)",
+      "docs": "https://apidocs.lighter.xyz/docs/get-started"
+    },
+    "Vertex": {
+      "gateway_url": "https://gateway.prod.vertexprotocol.com/v1",
+      "archive_url": "https://archive.prod.vertexprotocol.com/v1",
+      "fr_endpoint": "POST /query {\"type\": \"funding_rates\", \"product_ids\": [...]}",
+      "historical_fr_endpoint": "POST /indexer {\"funding_rates\": {\"product_id\": N, \"limit\": L}}",
+      "all_products_endpoint": "POST /query {\"type\": \"all_products\"}",
+      "auth_required": false,
+      "funding_period_h": 8,
+      "margin_currency": "USDC",
+      "product_ids": {"BTC": 2, "ETH": 4, "ARB": 6, "SOL": 12},
+      "chain": "Arbitrum (EVM)",
+      "docs": "https://docs.vertexprotocol.com/"
+    }
+  },
+  "configuration": {
+    "leverage_caps": {
+      "K280_K208_Lighter": 3.0,
+      "K280_K208_Vertex": 3.0
+    },
+    "smart_router": {
+      "Lighter": {"enabled": true, "min_depth_usd": 25000, "max_position_pct_of_depth": 0.03, "funding_period_h": 8},
+      "Vertex": {"enabled": true, "min_depth_usd": 25000, "max_position_pct_of_depth": 0.03, "funding_period_h": 8}
+    },
+    "depth_allocator": {
+      "Lighter": {"enabled": true, "max_pct_of_oi": 0.03, "min_depth_usd": 25000, "slippage_bps_per_pct_of_oi": 18.0},
+      "Vertex": {"enabled": true, "max_pct_of_oi": 0.03, "min_depth_usd": 25000, "slippage_bps_per_pct_of_oi": 18.0}
+    },
+    "conservative_tier_rationale": "New venues (Lighter+Vertex): max_pct_of_oi=0.03 vs 0.05 for established venues. min_depth=25K vs 50K-100K. 3x leverage cap. Upgrade to standard tier after 30d data accumulation and live API validation."
+  },
+  "emergency_exit_flags": {
+    "lighter": "--include-lighter (STUB, manual action at lighter.xyz)",
+    "vertex": "--include-vertex (STUB, manual action at app.vertexprotocol.com)"
+  },
+  "runbook_section": "docs/k302a_runbook.md §35",
+  "todo_post_k465": [
+    "Lighter: obtain API keys, implement authenticated order submission",
+    "Vertex: deposit USDC, implement wallet-signed /execute calls",
+    "Upgrade conservative tier after 30d data + live API validation",
+    "Activate plists after API connectivity confirmed",
+    "Test --products flag to verify Vertex product IDs are correct"
+  ],
+  "k339_security": {
+    "repo_root_pattern": "REPO_ROOT = Path(__file__).resolve().parent.parent",
+    "no_users_literals": true,
+    "plists_gitignored": true,
+    "auth_env_only": "API keys read from env vars only at execution time"
+  }
+}

@@ -1,7 +1,7 @@
 {
-  "_comment": "K460 Smart Router Config \u2014 cross-venue HL/Bybit/OKX/Aevo/dYdX_v4 routing for K208 trades",
-  "_wave": "K460",
-  "_updated": "2026-05-25",
+  "_comment": "K465 Smart Router Config — cross-venue HL/Bybit/OKX/Aevo/dYdX_v4/Lighter/Vertex routing for K208 trades",
+  "_wave": "K465",
+  "_updated": "2026-05-30",
   "venues": {
     "HL": {
       "enabled": true,
@@ -39,7 +39,7 @@
       "max_position_pct_of_depth": 0.05,
       "funding_period_h": 1,
       "funding_normalization_factor": 8,
-      "_note": "K460 scaffold \u2014 4th venue. 1h funding cycle. Activate after Aevo trading keys configured + v6.20 go-live. Fetcher: scripts/aevo_fr_fetcher.py. Dashboard: data/aevo_dashboard.json."
+      "_note": "K460 scaffold — 4th venue. 1h funding cycle. Activate after Aevo trading keys configured + v6.20 go-live. Fetcher: scripts/aevo_fr_fetcher.py. Dashboard: data/aevo_dashboard.json."
     },
     "dYdX_v4": {
       "enabled": true,
@@ -51,7 +51,28 @@
       "funding_period_h": 1,
       "funding_normalization_factor": 8,
       "chain": "Cosmos",
-      "_note": "K460 scaffold \u2014 5th venue. Cosmos appchain. 1h funding cycle. Trading requires Cosmos SDK signing (TODO post-K460). Indexer: indexer.dydx.trade (public read-only). Fetcher: scripts/dydx_v4_fr_fetcher.py. Dashboard: data/dydx_v4_dashboard.json."
+      "_note": "K460 scaffold — 5th venue. Cosmos appchain. 1h funding cycle. Trading requires Cosmos SDK signing (TODO post-K460). Indexer: indexer.dydx.trade (public read-only). Fetcher: scripts/dydx_v4_fr_fetcher.py. Dashboard: data/dydx_v4_dashboard.json."
+    },
+    "Lighter": {
+      "enabled": true,
+      "user_tier": "default",
+      "maker_rebate_bps": 0.0,
+      "taker_fee_bps": 5.0,
+      "min_depth_usd": 25000,
+      "max_position_pct_of_depth": 0.03,
+      "funding_period_h": 8,
+      "_note": "K465 scaffold — 6th venue. zkEVM perps (ZK proof settlement). 8h funding cycle. Conservative tier (new venue): max_pct_of_oi=0.03, min_depth=25K. Base URL: mainnet.zklighter.elliot.ai. Fetcher: scripts/lighter_fr_fetcher.py. Dashboard: data/lighter_dashboard.json. Auth not required for read-only. Trading keys TODO post-K465."
+    },
+    "Vertex": {
+      "enabled": true,
+      "user_tier": "default",
+      "maker_rebate_bps": 0.0,
+      "taker_fee_bps": 5.0,
+      "min_depth_usd": 25000,
+      "max_position_pct_of_depth": 0.03,
+      "funding_period_h": 8,
+      "margin_currency": "USDC",
+      "_note": "K465 scaffold — 7th venue. Spot+perp AMM hybrid, USDC margin. 8h funding cycle. Conservative tier (new venue): max_pct_of_oi=0.03, min_depth=25K. Gateway: gateway.prod.vertexprotocol.com/v1. Archive: archive.prod.vertexprotocol.com/v1. Product IDs: BTC=2, ETH=4. Fetcher: scripts/vertex_fr_fetcher.py. Dashboard: data/vertex_dashboard.json. Auth not required for read-only. Trading keys TODO post-K465."
     }
   },
   "default_post_only": true,
@@ -62,7 +83,9 @@
     "Bybit_pct_of_total": 0.5,
     "OKX_pct_of_total": 0.3,
     "Aevo_pct_of_total": 0.15,
-    "dYdX_v4_pct_of_total": 0.15
+    "dYdX_v4_pct_of_total": 0.15,
+    "Lighter_pct_of_total": 0.10,
+    "Vertex_pct_of_total": 0.10
   },
   "k460_notes": {
     "wave": "K460",
@@ -70,5 +93,16 @@
     "v620_progress": "5/7 waves",
     "daemon_count": 24,
     "funding_comparison_note": "Aevo and dYdX v4 use 1h cycles. Normalize to 8h basis before cross-venue FR comparison. Multiply 1h rate x 8 for direct HL/Bybit/OKX comparison."
+  },
+  "k465_notes": {
+    "wave": "K465",
+    "new_venues": ["Lighter", "Vertex"],
+    "v620_progress": "7-venue K208 mesh COMPLETE",
+    "daemon_count": 26,
+    "venues_7": ["HL", "Bybit", "OKX", "Aevo", "dYdX_v4", "Lighter", "Vertex"],
+    "conservative_tier": "Lighter + Vertex start at max_pct_of_oi=0.03, min_depth=25K (vs 0.05/50K for established venues)",
+    "funding_note": "Lighter and Vertex both use 8h funding cycles (same as HL/Bybit/OKX). Direct FR comparison without normalization.",
+    "lighter_api": "mainnet.zklighter.elliot.ai — zkEVM settlement",
+    "vertex_api": "gateway.prod.vertexprotocol.com/v1 — spot+perp AMM, USDC margin"
   }
 }

@@ -1522,6 +1522,51 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K465: Lighter emergency exit flag (stub scaffold — 6th venue, zkEVM)
+    lighter_group = parser.add_mutually_exclusive_group()
+    lighter_group.add_argument(
+        "--include-lighter",
+        dest="include_lighter",
+        action="store_true",
+        default=False,
+        help=(
+            "K465: Include Lighter close-all in emergency exit (6th venue, zkEVM STUB scaffold). "
+            "STUB only at K465 — full auth TODO post-K465. "
+            "Dry-run: prints guidance. Live: warns manual action required at lighter.xyz. "
+            "zkEVM settlement — close via Lighter web UI or SDK (API keys required). "
+            "See: docs/k302a_runbook.md §35.5"
+        ),
+    )
+    lighter_group.add_argument(
+        "--no-lighter",
+        dest="include_lighter",
+        action="store_false",
+        help="Skip Lighter close-all (default — Lighter not yet live at K465)",
+    )
+
+    # K465: Vertex emergency exit flag (stub scaffold — 7th venue, USDC margin)
+    vertex_group = parser.add_mutually_exclusive_group()
+    vertex_group.add_argument(
+        "--include-vertex",
+        dest="include_vertex",
+        action="store_true",
+        default=False,
+        help=(
+            "K465: Include Vertex close-all in emergency exit (7th venue, USDC margin STUB scaffold). "
+            "STUB only at K465 — full auth TODO post-K465. "
+            "Dry-run: prints guidance. Live: warns manual action required at app.vertexprotocol.com. "
+            "USDC margin — close via Vertex web UI or SDK (wallet signing required). "
+            "Product IDs: BTC=2, ETH=4 (POST /execute to Gateway). "
+            "See: docs/k302a_runbook.md §35.6"
+        ),
+    )
+    vertex_group.add_argument(
+        "--no-vertex",
+        dest="include_vertex",
+        action="store_false",
+        help="Skip Vertex close-all (default — Vertex not yet live at K465)",
+    )
+
     args = parser.parse_args()
 
     # Determine mode

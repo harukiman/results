@@ -130,6 +130,41 @@ VENUE_CONFIG: Dict[str, dict] = {
             "Trading requires Cosmos SDK signing (TODO post-K460)."
         ),
     },
+    "Lighter": {
+        "enabled":  True,   # K465 scaffold: enabled for read-only FR fetch + OI placeholder
+        "max_pct_of_oi": 0.03,   # conservative tier (new venue)
+        "min_depth_usd": 25_000,  # conservative (new venue, zkEVM)
+        "slippage_bps_per_pct_of_oi": 18.0,
+        "maker_rebate_bps": 0.0,
+        "taker_fee_bps": 5.0,
+        "_k465_note": (
+            "6th venue (K465). zkEVM perps (ZK proof settlement). "
+            "Base URL: mainnet.zklighter.elliot.ai. 8h funding cycle. "
+            "Depth: GET /api/v1/orderBooks?market={SYMBOL}. "
+            "OI: use FALLBACK_OI_USD until live API confirmed. "
+            "Fetcher: scripts/lighter_fr_fetcher.py. Dashboard: data/lighter_dashboard.json. "
+            "Conservative tier: max_pct_of_oi=0.03 (vs 0.05 for established venues). "
+            "Trading auth TODO post-K465."
+        ),
+    },
+    "Vertex": {
+        "enabled":  True,   # K465 scaffold: enabled for read-only FR fetch + OI placeholder
+        "max_pct_of_oi": 0.03,   # conservative tier (new venue)
+        "min_depth_usd": 25_000,  # conservative (new venue, spot+perp AMM)
+        "slippage_bps_per_pct_of_oi": 18.0,
+        "maker_rebate_bps": 0.0,
+        "taker_fee_bps": 5.0,
+        "_k465_note": (
+            "7th venue (K465). Spot+perp AMM hybrid, USDC margin. "
+            "Gateway: gateway.prod.vertexprotocol.com/v1 (POST /query). "
+            "Archive: archive.prod.vertexprotocol.com/v1 (POST /indexer). "
+            "8h funding cycle. Product IDs: BTC=2, ETH=4. "
+            "OI: use FALLBACK_OI_USD until live API confirmed. "
+            "Fetcher: scripts/vertex_fr_fetcher.py. Dashboard: data/vertex_dashboard.json. "
+            "Conservative tier: max_pct_of_oi=0.03 (vs 0.05 for established venues). "
+            "Trading auth TODO post-K465. K208 7-venue mesh COMPLETE."
+        ),
+    },
 }
 
 # ── Active venues (enabled=True) ──────────────────────────────────────────────
@@ -151,24 +186,25 @@ HL_TICKER_MAP: Dict[str, str] = {
 SIM_SYMBOLS = ["BTC", "ETH", "SOL", "XRP", "SUI", "OP", "APT", "AXS", "JTO", "IMX"]
 
 # ── Estimated OI baselines (USD) for dry-run when API unavailable ──────────────
-# Source: K456/K460 research + public data 2026-05
+# Source: K456/K460/K465 research + public data 2026-05
 # Aevo + dYdX_v4: conservative estimates (smaller venues than HL/Bybit/OKX)
+# Lighter + Vertex: very conservative (new venues K465, zkEVM/AMM)
 FALLBACK_OI_USD: Dict[str, Dict[str, float]] = {
-    "BTC":  {"HL": 800_000_000, "Bybit": 1_200_000_000, "OKX": 900_000_000, "Aevo": 80_000_000,  "dYdX_v4": 200_000_000},
-    "ETH":  {"HL": 400_000_000, "Bybit": 600_000_000,   "OKX": 500_000_000, "Aevo": 40_000_000,  "dYdX_v4": 100_000_000},
-    "SOL":  {"HL": 200_000_000, "Bybit": 300_000_000,   "OKX": 250_000_000, "Aevo": 15_000_000,  "dYdX_v4": 50_000_000},
-    "XRP":  {"HL": 80_000_000,  "Bybit": 150_000_000,   "OKX": 120_000_000, "Aevo": 5_000_000,   "dYdX_v4": 25_000_000},
-    "SUI":  {"HL": 60_000_000,  "Bybit": 90_000_000,    "OKX": 70_000_000,  "Aevo": 5_000_000,   "dYdX_v4": 10_000_000},
-    "OP":   {"HL": 30_000_000,  "Bybit": 50_000_000,    "OKX": 40_000_000,  "Aevo": 3_000_000,   "dYdX_v4": 8_000_000},
-    "APT":  {"HL": 25_000_000,  "Bybit": 40_000_000,    "OKX": 35_000_000,  "Aevo": 2_000_000,   "dYdX_v4": 5_000_000},
-    "AXS":  {"HL": 15_000_000,  "Bybit": 25_000_000,    "OKX": 20_000_000,  "Aevo": 1_000_000,   "dYdX_v4": 3_000_000},
-    "JTO":  {"HL": 20_000_000,  "Bybit": 35_000_000,    "OKX": 25_000_000,  "Aevo": 1_000_000,   "dYdX_v4": 5_000_000},
-    "IMX":  {"HL": 18_000_000,  "Bybit": 30_000_000,    "OKX": 22_000_000,  "Aevo": 1_000_000,   "dYdX_v4": 3_000_000},
-    "SAND": {"HL": 12_000_000,  "Bybit": 20_000_000,    "OKX": 15_000_000,  "Aevo": 500_000,     "dYdX_v4": 2_000_000},
-    "ADA":  {"HL": 40_000_000,  "Bybit": 80_000_000,    "OKX": 60_000_000,  "Aevo": 3_000_000,   "dYdX_v4": 10_000_000},
-    "DOGE": {"HL": 50_000_000,  "Bybit": 100_000_000,   "OKX": 80_000_000,  "Aevo": 3_000_000,   "dYdX_v4": 15_000_000},
-    "AVAX": {"HL": 45_000_000,  "Bybit": 80_000_000,    "OKX": 65_000_000,  "Aevo": 3_000_000,   "dYdX_v4": 10_000_000},
-    "LINK": {"HL": 35_000_000,  "Bybit": 60_000_000,    "OKX": 50_000_000,  "Aevo": 2_000_000,   "dYdX_v4": 8_000_000},
+    "BTC":  {"HL": 800_000_000, "Bybit": 1_200_000_000, "OKX": 900_000_000, "Aevo": 80_000_000,  "dYdX_v4": 200_000_000, "Lighter": 30_000_000,  "Vertex": 50_000_000},
+    "ETH":  {"HL": 400_000_000, "Bybit": 600_000_000,   "OKX": 500_000_000, "Aevo": 40_000_000,  "dYdX_v4": 100_000_000, "Lighter": 15_000_000,  "Vertex": 25_000_000},
+    "SOL":  {"HL": 200_000_000, "Bybit": 300_000_000,   "OKX": 250_000_000, "Aevo": 15_000_000,  "dYdX_v4": 50_000_000,  "Lighter": 5_000_000,   "Vertex": 10_000_000},
+    "XRP":  {"HL": 80_000_000,  "Bybit": 150_000_000,   "OKX": 120_000_000, "Aevo": 5_000_000,   "dYdX_v4": 25_000_000,  "Lighter": 2_000_000,   "Vertex": 5_000_000},
+    "SUI":  {"HL": 60_000_000,  "Bybit": 90_000_000,    "OKX": 70_000_000,  "Aevo": 5_000_000,   "dYdX_v4": 10_000_000,  "Lighter": 1_000_000,   "Vertex": 3_000_000},
+    "OP":   {"HL": 30_000_000,  "Bybit": 50_000_000,    "OKX": 40_000_000,  "Aevo": 3_000_000,   "dYdX_v4": 8_000_000,   "Lighter": 500_000,     "Vertex": 1_000_000},
+    "APT":  {"HL": 25_000_000,  "Bybit": 40_000_000,    "OKX": 35_000_000,  "Aevo": 2_000_000,   "dYdX_v4": 5_000_000,   "Lighter": 500_000,     "Vertex": 1_000_000},
+    "AXS":  {"HL": 15_000_000,  "Bybit": 25_000_000,    "OKX": 20_000_000,  "Aevo": 1_000_000,   "dYdX_v4": 3_000_000,   "Lighter": 200_000,     "Vertex": 500_000},
+    "JTO":  {"HL": 20_000_000,  "Bybit": 35_000_000,    "OKX": 25_000_000,  "Aevo": 1_000_000,   "dYdX_v4": 5_000_000,   "Lighter": 200_000,     "Vertex": 500_000},
+    "IMX":  {"HL": 18_000_000,  "Bybit": 30_000_000,    "OKX": 22_000_000,  "Aevo": 1_000_000,   "dYdX_v4": 3_000_000,   "Lighter": 200_000,     "Vertex": 500_000},
+    "SAND": {"HL": 12_000_000,  "Bybit": 20_000_000,    "OKX": 15_000_000,  "Aevo": 500_000,     "dYdX_v4": 2_000_000,   "Lighter": 100_000,     "Vertex": 200_000},
+    "ADA":  {"HL": 40_000_000,  "Bybit": 80_000_000,    "OKX": 60_000_000,  "Aevo": 3_000_000,   "dYdX_v4": 10_000_000,  "Lighter": 1_000_000,   "Vertex": 2_000_000},
+    "DOGE": {"HL": 50_000_000,  "Bybit": 100_000_000,   "OKX": 80_000_000,  "Aevo": 3_000_000,   "dYdX_v4": 15_000_000,  "Lighter": 1_000_000,   "Vertex": 3_000_000},
+    "AVAX": {"HL": 45_000_000,  "Bybit": 80_000_000,    "OKX": 65_000_000,  "Aevo": 3_000_000,   "dYdX_v4": 10_000_000,  "Lighter": 1_000_000,   "Vertex": 2_000_000},
+    "LINK": {"HL": 35_000_000,  "Bybit": 60_000_000,    "OKX": 50_000_000,  "Aevo": 2_000_000,   "dYdX_v4": 8_000_000,   "Lighter": 500_000,     "Vertex": 1_000_000},
 }
 
 
