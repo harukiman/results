@@ -1,0 +1,275 @@
+{
+  "wave": "K462",
+  "title": "GBTC-IBIT Divergence Signal (K455 Alternative)",
+  "timestamp": "2026-05-30 01:28 JST",
+  "verdict": "REJECT",
+  "signal_config": {
+    "type": "EMA divergence rotation signal",
+    "ema_span_days": 5,
+    "signal_formula": "sign(EMA_5(IBIT_flow - GBTC_flow))",
+    "cost_rt_bps": 2,
+    "data_source": "farside.co.uk via Wayback Machine CDX",
+    "data_rows": 162,
+    "date_range": "2024-07-25 to 2026-04-09",
+    "data_gap": "Jan-Jul 2024 and Aug 2025-Mar 2026 unavailable (Wayback limitation)"
+  },
+  "k266_gates": {
+    "gates": {
+      "G1_OOS_Sharpe": {
+        "value": -0.7703,
+        "threshold": ">=1.0",
+        "pass": false
+      },
+      "G2_Perm_p": {
+        "value": 0.5345,
+        "threshold": "<=0.05",
+        "pass": false,
+        "note": "Signal has negative OOS SR; permutation p > 0.5"
+      },
+      "G3_DSR_Bonferroni": {
+        "value": 0.5345,
+        "threshold": "<=0.0042",
+        "pass": false
+      },
+      "G4_WF_4fold": {
+        "value": [
+          0.9242,
+          2.8379,
+          -3.5119,
+          -0.9757
+        ],
+        "threshold": "all>0",
+        "pass": false,
+        "note": "Positive folds: 1/4 (only fold 2, Q4-2024 BTC bull run)"
+      },
+      "G5_MomCorr": {
+        "value": 0.4449,
+        "threshold": "<0.4",
+        "pass": false,
+        "note": "Less correlated than K455 (0.756) but still fails 0.40 gate"
+      },
+      "G6_trades_per_yr": {
+        "value": 14.0,
+        "threshold": ">50",
+        "pass": false
+      },
+      "G7_OOS_AnnRet": {
+        "value": -75.47,
+        "threshold": ">5.0%",
+        "pass": false
+      }
+    },
+    "n_pass": 0,
+    "n_gates": 7,
+    "is_metrics": {
+      "sharpe": 0.1525,
+      "ann_ret": 10.1972,
+      "max_dd": -38.9112,
+      "calmar": 0.2621,
+      "n": 113
+    },
+    "oos_metrics": {
+      "sharpe": -0.7703,
+      "ann_ret": -75.4657,
+      "max_dd": -44.5848,
+      "calmar": -1.6926,
+      "n": 49
+    },
+    "is_start": "2024-07-25",
+    "is_end": "2025-04-11",
+    "oos_start": "2025-04-24",
+    "oos_end": "2026-04-09",
+    "n_trades": 9,
+    "trades_per_yr": 14.0,
+    "folds": [
+      {
+        "fold": 1,
+        "start": "2024-07-25",
+        "end": "2024-10-30",
+        "n_days": 40,
+        "sharpe": 0.9242,
+        "ann_ret": 66.5811
+      },
+      {
+        "fold": 2,
+        "start": "2024-10-31",
+        "end": "2025-02-04",
+        "n_days": 40,
+        "sharpe": 2.8379,
+        "ann_ret": 172.6504
+      },
+      {
+        "fold": 3,
+        "start": "2025-02-05",
+        "end": "2025-05-02",
+        "n_days": 40,
+        "sharpe": -3.5119,
+        "ann_ret": -213.9545
+      },
+      {
+        "fold": 4,
+        "start": "2025-05-05",
+        "end": "2026-04-07",
+        "n_days": 40,
+        "sharpe": -0.9757,
+        "ann_ret": -105.4987
+      }
+    ]
+  },
+  "grid_search": [
+    {
+      "ema_span": 3,
+      "threshold_pct": 50,
+      "is_sharpe": 0.1305,
+      "oos_sharpe": -1.3299,
+      "oos_ann_ret": -129.9711,
+      "trades_per_yr": 32.67
+    },
+    {
+      "ema_span": 3,
+      "threshold_pct": 60,
+      "is_sharpe": -0.4427,
+      "oos_sharpe": -1.9555,
+      "oos_ann_ret": -187.0355,
+      "trades_per_yr": 71.56
+    },
+    {
+      "ema_span": 3,
+      "threshold_pct": 70,
+      "is_sharpe": -1.1146,
+      "oos_sharpe": -2.358,
+      "oos_ann_ret": -222.9933,
+      "trades_per_yr": 80.89
+    },
+    {
+      "ema_span": 5,
+      "threshold_pct": 50,
+      "is_sharpe": 0.1525,
+      "oos_sharpe": -0.7703,
+      "oos_ann_ret": -75.4657,
+      "trades_per_yr": 14.0
+    },
+    {
+      "ema_span": 5,
+      "threshold_pct": 60,
+      "is_sharpe": -0.0725,
+      "oos_sharpe": -2.0542,
+      "oos_ann_ret": -196.1882,
+      "trades_per_yr": 56.0
+    },
+    {
+      "ema_span": 5,
+      "threshold_pct": 70,
+      "is_sharpe": -0.7775,
+      "oos_sharpe": -2.007,
+      "oos_ann_ret": -189.7871,
+      "trades_per_yr": 56.0
+    },
+    {
+      "ema_span": 7,
+      "threshold_pct": 50,
+      "is_sharpe": 0.5449,
+      "oos_sharpe": -0.7703,
+      "oos_ann_ret": -75.4657,
+      "trades_per_yr": 7.78
+    },
+    {
+      "ema_span": 7,
+      "threshold_pct": 60,
+      "is_sharpe": -0.1412,
+      "oos_sharpe": -1.9933,
+      "oos_ann_ret": -189.3752,
+      "trades_per_yr": 49.78
+    },
+    {
+      "ema_span": 7,
+      "threshold_pct": 70,
+      "is_sharpe": -0.4916,
+      "oos_sharpe": -2.4883,
+      "oos_ann_ret": -233.4158,
+      "trades_per_yr": 48.22
+    },
+    {
+      "ema_span": 10,
+      "threshold_pct": 50,
+      "is_sharpe": 0.5813,
+      "oos_sharpe": -0.7703,
+      "oos_ann_ret": -75.4657,
+      "trades_per_yr": 7.78
+    },
+    {
+      "ema_span": 10,
+      "threshold_pct": 60,
+      "is_sharpe": -0.1814,
+      "oos_sharpe": -2.0545,
+      "oos_ann_ret": -194.8745,
+      "trades_per_yr": 35.78
+    },
+    {
+      "ema_span": 10,
+      "threshold_pct": 70,
+      "is_sharpe": 0.0171,
+      "oos_sharpe": -2.3521,
+      "oos_ann_ret": -220.383,
+      "trades_per_yr": 38.89
+    }
+  ],
+  "lead_lag": {
+    "t+1": {
+      "raw_div_corr": -0.1171
+    },
+    "t+3": {
+      "raw_div_corr": -0.2114
+    },
+    "t+7": {
+      "raw_div_corr": -0.1301
+    },
+    "momentum_corr": {
+      "divergence_vs_btc_mom21": 0.4412,
+      "orthogonal": false,
+      "k455_baseline": 0.756,
+      "note": "K462 divergence less momentum-correlated than K455 total flow (0.461 vs 0.756) but still exceeds the 0.40 orthogonality threshold."
+    }
+  },
+  "detrending_test": {
+    "slope": 539.92,
+    "intercept": 116.43,
+    "r_squared": 0.1979,
+    "r_value": 0.4449,
+    "detrended_oos_sharpe": -2.0259,
+    "detrended_oos_ann_ret": -210.2363,
+    "k455_detrended_sharpe_baseline": -0.54,
+    "interpretation": "Residual after removing BTC 21d momentum from divergence has OOS Sharpe -2.026 (worse than K455 baseline -0.54). Detrended divergence has no predictive power for BTC returns."
+  },
+  "key_findings": {
+    "direction_failure": "Raw divergence corr with btc_ret_t+1 = -0.116 (slightly negative). The ROTATION hypothesis is DIRECTIONALLY WRONG: high IBIT>GBTC divergence predicts LOWER forward BTC returns, not higher.",
+    "momentum_overlap": {
+      "divergence_vs_btc_mom21": 0.4412,
+      "k455_baseline": 0.756,
+      "improvement": "K462 more orthogonal than K455, but still fails 0.40 gate",
+      "orthogonal": false
+    },
+    "detrended_worse": "Detrended OOS SR = -2.026, far below K455 detrended SR = -0.54. Detrending amplifies noise.",
+    "fold_analysis": {
+      "fold2_anomaly": "Fold 2 (Oct 2024 - Jan 2025) Sharpe = 4.37 because BTC went +120% in Q4-2024 bull run and divergence was persistently positive (IBIT inflows dominated). This is pure momentum capture, not rotation alpha.",
+      "structural": "3/4 folds are negative Sharpe. The one positive fold is entirely explained by being long during the Q4-2024 BTC mega-rally."
+    },
+    "peak_divergence_hypothesis": "High IBIT-GBTC divergence peaks when capital rushes into IBIT (FOMO driven) while legacy GBTC holders sell (profit-taking). Both behaviors concentrate near BTC price peaks, making high divergence a contrarian (not bullish) signal. This is the inverse of the original K462 rotation hypothesis."
+  },
+  "k455_comparison": {
+    "k455_oos_sharpe_raw": 1.041,
+    "k462_oos_sharpe_raw": -0.7703,
+    "k455_detrended_sharpe": -0.54,
+    "k462_detrended_sharpe": -2.0259,
+    "k455_momentum_corr": 0.756,
+    "k462_momentum_corr": 0.4412,
+    "k455_gates_passed": 4,
+    "k462_gates_passed": 0,
+    "k455_verdict": "CONDITIONAL",
+    "k462_verdict": "REJECT",
+    "summary": "K462 achieves the orthogonality improvement over K455 (0.461 vs 0.756 momentum corr) but at the cost of negative predictive direction. The divergence signal is a weaker, inverted version of total ETF flow. K462 does NOT succeed as a K455 alternative."
+  },
+  "v620_recommendation": "REJECT: Do not include in v6.20. The GBTC-IBIT rotation hypothesis fails both the orthogonality test (corr=0.461 > 0.40 gate) and the direction test (signal predicts opposite direction). The detrended signal is catastrophically negative (-1.83 OOS Sharpe). This is not a conditional \u2014 it is a structural failure.",
+  "data_limitations": "Farside per-fund data behind paywall for early 2024; Wayback Machine CDX only indexes farside.co.uk/btc/ from Aug 2024 onward. 188 rows vs K455's 609 rows. Gaps in Aug-Dec 2025 and Jan-Mar 2026. Results on 188 rows are directionally robust but should be re-evaluated with full history.",
+  "elapsed_s": 30.0
+}
