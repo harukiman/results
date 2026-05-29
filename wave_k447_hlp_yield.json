@@ -1,0 +1,381 @@
+{
+  "wave": "K447",
+  "title": "HL HLP Vault Yield Analysis",
+  "generated_at": "2026-05-29T14:49:16Z",
+  "phase_1_mechanism": {
+    "name": "HyperLiquidity Provider (HLP)",
+    "protocol": "HyperLiquid",
+    "type": "Protocol vault / community market-maker",
+    "description": "HLP democratizes market-making strategies typically reserved for privileged parties on other exchanges. Depositors pool USDC and share vault PnL proportionally.",
+    "lp_token_mechanics": {
+      "mint_burn": "Deposit USDC \u2192 receive proportional ownership share of vault",
+      "nav_calculation": "Depositor share = deposit_amount / total_vault_at_deposit_time",
+      "example": "100 USDC into 900 USDC vault = 10% share. If vault grows to 2000 USDC, withdrawal = 200 USDC minus leader fee.",
+      "withdrawal_netting": "Withdraw your proportional share of current vault value"
+    },
+    "yield_sources": {
+      "trading_fees": "Maker rebates from HL exchange; LP supplies liquidity at bid/ask",
+      "funding_rates": "When market is net long, shorts earn FR; HLP holds offsetting positions",
+      "liquidation_proceeds": "HLP participates in liquidations, capturing discount",
+      "usdc_earn": "Idle USDC deposited in HL Earn for additional yield",
+      "hype_airdrop": "Historical: HYPE tokens distributed to HLP depositors; ongoing uncertain"
+    },
+    "lockup_period_days": 4,
+    "lockup_notes": "4-day minimum; clock resets on each new deposit to same vault",
+    "loss_mechanism": {
+      "adverse_selection": "LP loses to informed traders on large directional moves",
+      "inventory_risk": "Accumulates net position if market moves one-way (delta exposure)",
+      "tail_events": "JELLY incident March 2025: ~$10M loss (~5% of ~$200M TVL at time)",
+      "manipulation_risk": "Low-liquidity perps can be used to pump against HLP positions"
+    },
+    "counterparty": "HyperLiquid protocol (on-chain, L1 settlement)",
+    "audit_status": "Open-source but no formal HLP vault audit cited in documentation",
+    "deposit_currency": "USDC",
+    "current_tvl_usd": 357959962,
+    "defillama_ann_fees_usd": 6770000,
+    "defillama_fee_apy_pct": 1.89
+  },
+  "phase_2_historical_apy": {
+    "data_quality": "TVL proxy (mixes flows + PnL); NOT pure per-share NAV",
+    "n_snapshots": 92,
+    "first_snapshot": "2023-05-17 00:00:00+00:00",
+    "last_snapshot": "2026-05-28 00:00:00+00:00",
+    "current_tvl_usd": 357959962,
+    "period_metrics": {
+      "last_30d": {
+        "label": "Last 30 days",
+        "n_obs": 7,
+        "cumulative_tvl_return_pct": -11.18,
+        "pct_positive_snapshots": 42.9,
+        "mean_per_snapshot_pct": -1.52,
+        "ann_tvl_proxy_pct": -39.53,
+        "WARNING": "Mixes deposit inflows with PnL; NOT pure APY"
+      },
+      "last_90d": {
+        "label": "Last 90 days",
+        "n_obs": 11,
+        "cumulative_tvl_return_pct": -6.19,
+        "pct_positive_snapshots": 54.5,
+        "mean_per_snapshot_pct": -0.36,
+        "ann_tvl_proxy_pct": -9.39,
+        "WARNING": "Mixes deposit inflows with PnL; NOT pure APY"
+      },
+      "last_180d": {
+        "label": "Last 180 days",
+        "n_obs": 18,
+        "cumulative_tvl_return_pct": -32.81,
+        "pct_positive_snapshots": 44.4,
+        "mean_per_snapshot_pct": -1.64,
+        "ann_tvl_proxy_pct": -42.55,
+        "WARNING": "Mixes deposit inflows with PnL; NOT pure APY"
+      },
+      "last_365d": {
+        "label": "Last 365 days",
+        "n_obs": 31,
+        "cumulative_tvl_return_pct": 28.92,
+        "pct_positive_snapshots": 51.6,
+        "mean_per_snapshot_pct": 1.71,
+        "ann_tvl_proxy_pct": 44.44,
+        "WARNING": "Mixes deposit inflows with PnL; NOT pure APY"
+      },
+      "all_time": {
+        "label": "All-time",
+        "n_obs": 92,
+        "cumulative_tvl_return_pct": 434680.55,
+        "pct_positive_snapshots": 59.8,
+        "mean_per_snapshot_pct": 15.86,
+        "ann_tvl_proxy_pct": 412.26,
+        "WARNING": "Mixes deposit inflows with PnL; NOT pure APY"
+      }
+    },
+    "apy_estimates": {
+      "defillama_fee_floor_pct": 1.89,
+      "community_estimate_2024_bull_pct": "15-25%",
+      "community_estimate_2025_normalized_pct": "5-12%",
+      "base_case_net_apy_pct": "6-10%",
+      "bear_case_net_apy_pct": "0-4% (high volatility / tail-event year)",
+      "bull_case_net_apy_pct": "12-20% (bull run conditions)",
+      "calibration_note": "No on-chain per-share NAV available in cache. Estimates from DeFiLlama fees + community consensus + TVL proxy analysis. JELLY incident (-5% NAV in one event, Mar 2025) is key tail-risk data point."
+    },
+    "tail_risk_events": [
+      {
+        "event": "JELLY incident",
+        "date": "2026-03-2025",
+        "estimated_nav_loss_pct": -5.0,
+        "description": "Market manipulation of JELLY perp forced HLP to absorb ~$10M loss"
+      }
+    ]
+  },
+  "phase_3_correlation": {
+    "n_obs": 66,
+    "rho_hlp_tvl_vs_susde_apy_change": -0.0118,
+    "rho_hlp_tvl_vs_susde_apy_level": 0.4607,
+    "gate_threshold": 0.4,
+    "returns_vs_returns_result": "PASS",
+    "level_vs_returns_result": "WARNING",
+    "interpretation": "Returns-on-returns correlation (rho=-0.012) is near-zero, indicating HLP yield changes are effectively orthogonal to sUSDe APY changes. Level correlation (rho=0.461) is moderate \u2014 both assets are positively associated with bull market conditions (risk-on).",
+    "orthogonal_verdict": true,
+    "susde_current_apy_pct": 3.7182,
+    "susde_30d_mean_apy_pct": 4.0152
+  },
+  "phase_4_hl_concentration": {
+    "current_v6_13d_hl_exposure_pct": 57.5,
+    "cap_rule_pct": 65.0,
+    "proposed_hlp_sleeve_pct": 5.0,
+    "new_hl_exposure_pct": 62.5,
+    "margin_to_cap_pct": 2.5,
+    "within_cap": true,
+    "note": "Adding 5% HLP sleeve raises HL exposure from 57.5% to 62.5%, leaving only 2.5pp margin to the 65% hard cap (K355 rule). This is TIGHT but within limits.",
+    "concentration_risk": "HLP is 100% HL-correlated for counterparty risk: HL protocol failure / hack = total HLP loss. K280 strategy also HL-dependent. Combined tail-risk concentration."
+  },
+  "phase_5_k266_gates": {
+    "gates": {
+      "G1_net_apy_gte_5pct": {
+        "threshold": ">=5% net APY",
+        "estimate": "6-10% base case, 5-12% normalized range",
+        "verdict": "CONDITIONAL PASS",
+        "confidence": "MEDIUM",
+        "notes": "Cannot confirm from pure NAV data. DeFiLlama fee floor 1.89%; community consensus 6-10% in normal conditions. Bear-case years (e.g., JELLY year) may fall below 5%."
+      },
+      "G2_nav_volatility": {
+        "threshold": "Annualized NAV std acceptable",
+        "estimate": "HIGH \u2014 double-digit swings in TVL proxy; JELLY -5% single event",
+        "verdict": "CONCERN",
+        "confidence": "HIGH",
+        "notes": "TVL proxy shows high periodic swings. JELLY March 2025 event: ~-5% NAV in days. True NAV volatility likely 15-30% annualized in stress scenarios."
+      },
+      "G3_counterparty_audit": {
+        "threshold": "Reputable audit / counterparty",
+        "estimate": "HL protocol open-source; no formal HLP vault security audit cited",
+        "verdict": "BORDERLINE",
+        "confidence": "MEDIUM",
+        "notes": "HL is a top-5 perp DEX by OI. Strong community trust. But vault mechanics not independently audited. Smart contract risk."
+      },
+      "G4_correlation_vs_k280_lt_0_4": {
+        "threshold": "<0.4 correlation vs K280",
+        "estimate": "rho(vs sUSDe APY chg) = -0.012 (orthogonal to sUSDe)",
+        "verdict": "PASS (vs sUSDe)",
+        "confidence": "HIGH",
+        "notes": "HLP yield changes uncorrelated with sUSDe APY changes. BUT: HLP and K280 share HL counterparty \u2014 protocol failure correlation = 1.0. Yield-return orthogonality does NOT protect against HL tail event."
+      },
+      "G5_max_single_day_loss_lt_2pct": {
+        "threshold": "<2% max single-day NAV loss",
+        "estimate": "JELLY event: ~5% in days. TVL shows -10%+ single-snapshot drops.",
+        "verdict": "FAIL",
+        "confidence": "HIGH",
+        "notes": "JELLY incident clearly exceeded 2% threshold. Structural risk: low-liquidity perp manipulation can cause >2% NAV loss. G5 is a HARD FAIL unless sleeve size is capped and stop-loss implemented."
+      },
+      "G6_lockup_lte_7_days": {
+        "threshold": "<=7 days lockup",
+        "estimate": "4-day minimum (documented)",
+        "verdict": "PASS",
+        "confidence": "HIGH",
+        "notes": "4-day lockup per docs. Acceptable for yield sleeve."
+      }
+    },
+    "summary": {
+      "pass": 1,
+      "concern_or_fail": 2,
+      "conditional": 2,
+      "total": 6,
+      "overall_gate_result": "CONDITIONAL \u2014 G5 hard fail requires mitigation"
+    }
+  },
+  "phase_6_hype_airdrop": {
+    "genesis_airdrop": "Closed per K368 finding \u2014 historical only",
+    "ongoing_hlp_depositor_distribution": "Variable; HL has historically rewarded active LPs",
+    "hype_staker_apy": "2.26% per K437",
+    "quantification": "Hard to model; treat as upside optionality, not base-case yield",
+    "additive_estimate": "0-3% APY equivalent if HYPE price holds / appreciates",
+    "recommendation": "Do NOT include in G1 APY calculation (conservative base case)"
+  },
+  "phase_7_yield_scenarios": {
+    "aum_10m_bear_3pct": {
+      "aum": 10000000,
+      "sleeve_usd": 500000.0,
+      "apy_pct": 3.0,
+      "annual_yield_usd": 15000.0,
+      "airdrop_add_usd": "+$10,000 to $15,000 (optional)"
+    },
+    "aum_10m_base_6pct": {
+      "aum": 10000000,
+      "sleeve_usd": 500000.0,
+      "apy_pct": 6.0,
+      "annual_yield_usd": 30000.0,
+      "airdrop_add_usd": "+$10,000 to $15,000 (optional)"
+    },
+    "aum_10m_base_8pct": {
+      "aum": 10000000,
+      "sleeve_usd": 500000.0,
+      "apy_pct": 8.0,
+      "annual_yield_usd": 40000.0,
+      "airdrop_add_usd": "+$10,000 to $15,000 (optional)"
+    },
+    "aum_10m_bull_15pct": {
+      "aum": 10000000,
+      "sleeve_usd": 500000.0,
+      "apy_pct": 15.0,
+      "annual_yield_usd": 75000.0,
+      "airdrop_add_usd": "+$10,000 to $15,000 (optional)"
+    },
+    "aum_50m_bear_3pct": {
+      "aum": 50000000,
+      "sleeve_usd": 2500000.0,
+      "apy_pct": 3.0,
+      "annual_yield_usd": 75000.0,
+      "airdrop_add_usd": "+$50,000 to $75,000 (optional)"
+    },
+    "aum_50m_base_6pct": {
+      "aum": 50000000,
+      "sleeve_usd": 2500000.0,
+      "apy_pct": 6.0,
+      "annual_yield_usd": 150000.0,
+      "airdrop_add_usd": "+$50,000 to $75,000 (optional)"
+    },
+    "aum_50m_base_8pct": {
+      "aum": 50000000,
+      "sleeve_usd": 2500000.0,
+      "apy_pct": 8.0,
+      "annual_yield_usd": 200000.0,
+      "airdrop_add_usd": "+$50,000 to $75,000 (optional)"
+    },
+    "aum_50m_bull_15pct": {
+      "aum": 50000000,
+      "sleeve_usd": 2500000.0,
+      "apy_pct": 15.0,
+      "annual_yield_usd": 375000.0,
+      "airdrop_add_usd": "+$50,000 to $75,000 (optional)"
+    }
+  },
+  "phase_8_risk_comparison": {
+    "sUSDe": {
+      "apy_range_pct": "3.7-4.0% (current 30d mean: 4.02%)",
+      "volatility": "Low (APY drifts slowly, no NAV drawdown in normal conditions)",
+      "tail_risk": "Ethena depegging event (low probability, partially hedged)",
+      "custody": "Ethena protocol (non-HL)",
+      "hl_concentration_add": "0% (fully orthogonal counterparty)",
+      "lockup": "None (ERC-20, liquid)",
+      "audit": "Multiple audits (Quantstamp, Pashov)",
+      "yield_source": "BTC/ETH perpetual funding rates + staked ETH"
+    },
+    "HLP": {
+      "apy_range_pct": "6-10% base case (estimated, not confirmed from NAV)",
+      "volatility": "Medium-high (JELLY -5% single event; tail events non-trivial)",
+      "tail_risk": "Low-liquidity perp manipulation; HL protocol risk",
+      "custody": "HL protocol (same as K280)",
+      "hl_concentration_add": "+5pp (57.5% \u2192 62.5%)",
+      "lockup": "4 days",
+      "audit": "No formal HLP audit cited",
+      "yield_source": "Market-making spreads + FR + liquidation bonuses"
+    },
+    "comparison_verdict": "sUSDe offers lower yield (3.7-4%) but significantly better risk profile: no HL concentration add, audited, liquid. HLP offers potentially higher yield (6-10%) but adds HL tail-event correlated risk, G5 volatility concerns, and concentration creep. Risk-adjusted: sUSDe wins for $10M AUM. HLP interesting at $50M+ AUM where diversification benefits become more valuable."
+  },
+  "phase_9_v6_16_architecture": {
+    "v6_13d_current": {
+      "K280": "75%",
+      "K297_prime": "15%",
+      "sUSDe": "5%",
+      "idle_USDC": "5%",
+      "HL_exposure_pct": 57.5
+    },
+    "v6_16_proposed": {
+      "K280": "75%",
+      "K297_prime": "10%",
+      "sUSDe": "5%",
+      "HLP": "5%",
+      "idle_USDC": "5%",
+      "HL_exposure_pct": 62.5,
+      "note": "Replace 5pp of K297' with HLP sleeve; sUSDe maintained"
+    },
+    "v6_16_alt_no_reduce_k297": {
+      "K280": "75%",
+      "K297_prime": "15%",
+      "sUSDe": "5%",
+      "HLP": "5%",
+      "idle_USDC": "0%",
+      "HL_exposure_pct": 62.5,
+      "note": "Maintain K297'; remove idle USDC buffer",
+      "warning": "Eliminates liquidity buffer \u2014 NOT recommended"
+    },
+    "preferred_if_accept": "v6_16_proposed"
+  },
+  "phase_10_decision": {
+    "criteria": {
+      "ACCEPT": {
+        "conditions": [
+          "HLP APY > 6%",
+          "correlation < 0.4 vs K280",
+          "drawdown < 5%"
+        ],
+        "status": {
+          "apy_gt_6pct": "CONDITIONAL (est 6-10%, not confirmed from NAV data)",
+          "correlation_lt_0_4": "PASS for yield-on-yield vs sUSDe; FAIL for HL tail-event correlation",
+          "drawdown_lt_5pct": "FAIL \u2014 JELLY event was ~5% in days; G5 breached"
+        },
+        "verdict": "REJECT at current risk profile"
+      },
+      "MONITOR": {
+        "conditions": [
+          "positive yield, high correlation, or concentration cost"
+        ],
+        "verdict": "MONITOR \u2014 revisit after HL publishes per-share NAV history"
+      },
+      "REJECT": {
+        "conditions": [
+          "net negative or concentration too high"
+        ],
+        "verdict": "CONDITIONAL REJECT \u2014 G5 fail is blocking, concentration margin tight"
+      }
+    },
+    "final_decision": "MONITOR / CONDITIONAL REJECT",
+    "rationale": "HLP fails G5 (max single-day loss < 2%) based on JELLY incident evidence. Additionally: (1) No auditable per-share NAV data available to confirm APY; (2) HL concentration rises to 62.5% with only 2.5pp cap margin; (3) Counterparty risk fully correlated with K280 (K280 failure = HLP failure). sUSDe (K344) remains superior risk-adjusted yield sleeve at current AUM. REVISIT condition: HL publishes per-share NAV history + independent HLP audit + no tail events for 12+ consecutive months."
+  },
+  "phase_11_profit_projection": {
+    "baseline_v6_13d": {
+      "aum_10m": {
+        "annual_profit_usd": 1000000
+      },
+      "aum_50m": {
+        "annual_profit_usd": 5000000
+      }
+    },
+    "v6_16_with_hlp": {
+      "aum_10m": {
+        "hlp_sleeve_usd": 500000,
+        "hlp_yield_6pct": 30000,
+        "hlp_yield_10pct": 50000,
+        "estimated_annual_uplift_pct": "3-5%",
+        "total_annual_usd_low": 1030000,
+        "total_annual_usd_high": 1050000
+      },
+      "aum_50m": {
+        "hlp_sleeve_usd": 2500000,
+        "hlp_yield_6pct": 150000,
+        "hlp_yield_10pct": 250000,
+        "estimated_annual_uplift_pct": "3-5%",
+        "total_annual_usd_low": 5150000,
+        "total_annual_usd_high": 5250000
+      },
+      "5y_terminal_lift_usd": "+$750K to $1.5M over baseline (assuming $50M AUM scale)"
+    },
+    "note": "Uplift is modest relative to risk added. sUSDe already provides 5% sleeve at lower risk. HLP uplift only justified at $50M+ AUM where marginal concentration cost is smaller."
+  },
+  "executive_summary": {
+    "decision": "MONITOR / CONDITIONAL REJECT",
+    "hlp_current_tvl_usd": 357959962,
+    "defillama_fee_apy_pct": 1.89,
+    "estimated_net_apy_range": "6-10% base case (not confirmed from NAV)",
+    "correlation_vs_susde_apy_changes": -0.0118,
+    "orthogonal_vs_susde": true,
+    "hl_concentration_if_added": 62.5,
+    "g5_fail": true,
+    "blocking_issues": [
+      "G5: JELLY incident exceeded 2% single-event NAV loss threshold",
+      "No auditable per-share NAV data (cannot confirm APY claims)",
+      "HL counterparty correlation with K280 = 1.0 (tail-event risk not diversified)",
+      "Concentration: 62.5% HL with 2.5pp cap margin (tight)"
+    ],
+    "v6_16_path": "DEFER pending HL per-share NAV publication + audit",
+    "revisit_trigger": "HL publishes per-share NAV + 12 months no tail events + independent audit"
+  }
+}
