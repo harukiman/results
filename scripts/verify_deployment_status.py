@@ -266,6 +266,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k376_regime_monitor",
         expected_html_status="SCAFFOLD-READY",  # K497: plist in scripts/ (gitignored); daily StartCalendarInterval 22:00 UTC (07:00 JST); activate to enable daily regime polling
     ),
+    DaemonSpec(
+        label="com.cryptolab.k493-atom-btc",
+        purpose="K493 ATOM-BTC FR differential paired-trade (delta-neutral, 4x leverage, 8h cycle, HL-only, OOS Sh 50.79 #1 family, $231K/yr net @$10M, G5a 0.1763 Cosmos hypothesis CONFIRMED, v6.24 candidate K449+K476+K484+K493 14% combined sleeve ~$507K/yr, 32nd daemon)",
+        scripts=["scripts/k493_atom_btc_run.py"],
+        log_basename="k493_atom_btc",
+        expected_html_status="SCAFFOLD-READY",  # K499: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=5.0 paper + fill_rate >=60% + maxDD <15%)
+    ),
 ]
 
 

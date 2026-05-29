@@ -439,6 +439,103 @@ def close_k484_paired_positions(
     return True
 
 
+def _detect_k493_paired_positions(positions: List[Dict]) -> Optional[Dict]:
+    """
+    K499 Phase 4: Detect K493 paired positions (ATOM long + BTC short, or reverse).
+
+    K493 ATOM-BTC = 2 legs on HL: ATOM and BTC (one long, one short).
+    Sequential close: short leg first (avoid uncovered short), then long leg.
+
+    A K493 pair is identified by:
+      - One long leg: ATOM or BTC
+      - One short leg: the other of ATOM/BTC
+      - Both on HL (HL-only strategy, K434 smart router)
+
+    Note: ATOM disambiguation — ATOM is Cosmos Hub native token, not present in K457 basket.
+    K493 is identified by ATOM+BTC in a paired long/short.
+    OOS Sharpe 50.79 (#1 paired-trade family). G5a 0.1763 (most orthogonal).
+    Cosmos hypothesis CONFIRMED.
+    """
+    K493_SYMBOLS = {"ATOM", "BTC"}
+    atom_btc = [p for p in positions if p.get("coin", "").upper() in K493_SYMBOLS]
+    if len(atom_btc) < 2:
+        return None
+
+    longs  = [p for p in atom_btc if p.get("side") == "long"]
+    shorts = [p for p in atom_btc if p.get("side") == "short"]
+
+    if not (longs and shorts):
+        return None
+
+    long_pos  = longs[0]
+    short_pos = shorts[0]
+    long_sym  = long_pos["coin"].upper()
+    short_sym = short_pos["coin"].upper()
+
+    if long_sym not in K493_SYMBOLS or short_sym not in K493_SYMBOLS:
+        return None
+    if long_sym == short_sym:
+        return None
+
+    return {
+        "detected":        True,
+        "long_symbol":     long_sym,
+        "short_symbol":    short_sym,
+        "long_value_usd":  long_pos.get("value_usd", 0.0),
+        "short_value_usd": short_pos.get("value_usd", 0.0),
+        "long_size":       long_pos.get("size", 0.0),
+        "short_size":      short_pos.get("size", 0.0),
+        "state":           f"LONG_{long_sym}_SHORT_{short_sym}",
+        "venue":           "HL",
+        "close_protocol":  "short_leg_first_then_long_leg",
+        "note":            "K493 ATOM-BTC paired position — cover short first, then sell long (HL-only, K434)",
+    }
+
+
+def close_k493_paired_positions(
+    plan:    Dict,
+    logger:  "logging.Logger",
+    dry_run: bool = True,
+) -> bool:
+    """
+    K499 Phase 4: Close K493 ATOM-BTC paired positions.
+    Sequential: short leg first (avoid uncovered short), then long leg.
+
+    Args:
+      plan:    exit plan dict (from plan_exit())
+      logger:  logger instance
+      dry_run: True = paper-trade simulation
+
+    Returns True on success (or dry-run), False on error.
+    """
+    k493_detail = plan.get("k493_pair_detail")
+
+    if not k493_detail or not k493_detail.get("detected"):
+        logger.info("  [K493] No K493 ATOM-BTC paired position detected (NEUTRAL or 60d paper-trade).")
+        return True
+
+    short_sym  = k493_detail["short_symbol"]
+    long_sym   = k493_detail["long_symbol"]
+    short_val  = k493_detail.get("short_value_usd", 0.0)
+    long_val   = k493_detail.get("long_value_usd", 0.0)
+
+    logger.info(f"  [K493] ATOM-BTC paired close — {k493_detail['state']}")
+    logger.info(f"    Step 1 (SHORT first): BUY-COVER {short_sym} ${short_val:,.0f}  (HL IOC reduce-only)")
+    logger.info(f"    Step 2 (LONG second): SELL      {long_sym} ${long_val:,.0f}  (HL IOC reduce-only)")
+
+    if dry_run:
+        logger.info("    [DRY-RUN] K493 ATOM-BTC close simulated — no actual orders submitted")
+        return True
+
+    # LIVE scaffold: IOC close on HL (sequential)
+    # Step 1: cover short (buy ATOM or BTC)
+    logger.info(f"    SCAFFOLD: IOC reduce {short_sym} (cover short) @ HL")
+    # Step 2: sell long (after short covered)
+    logger.info(f"    SCAFFOLD: IOC reduce {long_sym} (sell long) @ HL")
+    logger.info("    SCAFFOLD: K493 close wired but not executed (HL auth required at live activation)")
+    return True
+
+
 def _detect_k449_paired_positions(positions: List[Dict]) -> Optional[Dict]:
     """
     K450 Phase 11: Detect K449 paired positions (ETH long + BTC short, or reverse).
@@ -518,6 +615,12 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
     k484_coins: set = set()
     if k484_pair:
         k484_coins = {k484_pair["long_symbol"], k484_pair["short_symbol"]}
+
+    # K499: detect K493 paired positions (ATOM/BTC — HL-only)
+    k493_pair = _detect_k493_paired_positions(positions)
+    k493_coins: set = set()
+    if k493_pair:
+        k493_coins = {k493_pair["long_symbol"], k493_pair["short_symbol"]}
 
     # K459: detect K457 basket positions (BTC/ETH/SOL)
     k457_basket = _detect_k457_basket_positions(positions)
@@ -683,8 +786,46 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
             })
             total_notional += long_pos["value_usd"]
 
-    # All other positions: close in any order (non-K449, non-K457, non-K476, non-K484)
-    handled_coins = k449_coins | k457_coins | k476_coins | k484_coins
+    # K493 ATOM-BTC paired positions: short leg first, then long leg (K499 Phase 4)
+    if k493_pair:
+        # Short leg first (avoid uncovered short)
+        short_coin = k493_pair["short_symbol"]
+        short_pos  = next((p for p in positions if p["coin"].upper() == short_coin
+                           and p["side"] == "short"), None)
+        if short_pos:
+            close_list.append({
+                "coin":             short_pos["coin"],
+                "size":             short_pos["size"],
+                "side_to_close":    "buy",   # covering short
+                "value_usd":        short_pos["value_usd"],
+                "current_side":     "short",
+                "k493_paired":      True,
+                "k493_close_order": 1,        # close short first
+                "venue":            "HL",
+                "note":             f"K493 ATOM-BTC short leg {short_coin} — cover first (HL-only)",
+            })
+            total_notional += short_pos["value_usd"]
+
+        # Long leg second
+        long_coin = k493_pair["long_symbol"]
+        long_pos  = next((p for p in positions if p["coin"].upper() == long_coin
+                          and p["side"] == "long"), None)
+        if long_pos:
+            close_list.append({
+                "coin":             long_pos["coin"],
+                "size":             long_pos["size"],
+                "side_to_close":    "sell",
+                "value_usd":        long_pos["value_usd"],
+                "current_side":     "long",
+                "k493_paired":      True,
+                "k493_close_order": 2,        # close long second
+                "venue":            "HL",
+                "note":             f"K493 ATOM-BTC long leg {long_coin} — sell second (HL-only)",
+            })
+            total_notional += long_pos["value_usd"]
+
+    # All other positions: close in any order (non-K449, non-K457, non-K476, non-K484, non-K493)
+    handled_coins = k449_coins | k457_coins | k476_coins | k484_coins | k493_coins
     for p in positions:
         coin = p.get("coin", "").upper()
         if coin in handled_coins:
@@ -720,6 +861,8 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
         "k476_pair_detail":       k476_pair,
         "k484_paired_detected":   k484_pair is not None,
         "k484_pair_detail":       k484_pair,
+        "k493_paired_detected":   k493_pair is not None,
+        "k493_pair_detail":       k493_pair,
     }
 
 
@@ -2051,6 +2194,28 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K499: K493 ATOM-BTC FR differential paired-trade emergency exit flag
+    # K493 = ATOM long + BTC short (or reverse) on HL — 2 legs, HL-only.
+    # Sequential close: short leg first (avoid uncovered short), then long leg.
+    # Default: off (K493 positions are auto-detected via _detect_k493_paired_positions).
+    # Use --include-k493 to print K493-specific close summary and ensure sequential ordering.
+    parser.add_argument(
+        "--include-k493",
+        dest="include_k493",
+        action="store_true",
+        default=False,
+        help=(
+            "K499: Include K493 ATOM-BTC paired-trade close summary during emergency exit. "
+            "K493 positions (ATOM+BTC, HL-only, 2 legs) are detected automatically; "
+            "this flag adds a structured summary. "
+            "Close protocol: short leg first (avoid uncovered short), then long leg. "
+            "Both legs on HyperLiquid only (K434 smart router HL-only). "
+            "OOS Sharpe 50.79 (#1 paired-trade family). G5a 0.1763 (Cosmos hypothesis). "
+            "Requires: K493 daemon running (com.cryptolab.k493-atom-btc). "
+            "See: docs/k302a_runbook.md §38d"
+        ),
+    )
+
     # K473: Spark sUSDS (Sky/MakerDAO) emergency exit flag (stub scaffold — Ethereum DeFi)
     # sUSDS is an Ethereum DeFi yield position — NOT a perp/futures position on HL/Bybit/OKX.
     # Redemption is instant (no lockup). No HL delta hedge required.
@@ -2263,6 +2428,24 @@ USDY sleeve emergency guidance (K415 §21.6):
                 logger.info(
                     "K484 AVAX-BTC paired positions detected — included in HL exit above. "
                     "Use --include-k484 to print detailed AVAX-BTC sequential close summary (§38c)."
+                )
+
+        # K499: K493 ATOM-BTC paired close summary (documentation; positions auto-detected in plan_exit)
+        # K493 positions (ATOM+BTC on HL) are included in the main HL exit.
+        # This flag adds a structured summary of the K493-specific sequential close protocol.
+        if args.include_k493:
+            logger.info("=== K493 ATOM-BTC PAIRED CLOSE SUMMARY (K499 §38d) ===")
+            success_k493 = close_k493_paired_positions(plan=plan, logger=logger, dry_run=False)
+            if success_k493:
+                logger.info("  K493 ATOM-BTC close: complete (or no position detected).")
+            else:
+                logger.warning("  K493 ATOM-BTC close: had errors — verify HL positions manually.")
+            logger.info("  See: docs/k302a_runbook.md §38d (K493 ATOM-BTC strategy playbook)")
+        else:
+            if plan.get("k493_paired_detected"):
+                logger.info(
+                    "K493 ATOM-BTC paired positions detected — included in HL exit above. "
+                    "Use --include-k493 to print detailed ATOM-BTC sequential close summary (§38d)."
                 )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)

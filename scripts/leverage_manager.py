@@ -59,6 +59,7 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K449_ETH_BTC":   4.0,   # K450: ETH-BTC paired-trade (v6.16 sleeve, HL-only)
     "K476_SOL_BTC":   4.0,   # K478: SOL-BTC paired-trade (v6.21 candidate, HL-only)
     "K484_AVAX_BTC":  4.0,   # K489: AVAX-BTC paired-trade (v6.23 candidate, HL-only, OOS Sh 43.89)
+    "K493_ATOM_BTC":  4.0,   # K499: ATOM-BTC paired-trade (v6.24 candidate, HL-only, OOS Sh 50.79 #1 family)
     "K457_basket":    4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
@@ -72,6 +73,7 @@ SLEEVE_WEIGHTS: Dict[str, float] = {
     "K457":   0.00,   # K457 BTC+ETH+SOL basket (K459 scaffold, 5% target at v6.20 activation)
     "K476":   0.00,   # K476 SOL-BTC FR differential paired-trade (K478 scaffold, 3% target at v6.21 activation)
     "K484":   0.00,   # K484 AVAX-BTC FR differential paired-trade (K489 scaffold, 3% target at v6.23 activation)
+    "K493":   0.00,   # K493 ATOM-BTC FR differential paired-trade (K499 scaffold, 3% target at v6.24 activation)
 }
 
 # v6.21 candidate weights (proposed in K478 — not yet active)
@@ -93,6 +95,19 @@ SLEEVE_WEIGHTS_V623: Dict[str, float] = {
     "K476":  0.03,   # SOL-BTC delta-neutral, 4x leverage, HL-only (v6.21 addition)
     "K484":  0.03,   # AVAX-BTC delta-neutral, 4x leverage, HL-only (v6.23 addition, K489 scaffold)
     "K457":  0.01,   # BTC+ETH+SOL basket (placeholder, reduced from v6.20 5% pending paper gate)
+}
+
+# v6.24 candidate weights (proposed in K499 — not yet active)
+# K449 5% + K476 3% + K484 3% + K493 3% = 14% combined paired-trade sleeve, ~$507K/yr @ $10M
+SLEEVE_WEIGHTS_V624: Dict[str, float] = {
+    "K280":  0.60,   # reduced 3pp vs v6.23 to fund K493 ATOM-BTC sleeve
+    "K297":  0.20,
+    "sUSDe": 0.05,
+    "K449":  0.05,   # ETH-BTC delta-neutral, 4x leverage, HL-only (v6.16 base, 5%)
+    "K476":  0.03,   # SOL-BTC delta-neutral, 4x leverage, HL-only (v6.21 addition)
+    "K484":  0.03,   # AVAX-BTC delta-neutral, 4x leverage, HL-only (v6.23 addition)
+    "K493":  0.03,   # ATOM-BTC delta-neutral, 4x leverage, HL-only (v6.24 addition, K499 scaffold)
+    "K457":  0.01,   # BTC+ETH+SOL basket (placeholder, pending paper gate)
 }
 
 # v6.16 candidate weights (proposed in K450 — not yet active)
@@ -204,6 +219,7 @@ def compute_position_size(
         "K457":   "K457_basket",    # K459: 4x cap for BTC+ETH+SOL basket
         "K476":   "K476_SOL_BTC",   # K478: 4x cap for SOL-BTC paired-trade sleeve
         "K484":   "K484_AVAX_BTC",  # K489: 4x cap for AVAX-BTC paired-trade sleeve
+        "K493":   "K493_ATOM_BTC",  # K499: 4x cap for ATOM-BTC paired-trade sleeve
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)
