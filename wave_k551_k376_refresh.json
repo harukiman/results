@@ -1,0 +1,154 @@
+{
+  "wave": "K551",
+  "timestamp_jst": "2026-05-30 21:55 JST",
+  "timestamp_utc": "2026-05-30T12:55:00Z",
+  "task": "K376 readiness refresh (slope, regime, ETA, Phase B1 prerequisite)",
+  "phase1_btc_slope": {
+    "btc_price": 73710.6,
+    "sma_today": 77648.61,
+    "sma_20d_ago": 78336.81,
+    "slope_current": -34.41,
+    "slope_k527": -37.23,
+    "slope_k533": -33.83,
+    "slope_trend": "improving (less negative)",
+    "fetch_source": "Bybit v5 market kline",
+    "fetch_time_utc": "2026-05-30T12:49:17Z",
+    "status": "success"
+  },
+  "phase2_regime_audit": {
+    "regime_file": "data/k376_regime_status.json",
+    "regime": "TRANSITION",
+    "slope_k497": -33.83,
+    "sma_today_k497": 77618.45,
+    "days_in_regime": 2,
+    "days_slope_positive": 0,
+    "last_checked_jst": "2026-05-30 03:31 JST",
+    "trigger_date": null,
+    "version": "k497_v1",
+    "daemon_label": "com.cryptolab.k376-regime-monitor",
+    "status": "current"
+  },
+  "phase3_bull_confirmed_proximity": {
+    "requirement": "slope >= 0 sustained for 7 consecutive days",
+    "current_slope": -34.41,
+    "days_positive_current": 0,
+    "days_required": 7,
+    "bull_confirmed_ready": false,
+    "estimated_recovery_rate_per_day": 5.0,
+    "days_to_zero_slope": 6.9,
+    "days_to_7_consecutive_positive": 14,
+    "eta_days_bull_confirmed": 14,
+    "note": "Slope improving at ~3.4 $/day (K527: -37.23 → K551: -34.41). At current pace, ETA ~7d to slope >= 0; +7d more for 7-consecutive-day confirmation = ~14d total to BULL_CONFIRMED.",
+    "upside_scenario": "If recovery accelerates to 7 $/day: ~10 days to BULL_CONFIRMED",
+    "downside_scenario": "If trend reverses: could extend to 21+ days"
+  },
+  "phase4_paper_trade_dashboard": {
+    "dashboard_file": "data/k376_momentum_dashboard.json",
+    "strategy_id": "K376_volume_momentum_v1",
+    "version": "v6.14_candidate",
+    "universe": ["ETH", "LINK", "AVAX"],
+    "sleeve_pct": 0.03,
+    "paper_trade_mode": true,
+    "regime_during_period": "100% BEAR (correct behavior: 0 signals)",
+    "paper_period_start": "2026-03-31",
+    "paper_period_end": "2026-05-30",
+    "paper_period_days": 60,
+    "fills_realized": 0,
+    "signals_24h": 0,
+    "fill_rate_60d": 0.0,
+    "live_sharpe_30d": 0.0,
+    "g8_gate_passed": false,
+    "open_positions": [],
+    "last_updated_utc": "2026-05-29T14:48:38Z",
+    "readiness_note": "Paper period complete (60d). Bear regime suppressed all signals correctly. Gate G8 fill rate (65%+) and G9 live Sharpe pending 30d live BULL confirmation."
+  },
+  "phase5_phase_b1_prerequisites": {
+    "portfolio_aum_file": "data/portfolio_aum_state.json",
+    "last_updated_jst": "2026-05-29 22:40 JST",
+    "current_aum_usdc": 10000000.0,
+    "sleeve_weights": {
+      "K280": 0.75,
+      "K297_prime": 0.2,
+      "sUSDe": 0.05,
+      "K376": 0.03
+    },
+    "k280_current_weight": 0.75,
+    "k280_required_reduction": "75% -> 70%",
+    "k280_reduction_status": "PENDING",
+    "k280_reduction_frees_hl_pp": 2.5,
+    "hl_current_pct": 65.0,
+    "hl_cap": 65.0,
+    "hl_headroom_pp": 0.0,
+    "k376_hl_additive_at_3pct": 2.7,
+    "projected_hl_without_restructure": 67.7,
+    "projected_hl_with_k280_reduction": 65.2,
+    "cap_breach_without_restructure": true,
+    "cap_breach_with_restructure": false,
+    "phase_b1_verdict": "PREREQUISITE BLOCKING: K280 sleeve reduction (75%→70%) MUST be applied BEFORE K376 activation to avoid HL cap breach (65.0% cap, projected 67.7% without restructure)."
+  },
+  "phase6_activation_readiness_ranking": {
+    "dimension_1_btc_regime": {
+      "status": "TRANSITION",
+      "eta_days_to_bull": 14,
+      "readiness": "MEDIUM-HIGH (improving)"
+    },
+    "dimension_2_k280_restructure": {
+      "status": "PENDING",
+      "action_required": "Reduce K280 from 75% to 70%",
+      "readiness": "CRITICAL BLOCKER"
+    },
+    "dimension_3_k376_paper_sharpe": {
+      "backtest_sharpe_oos": 2.524,
+      "backtest_sharpe_eth": 2.858,
+      "backtest_sharpe_link": 2.662,
+      "backtest_sharpe_avax": 2.051,
+      "live_sharpe_current": 0.0,
+      "readiness": "HIGH (all >= 1.0 threshold)"
+    },
+    "dimension_4_paper_period": {
+      "status": "COMPLETE (60 days)",
+      "regime_during": "100% BEAR",
+      "readiness": "COMPLETE"
+    },
+    "dimension_5_daemon": {
+      "plist_exists": true,
+      "plist_in_launchagents": false,
+      "daemon_loaded": false,
+      "readiness": "ACTION REQUIRED (load plist at activation)"
+    },
+    "overall_readiness": "PRE-ACTIVATION (K280 restructure blocking)",
+    "combined_unlock_proximity_days": 14,
+    "unlock_profit_immediate_usd": 247000,
+    "unlock_profit_yr_3pct_sleeve": 247000,
+    "unlock_profit_yr_5pct_sleeve": 412000,
+    "daily_delay_cost_usd": 677.0
+  },
+  "phase7_summary": {
+    "btc_slope_current": -34.41,
+    "btc_slope_trend": "improving (+3.41 vs K527)",
+    "eta_days_to_bull_confirmed": 14,
+    "eta_confidence": "medium (depends on sustained recovery)",
+    "k280_restructure_status": "PENDING (blocking activation)",
+    "k376_paper_sharpe": 2.524,
+    "outstanding_action_items": [
+      "REQUIRED: Reduce K280 sleeve from 75% to 70% BEFORE K376 activation (frees 2.5pp HL, enabling K376 3% within 65% cap)",
+      "PENDING: BTC slope sustained >= 0 for 7 consecutive days (ETA 14 days from K551)",
+      "PENDING: launchctl load com.cryptolab.k376-regime-monitor.plist (user action at D1)",
+      "PENDING: G8 fill rate confirmation (first 30d of live BULL regime signals)",
+      "PENDING: G9 live Sharpe confirmation (first 30d of live BULL signals >= 1.0)",
+      "PENDING: Daemon verification (plist not in ~/Library/LaunchAgents, requires manual setup)"
+    ],
+    "k376_unlock_eta": "D14 (if K280 restructure applied immediately)",
+    "k376_unlock_eta_if_delayed": "D21-28 (if K280 restructure delayed 1-2 weeks)",
+    "profit_impact_annual_usd": 247000,
+    "profit_impact_note": "Unlocked only after BULL_CONFIRMED + K280 restructure + 30d live G9 validation"
+  },
+  "cross_reference": {
+    "k497_regime_trigger": "wave_k497_k376_regime_trigger.json",
+    "k527_slope_refresh": "wave_k527_k376_trigger_refresh.json",
+    "k533_readiness": "wave_k533_k376_readiness.json",
+    "regime_file": "data/k376_regime_status.json",
+    "dashboard_file": "data/k376_momentum_dashboard.json",
+    "portfolio_aum_file": "data/portfolio_aum_state.json"
+  }
+}
