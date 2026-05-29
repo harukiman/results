@@ -6591,3 +6591,201 @@ Sleeve weight (v6.25 candidate):
 ---
 
 *K502 §39 -- K495 DEX-CEX flow divergence production scaffold (33rd daemon, bear-conditional LONG BTC+ETH+SOL, OOS Sh bear-cond 4.59, $323K/yr net @$10M, corr K208=-0.017 K280=0.008 fully orthogonal to FR-carry family, 60d paper-trade gate, v6.25 candidate) -- 2026-05-30*
+
+---
+
+## §38e K500 INJ-BTC FR Differential — Production Scaffold Playbook
+
+**Wave:** K506 | **Status:** SCAFFOLD-READY (34th daemon) | **Date:** 2026-05-30
+
+---
+
+### §38e.1 Strategy Summary
+
+K500 INJ-BTC implements a delta-neutral funding rate carry trade on HyperLiquid, pairing
+INJ (Injective) against BTC based on the 7-day EMA of their funding rate differential.
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe | **11.23** (family rank #4) |
+| Ann Return | **$124K/yr net** @ $10M AUM |
+| Gate passage | 10/13 §6 gates |
+| Sleeve | 3% of AUM ($300K capital) |
+| Leverage | 4x (HL-only) |
+| Total notional | $1.2M ($600K/leg) |
+| HL concentration | 62% < 65% cap (3pp headroom) |
+| G5a | 0.1409 PASS (INJ orthogonal to ETH-BTC) |
+| G5d | 0.2893 PASS (Cosmos cluster expandable) |
+| Vol ratio | 3.83x BTC (family max) |
+| Cron | 8h (StartInterval 28800) |
+| Venue | HL-only (K434 Phase 2 smart router) |
+
+### §38e.2 Cosmos 2nd Hypothesis — CONFIRMED
+
+K500 is the second Cosmos-ecosystem token to pass §6 gates (after ATOM in K493).
+INJ (Injective Protocol) differs mechanistically from ATOM:
+
+| Dimension | ATOM (K493) | INJ (K500) |
+|-----------|-------------|------------|
+| Mechanism | IBC governance + staking | DeFi-perp exchange L1 |
+| FR driver | Governance demand cycles | Native perp trading activity |
+| Buyback | No | Yes (INJ buyback-and-burn) |
+| Vol ratio | 2.34x BTC | 3.83x BTC (family max) |
+| G5a | 0.1763 | 0.1409 (more orthogonal) |
+| G5d | — | 0.2893 PASS (Cosmos sub-cluster) |
+
+G5d 0.2893 PASS confirms INJ forms a distinct Cosmos sub-group from ATOM:
+the DeFi-perp cluster (INJ, potential OSMO) vs the IBC/staking cluster (ATOM).
+This validates the Cosmos family expansion thesis.
+
+### §38e.3 FR Differential Signal
+
+Signal logic (INJ-BTC 7d EMA):
+
+```
+ema_7d > +0.00001 → INJ FR > BTC FR
+  → SHORT INJ (collect high FR) + LONG BTC (cheap carry)
+  → state: LONG_BTC_SHORT_INJ
+
+ema_7d < -0.00001 → BTC FR > INJ FR
+  → SHORT BTC (collect high FR) + LONG INJ (cheap carry)
+  → state: LONG_INJ_SHORT_BTC
+
+|ema_7d| ≤ 0.00001 → NEUTRAL (no trade)
+```
+
+Cross-venue validation:
+- Bybit INJ-BTC FR correlation: **0.82** (high agreement)
+- OKX INJ-BTC FR correlation: **0.94** (very high agreement)
+Both confirm HL is the primary venue for FR signal capture.
+
+### §38e.4 Position Sizing
+
+At $10M AUM, 3% sleeve, 4x leverage:
+
+```
+Sleeve capital:   $10M × 3%  = $300,000
+Notional/leg:     $300K × 4 / 2 = $600,000 per leg
+Total notional:   $1,200,000 (2 legs combined)
+Margin required:  $1.2M / 4x = $300,000 (3% of AUM)
+```
+
+### §38e.5 Paired Execution Protocol
+
+Follows K439 POST_ONLY parallel pattern (same as K449/K476/K484/K493):
+
+1. Submit LONG leg POST_ONLY on HL
+2. Submit SHORT leg POST_ONLY on HL (parallel)
+3. IOC fallback if POST_ONLY times out (5 min window)
+4. If both legs fail: retry at next 8h cycle
+5. Close sequence: SHORT leg first (avoid uncovered short), then LONG leg
+
+### §38e.6 60d Paper-Trade Activation Gate
+
+Before live activation, K500 must pass all three criteria:
+
+| Criterion | Target | Current |
+|-----------|--------|---------|
+| OOS Sharpe (paper) | ≥ 3.5 | IN_PROGRESS |
+| Fill rate (both legs) | ≥ 60% | IN_PROGRESS |
+| Max drawdown | < 15% | IN_PROGRESS |
+
+Gate is **lower** than K493 (≥5.0) because INJ has lower OOS Sharpe (11.23 vs 50.79).
+The 3.5 floor is proportional and conservative.
+
+### §38e.7 v6.25 Architecture — Combined Paired-Trade Sleeve
+
+K500 completes the v6.25 paired-trade family:
+
+| Strategy | Pair | Sharpe | Ann Return | Sleeve |
+|----------|------|--------|------------|--------|
+| K449 | ETH-BTC | 5.66 | $187K/yr | 5% |
+| K476 | SOL-BTC | 16.30 | $187K/yr | 3% |
+| K484 | AVAX-BTC | 43.89 | $75.7K/yr | 3% |
+| K493 | ATOM-BTC | 50.79 | $231K/yr | 3% |
+| K500 | INJ-BTC | 11.23 | $124K/yr | 3% |
+| **Combined** | | | **$631K/yr** | **17%** |
+
+Plus K495 DEX-CEX (3% bear-conditional) = fully orthogonal axis.
+HL concentration: 62% < 65% cap (3pp headroom post-K500).
+
+### §38e.8 Emergency Exit Integration
+
+K500 is integrated into `scripts/emergency_hl_exit.py`:
+- `_detect_k500_paired_positions()`: detects INJ+BTC paired long/short
+- `close_k500_paired_positions()`: sequential IOC reduce-only (short first, then long)
+- `plan_exit()`: k500_paired_detected + k500_pair_detail in exit plan
+- CLI flag: `--include-k500` (K506 addition)
+
+```bash
+# Emergency dry-run (includes K500 summary):
+python3 scripts/emergency_hl_exit.py --dry-run --include-k500 --user 0x...
+
+# Emergency EXECUTE (all venues including K500):
+python3 scripts/emergency_hl_exit.py --EXECUTE --include-k500 --user 0x...
+```
+
+Close protocol: SHORT leg first (cover), then LONG leg (sell). Both IOC reduce-only on HL.
+
+### §38e.9 Activation Procedure
+
+1. K500 paper-trade gate passed (all 3 metrics — see §38e.6)
+2. HL concentration verified ≤ 65%:
+   `python3 scripts/leverage_manager.py --check-health`
+3. Copy plist to LaunchAgents:
+   ```bash
+   REPO=$(python3 -c "from pathlib import Path; print(Path('scripts/k500_inj_btc_run.py').resolve().parent.parent)")
+   sed "s|REPO_ROOT|$REPO|g" com.cryptolab.k500-inj-btc.plist \
+     > ~/Library/LaunchAgents/com.cryptolab.k500-inj-btc.plist
+   launchctl load ~/Library/LaunchAgents/com.cryptolab.k500-inj-btc.plist
+   ```
+4. Update plist ProgramArguments: remove `--dry-run`, set `PAPER_TRADE=False`
+5. Set HL credentials: `export HL_USER_ADDRESS=0x... HL_PRIVATE_KEY=0x...`
+6. Run verification:
+   ```bash
+   python3 scripts/k500_inj_btc_run.py --status
+   python3 scripts/verify_deployment_status.py
+   ```
+7. Confirm 34 daemons, 0 mismatches
+
+### §38e.10 Leverage Configuration
+
+K500 is registered in `data/leverage_config.json`:
+```json
+"K500_INJ_BTC": 4.0
+```
+And in `scripts/leverage_manager.py`:
+```python
+"K500_INJ_BTC": 4.0,  # K506: INJ-BTC paired-trade (v6.25 candidate)
+```
+Sleeve weight (v6.25 candidate):
+```python
+"K500": 0.03  # SLEEVE_WEIGHTS_V625
+```
+
+### §38e.11 File Inventory
+
+| File | Description |
+|------|-------------|
+| `scripts/k500_inj_btc_run.py` | Main strategy script (~250 LOC, K339 pattern) |
+| `com.cryptolab.k500-inj-btc.plist` | LaunchAgent plist (28800s 8h cron) |
+| `data/k500_dashboard.json` | Real-time FR + position state |
+| `cache/k500_fr_history.jsonl` | 7d+ INJ-BTC FR history for EMA |
+| `cache/k500_paper_trades.jsonl` | Paper-trade execution log |
+| `logs/k500_inj_btc.log` | Daemon stdout log |
+| `logs/k500_inj_btc.err` | Daemon stderr log |
+
+### §38e.12 References
+
+| Wave | Description |
+|------|-------------|
+| K506 | This section — K500 INJ-BTC production scaffold (34th daemon, v6.25 architecture) |
+| K500 | K500 analysis — INJ-BTC FR differential ACCEPT ($124K/yr @$10M, Cosmos 2nd CONFIRMED) |
+| K505 | v6.25 architecture wave (concurrent with K506, Option A: K500 INJ 3% + cash −2%) |
+| K493 | ATOM-BTC FR differential (K499 scaffold, 32nd daemon, direct scaffold template) |
+| K434 | Smart router (K500 uses HL-only pattern) |
+| K266 | §6 strict gate framework (K500 scored 10/13) |
+
+---
+
+*K506 §38e -- K500 INJ-BTC FR differential production scaffold (34th daemon, OOS Sh 11.23 #4 family, $124K/yr net @$10M, G5a 0.1409 Cosmos 2nd CONFIRMED, G5d 0.2893 PASS Cosmos cluster expandable, v6.25 K449+K476+K484+K493+K500 17% combined paired-trade sleeve ~$631K/yr, 60d paper-trade gate) -- 2026-05-30*

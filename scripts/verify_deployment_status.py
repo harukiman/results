@@ -280,6 +280,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k495_dex_cex_flow",
         expected_html_status="SCAFFOLD-READY",  # K502: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=3.0 + >=2 bear-regime hits + maxDD <15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k500-inj-btc",
+        purpose="K500 INJ-BTC FR differential paired-trade (delta-neutral, 4x leverage, 8h cycle, HL-only, OOS Sh 11.23 #4 family, $124K/yr net @$10M, G5a 0.1409 Cosmos 2nd CONFIRMED, G5d 0.2893 PASS, v6.25 candidate K449+K476+K484+K493+K500 17% combined sleeve ~$631K/yr, 34th daemon)",
+        scripts=["scripts/k500_inj_btc_run.py"],
+        log_basename="k500_inj_btc",
+        expected_html_status="SCAFFOLD-READY",  # K506: plist in repo root (gitignored); activate after 60d paper-trade gate (OOS Sh >=3.5 + fill_rate >=60% + maxDD <15%)
+    ),
 ]
 
 

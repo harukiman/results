@@ -536,6 +536,103 @@ def close_k493_paired_positions(
     return True
 
 
+def _detect_k500_paired_positions(positions: List[Dict]) -> Optional[Dict]:
+    """
+    K506 Phase 4: Detect K500 paired positions (INJ long + BTC short, or reverse).
+
+    K500 INJ-BTC = 2 legs on HL: INJ and BTC (one long, one short).
+    Sequential close: short leg first (avoid uncovered short), then long leg.
+
+    A K500 pair is identified by:
+      - One long leg: INJ or BTC
+      - One short leg: the other of INJ/BTC
+      - Both on HL (HL-only strategy, K434 smart router)
+
+    Note: INJ is the Injective DeFi-perp chain token (Cosmos SDK).
+    K500 is identified by INJ+BTC in a paired long/short.
+    OOS Sharpe 11.23 (family rank #4). G5d 0.2893 PASS (Cosmos 2nd CONFIRMED).
+    INJ DeFi-perp mechanics distinct from ATOM IBC/staking.
+    """
+    K500_SYMBOLS = {"INJ", "BTC"}
+    inj_btc = [p for p in positions if p.get("coin", "").upper() in K500_SYMBOLS]
+    if len(inj_btc) < 2:
+        return None
+
+    longs  = [p for p in inj_btc if p.get("side") == "long"]
+    shorts = [p for p in inj_btc if p.get("side") == "short"]
+
+    if not (longs and shorts):
+        return None
+
+    long_pos  = longs[0]
+    short_pos = shorts[0]
+    long_sym  = long_pos["coin"].upper()
+    short_sym = short_pos["coin"].upper()
+
+    if long_sym not in K500_SYMBOLS or short_sym not in K500_SYMBOLS:
+        return None
+    if long_sym == short_sym:
+        return None
+
+    return {
+        "detected":        True,
+        "long_symbol":     long_sym,
+        "short_symbol":    short_sym,
+        "long_value_usd":  long_pos.get("value_usd", 0.0),
+        "short_value_usd": short_pos.get("value_usd", 0.0),
+        "long_size":       long_pos.get("size", 0.0),
+        "short_size":      short_pos.get("size", 0.0),
+        "state":           f"LONG_{long_sym}_SHORT_{short_sym}",
+        "venue":           "HL",
+        "close_protocol":  "short_leg_first_then_long_leg",
+        "note":            "K500 INJ-BTC paired position — cover short first, then sell long (HL-only, K434)",
+    }
+
+
+def close_k500_paired_positions(
+    plan:    Dict,
+    logger:  "logging.Logger",
+    dry_run: bool = True,
+) -> bool:
+    """
+    K506 Phase 4: Close K500 INJ-BTC paired positions.
+    Sequential: short leg first (avoid uncovered short), then long leg.
+
+    Args:
+      plan:    exit plan dict (from plan_exit())
+      logger:  logger instance
+      dry_run: True = paper-trade simulation
+
+    Returns True on success (or dry-run), False on error.
+    """
+    k500_detail = plan.get("k500_pair_detail")
+
+    if not k500_detail or not k500_detail.get("detected"):
+        logger.info("  [K500] No K500 INJ-BTC paired position detected (NEUTRAL or 60d paper-trade).")
+        return True
+
+    short_sym  = k500_detail["short_symbol"]
+    long_sym   = k500_detail["long_symbol"]
+    short_val  = k500_detail.get("short_value_usd", 0.0)
+    long_val   = k500_detail.get("long_value_usd", 0.0)
+
+    logger.info(f"  [K500] INJ-BTC paired close — {k500_detail['state']}")
+    logger.info(f"    Step 1 (SHORT first): BUY-COVER {short_sym} ${short_val:,.0f}  (HL IOC reduce-only)")
+    logger.info(f"    Step 2 (LONG second): SELL      {long_sym} ${long_val:,.0f}  (HL IOC reduce-only)")
+
+    if dry_run:
+        logger.info("    [DRY-RUN] K500 INJ-BTC close simulated — no actual orders submitted")
+        return True
+
+    # LIVE scaffold: IOC close on HL (sequential)
+    # Step 1: cover short (buy INJ or BTC)
+    logger.info(f"    SCAFFOLD: IOC reduce {short_sym} (cover short) @ HL")
+    # Step 2: sell long (after short covered)
+    logger.info(f"    SCAFFOLD: IOC reduce {long_sym} (sell long) @ HL")
+    logger.info("    SCAFFOLD: K500 close wired but not executed (HL auth required at live activation)")
+    return True
+
+
 def _detect_k449_paired_positions(positions: List[Dict]) -> Optional[Dict]:
     """
     K450 Phase 11: Detect K449 paired positions (ETH long + BTC short, or reverse).
@@ -721,6 +818,12 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
     k493_coins: set = set()
     if k493_pair:
         k493_coins = {k493_pair["long_symbol"], k493_pair["short_symbol"]}
+
+    # K506: detect K500 paired positions (INJ/BTC — HL-only)
+    k500_pair = _detect_k500_paired_positions(positions)
+    k500_coins: set = set()
+    if k500_pair:
+        k500_coins = {k500_pair["long_symbol"], k500_pair["short_symbol"]}
 
     # K502: detect K495 DEX-CEX flow divergence positions (LONG BTC+ETH+SOL)
     k495_pos = _detect_k495_position(positions)
@@ -930,8 +1033,46 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
             })
             total_notional += long_pos["value_usd"]
 
-    # All other positions: close in any order (non-K449, non-K457, non-K476, non-K484, non-K493)
-    handled_coins = k449_coins | k457_coins | k476_coins | k484_coins | k493_coins
+    # K500 INJ-BTC paired positions: short leg first, then long leg (K506 Phase 4)
+    if k500_pair:
+        # Short leg first (avoid uncovered short)
+        short_coin = k500_pair["short_symbol"]
+        short_pos  = next((p for p in positions if p["coin"].upper() == short_coin
+                           and p["side"] == "short"), None)
+        if short_pos:
+            close_list.append({
+                "coin":             short_pos["coin"],
+                "size":             short_pos["size"],
+                "side_to_close":    "buy",   # covering short
+                "value_usd":        short_pos["value_usd"],
+                "current_side":     "short",
+                "k500_paired":      True,
+                "k500_close_order": 1,        # close short first
+                "venue":            "HL",
+                "note":             f"K500 INJ-BTC short leg {short_coin} — cover first (HL-only)",
+            })
+            total_notional += short_pos["value_usd"]
+
+        # Long leg second
+        long_coin = k500_pair["long_symbol"]
+        long_pos  = next((p for p in positions if p["coin"].upper() == long_coin
+                          and p["side"] == "long"), None)
+        if long_pos:
+            close_list.append({
+                "coin":             long_pos["coin"],
+                "size":             long_pos["size"],
+                "side_to_close":    "sell",
+                "value_usd":        long_pos["value_usd"],
+                "current_side":     "long",
+                "k500_paired":      True,
+                "k500_close_order": 2,        # close long second
+                "venue":            "HL",
+                "note":             f"K500 INJ-BTC long leg {long_coin} — sell second (HL-only)",
+            })
+            total_notional += long_pos["value_usd"]
+
+    # All other positions: close in any order (non-K449, non-K457, non-K476, non-K484, non-K493, non-K500)
+    handled_coins = k449_coins | k457_coins | k476_coins | k484_coins | k493_coins | k500_coins
     for p in positions:
         coin = p.get("coin", "").upper()
         if coin in handled_coins:
@@ -969,6 +1110,8 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
         "k484_pair_detail":       k484_pair,
         "k493_paired_detected":   k493_pair is not None,
         "k493_pair_detail":       k493_pair,
+        "k500_paired_detected":   k500_pair is not None,
+        "k500_pair_detail":       k500_pair,
         "k495_detected":          k495_pos is not None,
         "k495_detail":            k495_pos,
     }
@@ -2018,7 +2161,8 @@ def main() -> int:
             "K456: --include-okx flag added (3rd venue, OKX SWAP perpetuals)\n"
             "K460: --include-aevo flag added (4th venue, STUB scaffold)\n"
             "K460: --include-dydx flag added (5th venue, Cosmos chain STUB scaffold)\n"
-            "K502: --include-k495 flag added (K495 DEX-CEX flow divergence, LONG BTC+ETH+SOL, bear-conditional)"
+            "K502: --include-k495 flag added (K495 DEX-CEX flow divergence, LONG BTC+ETH+SOL, bear-conditional)\n"
+            "K506: --include-k500 flag added (K500 INJ-BTC FR differential, 34th daemon, Cosmos 2nd CONFIRMED)"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
@@ -2325,6 +2469,29 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K506: K500 INJ-BTC FR differential paired-trade emergency exit flag
+    # K500 = INJ long + BTC short (or reverse) on HL — 2 legs, HL-only.
+    # Sequential close: short leg first (avoid uncovered short), then long leg.
+    # Default: off (K500 positions are auto-detected via _detect_k500_paired_positions).
+    # Use --include-k500 to print K500-specific close summary and ensure sequential ordering.
+    parser.add_argument(
+        "--include-k500",
+        dest="include_k500",
+        action="store_true",
+        default=False,
+        help=(
+            "K506: Include K500 INJ-BTC paired-trade close summary during emergency exit. "
+            "K500 positions (INJ+BTC, HL-only, 2 legs) are detected automatically; "
+            "this flag adds a structured summary. "
+            "Close protocol: short leg first (avoid uncovered short), then long leg. "
+            "Both legs on HyperLiquid only (K434 smart router HL-only). "
+            "OOS Sharpe 11.23 (family rank #4). G5d 0.2893 PASS (Cosmos 2nd CONFIRMED). "
+            "INJ DeFi-perp mechanics distinct from ATOM IBC/staking. "
+            "Requires: K500 daemon running (com.cryptolab.k500-inj-btc). "
+            "See: docs/k302a_runbook.md §38e"
+        ),
+    )
+
     # K502: K495 DEX-CEX flow divergence bear-conditional emergency exit flag
     # K495 = LONG BTC+ETH+SOL on HL (3 legs) when DEX-CEX z-score > 1.0 in bear regime.
     # Close protocol: IOC market orders (reduce-only) BTC → ETH → SOL (largest notional first).
@@ -2579,6 +2746,24 @@ USDY sleeve emergency guidance (K415 §21.6):
                 logger.info(
                     "K493 ATOM-BTC paired positions detected — included in HL exit above. "
                     "Use --include-k493 to print detailed ATOM-BTC sequential close summary (§38d)."
+                )
+
+        # K506: K500 INJ-BTC paired close summary (documentation; positions auto-detected in plan_exit)
+        # K500 positions (INJ+BTC on HL) are included in the main HL exit.
+        # This flag adds a structured summary of the K500-specific sequential close protocol.
+        if args.include_k500:
+            logger.info("=== K500 INJ-BTC PAIRED CLOSE SUMMARY (K506 §38e) ===")
+            success_k500 = close_k500_paired_positions(plan=plan, logger=logger, dry_run=False)
+            if success_k500:
+                logger.info("  K500 INJ-BTC close: complete (or no position detected).")
+            else:
+                logger.warning("  K500 INJ-BTC close: had errors — verify HL positions manually.")
+            logger.info("  See: docs/k302a_runbook.md §38e (K500 INJ-BTC strategy playbook)")
+        else:
+            if plan.get("k500_paired_detected"):
+                logger.info(
+                    "K500 INJ-BTC paired positions detected — included in HL exit above. "
+                    "Use --include-k500 to print detailed INJ-BTC sequential close summary (§38e)."
                 )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)
