@@ -3067,3 +3067,117 @@ After both D+14 PASS/HOLD:
 Source files: `wave_k558_k476_k484_week2_live.{py,json,md}`
 
 *K558 Appendix — Added 2026-05-30 06:15 JST*
+
+---
+
+## K560 Appendix — Week 5 K512 APT-BTC Final LIVE + Family Completion
+
+**Wave:** K560 | **Generated:** 2026-05-30 06:31 JST
+**Mandate:** K547 sequenced activation Week 5 — D+32 K512 APT-BTC LIVE (family completion)
+
+### ★★★ 5-Week K547 CASCADE COMPLETE ★★★
+
+| Week | Strategy | Day | OOS Sh | @$10M/yr | Cumulative |
+|------|----------|-----|--------|---------|-----------|
+| W1 | K449 ETH-BTC | D0 | 5.66 | $13,000 | $13,000 |
+| W2 | K476 SOL-BTC | D+7 | 16.30 | $187,000 | $200,000 |
+| W2 | K484 AVAX-BTC | D+9 | 43.89 | $76,000 | $276,000 |
+| W3 | K493 ATOM-BTC | D+14 | 50.79 | $231,000 | $507,000 |
+| W4 | K500 INJ-BTC | D+21 | 11.23 | $124,000 | $631,000 |
+| W4 | K507 SEI-BTC | D+23 | 48.10 | $179,000 | $810,000 |
+| W4 | K507 TIA-BTC | D+25 | 14.44 | $51,000 | $861,000 |
+| **W5** | **K512 APT-BTC ★** | **D+32** | **51.10** | **$302,000** | **$1,163,000** |
+
+**Family complete: $1,163,000/yr @ $10M | $3,489,000/yr @ $30M | $11,630,000/yr @ $100M**
+
+### K512 APT-BTC — Move-VM Block-STM Alpha (#1 Family Sharpe)
+
+| Parameter | Value |
+|-----------|-------|
+| OOS Sharpe | **51.10** (highest in family) |
+| Ann. Return | **$302,000/yr @ $10M** |
+| Activation | D+32, Bybit-only Phase A |
+| Sleeve | 2% total (0% HL + 2% Bybit) |
+| HL add | 0pp (cap safety — Phase A) |
+| OU half-life | 0.27 days (fastest mean reversion in family) |
+| Alpha thesis | Block-STM parallel execution → orthogonal FR dynamics vs EVM/SVM/CosmWasm |
+
+### HL Exposure Post-Week 5
+
+| Scenario | Post-W5 HL | Headroom | Status |
+|----------|-----------|---------|--------|
+| Phase A: Bybit-only (RECOMMENDED) | **64.5%** | **+0.5pp** | **SAFE** |
+| Phase B: 0.5% HL split | 65.0% | 0.0pp | AT CAP |
+| Phase C: 1% HL (cap breach) | 65.5% | -0.5pp | BREACH |
+
+### Total v6.28 LIVE Projection (Post-K560)
+
+| Component | @$10M/yr | Status |
+|-----------|---------|--------|
+| Family paired-trade W1-W5 | $1,163,000 | LIVE |
+| K280 + K297' + sUSDe + Spark | $352,000 | LIVE |
+| K545 tax harvester | $47,000 | LIVE |
+| K376 (BULL gate) | $48,000 | Gate |
+| K495 DEX-CEX (60d gate) | $646,000 | Gate |
+| K541 stablecoin (90d gate) | $294,000 | Gate |
+| K521 Options (90d gate) | $494,000 | Gate |
+| **Total v6.28 mid** | **$2,550,000** | — |
+
+### D+42 Decision Matrix
+
+| Realized Sh (10d) | Verdict | Action |
+|------------------|---------|--------|
+| ≥ 25.0 (50% OOS) | PASS | Expand to 3% Bybit |
+| 15.0 – 25.0 | HOLD | Maintain 2% |
+| < 15.0 | ROLLBACK | Unload daemon + close |
+
+### User Actions Added (K560)
+
+- **Action #39**: K512 APT-BTC D+32 LIVE activation — Bybit-only Phase A (HL 64.5% maintained) → OOS Sh 51.10, $302K/yr @$10M | `python3 wave_k560_k512_week5_live.py --checklist-d32`
+- **Action #40**: D+35 3-day monitoring check — fill rate + PnL + HL margin | `python3 wave_k560_k512_week5_live.py --checklist-d35`
+- **Action #41**: D+42 decision matrix + full family review — PASS→expand 3%, HOLD→maintain 2%, ROLLBACK→unload | `python3 wave_k560_k512_week5_live.py --checklist-d42`
+- **Action #42**: K495 DEX-CEX 60d paper gate monitoring (D+17 of gate as of D+32)
+- **Action #43**: K376 BULL_CONFIRMED gate check (regime monitor)
+
+```bash
+# D+32: K512 activation
+python3 wave_k560_k512_week5_live.py --checklist-d32
+
+# D+35: monitoring
+python3 wave_k560_k512_week5_live.py --checklist-d35
+
+# D+42: decision
+python3 wave_k560_k512_week5_live.py --checklist-d42
+
+# Full playbook:
+python3 wave_k560_k512_week5_live.py --all
+
+# Family profit summary:
+python3 wave_k560_k512_week5_live.py --family-summary
+```
+
+### v6.28 Architecture Status (All 12 Phases Complete)
+
+```
+[LIVE] K449 ETH-BTC    5%  HL-primary     $13K/yr   D0
+[LIVE] K476 SOL-BTC    3%  HL-only        $187K/yr  D+7
+[LIVE] K484 AVAX-BTC   3%  HL-only        $76K/yr   D+9
+[LIVE] K493 ATOM-BTC   5%  HL+Bybit       $231K/yr  D+14
+[LIVE] K500 INJ-BTC    3%  HL-primary     $124K/yr  D+21
+[LIVE] K507 SEI-BTC    2%  HL+Bybit 1+1  $179K/yr  D+23
+[LIVE] K507 TIA-BTC    1%  Bybit-only     $51K/yr   D+25
+[LIVE] K512 APT-BTC    2%  Bybit-only     $302K/yr  D+32 ★K560
+──────────────────────────────────────────────────────────
+TOTAL  24%                 $1,163K/yr @ $10M
+
+[PAPER] K495 DEX-CEX  6%  60d gate  $646K/yr Q3 2026
+[PAPER] K376 momentum 8%  BULL gate $48K/yr  BULL
+[PAPER] K541 stable   3%  90d gate  $294K/yr Q4 2026
+[PAPER] K521 Options  3%  90d gate  $494K/yr Q4 2026
+```
+
+HL post-K560: **64.5%** (Phase A Bybit-only, 0.5pp headroom to 65% hard cap)
+
+Source files: `wave_k560_k512_week5_live.{py,json,md}`
+
+*K560 Appendix — Added 2026-05-30 06:31 JST*
