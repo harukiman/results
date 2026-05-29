@@ -1,0 +1,189 @@
+{
+  "wave": "K504",
+  "signal": "ETH MVRV z-score follow (w=90, th=1.0, hold=30d)",
+  "winner": "ETH",
+  "decision": "REJECT",
+  "gates_pass": 4,
+  "gates_total": 7,
+  "is": {
+    "n": 2372,
+    "start": "2019-01-01",
+    "end": "2025-06-30",
+    "sharpe": 0.339,
+    "ann_return": 15.48,
+    "max_dd": -61.28
+  },
+  "oos": {
+    "n": 332,
+    "start": "2025-07-01",
+    "end": "2026-05-30",
+    "sharpe": 0.814,
+    "ann_return": 22.67,
+    "max_dd": -14.03,
+    "cum_return": 18.77,
+    "win_rate": 0.042,
+    "trades_yr": 12.4
+  },
+  "perm_p": 0.774,
+  "corr": {
+    "vs_k449_btc_fr": -0.1659,
+    "vs_k449_eth_fr": -0.109,
+    "vs_eth_raw_ret": 0.3627,
+    "vs_k280_mom": -0.2534,
+    "vs_k495_dex": 0.0119
+  },
+  "walk_forward": [
+    {
+      "fold": 1,
+      "start": "2020-06-25",
+      "end": "2021-12-16",
+      "sharpe": 1.341,
+      "positive": true
+    },
+    {
+      "fold": 2,
+      "start": "2021-12-17",
+      "end": "2023-06-09",
+      "sharpe": -0.552,
+      "positive": false
+    },
+    {
+      "fold": 3,
+      "start": "2023-06-10",
+      "end": "2024-11-30",
+      "sharpe": 0.429,
+      "positive": true
+    },
+    {
+      "fold": 4,
+      "start": "2024-12-01",
+      "end": "2026-05-24",
+      "sharpe": 0.071,
+      "positive": true
+    }
+  ],
+  "gates": {
+    "G1": {
+      "label": "OOS Sharpe >= 1.0",
+      "value": 0.814,
+      "threshold": 1.0,
+      "pass_": false
+    },
+    "G2": {
+      "label": "Perm p-value <= 0.05 (IS)",
+      "value": 0.774,
+      "threshold": 0.05,
+      "pass_": false
+    },
+    "G3": {
+      "label": "DSR Bonferroni p<=0.0004 (n=120)",
+      "value": 0.774,
+      "threshold": 0.0004,
+      "pass_": false
+    },
+    "G4": {
+      "label": "Walk-fwd 3/4+ folds positive",
+      "value": 3,
+      "threshold": 3,
+      "pass_": true
+    },
+    "G5": {
+      "label": "Max corr vs existing < 0.40",
+      "value": 0.3627,
+      "threshold": 0.4,
+      "pass_": true
+    },
+    "G6": {
+      "label": "Trades/yr >= 10 (long-horizon)",
+      "value": 12.4,
+      "threshold": 10,
+      "pass_": true
+    },
+    "G7": {
+      "label": "OOS Ann Return > 5%",
+      "value": 22.67,
+      "threshold": 5.0,
+      "pass_": true
+    }
+  },
+  "profit": {
+    "sleeve_pct": 0.03,
+    "leverage": 2.0,
+    "ann_return_1x_pct": 22.67,
+    "ann_return_lev_pct": 50.48,
+    "notional_10m": 600000,
+    "profit_10m_usd_yr": 136020,
+    "profit_100m_usd_yr": 1360200,
+    "profit_200m_usd_yr": 2720400,
+    "terminal_5y_10m_usd": 10698854,
+    "warning": "REJECTED: not deployable per \u00a76 gate failures"
+  },
+  "regime": {
+    "bull_oos_sharpe": 1.3,
+    "bear_oos_sharpe": 0.0,
+    "bull_fraction": 0.389,
+    "bear_fraction": 0.611,
+    "bull_n": 129,
+    "bear_n": 203,
+    "note": "OOS signal works only in Bull regime (Sh=1.30) not Bear (Sh=0.0)"
+  },
+  "stack": {
+    "k449_ref": 2.0,
+    "k495_ref": 2.17,
+    "k504": 0.814,
+    "two_axis_realistic": 1.942,
+    "three_axis_realistic": 2.744,
+    "note": "K504 Sh=0.81 dilutes 2+3 axis combo vs K449+K495 alone (Sh=2.08); minimal lift"
+  },
+  "grid": {
+    "btc_best": {
+      "w": 60,
+      "th": 1.5,
+      "h": 14,
+      "is_sharpe": 1.942
+    },
+    "eth_best": {
+      "w": 30,
+      "th": 1.0,
+      "h": 7,
+      "is_sharpe": 1.396
+    },
+    "total_combos": 120
+  },
+  "data_source": {
+    "primary": "CoinMetrics Community API v4 (free, no key required)",
+    "endpoint": "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics",
+    "metric": "CapMVRVCur (Market Value / Realized Value ratio)",
+    "assets": [
+      "BTC",
+      "ETH"
+    ],
+    "rows_btc": 2705,
+    "rows_eth": 2705,
+    "date_range": "2019-01-01 -> 2026-05-30",
+    "nulls": 0,
+    "status": "SUFFICIENT (7.4yr daily, free tier, no key)",
+    "rejection_reason": "Signal quality (cycle-level mismatch), NOT data volume",
+    "paid_upgrade": [
+      "Glassnode Pro ($29-299/mo): MVRV Z-Score pre-computed, entity MVRV",
+      "Nansen ($1500/mo): per-wallet MVRV, smart money vs retail segmentation",
+      "CryptoQuant ($99+/mo): SOPR, exchange-flow MVRV variants"
+    ]
+  },
+  "key_findings": [
+    "MVRV Spearman corr fwd 30d: +0.175 (FOLLOW not contrarian)",
+    "MVRV<1.0 extreme zone: t-stat=10.74, 30d mean=9.26% (276 days in IS)",
+    "MVRV<1.0 zone: ZERO days in OOS 2025-07 to 2026-05",
+    "IS perm p=0.774: NO statistical significance in IS period",
+    "OOS Sh=0.81 driven by Bull-only (Sh=1.30 bull, 0.0 bear)",
+    "IS MaxDD=-61.3%: unacceptable for 3% sleeve",
+    "Orthogonality: CONFIRMED (all corr < 0.40 vs K449/K495/K280)",
+    "MVRV as REGIME FILTER (not alpha): MVRV<2.0 filter on FR carry may add value"
+  ],
+  "next_axis": [
+    "K505: SOPR (Spent Output Profit Ratio) \u2014 same CoinMetrics free, more granular",
+    "K506: Social sentiment (LunarCrush free tier) \u2014 different information axis",
+    "K507: MVRV as regime FILTER on K449 FR carry (not standalone alpha)"
+  ],
+  "elapsed_sec": 59.9
+}
