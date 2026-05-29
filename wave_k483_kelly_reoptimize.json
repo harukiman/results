@@ -1,0 +1,819 @@
+{
+  "wave": "K483",
+  "title": "v6.22 Kelly Criterion Re-optimization (9-sleeve, 1/4 fractional)",
+  "run_time_jst": "2026-05-30 02:50:03 JST",
+  "runtime_s": 1.372,
+  "sources": {
+    "K427": "wave_k427_kelly_optimization.json  (3-sleeve Kelly baseline)",
+    "K461": "wave_k461_v620_validation.json  (v6.20 portfolio validation)",
+    "K476": "wave_k476_sol_btc.json  (SOL-BTC ACCEPT, OOS Sh=16.30)",
+    "K477": "wave_k477_v621_proposal.json  (stablecoin split v6.21)",
+    "K479": "wave_k479_v622_proposal.json  (v6.22 heuristic weights)"
+  },
+  "methodology": {
+    "fractional_kelly": "Fractional Kelly = standard MV utility U=w_mu - (lambda/2)*w_Sigma_w. lambda=1: Full Kelly; lambda=2: Half; lambda=4: Quarter. Production anchor K280>=50% prevents degenerate corner solutions. K427 lesson: unconstrained Kelly corners to sUSDe (highest Sharpe); here K376 (mu=8%) would dominate without floor.",
+    "interpolation_method": "Alternative: w_frac = f*w_maxret + (1-f)*w_k479 for f=1/4,1/2,1. Both methods provided; MV utility is primary recommendation.",
+    "k280_floor": "0.50 (50%) production anchor from K427 Pareto analysis"
+  },
+  "sleeve_definitions": [
+    {
+      "sleeve": "K280",
+      "mu_ann_pct": 5.0,
+      "sigma_ann_pct": 4.0,
+      "sharpe_individual": 1.25,
+      "hl_frac": 0.5,
+      "weight_k479_pct": 65.0,
+      "weight_quarter_kelly_mv_pct": 50.0,
+      "weight_half_kelly_mv_pct": 50.0,
+      "weight_full_kelly_mv_pct": 50.0,
+      "weight_quarter_kelly_interp_pct": 58.02,
+      "weight_max_return_pct": 50.0
+    },
+    {
+      "sleeve": "K297p",
+      "mu_ann_pct": 4.5,
+      "sigma_ann_pct": 1.5,
+      "sharpe_individual": 3.0,
+      "hl_frac": 1.0,
+      "weight_k479_pct": 5.0,
+      "weight_quarter_kelly_mv_pct": 0.0,
+      "weight_half_kelly_mv_pct": 0.0,
+      "weight_full_kelly_mv_pct": 0.0,
+      "weight_quarter_kelly_interp_pct": 3.75,
+      "weight_max_return_pct": 0.0
+    },
+    {
+      "sleeve": "sUSDe",
+      "mu_ann_pct": 3.72,
+      "sigma_ann_pct": 0.5,
+      "sharpe_individual": 7.44,
+      "hl_frac": 0.0,
+      "weight_k479_pct": 5.0,
+      "weight_quarter_kelly_mv_pct": 10.0,
+      "weight_half_kelly_mv_pct": 10.0,
+      "weight_full_kelly_mv_pct": 10.0,
+      "weight_quarter_kelly_interp_pct": 7.5,
+      "weight_max_return_pct": 10.0
+    },
+    {
+      "sleeve": "Spark_sUSDS",
+      "mu_ann_pct": 3.34,
+      "sigma_ann_pct": 0.6,
+      "sharpe_individual": 5.5667,
+      "hl_frac": 0.0,
+      "weight_k479_pct": 5.0,
+      "weight_quarter_kelly_mv_pct": 0.0,
+      "weight_half_kelly_mv_pct": 0.0,
+      "weight_full_kelly_mv_pct": 0.0,
+      "weight_quarter_kelly_interp_pct": 3.75,
+      "weight_max_return_pct": 0.0
+    },
+    {
+      "sleeve": "K376",
+      "mu_ann_pct": 8.0,
+      "sigma_ann_pct": 6.0,
+      "sharpe_individual": 1.3333,
+      "hl_frac": 1.0,
+      "weight_k479_pct": 5.0,
+      "weight_quarter_kelly_mv_pct": 35.0,
+      "weight_half_kelly_mv_pct": 35.0,
+      "weight_full_kelly_mv_pct": 35.0,
+      "weight_quarter_kelly_interp_pct": 13.75,
+      "weight_max_return_pct": 35.0
+    },
+    {
+      "sleeve": "K449",
+      "mu_ann_pct": 1.3,
+      "sigma_ann_pct": 2.5,
+      "sharpe_individual": 0.52,
+      "hl_frac": 1.0,
+      "weight_k479_pct": 5.0,
+      "weight_quarter_kelly_mv_pct": 0.0,
+      "weight_half_kelly_mv_pct": 0.0,
+      "weight_full_kelly_mv_pct": 0.0,
+      "weight_quarter_kelly_interp_pct": 3.75,
+      "weight_max_return_pct": 0.0
+    },
+    {
+      "sleeve": "K476",
+      "mu_ann_pct": 18.7,
+      "sigma_ann_pct": 9.0,
+      "sharpe_individual": 2.0778,
+      "hl_frac": 1.0,
+      "weight_k479_pct": 3.0,
+      "weight_quarter_kelly_mv_pct": 5.0,
+      "weight_half_kelly_mv_pct": 5.0,
+      "weight_full_kelly_mv_pct": 5.0,
+      "weight_quarter_kelly_interp_pct": 3.5,
+      "weight_max_return_pct": 5.0
+    },
+    {
+      "sleeve": "K457",
+      "mu_ann_pct": 5.0,
+      "sigma_ann_pct": 4.0,
+      "sharpe_individual": 1.25,
+      "hl_frac": 0.5,
+      "weight_k479_pct": 5.0,
+      "weight_quarter_kelly_mv_pct": 0.0,
+      "weight_half_kelly_mv_pct": 0.0,
+      "weight_full_kelly_mv_pct": 0.0,
+      "weight_quarter_kelly_interp_pct": 4.48,
+      "weight_max_return_pct": 0.0
+    },
+    {
+      "sleeve": "Cash",
+      "mu_ann_pct": 0.0,
+      "sigma_ann_pct": 0.0,
+      "sharpe_individual": 0.0,
+      "hl_frac": 0.0,
+      "weight_k479_pct": 2.0,
+      "weight_quarter_kelly_mv_pct": 0.0,
+      "weight_half_kelly_mv_pct": 0.0,
+      "weight_full_kelly_mv_pct": 0.0,
+      "weight_quarter_kelly_interp_pct": 1.5,
+      "weight_max_return_pct": 0.0
+    }
+  ],
+  "correlation_matrix": {
+    "labels": [
+      "K280",
+      "K297p",
+      "sUSDe",
+      "Spark_sUSDS",
+      "K376",
+      "K449",
+      "K476",
+      "K457",
+      "Cash"
+    ],
+    "rho": [
+      [
+        1.0,
+        0.1,
+        0.0,
+        0.0,
+        0.2,
+        0.15,
+        0.15,
+        0.3,
+        0.0
+      ],
+      [
+        0.1,
+        1.0,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.0
+      ],
+      [
+        0.0,
+        0.1,
+        1.0,
+        0.5,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.1,
+        0.5,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.2,
+        0.1,
+        0.0,
+        0.0,
+        1.0,
+        0.1,
+        0.2,
+        0.1,
+        0.0
+      ],
+      [
+        0.15,
+        0.1,
+        0.0,
+        0.0,
+        0.1,
+        1.0,
+        0.15,
+        0.1,
+        0.0
+      ],
+      [
+        0.15,
+        0.1,
+        0.0,
+        0.0,
+        0.2,
+        0.15,
+        1.0,
+        0.25,
+        0.0
+      ],
+      [
+        0.3,
+        0.1,
+        0.0,
+        0.0,
+        0.1,
+        0.1,
+        0.25,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "sources": {
+      "K280_K457_0.30": "K461 G5: BTC overlap",
+      "sUSDe_Spark_0.50": "Similar stablecoin protocol",
+      "K449_K476_0.15": "K476 G5b confirmed K478",
+      "K280_K476_0.15": "K479 G5",
+      "K376_K476_0.20": "K476 G5d",
+      "K476_K457_0.25": "K476 G5c",
+      "others": "0.10 default for same-class pairs, 0.0 for stablecoin-vs-active"
+    }
+  },
+  "constraints": {
+    "hl_cap_pct": 65.0,
+    "k280_cap_pct": 70.0,
+    "k280_floor_pct": 50.0,
+    "k476_cap_pct": 5.0,
+    "k297p_cap_pct": 20.0,
+    "stable_total_cap_pct": 15.0,
+    "long_only": true,
+    "sum_to_1": true
+  },
+  "recommended": {
+    "label": "v6.22a_QuarterKelly_MV",
+    "method": "1/4 Kelly (MV utility lambda=4, K280>=50% anchor)",
+    "weights_pct": {
+      "K280": 50.0,
+      "K297p": 0.0,
+      "sUSDe": 10.0,
+      "Spark_sUSDS": 0.0,
+      "K376": 35.0,
+      "K449": 0.0,
+      "K476": 5.0,
+      "K457": 0.0,
+      "Cash": 0.0
+    },
+    "mu_p_pct": 6.607,
+    "sigma_p_pct": 3.308,
+    "sharpe": 1.9973,
+    "hl_pct": 65.0,
+    "ann_profit_10M_USDC": 660700,
+    "ann_profit_100M_USDC": 6607000,
+    "lift_vs_k479_10M": 150300,
+    "lift_vs_k479_100M": 1503000,
+    "lift_10M_bps": 1.5,
+    "constraint_binding": {
+      "hl_65pct": true,
+      "k280_70pct": false,
+      "k280_50pct_floor": true,
+      "k476_5pct": true,
+      "k297p_20pct": false,
+      "stable_15pct": false
+    },
+    "production_note": "K280>=50% floor is a production anchor from K427 analysis. K476 cap=5% binding (new paper-trade sleeve, conservative). K280 unconstrained optimal=K376 dominated; floor prevents this."
+  },
+  "comparison_table": [
+    {
+      "label": "K479_heuristic",
+      "weights_pct": {
+        "K280": 65.0,
+        "K297p": 5.0,
+        "sUSDe": 5.0,
+        "Spark_sUSDS": 5.0,
+        "K376": 5.0,
+        "K449": 5.0,
+        "K476": 3.0,
+        "K457": 5.0,
+        "Cash": 2.0
+      },
+      "mu_p_pct": 5.104,
+      "sigma_p_pct": 2.84,
+      "sharpe": 1.7972,
+      "hl_pct": 53.0,
+      "ann_profit_10M_USDC": 510400,
+      "ann_profit_100M_USDC": 5104000,
+      "lift_vs_k479_10M": 0,
+      "lift_vs_k479_100M": 0,
+      "hl_check": {
+        "hl_pct": 53.0,
+        "cap_pct": 65.0,
+        "headroom_pct": 12.0,
+        "passes": true,
+        "constraint_binding": false
+      }
+    },
+    {
+      "label": "MaxReturn_K280gte50",
+      "weights_pct": {
+        "K280": 50.0,
+        "K297p": 0.0,
+        "sUSDe": 10.0,
+        "Spark_sUSDS": 0.0,
+        "K376": 35.0,
+        "K449": 0.0,
+        "K476": 5.0,
+        "K457": 0.0,
+        "Cash": 0.0
+      },
+      "mu_p_pct": 6.607,
+      "sigma_p_pct": 3.308,
+      "sharpe": 1.9973,
+      "hl_pct": 65.0,
+      "ann_profit_10M_USDC": 660700,
+      "ann_profit_100M_USDC": 6607000,
+      "lift_vs_k479_10M": 150300,
+      "lift_vs_k479_100M": 1503000,
+      "hl_check": {
+        "hl_pct": 65.0,
+        "cap_pct": 65.0,
+        "headroom_pct": 0.0,
+        "passes": true,
+        "constraint_binding": true
+      }
+    },
+    {
+      "label": "FullKelly_MV_K280gte50",
+      "weights_pct": {
+        "K280": 50.0,
+        "K297p": 0.0,
+        "sUSDe": 10.0,
+        "Spark_sUSDS": 0.0,
+        "K376": 35.0,
+        "K449": 0.0,
+        "K476": 5.0,
+        "K457": 0.0,
+        "Cash": 0.0
+      },
+      "mu_p_pct": 6.607,
+      "sigma_p_pct": 3.308,
+      "sharpe": 1.9973,
+      "hl_pct": 65.0,
+      "ann_profit_10M_USDC": 660700,
+      "ann_profit_100M_USDC": 6607000,
+      "lift_vs_k479_10M": 150300,
+      "lift_vs_k479_100M": 1503000,
+      "hl_check": {
+        "hl_pct": 65.0,
+        "cap_pct": 65.0,
+        "headroom_pct": -0.0,
+        "passes": false,
+        "constraint_binding": true
+      }
+    },
+    {
+      "label": "HalfKelly_MV_K280gte50",
+      "weights_pct": {
+        "K280": 50.0,
+        "K297p": 0.0,
+        "sUSDe": 10.0,
+        "Spark_sUSDS": 0.0,
+        "K376": 35.0,
+        "K449": 0.0,
+        "K476": 5.0,
+        "K457": 0.0,
+        "Cash": 0.0
+      },
+      "mu_p_pct": 6.607,
+      "sigma_p_pct": 3.308,
+      "sharpe": 1.9973,
+      "hl_pct": 65.0,
+      "ann_profit_10M_USDC": 660700,
+      "ann_profit_100M_USDC": 6607000,
+      "lift_vs_k479_10M": 150300,
+      "lift_vs_k479_100M": 1503000,
+      "hl_check": {
+        "hl_pct": 65.0,
+        "cap_pct": 65.0,
+        "headroom_pct": -0.0,
+        "passes": false,
+        "constraint_binding": true
+      }
+    },
+    {
+      "label": "QuarterKelly_MV_K280gte50",
+      "weights_pct": {
+        "K280": 50.0,
+        "K297p": 0.0,
+        "sUSDe": 10.0,
+        "Spark_sUSDS": 0.0,
+        "K376": 35.0,
+        "K449": 0.0,
+        "K476": 5.0,
+        "K457": 0.0,
+        "Cash": 0.0
+      },
+      "mu_p_pct": 6.607,
+      "sigma_p_pct": 3.308,
+      "sharpe": 1.9973,
+      "hl_pct": 65.0,
+      "ann_profit_10M_USDC": 660700,
+      "ann_profit_100M_USDC": 6607000,
+      "lift_vs_k479_10M": 150300,
+      "lift_vs_k479_100M": 1503000,
+      "hl_check": {
+        "hl_pct": 65.0,
+        "cap_pct": 65.0,
+        "headroom_pct": -0.0,
+        "passes": false,
+        "constraint_binding": true
+      }
+    },
+    {
+      "label": "QuarterKelly_interp",
+      "weights_pct": {
+        "K280": 58.02,
+        "K297p": 3.75,
+        "sUSDe": 7.5,
+        "Spark_sUSDS": 3.75,
+        "K376": 13.75,
+        "K449": 3.75,
+        "K476": 3.5,
+        "K457": 4.48,
+        "Cash": 1.5
+      },
+      "mu_p_pct": 5.5013,
+      "sigma_p_pct": 2.7831,
+      "sharpe": 1.9767,
+      "hl_pct": 56.0,
+      "ann_profit_10M_USDC": 550125,
+      "ann_profit_100M_USDC": 5501250,
+      "lift_vs_k479_10M": 39725,
+      "lift_vs_k479_100M": 397250,
+      "hl_check": {
+        "hl_pct": 56.0,
+        "cap_pct": 65.0,
+        "headroom_pct": 9.0,
+        "passes": true,
+        "constraint_binding": false
+      }
+    },
+    {
+      "label": "HalfKelly_interp",
+      "weights_pct": {
+        "K280": 51.05,
+        "K297p": 2.5,
+        "sUSDe": 10.0,
+        "Spark_sUSDS": 2.5,
+        "K376": 22.5,
+        "K449": 2.5,
+        "K476": 4.0,
+        "K457": 3.95,
+        "Cash": 1.0
+      },
+      "mu_p_pct": 5.8985,
+      "sigma_p_pct": 2.8341,
+      "sharpe": 2.0813,
+      "hl_pct": 59.0,
+      "ann_profit_10M_USDC": 589850,
+      "ann_profit_100M_USDC": 5898500,
+      "lift_vs_k479_10M": 79450,
+      "lift_vs_k479_100M": 794500,
+      "hl_check": {
+        "hl_pct": 59.0,
+        "cap_pct": 65.0,
+        "headroom_pct": 6.0,
+        "passes": true,
+        "constraint_binding": false
+      }
+    },
+    {
+      "label": "FullKelly_interp",
+      "weights_pct": {
+        "K280": 37.1,
+        "K297p": 0.0,
+        "sUSDe": 15.0,
+        "Spark_sUSDS": 0.0,
+        "K376": 40.0,
+        "K449": 0.0,
+        "K476": 5.0,
+        "K457": 2.9,
+        "Cash": 0.0
+      },
+      "mu_p_pct": 6.693,
+      "sigma_p_pct": 3.2289,
+      "sharpe": 2.0728,
+      "hl_pct": 65.0,
+      "ann_profit_10M_USDC": 669300,
+      "ann_profit_100M_USDC": 6693000,
+      "lift_vs_k479_10M": 158900,
+      "lift_vs_k479_100M": 1589000,
+      "hl_check": {
+        "hl_pct": 65.0,
+        "cap_pct": 65.0,
+        "headroom_pct": -0.0,
+        "passes": false,
+        "constraint_binding": true
+      }
+    },
+    {
+      "label": "MaxSharpe_unconstrained",
+      "weights_pct": {
+        "K280": 0.12,
+        "K297p": 1.08,
+        "sUSDe": 10.75,
+        "Spark_sUSDS": 3.44,
+        "K376": 0.1,
+        "K449": 0.0,
+        "K476": 0.15,
+        "K457": 0.1,
+        "Cash": 84.25
+      },
+      "mu_p_pct": 0.6112,
+      "sigma_p_pct": 0.0735,
+      "sharpe": 8.3199,
+      "hl_pct": 1.44,
+      "ann_profit_10M_USDC": 61115,
+      "ann_profit_100M_USDC": 611152,
+      "lift_vs_k479_10M": -449285,
+      "lift_vs_k479_100M": -4492848,
+      "hl_check": {
+        "hl_pct": 1.44,
+        "cap_pct": 65.0,
+        "headroom_pct": 63.56,
+        "passes": true,
+        "constraint_binding": false
+      }
+    },
+    {
+      "label": "MaxSharpe_K280gte50",
+      "weights_pct": {
+        "K280": 50.0,
+        "K297p": 20.0,
+        "sUSDe": 15.0,
+        "Spark_sUSDS": 0.0,
+        "K376": 8.89,
+        "K449": 0.0,
+        "K476": 5.0,
+        "K457": 1.11,
+        "Cash": 0.0
+      },
+      "mu_p_pct": 5.6596,
+      "sigma_p_pct": 2.3731,
+      "sharpe": 2.385,
+      "hl_pct": 59.44,
+      "ann_profit_10M_USDC": 565963,
+      "ann_profit_100M_USDC": 5659633,
+      "lift_vs_k479_10M": 55563,
+      "lift_vs_k479_100M": 555633,
+      "hl_check": {
+        "hl_pct": 59.44,
+        "cap_pct": 65.0,
+        "headroom_pct": 5.56,
+        "passes": true,
+        "constraint_binding": false
+      }
+    }
+  ],
+  "profit_lift_summary": {
+    "k479_heuristic_10M": 510400,
+    "k479_heuristic_100M": 5104000,
+    "quarter_kelly_mv_10M": 660700,
+    "quarter_kelly_mv_100M": 6607000,
+    "lift_10M": 150300,
+    "lift_100M": 1503000,
+    "quarter_kelly_interp_10M": 550125,
+    "lift_interp_10M": 39725,
+    "note": "Annual USDC profit = mu_p * AUM. v6.22a candidate lifts return by reallocating from lower-mu sleeves (cash 2%, stablecoins underweight) to higher-alpha sleeves. Negative lift possible if Kelly recommends Sharpe over return (similar to K427 result where Kelly had lower Ann Return than K346)."
+  },
+  "robustness": {
+    "mu_shock_20pct_qtr_kelly": [
+      {
+        "sleeve": "K280",
+        "weight_pct": 50.0,
+        "delta_ret_up_bps": 50.0,
+        "delta_ret_down_bps": -50.0,
+        "profit_impact_up_10M": 50000,
+        "profit_impact_down_10M": -50000
+      },
+      {
+        "sleeve": "K297p",
+        "weight_pct": 0.0,
+        "delta_ret_up_bps": 0.0,
+        "delta_ret_down_bps": 0.0,
+        "profit_impact_up_10M": 0,
+        "profit_impact_down_10M": 0
+      },
+      {
+        "sleeve": "sUSDe",
+        "weight_pct": 10.0,
+        "delta_ret_up_bps": 7.44,
+        "delta_ret_down_bps": -7.44,
+        "profit_impact_up_10M": 7440,
+        "profit_impact_down_10M": -7440
+      },
+      {
+        "sleeve": "Spark_sUSDS",
+        "weight_pct": 0.0,
+        "delta_ret_up_bps": 0.0,
+        "delta_ret_down_bps": 0.0,
+        "profit_impact_up_10M": 0,
+        "profit_impact_down_10M": 0
+      },
+      {
+        "sleeve": "K376",
+        "weight_pct": 35.0,
+        "delta_ret_up_bps": 56.0,
+        "delta_ret_down_bps": -56.0,
+        "profit_impact_up_10M": 56000,
+        "profit_impact_down_10M": -56000
+      },
+      {
+        "sleeve": "K449",
+        "weight_pct": 0.0,
+        "delta_ret_up_bps": 0.0,
+        "delta_ret_down_bps": 0.0,
+        "profit_impact_up_10M": 0,
+        "profit_impact_down_10M": 0
+      },
+      {
+        "sleeve": "K476",
+        "weight_pct": 5.0,
+        "delta_ret_up_bps": 18.7,
+        "delta_ret_down_bps": -18.7,
+        "profit_impact_up_10M": 18700,
+        "profit_impact_down_10M": -18700
+      },
+      {
+        "sleeve": "K457",
+        "weight_pct": 0.0,
+        "delta_ret_up_bps": 0.0,
+        "delta_ret_down_bps": 0.0,
+        "profit_impact_up_10M": 0,
+        "profit_impact_down_10M": 0
+      },
+      {
+        "sleeve": "Cash",
+        "weight_pct": 0.0,
+        "delta_ret_up_bps": 0.0,
+        "delta_ret_down_bps": 0.0,
+        "profit_impact_up_10M": 0,
+        "profit_impact_down_10M": 0
+      }
+    ],
+    "mu_shock_20pct_interp": [
+      {
+        "sleeve": "K280",
+        "weight_pct": 58.02,
+        "delta_ret_up_bps": 58.02,
+        "delta_ret_down_bps": -58.02,
+        "profit_impact_up_10M": 58025,
+        "profit_impact_down_10M": -58025
+      },
+      {
+        "sleeve": "K297p",
+        "weight_pct": 3.75,
+        "delta_ret_up_bps": 3.37,
+        "delta_ret_down_bps": -3.37,
+        "profit_impact_up_10M": 3375,
+        "profit_impact_down_10M": -3375
+      },
+      {
+        "sleeve": "sUSDe",
+        "weight_pct": 7.5,
+        "delta_ret_up_bps": 5.58,
+        "delta_ret_down_bps": -5.58,
+        "profit_impact_up_10M": 5580,
+        "profit_impact_down_10M": -5580
+      },
+      {
+        "sleeve": "Spark_sUSDS",
+        "weight_pct": 3.75,
+        "delta_ret_up_bps": 2.51,
+        "delta_ret_down_bps": -2.51,
+        "profit_impact_up_10M": 2505,
+        "profit_impact_down_10M": -2505
+      },
+      {
+        "sleeve": "K376",
+        "weight_pct": 13.75,
+        "delta_ret_up_bps": 22.0,
+        "delta_ret_down_bps": -22.0,
+        "profit_impact_up_10M": 22000,
+        "profit_impact_down_10M": -22000
+      },
+      {
+        "sleeve": "K449",
+        "weight_pct": 3.75,
+        "delta_ret_up_bps": 0.98,
+        "delta_ret_down_bps": -0.98,
+        "profit_impact_up_10M": 975,
+        "profit_impact_down_10M": -975
+      },
+      {
+        "sleeve": "K476",
+        "weight_pct": 3.5,
+        "delta_ret_up_bps": 13.09,
+        "delta_ret_down_bps": -13.09,
+        "profit_impact_up_10M": 13090,
+        "profit_impact_down_10M": -13090
+      },
+      {
+        "sleeve": "K457",
+        "weight_pct": 4.48,
+        "delta_ret_up_bps": 4.48,
+        "delta_ret_down_bps": -4.48,
+        "profit_impact_up_10M": 4475,
+        "profit_impact_down_10M": -4475
+      },
+      {
+        "sleeve": "Cash",
+        "weight_pct": 1.5,
+        "delta_ret_up_bps": 0.0,
+        "delta_ret_down_bps": 0.0,
+        "profit_impact_up_10M": 0,
+        "profit_impact_down_10M": 0
+      }
+    ],
+    "corr_shock_50pct_qtr_kelly": {
+      "base_sharpe": 1.9973,
+      "shocked_sharpe": 1.8988,
+      "delta_sharpe": -0.0984,
+      "base_vol_pct": 3.308,
+      "shocked_vol_pct": 3.4795,
+      "note": "+50% correlation shock on all off-diagonal pairs"
+    },
+    "corr_shock_50pct_interp": {
+      "base_sharpe": 1.9767,
+      "shocked_sharpe": 1.8856,
+      "delta_sharpe": -0.0911,
+      "base_vol_pct": 2.7831,
+      "shocked_vol_pct": 2.9175,
+      "note": "+50% correlation shock on all off-diagonal pairs"
+    },
+    "cvar_qtr_kelly": {
+      "alpha": 0.05,
+      "mu_p_pct": 6.607,
+      "sigma_p_pct": 3.308,
+      "annual_VaR_5pct": -1.1658,
+      "annual_CVaR_5pct": 0.2165,
+      "return_to_cvar_ratio": 30.5178
+    },
+    "cvar_interp_qtr": {
+      "alpha": 0.05,
+      "mu_p_pct": 5.5013,
+      "sigma_p_pct": 2.7831,
+      "annual_VaR_5pct": -0.9235,
+      "annual_CVaR_5pct": 0.2394,
+      "return_to_cvar_ratio": 22.9767
+    },
+    "cvar_k479": {
+      "alpha": 0.05,
+      "mu_p_pct": 5.104,
+      "sigma_p_pct": 2.84,
+      "annual_VaR_5pct": -0.4326,
+      "annual_CVaR_5pct": 0.7542,
+      "return_to_cvar_ratio": 6.7676
+    }
+  },
+  "decision": {
+    "variant": "v6.22a",
+    "recommended": "1/4 Kelly MV (QuarterKelly_MV_K280gte50)",
+    "weights": {
+      "K280": 50.0,
+      "K297p": 0.0,
+      "sUSDe": 10.0,
+      "Spark_sUSDS": 0.0,
+      "K376": 35.0,
+      "K449": 0.0,
+      "K476": 5.0,
+      "K457": 0.0,
+      "Cash": 0.0
+    },
+    "sharpe": 1.9973,
+    "mu_pct": 6.607,
+    "hl_pct": 65.0,
+    "lift_10M": 150300,
+    "lift_100M": 1503000,
+    "lift_label": "+$150,300/yr @ $10M | +$1,503,000/yr @ $100M",
+    "production_gate": "K476 paper-trade 60d gate still applies",
+    "binding_analysis": "K476 cap (5%) binding. K280 floor (50%) active if optimizer would go lower. HL constraint non-binding (headroom available). sUSDe+Spark cap non-binding."
+  }
+}
