@@ -2389,3 +2389,29 @@ launchctl kickstart -k gui/$(id -u)/com.cryptolab.k280-live
 Source files: `wave_k530_k498_phase_1a_playbook.py` | `wave_k530_k498_phase_1a_playbook.json` | `wave_k530_k498_phase_1a_playbook.md`
 
 *K530 Appendix — Added 2026-05-30 05:00 JST*
+
+
+---
+
+## K540 R16 Catalyst Integration (Added 2026-05-30 05:34 JST)
+
+### June 4-5 Dual Catalyst Event Window
+
+| Catalyst | Status | Passage Prob | +$/yr @$10M | Trigger |
+|----------|--------|-------------|------------|---------|
+| R16-01 HIP-5 AF2 Buyback | Voting June 5 | 68% | +$80-220K | June 5 18:00 ET result |
+| R16-11 Clarity Act | Floor vote June 4-5 | 87% | +$150-400K | Senate.gov confirmation |
+| Both PASS (combined) | — | ~59% | +$420K mid | Both confirmed D+0 |
+
+### Portfolio Action by Outcome
+
+| Outcome | HL Exposure | K376 | K297' | K430 Leverage | Notes |
+|---------|------------|------|-------|--------------|-------|
+| PASS+PASS | Hold 65% | Activate 2-3% sleeve | Hold | Restore 3x D+7 | MAX_BULLISH |
+| PASS+FAIL | Hold 65% | Hold | Hold | Restore 3x D+7 | MODERATE |
+| FAIL+PASS | Hold 65% | Hold | +2% add | Restore 3x D+7 | MODERATE+ |
+| FAIL+FAIL | Reduce 60% | Hold | Hold | Maintain 2x D+14 | DEFENSIVE |
+
+**EV: +$378,800/yr @$10M (probability-weighted)**
+
+See `wave_k540_dual_catalyst_prep.{py,json,md}` for full playbook.
