@@ -2664,3 +2664,113 @@ HL exposure trajectory: baseline 47% → K449 52% → K476 55% → K484 58% (< 6
 Source files: `wave_k549_k449_week1_live.{py,json,md}`
 
 *K549 Appendix — Added 2026-05-30 05:46 JST*
+
+
+---
+
+## K555 v6.29 Architecture Proposal
+
+**Version:** 6.29 | **Generated:** 2026-05-30 06:10 JST | **Wave:** K555
+**Status:** CANDIDATE — K541 Stablecoin Supply Growth addition (Bybit-only, 90d paper gate)
+
+### v6.29 Executive Summary
+
+> **K523 Transparent Range (mandatory):**
+> - Conservative: **$1,810,250/yr** @$10M (25% family haircut, K541 $200K, K495 free-tier)
+> - Mid: **$2,502,000/yr** @$10M (K541 $294K stated, K495 paid-tier, 0% haircut)
+> - Optimistic: **$2,725,000/yr** @$10M (+K492E $223K, bull regime)
+>
+> **vs v6.28 K523 mid ($2.02M): +$294K K541 contribution (mid)**
+> **HL: 62.5% (-1.5pp vs v6.28 64%; K541 Bybit-only + K280 35% cut)**
+> **5-year mid: $30,542,000 central (vs v6.28 $28.7M, +$1.8M)**
+
+| Metric | v6.28 (K516) | v6.29 (K555) | Delta |
+|--------|-------------|-------------|-------|
+| Ann Yield @$10M conservative | $1,634K | $1,810K | +$176K |
+| Ann Yield @$10M mid | $2,024K | $2,502K | +$478K |
+| Ann Yield @$10M optimistic | $2,483K | $2,725K | +$242K |
+| HL Concentration | 64.0% | **62.5%** | **-1.5pp** |
+| K541 Contribution | — | $294K (mid) | **NEW** |
+| 5y Terminal @$10M mid | $28.7M | $30.5M | +$1.8M |
+| Sleeves | 15 | **16** | +1 (K541) |
+
+### K541 HL Analysis (Phase 3 Recheck)
+
+**Key:** K541 DefiLlama USDT+USDC supply signal is exchange-agnostic → Bybit-only execution.
+K280 35% × 50% HL = 17.5% (was 38% × 50% = 19.0%) → net -1.5pp.
+K541 3% Bybit-only = +0.0pp HL.
+**v6.29 HL = 64.0% - 1.5pp = 62.5% < 65% cap — well within constraint.**
+
+| Analysis Path | HL Result |
+|--------------|-----------|
+| Naive: K541 HL-only 3% | 64% + 3% = 67% → FAIL (over cap) |
+| K541 split HL+Bybit 50/50 | 64% + 1.5% - 1.5% = 64% → borderline |
+| **K541 Bybit-only (selected)** | **64% - 1.5pp (K280) = 62.5% → PASS ✓** |
+
+### v6.29 Composition
+
+| Sleeve | v6.28 | v6.29 | Delta | Venue | Ann @$10M mid |
+|--------|-------|-------|-------|-------|---------------|
+| K280 multi-venue | 38% | **35%** | -3pp | HL+Bybit | $246K |
+| K297' | 5% | 5% | — | HL | $50K |
+| sUSDe | 7% | 7% | — | Ethena | $14K |
+| Spark sUSDS | 7% | 7% | — | Spark | $14K |
+| K376 momentum | 8% | 8% | — | HL | $48K |
+| K449 ETH-BTC | 5% | 5% | — | HL | $13K |
+| K476 SOL-BTC | 4% | 4% | — | HL | $187K |
+| K484 AVAX-BTC | 5% | 5% | — | HL | $76K |
+| K493 ATOM-BTC | 5% | 5% | — | HL | $231K |
+| K500 INJ-BTC | 4% | 4% | — | HL | $124K |
+| K507 SEI-BTC | 2% | 2% | — | HL+Bybit | $179K |
+| K507 TIA-BTC | 1% | 1% | — | HL | $51K |
+| K512 APT-BTC | 2% | 2% | — | HL+Bybit | $302K |
+| K495 DEX-CEX | 6% | 6% | — | HL | $646K |
+| **K541 stablecoin** | **0%** | **3%** | **+3pp** | **Bybit** | **$294K** |
+| Cash | 1% | 1% | — | — | — |
+| **TOTAL** | **100%** | **100%** | — | — | — |
+
+### Profit @ $10M / $100M / $200M (K523 ranges)
+
+| AUM | Conservative | Mid | Optimistic |
+|-----|-------------|-----|-----------|
+| $10M | $1,810K/yr | **$2,502K/yr** | $2,725K/yr |
+| $100M | $18.1M/yr | **$25.0M/yr** | $27.3M/yr |
+| $200M | $36.2M/yr | **$50.0M/yr** | $54.5M/yr |
+
+### 5-Year Projection @$10M
+
+| Scenario | 5y Terminal | vs v6.28 ($28.7M) |
+|----------|-------------|-------------------|
+| v6.29 conservative | $23.0M | -$5.7M |
+| **v6.29 mid** | **$30.5M** | **+$1.8M** |
+| v6.29 optimistic | $33.4M | +$4.7M |
+
+### §6 Gate Summary (v6.29)
+
+| Gate | v6.29 | Status |
+|------|-------|--------|
+| HL cap ≤ 65% | 62.5% | ✓ PASS (2.5pp headroom) |
+| G5 K541 max corr | 0.074 | ✓ PASS (< 0.40 threshold, orthogonal) |
+| G7 ann return | ~25% mid | ✓ PASS (≥ 15%) |
+| G6 live paper gate | 90d required | PENDING (pre-gate) |
+| G4 negative fold tolerance | seasonal supply dips | CONDITIONAL |
+
+### Implementation Roadmap Phase 1-6
+
+| Phase | Timing | Action | HL After | Target Yield |
+|-------|--------|--------|----------|--------------|
+| 1 | D0 | v6.26→v6.28 + K280 75→60% (K552) | 57.5% | $650K-$1.05M |
+| 2 | D7 | K449 LIVE + K498 Phase 1A | ~57.5% | $1.05M-$1.45M |
+| 3 | D14-D30 | K376 BULL_CONFIRMED + paired-trade family | ~52-58% | $1.35M-$1.95M |
+| 4 | D60 | v6.28 FULL LIVE (K280=38%, family live) | 64% | $1.55M-$2.35M |
+| 5 | D90-D150 | K541 90d paper gate + K521 90d paper gate | 64%→62.5% | $1.81M-$2.79M |
+| **6** | **D150** | **v6.29 FULL LIVE + K545 tax harvester** | **62.5%** | **$1.81M-$2.73M** |
+
+### User Actions Added (K555)
+
+- **Action #32**: K541 90d paper-trade monitor (post K550 scaffold) — OOS Sh >= 1.2 gate → +$294K/yr mid @$10M (Bybit-only, 3% sleeve)
+- **Action #33**: K521 Options Skew 90d paper (post scaffold) — OOS Sh >= 1.0 gate → +$494K/yr stated @$10M (Deribit DVOL)
+
+Source files: `wave_k555_v629_proposal.py` | `wave_k555_v629_proposal.json` | `wave_k555_v629_proposal.md`
+
+*K555 Appendix — Added 2026-05-30 06:10 JST*
