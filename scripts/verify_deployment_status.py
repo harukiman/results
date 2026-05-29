@@ -161,6 +161,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="smart_router",
         expected_html_status="SCAFFOLD-READY",  # K434: plist in repo root (gitignored); activate after live testing
     ),
+    DaemonSpec(
+        label="com.cryptolab.k443-variational-paper",
+        purpose="K443 K297'' Variational paper-trade scaffold (XAU 50%+XAG 30%+CL 20%, 4h funding, 8% AUM, capacity expansion $25M+, trading API trigger Q3-Q4 2026, 17th daemon)",
+        scripts=["scripts/k297_variational_run.py"],
+        log_basename="k443_variational_paper",
+        expected_html_status="SCAFFOLD-READY",  # K443: plist in repo root (gitignored); activate when Variational trading API released
+    ),
 ]
 
 

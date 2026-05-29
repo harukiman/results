@@ -1,0 +1,76 @@
+{
+  "wave": "K443",
+  "title": "K297' Variational Venue Prep — 17th Daemon Scaffold, Q3 API Trigger",
+  "date_jst": "2026-05-29 23:32 JST",
+  "status": "SCAFFOLD-READY",
+  "trigger": "Variational trading API public release (Q3-Q4 2026)",
+  "strategy": {
+    "name": "K297''-Variational",
+    "instruments": {
+      "XAU": {"weight_base": 0.50, "type": "Gold perp", "settlement": "4h", "note": "K297 equivalent, always-on"},
+      "XAG": {"weight_base": 0.30, "type": "Silver perp", "settlement": "4h", "note": "NEW — not on HyperLiquid"},
+      "CL":  {"weight_base": 0.20, "type": "WTI Crude perp", "settlement": "4h", "note": "NEW — not on HyperLiquid"}
+    },
+    "weighting": "inv-vol blend (50% base + 50% inv-vol), floor 10%, ceiling 65%",
+    "filter": "XAU FR > 0 gates XAG/CL entries (SPX-proxy)",
+    "settlement_cadence": "4h (Variational) vs 1h/8h (HL)",
+    "exchange": "Variational (https://variational.io, $3.85B TVL)"
+  },
+  "multivenue_allocation": {
+    "total_k297_sleeve_pct": 0.20,
+    "hl_k297_prime_pct": 0.12,
+    "variational_k297pp_pct": 0.08,
+    "rebalance_cadence": "monthly (K427 pattern)",
+    "rebalance_trigger": "HL sleeve > 65% of K297 total"
+  },
+  "capacity_projection": {
+    "25M_aum_2venue_hl_bybit": 4280000,
+    "25M_aum_3venue_with_variational": 5500000,
+    "50M_aum_3venue": 6500000,
+    "50M_aum_vs_drift": "Variational > Drift: XAG/CL not on Drift, $3.85B TVL vs $1.2B"
+  },
+  "deliverables": {
+    "script": "scripts/k297_variational_run.py",
+    "plist": "com.cryptolab.k443-variational-paper.plist",
+    "verify_registry": "scripts/verify_deployment_status.py (17th daemon added)",
+    "rss_keywords": "scripts/regulatory_rss_monitor.py (variational trading api + variational finance)",
+    "runbook": "docs/k302a_runbook.md §27",
+    "report": "report.html (K443 row, 17th daemon, header updated)",
+    "wave_files": ["wave_k443_variational_prep.md", "wave_k443_variational_prep.json"]
+  },
+  "daemon_count": 17,
+  "api_state": {
+    "public_read_api": "LIVE (K363/K365 confirmed)",
+    "trading_api": "PENDING (Q3-Q4 2026)",
+    "k363_snapshots": 1,
+    "k365_baseline": {
+      "XAUT": {"fr_ann_pct": -71.1, "oi_usd": 26600000},
+      "XAU":  {"fr_ann_pct": 560.0, "oi_usd": 21900000},
+      "PAXG": {"fr_ann_pct": 239.8, "oi_usd": 15000000},
+      "CL":   {"fr_ann_pct": -247.0, "oi_usd": 4900000},
+      "XAG":  {"fr_ann_pct": 0.0,   "oi_usd": 4100000}
+    }
+  },
+  "activation_conditions": [
+    "A: Variational trading API public release → load plist + 60d paper-trade → K444 production",
+    "B: K387 RSS alert: 'variational trading api' or 'variational finance' keyword",
+    "C: K363 daemon 90d data → rolling Sharpe computation enabled",
+    "D: HL K297' sleeve > 65% of K297 total → rebalance trigger"
+  ],
+  "constraints": {
+    "production_scripts_modified": false,
+    "new_packages_required": false,
+    "k339_security": true,
+    "paper_trade_only": true,
+    "gitignored_plist": true
+  },
+  "references": {
+    "K363": "Variational RWA FR monitor scaffold",
+    "K365": "Variational API confirmation + baseline snapshot",
+    "K297": "Original PAXG/SPX satellite",
+    "K302a": "K297' HL satellite (K302a, §27)",
+    "K431": "$25M+ AUM multi-venue requirement",
+    "K357": "Emergency exit protocol",
+    "K386": "BEAR_1 fallback (§18)"
+  }
+}

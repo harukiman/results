@@ -60,6 +60,8 @@ KEYWORDS = [
     "crypto market structure",
     "defi exemption",
     "cftc market authority",
+    "variational trading api",   # K443: trigger for K297'' Variational activation (Q3-Q4 2026)
+    "variational finance",       # K443: Variational protocol news
 ]
 
 

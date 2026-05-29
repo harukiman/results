@@ -3292,3 +3292,190 @@ python3 scripts/post_only_order_manager.py --dry-run
 ---
 
 *K439 §26 — POST_ONLY Order Manager + IOC Fallback (+$23K/yr @ $10M, K208/K297'/K376 integration) — 2026-05-29*
+
+---
+
+## §27 K443 Variational Venue Prep — K297'' Paper-Trade (17th Daemon)
+
+**Wave:** K443 | **Status:** SCAFFOLD-READY (PENDING API) | **Date:** 2026-05-25
+
+### §27.1 Overview
+
+K443 prepares a Variational-equivalent of the K297' satellite strategy (K302a) for deployment when the Variational trading API becomes publicly available (target Q3-Q4 2026).
+
+**Strategy: K297''-Variational**
+
+| Component | Instrument | Weight | Status |
+|-----------|-----------|--------|--------|
+| Gold carry (K297 equiv) | XAU perp | 50% base | Always-on |
+| Silver carry (NEW) | XAG perp | 30% base | XAU-filter gated |
+| WTI Crude carry (NEW) | CL perp | 20% base | XAU-filter gated |
+
+Weights adjusted by inv-vol (|FR| magnitude), 50/50 blend with base weights. Floor 10%, ceiling 65%.
+
+**K297 sleeve multi-venue split (v6.17 candidate):**
+
+| Sleeve | Strategy | % of AUM | Exchange |
+|--------|----------|----------|---------|
+| HL K297' | PAXG 60% + SPX 40% | 12% | HyperLiquid |
+| Variational K297'' | XAU 50% + XAG 30% + CL 20% | 8% | Variational |
+| **Total K297 sleeve** | — | **20%** | Multi-venue |
+
+### §27.2 Capacity Rationale
+
+Per K431: at $25M+ AUM, K297' on HyperLiquid alone hits capacity (OI impact at HL). Variational ($3.85B TVL, K363/K407 tracking) absorbs overflow, unlocking:
+
+- **$25M AUM (HL+Bybit+Variational):** ~$5-6M/yr (vs $4.28M/yr 2-venue)
+- **$50M AUM (3-venue):** ~$6-7M/yr
+- **Advantage over Drift:** XAG/CL not on Drift; HIP-3 RWA mechanism equivalent; $3.85B TVL vs $1.2B (K396)
+
+### §27.3 Activation Trigger Conditions
+
+| Trigger | Description | Action |
+|---------|-------------|--------|
+| **Primary** | Variational trading API public release (Q3-Q4 2026) | Activate plist + start 60d paper-trade |
+| **K387 RSS** | Keyword "Variational trading API" or "Variational finance" in RSS monitor | Alert operator immediately |
+| **K363 data** | 90+ days of FR snapshots accumulated | Enable rolling Sharpe computation |
+| **Rebalance** | HL K297' sleeve > 65% of K297 total | Shift 5pp to Variational |
+
+K387 regulatory RSS monitor now includes "variational trading api" and "variational finance" keywords (K443 update).
+
+### §27.4 Activation Procedure (When API Released)
+
+```bash
+# Step 1: Verify trading API available
+curl -s "https://api.variational.io/v1/orders" | python3 -m json.tool
+
+# Step 2: Load plist
+cp /Users/nekonaomichi/crypto-lab/com.cryptolab.k443-variational-paper.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k443-variational-paper.plist
+
+# Step 3: Verify dry-run
+$CRYPTO_LAB/.venv311/bin/python3 $CRYPTO_LAB/scripts/k297_variational_run.py --dry-run
+
+# Step 4: Confirm 17-daemon registry
+$CRYPTO_LAB/.venv311/bin/python3 $CRYPTO_LAB/scripts/verify_deployment_status.py
+# Expect: 0 mismatches
+
+# Step 5: Set API key (K444 patch)
+export VARIATIONAL_API_KEY="<key>"
+# Edit plist: uncomment VARIATIONAL_API_KEY EnvironmentVariable block
+
+# Step 6: Start 60-day paper-trade phase
+# Monitor: python3 scripts/k297_variational_run.py --status
+
+# Step 7: After 60d paper-trade → K444 production activation wave
+```
+
+### §27.5 Daily Operations (After Activation)
+
+```bash
+# Dashboard check
+python3 $CRYPTO_LAB/scripts/k297_variational_run.py --status
+
+# Manual run
+$CRYPTO_LAB/.venv311/bin/python3 $CRYPTO_LAB/scripts/k297_variational_run.py
+
+# Log review
+tail -20 $CRYPTO_LAB/logs/k443_variational_paper.log | grep -E "(ALERT|ERROR|PnL)"
+tail -5 $CRYPTO_LAB/logs/k443_variational_paper.err
+
+# Dashboard JSON
+python3 -c "
+import json
+with open('$CRYPTO_LAB/data/k443_variational_dashboard.json') as f:
+    d = json.load(f)
+print(f'Status: {d[\"mode\"]}  API: {d[\"api_status\"]}')
+print(f'Net PnL: \${d[\"pnl_result\"][\"net_pnl_usd\"]:.4f}')
+print(f'Ann est: \${d[\"ann_net_pnl_usd\"]:,.0f}/yr')
+print(f'Updated: {d[\"updated_at_jst\"]}')
+"
+```
+
+### §27.6 BEAR_1 Scenario (K386 Integration)
+
+If `BEAR_1_FALLBACK_ACTIVE.flag` is present:
+- **XAU position:** HOLD (safe-haven demand increases gold carry)
+- **XAG position:** HOLD (silver follows gold safe-haven)
+- **CL position:** REDUCE 50% (crude oil carry less predictable under CFTC stress)
+- Weight renormalization applied automatically
+
+Variational XAU/XAG are expected to be **BEAR_1-resilient** — unlike K297' SPX component which suspends entirely.
+
+### §27.7 Emergency Exit (K357 Integration)
+
+`close_variational_positions()` is scaffolded in `scripts/k297_variational_run.py` (K443 Phase 6).
+
+**Pre-API (current state):** Function logs the request and returns `STUB_NO_API`. All positions are paper-trade only — no real positions to close.
+
+**Post-API (K444 implementation):**
+1. Authenticate with VARIATIONAL_API_KEY
+2. GET `/v1/positions` → list open perp positions
+3. For each: POST `/v1/order` `{side: opposite, size: full, type: market}`
+4. Confirm closed (retry 3x)
+5. Pattern: K380 Bybit close-all (see `scripts/emergency_hl_exit.py`)
+
+### §27.8 Multi-Venue Rebalancer (K443 Phase 5)
+
+`compute_multivenue_allocation()` computes K297 sleeve split. Rebalance cadence: monthly (K427 pattern).
+
+```python
+# Example at $25M AUM:
+# K297 sleeve total:    $5,000,000  (20% of $25M)
+# HL K297' (60%):       $3,000,000  (12% of AUM)  → K302a satellite
+# Variational K297'' (40%): $2,000,000  (8% of AUM)  → K443 script
+# Trigger: if HL > 65% of sleeve → shift 5pp to Variational
+```
+
+### §27.9 K363 FR Data Dependency
+
+K297'' Variational uses K363 FR snapshots (`cache/variational_fr_snapshots/`).
+
+- **K363 daemon loaded:** Rolling data available, Sharpe computable after 30d.
+- **K363 daemon not loaded (current):** Fallback to K365 baseline snapshot (2026-05-27).
+- **To start K363 data accumulation:**
+  ```bash
+  cp com.cryptolab.variational-fr-monitor.plist ~/Library/LaunchAgents/
+  launchctl load ~/Library/LaunchAgents/com.cryptolab.variational-fr-monitor.plist
+  ```
+
+### §27.10 Profit Projection
+
+| AUM | Venue Config | Est. Annual Profit |
+|-----|-------------|-------------------|
+| $10M | HL + Bybit | $1.72M/yr (K440 base) |
+| $25M | HL + Bybit + Variational | ~$5-6M/yr (K443 est.) |
+| $50M | HL + Bybit + Variational | ~$6-7M/yr (K443 est.) |
+| $50M | HL + Bybit + Drift | ~$5.45M/yr (K431 est.) |
+
+**Variational advantage over Drift:** XAG + CL instruments (unique), HIP-3 RWA equivalent, $3.85B TVL (K407 tracking).
+
+### §27.11 File Locations
+
+| File | Purpose |
+|------|---------|
+| `scripts/k297_variational_run.py` | K297'' paper-trade main script |
+| `com.cryptolab.k443-variational-paper.plist` | launchd daemon (gitignored, repo root) |
+| `data/k443_variational_dashboard.json` | Live dashboard (written daily) |
+| `data/k443_variational_paper_trades.jsonl` | Append-only trade log |
+| `logs/k443_variational_paper.log` | Daemon stdout log |
+| `logs/k443_variational_paper.err` | Daemon stderr/error log |
+| `cache/variational_fr_snapshots/` | K363 FR data (accumulated by K363 daemon) |
+
+### §27.12 References
+
+| Wave | Content |
+|------|---------|
+| K363 | Variational RWA FR monitor scaffold |
+| K365 | Variational API confirmed (public read); trading API timeline |
+| K297 | Original PAXG/SPX satellite strategy |
+| K302a | K297' implementation (K302a satellite, HL only) |
+| K431 | $25M+ AUM multi-venue requirement analysis |
+| K434 | Smart router K434 (§24): venue scoring upstream |
+| K357 | Emergency exit protocol |
+| K386 | BEAR_1 fallback playbook (§18) |
+| K443 | This section — Variational venue prep, 17th daemon scaffold |
+
+---
+
+*K443 §27 — Variational K297'' paper-trade scaffold (17th daemon, capacity expansion $25M+, Q3 API trigger) — 2026-05-25*
