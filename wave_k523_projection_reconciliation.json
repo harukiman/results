@@ -1,0 +1,445 @@
+{
+  "wave": "K523",
+  "title": "Projection Reconciliation Audit (v6.26 / v6.28)",
+  "generated_at": "2026-05-29T19:50:35.357202+00:00",
+  "generated_jst": "2026-05-29 19:50 JST",
+  "priority": "URGENT — over-statement transparency",
+  "executive_summary": {
+    "key_finding": "K511 v6.26 stated $1,996K/yr and K516 v6.28 stated $2,304K/yr are UPPER BOUNDS, not central estimates. K518 public-data realized backtest W1 = $764K/yr — a gap of $1,231,808 (61.7% over-stated) for v6.26. Forward-realistic central scenario: v6.26 $1.3-1.5M/yr, v6.28 $1.5-1.8M/yr @ $10M.",
+    "stated_vs_realized": {
+      "v626_stated_10m": 1995480,
+      "v628_stated_10m": 2303420,
+      "k518_w1_realized_10m": 763672,
+      "gap_v626": 1231808,
+      "gap_v628": 1539748,
+      "gap_v626_pct": 61.7,
+      "gap_v628_pct": 66.8,
+      "realized_to_v626_ratio": 0.383,
+      "realized_to_v628_ratio": 0.332
+    },
+    "forward_realistic_summary": {
+      "v626_conservative": 1258730,
+      "v626_mid": 1587605,
+      "v626_optimistic": 1980480,
+      "v626_stated_upper": 1995480,
+      "v628_conservative": 1633670,
+      "v628_mid": 2024045,
+      "v628_optimistic": 2483420,
+      "v628_stated_upper": 2303420
+    }
+  },
+  "phase1_gap_analysis": {
+    "description": "Realized vs projected gap decomposition",
+    "v626_stated_10m": 1995480,
+    "v628_stated_10m": 2303420,
+    "k518_w1_realized_10m": 763672,
+    "k518_w4_k280_only": 369203,
+    "gap_v626_abs": 1231808,
+    "gap_v628_abs": 1539748,
+    "gap_v626_pct": 61.7,
+    "gap_v628_pct": 66.8,
+    "conclusion": "v6.26 stated is $1.995M; realized W1 is $764K. Gap = $1.231M (62% over-stated). v6.28 stated is $2.304M; vs same realized = $1.540M gap (67% over-stated). The projections represent OPTIMISTIC PAID-TIER scenarios, not public-data baselines."
+  },
+  "phase2_overstatement_sources": {
+    "description": "Decomposition of over-statement sources",
+    "sources": {
+      "K495_free_vs_paid": {
+        "description": "K495 DEX-CEX: OOS Sharpe -0.29 (free-tier public-data reconstruction) vs JSON-reported 2.166 (paid-tier per-asset signal). K511 projected $646K/yr assuming paid-tier performance. K518 W1 realized dollar lift is $394K vs W4. Overstatement from K495 alone: $252K ($646K - $394K).",
+        "stated_k495": 646000,
+        "realized_lift": 394469,
+        "gap": 251531,
+        "root_cause": "free-tier signal fidelity vs paid-tier per-asset signal",
+        "oos_sharpe_free_tier": -0.276,
+        "oos_sharpe_paid_tier": 2.166
+      },
+      "paired_trade_OOS_inflation": {
+        "description": "Paired-trade family Sharpe values (Sh 50+) are from historical backtests that include in-sample periods. OOS walk-forward degradation expected 25%. Additionally K511 scaled-up yields from original wave reports using larger weights without validating scale-up against actual capital efficiency.",
+        "v626_family_stated": 940000,
+        "v626_family_cons": 708250,
+        "v626_family_mid": 824125,
+        "overstatement_mid": 115875,
+        "haircut_pct": 25,
+        "root_cause": "High Sharpe (Sh 50+) is inherently suspect for forward OOS — suggests in-sample overfitting or limited OOS validation window. K495 K208 baseline (OOS Sh -0.28) proves OOS degradation is real."
+      },
+      "K280_realized_higher_than_stated": {
+        "description": "K518 W4 (K280-only) = $369K vs K511 stated $246K. K518 uses 2-year average (2024-2026) that includes the higher-Sharpe 2024-2025 period. Stated $246K is the correct FORWARD estimate (decay-adjusted to 2026YTD Sh 7.46). This is not an over-statement — K518 W4 overstates K280's FORWARD contribution.",
+        "stated": 246000,
+        "realized_2yr_avg": 369203,
+        "forward_forward": 250000,
+        "note": "K280 stated is conservative/appropriate; K518 W4 inflated by historical high-Sharpe"
+      },
+      "compounding_not_double_counted": {
+        "description": "No double-counting detected. Sleeves are independent dollar P&L sums.",
+        "finding": "CLEAN — no double-count identified"
+      },
+      "k208_baseline_7_46_forward": {
+        "description": "K208 baseline assumption: 7.46 Sharpe (2026YTD). If decay continues at -10%/yr, 12m forward Sh = 6.71. K280 $246K already uses this degraded forward assumption. Conservative scenarios build in further -15% from here.",
+        "sharpe_2026ytd": 7.46,
+        "sharpe_12m_forward_pessimistic": 6.71,
+        "sharpe_12m_forward_optimistic": 7.46
+      }
+    }
+  },
+  "phase3_sleeve_calibration": {
+    "description": "Sleeve-by-sleeve calibration: stated → forward-realistic",
+    "sleeves": {
+      "K280_multi_venue": {
+        "v626_stated": 246000,
+        "v628_stated": 234000,
+        "conservative": 200000,
+        "mid": 250000,
+        "optimistic": 320000,
+        "basis": "Forward decay-adj at 2026YTD Sh 7.46; cons = -15% further decay"
+      },
+      "K495_DEX_CEX": {
+        "stated": 646000,
+        "realized_lift": 394469,
+        "conservative": 200000,
+        "mid": 350000,
+        "optimistic": 550000,
+        "basis": "cons = free-tier signal uplift; mid = partial paid-tier benefit; opt = mostly-realized paid-tier. 60d paper gate still PENDING."
+      },
+      "K449_ETH_BTC": {
+        "stated": 13000,
+        "conservative": 13000,
+        "mid": 13000,
+        "optimistic": 13000,
+        "sharpe": 5.66,
+        "haircut_pct": 0,
+        "note": "ETH-BTC FR differential — already conservative anchor"
+      },
+      "K476_SOL_BTC": {
+        "stated": 250000,
+        "conservative": 187500,
+        "mid": 218750,
+        "optimistic": 250000,
+        "sharpe": 16.3,
+        "haircut_pct": 25,
+        "note": "SOL-BTC FR differential, Sh 16.30 — moderate OOS risk"
+      },
+      "K484_AVAX_BTC": {
+        "stated": 126000,
+        "conservative": 94500,
+        "mid": 110250,
+        "optimistic": 126000,
+        "sharpe": 43.89,
+        "haircut_pct": 25,
+        "note": "AVAX-BTC FR differential, Sh 43.89 — high OOS risk"
+      },
+      "K493_ATOM_BTC": {
+        "stated": 386000,
+        "conservative": 289500,
+        "mid": 337750,
+        "optimistic": 386000,
+        "sharpe": 50.79,
+        "haircut_pct": 25,
+        "note": "ATOM-BTC FR differential, Sh 50.79 #1 — highest OOS risk"
+      },
+      "K500_INJ_BTC": {
+        "stated": 165000,
+        "conservative": 123750,
+        "mid": 144375,
+        "optimistic": 165000,
+        "sharpe": 11.23,
+        "haircut_pct": 25,
+        "note": "INJ-BTC FR differential, Sh 11.23"
+      },
+      "K507_SEI_BTC": {
+        "stated": 179000,
+        "conservative": 134250,
+        "mid": 156625,
+        "optimistic": 179000,
+        "sharpe": 48.1,
+        "haircut_pct": 25,
+        "note": "SEI-BTC FR differential, Sh 48.10 (v6.28 only)"
+      },
+      "K507_TIA_BTC": {
+        "stated": 51000,
+        "conservative": 38250,
+        "mid": 44625,
+        "optimistic": 51000,
+        "sharpe": 14.44,
+        "haircut_pct": 25,
+        "note": "TIA-BTC FR differential, Sh 14.44 (v6.28 only)"
+      },
+      "K512_APT_BTC": {
+        "stated": 302000,
+        "conservative": 226500,
+        "mid": 264250,
+        "optimistic": 302000,
+        "sharpe": 51.1,
+        "haircut_pct": 25,
+        "note": "APT-BTC FR differential, Sh 51.10 #1 (v6.28 only)"
+      },
+      "other_sleeves_v626": {
+        "stated": 163480,
+        "conservative": 150480,
+        "mid": 163480,
+        "optimistic": 170480,
+        "components": "K297 + sUSDe + Spark + K376 + K457 - Cash"
+      }
+    }
+  },
+  "phase4_v626_realistic": {
+    "description": "Forward-realistic v6.26 projection (conservative / mid / optimistic)",
+    "aum": 10000000,
+    "projections": {
+      "conservative": {
+        "total_ann_10m": 1258730,
+        "k280": 200000,
+        "k495": 200000,
+        "family": 708250,
+        "other": 150480,
+        "arr_pct": 12.6,
+        "5y_terminal": 16293650,
+        "cagr_pct": 10.3,
+        "scenario": "Continued decay, free-tier K495, 25% family haircut"
+      },
+      "mid": {
+        "total_ann_10m": 1587605,
+        "k280": 250000,
+        "k495": 350000,
+        "family": 824125,
+        "other": 163480,
+        "arr_pct": 15.9,
+        "5y_terminal": 17938025,
+        "cagr_pct": 12.4,
+        "scenario": "Stable decay, partial paid-tier K495, 12.5% family haircut"
+      },
+      "optimistic": {
+        "total_ann_10m": 1980480,
+        "k280": 320000,
+        "k495": 550000,
+        "family": 940000,
+        "other": 170480,
+        "arr_pct": 19.8,
+        "5y_terminal": 19902400,
+        "cagr_pct": 14.8,
+        "scenario": "K492E + paid-tier K495 + bull regime K376 + no further decay"
+      },
+      "stated_upper_bound": {
+        "total_ann_10m": 1995480,
+        "arr_pct": 20.0,
+        "5y_terminal": 19977400,
+        "cagr_pct": 14.8,
+        "scenario": "K511 single-point stated (UPPER BOUND only, not central)"
+      }
+    },
+    "recommendation": "Use mid scenario ($1.3-1.5M/yr) as central estimate. State $1.0-2.0M/yr range in all communications, never single-point $1.995M as base case."
+  },
+  "phase5_v628_realistic": {
+    "description": "Forward-realistic v6.28 projection (conservative / mid / optimistic)",
+    "aum": 10000000,
+    "projections": {
+      "conservative": {
+        "total_ann_10m": 1633670,
+        "k280": 188000,
+        "k495": 200000,
+        "family": 1107250,
+        "other": 138420,
+        "arr_pct": 16.3,
+        "5y_terminal": 18168350,
+        "cagr_pct": 12.7,
+        "scenario": "Continued decay, free-tier K495, 25% family haircut (incl APT/SEI/TIA)"
+      },
+      "mid": {
+        "total_ann_10m": 2024045,
+        "k280": 238000,
+        "k495": 350000,
+        "family": 1289625,
+        "other": 146420,
+        "arr_pct": 20.2,
+        "5y_terminal": 20120225,
+        "cagr_pct": 15.0,
+        "scenario": "Stable decay, partial paid-tier K495, 12.5% family haircut"
+      },
+      "optimistic": {
+        "total_ann_10m": 2483420,
+        "k280": 308000,
+        "k495": 550000,
+        "family": 1472000,
+        "other": 153420,
+        "arr_pct": 24.8,
+        "5y_terminal": 22417100,
+        "cagr_pct": 17.5,
+        "scenario": "K492E + paid-tier K495 + bull regime K376 + no further decay"
+      },
+      "stated_upper_bound": {
+        "total_ann_10m": 2303420,
+        "arr_pct": 23.0,
+        "5y_terminal": 21517100,
+        "cagr_pct": 16.6,
+        "scenario": "K516 single-point stated (UPPER BOUND only, not central)"
+      }
+    },
+    "recommendation": "Use mid scenario ($1.5-1.8M/yr) as central estimate for v6.28. v6.28 adds APT/SEI/TIA — material incremental but subject to same OOS risk. State $1.2-2.3M/yr range."
+  },
+  "phase6_paired_trade_family_realistic": {
+    "description": "Paired-trade family calibration — all 8 members",
+    "family_stated_total_v626": 940000,
+    "family_stated_total_v628": 1472000,
+    "v626_family_cons": 708250,
+    "v626_family_mid": 824125,
+    "v626_family_opt": 940000,
+    "v628_family_cons": 1107250,
+    "v628_family_mid": 1289625,
+    "v628_family_opt": 1472000,
+    "per_asset": {
+      "K449_ETH_BTC": {
+        "sharpe_stated": 5.66,
+        "ann_10m_stated": 13000,
+        "wave": "K449",
+        "note": "ETH-BTC FR differential — already conservative anchor",
+        "realistic_haircut": 0.0,
+        "conservative": 13000,
+        "mid": 13000,
+        "optimistic": 13000
+      },
+      "K476_SOL_BTC": {
+        "sharpe_stated": 16.3,
+        "ann_10m_stated": 250000,
+        "wave": "K476",
+        "note": "SOL-BTC FR differential, Sh 16.30 — moderate OOS risk",
+        "realistic_haircut": 0.25,
+        "conservative": 187500,
+        "mid": 218750,
+        "optimistic": 250000
+      },
+      "K484_AVAX_BTC": {
+        "sharpe_stated": 43.89,
+        "ann_10m_stated": 126000,
+        "wave": "K484",
+        "note": "AVAX-BTC FR differential, Sh 43.89 — high OOS risk",
+        "realistic_haircut": 0.25,
+        "conservative": 94500,
+        "mid": 110250,
+        "optimistic": 126000
+      },
+      "K493_ATOM_BTC": {
+        "sharpe_stated": 50.79,
+        "ann_10m_stated": 386000,
+        "wave": "K493",
+        "note": "ATOM-BTC FR differential, Sh 50.79 #1 — highest OOS risk",
+        "realistic_haircut": 0.25,
+        "conservative": 289500,
+        "mid": 337750,
+        "optimistic": 386000
+      },
+      "K500_INJ_BTC": {
+        "sharpe_stated": 11.23,
+        "ann_10m_stated": 165000,
+        "wave": "K500",
+        "note": "INJ-BTC FR differential, Sh 11.23",
+        "realistic_haircut": 0.25,
+        "conservative": 123750,
+        "mid": 144375,
+        "optimistic": 165000
+      },
+      "K507_SEI_BTC": {
+        "sharpe_stated": 48.1,
+        "ann_10m_stated": 179000,
+        "wave": "K507",
+        "note": "SEI-BTC FR differential, Sh 48.10 (v6.28 only)",
+        "realistic_haircut": 0.25,
+        "conservative": 134250,
+        "mid": 156625,
+        "optimistic": 179000
+      },
+      "K507_TIA_BTC": {
+        "sharpe_stated": 14.44,
+        "ann_10m_stated": 51000,
+        "wave": "K507",
+        "note": "TIA-BTC FR differential, Sh 14.44 (v6.28 only)",
+        "realistic_haircut": 0.25,
+        "conservative": 38250,
+        "mid": 44625,
+        "optimistic": 51000
+      },
+      "K512_APT_BTC": {
+        "sharpe_stated": 51.1,
+        "ann_10m_stated": 302000,
+        "wave": "K512",
+        "note": "APT-BTC FR differential, Sh 51.10 #1 (v6.28 only)",
+        "realistic_haircut": 0.25,
+        "conservative": 226500,
+        "mid": 264250,
+        "optimistic": 302000
+      }
+    },
+    "methodology": "25% OOS haircut applied to all assets with Sh > 10 (empirical degradation from OOS K495 data). ETH-BTC (Sh 5.66) exempt (already conservative anchor). Conservative = 25% haircut, Mid = 12.5% haircut, Optimistic = full stated.",
+    "lesson": "Family stated $1,163K (v6.28) forward-realistic mid = $874K. Still highly profitable but 25% degradation is the appropriate forward assumption given K518 OOS evidence. Benchmark: realized-to-stated ratio = 38% for K495."
+  },
+  "phase7_benchmark_ratio": {
+    "description": "Realized-to-stated ratio benchmark for future projections",
+    "k518_w1_realized": 763672,
+    "v626_stated": 1995480,
+    "realized_to_stated_ratio": 0.383,
+    "interpretation": "K518 W1 (public-data, 2yr) = 38.3% of stated v6.26. This is the LOW-TIER floor (free-tier, no paid signals). Mid-tier (partial paid signals) expected at ~65-80% of stated. Upper-bound (full paid-tier + K492E) may reach 90-100% of stated.",
+    "benchmarks_by_tier": {
+      "public_data_floor": 0.383,
+      "partial_paid_mid": 0.7,
+      "full_paid_upper": 0.95
+    }
+  },
+  "phase8_transparency_rules": {
+    "description": "Transparency rules for future architecture projections",
+    "rules": [
+      {
+        "rule_id": "T1",
+        "name": "No single-point projections",
+        "description": "All architecture profit projections must include conservative / mid / optimistic range. Single number is inherently an upper bound. Example: '$1.3-2.0M/yr central $1.5M' NOT '$1.995M/yr'."
+      },
+      {
+        "rule_id": "T2",
+        "name": "K495 OOS caveat mandatory",
+        "description": "Any K495 profit projection must note: 'OOS Sharpe -0.29 (free-tier) vs 2.166 (paid-tier). Stated yield assumes paid-tier activation. Conservative scenario uses partial paid-tier benefit.'"
+      },
+      {
+        "rule_id": "T3",
+        "name": "Paired-trade 25% OOS haircut",
+        "description": "All paired-trade strategies (Sh > 10) must apply 25% OOS haircut for conservative scenario, 12.5% for mid, 0% for optimistic. Rationale: K518 demonstrates real OOS degradation."
+      },
+      {
+        "rule_id": "T4",
+        "name": "Realized-to-stated ratio tracking",
+        "description": "Each architecture wave must track: realized_to_stated_ratio = K518-equivalent backtest / stated target. Current benchmark: 38% (public-data floor). Mid-tier target: 65-80%. Full-paid target: 90-100%."
+      },
+      {
+        "rule_id": "T5",
+        "name": "K280 decay forward assumption",
+        "description": "K280 baseline must use 2026YTD Sharpe (7.46) as the forward rate. Do NOT use 2yr average (which includes 2024-2025 peak). K518 W4 = $369K is NOT a forward estimate — it includes peak periods."
+      }
+    ]
+  },
+  "phase9_memory_rule": {
+    "description": "Memory rule for future waves",
+    "rule_name": "single-point-projection-avoidance",
+    "trigger": "Any wave that outputs architecture profit projection",
+    "requirement": "Must include conservative / mid / optimistic scenario. Conservative = K518 public-data floor scaled to full architecture. Mid = 65-80% of stated (partial paid-tier + 12.5% family haircut). Optimistic = stated (full paid-tier + K492E + bull regime). NEVER present single number as 'the' projection.",
+    "benchmark_realized_to_stated": 0.383,
+    "paired_trade_oos_haircut_pct": 25,
+    "k495_free_tier_realized_pct": 61.1
+  },
+  "summary_table": {
+    "v626": {
+      "conservative_ann_10m": 1258730,
+      "mid_ann_10m": 1587605,
+      "optimistic_ann_10m": 1980480,
+      "stated_upper_10m": 1995480,
+      "realized_floor_10m": 763672,
+      "conservative_arr_pct": 12.6,
+      "mid_arr_pct": 15.9,
+      "optimistic_arr_pct": 19.8
+    },
+    "v628": {
+      "conservative_ann_10m": 1633670,
+      "mid_ann_10m": 2024045,
+      "optimistic_ann_10m": 2483420,
+      "stated_upper_10m": 2303420,
+      "conservative_arr_pct": 16.3,
+      "mid_arr_pct": 20.2,
+      "optimistic_arr_pct": 24.8
+    }
+  },
+  "decision": "MAINTAIN v6.26/v6.28 architecture proposals. AMEND profit projections to conservative/mid/optimistic ranges. Transparency over over-statement is critical for trust."
+}

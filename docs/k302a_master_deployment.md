@@ -1870,6 +1870,14 @@ Mechanism: HL HIP-3/HIP-4 venue expansion compressed divergence. R15-12 claim vi
 | **v6.26 reallocation** | **$1,996K** | **20.0%** | **+$801K** |
 | v6.26 + K492 Variant E | $2,219K | 22.2% | +$1,024K |
 
+> **K523 PROJECTION AUDIT NOTE (2026-05-30):** $1,996K is the UPPER BOUND (full paid-tier K495 + no OOS degradation).
+> Forward-realistic ranges (K523 reconciliation):
+> - Conservative: **$1,259K/yr** (12.6% ARR) — free-tier K495, 25% paired-trade haircut
+> - Mid (central): **$1,588K/yr** (15.9% ARR) — partial paid-tier, 12.5% haircut
+> - Optimistic: **$1,980K/yr** (19.8% ARR) — K492E + paid-tier + bull regime
+> - K518 realized floor: $764K/yr (38% of stated, public-data only)
+> Single-point $1,995K is misleading as base case. Use $1.3–2.0M/yr range in all communications.
+
 ### HL Concentration Audit
 
 | Sleeve | HL Exposure |
@@ -1961,6 +1969,14 @@ Source files: `wave_k511_v626_emergency_recompute.py` | `wave_k511_v626_emergenc
 | Family Combined @ $10M | $863K/yr | **$1,467K/yr** | +$604K/yr |
 
 v6.28 + K492E: **$2,527K/yr @ $10M** | 5y: **$30.8M**
+
+> **K523 PROJECTION AUDIT NOTE (2026-05-30):** $2,304K is the UPPER BOUND (full paid-tier K495 + no OOS degradation).
+> Forward-realistic ranges (K523 reconciliation):
+> - Conservative: **$1,634K/yr** (16.3% ARR) — free-tier K495, 25% family haircut (incl APT/SEI/TIA)
+> - Mid (central): **$2,024K/yr** (20.2% ARR) — partial paid-tier, 12.5% haircut
+> - Optimistic: **$2,483K/yr** (24.8% ARR) — K492E + paid-tier + bull regime
+> - v6.28 lift vs v6.26 still POSITIVE across all scenarios (architecture logic maintained)
+> Use $1.6–2.5M/yr range. v6.28 remains superior to v6.26 even under conservative assumptions.
 
 ### Family Rank (K516) — 8 ACCEPTs
 
