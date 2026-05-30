@@ -3539,6 +3539,34 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K650: K645 BNB-BTC orthog emergency exit flag
+    # K645 = Bybit-only BNB+BTC paired (2 legs) when residual EMA_168h > 1.5sigma.
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
+    # Orthog: residual = BNB_diff - 0.539*ETH_diff (K645 OLS SF, beta hardcoded).
+    # EMA window: W=168h = 21 x 8h periods (optimal per K645 analysis).
+    # Use --include-k645 to print K645-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k645",
+        dest="include_k645",
+        action="store_true",
+        default=False,
+        help=(
+            "K650: Include K645 BNB-BTC orthog close summary during emergency exit. "
+            "K645 positions (BNB+BTC paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Orthog: residual = BNB_diff - 0.539*ETH_diff (K645 OLS SF beta hardcoded). "
+            "EMA window: W=168h = 21 x 8h periods (optimal per K645 analysis). "
+            "HL concentration UNCHANGED (Bybit-only strategy — HL NOT affected). "
+            "OOS Sharpe 7.07 (residual SF W=168h). $17,694/yr net @$10M @4x (3% sleeve). "
+            "60d paper-trade gate: Realized Sh>=3.5 + fill>=60% + maxDD<20%. "
+            "Cluster: Binance Ecosystem / BSC L1 (ETH-cluster unlock, 6th orthog, 45th daemon). "
+            "ETH unlock: K480 BLOCKED (corr=0.435) -> K645 post-orth=0.1757 PASS. "
+            "Requires: K645 daemon running (com.cryptolab.k645-bnb-orthog, 45th daemon). "
+            "See: docs/k302a_runbook.md §47"
+        ),
+    )
+
     # K642: K638 STX-BTC orthog emergency exit flag
     # K638 = Bybit-only STX+BTC paired (2 legs) when residual EMA_504h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -3563,6 +3591,35 @@ USDY sleeve emergency guidance (K415 §21.6):
             "Cluster: BTC-L2 / Stacks PoX (Bitcoin Layer-2, PoX stacking cycles). "
             "Requires: K638 daemon running (com.cryptolab.k638-stx-orthog, 44th daemon). "
             "See: docs/k302a_runbook.md §46"
+        ),
+    )
+
+    # K651: K646 ALGO-BTC orthog emergency exit flag
+    # K646 = Bybit-only ALGO+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
+    # Orthog: residual = ALGO_diff - 0.411*FIL_diff (K646 OLS SF, beta hardcoded).
+    # EMA window: W=72h = 9 x 8h periods (optimal per K646 analysis).
+    # Use --include-k646 to print K646-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k646",
+        dest="include_k646",
+        action="store_true",
+        default=False,
+        help=(
+            "K651: Include K646 ALGO-BTC orthog close summary during emergency exit. "
+            "K646 positions (ALGO+BTC paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Orthog: residual = ALGO_diff - 0.411*FIL_diff (K646 OLS SF beta hardcoded). "
+            "EMA window: W=72h = 9 x 8h periods (optimal per K646 analysis). "
+            "HL concentration UNCHANGED (Bybit-only strategy — HL NOT affected). "
+            "OOS Sharpe 8.11 (residual SF W=72h). ~$20,325/yr net @$10M @4x (2% sleeve). "
+            "60d paper-trade gate: Realized Sh>=4 + fill>=60% + maxDD<20%. "
+            "Cluster: Enterprise/Utility L1 / Algorand PoS VRF (FIL-cluster unlock, 7th orthog, 46th daemon). "
+            "FIL unlock: K522 BLOCKED (corr=0.6052) -> K646 post-orth=0.2546 PASS. "
+            "Requires: K646 daemon running (com.cryptolab.k646-algo-orthog, 46th daemon). "
+            "K646 on Bybit: ALGO_diff - 0.411*FIL_diff (K651 scaffold). "
+            "See: docs/k302a_runbook.md §48"
         ),
     )
 
@@ -4046,6 +4103,28 @@ USDY sleeve emergency guidance (K415 §21.6):
             logger.info(
                 "K635 IMX-BTC orthog: Bybit-only (NOT HL). "
                 "Use --include-k635 for Bybit close summary (§44). "
+                "HL concentration UNCHANGED at 65%."
+            )
+
+        # K650: K645 BNB-BTC orthog close summary (Bybit-only — HL NOT affected)
+        # K645 positions (BNB+BTC, Bybit-only) are NOT in the HL exit above.
+        # K645 is Bybit-only: HL concentration UNCHANGED. Use --include-k645 for Bybit summary.
+        if args.include_k645:
+            logger.info("=== K645 BNB-BTC ORTHOG CLOSE SUMMARY (K650 §47) ===")
+            logger.info("  K645 BNB-BTC orthog: Bybit-only (BNB+BTC both legs on Bybit)")
+            logger.info("  Orthog: residual = BNB_diff - 0.539*ETH_diff (K645 OLS SF, beta hardcoded)")
+            logger.info("  EMA window: W=168h = 21 x 8h periods (optimal per K645 analysis)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: UNCHANGED at 65% (K645 is Bybit-only)")
+            logger.info("  OOS Sharpe 7.07 (residual SF W=168h) | $17,694/yr net @$10M @4x (3% sleeve)")
+            logger.info("  ETH unlock: K480 BLOCKED (corr=0.435) -> K645 post-orth=0.1757 PASS")
+            logger.info("  Cluster: Binance Ecosystem / BSC L1 (6th orthog, 45th daemon)")
+            logger.info("  60d gate: Realized Sh>=3.5 + fill>=60% + maxDD<20%")
+            logger.info("  See: docs/k302a_runbook.md §47 (K645 BNB orthog playbook)")
+        else:
+            logger.info(
+                "K645 BNB-BTC orthog: Bybit-only (NOT HL). "
+                "Use --include-k645 for Bybit close summary (§47). "
                 "HL concentration UNCHANGED at 65%."
             )
 

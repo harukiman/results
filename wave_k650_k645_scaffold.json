@@ -1,0 +1,146 @@
+{
+  "wave": "K650",
+  "strategy": "K645 BNB-BTC Orthogonalized FR Differential",
+  "timestamp_jst": "2026-05-30 12:08 JST",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k645_bnb_orthog_run.py",
+        "description": "Phase 1: K645 strategy script (K339 pattern, W=168h, beta_ETH=0.539)",
+        "exists": true,
+        "size_bytes": 44634,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k645-bnb-orthog.plist",
+        "description": "Phase 2: 45th daemon plist (StartInterval 28800)",
+        "exists": true,
+        "size_bytes": 2386,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k645_dashboard.json",
+        "description": "Phase 3: Dashboard (residual signal, beta_eth_used, regime)",
+        "exists": true,
+        "size_bytes": 2931,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k645 flag, \u00a747)",
+        "exists": true,
+        "size_bytes": 207025,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K645_BNB_ORTHOG + SLEEVE_WEIGHTS_V636)",
+        "exists": true,
+        "size_bytes": 50480,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K645_BNB_ORTHOG: 4.0 + k645_notes)",
+        "exists": true,
+        "size_bytes": 30882,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (45th daemon registry)",
+        "exists": true,
+        "size_bytes": 29294,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a747 (K645 BNB orthog playbook)",
+        "exists": true,
+        "size_bytes": 352811,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K645 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1561308,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k650_k645_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 13926,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_checks": {
+    "beta_eth_hardcoded": true,
+    "k339_repo_root": true,
+    "paper_trade_default": true,
+    "bybit_primary": true,
+    "post_only": true,
+    "signal_1_5sigma": true,
+    "sleeve_3pct": true,
+    "ema_168h": true,
+    "dashboard_beta_eth": true,
+    "dashboard_regime": true,
+    "dashboard_oos_perf": true,
+    "dashboard_orthog_mech": true,
+    "dashboard_eth_corr_raw": true,
+    "dashboard_eth_corr_post": true,
+    "cfg_k645_cap": true,
+    "cfg_k645_notes": true,
+    "cfg_beta_eth": true,
+    "cfg_sleeve_3pct": true,
+    "emer_include_k645": true,
+    "emer_k645_summary": true,
+    "lev_k645_cap": true,
+    "lev_v636_weights": true,
+    "vds_45th_daemon": true,
+    "vds_45th_label": true,
+    "runbook_section47": true,
+    "runbook_beta_table": true,
+    "runbook_60d_gate": true,
+    "html_k650_entry": true,
+    "html_k645_scaffold": true,
+    "html_45_daemons": true
+  },
+  "daemon_count": 45,
+  "daemon_ok": true,
+  "dry_run": {
+    "returncode": 0,
+    "success": true,
+    "stdout_len": 2999,
+    "stderr_len": 0,
+    "status": "PASS"
+  },
+  "k645_summary": {
+    "oos_sharpe_residual": 7.0686,
+    "oos_r2": 0.0215,
+    "oos_r2_note": "HEALTHIEST in orthog series (positive OOS R\u00b2)",
+    "beta_eth": 0.539,
+    "beta_eth_note": "HARDCODED \u2014 no re-OLS in production for stability",
+    "eth_corr_raw": 0.435,
+    "eth_corr_post_orth": 0.1757,
+    "eth_cluster_unlock": "K480 BLOCKED (ETH corr=0.435 >= 0.40) \u2192 K645 PASS (0.1757 < 0.40)",
+    "ema_window": "W=168h (21 x 8h periods, single-factor SF ETH)",
+    "signal_threshold": "1.5\u03c3 of residual EMA_168h",
+    "profit_3pct_net_usd_yr": 17694,
+    "profit_3pct_gross_usd_yr": 22117,
+    "sleeve_activation": "3% Bybit (BNB+BTC both legs, delta-neutral)",
+    "hl_concentration": "65% UNCHANGED \u2014 Bybit-only strategy",
+    "cluster": "Binance Ecosystem / BSC L1 (6th orthog scaffold)",
+    "gate_60d": "Realized Sh>=3.5 + fill>=60% + maxDD<20%",
+    "v636_candidate": "K645 3% Bybit + v6.35 portfolio",
+    "daemon_number": "45th",
+    "milestone": "K650 MILESTONE \u2014 6th orthog scaffold complete"
+  },
+  "overall_status": "PASS"
+}

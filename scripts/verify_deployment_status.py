@@ -357,6 +357,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k638_stx_orthog",
         expected_html_status="SCAFFOLD-READY",  # K642: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=6 + fill_rate>=60% + maxDD<20%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k645-bnb-orthog",
+        purpose="K645 BNB-BTC Orthogonalized FR Differential (Binance-ecosystem cluster, ETH-cluster unlock, Bybit-only BNB+BTC paired, 4x leverage, 8h cycle, OOS Sh 7.07 residual SF W=168h, $17,694/yr net @$10M @4x, beta_ETH=0.539 hardcoded, ETH corr 0.435->0.1757 post-orth PASS, HL concentration UNCHANGED 65%, 60d paper-trade gate, v6.36 candidate 3% sleeve, 45th daemon, K650 milestone)",
+        scripts=["scripts/k645_bnb_orthog_run.py"],
+        log_basename="k645_bnb_orthog",
+        expected_html_status="SCAFFOLD-READY",  # K650: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=3.5 + fill_rate>=60% + maxDD<20%)
+    ),
 ]
 
 

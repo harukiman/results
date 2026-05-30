@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k645-bnb-orthog</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k645_bnb_orthog_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 45th daemon: K645 BNB Orthogonalized FR Differential -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 3.5, fill_rate >= 60%, maxDD < 20% -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k645_bnb_orthog.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k645_bnb_orthog.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K645 specific notes (do not remove):
+         Strategy:    BNB-BTC FR Differential, orthogonalized vs ETH (K645 OLS SF)
+         Daemon #:    45th daemon (K650 scaffold, milestone wave)
+         OOS Sharpe:  7.07 (residual SF W=168h) vs 8.04 raw K480 (ETH corr 0.435 -> 0.1757 post-orth)
+         Profit:      $17,694/yr net @$10M @4x (3% sleeve)
+         beta coefs:  beta_ETH=0.539  (HARDCODED, no re-OLS)
+         Venue:       Bybit primary (BNB+BTC both legs; Bybit BNBUSDT perp + BTC-USDT-SWAP)
+         HL impact:   NONE — Bybit-only; HL concentration unchanged at 65%
+         Gate:        60d paper-trade: Realized Sh>=3.5 + fill>=60% + maxDD<20%
+         Cluster:     Binance Ecosystem / BSC L1 (ETH-cluster unlock, 6th orthog)
+         v6.36:       K645 adds 3% Bybit sleeve to v6.35 portfolio
+         ETH unlock:  K480 BLOCKED-G5a (ETH corr=0.435 >= 0.40) -> K645 (post-orth=0.1757 PASS)
+         Deploy:      cp scripts/com.cryptolab.k645-bnb-orthog.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k645-bnb-orthog.plist
+    -->
+</dict>
+</plist>

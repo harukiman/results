@@ -8966,3 +8966,200 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k638-stx-orthog.plist
 ---
 
 *K642 §46 -- K638 STX-BTC Orthogonalized FR Differential production scaffold (44th daemon, OOS Sh 12.38 residual MF APT+SEI+DOGE W=504h $65,018/yr net @$10M @4x, beta_APT=0.203339 beta_SEI=0.125164 beta_DOGE=0.306518 hardcoded, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=6 fill>=60% maxDD<20%, BTC-L2 cluster, v6.35 candidate) -- 2026-05-30*
+
+---
+
+## §47 K645 BNB-BTC Orthogonalized FR Differential — Production Scaffold Playbook
+
+### §47.1 Strategy Overview
+
+K645 implements a delta-neutral paired trade on **BNB-BTC funding rate differential**, orthogonalized against the ETH factor via single-factor OLS regression. BNB (Binance Coin) is the BSC L1 / Binance ecosystem token — FR dynamics are driven by BSC DEX cycles (PancakeSwap dominance), BNB quarterly burn mechanics, Binance Launchpad/Launchpool IDO demand, and opBNB L2 adoption, not shared ETH regulatory co-movement.
+
+| Metric | Value |
+|--------|-------|
+| Wave | K645 (orthogonalize) → K650 (scaffold, milestone) |
+| Decision | ACCEPT CONDITIONAL |
+| OOS Sharpe (residual) | 7.07 (SF W=168h) |
+| OOS Sharpe (raw K480) | 8.04 (BLOCKED-G5a ETH corr=0.435) |
+| Net Profit 3% sleeve | $17,694/yr @$10M @4x |
+| Daemon | 45th (com.cryptolab.k645-bnb-orthog) |
+| Cluster | Binance Ecosystem / BSC L1 (ETH-cluster unlock, 6th orthog) |
+| Venue | Bybit primary (BNB+BTC paired, both legs Bybit) |
+
+**ETH-cluster unlock**: K480 was BLOCKED-G5a (ETH corr=0.435 ≥ 0.40); K645 orthog reduces to 0.1757 (PASS), unlocking the Binance-ecosystem sub-cluster as the 6th confirmed orthog.
+
+### §47.2 Orthogonalization Mechanism (K645 OLS Single-Factor)
+
+```
+BNB_diff  = BNB_FR  − BTC_FR       (raw paired diff)
+ETH_diff  = ETH_FR  − BTC_FR       (ETH regulatory co-movement factor)
+
+residual = BNB_diff − β_ETH × ETH_diff
+         = BNB_diff − 0.539 × ETH_diff
+```
+
+**β coefficient** (K645 single-factor OLS, IS period May 2024–Oct 2025):
+
+| Factor | β | IS R² (SF) | OOS R² | Note |
+|--------|---|-----------|--------|------|
+| β_ETH  | 0.539 | 0.1457 | +0.0215 | Best positive OOS R² in orthog series |
+
+**HARDCODED in production — no re-OLS for stability.**
+
+ETH was the primary G5 blocker: ETH corr with raw BNB=0.435 → post-orth=0.1757 (PASS).
+OOS R²=+0.0215 is the healthiest OOS R² in the entire orthog series (all others negative).
+
+### §47.3 Signal Gate
+
+| Parameter | Value |
+|-----------|-------|
+| EMA window | W=168h (21 × 8h periods) |
+| Entry threshold | \|residual_EMA_168h\| > 1.5σ |
+| Regime BULL_BNB | EMA > +1.5σ → SHORT BNB / LONG BTC |
+| Regime BEAR_BNB | EMA < −1.5σ → LONG BNB / SHORT BTC |
+| Regime NEUTRAL | \|EMA\| ≤ 1.5σ → no position |
+
+### §47.4 Execution (Bybit Primary)
+
+- **Venue**: Bybit primary — BNBUSDT perp + BTC-USDT-SWAP
+- **Sleeve**: 3% (ETH-cluster unlock mandates larger sleeve vs 1.5% BTC-L2)
+- **Leverage**: 4x (K430 cap)
+- **Margin**: 3% × $10M = $300K margin, $1.2M total notional
+- **Per leg**: $600K BNB + $600K BTC (equal weight, delta-neutral)
+- **Execution**: POST_ONLY parallel (K439 pattern)
+- **Cadence**: 8h (matches FR settlement cycle)
+- **HL impact**: NONE — Bybit-only; HL concentration unchanged at 65%
+
+### §47.5 Performance Summary
+
+| Metric | SF W=168h (best) |
+|--------|-----------------|
+| OOS Sharpe | **7.07** |
+| OOS Ann Return | 1.84% (1x) → 7.37% (4x) |
+| OOS Max DD | -0.85% |
+| Trades/yr | 32.0 |
+| Net profit @$10M @4x 3% | **$17,694/yr** |
+
+Gate summary (SF W=168h, best config):
+- G1 (OOS Sh≥1.0): PASS (7.07)
+- G2 (permutation p<0.05): PASS (p=0.0)
+- G3 (DSR Bonferroni): FAIL (n_trials=4 penalty, ACCEPT per K628/K631/K633/K635/K638 precedent)
+- G4 (walk-forward): FAIL (3 negative folds in 12, thin OOS per fold)
+- G5 (orthogonality): PASS (ETH corr post-orth=0.1757, all 28 checks pass, max=0.3266 AVAX)
+- G6 (trade count): PASS (32.0/yr > 30 threshold)
+- G7 (ann return): PASS (7.37% 4x > 5% threshold)
+- G8 (cross-venue): FAIL (Bybit 8h vs HL 1h venue diff, corr=0.5226 FAIL threshold 0.55)
+- G9 (data sufficiency): PASS (216.8 OOS days > 180)
+- Total: 35/38 gates — ACCEPT per K628/K631/K633/K635/K638 profit-max precedent
+
+### §47.6 60-Day Paper-Trade Activation Gate
+
+Activate live when all three criteria met after 60-day paper-trade:
+
+| Gate | Threshold | Rationale |
+|------|-----------|-----------|
+| Realized Sharpe | ≥ 3.5 | 50% of OOS Sh=7.07 |
+| Fill rate | ≥ 60% | POST_ONLY viability on Bybit |
+| Max drawdown | < 20% | Tail loss protection |
+
+**Status**: SCAFFOLD-READY (60d paper-trade in progress)
+
+### §47.7 Emergency Exit Protocol
+
+K645 is Bybit-only. Emergency procedure:
+
+1. Check position: `python3 scripts/k645_bnb_orthog_run.py --status`
+2. If position open: `python3 scripts/k645_bnb_orthog_run.py --close "emergency"`
+3. Or use: `python3 scripts/emergency_hl_exit.py --include-k645`
+4. Close sequence: SHORT leg (BNB or BTC) first, then LONG leg (IOC reduce-only)
+5. **HL not affected** — K645 is Bybit-only
+
+### §47.8 Regime Monitoring
+
+```json
+{
+  "regime": "BULL_BNB | BEAR_BNB | NEUTRAL",
+  "residual_ema_168h": float,
+  "threshold_1_5sigma": float,
+  "beta_eth_used": 0.539,
+  "eth_corr_post_orth": 0.1757,
+  "hl_concentration_pct": 65.0,
+  "gate_metrics.gate_status": "IN_PROGRESS -> PASS after 60d"
+}
+```
+
+### §47.9 Operational Commands
+
+```bash
+# Status check
+python3 scripts/k645_bnb_orthog_run.py --status
+
+# Single cycle dry-run
+python3 scripts/k645_bnb_orthog_run.py --dry-run
+
+# Rebalance check
+python3 scripts/k645_bnb_orthog_run.py --rebalance
+
+# Close positions (paper/scaffold)
+python3 scripts/k645_bnb_orthog_run.py --close "reason"
+
+# View dashboard
+cat data/k645_dashboard.json | python3 -m json.tool | head -50
+
+# Verify 45th daemon in registry
+python3 scripts/verify_deployment_status.py | grep -A3 k645
+
+# Install daemon (post gate passage)
+cp scripts/com.cryptolab.k645-bnb-orthog.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k645-bnb-orthog.plist
+```
+
+### §47.10 Leverage Configuration
+
+```json
+"K645_BNB_ORTHOG": 4.0,   // in exchange_caps -- 4x (paired delta-neutral carry)
+"k645_notes": {
+  "sleeve_pct": 0.03,
+  "leverage": 4.0,
+  "margin_calc": "4x x 3% x $10M = $1.2M total notional / 4x = $300K margin (3% AUM)",
+  "oos_sharpe_residual": 7.07,
+  "ann_return_usd_3pct_4x_net": 17694,
+  "beta_eth": 0.539,
+  "eth_corr_raw": 0.435,
+  "eth_corr_post_orth": 0.1757,
+  "venue": "Bybit-only (BNB+BTC both legs: Bybit BNBUSDT perp + BTC-USDT-SWAP)",
+  "hl_impact": "NONE -- Bybit-only; HL concentration UNCHANGED at 65%",
+  "activation": "SCAFFOLD-READY -- 60d paper-trade gate (Realized Sh>=3.5 + fill>=60% + maxDD<20%)"
+}
+```
+
+### §47.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k645_bnb_orthog_run.py` | Strategy script (K650 scaffold, K339 pattern) |
+| `data/k645_dashboard.json` | Live state + residual signal + beta_eth_used + regime |
+| `scripts/com.cryptolab.k645-bnb-orthog.plist` | 45th daemon plist (StartInterval 28800, gitignored) |
+| `scripts/emergency_hl_exit.py` | `--include-k645` flag + K645 Bybit close summary |
+| `scripts/leverage_manager.py` | K645_BNB_ORTHOG 4.0 cap + SLEEVE_WEIGHTS_V636 |
+| `data/leverage_config.json` | K645_BNB_ORTHOG: 4.0 + k645_notes |
+| `scripts/verify_deployment_status.py` | 45th daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§47) |
+| `wave_k650_k645_scaffold.py` | Wave driver/test |
+| `wave_k650_k645_scaffold.json` | Wave result report |
+
+### §47.12 References
+
+| Wave | Description |
+|------|-------------|
+| K650 | This section — K645 BNB orthog production scaffold (45th daemon, v6.36 candidate, milestone wave) |
+| K645 | K645 analysis — BNB ACCEPT CONDITIONAL ($17,694/yr net @$10M @4x, OOS Sh 7.07 SF W=168h residual) |
+| K480 | K480 BNB-BTC raw (BLOCKED-G5a, ETH corr=0.435) |
+| K642 | K638 STX orthog scaffold (44th daemon, direct scaffold template) |
+| K641 | K635 IMX orthog scaffold (43rd daemon) |
+| K637 | K628 JTO orthog scaffold (40th daemon, pattern origin) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K650 §47 -- K645 BNB-BTC Orthogonalized FR Differential production scaffold (45th daemon, K650 milestone wave, OOS Sh 7.07 residual SF ETH W=168h $17,694/yr net @$10M @4x, beta_ETH=0.539 hardcoded, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=3.5 fill>=60% maxDD<20%, Binance-ecosystem cluster ETH-cluster unlock 6th orthog, v6.36 candidate) -- 2026-05-30*
