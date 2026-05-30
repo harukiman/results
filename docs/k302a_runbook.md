@@ -11310,3 +11310,200 @@ data/k679_dashboard.json
 ---
 
 *K683 §56 -- K679 APT-SOL FR Differential production scaffold (55th daemon, FIRST ALT-ALT pair Move-VM vs SVM, OOS Sh 39.29 W=168h direct alt-alt diff $234.7K/yr net @$10M @4x 3% sleeve, Bybit-only HL 65.5% OVER cap, K512+K476 algebraic overlap standalone, 60d gate: Sh>=20 fill>=60% maxDD<15%, v6.44 candidate) -- 2026-05-30*
+
+---
+
+## §57 K682 ATOM-SOL FR Differential — Production Scaffold Playbook
+
+**Wave:** K685 | **Strategy:** K682 ATOM-SOL Alt-Alt | **Decision:** ACCEPT (10/12 §6 gates)  
+**Daemon:** 55th daemon (2nd alt-alt pair) | **Scaffold generated:** 2026-05-30
+
+---
+
+### §57.0 Strategy Summary
+
+K682 ATOM-SOL = SECOND alt-alt paired-trade (after K679 APT-SOL FIRST ALT-ALT ACCEPT).
+Signal: `sign(7d rolling mean of ATOM_FR - SOL_FR)` — captures Cosmos IBC governance episodics vs Solana retail premium.
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe | **43.43** (> K679 APT-SOL 39.29) |
+| OOS Ann Return (4x) | 84.17% |
+| Net Profit @$10M | **$214,638/yr** (2% sleeve, 4x) |
+| Daily USDC @$10M | $588/day |
+| §6 Gates | 10/12 ACCEPT |
+| 60d Gate | Sh >= 22 + fill >= 60% + DD < 15% |
+
+---
+
+### §57.1 Key Parameters
+
+| Parameter | Value | Notes |
+|-----------|-------|-------|
+| Signal | ATOM_FR - SOL_FR | Direct alt-alt, no BTC/ETH base |
+| Window | W=168h (21 x 8h) | 7d rolling mean |
+| Threshold | 0.0 (zero) | Sign of mean only |
+| Leverage | 4x | K430 cap |
+| Sleeve | 2% standalone | Bybit-only |
+| Venue | Bybit both legs | HL 62.5% — Bybit avoids cap risk |
+| HL impact | UNCHANGED 62.5% | No HL positions |
+| Cadence | 8h | FR settlement cycle |
+| ADF p | 4.25e-30 | Stationary at 1% |
+| OU half-life | 3.37h | STRONG mean-reversion |
+
+---
+
+### §57.2 Performance (K682 ACCEPT)
+
+| Period | Sharpe | Ann Ret (1x) | Max DD | Entries |
+|--------|--------|--------------|--------|---------|
+| IS (2024-05-31 – 2025-10-18) | 20.87 | 8.20% | n/a | 42 |
+| OOS (2025-10-18 – 2026-05-23) | **43.43** | **21.04%** | -0.33% | 11 |
+
+Walk-forward: 10/12 folds positive (folds 1 & 4 negative — early Q4 2024 bull regime warm-up).
+Grid search: W=168h T=0 is best config (OOS Sh=44.21 in grid, primary OOS Sh=43.43).
+
+---
+
+### §57.3 Signal Direction Logic
+
+```
+ATOM_FR - SOL_FR:
+  mean_168h > 0 (BULL_ATOM):
+    Cosmos IBC governance spike — ATOM FR > SOL FR (episodic)
+    → short ATOM (collect high ATOM FR) / long SOL (cheaper carry)
+    → position_state = LONG_SOL_SHORT_ATOM
+
+  mean_168h < 0 (BEAR_ATOM):
+    SOL retail/DePIN premium dominates (~80%+ of time)
+    SOL FR > ATOM FR (persistent structural premium +7.73%/ann vs -3.27%/ann ATOM)
+    → long ATOM (cheap carry) / short SOL (collect high SOL FR)
+    → position_state = LONG_ATOM_SHORT_SOL (typical default state)
+
+  mean_168h == 0 (NEUTRAL):
+    No trade (exact zero — rare)
+```
+
+---
+
+### §57.4 K493+K476 Overlap Warning & Anti-Correlation
+
+**Mathematical identity:**
+`ATOM_fr - SOL_fr = (ATOM_fr - BTC_fr) - (SOL_fr - BTC_fr) = -K493_direction + K476_direction`
+
+K682 vs K493 signed correlation = **-0.5195** (anti-correlated by math identity).
+Per §6/K266 signed convention: signed corr < 0.40 → **PASSES G5c**.
+K682 **HEDGES** K493 ATOM-BTC exposure in portfolio (anti-corr = diversifying).
+
+**Default: K682 STANDALONE 2% Bybit sleeve** — do not assume K493/K476 netting.
+If rebalancing: reduce K493 to 3% + K476 to 1% + K682 at 2% for cleaner ATOM-net exposure.
+
+---
+
+### §57.5 Venue & HL Concentration
+
+| Scenario | HL % | Status |
+|----------|------|--------|
+| HL-only (both legs) | 65.5% | OVER CAP |
+| **Bybit (both legs)** | **62.5%** | **PREFERRED** |
+
+Execute both ATOM+SOL legs on Bybit. HL stays 62.5% (unchanged from baseline).
+ATOM-PERP and SOL-PERP both listed on Bybit with adequate liquidity.
+OKX ATOM corr=0.799 vs HL (secondary G8 confirmation).
+
+---
+
+### §57.6 60d Paper-Trade Gate (K685 specification)
+
+```
+Gate metrics (must ALL pass for live activation):
+  Realized Sharpe (60d)  >=  22.0   (50% of OOS 43.43)
+  Fill rate              >=  60%
+  Max drawdown           <   15%
+  Duration               >=  60 calendar days
+
+Status: SCAFFOLD-READY (paper-trade mode default)
+```
+
+**Activation after gate passage:**
+1. Set `PAPER_TRADE=False` in plist environment
+2. Reload plist: `launchctl unload` + `launchctl load`
+3. Verify first live cycle in logs/k682_atom_sol.log
+4. Update `data/k682_dashboard.json` gate_status = "ACTIVATED"
+
+---
+
+### §57.7 Emergency Close Procedure
+
+```bash
+# K682 ATOM-SOL emergency close (Bybit-only, NOT HL):
+python3 scripts/emergency_hl_exit.py --include-k682 --dry-run
+
+# Close sequence (Bybit IOC reduce-only):
+# Step 1: Cover short leg (ATOM or SOL, whichever is short) on Bybit
+# Step 2: Sell long leg (remaining leg) on Bybit
+
+# K682 does NOT affect HL. Close K682 independently of:
+#   - K493 ATOM-BTC (HL+Bybit split) — separate close required
+#   - K476 SOL-BTC (HL-only) — separate HL close required
+#   - DO NOT net K682 against K493/K476 algebraically
+
+# Monitor:
+python3 scripts/k682_atom_sol_run.py --status
+python3 scripts/k682_atom_sol_run.py --close "emergency_exit"
+```
+
+---
+
+### §57.8 Daemon Deployment
+
+```bash
+# Plist location (K685 scaffold)
+scripts/com.cryptolab.k682-atom-sol.plist
+
+# Deploy (after 60d gate passage)
+cp scripts/com.cryptolab.k682-atom-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k682-atom-sol.plist
+
+# Verify
+launchctl list | grep k682
+
+# Log files
+logs/k682_atom_sol.log
+logs/k682_atom_sol.err
+
+# Dashboard
+data/k682_dashboard.json
+```
+
+### §57.9 Deliverable Files
+
+| File | Description |
+|------|-------------|
+| `scripts/k682_atom_sol_run.py` | Phase 1: K682 strategy script (K339 pattern, W=168h, alt-alt direct diff) |
+| `scripts/com.cryptolab.k682-atom-sol.plist` | Phase 2: 55th daemon plist (StartInterval 28800) |
+| `data/k682_dashboard.json` | Phase 3: Dashboard (diff signal, regime, alt_alt_mechanism) |
+| `scripts/emergency_hl_exit.py` | Phase 4: Emergency exit (--include-k682 flag, §57) |
+| `scripts/leverage_manager.py` | Phase 5: Leverage manager (K682_ATOM_SOL cap + SLEEVE_WEIGHTS_V645) |
+| `data/leverage_config.json` | Phase 6: Leverage config (K682_ATOM_SOL: 4.0 + k682_notes) |
+| `scripts/verify_deployment_status.py` | Phase 7: Deployment verifier (55th daemon 2nd alt-alt registry) |
+| `docs/k302a_runbook.md` | Phase 8: This section (§57) |
+| `report.html` | Phase 9: HTML report (K682 SCAFFOLD-READY banner) |
+| `wave_k685_k682_scaffold.py` | Phase 11: Wave driver |
+| `wave_k685_k682_scaffold.json` | Phase 12: Wave result report |
+
+### §57.10 References
+
+| Wave | Description |
+|------|-------------|
+| K685 | This section — K682 ATOM-SOL scaffold (55th daemon 2nd alt-alt, v6.45 candidate) |
+| K682 | K682 analysis — ATOM-SOL ACCEPT (SECOND ALT-ALT, OOS Sh 43.43) |
+| K683 | K679 APT-SOL scaffold (FIRST ALT-ALT, 55th daemon) |
+| K679 | K679 analysis — APT-SOL ACCEPT (FIRST ALT-ALT, OOS Sh 39.29) |
+| K499 | K493 ATOM-BTC scaffold (ATOM-BTC paired-trade, algebraic overlap) |
+| K478 | K476 SOL-BTC scaffold (SOL-BTC paired-trade, algebraic overlap) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K685 §57 -- K682 ATOM-SOL FR Differential production scaffold (55th daemon 2nd alt-alt pair Cosmos IBC vs SVM, OOS Sh 43.43 W=168h direct alt-alt diff $214.6K/yr net @$10M @4x 2% sleeve, Bybit-only HL 62.5% unchanged, K493+K476 algebraic overlap anti-corr=-0.5195 HEDGES K493 standalone, 60d gate: Sh>=22 fill>=60% maxDD<15%, v6.45 candidate) -- 2026-05-30*

@@ -83,6 +83,8 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K661_AVAX_ETH": 4.0,   # K677: AVAX-ETH FR Differential (v6.43 candidate, HL-primary, 1.5% sleeve, 4x leverage, OOS Sh 28.26 W=168h direct diff, $63,416/yr net @$10M @4x (1.5% sleeve), AVAX Subnet/RWA Avalanche9000 cluster, ETH-base ACCEPT CONDITIONAL PnL corr=0.3731 PASS dual-sleeve K484, G5a K449 corr=-0.008 CRITICAL PASS, 6/7 §6 gates G6 structural 18.6/yr, 53rd daemon 6th ETH-base scaffold)
     "K587_ICP_BTC":  4.0,   # K678: ICP-BTC FR Differential (BTC-base Compute/Cloud cluster, HL 0.5%+Bybit 0.5% split, 4x leverage, OOS Sh 12.53 W=168h, $21K/yr net @$10M @4x (1% sleeve), ICP vol 8.40x highest in BTC-base family, HL maxLev=5x limit uses 4x margin of safety, 60d paper-trade gate, v6.43 candidate, 54th daemon)
     "K679_APT_SOL":  4.0,   # K683: APT-SOL FR Differential (FIRST ALT-ALT pair, Bybit-only, 3% standalone sleeve, 4x leverage, OOS Sh 39.29 W=168h direct alt-alt diff, $234,700/yr net @$10M @4x, Move-VM vs SVM DePIN-Retail cluster, HL 65.5% OVER cap Bybit-only mandatory, K512+K476 algebraic overlap — standalone, 60d gate Sh>=20, 55th daemon)
+    "K682_ATOM_SOL": 4.0,   # K685: ATOM-SOL FR Differential (SECOND ALT-ALT pair, Bybit-only, 2% standalone sleeve, 4x leverage, OOS Sh 43.43 W=168h direct alt-alt diff, $214,638/yr net @$10M @4x, Cosmos IBC vs SVM DePIN-Retail cluster, HL 62.5% Bybit-only preferred, K493+K476 algebraic overlap anti-corr=-0.5195 HEDGES K493 — standalone, 60d gate Sh>=22, 55th daemon 2nd alt-alt)
+    "K684_SOL_INJ":  4.0,   # K687: SOL-INJ FR Differential (THIRD ALT-ALT pair, Bybit-only, 3% standalone sleeve, 4x leverage, OOS Sh 9.65 W=168h direct alt-alt diff, $114,316/yr net @$10M @4x, SVM DePIN-Retail vs Cosmos-DeFi-Perp cluster, HL 62.5% Bybit-only preferred headroom preserved, K476+K500 algebraic overlap standalone, K679+K684 SOL double-exposure monitor, 60d gate Sh>=5, 56th daemon 3rd alt-alt)
     "K457_basket":    4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
@@ -784,6 +786,8 @@ SLEEVE_WEIGHTS_V645: Dict[str, float] = {
     "K661":    0.015,   # AVAX-ETH FR Differential, 4x leverage, HL-primary (v6.43 K677 addition, $63,416/yr net @1.5%, AVAX Subnet/RWA, ETH-base ACCEPT CONDITIONAL dual K484 1.5%, 53rd daemon)
     "K587":    0.01,    # ICP-BTC FR Differential, 4x leverage, HL 0.5%+Bybit 0.5% split (v6.43 K678 addition, $21K/yr net @1%, Compute/Cloud cluster, ICP vol 8.40x highest in family, HL maxLev=5x uses 4x, 54th daemon)
     "K679":    0.03,    # APT-SOL FR Differential, 4x leverage, Bybit-only (v6.44 K683 addition, $234,700/yr net @3%, FIRST ALT-ALT pair Move-VM vs SVM, HL 65.5% OVER cap Bybit-only, K512+K476 overlap standalone, 55th daemon)
+    "K682":    0.02,    # ATOM-SOL FR Differential, 4x leverage, Bybit-only (v6.45 K685 addition, $214,638/yr net @2%, SECOND ALT-ALT pair Cosmos IBC vs SVM, HL 62.5% Bybit preferred, K493+K476 overlap standalone anti-corr=-0.5195 HEDGES K493, 55th daemon 2nd alt-alt)
+    "K684":    0.03,    # SOL-INJ FR Differential, 4x leverage, Bybit-only (v6.46 K687 addition, $114,316/yr net @3%, THIRD ALT-ALT pair SVM DePIN-Retail vs Cosmos-DeFi-Perp, HL 62.5% Bybit-only headroom preserved, K476+K500 algebraic overlap standalone, K679+K684 SOL double-exposure monitor, 56th daemon 3rd alt-alt)
     "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
 }
 
@@ -904,6 +908,8 @@ def compute_position_size(
         "K512":     "K512_APT_BTC",  # K520: 4x cap for APT-BTC paired-trade sleeve (HL+Bybit split, Move-VM #1)
         "K587":     "K587_ICP_BTC",  # K678: 4x cap for ICP-BTC paired-trade sleeve (HL+Bybit split, Compute/Cloud, ICP HL maxLev=5x)
         "K679":     "K679_APT_SOL",  # K683: 4x cap for APT-SOL paired-trade sleeve (Bybit-only, FIRST ALT-ALT, 3% standalone)
+        "K682":     "K682_ATOM_SOL", # K685: 4x cap for ATOM-SOL paired-trade sleeve (Bybit-only, SECOND ALT-ALT, 2% standalone)
+        "K684":     "K684_SOL_INJ",  # K687: 4x cap for SOL-INJ paired-trade sleeve (Bybit-only, THIRD ALT-ALT, 3% standalone)
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)
@@ -962,6 +968,8 @@ def compute_margin_required(
         "K512":     "K512_APT_BTC",  # K520: 4x cap APT-BTC paired-trade (HL+Bybit split, Move-VM #1)
         "K587":     "K587_ICP_BTC",  # K678: 4x cap ICP-BTC paired-trade (HL+Bybit split, Compute/Cloud, ICP HL maxLev=5x)
         "K679":     "K679_APT_SOL",  # K683: 4x cap APT-SOL paired-trade (Bybit-only, FIRST ALT-ALT, 3% standalone)
+        "K682":     "K682_ATOM_SOL", # K685: 4x cap ATOM-SOL paired-trade (Bybit-only, SECOND ALT-ALT, 2% standalone)
+        "K684":     "K684_SOL_INJ",  # K687: 4x cap SOL-INJ paired-trade (Bybit-only, THIRD ALT-ALT, 3% standalone)
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)

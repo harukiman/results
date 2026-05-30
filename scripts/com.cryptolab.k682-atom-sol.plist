@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k682-atom-sol</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k682_atom_sol_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 55th daemon (2nd alt-alt pair): K682 ATOM-SOL FR Differential (Bybit-only) -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 22, fill_rate >= 60%, maxDD < 15% -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k682_atom_sol.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k682_atom_sol.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K682 specific notes (do not remove):
+         Strategy:    ATOM-SOL FR Differential, SECOND ALT-ALT pair (K682, K685 scaffold)
+         Daemon #:    55th daemon (2nd alt-alt; K679 APT-SOL = 55th; K682 adds to same slot)
+         OOS Sharpe:  43.43 (SECOND ALT-ALT record > K679 APT-SOL 39.29, W=168h, zero threshold)
+         Profit:      $214,638/yr net @$10M @4x (2% standalone sleeve)
+         Signal:      diff = ATOM_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold)
+         Venue:       Bybit-only (ATOM-PERP + SOL-PERP, both Bybit)
+         HL impact:   UNCHANGED 62.5% (Bybit-only — HL within 65% cap, no HL positions)
+         Gate:        60d paper-trade: Realized Sh>=22 + fill>=60% + maxDD<15%
+         Cluster:     ATOM-SOL Alt-Alt (Cosmos IBC vs Solana SVM DePIN-Retail, SECOND ALT-ALT)
+         ATOM drivers: Cosmos IBC governance-driven episodics, validator staking -3.27%/ann,
+                       new chain launches, SNS DAO proposals, IBC ecosystem growth
+         SOL drivers:  DePIN/Retail meme-coin season (BONK/WIF), Firedancer hype, validator economics
+         K493+K476:   Algebraic overlap warning — K682 HEDGES K493 (anti-corr=-0.5195, signed PASS)
+         Standalone:  K682 2% Bybit sleeve independent of K493 ATOM-BTC + K476 SOL-BTC
+         Math identity: ATOM-SOL = -(BTC-ATOM) + (BTC-SOL) = -K493_dir + K476_dir
+         Trades/yr:   ~26.8 (W=168h, zero threshold; G6 borderline <30 but ACCEPT 10/12)
+         Deploy:      cp scripts/com.cryptolab.k682-atom-sol.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k682-atom-sol.plist
+    -->
+</dict>
+</plist>

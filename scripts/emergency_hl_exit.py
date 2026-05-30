@@ -3991,6 +3991,71 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K685: K682 ATOM-SOL FR Differential emergency exit flag
+    # K682 = Bybit-only ATOM+SOL paired (2 legs, SECOND ALT-ALT pair).
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL at 62.5%, Bybit-only preferred).
+    # Signal: diff = ATOM_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold).
+    # K493+K476 overlap warning: K682 STANDALONE — close K682 independently of K493/K476.
+    # Anti-corr: K682 vs K493 = -0.5195 (HEDGES K493 portfolio exposure). Close independently.
+    # Bybit-only: ATOM-PERP + SOL-PERP both on Bybit. HL UNCHANGED at 62.5%.
+    # Use --include-k682 to print K682-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k682",
+        dest="include_k682",
+        action="store_true",
+        default=False,
+        help=(
+            "K685: Include K682 ATOM-SOL close summary during emergency exit. "
+            "K682 positions (ATOM+SOL paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Signal: diff = ATOM_FR - SOL_FR (direct alt-alt differential, W=168h rolling mean, zero threshold). "
+            "HL concentration UNCHANGED at 62.5% (Bybit-only — no HL positions). "
+            "OOS Sharpe 43.43 (SECOND ALT-ALT pair, > K679 39.29). $214,638/yr net @$10M @4x (2% standalone sleeve). "
+            "K493+K476 overlap: close K682 STANDALONE. Anti-corr K682/K493=-0.5195 (HEDGES K493, close independently). "
+            "Math identity: ATOM-SOL = -(BTC-ATOM) + (BTC-SOL) = -K493_dir + K476_dir. "
+            "60d paper-trade gate: Realized Sh>=22 + fill>=60% + maxDD<15%. "
+            "ATOM FR: Cosmos IBC governance-driven episodics (new chain launches, staking inflation -3.27%/ann). "
+            "SOL FR: DePIN/Retail/meme-coin premium (BONK/WIF, Firedancer, validator economics, +7.73%/ann). "
+            "Cluster: ATOM-SOL Alt-Alt (Cosmos IBC vs SVM DePIN-Retail, SECOND ALT-ALT, 55th daemon 2nd). "
+            "Requires: K682 daemon running (com.cryptolab.k682-atom-sol). "
+            "See: docs/k302a_runbook.md §57"
+        ),
+    )
+
+    # K687: K684 SOL-INJ FR Differential emergency exit flag
+    # K684 = Bybit-only SOL+INJ paired (2 legs, THIRD ALT-ALT pair).
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — Bybit-only preferred, HL stays at 62.5%).
+    # Signal: diff = SOL_FR - INJ_FR (direct alt-alt, W=168h rolling mean, zero threshold).
+    # K476+K500 overlap warning: K684 STANDALONE — close K684 independently of K476/K500.
+    # K679 SOL-exposure: K684 + K679 share SOL leg — close independently, monitor SOL exposure.
+    # Bybit-only: SOL-PERP + INJ-PERP both on Bybit. HL UNCHANGED at 62.5%.
+    # Use --include-k684 to print K684-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k684",
+        dest="include_k684",
+        action="store_true",
+        default=False,
+        help=(
+            "K687: Include K684 SOL-INJ close summary during emergency exit. "
+            "K684 positions (SOL+INJ paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Signal: diff = SOL_FR - INJ_FR (direct alt-alt differential, W=168h rolling mean, zero threshold). "
+            "HL concentration UNCHANGED at 62.5% (Bybit-only — no HL positions, headroom preserved). "
+            "OOS Sharpe 9.65 (THIRD ALT-ALT pair, 216d OOS). $114,316/yr net @$10M @4x (3% standalone sleeve). "
+            "K476+K500 algebraic overlap: SOL-INJ = K476_dir - K500_dir. Close K684 STANDALONE. "
+            "K679 SOL-exposure: K684 + K679 share SOL leg — close independently, monitor SOL notional. "
+            "Math identity: SOL-INJ = (SOL-BTC) - (INJ-BTC) = K476_dir - K500_dir. "
+            "60d paper-trade gate: Realized Sh>=5 + fill>=60% + maxDD<15%. "
+            "SOL FR: DePIN/Retail/meme-coin premium (BONK/WIF, Firedancer, ETF speculation, +7.7% ann). "
+            "INJ FR: Cosmos DeFi perp DEX (liquidation cascades, INJ burn, IBC bridge, +3.6% ann episodic). "
+            "Cluster: SOL-INJ Alt-Alt (SVM DePIN-Retail vs Cosmos-DeFi-Perp, THIRD ALT-ALT, 56th daemon). "
+            "Requires: K684 daemon running (com.cryptolab.k684-sol-inj, 56th daemon). "
+            "See: docs/k302a_runbook.md §58"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -4753,6 +4818,64 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "Close K679 on Bybit independently of K512/K476. "
                 "Use --include-k679 for Bybit close summary (§55). "
                 "HL concentration UNCHANGED at 65.5%."
+            )
+
+        # K685: K682 ATOM-SOL close summary (Bybit-only — HL NOT affected)
+        # K682 positions (ATOM+SOL, Bybit-only) are NOT in the HL exit above.
+        # K682 is Bybit-only (HL at 62.5%, Bybit avoids 65% cap risk). HL UNCHANGED at 62.5%.
+        # Close K682 independently of K493 ATOM-BTC and K476 SOL-BTC (standalone).
+        # Note: K682 anti-corr with K493 (-0.5195) = HEDGES — close independently anyway.
+        if args.include_k682:
+            logger.info("=== K682 ATOM-SOL CLOSE SUMMARY (K685 §57) ===")
+            logger.info("  K682 ATOM-SOL: Bybit-only (ATOM-PERP + SOL-PERP both legs on Bybit)")
+            logger.info("  SECOND ALT-ALT pair: ATOM vs SOL (no BTC/ETH base)")
+            logger.info("  Signal: diff = ATOM_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: UNCHANGED at 62.5% (K682 is Bybit-only)")
+            logger.info("  K493+K476 overlap: close K682 STANDALONE (anti-corr=-0.5195 HEDGES K493, close independently)")
+            logger.info("  Math identity: ATOM-SOL = -(BTC-ATOM) + (BTC-SOL) = -K493_dir + K476_dir")
+            logger.info("  OOS Sharpe 43.43 (SECOND ALT-ALT > K679 39.29) | $214,638/yr net @$10M @4x (2% sleeve)")
+            logger.info("  ATOM FR: Cosmos IBC governance-driven episodics (staking -3.27%/ann bias)")
+            logger.info("  SOL FR: DePIN/Retail/meme-coin premium (BONK/WIF, Firedancer, +7.73%/ann)")
+            logger.info("  Cluster: ATOM-SOL Alt-Alt (Cosmos IBC vs SVM DePIN-Retail, SECOND ALT-ALT)")
+            logger.info("  60d gate: Realized Sh>=22 + fill>=60% + maxDD<15%")
+            logger.info("  See: docs/k302a_runbook.md §57 (K682 ATOM-SOL playbook)")
+        else:
+            logger.info(
+                "K682 ATOM-SOL: Bybit-only (NOT HL — HL at 62.5%, Bybit avoids cap risk). "
+                "K682 positions ARE NOT in the HL exit above (Bybit-only). "
+                "Close K682 on Bybit independently of K493/K476. "
+                "Use --include-k682 for Bybit close summary (§57). "
+                "HL concentration UNCHANGED at 62.5%."
+            )
+
+        # K687: K684 SOL-INJ close summary (Bybit-only — HL NOT affected)
+        # K684 positions (SOL+INJ, Bybit-only) are NOT in the HL exit above.
+        # K684 is Bybit-only (HL at 62.5%, Bybit-only preferred — headroom preserved). HL UNCHANGED at 62.5%.
+        # Close K684 independently of K476 SOL-BTC and K500 INJ-BTC (standalone).
+        # Note: K684 + K679 share SOL leg — close independently, monitor SOL notional.
+        if args.include_k684:
+            logger.info("=== K684 SOL-INJ CLOSE SUMMARY (K687 §58) ===")
+            logger.info("  K684 SOL-INJ: Bybit-only (SOL-PERP + INJ-PERP both legs on Bybit)")
+            logger.info("  THIRD ALT-ALT pair: SOL vs INJ (no BTC/ETH base)")
+            logger.info("  Signal: diff = SOL_FR - INJ_FR (direct alt-alt, W=168h rolling mean, zero threshold)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: UNCHANGED at 62.5% (K684 is Bybit-only, headroom preserved)")
+            logger.info("  K476+K500 overlap: close K684 STANDALONE (SOL-INJ = K476_dir - K500_dir algebraic identity)")
+            logger.info("  K679 SOL-exposure: K684 + K679 share SOL leg — close independently, monitor SOL notional")
+            logger.info("  OOS Sharpe 9.65 (THIRD ALT-ALT, 216d OOS) | $114,316/yr net @$10M @4x (3% sleeve)")
+            logger.info("  SOL FR: DePIN/Retail/meme-coin premium (BONK/WIF, Firedancer, ETF speculation, +7.7% ann)")
+            logger.info("  INJ FR: Cosmos DeFi perp DEX (liquidation cascades, INJ burn, IBC bridge, +3.6% ann episodic)")
+            logger.info("  Cluster: SOL-INJ Alt-Alt (SVM DePIN-Retail vs Cosmos-DeFi-Perp, 56th daemon)")
+            logger.info("  60d gate: Realized Sh>=5 + fill>=60% + maxDD<15%")
+            logger.info("  See: docs/k302a_runbook.md §58 (K684 SOL-INJ playbook)")
+        else:
+            logger.info(
+                "K684 SOL-INJ: Bybit-only (NOT HL — HL at 62.5%, Bybit-only preferred). "
+                "K684 positions ARE NOT in the HL exit above (Bybit-only). "
+                "Close K684 on Bybit independently of K476/K500. "
+                "Use --include-k684 for Bybit close summary (§58). "
+                "HL concentration UNCHANGED at 62.5%."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)

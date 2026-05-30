@@ -434,6 +434,20 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k679_apt_sol",
         expected_html_status="SCAFFOLD-READY",  # K683: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=20 + fill>=60% + maxDD<15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k682-atom-sol",
+        purpose="K682 ATOM-SOL FR Differential (SECOND ALT-ALT pair Cosmos IBC vs SVM DePIN-Retail, Bybit-only ATOM-PERP+SOL-PERP both legs, 4x leverage, 8h cycle, OOS Sh 43.43 W=168h direct alt-alt diff, $214,638/yr net @$10M @4x @2% standalone sleeve, HL 62.5% Bybit-only preferred, K493+K476 algebraic overlap anti-corr=-0.5195 HEDGES K493 — standalone, ATOM FR=Cosmos IBC governance-driven episodics staking -3.27%/ann validator inflation, SOL FR=DePIN/Retail meme-coin BONK/WIF Firedancer +7.73%/ann, 60d paper-trade gate Realized Sh>=22 fill>=60% maxDD<15%, v6.45 candidate 2% sleeve, 55th daemon 2nd alt-alt, K685 scaffold)",
+        scripts=["scripts/k682_atom_sol_run.py"],
+        log_basename="k682_atom_sol",
+        expected_html_status="SCAFFOLD-READY",  # K685: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=22 + fill>=60% + maxDD<15%)
+    ),
+    DaemonSpec(
+        label="com.cryptolab.k684-sol-inj",
+        purpose="K684 SOL-INJ FR Differential (THIRD ALT-ALT pair SVM DePIN-Retail vs Cosmos-DeFi-Perp, Bybit-only SOL-PERP+INJ-PERP both legs, 4x leverage, 8h cycle, OOS Sh 9.65 W=168h direct alt-alt diff, $114,316/yr net @$10M @4x @3% standalone sleeve, HL 62.5% Bybit-only preferred headroom preserved, K476+K500 algebraic overlap — standalone, K679+K684 SOL double-exposure monitor, SOL FR=DePIN/Retail meme-coin BONK/WIF Firedancer ETF speculation +7.7%ann persistent, INJ FR=Cosmos DeFi perp DEX liquidations INJ burn IBC bridge +3.6%ann episodic mean-reverting, 60d paper-trade gate Realized Sh>=5 fill>=60% maxDD<15%, v6.46 candidate 3% sleeve, 56th daemon, K687 scaffold)",
+        scripts=["scripts/k684_sol_inj_run.py"],
+        log_basename="k684_sol_inj",
+        expected_html_status="SCAFFOLD-READY",  # K687: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=5 + fill>=60% + maxDD<15%)
+    ),
 ]
 
 

@@ -1,0 +1,115 @@
+{
+  "wave": "K685",
+  "strategy": "K682 ATOM-SOL FR Differential (SECOND ALT-ALT, Bybit-only)",
+  "generated_jst": "2026-05-30 14:34 JST",
+  "total_tests": 13,
+  "passed": 13,
+  "failed": 0,
+  "results": [
+    {
+      "name": "script_exists",
+      "status": "PASS",
+      "detail": "scripts/k682_atom_sol_run.py exists (1009 lines)"
+    },
+    {
+      "name": "plist_exists",
+      "status": "PASS",
+      "detail": "com.cryptolab.k682-atom-sol.plist: label + StartInterval=28800 OK"
+    },
+    {
+      "name": "dashboard_exists",
+      "status": "PASS",
+      "detail": "data/k682_dashboard.json: state=LONG_ATOM_SHORT_SOL, OOS Sh=43.43, $214,638/yr, 2% sleeve, gate Sh>=22.0, HL 62.5%"
+    },
+    {
+      "name": "dry_run",
+      "status": "PASS",
+      "detail": "dry-run: K682 ATOM-SOL Cycle Complete (exit 0)"
+    },
+    {
+      "name": "dashboard_written",
+      "status": "PASS",
+      "detail": "dashboard: wave=K685, sleeve=2%, leverage=4.0x, HL conc=62.5%"
+    },
+    {
+      "name": "notional_sizing",
+      "status": "PASS",
+      "detail": "notional: per_leg=$400,000, total=$800,000, margin=$200,000 (2% @$10M x 4x)"
+    },
+    {
+      "name": "fr_differential_logic",
+      "status": "PASS",
+      "detail": "FR logic: BEAR_ATOM->LONG_ATOM_SHORT_SOL (both @BYBIT), BULL_ATOM->LONG_SOL_SHORT_ATOM (both @BYBIT), NEUTRAL->None"
+    },
+    {
+      "name": "emergency_exit_flag",
+      "status": "PASS",
+      "detail": "emergency_hl_exit.py: --include-k682 flag + K682 ATOM-SOL CLOSE SUMMARY present"
+    },
+    {
+      "name": "leverage_manager_k682",
+      "status": "PASS",
+      "detail": "leverage_manager: K682_ATOM_SOL cap=4.0, SLEEVE_WEIGHTS_V645 K682=2%"
+    },
+    {
+      "name": "leverage_config_k682",
+      "status": "PASS",
+      "detail": "leverage_config.json: K682_ATOM_SOL=4.0, k682_notes OOS Sh 43.43 $214,638/yr, 2% sleeve"
+    },
+    {
+      "name": "verify_deployment_k682",
+      "status": "PASS",
+      "detail": "verify_deployment_status: K682 registered (SECOND ALT-ALT, 55th daemon slot)"
+    },
+    {
+      "name": "runbook_section",
+      "status": "PASS",
+      "detail": "docs/k302a_runbook.md: \u00a757 present with OOS Sh 43.43, $214K/yr, Cosmos IBC, SECOND ALT-ALT"
+    },
+    {
+      "name": "report_html_k682",
+      "status": "PASS",
+      "detail": "report.html: K682 entry present (eval section confirmed)"
+    }
+  ],
+  "k682_spec": {
+    "oos_sharpe": 43.43,
+    "ann_return_usd_net": 214638,
+    "daily_usdc": 588,
+    "sleeve_pct": 0.02,
+    "leverage": 4.0,
+    "w_hours": 168,
+    "threshold": 0.0,
+    "bybit_only": true,
+    "hl_concentration": 62.5,
+    "daemon_slot": "55th (2nd alt-alt)",
+    "cluster": "ATOM-SOL Alt-Alt \u2014 Cosmos IBC vs Solana SVM DePIN-Retail",
+    "venue": "Bybit-only (ATOM-PERP + SOL-PERP)",
+    "k493_k476_overlap": "algebraic overlap \u2014 standalone 2% sleeve, anti-corr K682/K493=-0.5195 HEDGES",
+    "math_identity": "ATOM-SOL = -(BTC-ATOM) + (BTC-SOL) = -K493_dir + K476_dir"
+  },
+  "activation_gate": {
+    "oos_sharpe_min": 22.0,
+    "fill_rate_min_pct": 60,
+    "max_drawdown_pct": 15,
+    "duration_days": 60,
+    "status": "SCAFFOLD-READY",
+    "note": "Sh>=22 (50% of OOS 43.43), fill>=60%, maxDD<15%, 60d paper-trade"
+  },
+  "hl_concentration": {
+    "baseline_pct": 62.5,
+    "k682_hl_adds_pp": 0.0,
+    "post_k682_estimate": 62.5,
+    "limit": 65.0,
+    "headroom_pp": 2.5
+  },
+  "section6_gates": {
+    "gates_passed": 10,
+    "gates_total": 12,
+    "failed": [
+      "G4 WF 10/12 folds (not all positive)",
+      "G6 trades/yr 26.8 <30 threshold"
+    ],
+    "decision": "ACCEPT"
+  }
+}
