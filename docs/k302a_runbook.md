@@ -15349,6 +15349,185 @@ python3 scripts/k774_io_sol_run.py --dry-run
 
 ---
 
+## §81 K786 BIO-SOL FR Differential (80th Daemon, TWENTY-THIRD ALT-ALT, DeSci × SVM, 21st Vertex)
+
+*K787 §81 -- K786 BIO-SOL FR Differential production scaffold (80th daemon, TWENTY-THIRD ALT-ALT scaffold 21st-vertex BIO DeSci-Biotech-DAO-coordination Bio-Protocol × Solana SVM, OOS Sh 23.10 IS Sh 23.24 IS~OOS-consistent W=84h G6-7479/yr-OOS, central $63,652/yr net @$10M @4x 0.4% sleeve K523 3-point $54K-$168K, HL ONLY BIO-PERP+SOL-PERP G8-FAIL-HL-only-HIP-3-no-Bybit-no-OKX, ACCEPT 8/9 G8-FAIL-cross-venue-unconfirmed, G4 WF 5/5 ALL-POSITIVE min_fold_sh=20.95, G5 24/24 ALL-PASS max_corr=0.3308-G5u-FIL-SOL, G6 7479/yr PASS, G9 OOS-204.8d-PASS>=180d, L004-PASS BIO-bidirectional, L004_DIFF-BORDERLINE full=0.303-OOS=0.461-monthly-recheck, BIO-vertex-21st 1st-DeSci-cluster MR9-L002-all-future-BIO-X-blocked, 60d gate: Sh>=15 fill>=60% maxDD<15% + K498/v6.52 + cross-venue Bybit BIO verify) -- 2026-05-31*
+
+### §81.1 Strategy Overview
+
+| Field | Value |
+|-------|-------|
+| Strategy | K786 BIO-SOL FR Differential (TWENTY-THIRD ALT-ALT scaffold) |
+| Decision | **ACCEPT 8/9** (G8 FAIL — HL-only HIP-3, cross-venue unconfirmed) |
+| OOS Sharpe | 23.10 (W=84h, zero threshold, 205d OOS) |
+| IS Sharpe | 23.24 (IS~OOS — consistent, no directional overfit) |
+| G4 Walk-Forward | 5/5 ALL POSITIVE (min_fold_sh=20.95) |
+| G5 family | 24/24 ALL PASS (max_corr=0.3308 G5u FIL-SOL, below 0.40) |
+| G6 trade count | 7,479 entries/yr OOS (W=84h — ultra-high frequency) |
+| G7 ann return | OOS 4x=558.4% PASS |
+| G8 cross-venue | **FAIL** — BIO HL-only HIP-3 (no Bybit/OKX perp confirmed) |
+| G9 data | OOS 204.8d PASS (>= 180d minimum) |
+| L004 | PASS — BIO bidirectional (pos_frac_full=0.5590 pos_frac_oos=0.5983) |
+| L004_DIFF | **BORDERLINE** — full=0.303 (OOS=0.461 PASS). Monthly recheck. |
+| Sleeve | 0.4% (liquidity-limited — BIO HIP-3 daily vol) |
+| Leverage | 4x |
+| Venue | **HL ONLY** (no Bybit, no OKX — G8 FAIL) |
+| K523 central | $63,652/yr @$10M @4x @0.4% sleeve |
+| K523 3-point | conservative=$54,105 / central=$63,652 / optimistic=$167,506/yr |
+| BIO vertex | 21st vertex (1st DeSci cluster). MR9 L002: all BIO-X blocked. |
+| HL cap | 66.8% AT CAP → paper-gate strict |
+| Live gate | Sh ≥ 15, fill ≥ 60%, maxDD < 15% + K498/v6.52 + cross-venue Bybit verify |
+
+### §81.2 BIO vs SOL FR Economics
+
+**BIO FR drivers (DeSci / Biotech DAO coordination):**
+- DeSci narrative cycles — general DeSci bull/bear (biotech sector mood)
+- BioDAO deal flow — IP-NFT acquisitions, licensing events
+- VitaDAO longevity milestones — clinical trial progress, drug discovery news
+- AthenaDAO / HairDAO / GenomesDAO research cycle announcements
+- Biotech bull/bear cycles — FDA approval/rejection, biotech sector sentiment
+- Regulatory DeSci news — US/EU policy on decentralized science funding
+- Decentralized patient capital deployment — drug discovery DAO funding rounds
+- BIO FR bidirectional: OOS pos_fraction=0.5983 confirms genuine bidirectionality
+
+**SOL FR drivers (Solana SVM L1):**
+- Retail momentum / meme coin seasons (BONK, WIF, POPCAT on Solana)
+- Firedancer upgrade cycles (validator throughput expectations)
+- Solana ETF narrative events (institutional SOL demand)
+- SVM DeFi TVL expansion (Jupiter, Drift, Jito restaking)
+- SOL staking yield vs perpetual leverage premium
+- SOL liquidation cascade: Min=-20.51bps (Feb 2025)
+
+**Structural independence:** BIO DeSci (biotech DAO capital) vs SOL SVM (consumer DeFi/meme). raw_corr=0.0028 — essentially uncorrelated. cycle_independence=0.9972.
+
+### §81.3 §6 Gate Results (K786)
+
+| Gate | Value | Threshold | Result |
+|------|-------|-----------|--------|
+| G1 OOS Sharpe | 23.10 | >= 1.0 | PASS |
+| G2 Perm p | 0.0000 | <= 0.05 | PASS |
+| G3 DSR Bonferroni | t=1619.5 | < 0.0056 | PASS |
+| G4 Walk-forward | 5/5 positive | all positive | PASS |
+| G5 Family (24 checks) | max_corr=0.3308 | all < 0.40 | PASS |
+| G6 Entries/yr | 7,479 | >= 30 | PASS |
+| G7 OOS ret @4x | 558.4% | > 5% | PASS |
+| G8 Cross-venue | HL only | need Bybit/OKX | **FAIL** |
+| G9 OOS days | 204.8d | >= 180d | PASS |
+
+**G4 Walk-Forward Folds:**
+
+| Fold | OOS Period | Sharpe | Ann Ret |
+|------|------------|--------|---------|
+| 1 | 2025-04-03 → 2025-05-03 | 37.44 | 177.6% |
+| 2 | 2025-07-02 → 2025-08-01 | 69.92 | 85.9% |
+| 3 | 2025-09-30 → 2025-10-30 | 33.03 | 1227.0% |
+| 4 | 2025-12-29 → 2026-01-28 | 29.89 | 21.2% |
+| 5 | 2026-03-29 → 2026-04-28 | 20.95 | 183.9% |
+
+All 5 folds positive. Minimum fold Sh=20.95 (strong — all folds clear 20.0).
+
+### §81.4 K523 3-Point Profit Projection (@$10M @4x @0.4%)
+
+| Scenario | Annual USD |
+|----------|------------|
+| Conservative (×0.38 realized ×OOS-haircut ×fee) | $54,105/yr |
+| **Mid/Central (×0.38 realized ×OOS-haircut)** | **$63,652/yr** |
+| Optimistic (raw OOS, upper bound) | $167,506/yr |
+
+- Sleeve: 0.4% of $10M = $40,000 margin → $160,000 notional (4x leverage)
+- Notional per leg: $80,000 (BIO leg + SOL leg = $160,000 total)
+- K523 compliance: single-number $167K is **upper bound, not central**
+
+### §81.5 HL Concentration Status
+
+| Metric | Value |
+|--------|-------|
+| HL concentration pre-K786 | 66.8% |
+| HL concentration post-K786 | 66.8% (UNCHANGED — paper-only) |
+| HL cap | 65.0% (K532 Governance v5) |
+| Status | AT CAP — paper-gate strict |
+| Action | Paper-gate until K498/v6.52 reduces HL% below 65% |
+
+### §81.6 BIO Vertex Rule (MR9 L002)
+
+BIO is added as the **21st vertex** (1st DeSci cluster) to the alt-alt vertex set:
+
+```
+V (after K786) = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI,
+                   SOL, TIA, TAO, PEPE, WIF, BLUR, AXS, IO, EIGEN, COMP, BIO}
+```
+
+MR9 L002: All future BIO-X pairs are **auto-blocked**. BIO-SOL is the only permissible BIO-X pair.
+
+### §81.7 L004_DIFF Monthly Recheck Protocol
+
+L004_DIFF full=0.303 is borderline (0.003 above 0.30 floor). OOS=0.461 PASS.
+
+**Monthly recheck required:**
+1. Re-fetch BIO-SOL FR history (cache growing with each 8h cycle)
+2. Recompute L004_DIFF on full dataset + rolling 90d window
+3. If full drops below 0.30: escalate to governance review (wave)
+4. If OOS drops below 0.30: BLOCK immediately (override paper-gate)
+5. G2 p=0.000 baseline: re-run permutation if L004_DIFF approaches 0.25
+
+### §81.8 G8 Resolution Protocol
+
+G8 FAIL: BIO is HIP-3 on HL (listed Jan 2025). No confirmed Bybit/OKX perpetual.
+
+**Steps to resolve G8 FAIL before live:**
+1. Check Bybit perpetuals listing: search BIOUSDT or BIO-PERP
+2. Check OKX perpetuals: search BIO-USDT-SWAP
+3. If confirmed: run G8 corr check (target: HL vs Bybit FR corr >= 0.55, n >= 100)
+4. Document result in K302a §81 update
+5. Only then: G8 resolved → live gate active (plus K498/v6.52 + 60d paper gate)
+
+### §81.9 Live Gate
+
+| Criterion | Threshold | Note |
+|-----------|-----------|------|
+| Realized Sharpe (60d) | >= 15.0 | Higher than COMP-SOL (G8 unresolved) |
+| Fill rate | >= 60% | POST_ONLY orders |
+| Max drawdown | < 15% | Rolling 60d |
+| HL concentration | < 65.0% | K498/v6.52 OKX prerequisite |
+| G8 resolution | Bybit BIO verified | Cross-venue perp required |
+
+### §81.10 Daemon Activation
+
+```bash
+# Activate 80th daemon (K786 BIO-SOL):
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k786-bio-sol.plist
+cp scripts/com.cryptolab.k786-bio-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k786-bio-sol.plist
+
+# Verify:
+launchctl list | grep k786
+python3 scripts/k786_bio_sol_run.py --status
+
+# Paper-trade test:
+python3 scripts/k786_bio_sol_run.py --dry-run
+```
+
+**WARNING:** Only convert `PAPER_TRADE=False` AFTER:
+1. K498/v6.52 reduces HL% below 65%
+2. Cross-venue Bybit BIO verified (G8 resolution)
+3. 60d live gate: Sh>=15 + fill>=60% + maxDD<15%
+
+### §81.11 References
+
+| Wave | Description |
+|------|-------------|
+| K786 | K786 BIO-SOL evaluation (ACCEPT 8/9 — G8 FAIL HL-only HIP-3) |
+| K787 | This section — K786 BIO-SOL production scaffold (80th daemon) |
+| K498 | OKX activation prerequisite (reduces HL% below 65%) |
+| K523 | 3-point projection mandate |
+| K518 | 38% realized-to-stated ratio floor |
+| K532 | Governance v5 (HL 65.0% cap rule) |
+| K782 | PROVE-SOL precedent (L004_DIFF 0.277 BLOCKED) |
+| K784 | G5u FIL-SOL pre-check precedent (0.331 PASS) |
+| K735 | HBAR-SOL precedent (G8 STRUCTURAL_NA HL-only asset) |
+
+---
+
 ## §80 K778 COMP-SOL FR Differential (79th Daemon, TWENTY-SECOND ALT-ALT, DeFi-Gov × SVM, 20th Vertex)
 
 *K780 §80 -- K778 COMP-SOL FR Differential production scaffold (79th daemon, TWENTY-SECOND ALT-ALT scaffold 20th-vertex COMP DeFi-governance-token Compound-Finance × Solana SVM, OOS Sh 25.05 IS Sh 14.91 OOS>IS CLEAN-ACCEPT W=48h G6-87.5/yr-OOS, central $207,345/yr net @$10M @4x 2.5% sleeve K523 3-point $79K-$276K, HL primary COMP-PERP+SOL-PERP Bybit fallback COMPUSDT OKX secondary COMP-confirmed G8-PASS, CLEAN ACCEPT 30/30 NO-conditional-caveats, G4 WF 12/12 ALL-POSITIVE min_fold_sh=14.79 perfect-WF-validation, G5 22/22 ALL-PASS max_corr=0.3906-G5j-SOL-INJ-negative all-below-0.40, G6 87.5/yr PASS, G9 OOS-216d-PASS>=180d-NO-marginal-caveat, L004-PASS COMP-bidirectional-pos_frac_full=68.1%-pos_frac_oos=50.1%, COMP-vertex-20th 1st-DeFi-governance-cluster MR9-L002-all-future-COMP-X-blocked, 60d gate: Sh>=12 fill>=60% maxDD<15% + K498/v6.52-OKX-activation) -- 2026-05-30*

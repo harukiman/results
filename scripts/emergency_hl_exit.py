@@ -4545,6 +4545,51 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K787: K786 BIO-SOL HL-only emergency exit flag
+    # K786 = HL-only BIO+SOL paired (2 legs) when BIO_FR-SOL_FR rolling mean 84h changes sign.
+    # Close protocol: IOC reduce-only on HL (short leg first, then long leg). NO Bybit/OKX fallback.
+    # BIO is HIP-3 on HL (Jan 2025). G8 FAIL: cross-venue not confirmed. HL concentration: 66.8% AT CAP (paper-gate strict).
+    # ACCEPT 8/9 gates. G4 5/5 ALL POSITIVE. G5 24/24 ALL PASS. G9 OOS 204.8d PASS.
+    # L004 PASS: BIO bidirectional (pos_frac_full=0.5590 pos_frac_oos=0.5983).
+    # L004_DIFF BORDERLINE: full=0.303, OOS=0.461 PASS. Monthly recheck required.
+    # Use --include-k786 to print K786-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k786",
+        dest="include_k786",
+        action="store_true",
+        default=False,
+        help=(
+            "K787: Include K786 BIO-SOL close summary during emergency exit. "
+            "K786 positions (BIO+SOL paired, HL-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = BIO_FR - SOL_FR (direct differential, W=84h rolling mean, zero threshold). "
+            "HL primary ONLY: BIO-PERP + SOL-PERP on HL. NO Bybit. NO OKX (G8 FAIL HIP-3). "
+            "HL concentration 66.8% AT CAP — paper-gate strict (PAPER_TRADE=True default). "
+            "ACCEPT 8/9 gates (G8 FAIL: BIO HL-only HIP-3, cross-venue perp not confirmed). "
+            "G4 WF 5/5 ALL POSITIVE (min_fold_sh=20.95 -- all folds strong). "
+            "G5 24/24 ALL PASS: max_corr=0.3308 (G5u FIL-SOL, below 0.40). "
+            "G6: 7,479 entries/yr OOS PASS (W=84h vs 30/yr threshold). "
+            "G7: OOS ann ret 4x=558.4% PASS. "
+            "G8: FAIL -- BIO HL-only HIP-3 (no cross-venue perp confirmed). "
+            "G9: OOS 204.8d PASS (>= 180d minimum). "
+            "L004 PASS: BIO bidirectional (pos_frac_full=0.5590 pos_frac_oos=0.5983). "
+            "L004_DIFF BORDERLINE: full=0.303 (0.003 above floor), OOS=0.461 PASS. Monthly recheck. "
+            "OOS Sharpe 23.10 (W=84h, 205d OOS). IS Sharpe 23.24 (IS~OOS -- consistent). "
+            "BIO FR: DeSci narrative cycles, IP-NFT acquisitions (VitaDAO longevity, AthenaDAO), "
+            "biotech bull/bear cycles, regulatory DeSci news, decentralized patient capital. "
+            "vol_ratio=9.833x (full). raw_corr=0.0028. "
+            "SOL FR: DePIN/Retail Phantom Firedancer ETF persistent positive. Min=-20.51bps cascade. "
+            "BIO = 21st vertex (1st DeSci cluster). MR9 L002: all future BIO-X blocked. "
+            "V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO,EIGEN,COMP,BIO} "
+            "K523 3-point: conservative=$54,105 central=$63,652 optimistic=$167,506/yr @$10M @4x @0.4%. "
+            "60d live gate: Sh>=15 + fill>=60% + maxDD<15% + K498/v6.52 + cross-venue Bybit BIO verify. "
+            "Cluster: DeSci Biotech DAO (Bio Protocol) × Solana SVM (23rd alt-alt scaffold, 80th daemon). "
+            "Requires: K786 daemon running (com.cryptolab.k786-bio-sol, 80th daemon). "
+            "See: docs/k302a_runbook.md §81"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -5873,6 +5918,52 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "CLEAN ACCEPT 30/30. G4 12/12 ALL POSITIVE (min_sh=14.79). COMP = 20th vertex (DeFi-gov). "
                 "G5 22/22 ALL PASS (max_corr=0.3906). G9 OOS 216d PASS. L004 PASS (bidirectional). "
                 "Use --include-k778 for structured HL close summary (§80)."
+            )
+
+        # ── K786 BIO-SOL close summary (K787 §81) ────────────────────────────
+        # HL concentration: 66.8% AT CAP (paper-gate: PAPER_TRADE=True default — no live capital yet).
+        # Live only after K498/v6.52 OKX activation + 60d gate + cross-venue Bybit BIO verify.
+        # ACCEPT 8/9 gates (G8 FAIL: BIO HL-only HIP-3, cross-venue perp not confirmed).
+        if args.include_k786:
+            logger.info("=== K786 BIO-SOL CLOSE SUMMARY (K787 §81) ===")
+            logger.info("  K786 BIO-SOL: HL ONLY (BIO-PERP + SOL-PERP both legs on HL)")
+            logger.info("  NO Bybit. NO OKX. G8 FAIL: BIO is HIP-3 on HL (Jan 2025), not on Bybit/OKX.")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_BIO (DeSci IP-NFT spike): short SOL first -> sell long BIO second")
+            logger.info("  BEAR_BIO (DeSci bear + SVM season, frequent): short BIO first -> sell long SOL second")
+            logger.info("  HL concentration: 66.8% AT CAP — paper-gate strict")
+            logger.info("  PAPER_TRADE=True default — no live capital until 60d gate + K498/v6.52 + G8 resolve")
+            logger.info("  ACCEPT 8/9 gates (G8 FAIL HL-only HIP-3 — cross-venue verify required)")
+            logger.info("  G4 WF: 5/5 ALL POSITIVE (min_fold_sh=20.95 -- all folds strong)")
+            logger.info("  G5: 24/24 ALL PASS: max_corr=0.3308 (G5u FIL-SOL, below 0.40)")
+            logger.info("  G5u: FIL-SOL=0.3308 PASS (highest, below 0.40 threshold)")
+            logger.info("  G5j: SOL-INJ=-0.2987 PASS (K784 lesson validated)")
+            logger.info("  G6: 7,479 entries/yr OOS PASS (W=84h vs 30/yr threshold — ultra-high frequency)")
+            logger.info("  G7: OOS ann ret 4x=558.4% PASS")
+            logger.info("  G8: FAIL -- BIO HL-only HIP-3 (no cross-venue perp confirmed)")
+            logger.info("  G9: OOS 204.8d PASS (>= 180d minimum)")
+            logger.info("  L004 PASS: BIO bidirectional (pos_frac_full=0.5590 pos_frac_oos=0.5983)")
+            logger.info("  L004_DIFF BORDERLINE: full=0.303 (0.003 above 0.30 floor), OOS=0.461 PASS. Monthly recheck.")
+            logger.info("  BIO FR: DeSci narrative cycles, IP-NFT acquisitions (VitaDAO longevity, AthenaDAO),")
+            logger.info("         HairDAO/GenomesDAO research cycles, biotech bull/bear (FDA cycles),")
+            logger.info("         regulatory DeSci news, decentralized patient capital deployment.")
+            logger.info("  BIO FR: bidirectional. OOS pos_fraction=0.5983 confirms genuine bidirectionality.")
+            logger.info("  BIO = 21st vertex (1st DeSci cluster). MR9 L002: all future BIO-X blocked.")
+            logger.info("  V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO,EIGEN,COMP,BIO}")
+            logger.info("  SOL FR: DePIN/Retail Phantom Firedancer ETF persistent positive. Min=-20.51bps cascade.")
+            logger.info("  OOS Sh=23.10 (W=84h, 205d OOS) | IS Sh=23.24 (IS~OOS -- consistent)")
+            logger.info("  K523 3-point: conservative=$54,105 central=$63,652 optimistic=$167,506/yr")
+            logger.info("  Sleeve 0.4% (@$10M = $40K margin, $160K total notional, $80K per leg). 4x leverage.")
+            logger.info("  60d gate: Sh>=15 + fill>=60% + maxDD<15% + K498/v6.52 + cross-venue Bybit BIO verify")
+            logger.info("  23rd alt-alt scaffold, 80th daemon. HL primary (positions in main HL exit)")
+            logger.info("  See: docs/k302a_runbook.md §81 (K786 BIO-SOL playbook)")
+        else:
+            logger.info(
+                "K786 BIO-SOL: HL ONLY (positions ARE in HL exit above — BIO-PERP + SOL-PERP on HL). "
+                "HL 66.8% AT CAP — paper-gate strict; no live capital until K498/v6.52 + 60d gate + G8 resolve. "
+                "ACCEPT 8/9 (G8 FAIL HL-only HIP-3). G4 5/5 ALL POSITIVE (min_sh=20.95). BIO = 21st vertex (DeSci). "
+                "G5 24/24 ALL PASS (max_corr=0.3308). G9 OOS 204.8d PASS. L004 PASS (bidirectional). "
+                "Use --include-k786 for structured HL close summary (§81)."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)
