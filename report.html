@@ -16211,3 +16211,220 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
   </div>
 </div>
 
+
+<!-- K706 PRODUCTION AUDIT - inserted 2026-05-30 07:02 UTC -->
+<div class="section" id="k706-audit">
+  <div class="section-header">
+    <h2>🔍 K706 Production User-Ready Final Audit</h2>
+    <p class="timestamp">Generated: 2026-05-30 16:02 JST | Model: haiku 4.5 | Status: READ-ONLY</p>
+  </div>
+  
+  <div class="finding-block critical">
+    <h3>⚠️ VERDICT: BLOCKED (2 Critical Issues)</h3>
+    <p><strong>Phase A readiness:</strong> ✅ PRE-EXECUTION READY (K702 pass, 62 daemons &gt; 61)</p>
+    <p><strong>Production blockers:</strong> 🔴 2 CRITICAL (K552 patch pending, K208 decay response required)</p>
+    <p><strong>Overall status:</strong> User must resolve blockers before deployment.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Phase 1: K208 K280 Production Status</h3>
+    <table class="metrics-table">
+      <tr>
+        <th>Metric</th>
+        <th>Value</th>
+        <th>Status</th>
+      </tr>
+      <tr>
+        <td>K208 Sharpe decay (2024H2→2026YTD)</td>
+        <td>-67.0%</td>
+        <td>🔴 CONFIRMED</td>
+      </tr>
+      <tr>
+        <td>R15-12 claim (-60% Y/Y)</td>
+        <td>-67.0% actual (exceeded)</td>
+        <td>✅ VINDICATED</td>
+      </tr>
+      <tr>
+        <td>K208 current Sharpe (2026 YTD)</td>
+        <td>7.46</td>
+        <td>Degraded from 22.61</td>
+      </tr>
+      <tr>
+        <td>K280 weight (current)</td>
+        <td>0.75</td>
+        <td>🔴 STILL PENDING</td>
+      </tr>
+      <tr>
+        <td>K280 weight (expected)</td>
+        <td>0.60 (K552 patch)</td>
+        <td>Not applied</td>
+      </tr>
+      <tr>
+        <td>HL exposure (current)</td>
+        <td>57.5%</td>
+        <td>vs 50.0% target</td>
+      </tr>
+      <tr>
+        <td>K552 patch status</td>
+        <td>PENDING</td>
+        <td>🔴 BLOCKER 1</td>
+      </tr>
+    </table>
+    <p><strong>Root cause:</strong> K208 single-factor FR edge decayed due to crowding + exchange anti-edge design.</p>
+    <p><strong>Action required:</strong> Apply K552 patch (3 files: leverage_manager.py, portfolio_aum_state.json, portfolio_aum_manager.py) OR activate K492 Variant E multi-factor enhancement.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Phase 2: K376 Regime Status</h3>
+    <table class="metrics-table">
+      <tr>
+        <th>Field</th>
+        <th>Value</th>
+      </tr>
+      <tr>
+        <td>Current regime</td>
+        <td>TRANSITION</td>
+      </tr>
+      <tr>
+        <td>BTC slope (SMA 20d)</td>
+        <td>-34.41 (improving +3.41/day)</td>
+      </tr>
+      <tr>
+        <td>Days until BULL_CONFIRMED</td>
+        <td><strong>14 days</strong> (ETA ~2026-06-13)</td>
+      </tr>
+      <tr>
+        <td>Profit unlock @ $10M AUM</td>
+        <td>$247K/yr @ 3% (daily $677)</td>
+      </tr>
+      <tr>
+        <td>Last checked</td>
+        <td>2026-05-30 21:55 JST</td>
+      </tr>
+    </table>
+    <p><strong>Status:</strong> ✅ MONITORING. Regime filter is dormant; automatic activation when slope crosses 0 for 15d.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Phase 3: Phase A User-Ready Check (K702)</h3>
+    <table class="metrics-table">
+      <tr>
+        <th>Item</th>
+        <th>Value</th>
+        <th>Status</th>
+      </tr>
+      <tr>
+        <td>Total daemons</td>
+        <td>62</td>
+        <td>✅ &gt; 61 requirement</td>
+      </tr>
+      <tr>
+        <td>SCAFFOLD-READY daemons</td>
+        <td>58</td>
+        <td>Ready</td>
+      </tr>
+      <tr>
+        <td>SMART_ROUTER_ENABLED</td>
+        <td>False</td>
+        <td>✅ Phase A condition</td>
+      </tr>
+      <tr>
+        <td>routing_mode_missing</td>
+        <td>True</td>
+        <td>✅ Phase A condition</td>
+      </tr>
+      <tr>
+        <td>K280 sleeve @ 0.75</td>
+        <td>True</td>
+        <td>✅ Phase A condition</td>
+      </tr>
+      <tr>
+        <td>HL builder wallet not set</td>
+        <td>True</td>
+        <td>✅ Phase A condition</td>
+      </tr>
+      <tr>
+        <td>Phase A execution gate</td>
+        <td>PRE-EXECUTION READY</td>
+        <td>✅ PASS (per K702)</td>
+      </tr>
+    </table>
+    <p><strong>Status:</strong> ✅ All Phase A defensive checks PASS. 62 daemons exceed 61+ requirement. User can deploy Phase A once blockers resolved.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Phase 4: Critical Concerns & Blockers</h3>
+    
+    <div class="finding-block critical">
+      <h4>🔴 BLOCKER 1: K552 K280 Weight Patch Not Applied</h4>
+      <p><strong>Issue:</strong> K280 sleeve weight still 0.75 (expected 0.60 per K552 patch generated 2026-05-30 05:56 JST).</p>
+      <p><strong>Impact:</strong> HL exposure remains 57.5%, insufficient headroom (need 50.0% for K449/K376 activations).</p>
+      <p><strong>Files to patch:</strong></p>
+      <ul>
+        <li>scripts/leverage_manager.py line 74: "K280": 0.75 → 0.60</li>
+        <li>data/portfolio_aum_state.json line 18: "K280": 0.75 → 0.60</li>
+        <li>scripts/portfolio_aum_manager.py line 86: "K280": 0.75 → 0.60</li>
+      </ul>
+      <p><strong>Validation:</strong> Run <code>python3 scripts/verify_deployment_status.py</code> (expect no MISMATCH errors). Restart daemons: k280-live, k302a-satellite.</p>
+    </div>
+
+    <div class="finding-block critical">
+      <h4>🔴 BLOCKER 2: K208 Decay Response Required</h4>
+      <p><strong>Issue:</strong> K208 sharpe degraded -67% (K509 CONFIRMED). Single-factor FR strategy is stale.</p>
+      <p><strong>Root cause:</strong> Crowding (copycats), exchange anti-edge design, stablecoin compression.</p>
+      <p><strong>Options:</strong></p>
+      <ul>
+        <li><strong>Option A (Aggressive):</strong> Reduce K280 sleeve from 0.75 to 0.35-0.45 (cost: -60% profit)</li>
+        <li><strong>Option B (Recommended):</strong> Activate K492 Variant E multi-factor enhancement (+6.19 Sharpe, +$185K/yr @ $10M)</li>
+      </ul>
+      <p><strong>Recommendation:</strong> Use Option B (Variant E). Analysis complete; requires 14-day paper-trade confirmation before live activation. Can run parallel to K552 patch.</p>
+    </div>
+
+    <div class="finding-block warning">
+      <h4>🟡 HIGH PRIORITY (Non-blocking): K492E Variant E Not Activated</h4>
+      <p><strong>Status:</strong> Scaffold-ready (analysis K492 complete). Contains 3 enhancement modules:</p>
+      <ul>
+        <li>Microstructure gate (FR gradient, spread compression, top-of-book)</li>
+        <li>Persistence filter (2-of-3 periods positive + gradient ≥ 0)</li>
+        <li>Cross-venue convergence (HL+Bybit+OKX all agree)</li>
+      </ul>
+      <p><strong>Benefits:</strong> Recovers 87% of addressable false positives. Sharpe lift +6.19 (K438 19.12 → Variant E 25.31).</p>
+      <p><strong>Timeline:</strong> Week 1-8 for implementation + 14d paper-trade.</p>
+    </div>
+
+    <div class="finding-block info">
+      <h4>🟢 WATCH ITEMS (Monitoring): K376 Regime Filter</h4>
+      <p><strong>ETA:</strong> 14 days to BULL_CONFIRMED (2026-06-13).</p>
+      <p><strong>Unlock value:</strong> $247K/yr @ 3% = $677/day.</p>
+      <p><strong>Action:</strong> None required; automatic activation upon regime change. Monitor daily via <code>data/k376_regime_status.json</code>.</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h3>Execution Checklist</h3>
+    <p><strong>Before Phase A Deployment:</strong></p>
+    <ol>
+      <li>☐ <strong>REQUIRED:</strong> Apply K552 patch (leverage_manager.py, portfolio_aum_state.json, portfolio_aum_manager.py)</li>
+      <li>☐ <strong>REQUIRED:</strong> Decide K208 response (reduce sleeve OR activate K492 Variant E)</li>
+      <li>☐ Verify K552 patch: <code>python3 scripts/verify_deployment_status.py</code> (no MISMATCH)</li>
+      <li>☐ Restart K280/K302A daemons after patch</li>
+      <li>☐ K280 dashboard health check (OOS Sharpe, WF Min)</li>
+    </ol>
+    <p><strong>Post-Deployment (14-day window):</strong></p>
+    <ul>
+      <li>K492E paper-trade validates ≥60% of analytical lift (if activated)</li>
+      <li>K376 reaches BULL_CONFIRMED (~2026-06-13)</li>
+      <li>K280 sleeve performance improves post-patch</li>
+    </ul>
+  </div>
+
+  <div class="subsection">
+    <h3>Summary</h3>
+    <p><strong>Phase A readiness:</strong> ✅ GREEN (all 62 daemons, K702 defensive pass)</p>
+    <p><strong>Production blockers:</strong> 🔴 RED (K552 patch pending, K208 decay response needed)</p>
+    <p><strong>Recommendation:</strong> Apply K552 patch immediately (atomic, 1-2 min). Parallel: start K492E paper-trade setup. Phase A deployment clears when blockers resolved.</p>
+  </div>
+</div>
+
+<!-- EOF K706 -->
+

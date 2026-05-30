@@ -1,0 +1,53 @@
+{
+  "wave": "K706",
+  "title": "Production user-ready final audit (Phase A clear, K208 decay confirmed, K376 BULL ETA)",
+  "generated_jst": "2026-05-30 16:02 JST",
+  "model": "haiku 4.5",
+  "scope": "READ-ONLY audit",
+  "phase1_k208_k280": {
+    "verdict": "CONFIRM",
+    "sharpe_decay_pct": -0.6701,
+    "claim_status": "CONFIRMED",
+    "k208_action": "URGENT_REBALANCE",
+    "k280_current": 0.75,
+    "k280_expected": 0.6,
+    "k552_patch_status": "PENDING",
+    "hl_exposure_current": 57.5,
+    "hl_exposure_after_patch": 50.0,
+    "k280_dashboard_fresh": true
+  },
+  "phase2_k376": {
+    "regime": "TRANSITION",
+    "btc_slope": -34.41,
+    "days_until_bull": 14,
+    "eta_jst": "2026-06-13",
+    "profit_unlock_at_10M": 247000,
+    "last_checked": "2026-05-30 21:55 JST"
+  },
+  "phase3_phase_a": {
+    "status": "PRE-EXECUTION READY",
+    "total_daemons": 62,
+    "requirement_met": true,
+    "phase_a_ready": true
+  },
+  "phase4_concerns": {
+    "blockers": [
+      {
+        "severity": "BLOCKER",
+        "item": "K552_PATCH_PENDING",
+        "detail": "K552 K280 weight patch NOT APPLIED (still 0.75, expected 0.60)",
+        "action": "Apply K552 patch: leverage_manager.py + portfolio_aum_state.json + portfolio_aum_manager.py"
+      },
+      {
+        "severity": "BLOCKER",
+        "item": "K208_DECAY_CONFIRMED",
+        "detail": "K208 decay CONFIRMED: -67% sharpe vs 2024H2. Must reduce K280 sleeve or activate Variant E.",
+        "action": "Reduce K280 to 35-45% OR activate K492 Variant E (research phase, requires 14d paper-trade)"
+      }
+    ],
+    "critical_count": 2,
+    "phase_a_execution_ready": true
+  },
+  "production_ready": false,
+  "verdict": "BLOCKED: Apply K552, address K208 decay"
+}
