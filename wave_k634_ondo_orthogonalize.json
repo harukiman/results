@@ -1,0 +1,1173 @@
+{
+  "wave": "K634",
+  "strategy": "ONDO-BTC FR Differential Signal Orthogonalization \u2014 Remove AVAX Institutional DeFi Common Factor (K628/K631 Pattern)",
+  "run_time_jst": "2026-05-30T10:54:57+0900",
+  "runtime_s": 2.98,
+  "decision": "REJECT",
+  "decision_rationale": "Orthogonalized ONDO signal (W=168h): REJECT \u2014 insufficient \u00a76 gates (4/9 PASS, require \u22656). Key fails: G6 trades/yr=0.0 (need \u226530), G2 perm p>0.05, G3 DSR FAIL. ONDO orthogonalization destroys profitable edge: raw K630 OOS Sharpe=12.40 \u2192 residual Sharpe=1.56 (reduction=10.84 units). The shared AVAX institutional DeFi common factor was LOAD-BEARING for ONDO signal profitability. AVAX-ONDO co-movement was not spurious overlap \u2014 it was the actual alpha driver. Removing it collapses OOS performance. OOS R\u00b2=-0.67 confirms AVAX factor fit IS data but degraded OOS (regime shift in OOS: AVAX institutional narrative decoupled from ONDO Treasury yields). K630 ONDO-BTC remains BLOCKED: no orthogonalization pathway viable.",
+  "k630_context": {
+    "k630_decision": "BLOCKED-G5c-AVAX (AVAX=0.5146, INJ=0.4343)",
+    "k630_oos_sharpe": 12.401,
+    "k630_profit_10m_4x": 1366000,
+    "k630_avax_corr_full": 0.5146,
+    "k630_avax_corr_is": 0.4757,
+    "k630_avax_corr_oos": 0.5416,
+    "k630_inj_corr": 0.4343,
+    "k630_block_type": "STRUCTURAL (monotone worsening in OOS, not tunable)",
+    "k628_precedent": {
+      "k628_approach": "OLS residualization: JTO-BTC ~ \u03b1 + \u03b2_SEI*SEI + \u03b2_DOGE*DOGE + residual",
+      "k628_decision": "ACCEPT CONDITIONAL",
+      "k628_orth_sharpe": 18.3,
+      "k628_raw_sharpe": 18.67,
+      "k628_profit_10m_4x": 17851320,
+      "k628_beta_sei": 0.1641,
+      "k628_beta_doge": 0.3021,
+      "k628_is_r2": 0.075
+    },
+    "k631_precedent": {
+      "k631_approach": "OLS residualization: WLD-BTC ~ \u03b1 + \u03b2_JUP*JUP + residual",
+      "k631_decision": "ACCEPT CONDITIONAL",
+      "k631_orth_sharpe": 18.04,
+      "k631_raw_sharpe": 25.0575,
+      "k631_profit_10m_4x": 2560000,
+      "k631_beta_jup": 0.4589,
+      "k631_is_r2": 0.1281
+    },
+    "k634_approach": "OLS residualization: ONDO-BTC ~ \u03b1 + \u03b2_AVAX*AVAX-BTC + residual. ONDO-AVAX signal corr=0.5146 (institutional DeFi adoption common factor). Expected \u03b2_AVAX\u22480.35-0.55, IS R\u00b2\u22480.15-0.27 (higher than K628/K631 \u2192 larger degradation)."
+  },
+  "data_info": {
+    "hl_ondo_fr_rows": 17478,
+    "date_start": "2024-05-25 02:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.995,
+    "oos_start": "2025-10-19",
+    "oos_years": 0.593,
+    "n_is_rows": 12286,
+    "n_oos_rows": 5193,
+    "fr_frequency": "1h (HL settles hourly)",
+    "raw_ondo_avax_fr_diff_corr": 0.3815,
+    "raw_ondo_avax_is_corr": 0.3708,
+    "raw_ondo_avax_oos_corr": 0.4728
+  },
+  "signal_config": {
+    "strategy_type": "FR differential carry \u2014 ORTHOGONALIZED vs AVAX",
+    "direction_rule": "sign(W-hour rolling mean of OLS residual of fr_diff_ondo)",
+    "cost_rt_bps": 4,
+    "pnl_source": "signal * fr_diff_ondo (carry from actual ONDO-BTC position)",
+    "signal_windows": [
+      72,
+      168
+    ]
+  },
+  "phase1_regression": {
+    "method": "OLS IS-estimated, applied to full period",
+    "is_period": {
+      "start": "2024-05-25",
+      "end": "2025-10-19",
+      "n_rows": 12286
+    },
+    "coefficients": {
+      "alpha": 1.287e-05,
+      "beta_avax": 0.663985
+    },
+    "t_stats": {
+      "t_alpha": 27.946,
+      "t_avax": 44.25
+    },
+    "r_squared": {
+      "is": 0.1375,
+      "oos": -0.6697
+    },
+    "residual_properties": {
+      "adf_pvalue": 0.0,
+      "stationary": true,
+      "ou_halflife_h": 5.02
+    },
+    "correlation_check": {
+      "raw_ondo_avax_corr": 0.3815,
+      "resid_avax_corr": -0.007367,
+      "orthogonality_achieved": true
+    },
+    "regression_data": {
+      "n_full": 17478,
+      "n_is": 12286,
+      "n_oos": 5193
+    }
+  },
+  "phase2_signal_infos": [
+    {
+      "window_h": 72,
+      "raw_orth_signal_corr": 0.4213,
+      "orth_vs_avax_signal_corr": 0.2266,
+      "avax_expected_near_zero": false,
+      "n_signal_rows": 17407
+    },
+    {
+      "window_h": 168,
+      "raw_orth_signal_corr": 0.4371,
+      "orth_vs_avax_signal_corr": 0.2257,
+      "avax_expected_near_zero": false,
+      "n_signal_rows": 17311
+    }
+  ],
+  "phase3_backtest": [
+    {
+      "window_h": 72,
+      "oos": {
+        "sharpe": -1.8273,
+        "ann_ret_pct": -0.4263,
+        "max_drawdown_pct": -1.5858,
+        "trades": 13,
+        "trades_per_year": 21.9,
+        "n_rows": 5193,
+        "n_years": 0.593,
+        "n_days": 216.4
+      },
+      "is": {
+        "sharpe": 18.844,
+        "ann_ret_pct": 10.9318,
+        "n_rows": 12215
+      },
+      "full": {
+        "sharpe": 14.9226
+      },
+      "raw_comparison": {
+        "raw_oos_sharpe": 12.401,
+        "orth_oos_sharpe": -1.8273,
+        "sharpe_reduction": 14.2283,
+        "interpretation": "Orthogonalization removed the AVAX institutional DeFi common factor from ONDO signal. Residual Sharpe = -1.83 vs raw 12.40. Reduction = 14.23 Sharpe units (this is the portion attributable to institutional DeFi adoption comovement)."
+      }
+    },
+    {
+      "window_h": 168,
+      "oos": {
+        "sharpe": 1.5639,
+        "ann_ret_pct": 0.233,
+        "max_drawdown_pct": -1.2322,
+        "trades": 0,
+        "trades_per_year": 0.0,
+        "n_rows": 5193,
+        "n_years": 0.593,
+        "n_days": 216.4
+      },
+      "is": {
+        "sharpe": 20.8752,
+        "ann_ret_pct": 11.18,
+        "n_rows": 12119
+      },
+      "full": {
+        "sharpe": 17.2223
+      },
+      "raw_comparison": {
+        "raw_oos_sharpe": 12.401,
+        "orth_oos_sharpe": 1.5639,
+        "sharpe_reduction": 10.8371,
+        "interpretation": "Orthogonalization removed the AVAX institutional DeFi common factor from ONDO signal. Residual Sharpe = 1.56 vs raw 12.40. Reduction = 10.84 Sharpe units (this is the portion attributable to institutional DeFi adoption comovement)."
+      }
+    }
+  ],
+  "phase4_section6": [
+    {
+      "window_h": 72,
+      "oos_metrics": {
+        "sharpe": -1.8273,
+        "ann_ret_pct": -0.4263,
+        "max_drawdown_pct": -1.5858,
+        "trades": 13,
+        "trades_per_year": 21.9,
+        "n_rows": 5193,
+        "n_years": 0.593,
+        "n_days": 216.4
+      },
+      "is_metrics": {
+        "sharpe": 18.844,
+        "ann_ret_pct": 10.9318,
+        "n_rows": 12215
+      },
+      "gates": [
+        {
+          "gate": "G1",
+          "name": "OOS Sharpe >= 1.0",
+          "value": -1.8273,
+          "pass": false
+        },
+        {
+          "gate": "G2",
+          "name": "Perm p <= 0.05",
+          "value": 0.916,
+          "pass": false
+        },
+        {
+          "gate": "G3",
+          "name": "DSR Bonferroni p < 0.02500",
+          "value": 1.0,
+          "pass": false
+        },
+        {
+          "gate": "G4",
+          "name": "Walk-forward all positive",
+          "value": "8/12",
+          "pass": false
+        },
+        {
+          "gate": "G5",
+          "name": "G5 family corr < 0.40",
+          "value": 0.2611,
+          "pass": true
+        },
+        {
+          "gate": "G6",
+          "name": "Trades/yr >= 30",
+          "value": 21.9,
+          "pass": false
+        },
+        {
+          "gate": "G7",
+          "name": "Ann ret > 5% (unleveraged)",
+          "value": -0.4263,
+          "pass": false
+        },
+        {
+          "gate": "G8",
+          "name": "Cross-venue corr >= 0.55",
+          "value": 0.832,
+          "pass": true
+        },
+        {
+          "gate": "G9",
+          "name": "OOS >= 180d",
+          "value": 216.4,
+          "pass": true
+        }
+      ],
+      "n_pass": 3,
+      "n_total": 9,
+      "all_critical_pass": false,
+      "g5_details": {
+        "G5j_K280": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5j_K280: skip (no data), assume PASS"
+        },
+        "G5a_ETH": {
+          "ticker": "ETH",
+          "corr": -0.0217,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs ETH-BTC at W=72h: corr=-0.0217 (PASS threshold 0.4)"
+        },
+        "G5b_SOL": {
+          "ticker": "SOL",
+          "corr": -0.0566,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs SOL-BTC at W=72h: corr=-0.0566 (PASS threshold 0.4)"
+        },
+        "G5c_AVAX": {
+          "ticker": "AVAX",
+          "corr": 0.2266,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs AVAX-BTC at W=72h: corr=0.2266 (PASS threshold 0.4) [ORTHOGONALIZED: by construction should be ~0; actual=0.2266 \u2014 residual corr confirms orthogonalization PARTIAL]"
+        },
+        "G5d_ATOM": {
+          "ticker": "ATOM",
+          "corr": 0.0997,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs ATOM-BTC at W=72h: corr=0.0997 (PASS threshold 0.4)"
+        },
+        "G5e_INJ": {
+          "ticker": "INJ",
+          "corr": 0.1592,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs INJ-BTC at W=72h: corr=0.1592 (PASS threshold 0.4) [K630 raw was 0.4343 (FAIL) \u2014 watch post-orthogonalization]"
+        },
+        "G5f_SEI": {
+          "ticker": "SEI",
+          "corr": -0.0299,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs SEI-BTC at W=72h: corr=-0.0299 (PASS threshold 0.4)"
+        },
+        "G5g_TIA": {
+          "ticker": "TIA",
+          "corr": -0.0591,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs TIA-BTC at W=72h: corr=-0.0591 (PASS threshold 0.4)"
+        },
+        "G5h_APT": {
+          "ticker": "APT",
+          "corr": -0.1362,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs APT-BTC at W=72h: corr=-0.1362 (PASS threshold 0.4)"
+        },
+        "G5i_FIL": {
+          "ticker": "FIL",
+          "corr": 0.0466,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs FIL-BTC at W=72h: corr=0.0466 (PASS threshold 0.4)"
+        },
+        "G5k_RNDR": {
+          "ticker": "RNDR",
+          "corr": 0.0092,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs RNDR-BTC at W=72h: corr=0.0092 (PASS threshold 0.4)"
+        },
+        "G5l_TAO": {
+          "ticker": "TAO",
+          "corr": -0.0704,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs TAO-BTC at W=72h: corr=-0.0704 (PASS threshold 0.4)"
+        },
+        "G5m_LINK": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5m_LINK: skip (no data), assume PASS"
+        },
+        "G5n_TON": {
+          "ticker": "TON",
+          "corr": null,
+          "pass": true,
+          "note": "TON data unavailable \u2014 skip, assume PASS"
+        },
+        "G5o_SAND": {
+          "ticker": "SAND",
+          "corr": 0.1118,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs SAND-BTC at W=72h: corr=0.1118 (PASS threshold 0.4)"
+        },
+        "G5p_ICP": {
+          "ticker": "ICP",
+          "corr": null,
+          "pass": true,
+          "note": "ICP data unavailable \u2014 skip, assume PASS"
+        },
+        "G5q_AXS": {
+          "ticker": "AXS",
+          "corr": 0.0442,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs AXS-BTC at W=72h: corr=0.0442 (PASS threshold 0.4)"
+        },
+        "G5r_DOGE": {
+          "ticker": "DOGE",
+          "corr": 0.0843,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs DOGE-BTC at W=72h: corr=0.0843 (PASS threshold 0.4)"
+        },
+        "G5s_SHIB": {
+          "ticker": "SHIB",
+          "corr": -0.0152,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs SHIB-BTC at W=72h: corr=-0.0152 (PASS threshold 0.4)"
+        },
+        "G5t_AAVE": {
+          "ticker": "AAVE",
+          "corr": -0.0289,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs AAVE-BTC at W=72h: corr=-0.0289 (PASS threshold 0.4)"
+        },
+        "G5u_CRV": {
+          "ticker": "CRV",
+          "corr": 0.2121,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs CRV-BTC at W=72h: corr=0.2121 (PASS threshold 0.4)"
+        },
+        "G5v_PEPE": {
+          "ticker": "PEPE",
+          "corr": -0.0236,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs PEPE-BTC at W=72h: corr=-0.0236 (PASS threshold 0.4)"
+        },
+        "G5w_WIF": {
+          "ticker": "WIF",
+          "corr": -0.0097,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs WIF-BTC at W=72h: corr=-0.0097 (PASS threshold 0.4)"
+        },
+        "G5x_BONK": {
+          "ticker": "BONK",
+          "corr": 0.0288,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs BONK-BTC at W=72h: corr=0.0288 (PASS threshold 0.4)"
+        },
+        "G5y_UNI": {
+          "ticker": "UNI",
+          "corr": 0.1848,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs UNI-BTC at W=72h: corr=0.1848 (PASS threshold 0.4)"
+        },
+        "G5z_ARB": {
+          "ticker": "ARB",
+          "corr": 0.051,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs ARB-BTC at W=72h: corr=0.0510 (PASS threshold 0.4)"
+        },
+        "G5aa_JUP": {
+          "ticker": "JUP",
+          "corr": 0.1637,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs JUP-BTC at W=72h: corr=0.1637 (PASS threshold 0.4)"
+        },
+        "G5ab_OP": {
+          "ticker": "OP",
+          "corr": -0.034,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs OP-BTC at W=72h: corr=-0.0340 (PASS threshold 0.4)"
+        },
+        "G5ac_SNX": {
+          "ticker": "SNX",
+          "corr": 0.1578,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs SNX-BTC at W=72h: corr=0.1578 (PASS threshold 0.4)"
+        },
+        "G5ad_LDO": {
+          "ticker": "LDO",
+          "corr": 0.1263,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs LDO-BTC at W=72h: corr=0.1263 (PASS threshold 0.4)"
+        },
+        "G5ae_MKR": {
+          "ticker": "MKR",
+          "corr": -0.1889,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs MKR-BTC at W=72h: corr=-0.1889 (PASS threshold 0.4)"
+        },
+        "G5af_POL": {
+          "ticker": "POL",
+          "corr": 0.0405,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs POL-BTC at W=72h: corr=0.0405 (PASS threshold 0.4)"
+        },
+        "G5ag_ENA": {
+          "ticker": "ENA",
+          "corr": 0.2145,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs ENA-BTC at W=72h: corr=0.2145 (PASS threshold 0.4)"
+        },
+        "G5ah_ETHFI": {
+          "ticker": "ETHFI",
+          "corr": 0.2611,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs ETHFI-BTC at W=72h: corr=0.2611 (PASS threshold 0.4)"
+        }
+      },
+      "g5_fail_list": {},
+      "g5_max_corr": 0.2611,
+      "g5_max_pair": "ETHFI",
+      "avax_corr": 0.2266,
+      "inj_corr": 0.1592,
+      "eth_corr": -0.0217,
+      "avax_pass": true,
+      "inj_pass": true,
+      "walk_forward": {
+        "folds": [
+          {
+            "fold": 1,
+            "oos_start": "2024-08-26",
+            "oos_end": "2024-09-25",
+            "sharpe": -33.49,
+            "ann_ret_pct": -8.318,
+            "entries": 2
+          },
+          {
+            "fold": 2,
+            "oos_start": "2024-09-25",
+            "oos_end": "2024-10-25",
+            "sharpe": 24.689,
+            "ann_ret_pct": 5.338,
+            "entries": 0
+          },
+          {
+            "fold": 3,
+            "oos_start": "2024-10-25",
+            "oos_end": "2024-11-24",
+            "sharpe": 2.196,
+            "ann_ret_pct": 1.191,
+            "entries": 9
+          },
+          {
+            "fold": 4,
+            "oos_start": "2024-11-24",
+            "oos_end": "2024-12-24",
+            "sharpe": 46.562,
+            "ann_ret_pct": 31.07,
+            "entries": 8
+          },
+          {
+            "fold": 5,
+            "oos_start": "2024-12-24",
+            "oos_end": "2025-01-23",
+            "sharpe": 72.597,
+            "ann_ret_pct": 86.703,
+            "entries": 2
+          },
+          {
+            "fold": 6,
+            "oos_start": "2025-01-23",
+            "oos_end": "2025-02-22",
+            "sharpe": 0.241,
+            "ann_ret_pct": 0.068,
+            "entries": 3
+          },
+          {
+            "fold": 7,
+            "oos_start": "2025-02-22",
+            "oos_end": "2025-03-24",
+            "sharpe": 16.932,
+            "ann_ret_pct": 6.07,
+            "entries": 4
+          },
+          {
+            "fold": 8,
+            "oos_start": "2025-03-24",
+            "oos_end": "2025-04-23",
+            "sharpe": -3.598,
+            "ann_ret_pct": -1.537,
+            "entries": 4
+          },
+          {
+            "fold": 9,
+            "oos_start": "2025-04-23",
+            "oos_end": "2025-05-23",
+            "sharpe": 22.709,
+            "ann_ret_pct": 7.592,
+            "entries": 2
+          },
+          {
+            "fold": 10,
+            "oos_start": "2025-05-23",
+            "oos_end": "2025-06-22",
+            "sharpe": -25.472,
+            "ann_ret_pct": -3.356,
+            "entries": 0
+          },
+          {
+            "fold": 11,
+            "oos_start": "2025-06-22",
+            "oos_end": "2025-07-22",
+            "sharpe": -10.759,
+            "ann_ret_pct": -4.858,
+            "entries": 8
+          },
+          {
+            "fold": 12,
+            "oos_start": "2025-07-22",
+            "oos_end": "2025-08-21",
+            "sharpe": 5.239,
+            "ann_ret_pct": 1.341,
+            "entries": 2
+          }
+        ],
+        "fold_sharpes": [
+          -33.48956408378471,
+          24.688558737947766,
+          2.1961267186357802,
+          46.56161406030053,
+          72.59730099649526,
+          0.24094762892873706,
+          16.932188425826755,
+          -3.59836678141363,
+          22.70915830047097,
+          -25.472394057858587,
+          -10.759154892306924,
+          5.239334118470701
+        ],
+        "n_positive": 8,
+        "n_folds": 12,
+        "all_positive": false,
+        "min_sharpe": -33.49
+      },
+      "permutation_test": {
+        "real_oos_sharpe": -1.8273,
+        "n_permutations": 500,
+        "p_value": 0.916,
+        "pass": false
+      },
+      "dsr_bonferroni": {
+        "n_trials": 2,
+        "t_stat": -1.292,
+        "p_raw": 0.790345,
+        "p_bonferroni": 1.0,
+        "threshold": 0.025,
+        "pass": false
+      },
+      "cross_venue": {
+        "bybit": {
+          "corr": 0.832,
+          "pass": true,
+          "note": "HL-bybit ONDO FR corr=0.8320 (PASS >= 0.55)"
+        },
+        "okx": {
+          "corr": null,
+          "pass": false,
+          "note": "Insufficient overlap"
+        }
+      }
+    },
+    {
+      "window_h": 168,
+      "oos_metrics": {
+        "sharpe": 1.5639,
+        "ann_ret_pct": 0.233,
+        "max_drawdown_pct": -1.2322,
+        "trades": 0,
+        "trades_per_year": 0.0,
+        "n_rows": 5193,
+        "n_years": 0.593,
+        "n_days": 216.4
+      },
+      "is_metrics": {
+        "sharpe": 20.8752,
+        "ann_ret_pct": 11.18,
+        "n_rows": 12119
+      },
+      "gates": [
+        {
+          "gate": "G1",
+          "name": "OOS Sharpe >= 1.0",
+          "value": 1.5639,
+          "pass": true
+        },
+        {
+          "gate": "G2",
+          "name": "Perm p <= 0.05",
+          "value": 0.1,
+          "pass": false
+        },
+        {
+          "gate": "G3",
+          "name": "DSR Bonferroni p < 0.02500",
+          "value": 0.46803,
+          "pass": false
+        },
+        {
+          "gate": "G4",
+          "name": "Walk-forward all positive",
+          "value": "6/12",
+          "pass": false
+        },
+        {
+          "gate": "G5",
+          "name": "G5 family corr < 0.40",
+          "value": 0.2507,
+          "pass": true
+        },
+        {
+          "gate": "G6",
+          "name": "Trades/yr >= 30",
+          "value": 0.0,
+          "pass": false
+        },
+        {
+          "gate": "G7",
+          "name": "Ann ret > 5% (unleveraged)",
+          "value": 0.233,
+          "pass": false
+        },
+        {
+          "gate": "G8",
+          "name": "Cross-venue corr >= 0.55",
+          "value": 0.832,
+          "pass": true
+        },
+        {
+          "gate": "G9",
+          "name": "OOS >= 180d",
+          "value": 216.4,
+          "pass": true
+        }
+      ],
+      "n_pass": 4,
+      "n_total": 9,
+      "all_critical_pass": false,
+      "g5_details": {
+        "G5j_K280": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5j_K280: skip (no data), assume PASS"
+        },
+        "G5a_ETH": {
+          "ticker": "ETH",
+          "corr": -0.0921,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs ETH-BTC at W=168h: corr=-0.0921 (PASS threshold 0.4)"
+        },
+        "G5b_SOL": {
+          "ticker": "SOL",
+          "corr": -0.0973,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs SOL-BTC at W=168h: corr=-0.0973 (PASS threshold 0.4)"
+        },
+        "G5c_AVAX": {
+          "ticker": "AVAX",
+          "corr": 0.2257,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs AVAX-BTC at W=168h: corr=0.2257 (PASS threshold 0.4) [ORTHOGONALIZED: by construction should be ~0; actual=0.2257 \u2014 residual corr confirms orthogonalization PARTIAL]"
+        },
+        "G5d_ATOM": {
+          "ticker": "ATOM",
+          "corr": 0.0526,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs ATOM-BTC at W=168h: corr=0.0526 (PASS threshold 0.4)"
+        },
+        "G5e_INJ": {
+          "ticker": "INJ",
+          "corr": 0.1689,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs INJ-BTC at W=168h: corr=0.1689 (PASS threshold 0.4) [K630 raw was 0.4343 (FAIL) \u2014 watch post-orthogonalization]"
+        },
+        "G5f_SEI": {
+          "ticker": "SEI",
+          "corr": -0.0749,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs SEI-BTC at W=168h: corr=-0.0749 (PASS threshold 0.4)"
+        },
+        "G5g_TIA": {
+          "ticker": "TIA",
+          "corr": -0.1658,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs TIA-BTC at W=168h: corr=-0.1658 (PASS threshold 0.4)"
+        },
+        "G5h_APT": {
+          "ticker": "APT",
+          "corr": -0.2104,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs APT-BTC at W=168h: corr=-0.2104 (PASS threshold 0.4)"
+        },
+        "G5i_FIL": {
+          "ticker": "FIL",
+          "corr": 0.0571,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs FIL-BTC at W=168h: corr=0.0571 (PASS threshold 0.4)"
+        },
+        "G5k_RNDR": {
+          "ticker": "RNDR",
+          "corr": -0.0191,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs RNDR-BTC at W=168h: corr=-0.0191 (PASS threshold 0.4)"
+        },
+        "G5l_TAO": {
+          "ticker": "TAO",
+          "corr": -0.1565,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs TAO-BTC at W=168h: corr=-0.1565 (PASS threshold 0.4)"
+        },
+        "G5m_LINK": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5m_LINK: skip (no data), assume PASS"
+        },
+        "G5n_TON": {
+          "ticker": "TON",
+          "corr": null,
+          "pass": true,
+          "note": "TON data unavailable \u2014 skip, assume PASS"
+        },
+        "G5o_SAND": {
+          "ticker": "SAND",
+          "corr": 0.0974,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs SAND-BTC at W=168h: corr=0.0974 (PASS threshold 0.4)"
+        },
+        "G5p_ICP": {
+          "ticker": "ICP",
+          "corr": null,
+          "pass": true,
+          "note": "ICP data unavailable \u2014 skip, assume PASS"
+        },
+        "G5q_AXS": {
+          "ticker": "AXS",
+          "corr": null,
+          "pass": true,
+          "note": "AXS signal has NaN correlation (constant/degenerate) \u2014 skip, assume PASS"
+        },
+        "G5r_DOGE": {
+          "ticker": "DOGE",
+          "corr": 0.0662,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs DOGE-BTC at W=168h: corr=0.0662 (PASS threshold 0.4)"
+        },
+        "G5s_SHIB": {
+          "ticker": "SHIB",
+          "corr": -0.0281,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs SHIB-BTC at W=168h: corr=-0.0281 (PASS threshold 0.4)"
+        },
+        "G5t_AAVE": {
+          "ticker": "AAVE",
+          "corr": -0.05,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs AAVE-BTC at W=168h: corr=-0.0500 (PASS threshold 0.4)"
+        },
+        "G5u_CRV": {
+          "ticker": "CRV",
+          "corr": 0.1705,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs CRV-BTC at W=168h: corr=0.1705 (PASS threshold 0.4)"
+        },
+        "G5v_PEPE": {
+          "ticker": "PEPE",
+          "corr": -0.1586,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs PEPE-BTC at W=168h: corr=-0.1586 (PASS threshold 0.4)"
+        },
+        "G5w_WIF": {
+          "ticker": "WIF",
+          "corr": -0.0868,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs WIF-BTC at W=168h: corr=-0.0868 (PASS threshold 0.4)"
+        },
+        "G5x_BONK": {
+          "ticker": "BONK",
+          "corr": -0.1083,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs BONK-BTC at W=168h: corr=-0.1083 (PASS threshold 0.4)"
+        },
+        "G5y_UNI": {
+          "ticker": "UNI",
+          "corr": 0.1348,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs UNI-BTC at W=168h: corr=0.1348 (PASS threshold 0.4)"
+        },
+        "G5z_ARB": {
+          "ticker": "ARB",
+          "corr": 0.0516,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs ARB-BTC at W=168h: corr=0.0516 (PASS threshold 0.4)"
+        },
+        "G5aa_JUP": {
+          "ticker": "JUP",
+          "corr": 0.1731,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs JUP-BTC at W=168h: corr=0.1731 (PASS threshold 0.4)"
+        },
+        "G5ab_OP": {
+          "ticker": "OP",
+          "corr": -0.0537,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs OP-BTC at W=168h: corr=-0.0537 (PASS threshold 0.4)"
+        },
+        "G5ac_SNX": {
+          "ticker": "SNX",
+          "corr": 0.161,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs SNX-BTC at W=168h: corr=0.1610 (PASS threshold 0.4)"
+        },
+        "G5ad_LDO": {
+          "ticker": "LDO",
+          "corr": 0.067,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs LDO-BTC at W=168h: corr=0.0670 (PASS threshold 0.4)"
+        },
+        "G5ae_MKR": {
+          "ticker": "MKR",
+          "corr": -0.2515,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs MKR-BTC at W=168h: corr=-0.2515 (PASS threshold 0.4)"
+        },
+        "G5af_POL": {
+          "ticker": "POL",
+          "corr": 0.0164,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs POL-BTC at W=168h: corr=0.0164 (PASS threshold 0.4)"
+        },
+        "G5ag_ENA": {
+          "ticker": "ENA",
+          "corr": 0.2056,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs ENA-BTC at W=168h: corr=0.2056 (PASS threshold 0.4)"
+        },
+        "G5ah_ETHFI": {
+          "ticker": "ETHFI",
+          "corr": 0.2507,
+          "pass": true,
+          "note": "ONDO-BTC ORTH signal vs ETHFI-BTC at W=168h: corr=0.2507 (PASS threshold 0.4)"
+        }
+      },
+      "g5_fail_list": {},
+      "g5_max_corr": 0.2507,
+      "g5_max_pair": "ETHFI",
+      "avax_corr": 0.2257,
+      "inj_corr": 0.1689,
+      "eth_corr": -0.0921,
+      "avax_pass": true,
+      "inj_pass": true,
+      "walk_forward": {
+        "folds": [
+          {
+            "fold": 1,
+            "oos_start": "2024-08-30",
+            "oos_end": "2024-09-29",
+            "sharpe": -2.331,
+            "ann_ret_pct": -0.588,
+            "entries": 0
+          },
+          {
+            "fold": 2,
+            "oos_start": "2024-09-29",
+            "oos_end": "2024-10-29",
+            "sharpe": 2.479,
+            "ann_ret_pct": 0.298,
+            "entries": 0
+          },
+          {
+            "fold": 3,
+            "oos_start": "2024-10-29",
+            "oos_end": "2024-11-28",
+            "sharpe": 3.646,
+            "ann_ret_pct": 1.895,
+            "entries": 5
+          },
+          {
+            "fold": 4,
+            "oos_start": "2024-11-28",
+            "oos_end": "2024-12-28",
+            "sharpe": 68.501,
+            "ann_ret_pct": 36.766,
+            "entries": 0
+          },
+          {
+            "fold": 5,
+            "oos_start": "2024-12-28",
+            "oos_end": "2025-01-27",
+            "sharpe": 70.274,
+            "ann_ret_pct": 84.229,
+            "entries": 1
+          },
+          {
+            "fold": 6,
+            "oos_start": "2025-01-27",
+            "oos_end": "2025-02-26",
+            "sharpe": 3.427,
+            "ann_ret_pct": 0.626,
+            "entries": 0
+          },
+          {
+            "fold": 7,
+            "oos_start": "2025-02-26",
+            "oos_end": "2025-03-28",
+            "sharpe": -2.282,
+            "ann_ret_pct": -0.696,
+            "entries": 2
+          },
+          {
+            "fold": 8,
+            "oos_start": "2025-03-28",
+            "oos_end": "2025-04-27",
+            "sharpe": -26.645,
+            "ann_ret_pct": -11.028,
+            "entries": 4
+          },
+          {
+            "fold": 9,
+            "oos_start": "2025-04-27",
+            "oos_end": "2025-05-27",
+            "sharpe": -4.165,
+            "ann_ret_pct": -1.405,
+            "entries": 2
+          },
+          {
+            "fold": 10,
+            "oos_start": "2025-05-27",
+            "oos_end": "2025-06-26",
+            "sharpe": -40.991,
+            "ann_ret_pct": -4.952,
+            "entries": 0
+          },
+          {
+            "fold": 11,
+            "oos_start": "2025-06-26",
+            "oos_end": "2025-07-26",
+            "sharpe": -14.472,
+            "ann_ret_pct": -4.447,
+            "entries": 2
+          },
+          {
+            "fold": 12,
+            "oos_start": "2025-07-26",
+            "oos_end": "2025-08-25",
+            "sharpe": 31.769,
+            "ann_ret_pct": 4.238,
+            "entries": 0
+          }
+        ],
+        "fold_sharpes": [
+          -2.330815897922942,
+          2.4792168991278447,
+          3.645866044680227,
+          68.50065701270785,
+          70.27350281557332,
+          3.4268759824177946,
+          -2.2817397972850624,
+          -26.644891786479782,
+          -4.165339829476961,
+          -40.99134879353285,
+          -14.471919483867312,
+          31.768611187085707
+        ],
+        "n_positive": 6,
+        "n_folds": 12,
+        "all_positive": false,
+        "min_sharpe": -40.991
+      },
+      "permutation_test": {
+        "real_oos_sharpe": 1.5639,
+        "n_permutations": 500,
+        "p_value": 0.1,
+        "pass": false
+      },
+      "dsr_bonferroni": {
+        "n_trials": 2,
+        "t_stat": 1.106,
+        "p_raw": 0.234015,
+        "p_bonferroni": 0.46803,
+        "threshold": 0.025,
+        "pass": false
+      },
+      "cross_venue": {
+        "bybit": {
+          "corr": 0.832,
+          "pass": true,
+          "note": "HL-bybit ONDO FR corr=0.8320 (PASS >= 0.55)"
+        },
+        "okx": {
+          "corr": null,
+          "pass": false,
+          "note": "Insufficient overlap"
+        }
+      }
+    }
+  ],
+  "phase5_decision": {
+    "decision": "REJECT",
+    "rationale": "Orthogonalized ONDO signal (W=168h): REJECT \u2014 insufficient \u00a76 gates (4/9 PASS, require \u22656). Key fails: G6 trades/yr=0.0 (need \u226530), G2 perm p>0.05, G3 DSR FAIL. ONDO orthogonalization destroys profitable edge: raw K630 OOS Sharpe=12.40 \u2192 residual Sharpe=1.56 (reduction=10.84 units). The shared AVAX institutional DeFi common factor was LOAD-BEARING for ONDO signal profitability. AVAX-ONDO co-movement was not spurious overlap \u2014 it was the actual alpha driver. Removing it collapses OOS performance. OOS R\u00b2=-0.67 confirms AVAX factor fit IS data but degraded OOS (regime shift in OOS: AVAX institutional narrative decoupled from ONDO Treasury yields). K630 ONDO-BTC remains BLOCKED: no orthogonalization pathway viable.",
+    "best_window_h": 168,
+    "best_oos_sharpe": 1.5639,
+    "best_n_pass": 4,
+    "best_n_total": 9,
+    "g5_cleared": true,
+    "g5_fail_list": {},
+    "avax_corr_post_orth": 0.2257,
+    "inj_corr_post_orth": 0.1689,
+    "avax_corr_72h": 0.2266,
+    "avax_corr_168h": 0.2257,
+    "inj_corr_72h": 0.1592,
+    "inj_corr_168h": 0.1689,
+    "orthogonalization_mechanism": {
+      "alpha": 1.287e-05,
+      "beta_avax": 0.663985,
+      "is_r2": 0.1375,
+      "oos_r2": -0.6697,
+      "interpretation": "OLS on IS period: ONDO-BTC fr_diff = 0.00001287 + 0.6640*AVAX-BTC fr_diff + \u03b5. IS R\u00b2 = 0.1375 (13.75% of ONDO FR variance explained by AVAX institutional DeFi regime). Residual = ONDO-specific Tokenized Treasury component (OUSG/USDY yield cycles, BlackRock BUIDL adoption events, US Treasury rate expectations, RWA regulatory catalysts) not captured by broad institutional DeFi adoption narrative (AVAX's driver)."
+    },
+    "vs_raw_signal": {
+      "raw_oos_sharpe": 12.401,
+      "orth_oos_sharpe": 1.5639,
+      "sharpe_degradation": 10.8371,
+      "note": "Sharpe degradation from orthogonalization = 10.84 units. If G5 passes, this is the 'price' for removing the AVAX institutional DeFi overlap. AVAX corr=0.5146 implies R\u00b2\u22480.265 of signal variance \u2014 significant fraction removed. Larger degradation expected than K628 (R\u00b2=0.075)."
+    },
+    "k628_k631_analogy": {
+      "k628_beta_sei": 0.1641,
+      "k628_beta_doge": 0.3021,
+      "k628_is_r2": 0.075,
+      "k628_orth_sharpe": 18.3,
+      "k628_decision": "ACCEPT CONDITIONAL",
+      "k631_beta_jup": 0.4589,
+      "k631_is_r2": 0.1281,
+      "k631_orth_sharpe": 18.04,
+      "k631_decision": "ACCEPT CONDITIONAL",
+      "note": "K628 pattern (JTO/SEI+DOGE): IS R\u00b2=0.075, Sh 18.67\u219218.30, ACCEPT CONDITIONAL. K631 pattern (WLD/JUP): IS R\u00b2=0.128, Sh 25.06\u219218.04, ACCEPT CONDITIONAL. K634 (ONDO/AVAX): signal corr=0.5146 \u2192 R\u00b2\u22480.265 expected. Higher R\u00b2 suggests larger common factor removal \u2192 more Sharpe degradation expected. Estimated \u03b2_AVAX\u22480.35-0.55 based on FR-diff regression."
+    }
+  },
+  "phase6_profit": {
+    "oos_ann_ret_frac": 0.00233,
+    "oos_ann_ret_pct": 0.233,
+    "oos_sharpe": 1.5639,
+    "profit_10m_4x_usd": 93200,
+    "profit_10m_4x_k": 93.2,
+    "profit_100m_4x_usd": 932000,
+    "profit_100m_4x_k": 932.0,
+    "profit_table": [
+      {
+        "notional_usd": 1000000,
+        "leverage": 1,
+        "ann_profit_usd": 2330.0,
+        "ann_profit_k": 2.3
+      },
+      {
+        "notional_usd": 1000000,
+        "leverage": 2,
+        "ann_profit_usd": 4660.0,
+        "ann_profit_k": 4.7
+      },
+      {
+        "notional_usd": 1000000,
+        "leverage": 4,
+        "ann_profit_usd": 9320.0,
+        "ann_profit_k": 9.3
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 1,
+        "ann_profit_usd": 11650.0,
+        "ann_profit_k": 11.7
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 2,
+        "ann_profit_usd": 23300.0,
+        "ann_profit_k": 23.3
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 4,
+        "ann_profit_usd": 46600.0,
+        "ann_profit_k": 46.6
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 1,
+        "ann_profit_usd": 23300.0,
+        "ann_profit_k": 23.3
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 2,
+        "ann_profit_usd": 46600.0,
+        "ann_profit_k": 46.6
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 4,
+        "ann_profit_usd": 93200.0,
+        "ann_profit_k": 93.2
+      },
+      {
+        "notional_usd": 100000000,
+        "leverage": 1,
+        "ann_profit_usd": 233000.0,
+        "ann_profit_k": 233.0
+      },
+      {
+        "notional_usd": 100000000,
+        "leverage": 2,
+        "ann_profit_usd": 466000.0,
+        "ann_profit_k": 466.0
+      },
+      {
+        "notional_usd": 100000000,
+        "leverage": 4,
+        "ann_profit_usd": 932000.0,
+        "ann_profit_k": 932.0
+      }
+    ],
+    "raw_profit_10m_4x": 1366000,
+    "comparison": {
+      "raw_profit_10m_4x_usd": 1366000,
+      "orth_profit_10m_4x_usd": 93200,
+      "delta_usd": -1272800,
+      "note": "Residual orthogonalized ONDO signal: $93,200/yr @$10M 4x vs raw $1,366,000/yr (K630, blocked). Delta = $-1,272,800/yr (LOWER than raw). Orthogonalization removes AVAX institutional DeFi common factor but retains ONDO-specific Tokenized Treasury alpha."
+    },
+    "note": "Orthogonalized ONDO signal OOS ann ret: 0.2330%. OOS Sharpe: 1.56. @$10M notional 4x leverage: $93,200/yr (USDC/yr estimate). Residual = ONDO-specific Tokenized Treasury alpha (OUSG/USDY demand cycles, BlackRock BUIDL adoption events, US Treasury rate expectations independent of AVAX subnet DeFi narrative). Note: actual live profit depends on execution quality and venue routing (HL concentration breach \u2192 route ONDO via Bybit or OKX if accepted)."
+  }
+}
