@@ -15349,6 +15349,168 @@ python3 scripts/k774_io_sol_run.py --dry-run
 
 ---
 
+## §83 K788 MEME-SOL FR Differential (82nd Daemon, TWENTY-FIFTH ALT-ALT, ERC-20 Meme Index × SVM, 22nd Vertex)
+
+*K791 §83 -- K788 MEME-SOL FR Differential production scaffold (82nd daemon, TWENTY-FIFTH ALT-ALT scaffold 22nd-vertex MEME ERC-20-meme-index memecoin.org × Solana SVM, OOS Sh 15.97 IS Sh 13.12 OOS>IS-no-overfit W=84h G6-84.3/yr-OOS, central $14,518/yr net @$10M @3x 0.4% sleeve K523 3-point $9.2K-$20.6K, HL primary MEME-PERP+SOL-PERP G8-PASS-HL+OKX+Bybit-confirmed, CONDITIONAL_ACCEPT 9/9 G8-PASS, G4 WF 12/12 ALL-POSITIVE min_fold_sh=4.3534, G5 27/27 ALL-PASS max_corr=0.1973-G5b-SOL-BTC G5w-PEPE-SOL=0.134-PASS G5y-WIF-SOL=0.083-PASS meme-cluster-CLEAR, G6 84.3/yr PASS, G9 OOS-212d-PASS>=180d, L004-PASS MEME-bidirectional pos_frac_oos=0.5743, L004_DIFF-BORDERLINE full=0.289-BELOW-floor OOS=0.440-PASS G2-p=0.000-timing-alpha-5.13Sh, MEME-vertex-22nd 1st-ERC-20-meme-index-cluster MR9-L002-all-future-MEME-X-blocked, 3x-leverage-HL-max-MEME, 60d gate: Sh>=10 fill>=60% maxDD<15% + K498/v6.52 + L004_DIFF stable OOS>=0.30) -- 2026-05-31*
+
+### §83.1 Strategy Overview
+
+| Parameter | Value |
+|-----------|-------|
+| Strategy | K788 MEME-SOL FR Differential (TWENTY-FIFTH ALT-ALT scaffold) |
+| Daemon | 82nd daemon |
+| Wave | K791 (K788 scaffold) |
+| Decision | CONDITIONAL_ACCEPT 9/9 gates (G8 PASS — cross-venue verified) |
+| OOS Sharpe | 15.97 (W=84h, zero threshold, 212d OOS) |
+| IS Sharpe | 13.12 (OOS > IS — no directional overfit) |
+| W=84h | G6: 84.3/yr OOS PASS (vs 30/yr threshold) |
+| K523 Central | $14,518/yr @$10M @3x @0.4% |
+| K523 3-point | Conservative=$9,194 / Central=$14,518 / Optimistic=$20,567/yr |
+| Sleeve | 0.4% ($40K margin @$10M, 3x → $120K total notional, $60K per leg) |
+| Leverage | 3x (HL max for MEME — lower than standard 4x; OI=$480K) |
+| Venue | HL primary (MEME-PERP + SOL-PERP). G8 PASS: Bybit+OKX confirmed. |
+| HL concentration | 66.8% AT CAP — paper-gate strict |
+| MEME vertex | 22nd vertex (1st ERC-20 meme index cluster) |
+
+### §83.2 MEME vs SOL FR Economics
+
+| Factor | MEME (ERC-20 Meme Index) | SOL (Solana SVM L1) |
+|--------|--------------------------|---------------------|
+| FR driver | ETH meme bull/bear cycles | SVM retail demand, Firedancer |
+| FR bias | Bidirectional (pos_frac_full=79.4%, OOS=57.4%) | Persistent positive |
+| Vol ratio | MEME/SOL = 3.34x (full period) | Lower vol, more stable |
+| Mechanism | ERC-20 meme rotation, HL HIP-3 speculative, crash kurtosis | Phantom, DePIN, ETF narrative |
+| Max spike | MEME: -48.37bps (meme crash event) | SOL: -20.51bps (Feb 2025 cascade) |
+| L004 | PASS: genuinely bidirectional (OOS 57.4% << 80% threshold) | Structural positive carry |
+| L004_DIFF | BORDERLINE: full=0.289 (<0.30), OOS=0.440 PASS, G2 timing alpha | Reference anchor |
+
+**MEME is distinct from:**
+- PEPE (K754): single ETH meme coin vs MEME basket-weighted index
+- WIF (K759): SOL-native meme vs MEME ERC-20 cross-chain
+- BONK: SOL-native vs MEME ERC-20 ETH chain
+
+G5w PEPE-SOL = 0.1339 PASS (meme cluster orthogonal). G5y WIF-SOL = 0.0825 PASS (cross-chain distinct).
+
+### §83.3 §6 Gate Results (K788)
+
+| Gate | Result | Value | Threshold |
+|------|--------|-------|-----------|
+| G1 OOS Sharpe | PASS | 15.97 | >= 1.0 |
+| G2 Perm p-value | PASS | p=0.000 | < 0.05 |
+| G3 DSR Bonferroni | PASS | p=0.000 (12 configs) | < alpha |
+| G4 Walk-Forward | PASS | 12/12 positive (min Sh=4.35) | All positive |
+| G5 Family corr | PASS | 27/27 max=0.1973 (G5b SOL-BTC) | All < 0.40 |
+| G6 Trade count | PASS | 84.3/yr OOS | >= 30/yr |
+| G7 Ann return | PASS | 3x OOS=60.5% | >= 5% |
+| G8 Cross-venue | PASS | HL+OKX+Bybit confirmed | 2+ venues |
+| G9 Data suff. | PASS | 212d OOS | >= 180d |
+
+**All 9/9 gates PASS. CONDITIONAL_ACCEPT (condition: L004_DIFF stable monitoring required).**
+
+### §83.4 K523 3-Point Profit Projection (@$10M @3x @0.4%)
+
+| Scenario | Annual | Basis |
+|----------|--------|-------|
+| Conservative | $9,194/yr | R2S=38% (K518 floor) × OOS-haircut=25% |
+| Central | $14,518/yr | R2S=38% × net-fee (K523 mandate) |
+| Optimistic | $20,567/yr | Near-full OOS realization |
+| Upper bound | >$20,567/yr | OOS raw return (NOT central per K523) |
+
+Notional: $120K (0.4% sleeve × 3x × $10M). OOS ann return raw=20.2% @3x. 3x (not 4x) due to MEME HL leverage cap.
+
+### §83.5 HL Concentration Status
+
+| Metric | Value |
+|--------|-------|
+| HL pre-K788 | 66.8% |
+| HL post-K788 | 66.8% (UNCHANGED — paper-only) |
+| HL cap | 65.0% |
+| Status | AT CAP — paper-gate STRICT |
+| Live trigger | K498/v6.52 OKX activation reduces HL% below 65% |
+
+### §83.6 MEME Vertex Rule (MR9 L002)
+
+MEME = **22nd vertex** (1st ERC-20 meme index cluster):
+```
+V (after K788) = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI, SOL, TIA, TAO,
+                   PEPE, WIF, BLUR, AXS, IO, EIGEN, COMP, BIO, MEME}
+```
+MR9 L002: **All future MEME-X pairs are auto-blocked** (MEME exhausted as new vertex).
+MEME-SOL is the only permissible MEME-X pair given V composition at K788.
+
+Note: MEME (ERC-20 meme index) is distinct from PEPE (K754, ETH meme single coin) and WIF (K759, SOL-native meme).
+G5w PEPE-SOL=0.1339 PASS and G5y WIF-SOL=0.0825 PASS confirm cluster independence.
+
+### §83.7 L004_DIFF Monthly Recheck Protocol
+
+L004_DIFF BORDERLINE — full=0.289 is 0.011 BELOW the 0.30 floor (borderline-FAIL full period):
+
+| Metric | Value | Threshold | Status |
+|--------|-------|-----------|--------|
+| diff_pos_full | 0.289 | >= 0.30 | BELOW FLOOR |
+| diff_pos_oos | 0.440 | [0.30, 0.70] | PASS |
+| G2 timing alpha | p=0.000 | < 0.05 | CONFIRMED |
+| Pure carry IS Sh | 7.99 | — | Reference |
+| Signal IS Sh | 13.12 | — | +5.13 Sh from timing |
+
+**Monthly recheck protocol:**
+1. Re-run OOS diff_pos calculation over rolling 90d OOS window (monthly)
+2. If OOS diff_pos < 0.28 for **2 consecutive months**: reduce sleeve by 50% (0.4% → 0.2%)
+3. If OOS diff_pos < 0.30 at live gate check: block live elevation until recovered
+4. If full diff_pos rises above 0.30 consistently: upgrade to ACCEPT (remove CONDITIONAL)
+
+### §83.8 Live Gate
+
+| Criterion | Threshold | Rationale |
+|-----------|-----------|-----------|
+| Realized Sharpe | >= 10 | G8 PASS (cross-venue verified) + 9/9 full gates |
+| Fill rate | >= 60% | Standard HL paired-trade fill requirement |
+| Max drawdown | < 15% | Standard alt-alt pair max loss gate |
+| K498/v6.52 | OKX activation required | HL% must drop below 65% |
+| L004_DIFF stable | OOS diff_pos >= 0.30 | Monthly recheck; reduce sleeve if deteriorates |
+| Days required | 60d paper-trade | Standard gate period |
+
+### §83.9 Daemon Activation
+
+```bash
+# Deploy (after all gate conditions met):
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k788-meme-sol.plist
+cp scripts/com.cryptolab.k788-meme-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k788-meme-sol.plist
+launchctl list | grep k788
+```
+
+**Status check:**
+```bash
+python3 scripts/k788_meme_sol_run.py --status
+python3 scripts/k788_meme_sol_run.py --dry-run
+```
+
+### §83.10 Leverage Note
+
+MEME max leverage on HL = **3x** (HIP-3 liquidity constraint):
+- MEME OI on HL: $480,135
+- MEME daily vol: $447,395
+- Max leverage HL: 3x (vs standard 4x for liquid alt-alt pairs)
+- Impact on K523: $40K sleeve × 3x = $120K notional (vs $160K at 4x) → central $14.5K/yr (not $19.3K/yr)
+- Bybit: 50x max leverage (MEMEUSDT) — but HL is primary execution venue
+
+### §83.11 References
+
+| Wave | Description |
+|------|-------------|
+| K766 | Long-tail HIP-3 screen — MEME identified as priority candidate (vol_ratio=4.8x 30d) |
+| K788 | K788 MEME-SOL evaluation (CONDITIONAL_ACCEPT 9/9 — G8 PASS, L004_DIFF borderline) |
+| K791 | This section — K788 MEME-SOL production scaffold (82nd daemon) |
+| K498 | OKX activation prerequisite (reduces HL% below 65%) |
+| K523 | 3-point projection mandate |
+| K518 | 38% realized-to-stated ratio floor |
+| K754 | PEPE-SOL (G5w reference — ETH meme single coin vs MEME index; meme cluster CLEAR) |
+| K759 | WIF-SOL (G5y reference — SOL-native meme vs MEME ERC-20; cross-chain distinct) |
+| K786 | BIO-SOL (G5aa reference — DeSci cluster independent from ERC-20 meme) |
+
+---
+
 ## §81 K786 BIO-SOL FR Differential (80th Daemon, TWENTY-THIRD ALT-ALT, DeSci × SVM, 21st Vertex)
 
 *K787 §81 -- K786 BIO-SOL FR Differential production scaffold (80th daemon, TWENTY-THIRD ALT-ALT scaffold 21st-vertex BIO DeSci-Biotech-DAO-coordination Bio-Protocol × Solana SVM, OOS Sh 23.10 IS Sh 23.24 IS~OOS-consistent W=84h G6-7479/yr-OOS, central $63,652/yr net @$10M @4x 0.4% sleeve K523 3-point $54K-$168K, HL ONLY BIO-PERP+SOL-PERP G8-FAIL-HL-only-HIP-3-no-Bybit-no-OKX, ACCEPT 8/9 G8-FAIL-cross-venue-unconfirmed, G4 WF 5/5 ALL-POSITIVE min_fold_sh=20.95, G5 24/24 ALL-PASS max_corr=0.3308-G5u-FIL-SOL, G6 7479/yr PASS, G9 OOS-204.8d-PASS>=180d, L004-PASS BIO-bidirectional, L004_DIFF-BORDERLINE full=0.303-OOS=0.461-monthly-recheck, BIO-vertex-21st 1st-DeSci-cluster MR9-L002-all-future-BIO-X-blocked, 60d gate: Sh>=15 fill>=60% maxDD<15% + K498/v6.52 + cross-venue Bybit BIO verify) -- 2026-05-31*
@@ -15525,6 +15687,211 @@ python3 scripts/k786_bio_sol_run.py --dry-run
 | K782 | PROVE-SOL precedent (L004_DIFF 0.277 BLOCKED) |
 | K784 | G5u FIL-SOL pre-check precedent (0.331 PASS) |
 | K735 | HBAR-SOL precedent (G8 STRUCTURAL_NA HL-only asset) |
+
+---
+
+## §82 K789 RESOLV-SOL FR Differential (81st Daemon, TWENTY-FOURTH ALT-ALT, RWA Synth-Dollar × SVM, 22nd Vertex Candidate)
+
+*K790 §82 -- K789 RESOLV-SOL FR Differential production scaffold (81st daemon, TWENTY-FOURTH ALT-ALT scaffold 22nd-vertex-candidate RESOLV RWA-Synthetic-Dollar-yield-bearing-stablecoin Resolv-Protocol × Solana SVM, OOS Sh 23.91 IS Sh 26.05 IS>OOS-typical W=84h G6-1228/yr-OOS, central $41,539/yr net @$10M @4x 0.4% sleeve K523 3-point $26K-$109K, HL ONLY RESOLV-PERP+SOL-PERP G8-FAIL-HL-only-HIP-3-no-Bybit-no-OKX G9-FAIL-OOS=141d-re-gate-Aug-2026, CONDITIONAL ACCEPT 7/9 G8-G9-FAIL, G4 WF 8/8 ALL-POSITIVE min_fold_sh=27.72 all-folds-strong, G5 25/25 ALL-PASS max_corr=0.1269-G5k-AVAX-SOL all-below-0.40, G6 1228/yr PASS, G9 OOS-141d-FAIL<180d-re-gate-Aug-18-2026-39-more-days, L004-PASS RESOLV-bidirectional-carry_full=0.5867-carry_oos=0.6955-both-below-80%, L004_DIFF-BORDERLINE-PASS full=0.3159-IS=0.1597-WARN-not-gated-OOS=0.5502-governs IS-failure-structural-RESOLV-FR-negative-2025Q3Q4-delta-hedge-bear-regime-recovered-2026Q1+, RESOLV-vertex-22nd-candidate 2nd-RWA-synth-dollar-cluster-after-ENA MR9-L002-all-future-RESOLV-X-blocked-if-confirmed, 60d gate: Sh>=15 fill>=60% maxDD<15% + K498/v6.52 + G9-re-gate-Aug-2026 + cross-venue-RESOLV-verify) -- 2026-05-31*
+
+### §82.1 Strategy Overview
+
+| Field | Value |
+|-------|-------|
+| Strategy | K789 RESOLV-SOL FR Differential (TWENTY-FOURTH ALT-ALT scaffold) |
+| Daemon | 81st (24th alt-alt scaffold, 23rd pair evaluated) |
+| Verdict | CONDITIONAL ACCEPT 7/9 gates (G8 FAIL + G9 FAIL) |
+| OOS Sharpe | 23.91 (W=84h, zero threshold, 141d OOS) |
+| IS Sharpe | 26.05 (IS > OOS typical — OOS conservative) |
+| W | 84h primary (G6: 1,228/yr OOS PASS) |
+| Sleeve | 0.4% (@$10M = $40K margin, $160K notional at 4x) |
+| K523 central | $41,539/yr @$10M @4x @0.4% |
+| K523 3-point | conservative=$26,481 / central=$41,539 / optimistic=$109,312/yr |
+| Venue | HL ONLY (RESOLV-PERP + SOL-PERP on HL, G8 FAIL HIP-3) |
+| HL concentration | 66.8% AT CAP (UNCHANGED — paper-only, no live capital) |
+| RESOLV vertex | 22nd vertex candidate (2nd RWA/synthetic-dollar cluster after ENA) |
+| G9 re-gate | ~Aug 18 2026 (OOS reaches 180d; re-run K789 eval) |
+
+### §82.2 RESOLV vs SOL FR Economics
+
+| Factor | RESOLV (Resolv Protocol — RWA Synthetic Dollar) | SOL (Solana SVM) |
+|--------|------------------------------------------------|-----------------|
+| Cluster | RWA Synthetic Dollar / yield-bearing stablecoin | SVM retail/DeFi/DePIN |
+| FR driver | Delta-hedge rebalancing, stablecoin adoption | Phantom, Firedancer, ETF, meme |
+| FR directionality | Bidirectional (carry_full=0.5867, carry_oos=0.6955) | Persistent positive |
+| vol_ratio | 13.9458x (full) — 2nd highest in family after BIO | Reference |
+| raw_corr(FR) | 0.0461 — near-zero (cycle_independence=0.9539) | Reference |
+| OU half-life | 6.68h | Reference |
+| FR Min/Max | Structural negative 2025Q3-Q4 (delta-hedge bear); recovered 2026Q1+ | Min=-20.51bps (cascade Feb 2025) |
+| Vertex | 22nd candidate (2nd RWA/synth-dollar, after ENA) | 11th (SVM Anchor — not exhausted) |
+
+### §82.3 §6 Gate Results (K789)
+
+| Gate | Result | Detail |
+|------|--------|--------|
+| G1 (OOS Sh ≥ 1.0) | PASS | OOS Sh=23.91 |
+| G2 (permutation p < 0.05) | PASS | p=0.000 (n=1000 perms) |
+| G3 (DSR Bonferroni) | PASS | t=14.89, p=0.000 |
+| G4 (walk-forward) | PASS | 8/8 ALL POSITIVE (min_fold_sh=27.72) |
+| G5 (family corr < 0.40) | PASS | 25/25 ALL PASS (max_corr=0.1269 G5k AVAX-SOL) |
+| G6 (entries/yr ≥ 30) | PASS | 1,228/yr OOS (W=84h) |
+| G7 (ann ret 4x ≥ 5%) | PASS | OOS ann ret 4x=273.3% |
+| G8 (cross-venue) | **FAIL** | RESOLV HL-only HIP-3 (~Jun 2025). No Bybit/OKX perp confirmed. Precedent: K786 BIO-SOL ACCEPT same pattern. |
+| G9 (OOS ≥ 180d) | **FAIL** | OOS=141d < 180d. Re-gate ~Aug 18 2026 (39 more days). |
+| L004 (carry pre-screen) | PASS | carry_full=0.5867, carry_oos=0.6955 (both below 80%) |
+| L004_DIFF | PASS (BORDERLINE) | full=0.3159 (0.016 above 0.30). IS=0.1597 WARN (IS not gated). OOS=0.5502 governs. |
+
+**G4 WF folds:**
+
+| Fold | OOS Period | Sharpe | Ann Ret |
+|------|------------|--------|---------|
+| 1 | 2025-09-08 to 2025-10-08 | 51.34 | 17.9% |
+| 2 | 2025-10-08 to 2025-11-07 | 27.72 | 97.0% |
+| 3 | 2025-11-07 to 2025-12-07 | 56.65 | 673.3% |
+| 4 | 2025-12-07 to 2026-01-06 | 71.11 | 113.1% |
+| 5 | 2026-01-06 to 2026-02-05 | 30.70 | 161.1% |
+| 6 | 2026-02-05 to 2026-03-07 | 37.54 | 76.9% |
+| 7 | 2026-03-07 to 2026-04-06 | 30.24 | 68.4% |
+| 8 | 2026-04-06 to 2026-05-06 | 34.58 | 10.6% |
+
+**G5 key correlations:**
+
+| Check | Corr | Result |
+|-------|------|--------|
+| G5k AVAX-SOL (highest) | 0.1269 | PASS (< 0.40) |
+| G5n ENA-SOL (2nd synth-dollar) | 0.0497 | PASS — distinct mechanisms |
+| G5y BIO-SOL (DeSci vs RWA) | -0.0119 | PASS — entirely distinct clusters |
+| G5a ETH-BTC | -0.0616 | PASS |
+| G5b SOL-BTC | -0.0356 | PASS |
+
+### §82.4 K523 3-Point Profit Projection (@$10M @4x @0.4%)
+
+| Scenario | Amount | Method |
+|----------|--------|--------|
+| Conservative | $26,481/yr | R2S=38% floor × OOS-haircut-25% × fee |
+| Central | $41,539/yr | K523 mandate (60% realized-to-stated) |
+| Optimistic | $109,312/yr | Near-full OOS realization (upper bound) |
+| Upper bound | OOS raw return | NOT central — K523 mandatory 3-point |
+
+### §82.5 HL Concentration Status
+
+| Metric | Value |
+|--------|-------|
+| HL concentration pre-K789 | 66.8% |
+| HL concentration post-K789 | 66.8% (UNCHANGED — paper-only) |
+| HL cap | 65.0% hard cap |
+| Paper-gate reason | AT CAP — any live capital would breach 65% ceiling |
+
+### §82.6 RESOLV Vertex Rule (22nd Vertex Candidate)
+
+RESOLV is a 22nd vertex **candidate** (not yet confirmed — pending G9 re-gate Aug 2026):
+
+```
+V (before K789) = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI,
+                    SOL, TIA, TAO, PEPE, WIF, BLUR, AXS, IO, EIGEN, COMP, BIO}
+
+V (candidate after K789) = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI,
+                              SOL, TIA, TAO, PEPE, WIF, BLUR, AXS, IO, EIGEN, COMP, BIO, RESOLV}
+```
+
+RESOLV cluster: **RWA Synthetic Dollar** (2nd synth-dollar vertex after ENA). Mechanism distinct:
+- ENA: Ethena — ETH staking yield delta-neutral (stETH basis trade)
+- RESOLV: Resolv Protocol — ETH/BTC perp hedge delta-neutral synthetic USD (USDR)
+- G5n ENA-SOL=0.0497 confirms distinct FR co-movement
+
+MR9 L002: all future RESOLV-X pairs auto-blocked **if CONDITIONAL ACCEPT confirmed at G9 re-gate**.
+
+### §82.7 L004_DIFF IS Warning Note
+
+IS=0.1597 < 0.30 threshold — BUT IS is NOT gated (per K782 mandatory lesson).
+
+| Period | RESOLV-SOL diff pos_frac | Interpretation |
+|--------|--------------------------|---------------|
+| 2025Q3 | 0.1658 | Delta-hedge bear regime (structural negative RESOLV FR) |
+| 2025Q4 | 0.1381 | Delta-hedge bear continues (aggressive hedge drawdown) |
+| 2026Q1 | 0.4764 | Regime recovery (approaching 30% floor) |
+| 2026Q2 | 0.6373 | Full recovery (OOS governs — 0.5502 PASS) |
+
+Full=0.3159 and OOS=0.5502 govern: **PASS**. Monthly recheck required.
+
+### §82.8 G9 Re-Gate Protocol
+
+G9 FAIL: OOS=141d < 180d threshold. Re-gate target: **~Aug 18 2026**.
+
+Re-gate procedure:
+1. Wait until RESOLV total history reaches ~450 days (OOS = 180d at 60/40 split)
+2. Re-run `python3 wave_k789_resolv_sol_eval.py` (or equivalent K789 eval script)
+3. Confirm OOS Sharpe ≥ 1.0 at 180d+ OOS
+4. Document result in K302a §82 update
+5. If G9 PASS confirmed: proceed to full live gate evaluation
+
+### §82.9 G8 Resolution Protocol
+
+G8 FAIL: RESOLV HL-only HIP-3 (~Jun 2025). No Bybit/OKX perp confirmed.
+
+Precedent: K786 BIO-SOL ACCEPT with G8 FAIL (same HIP-3 pattern — accepted at 8/9 gates).
+K789 CONDITIONAL ACCEPT at 7/9 (G8 + G9 both FAIL).
+
+G8 resolution procedure:
+1. Verify RESOLV-PERP listing on Bybit: check `bybit.com/trade/usdt/RESOLV`
+2. Fetch 100+ rows of Bybit RESOLV funding rate history
+3. Compute corr(HL RESOLV FR, Bybit RESOLV FR) — require ≥ 0.55 with n ≥ 100
+4. Document result in K302a §82 update
+5. If confirmed: G8 upgraded to PASS; live gate eligible (still needs G9 re-gate)
+
+### §82.10 Live Gate
+
+| Condition | Threshold | Status |
+|-----------|-----------|--------|
+| Realized Sharpe (60d) | ≥ 15.0 | Monitoring in paper-trade |
+| Fill rate | ≥ 60% | Monitoring in paper-trade |
+| Max drawdown | < 15% | Monitoring in paper-trade |
+| K498/v6.52 OKX activation | HL% < 65.0% | PENDING |
+| G9 re-gate | OOS reaches 180d | ~Aug 18 2026 |
+| Cross-venue RESOLV verify | Bybit/OKX perp confirmed | PENDING |
+
+**WARNING:** Only convert `PAPER_TRADE=False` AFTER ALL of:
+1. K498/v6.52 reduces HL% below 65%
+2. G9 re-gate passed (~Aug 2026, OOS reaches 180d)
+3. Cross-venue RESOLV perp verified (G8 resolution)
+4. 60d live gate: Sh>=15 + fill>=60% + maxDD<15%
+
+### §82.11 Daemon Activation
+
+```bash
+# Activate 81st daemon (K789 RESOLV-SOL):
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k789-resolv-sol.plist
+cp scripts/com.cryptolab.k789-resolv-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k789-resolv-sol.plist
+launchctl list | grep k789
+```
+
+**Status check:**
+```bash
+python3 scripts/k789_resolv_sol_run.py --status
+python3 scripts/k789_resolv_sol_run.py --dry-run
+```
+
+**WARNING:** Only convert `PAPER_TRADE=False` AFTER:
+1. K498/v6.52 reduces HL% below 65%
+2. G9 re-gate passed (~Aug 2026, OOS reaches 180d)
+3. Cross-venue RESOLV perp verified (G8 resolution)
+4. 60d live gate: Sh>=15 + fill>=60% + maxDD<15%
+
+### §82.12 References
+
+| Wave | Description |
+|------|-------------|
+| K789 | K789 RESOLV-SOL evaluation (CONDITIONAL ACCEPT 7/9 — G8 G9 FAIL) |
+| K790 | This section — K789 RESOLV-SOL production scaffold (81st daemon) |
+| K787 | K786 BIO-SOL scaffold (80th daemon, §81 — G8 FAIL precedent for HIP-3) |
+| K498 | OKX activation prerequisite (reduces HL% below 65%) |
+| K523 | 3-point projection mandate |
+| K518 | 38% realized-to-stated ratio floor |
+| K532 | Governance v5 (HL 65.0% cap rule) |
+| K782 | PROVE-SOL precedent (L004_DIFF IS not gated — OOS governs) |
+| K784 | G5u/G5j pre-check precedent |
+| K696 | ENA-SOL precedent (1st synth-dollar vertex) |
 
 ---
 

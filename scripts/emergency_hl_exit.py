@@ -4590,6 +4590,111 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K790: K789 RESOLV-SOL HL-only emergency exit flag
+    # K789 = HL-only RESOLV+SOL paired (2 legs) when RESOLV_FR-SOL_FR rolling mean 84h changes sign.
+    # Close protocol: IOC reduce-only on HL (short leg first, then long leg). NO Bybit/OKX fallback.
+    # RESOLV is HIP-3 on HL (~Jun 2025). G8 FAIL: cross-venue not confirmed. G9 FAIL: OOS=141d < 180d.
+    # HL concentration: 66.8% AT CAP (paper-gate strict).
+    # CONDITIONAL ACCEPT 7/9 gates. G4 8/8 ALL POSITIVE. G5 25/25 ALL PASS. G9 re-gate ~Aug 2026.
+    # L004 PASS: RESOLV bidirectional (carry_full=0.5867 carry_oos=0.6955).
+    # L004_DIFF BORDERLINE PASS: full=0.3159, IS=0.1597 WARN (IS not gated), OOS=0.5502 governs.
+    # Use --include-k789 to print K789-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k789",
+        dest="include_k789",
+        action="store_true",
+        default=False,
+        help=(
+            "K790: Include K789 RESOLV-SOL close summary during emergency exit. "
+            "K789 positions (RESOLV+SOL paired, HL-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = RESOLV_FR - SOL_FR (direct differential, W=84h rolling mean, zero threshold). "
+            "HL primary ONLY: RESOLV-PERP + SOL-PERP on HL. NO Bybit. NO OKX (G8 FAIL HIP-3). "
+            "HL concentration 66.8% AT CAP — paper-gate strict (PAPER_TRADE=True default). "
+            "CONDITIONAL ACCEPT 7/9 gates (G8 FAIL: RESOLV HL-only HIP-3; G9 FAIL: OOS=141d < 180d). "
+            "G4 WF 8/8 ALL POSITIVE (min_fold_sh=27.72 -- all folds strong). "
+            "G5 25/25 ALL PASS: max_corr=0.1269 (G5k AVAX-SOL, below 0.40). "
+            "G6: 1,228 entries/yr OOS PASS (W=84h vs 30/yr threshold). "
+            "G7: OOS ann ret 4x=273.3% PASS. "
+            "G8: FAIL -- RESOLV HL-only HIP-3 (no cross-venue perp confirmed). "
+            "G9: FAIL -- OOS=141d < 180d. Re-gate ~Aug 2026 (39 more days). "
+            "L004 PASS: RESOLV bidirectional (carry_full=0.5867 carry_oos=0.6955). "
+            "L004_DIFF BORDERLINE PASS: full=0.3159 (0.016 above floor), IS=0.1597 WARN (not gated), "
+            "OOS=0.5502 governs. IS failure: structural RESOLV FR negative 2025Q3-Q4 (delta-hedge bear). "
+            "Regime recovered 2026Q1+. Monthly recheck required. "
+            "OOS Sharpe 23.91 (W=84h, 141d OOS). IS Sharpe 26.05 (IS>OOS typical). "
+            "RESOLV FR: delta-hedge rebalancing cycles (perp position adjustments), "
+            "stablecoin adoption flow (USDR mint/redeem), "
+            "RWA yield competition vs Ethena sUSDe/Spark USDS/USDC, "
+            "ETH/BTC perp market funding regime (protocol hedge P&L), "
+            "DAO governance events (fee parameters, collateral), stablecoin regulatory news (SEC/MiCA). "
+            "vol_ratio=13.9458x (full). raw_corr=0.0461. OU half-life=6.68h. "
+            "SOL FR: DePIN/Retail Phantom Firedancer ETF persistent positive. Min=-20.51bps cascade. "
+            "RESOLV = 22nd vertex candidate (2nd RWA/synth-dollar cluster after ENA). "
+            "MR9 L002: all future RESOLV-X pairs blocked if CONDITIONAL ACCEPT confirmed. "
+            "V (candidate) = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO,EIGEN,COMP,BIO,RESOLV} "
+            "K523 3-point: conservative=$26,481 central=$41,539 optimistic=$109,312/yr @$10M @4x @0.4%. "
+            "60d live gate: Sh>=15 + fill>=60% + maxDD<15% + K498/v6.52 + G9 re-gate Aug 2026 + cross-venue. "
+            "G9 re-gate: ~Aug 18 2026 (OOS reaches 180d). Re-run K789 eval; confirm Sh>=1.0. "
+            "G8 precedent: K786 BIO-SOL ACCEPT with G8 FAIL (same HIP-3 pattern). "
+            "Cluster: RWA Synthetic Dollar (Resolv Protocol) × Solana SVM (24th alt-alt scaffold, 81st daemon). "
+            "Requires: K789 daemon running (com.cryptolab.k789-resolv-sol, 81st daemon). "
+            "See: docs/k302a_runbook.md §82"
+        ),
+    )
+
+    # K791: K788 MEME-SOL HL-primary emergency exit flag
+    # K788 = HL primary MEME+SOL paired (2 legs) when MEME_FR-SOL_FR rolling mean 84h changes sign.
+    # Close protocol: IOC reduce-only on HL (short leg first, then long leg).
+    # MEME is HIP-3 on HL. G8 PASS: HL+OKX+Bybit confirmed (cross-venue verified).
+    # HL concentration: 66.8% AT CAP (paper-gate strict). 3x leverage (HL max for MEME).
+    # CONDITIONAL_ACCEPT 9/9 gates. G4 12/12 ALL POSITIVE. G5 27/27 ALL PASS. G9 OOS 212d PASS.
+    # L004 PASS: MEME bidirectional (pos_frac_full=0.7940 pos_frac_oos=0.5743).
+    # L004_DIFF BORDERLINE: full=0.289 (<0.30 floor), OOS=0.440 PASS. G2 p=0.000 timing alpha.
+    # Use --include-k788 to print K788-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k788",
+        dest="include_k788",
+        action="store_true",
+        default=False,
+        help=(
+            "K791: Include K788 MEME-SOL close summary during emergency exit. "
+            "K788 positions (MEME+SOL paired, HL primary) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = MEME_FR - SOL_FR (direct differential, W=84h rolling mean, zero threshold). "
+            "HL primary: MEME-PERP + SOL-PERP on HL. G8 PASS: Bybit+OKX confirmed. "
+            "HL concentration 66.8% AT CAP — paper-gate strict (PAPER_TRADE=True default). "
+            "CONDITIONAL_ACCEPT 9/9 gates (G8 PASS: MEME HL+OKX+Bybit cross-venue verified). "
+            "G4 WF 12/12 ALL POSITIVE (min_fold_sh=4.3534 -- all folds positive). "
+            "G5 27/27 ALL PASS: max_corr=0.1973 (G5b SOL-BTC, well below 0.40). "
+            "G5w PEPE-SOL=0.1339 PASS (meme cluster orthogonal). "
+            "G5y WIF-SOL=0.0825 PASS (cross-chain meme distinct from ERC-20). "
+            "G6: 84.3 entries/yr OOS PASS (W=84h vs 30/yr threshold). "
+            "G7: OOS ann ret 3x=60.5% PASS. "
+            "G8: PASS -- MEME HL+OKX+Bybit confirmed (cross-venue verified). "
+            "G9: OOS 212d PASS (>= 180d minimum). "
+            "L004 PASS: MEME bidirectional (pos_frac_full=0.7940 pos_frac_oos=0.5743). "
+            "L004_DIFF BORDERLINE: full=0.289 (<0.30 floor, -0.011 margin), OOS=0.440 PASS. "
+            "G2 p=0.000 confirms timing alpha (+5.13 Sh vs pure carry IS Sh=7.99). Monthly recheck. "
+            "OOS Sharpe 15.97 (W=84h, 212d OOS). IS Sharpe 13.12 (OOS > IS -- no overfit). "
+            "MEME FR: ERC-20 meme index (memecoin.org basket-weighted), ETH meme bull/bear cycles, "
+            "ERC-20 meme rotation, HL HIP-3 speculative demand, meme crash kurtosis Max=-48.37bps. "
+            "vol_ratio=3.34x (full). raw_corr=0.1177. "
+            "Leverage: 3x (HL max for MEME -- lower than standard 4x; OI=$480K constraint). "
+            "SOL FR: DePIN/Retail Phantom Firedancer ETF persistent positive. Min=-20.51bps cascade. "
+            "MEME = 22nd vertex (1st ERC-20 meme index cluster). MR9 L002: all future MEME-X blocked. "
+            "V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO,EIGEN,COMP,BIO,MEME} "
+            "K523 3-point: conservative=$9,194 central=$14,518 optimistic=$20,567/yr @$10M @3x @0.4%. "
+            "60d live gate: Sh>=10 + fill>=60% + maxDD<15% + K498/v6.52 + L004_DIFF stable (OOS>=0.30). "
+            "L004_DIFF monitor: monthly recheck; reduce sleeve if OOS diff_pos < 0.28 for 2 months. "
+            "Cluster: ERC-20 Meme Index (memecoin.org) × Solana SVM (25th alt-alt scaffold, 82nd daemon). "
+            "Requires: K788 daemon running (com.cryptolab.k788-meme-sol, 82nd daemon). "
+            "See: docs/k302a_runbook.md §82"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -5964,6 +6069,118 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "ACCEPT 8/9 (G8 FAIL HL-only HIP-3). G4 5/5 ALL POSITIVE (min_sh=20.95). BIO = 21st vertex (DeSci). "
                 "G5 24/24 ALL PASS (max_corr=0.3308). G9 OOS 204.8d PASS. L004 PASS (bidirectional). "
                 "Use --include-k786 for structured HL close summary (§81)."
+            )
+
+        # ── K789 RESOLV-SOL close summary (K790 §82) ─────────────────────────
+        # HL concentration: 66.8% AT CAP (paper-gate: PAPER_TRADE=True default — no live capital yet).
+        # Live only after K498/v6.52 + G9 re-gate Aug 2026 + cross-venue RESOLV verify + 60d gate.
+        # CONDITIONAL ACCEPT 7/9 gates (G8 FAIL: RESOLV HL-only HIP-3; G9 FAIL: OOS=141d < 180d).
+        if args.include_k789:
+            logger.info("=== K789 RESOLV-SOL CLOSE SUMMARY (K790 §82) ===")
+            logger.info("  K789 RESOLV-SOL: HL ONLY (RESOLV-PERP + SOL-PERP both legs on HL)")
+            logger.info("  NO Bybit. NO OKX. G8 FAIL: RESOLV is HIP-3 on HL (~Jun 2025), not on Bybit/OKX.")
+            logger.info("  G9 FAIL: OOS=141d < 180d threshold. Re-gate ~Aug 2026 (39 more days).")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_RESOLV (delta-hedge spike): short SOL first -> sell long RESOLV second")
+            logger.info("  BEAR_RESOLV (delta-hedge bear + SVM season, frequent): short RESOLV first -> sell long SOL second")
+            logger.info("  HL concentration: 66.8% AT CAP — paper-gate strict")
+            logger.info("  PAPER_TRADE=True default — no live capital until 60d gate + K498/v6.52 + G9 + G8 resolve")
+            logger.info("  CONDITIONAL ACCEPT 7/9 gates (G8 FAIL HL-only HIP-3, G9 FAIL OOS=141d < 180d)")
+            logger.info("  G4 WF: 8/8 ALL POSITIVE (min_fold_sh=27.72 -- all folds strong)")
+            logger.info("  G5: 25/25 ALL PASS: max_corr=0.1269 (G5k AVAX-SOL, below 0.40)")
+            logger.info("  G5n: ENA-SOL=0.0497 PASS (2nd synth-dollar -- distinct mechanisms)")
+            logger.info("  G5y: BIO-SOL=-0.0119 PASS (RWA vs DeSci -- entirely distinct clusters)")
+            logger.info("  G6: 1,228 entries/yr OOS PASS (W=84h vs 30/yr threshold)")
+            logger.info("  G7: OOS ann ret 4x=273.3% PASS")
+            logger.info("  G8: FAIL -- RESOLV HL-only HIP-3 (no cross-venue perp confirmed)")
+            logger.info("  G9: FAIL -- OOS=141d < 180d. Re-gate ~Aug 18 2026 (39 more trading days).")
+            logger.info("  L004 PASS: RESOLV bidirectional (carry_full=0.5867 carry_oos=0.6955)")
+            logger.info("  L004_DIFF BORDERLINE PASS: full=0.3159 (0.016 above 0.30 floor),")
+            logger.info("    IS=0.1597 WARN (IS not gated — OOS=0.5502 governs per K782 lesson). PASS.")
+            logger.info("    IS failure: structural RESOLV FR negative 2025Q3-Q4 (delta-hedge bear regime).")
+            logger.info("    Regime recovered 2026Q1 (diff_pos_frac=0.4764) + 2026Q2 (0.6373).")
+            logger.info("    Monthly recheck required.")
+            logger.info("  RESOLV FR: delta-hedge rebalancing cycles (perp position adjustments),")
+            logger.info("         stablecoin adoption flow (USDR mint/redeem),")
+            logger.info("         RWA yield competition vs Ethena sUSDe/Spark USDS/USDC,")
+            logger.info("         ETH/BTC perp market funding regime (protocol hedge P&L),")
+            logger.info("         DAO governance events (fee parameters, collateral adjustments),")
+            logger.info("         stablecoin regulatory news (SEC guidance, EU MiCA compliance).")
+            logger.info("  RESOLV FR: bidirectional. OOS carry=0.6955 confirms genuine bidirectionality.")
+            logger.info("  RESOLV = 22nd vertex candidate (2nd RWA/synth-dollar cluster after ENA).")
+            logger.info("  MR9 L002: all future RESOLV-X pairs blocked if CONDITIONAL ACCEPT confirmed.")
+            logger.info("  V (candidate) = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO,EIGEN,COMP,BIO,RESOLV}")
+            logger.info("  SOL FR: DePIN/Retail Phantom Firedancer ETF persistent positive. Min=-20.51bps cascade.")
+            logger.info("  OOS Sh=23.91 (W=84h, 141d OOS) | IS Sh=26.05 (IS>OOS typical)")
+            logger.info("  vol_ratio=13.9458x (full) | raw_corr=0.0461 | OU half-life=6.68h")
+            logger.info("  K523 3-point: conservative=$26,481 central=$41,539 optimistic=$109,312/yr")
+            logger.info("  Sleeve 0.4% (@$10M = $40K margin, $160K total notional, $80K per leg). 4x leverage.")
+            logger.info("  G9 re-gate: ~Aug 18 2026. Re-run K789 eval; confirm Sh>=1.0 at 180d+.")
+            logger.info("  G8 precedent: K786 BIO-SOL ACCEPT with G8 FAIL (same HIP-3 pattern).")
+            logger.info("  60d gate: Sh>=15 + fill>=60% + maxDD<15% + K498/v6.52 + G9 Aug 2026 + cross-venue verify")
+            logger.info("  24th alt-alt scaffold, 81st daemon. HL primary (positions in main HL exit)")
+            logger.info("  See: docs/k302a_runbook.md §82 (K789 RESOLV-SOL playbook)")
+        else:
+            logger.info(
+                "K789 RESOLV-SOL: HL ONLY (positions ARE in HL exit above — RESOLV-PERP + SOL-PERP on HL). "
+                "HL 66.8% AT CAP — paper-gate strict; no live capital until K498/v6.52 + G9 Aug 2026 + G8 resolve. "
+                "CONDITIONAL ACCEPT 7/9 (G8 FAIL HL-only HIP-3, G9 FAIL OOS=141d re-gate Aug 2026). "
+                "G4 8/8 ALL POSITIVE (min_sh=27.72). RESOLV = 22nd vertex candidate (RWA synth-dollar). "
+                "G5 25/25 ALL PASS (max_corr=0.1269). L004 PASS (bidirectional carry_oos=0.6955). "
+                "Use --include-k789 for structured HL close summary (§82)."
+            )
+
+        # ── K788 MEME-SOL close summary (K791 §83) ───────────────────────────
+        # HL concentration: 66.8% AT CAP (paper-gate: PAPER_TRADE=True default — no live capital yet).
+        # Live only after K498/v6.52 + L004_DIFF stable (OOS diff_pos >= 0.30) + 60d gate.
+        # CONDITIONAL_ACCEPT 9/9 gates (G8 PASS: MEME HL+OKX+Bybit cross-venue verified).
+        if args.include_k788:
+            logger.info("=== K788 MEME-SOL CLOSE SUMMARY (K791 §83) ===")
+            logger.info("  K788 MEME-SOL: HL primary (MEME-PERP + SOL-PERP both legs on HL)")
+            logger.info("  G8 PASS: Bybit confirmed (MEMEUSDT Nov 2023 50x). OKX confirmed (corr=0.843).")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_MEME (ETH meme bull spike): short SOL first -> sell long MEME second")
+            logger.info("  BEAR_MEME (ETH meme bear + SVM season, frequent): short MEME first -> sell long SOL second")
+            logger.info("  HL concentration: 66.8% AT CAP — paper-gate strict")
+            logger.info("  PAPER_TRADE=True default — no live capital until 60d gate + K498/v6.52 + L004_DIFF stable")
+            logger.info("  CONDITIONAL_ACCEPT 9/9 gates (G8 PASS: MEME cross-venue verified)")
+            logger.info("  G4 WF: 12/12 ALL POSITIVE (min_fold_sh=4.3534 -- all folds positive)")
+            logger.info("  G5: 27/27 ALL PASS: max_corr=0.1973 (G5b SOL-BTC, well below 0.40)")
+            logger.info("  G5w: PEPE-SOL=0.1339 PASS (meme cluster orthogonal)")
+            logger.info("  G5y: WIF-SOL=0.0825 PASS (cross-chain meme distinct from ERC-20)")
+            logger.info("  G5aa: BIO-SOL=0.0639 PASS (DeSci cluster independent)")
+            logger.info("  G6: 84.3 entries/yr OOS PASS (W=84h vs 30/yr threshold)")
+            logger.info("  G7: OOS ann ret 3x=60.5% PASS")
+            logger.info("  G8: PASS -- MEME HL+OKX+Bybit confirmed (cross-venue verified)")
+            logger.info("  G9: OOS 212d PASS (>= 180d minimum)")
+            logger.info("  L004 PASS: MEME bidirectional (pos_frac_full=0.7940 pos_frac_oos=0.5743)")
+            logger.info("  L004_DIFF BORDERLINE: full=0.289 (<0.30 floor, -0.011), OOS=0.440 PASS. Monthly recheck.")
+            logger.info("  G2 p=0.000 confirms timing alpha (+5.13 Sh vs pure carry IS Sh=7.99).")
+            logger.info("  MEME FR: ERC-20 meme index (memecoin.org basket-weighted, cross-chain ETH),")
+            logger.info("         ETH meme bull/bear cycles (distinct from SOL-native memes),")
+            logger.info("         ERC-20 meme rotation, HL HIP-3 speculative retail demand,")
+            logger.info("         meme market crash kurtosis events (Max spike -48.37bps).")
+            logger.info("  MEME FR: bidirectional. OOS pos_fraction=0.5743 confirms genuine bidirectionality.")
+            logger.info("  MEME = 22nd vertex (1st ERC-20 meme index cluster). MR9 L002: all future MEME-X blocked.")
+            logger.info("  V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO,EIGEN,COMP,BIO,MEME}")
+            logger.info("  SOL FR: DePIN/Retail Phantom Firedancer ETF persistent positive. Min=-20.51bps cascade.")
+            logger.info("  OOS Sh=15.97 (W=84h, 212d OOS) | IS Sh=13.12 (OOS > IS -- no directional overfit)")
+            logger.info("  vol_ratio=3.34x (full) | raw_corr=0.1177")
+            logger.info("  K523 3-point: conservative=$9,194 central=$14,518 optimistic=$20,567/yr")
+            logger.info("  Sleeve 0.4% (@$10M = $40K margin, $120K total notional, $60K per leg). 3x leverage.")
+            logger.info("  Leverage: 3x (HL max for MEME -- lower than standard 4x; OI=$480K constraint)")
+            logger.info("  L004_DIFF monitor: monthly recheck. Reduce sleeve if OOS diff_pos < 0.28 for 2 mo.")
+            logger.info("  Live gate: Sh>=10 + fill>=60% + maxDD<15% + K498/v6.52 + L004_DIFF stable (OOS>=0.30)")
+            logger.info("  25th alt-alt scaffold, 82nd daemon. HL primary (positions in main HL exit)")
+            logger.info("  See: docs/k302a_runbook.md §83 (K788 MEME-SOL playbook)")
+        else:
+            logger.info(
+                "K788 MEME-SOL: HL primary (positions ARE in HL exit above — MEME-PERP + SOL-PERP on HL). "
+                "HL 66.8% AT CAP — paper-gate strict; no live capital until K498/v6.52 + L004_DIFF stable + 60d gate. "
+                "CONDITIONAL_ACCEPT 9/9 (G8 PASS HL+OKX+Bybit verified). G4 12/12 ALL POSITIVE (min_sh=4.35). "
+                "G5 27/27 ALL PASS (max_corr=0.1973). G9 OOS 212d PASS. L004 PASS (bidirectional). "
+                "L004_DIFF BORDERLINE (full=0.289 <0.30, OOS=0.440 PASS). MEME = 22nd vertex (ERC-20 meme index). "
+                "Use --include-k788 for structured HL close summary (§83)."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)
