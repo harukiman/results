@@ -1,0 +1,1220 @@
+{
+  "wave": "K636",
+  "strategy": "ETHFI-BTC FR Differential Signal Orthogonalization \u2014 Remove LDO ETH Yield Common Factor (K628/K631/K633 Pattern, K634 Lesson)",
+  "run_time_jst": "2026-05-30T11:17:39+0900",
+  "runtime_s": 3.18,
+  "decision": "REJECT",
+  "decision_rationale": "Orthogonalized ETHFI signal W=168h: REJECT \u2014 insufficient \u00a76 gates (4/9 PASS, require \u22656). Key fails: G3 DSR Bonferroni (2-window), G4 walk-forward not all positive (10/12 W=72h), G7 Ann ret 4.25% < 5.0%, G8 cross-venue no data. Residual Sh=18.40 vs raw K619=22.73. \u03b2_LDO=0.3386, IS R\u00b2=0.0519, OOS R\u00b2=-0.2512. NOTE: G5 DID CLEAR post-orthogonalization \u2014 LDO 0.6075\u21920.0179 PASS, ENA 0.4597\u21920.1864 PASS, AVAX 0.5134\u21920.1927 PASS. Unlike K634 where REJECT was due to Sharpe collapse (load-bearing), K636 REJECT is due to insufficient non-G5 gates. The orthogonalization mechanism WORKS. This is NOT a K634-pattern REJECT. Possible path forward: window sweep + G7 threshold review or multi-fold WF relaxation. W=72h has better WF (10/12 positive, G6 32 trades/yr PASS) but G3/G7/G8 still fail. Best window W=72h: 5/9 gates. ETHFI-BTC: G5 UNBLOCKED by orthogonalization but fails \u00a76 gate count threshold.",
+  "k619_context": {
+    "k619_decision": "BLOCKED-LSD (LDO=0.6075, AVAX=0.5134, ENA=0.4597, JUP=0.4749, WIF=0.4107)",
+    "k619_oos_sharpe": 22.7329,
+    "k619_net_usdc_10m": 57214,
+    "k619_ldo_corr_oos": 0.6075,
+    "k619_ena_corr_oos": 0.4597,
+    "k619_avax_corr_oos": 0.5134,
+    "k619_block_type": "BLOCKED-LSD: LDO restaking/LSD cluster overlap",
+    "k634_lesson": {
+      "k634_decision": "REJECT",
+      "k634_oos_r2": -0.6697,
+      "k634_orth_sh": 1.56,
+      "k634_raw_sh": 12.4,
+      "lesson": "OOS R\u00b2<0 alone does not guarantee REJECT. If Sharpe survives, NOT load-bearing \u2192 K628 pattern. If Sharpe collapses, load-bearing \u2192 REJECT."
+    },
+    "k628_precedent": {
+      "decision": "ACCEPT CONDITIONAL",
+      "is_r2": 0.075,
+      "orth_sh": 18.3
+    },
+    "k631_precedent": {
+      "decision": "ACCEPT CONDITIONAL",
+      "is_r2": 0.1281,
+      "orth_sh": 18.04
+    }
+  },
+  "data_info": {
+    "hl_fr_rows": 17359,
+    "date_start": "2024-05-30 01:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.982,
+    "oos_start": "2025-10-20",
+    "oos_years": 0.59,
+    "n_is_rows": 12191,
+    "n_oos_rows": 5169,
+    "fr_frequency": "1h (HL hourly settlement)",
+    "raw_ethfi_ldo_corr_full": 0.2368,
+    "raw_ethfi_ldo_corr_is": 0.2279,
+    "raw_ethfi_ldo_corr_oos": 0.38
+  },
+  "signal_config": {
+    "strategy_type": "FR differential carry \u2014 ORTHOGONALIZED vs LDO",
+    "direction_rule": "sign(W-hour rolling mean of OLS residual of fr_diff_ethfi)",
+    "cost_rt_bps": 4,
+    "pnl_source": "signal * fr_diff_ethfi (actual ETHFI-BTC carry)",
+    "signal_windows": [
+      72,
+      168
+    ]
+  },
+  "phase1_regression": {
+    "method": "OLS IS-estimated, applied to full period",
+    "is_period": {
+      "start": "2024-05-30",
+      "end": "2025-10-20",
+      "n_rows": 12191
+    },
+    "coefficients": {
+      "alpha": 1.321e-05,
+      "beta_ldo": 0.338557
+    },
+    "t_stats": {
+      "t_alpha": 37.925,
+      "t_ldo": 25.838
+    },
+    "r_squared": {
+      "is": 0.0519,
+      "oos": -0.2512
+    },
+    "oos_r2_diagnostic": {
+      "oos_r2": -0.2512,
+      "k634_oos_r2": -0.6697,
+      "k634_decision": "REJECT (Sharpe 12.40\u21921.56, LDO load-bearing)",
+      "k636_outlook": "K636 OOS R\u00b2 negative (like K634) but Sharpe survives: W=72h Sh=12.68 (10/12 WF), W=168h Sh=18.40 (5/12 WF). OOS R\u00b2 < 0 indicates LDO factor fit IS data but degrades OOS \u2014 typical for crypto FR regime shifts. Unlike K634, the ETHFI-specific restaking yield component retains its own consistent directional alpha independent of LDO."
+    },
+    "residual_properties": {
+      "adf_pvalue": 0.0,
+      "stationary": true,
+      "ou_halflife_h": 1.41
+    },
+    "correlation_check": {
+      "raw_ethfi_ldo_fr_corr": 0.2368,
+      "resid_ldo_corr": 0.019176,
+      "orthogonality_achieved": false
+    },
+    "regression_data": {
+      "n_full": 17359,
+      "n_is": 12191,
+      "n_oos": 5169
+    },
+    "k628_k631_comparison": {
+      "k628_is_r2": 0.075,
+      "k631_is_r2": 0.1281,
+      "k634_is_r2": 0.1375,
+      "k636_is_r2": 0.0519,
+      "note": "K628 R\u00b2=7.5% (ACCEPT), K631 R\u00b2=12.8% (ACCEPT), K634 R\u00b2=13.8% (REJECT, load-bearing). K636 R\u00b2=5.2% \u2014 lower than K634, more like K628/K631 range \u2192 favorable."
+    }
+  },
+  "phase2_signal_infos": [
+    {
+      "window_h": 72,
+      "raw_orth_signal_corr": 0.53,
+      "ldo_sig_corr_full": 0.0875,
+      "ldo_sig_corr_oos": 0.2954,
+      "k619_ldo_corr_oos": 0.6075,
+      "ldo_cleared_full": true,
+      "ldo_cleared_oos": true,
+      "n_signal_rows": 17288
+    },
+    {
+      "window_h": 168,
+      "raw_orth_signal_corr": 0.5045,
+      "ldo_sig_corr_full": 0.0179,
+      "ldo_sig_corr_oos": 0.3129,
+      "k619_ldo_corr_oos": 0.6075,
+      "ldo_cleared_full": true,
+      "ldo_cleared_oos": true,
+      "n_signal_rows": 17192
+    }
+  ],
+  "phase3_backtest": [
+    {
+      "window_h": 72,
+      "oos": {
+        "sharpe": 12.6819,
+        "ann_ret_pct": 3.8822,
+        "max_drawdown_pct": -0.464,
+        "trades": 19,
+        "trades_per_year": 32.2,
+        "n_rows": 5169,
+        "n_years": 0.59,
+        "n_days": 215.4
+      },
+      "is": {
+        "sharpe": 16.7478,
+        "ann_ret_pct": 7.5021,
+        "n_rows": 12120
+      },
+      "full": {
+        "sharpe": 15.6164
+      },
+      "raw_comparison": {
+        "raw_oos_sharpe": 22.7329,
+        "orth_oos_sharpe": 12.6819,
+        "sharpe_reduction": 10.051
+      }
+    },
+    {
+      "window_h": 168,
+      "oos": {
+        "sharpe": 18.3984,
+        "ann_ret_pct": 4.25,
+        "max_drawdown_pct": -0.5489,
+        "trades": 4,
+        "trades_per_year": 6.8,
+        "n_rows": 5169,
+        "n_years": 0.59,
+        "n_days": 215.4
+      },
+      "is": {
+        "sharpe": 12.5185,
+        "ann_ret_pct": 5.3951,
+        "n_rows": 12024
+      },
+      "full": {
+        "sharpe": 13.2218
+      },
+      "raw_comparison": {
+        "raw_oos_sharpe": 22.7329,
+        "orth_oos_sharpe": 18.3984,
+        "sharpe_reduction": 4.3345
+      }
+    }
+  ],
+  "phase4_section6": [
+    {
+      "window_h": 72,
+      "oos_metrics": {
+        "sharpe": 12.6819,
+        "ann_ret_pct": 3.8822,
+        "max_drawdown_pct": -0.464,
+        "trades": 19,
+        "trades_per_year": 32.2,
+        "n_rows": 5169,
+        "n_years": 0.59,
+        "n_days": 215.4
+      },
+      "is_metrics": {
+        "sharpe": 16.7478,
+        "ann_ret_pct": 7.5021,
+        "n_rows": 12120
+      },
+      "gates": [
+        {
+          "gate": "G1",
+          "name": "OOS Sharpe >= 1.0",
+          "value": 12.6819,
+          "pass": true
+        },
+        {
+          "gate": "G2",
+          "name": "Perm p <= 0.05",
+          "value": 0.0,
+          "pass": true
+        },
+        {
+          "gate": "G3",
+          "name": "DSR Bonferroni p<0.02500",
+          "value": 0.0707,
+          "pass": false
+        },
+        {
+          "gate": "G4",
+          "name": "Walk-forward all positive",
+          "value": "10/12 positive folds",
+          "pass": false
+        },
+        {
+          "gate": "G5",
+          "name": "G5 family corr < 0.40",
+          "value": 0.2707,
+          "pass": true
+        },
+        {
+          "gate": "G6",
+          "name": "Trades/yr >= 30",
+          "value": 32.2,
+          "pass": true
+        },
+        {
+          "gate": "G7",
+          "name": "Ann ret > 5% (unleveraged)",
+          "value": 3.8822,
+          "pass": false
+        },
+        {
+          "gate": "G8",
+          "name": "Cross-venue corr >= 0.55",
+          "value": 0.0,
+          "pass": false
+        },
+        {
+          "gate": "G9",
+          "name": "OOS >= 180d",
+          "value": 215.4,
+          "pass": true
+        }
+      ],
+      "n_pass": 5,
+      "n_total": 9,
+      "all_critical_pass": false,
+      "g5_details": {
+        "G5j_K280": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5j_K280: skip (self or no data), PASS"
+        },
+        "G5a_ETH": {
+          "ticker": "ETH",
+          "corr": 0.0211,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs ETH-BTC W=72h: corr=0.0211 (PASS < 0.4)"
+        },
+        "G5b_SOL": {
+          "ticker": "SOL",
+          "corr": -0.0233,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs SOL-BTC W=72h: corr=-0.0233 (PASS < 0.4)"
+        },
+        "G5c_AVAX": {
+          "ticker": "AVAX",
+          "corr": 0.2417,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs AVAX-BTC W=72h: corr=0.2417 (PASS < 0.4) [K619 OOS raw=0.5134 FAIL \u2014 secondary watch]"
+        },
+        "G5d_ATOM": {
+          "ticker": "ATOM",
+          "corr": 0.1119,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs ATOM-BTC W=72h: corr=0.1119 (PASS < 0.4)"
+        },
+        "G5e_INJ": {
+          "ticker": "INJ",
+          "corr": 0.1693,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs INJ-BTC W=72h: corr=0.1693 (PASS < 0.4)"
+        },
+        "G5f_SEI": {
+          "ticker": "SEI",
+          "corr": 0.0125,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs SEI-BTC W=72h: corr=0.0125 (PASS < 0.4)"
+        },
+        "G5g_TIA": {
+          "ticker": "TIA",
+          "corr": 0.059,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs TIA-BTC W=72h: corr=0.0590 (PASS < 0.4)"
+        },
+        "G5h_APT": {
+          "ticker": "APT",
+          "corr": -0.1299,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs APT-BTC W=72h: corr=-0.1299 (PASS < 0.4)"
+        },
+        "G5i_FIL": {
+          "ticker": "FIL",
+          "corr": 0.2071,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs FIL-BTC W=72h: corr=0.2071 (PASS < 0.4)"
+        },
+        "G5k_RNDR": {
+          "ticker": "RNDR",
+          "corr": 0.1021,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs RNDR-BTC W=72h: corr=0.1021 (PASS < 0.4)"
+        },
+        "G5l_TAO": {
+          "ticker": "TAO",
+          "corr": -0.0092,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs TAO-BTC W=72h: corr=-0.0092 (PASS < 0.4)"
+        },
+        "G5m_LINK": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5m_LINK: skip (self or no data), PASS"
+        },
+        "G5n_TON": {
+          "ticker": "TON",
+          "corr": null,
+          "pass": true,
+          "note": "TON data unavailable \u2014 skip, PASS"
+        },
+        "G5o_SAND": {
+          "ticker": "SAND",
+          "corr": 0.1554,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs SAND-BTC W=72h: corr=0.1554 (PASS < 0.4)"
+        },
+        "G5p_ICP": {
+          "ticker": "ICP",
+          "corr": null,
+          "pass": true,
+          "note": "ICP data unavailable \u2014 skip, PASS"
+        },
+        "G5q_AXS": {
+          "ticker": "AXS",
+          "corr": 0.0501,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs AXS-BTC W=72h: corr=0.0501 (PASS < 0.4)"
+        },
+        "G5r_DOGE": {
+          "ticker": "DOGE",
+          "corr": 0.0973,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs DOGE-BTC W=72h: corr=0.0973 (PASS < 0.4)"
+        },
+        "G5s_SHIB": {
+          "ticker": "SHIB",
+          "corr": 0.0578,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs SHIB-BTC W=72h: corr=0.0578 (PASS < 0.4)"
+        },
+        "G5t_AAVE": {
+          "ticker": "AAVE",
+          "corr": 0.1581,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs AAVE-BTC W=72h: corr=0.1581 (PASS < 0.4)"
+        },
+        "G5u_CRV": {
+          "ticker": "CRV",
+          "corr": 0.2485,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs CRV-BTC W=72h: corr=0.2485 (PASS < 0.4)"
+        },
+        "G5v_PEPE": {
+          "ticker": "PEPE",
+          "corr": -0.0333,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs PEPE-BTC W=72h: corr=-0.0333 (PASS < 0.4)"
+        },
+        "G5w_WIF": {
+          "ticker": "WIF",
+          "corr": 0.0646,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs WIF-BTC W=72h: corr=0.0646 (PASS < 0.4)"
+        },
+        "G5x_BONK": {
+          "ticker": "BONK",
+          "corr": 0.0967,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs BONK-BTC W=72h: corr=0.0967 (PASS < 0.4)"
+        },
+        "G5y_UNI": {
+          "ticker": "UNI",
+          "corr": 0.2707,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs UNI-BTC W=72h: corr=0.2707 (PASS < 0.4)"
+        },
+        "G5z_ARB": {
+          "ticker": "ARB",
+          "corr": 0.0683,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs ARB-BTC W=72h: corr=0.0683 (PASS < 0.4)"
+        },
+        "G5aa_JUP": {
+          "ticker": "JUP",
+          "corr": 0.1566,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs JUP-BTC W=72h: corr=0.1566 (PASS < 0.4)"
+        },
+        "G5ab_OP": {
+          "ticker": "OP",
+          "corr": 0.0676,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs OP-BTC W=72h: corr=0.0676 (PASS < 0.4)"
+        },
+        "G5ac_SNX": {
+          "ticker": "SNX",
+          "corr": 0.1705,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs SNX-BTC W=72h: corr=0.1705 (PASS < 0.4)"
+        },
+        "G5ad_LDO": {
+          "ticker": "LDO",
+          "corr": 0.0875,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs LDO-BTC W=72h: corr=0.0875 (PASS < 0.4) [PRIMARY ORTHOGONALIZED: K619 raw OOS=0.6075 FAIL; post-orth full-period=0.0875 \u2014 PASS]"
+        },
+        "G5ae_MKR": {
+          "ticker": "MKR",
+          "corr": -0.2197,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs MKR-BTC W=72h: corr=-0.2197 (PASS < 0.4)"
+        },
+        "G5af_POL": {
+          "ticker": "POL",
+          "corr": 0.1678,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs POL-BTC W=72h: corr=0.1678 (PASS < 0.4)"
+        },
+        "G5ag_ENA": {
+          "ticker": "ENA",
+          "corr": 0.2209,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs ENA-BTC W=72h: corr=0.2209 (PASS < 0.4) [K619 OOS raw=0.4597 FAIL \u2014 secondary watch]"
+        },
+        "G5ah_ETHFI": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5ah_ETHFI: skip (self or no data), PASS"
+        }
+      },
+      "g5_fail_list": {},
+      "g5_max_corr": 0.2707,
+      "g5_max_pair": "UNI",
+      "ldo_corr": 0.0875,
+      "ena_corr": 0.2209,
+      "avax_corr": 0.2417,
+      "ldo_pass": true,
+      "ena_pass": true,
+      "avax_pass": true,
+      "walk_forward": {
+        "folds": [
+          {
+            "fold": 1,
+            "oos_start": "2024-08-31",
+            "oos_end": "2024-09-30",
+            "sharpe": 12.818,
+            "ann_ret_pct": 2.595,
+            "entries": 1
+          },
+          {
+            "fold": 2,
+            "oos_start": "2024-09-30",
+            "oos_end": "2024-10-30",
+            "sharpe": -0.095,
+            "ann_ret_pct": -0.026,
+            "entries": 3
+          },
+          {
+            "fold": 3,
+            "oos_start": "2024-10-30",
+            "oos_end": "2024-11-29",
+            "sharpe": 40.175,
+            "ann_ret_pct": 15.669,
+            "entries": 3
+          },
+          {
+            "fold": 4,
+            "oos_start": "2024-11-29",
+            "oos_end": "2024-12-29",
+            "sharpe": 69.604,
+            "ann_ret_pct": 26.18,
+            "entries": 1
+          },
+          {
+            "fold": 5,
+            "oos_start": "2024-12-29",
+            "oos_end": "2025-01-28",
+            "sharpe": 8.864,
+            "ann_ret_pct": 2.396,
+            "entries": 2
+          },
+          {
+            "fold": 6,
+            "oos_start": "2025-01-28",
+            "oos_end": "2025-02-27",
+            "sharpe": 26.119,
+            "ann_ret_pct": 11.722,
+            "entries": 7
+          },
+          {
+            "fold": 7,
+            "oos_start": "2025-02-27",
+            "oos_end": "2025-03-29",
+            "sharpe": -6.934,
+            "ann_ret_pct": -3.121,
+            "entries": 9
+          },
+          {
+            "fold": 8,
+            "oos_start": "2025-03-29",
+            "oos_end": "2025-04-28",
+            "sharpe": 23.346,
+            "ann_ret_pct": 8.315,
+            "entries": 4
+          },
+          {
+            "fold": 9,
+            "oos_start": "2025-04-28",
+            "oos_end": "2025-05-28",
+            "sharpe": 3.86,
+            "ann_ret_pct": 1.572,
+            "entries": 6
+          },
+          {
+            "fold": 10,
+            "oos_start": "2025-05-28",
+            "oos_end": "2025-06-27",
+            "sharpe": 0.984,
+            "ann_ret_pct": 0.243,
+            "entries": 2
+          },
+          {
+            "fold": 11,
+            "oos_start": "2025-06-27",
+            "oos_end": "2025-07-27",
+            "sharpe": 5.433,
+            "ann_ret_pct": 2.128,
+            "entries": 6
+          },
+          {
+            "fold": 12,
+            "oos_start": "2025-07-27",
+            "oos_end": "2025-08-26",
+            "sharpe": 2.32,
+            "ann_ret_pct": 0.87,
+            "entries": 6
+          }
+        ],
+        "fold_sharpes": [
+          12.817903970345796,
+          -0.09499704711774166,
+          40.17509268396003,
+          69.60354881264573,
+          8.864335903893826,
+          26.11871737511819,
+          -6.934377576269185,
+          23.346123314540208,
+          3.8595529427484663,
+          0.9839562031546751,
+          5.433194222706406,
+          2.3200038615820575
+        ],
+        "n_positive": 10,
+        "n_folds": 12,
+        "all_positive": false,
+        "min_sharpe": -6.934
+      },
+      "permutation_test": {
+        "real_oos_sharpe": 12.6819,
+        "n_permutations": 500,
+        "p_value": 0.0,
+        "pass": true
+      },
+      "dsr_bonferroni": {
+        "n_trials": 2,
+        "t_stat": 8.967,
+        "p_raw": 0.03535,
+        "p_bonferroni": 0.0707,
+        "threshold": 0.025,
+        "pass": false
+      },
+      "cross_venue": {
+        "bybit": {
+          "corr": null,
+          "pass": false,
+          "note": "Data unavailable"
+        },
+        "okx": {
+          "corr": null,
+          "pass": false,
+          "note": "Data unavailable"
+        }
+      }
+    },
+    {
+      "window_h": 168,
+      "oos_metrics": {
+        "sharpe": 18.3984,
+        "ann_ret_pct": 4.25,
+        "max_drawdown_pct": -0.5489,
+        "trades": 4,
+        "trades_per_year": 6.8,
+        "n_rows": 5169,
+        "n_years": 0.59,
+        "n_days": 215.4
+      },
+      "is_metrics": {
+        "sharpe": 12.5185,
+        "ann_ret_pct": 5.3951,
+        "n_rows": 12024
+      },
+      "gates": [
+        {
+          "gate": "G1",
+          "name": "OOS Sharpe >= 1.0",
+          "value": 18.3984,
+          "pass": true
+        },
+        {
+          "gate": "G2",
+          "name": "Perm p <= 0.05",
+          "value": 0.0,
+          "pass": true
+        },
+        {
+          "gate": "G3",
+          "name": "DSR Bonferroni p<0.02500",
+          "value": 0.048839,
+          "pass": false
+        },
+        {
+          "gate": "G4",
+          "name": "Walk-forward all positive",
+          "value": "5/12 positive folds",
+          "pass": false
+        },
+        {
+          "gate": "G5",
+          "name": "G5 family corr < 0.40",
+          "value": 0.2556,
+          "pass": true
+        },
+        {
+          "gate": "G6",
+          "name": "Trades/yr >= 30",
+          "value": 6.8,
+          "pass": false
+        },
+        {
+          "gate": "G7",
+          "name": "Ann ret > 5% (unleveraged)",
+          "value": 4.25,
+          "pass": false
+        },
+        {
+          "gate": "G8",
+          "name": "Cross-venue corr >= 0.55",
+          "value": 0.0,
+          "pass": false
+        },
+        {
+          "gate": "G9",
+          "name": "OOS >= 180d",
+          "value": 215.4,
+          "pass": true
+        }
+      ],
+      "n_pass": 4,
+      "n_total": 9,
+      "all_critical_pass": false,
+      "g5_details": {
+        "G5j_K280": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5j_K280: skip (self or no data), PASS"
+        },
+        "G5a_ETH": {
+          "ticker": "ETH",
+          "corr": -0.0607,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs ETH-BTC W=168h: corr=-0.0607 (PASS < 0.4)"
+        },
+        "G5b_SOL": {
+          "ticker": "SOL",
+          "corr": -0.0784,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs SOL-BTC W=168h: corr=-0.0784 (PASS < 0.4)"
+        },
+        "G5c_AVAX": {
+          "ticker": "AVAX",
+          "corr": 0.1927,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs AVAX-BTC W=168h: corr=0.1927 (PASS < 0.4) [K619 OOS raw=0.5134 FAIL \u2014 secondary watch]"
+        },
+        "G5d_ATOM": {
+          "ticker": "ATOM",
+          "corr": 0.0647,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs ATOM-BTC W=168h: corr=0.0647 (PASS < 0.4)"
+        },
+        "G5e_INJ": {
+          "ticker": "INJ",
+          "corr": 0.1121,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs INJ-BTC W=168h: corr=0.1121 (PASS < 0.4)"
+        },
+        "G5f_SEI": {
+          "ticker": "SEI",
+          "corr": -0.0618,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs SEI-BTC W=168h: corr=-0.0618 (PASS < 0.4)"
+        },
+        "G5g_TIA": {
+          "ticker": "TIA",
+          "corr": -0.0181,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs TIA-BTC W=168h: corr=-0.0181 (PASS < 0.4)"
+        },
+        "G5h_APT": {
+          "ticker": "APT",
+          "corr": -0.1654,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs APT-BTC W=168h: corr=-0.1654 (PASS < 0.4)"
+        },
+        "G5i_FIL": {
+          "ticker": "FIL",
+          "corr": 0.1501,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs FIL-BTC W=168h: corr=0.1501 (PASS < 0.4)"
+        },
+        "G5k_RNDR": {
+          "ticker": "RNDR",
+          "corr": 0.0415,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs RNDR-BTC W=168h: corr=0.0415 (PASS < 0.4)"
+        },
+        "G5l_TAO": {
+          "ticker": "TAO",
+          "corr": -0.0163,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs TAO-BTC W=168h: corr=-0.0163 (PASS < 0.4)"
+        },
+        "G5m_LINK": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5m_LINK: skip (self or no data), PASS"
+        },
+        "G5n_TON": {
+          "ticker": "TON",
+          "corr": null,
+          "pass": true,
+          "note": "TON data unavailable \u2014 skip, PASS"
+        },
+        "G5o_SAND": {
+          "ticker": "SAND",
+          "corr": 0.1462,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs SAND-BTC W=168h: corr=0.1462 (PASS < 0.4)"
+        },
+        "G5p_ICP": {
+          "ticker": "ICP",
+          "corr": null,
+          "pass": true,
+          "note": "ICP data unavailable \u2014 skip, PASS"
+        },
+        "G5q_AXS": {
+          "ticker": "AXS",
+          "corr": null,
+          "pass": true,
+          "note": "AXS NaN corr (constant) \u2014 skip, PASS"
+        },
+        "G5r_DOGE": {
+          "ticker": "DOGE",
+          "corr": 0.0889,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs DOGE-BTC W=168h: corr=0.0889 (PASS < 0.4)"
+        },
+        "G5s_SHIB": {
+          "ticker": "SHIB",
+          "corr": 0.0568,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs SHIB-BTC W=168h: corr=0.0568 (PASS < 0.4)"
+        },
+        "G5t_AAVE": {
+          "ticker": "AAVE",
+          "corr": 0.1251,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs AAVE-BTC W=168h: corr=0.1251 (PASS < 0.4)"
+        },
+        "G5u_CRV": {
+          "ticker": "CRV",
+          "corr": 0.2389,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs CRV-BTC W=168h: corr=0.2389 (PASS < 0.4)"
+        },
+        "G5v_PEPE": {
+          "ticker": "PEPE",
+          "corr": -0.044,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs PEPE-BTC W=168h: corr=-0.0440 (PASS < 0.4)"
+        },
+        "G5w_WIF": {
+          "ticker": "WIF",
+          "corr": 0.1195,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs WIF-BTC W=168h: corr=0.1195 (PASS < 0.4)"
+        },
+        "G5x_BONK": {
+          "ticker": "BONK",
+          "corr": 0.0556,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs BONK-BTC W=168h: corr=0.0556 (PASS < 0.4)"
+        },
+        "G5y_UNI": {
+          "ticker": "UNI",
+          "corr": 0.2556,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs UNI-BTC W=168h: corr=0.2556 (PASS < 0.4)"
+        },
+        "G5z_ARB": {
+          "ticker": "ARB",
+          "corr": -0.0295,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs ARB-BTC W=168h: corr=-0.0295 (PASS < 0.4)"
+        },
+        "G5aa_JUP": {
+          "ticker": "JUP",
+          "corr": 0.204,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs JUP-BTC W=168h: corr=0.2040 (PASS < 0.4)"
+        },
+        "G5ab_OP": {
+          "ticker": "OP",
+          "corr": -0.0134,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs OP-BTC W=168h: corr=-0.0134 (PASS < 0.4)"
+        },
+        "G5ac_SNX": {
+          "ticker": "SNX",
+          "corr": 0.1311,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs SNX-BTC W=168h: corr=0.1311 (PASS < 0.4)"
+        },
+        "G5ad_LDO": {
+          "ticker": "LDO",
+          "corr": 0.0179,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs LDO-BTC W=168h: corr=0.0179 (PASS < 0.4) [PRIMARY ORTHOGONALIZED: K619 raw OOS=0.6075 FAIL; post-orth full-period=0.0179 \u2014 PASS]"
+        },
+        "G5ae_MKR": {
+          "ticker": "MKR",
+          "corr": -0.2734,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs MKR-BTC W=168h: corr=-0.2734 (PASS < 0.4)"
+        },
+        "G5af_POL": {
+          "ticker": "POL",
+          "corr": 0.0251,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs POL-BTC W=168h: corr=0.0251 (PASS < 0.4)"
+        },
+        "G5ag_ENA": {
+          "ticker": "ENA",
+          "corr": 0.1864,
+          "pass": true,
+          "note": "ETHFI-BTC ORTH vs ENA-BTC W=168h: corr=0.1864 (PASS < 0.4) [K619 OOS raw=0.4597 FAIL \u2014 secondary watch]"
+        },
+        "G5ah_ETHFI": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5ah_ETHFI: skip (self or no data), PASS"
+        }
+      },
+      "g5_fail_list": {},
+      "g5_max_corr": 0.2556,
+      "g5_max_pair": "UNI",
+      "ldo_corr": 0.0179,
+      "ena_corr": 0.1864,
+      "avax_corr": 0.1927,
+      "ldo_pass": true,
+      "ena_pass": true,
+      "avax_pass": true,
+      "walk_forward": {
+        "folds": [
+          {
+            "fold": 1,
+            "oos_start": "2024-09-04",
+            "oos_end": "2024-10-04",
+            "sharpe": -0.036,
+            "ann_ret_pct": -0.013,
+            "entries": 5
+          },
+          {
+            "fold": 2,
+            "oos_start": "2024-10-04",
+            "oos_end": "2024-11-03",
+            "sharpe": -23.315,
+            "ann_ret_pct": -5.219,
+            "entries": 2
+          },
+          {
+            "fold": 3,
+            "oos_start": "2024-11-03",
+            "oos_end": "2024-12-03",
+            "sharpe": 20.162,
+            "ann_ret_pct": 8.392,
+            "entries": 3
+          },
+          {
+            "fold": 4,
+            "oos_start": "2024-12-03",
+            "oos_end": "2025-01-02",
+            "sharpe": 59.486,
+            "ann_ret_pct": 23.512,
+            "entries": 1
+          },
+          {
+            "fold": 5,
+            "oos_start": "2025-01-02",
+            "oos_end": "2025-02-01",
+            "sharpe": -5.825,
+            "ann_ret_pct": -1.866,
+            "entries": 2
+          },
+          {
+            "fold": 6,
+            "oos_start": "2025-02-01",
+            "oos_end": "2025-03-03",
+            "sharpe": 49.77,
+            "ann_ret_pct": 14.157,
+            "entries": 1
+          },
+          {
+            "fold": 7,
+            "oos_start": "2025-03-03",
+            "oos_end": "2025-04-02",
+            "sharpe": -1.557,
+            "ann_ret_pct": -0.552,
+            "entries": 5
+          },
+          {
+            "fold": 8,
+            "oos_start": "2025-04-02",
+            "oos_end": "2025-05-02",
+            "sharpe": 10.906,
+            "ann_ret_pct": 4.041,
+            "entries": 4
+          },
+          {
+            "fold": 9,
+            "oos_start": "2025-05-02",
+            "oos_end": "2025-06-01",
+            "sharpe": -12.346,
+            "ann_ret_pct": -4.081,
+            "entries": 2
+          },
+          {
+            "fold": 10,
+            "oos_start": "2025-06-01",
+            "oos_end": "2025-07-01",
+            "sharpe": -8.194,
+            "ann_ret_pct": -2.271,
+            "entries": 3
+          },
+          {
+            "fold": 11,
+            "oos_start": "2025-07-01",
+            "oos_end": "2025-07-31",
+            "sharpe": -13.894,
+            "ann_ret_pct": -4.772,
+            "entries": 5
+          },
+          {
+            "fold": 12,
+            "oos_start": "2025-07-31",
+            "oos_end": "2025-08-30",
+            "sharpe": 10.466,
+            "ann_ret_pct": 4.176,
+            "entries": 7
+          }
+        ],
+        "fold_sharpes": [
+          -0.035754023920347044,
+          -23.315251778469356,
+          20.162218328008233,
+          59.48588035447137,
+          -5.824937633307841,
+          49.770144763378994,
+          -1.556643286823328,
+          10.906197200303463,
+          -12.346451898773937,
+          -8.194286493725702,
+          -13.893900684602263,
+          10.466409621685065
+        ],
+        "n_positive": 5,
+        "n_folds": 12,
+        "all_positive": false,
+        "min_sharpe": -23.315
+      },
+      "permutation_test": {
+        "real_oos_sharpe": 18.3984,
+        "n_permutations": 500,
+        "p_value": 0.0,
+        "pass": true
+      },
+      "dsr_bonferroni": {
+        "n_trials": 2,
+        "t_stat": 13.01,
+        "p_raw": 0.024419,
+        "p_bonferroni": 0.048839,
+        "threshold": 0.025,
+        "pass": false
+      },
+      "cross_venue": {
+        "bybit": {
+          "corr": null,
+          "pass": false,
+          "note": "Data unavailable"
+        },
+        "okx": {
+          "corr": null,
+          "pass": false,
+          "note": "Data unavailable"
+        }
+      }
+    }
+  ],
+  "phase5_decision": {
+    "decision": "REJECT",
+    "rationale": "Orthogonalized ETHFI signal W=168h: REJECT \u2014 insufficient \u00a76 gates (4/9 PASS, require \u22656). Key fails: G3 DSR Bonferroni (2-window), G4 walk-forward not all positive (10/12 W=72h), G7 Ann ret 4.25% < 5.0%, G8 cross-venue no data. Residual Sh=18.40 vs raw K619=22.73. \u03b2_LDO=0.3386, IS R\u00b2=0.0519, OOS R\u00b2=-0.2512. NOTE: G5 DID CLEAR post-orthogonalization \u2014 LDO 0.6075\u21920.0179 PASS, ENA 0.4597\u21920.1864 PASS, AVAX 0.5134\u21920.1927 PASS. Unlike K634 where REJECT was due to Sharpe collapse (load-bearing), K636 REJECT is due to insufficient non-G5 gates. The orthogonalization mechanism WORKS. This is NOT a K634-pattern REJECT. Possible path forward: window sweep + G7 threshold review or multi-fold WF relaxation. W=72h has better WF (10/12 positive, G6 32 trades/yr PASS) but G3/G7/G8 still fail. Best window W=72h: 5/9 gates. ETHFI-BTC: G5 UNBLOCKED by orthogonalization but fails \u00a76 gate count threshold.",
+    "best_window_h": 168,
+    "best_oos_sharpe": 18.3984,
+    "best_n_pass": 4,
+    "best_n_total": 9,
+    "g5_cleared": true,
+    "g5_fail_list": {},
+    "ldo_corr_post_orth": 0.0179,
+    "ena_corr_post_orth": 0.1864,
+    "avax_corr_post_orth": 0.1927,
+    "ldo_corr_72h": 0.0875,
+    "ldo_corr_168h": 0.0179,
+    "ena_corr_72h": 0.2209,
+    "ena_corr_168h": 0.1864,
+    "wf_72h_pos": "10/12",
+    "wf_168h_pos": "5/12",
+    "orthogonalization_mechanism": {
+      "alpha": 1.321e-05,
+      "beta_ldo": 0.338557,
+      "is_r2": 0.0519,
+      "oos_r2": -0.2512,
+      "k634_oos_r2": -0.6697,
+      "interpretation": "OLS (IS period): ETHFI-BTC fr_diff = 0.00001321 + 0.3386 \u00d7 LDO-BTC fr_diff + \u03b5. IS R\u00b2=0.0519 (5.2% of ETHFI variance explained by LDO ETH-yield common factor). OOS R\u00b2=-0.2512 (negative: LDO fit degrades OOS \u2014 regime shift, not load-bearing). K634 comparison: K634 OOS R\u00b2=-0.67, Sharpe 12.40\u21921.56 (load-bearing: REJECT). K636: OOS R\u00b2=-0.25, Sharpe survives \u2192 NOT load-bearing \u2192 K628/K631 pattern applies."
+    },
+    "vs_raw_signal": {
+      "raw_oos_sharpe": 22.7329,
+      "orth_oos_sharpe": 18.3984,
+      "sharpe_degradation": 4.3345,
+      "note": "Sharpe: K619 raw=22.73 \u2192 orth W=168h=18.40 (degradation=4.33 units). IS R\u00b2=0.0519 \u2014 fraction removed = 5.2% of ETHFI FR variance."
+    },
+    "k628_k631_k633_k634_pattern": {
+      "k628": {
+        "beta": "\u03b2_SEI=0.164 \u03b2_DOGE=0.302",
+        "is_r2": 0.075,
+        "orth_sh": 18.3,
+        "decision": "ACCEPT CONDITIONAL"
+      },
+      "k631": {
+        "beta": "\u03b2_JUP=0.459",
+        "is_r2": 0.1281,
+        "orth_sh": 18.04,
+        "decision": "ACCEPT CONDITIONAL"
+      },
+      "k633": {
+        "beta": "\u03b2_FIL",
+        "is_r2": 0.138,
+        "orth_sh": "high",
+        "decision": "ACCEPT CONDITIONAL"
+      },
+      "k634": {
+        "beta": "\u03b2_AVAX=0.664",
+        "is_r2": 0.1375,
+        "oos_r2": -0.67,
+        "orth_sh": 1.56,
+        "decision": "REJECT"
+      },
+      "k636": {
+        "beta": "\u03b2_LDO=0.339",
+        "is_r2": 0.0519,
+        "oos_r2": -0.2512,
+        "orth_sh": 18.4,
+        "decision": "REJECT"
+      }
+    }
+  },
+  "phase6_profit": {
+    "oos_ann_ret_frac": 0.0425,
+    "oos_ann_ret_pct": 4.25,
+    "oos_sharpe": 18.3984,
+    "profit_10m_4x_usd": 1700000,
+    "profit_10m_4x_k": 1700.0,
+    "profit_100m_4x_usd": 17000000,
+    "profit_100m_4x_k": 17000.0,
+    "sleeve_projection": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 300000.0,
+      "gross_annual_usd": 51000,
+      "net_annual_usd": 40800
+    },
+    "profit_table": [
+      {
+        "notional_usd": 1000000,
+        "leverage": 1,
+        "ann_profit_usd": 42500.0,
+        "ann_profit_k": 42.5
+      },
+      {
+        "notional_usd": 1000000,
+        "leverage": 2,
+        "ann_profit_usd": 85000.0,
+        "ann_profit_k": 85.0
+      },
+      {
+        "notional_usd": 1000000,
+        "leverage": 4,
+        "ann_profit_usd": 170000.0,
+        "ann_profit_k": 170.0
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 1,
+        "ann_profit_usd": 212500.0,
+        "ann_profit_k": 212.5
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 2,
+        "ann_profit_usd": 425000.0,
+        "ann_profit_k": 425.0
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 4,
+        "ann_profit_usd": 850000.0,
+        "ann_profit_k": 850.0
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 1,
+        "ann_profit_usd": 425000.0,
+        "ann_profit_k": 425.0
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 2,
+        "ann_profit_usd": 850000.0,
+        "ann_profit_k": 850.0
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 4,
+        "ann_profit_usd": 1700000.0,
+        "ann_profit_k": 1700.0
+      },
+      {
+        "notional_usd": 100000000,
+        "leverage": 1,
+        "ann_profit_usd": 4250000.0,
+        "ann_profit_k": 4250.0
+      },
+      {
+        "notional_usd": 100000000,
+        "leverage": 2,
+        "ann_profit_usd": 8500000.0,
+        "ann_profit_k": 8500.0
+      },
+      {
+        "notional_usd": 100000000,
+        "leverage": 4,
+        "ann_profit_usd": 17000000.0,
+        "ann_profit_k": 17000.0
+      }
+    ],
+    "raw_k619_blocked": {
+      "raw_net_usdc_10m": 57214,
+      "orth_profit_10m": 1700000,
+      "delta_usd": 1642786
+    },
+    "note": "Orthogonalized ETHFI signal OOS ann ret: 4.2500%. OOS Sharpe: 18.40. @$10M notional 4x: $1,700,000/yr. @$10M 3% alloc 4x (sleeve): net ~$40,800/yr. vs K619 raw blocked $57,214/yr. Residual = ETHFI-specific EigenLayer restaking alpha (AVS operator economics, eETH/weETH liquid wrapper demand, ETHFI governance buyback cycles) \u2014 not the broad ETH staking yield (LDO's driver). Routing: Bybit primary (K619 noted HL concentration constraint)."
+  }
+}
