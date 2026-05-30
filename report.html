@@ -750,58 +750,59 @@ window.__renderWhenReady = function(fn, label) {
 <body>
 
 <div class="container">
-<!-- LIVE_STATUS_BANNER: K744-K778 連続稼働中、2 並列 -->
-<div id="live-status-banner" style="background:#0d1117;border:2px solid #39d2c0;border-radius:10px;padding:18px 22px;margin:0 0 18px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-  <div style="color:#39d2c0;font-size:1.05rem;font-weight:700;margin-bottom:14px;border-bottom:1px solid #30363d;padding-bottom:8px;">
-    現在の状況 &mdash; 自動稼働中 (2026-05-30 23:22 JST)
+<!-- LIVE_STATUS_BANNER: 大型書式 視認性重視 -->
+<div id="live-status-banner" style="background:#ffffff;color:#0d1117;border:3px solid #0d1117;border-radius:12px;padding:24px 28px;margin:0 0 24px 0;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Segoe UI',sans-serif;">
+
+  <h2 style="font-size:1.6rem;font-weight:900;color:#0d1117;margin:0 0 8px 0;border-bottom:3px solid #0d1117;padding-bottom:8px;">
+    現在の状況
+  </h2>
+  <div style="font-size:0.95rem;color:#444;margin:0 0 24px 0;">
+    自動稼働中（2026-05-30 23:55 JST 更新）
   </div>
 
-  <div style="color:#e6edf3;font-size:0.88rem;line-height:1.7;">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
 
-    <div style="margin-bottom:12px;">
-      <span style="color:#39d2c0;font-weight:700;">[実行中]</span>
-      &nbsp;K778 COMP-SOL eval &mdash; <span style="color:#3fb950;font-weight:800;">ACCEPT &#9733; 30/30 gates</span> | OOS Sh=25.05 | 12/12 WF | DeFi governance ≠ carry-stable
+    <div>
+      <h3 style="font-size:1.15rem;font-weight:900;color:#0066cc;margin:0 0 8px 0;">いま動いていること</h3>
+      <ul style="font-size:1.0rem;color:#0d1117;margin:0;padding-left:22px;line-height:1.8;">
+        <li>K782 PROVE-SOL 評価中</li>
+        <li>K783 POLYX-SOL 評価中</li>
+      </ul>
     </div>
 
-    <div style="margin-bottom:12px;">
-      <span style="color:#3fb950;font-weight:700;">[直近35波 K744-K778]</span>
-      &nbsp;76 daemons production-ready (66→76)
-      <br>
-      &nbsp;&nbsp;&nbsp;ACCEPT 7新vertex: TAO / PEPE / WIF / BLUR / AXS / IO / EIGEN(cond)
-      <br>
-      &nbsp;&nbsp;&nbsp;ACCEPT 1新vertex candidate: COMP (K778 ★ 30/30 gates, paper-gate)
-      <br>
-      &nbsp;&nbsp;&nbsp;REJECT 9: ONDO / AAVE / PYTH / WLD / PENDLE / RUNE / DOGE / STX / MEGA
+    <div>
+      <h3 style="font-size:1.15rem;font-weight:900;color:#0a7a35;margin:0 0 8px 0;">このセッションの成果</h3>
+      <ul style="font-size:1.0rem;color:#0d1117;margin:0;padding-left:22px;line-height:1.8;">
+        <li>新規 ACCEPT 戦略: 8 個（TAO/PEPE/WIF/BLUR/AXS/IO/EIGEN/COMP）</li>
+        <li>本番稼働 daemon 数: 66 → 79 個</li>
+        <li>K744 から 37 wave 連続実行</li>
+      </ul>
     </div>
 
-    <div style="margin-bottom:12px;">
-      <span style="color:#ffd700;font-weight:700;">[重大発見]</span>
-      <br>
-      &nbsp;&nbsp;&nbsp;<span style="color:#f85149;">K751: v6.51 OUT OF COMPLIANCE</span> &mdash; HL 66.8% &gt; 65%、 Bybit 55.7% &gt; 50%、 K280 15.5% &lt; 30%
-      <br>
-      &nbsp;&nbsp;&nbsp;K763: 日次compounding = +$1.25M realized central @$10M (本セッション最大uplift)
-      <br>
-      &nbsp;&nbsp;&nbsp;K744: 14-vertex 100% saturated → 新vertex追加で 5 ACCEPT 達成
+    <div>
+      <h3 style="font-size:1.15rem;font-weight:900;color:#c41e3a;margin:0 0 8px 0;">最重要発見</h3>
+      <ul style="font-size:1.0rem;color:#0d1117;margin:0;padding-left:22px;line-height:1.8;">
+        <li><strong>K751: 現行 v6.51 は配分上限違反</strong>（HL 66.8% &gt; 65% / Bybit 55.7% &gt; 50%）。v6.52 への切替が最優先。</li>
+        <li><strong>K763: 日次 compounding で年間 +$1.25M 実現</strong>（本セッション最大の単発効果）</li>
+      </ul>
     </div>
 
-    <div style="margin-bottom:12px;">
-      <span style="color:#bc8cff;font-weight:700;">[ユーザー1-step 待ち Phase A++]</span>
-      &nbsp;合計 v7.0 central <span style="color:#ffd700;font-weight:700;">$2.81M/yr realized @$10M</span>
-      <br>
-      &nbsp;&nbsp;&nbsp;K751 v6.52 Kelly &mdash; compliance修復 MANDATORY 最初に実行
-      <br>
-      &nbsp;&nbsp;&nbsp;K763 日次compound &mdash; +$1.25M central
-      <br>
-      &nbsp;&nbsp;&nbsp;K755 HL builder rebate &mdash; +$248K central (65分作業)
-      <br>
-      &nbsp;&nbsp;&nbsp;K498 OKX / K485 Bybit sub / K545 tax / K742 K492-C / K767 RWA
-    </div>
-
-    <div style="color:#8b949e;font-size:0.78rem;border-top:1px solid #30363d;padding-top:8px;">
-      ユーザー mandate「実運用利益最大化、止めるまで継続」発令中。 詳細は下記 K764 Phase A++ banner と各 wave badge 参照。
+    <div>
+      <h3 style="font-size:1.15rem;font-weight:900;color:#7a3fbf;margin:0 0 8px 0;">ユーザー作業待ち（合計 $2.81M/年）</h3>
+      <ul style="font-size:1.0rem;color:#0d1117;margin:0;padding-left:22px;line-height:1.8;">
+        <li><strong>1. K751 v6.52 Kelly</strong>（配分修復、最初に必須）</li>
+        <li><strong>2. K763 日次 compound</strong>（+$1.25M）</li>
+        <li><strong>3. K755 HL builder rebate</strong>（+$248K、65 分作業）</li>
+        <li>4. その他 5 件: K498 OKX / K485 Bybit / K545 税 / K742 / K767</li>
+      </ul>
     </div>
 
   </div>
+
+  <div style="margin-top:20px;padding-top:14px;border-top:2px solid #0d1117;font-size:0.9rem;color:#444;">
+    詳細は下方の各 wave badge を参照。ユーザー指示「実運用利益最大化、止めるまで継続」発令中。
+  </div>
+
 </div>
 <!-- /LIVE_STATUS_BANNER -->
 
