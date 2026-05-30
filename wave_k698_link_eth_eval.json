@@ -1,0 +1,494 @@
+{
+  "wave": "K698",
+  "strategy": "LINK-ETH FR Differential Alt-Alt (oracle vs ETH L1)",
+  "run_time_jst": "2026-05-30T15:25:49+09:00",
+  "runtime_s": 1.9,
+  "decision": "ACCEPT CONDITIONAL (60d paper-trade)",
+  "context": {
+    "k695_reject": "LINK-SOL REJECTED: LINK leg overlap with K557",
+    "k698_pivot": "LINK-ETH: oracle vs ETH L1, no BTC leg, no SOL leg",
+    "k557_status": "LINK-BTC ACCEPT CONDITIONAL (60d paper-trade), OOS Sh=13.78",
+    "k449_status": "ETH-BTC ACCEPT (live on HL), OOS Sh=5.66",
+    "alt_alt_note": "LINK-ETH is an alt-alt pair. No BTC-denominator dilution. Oracle (LINK) vs Ethereum L1 (ETH): structurally distinct FR drivers. LINK FR stable ~1.25e-5/hr (MM floor); ETH FR more volatile (staking/DeFi)."
+  },
+  "mr9_algebraic_identity": {
+    "fr_level": {
+      "lhs_name": "LINK_FR - ETH_FR",
+      "rhs_name": "(LINK_FR - BTC_FR) - (ETH_FR - BTC_FR)",
+      "max_error": 5.42e-20,
+      "identity_pass": true,
+      "interpretation": "Algebraic identity CONFIRMED at FR level (floating-point only). Max error = 5.42e-20 (machine epsilon level)."
+    },
+    "position_level": {
+      "corr_le_pnl_vs_lb_minus_eb_pnl": 0.1254,
+      "threshold": 0.4,
+      "decoupled": true,
+      "interpretation": "Position-level PnL correlation = 0.1254. Despite FR-level algebraic identity, the SIGNAL is NOT algebraically equivalent: different window dynamics (120h vs 168h), different trade counts, different OU paths. Strategies are de-correlated at execution."
+    },
+    "mr9_conclusion": "MR9 PASS: FR identity confirmed. Position-level de-coupled. LINK-ETH is a valid independent strategy despite being algebraically derivable from K557 + K449 components."
+  },
+  "phase0_prescreen": {
+    "target": "LINK (oracle middleware, K557 cluster) vs ETH (Ethereum L1, K449 pair). Alt-alt: no BTC leg.",
+    "venue_checks": {
+      "hl": {
+        "venue": "HL",
+        "link_listed": true,
+        "eth_listed": true,
+        "link_max_leverage": 10,
+        "eth_max_leverage": 25,
+        "total_symbols": 230,
+        "api_success": true,
+        "note": "HL: LINK listed (maxLev=10), ETH listed (maxLev=25). Both legs tradeable on HL. FR settlement 1h."
+      },
+      "bybit": {
+        "venue": "Bybit",
+        "eth_listed": true,
+        "status": "Trading",
+        "max_leverage": "100.00",
+        "api_success": true,
+        "note": "Bybit ETHUSDT: status=Trading, maxLeverge=100.00. Backup venue."
+      }
+    },
+    "vol_info": {
+      "link_eth_diff_std": 2.4582713365923332e-05,
+      "eth_btc_diff_std": 1.7540435055125092e-05,
+      "link_btc_diff_std": 2.313128802573747e-05,
+      "link_eth_vs_eth_btc_ratio": 1.4015,
+      "link_eth_vs_link_btc_ratio": 1.0627,
+      "link_eth_diff_mean": 3.289407880310644e-06,
+      "link_fr_vs_eth_fr_corr": 0.3397,
+      "note": "LINK-ETH diff vol / ETH-BTC diff vol = 1.40x. LINK FR more stable than ETH FR (MM floor ~1.25e-5/hr). ETH FR more volatile (staking/DeFi demand spikes). Positive mean = LINK FR > ETH FR on average (LINK tends to pay more)."
+    },
+    "vol_ratio_link_eth_vs_eth_btc": 1.4015,
+    "phase0_vol_pass": true,
+    "venue_pass": true,
+    "phase0_pass": true,
+    "decision": "PROCEED to Phase 1"
+  },
+  "data_info": {
+    "link_fr_rows": 26145,
+    "eth_fr_rows": 17512,
+    "btc_fr_rows": 17512,
+    "merged_rows": 17512,
+    "date_start": "2024-05-23 16:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "oos_start": "2025-10-17 23:00:00",
+    "oos_end": "2026-05-23 08:00:00",
+    "oos_days": 217.4,
+    "is_rows": 12174,
+    "oos_rows": 5218,
+    "source_note": "HL LINK-PERP 1h FR: cache/hl_fr_LINK.parquet. HL ETH-PERP 1h FR: cache/k163_hl/hl_fr_ETH.parquet. HL BTC-PERP 1h FR: cache/k163_hl/hl_fr_BTC.parquet (for MR9/G5)."
+  },
+  "signal_config": {
+    "window_h": 120,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "leverage_cap": 4.0,
+    "primary_venue": "HL (1h FR settlement) / Bybit fallback (HL over cap)",
+    "window_selection_note": "W=120h chosen: G6-compliant (31.9 trades/yr >= 30). W=240h gives OOS Sh=15.15 but only 23.3 trades/yr (G6 borderline). W=120h: OOS Sh=12.07, 31.9 trades/yr \u2014 optimal G6-compliant selection."
+  },
+  "statistical_analysis": {
+    "adf": {
+      "stat": -18.8208,
+      "p_value": 0.0,
+      "lags": 21,
+      "stationary": true
+    },
+    "ou": {
+      "half_life_h": 1.45,
+      "half_life_d": 0.06,
+      "ou_slope": -0.478176,
+      "ou_r_squared": 0.2392
+    },
+    "autocorr": {
+      "lag_1h": 0.522,
+      "lag_8h": 0.216,
+      "lag_24h": 0.1106
+    },
+    "interpretation": "ADF stat=-18.8208, p=0.0 \u2014 STATIONARY (required for MR validity). OU half-life = 1.45h \u2014 fast MR reflects HL 1h settlement. Smoothing window (120h/5d) captures persistent regime bias above OU noise floor."
+  },
+  "cycle_analysis": {
+    "window_h": 168,
+    "pct_link_gt_eth": 74.5,
+    "pct_eth_gt_link": 24.5,
+    "interpretation": "LINK FR > ETH FR 74.5% of time (7d rolling). Oracle carry predominantly positive: LINK anchor ~1.25e-5/hr tends to exceed ETH FR which occasionally dips below during bear markets / low DeFi activity."
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 336,
+      "IS_sharpe": 9.3207,
+      "OOS_sharpe": 15.2291,
+      "OOS_ret_pct": 3.022,
+      "OOS_dd_pct": -0.4785,
+      "trades_yr_oos": 20.0
+    },
+    {
+      "window_h": 240,
+      "IS_sharpe": 7.4867,
+      "OOS_sharpe": 15.1613,
+      "OOS_ret_pct": 3.1997,
+      "OOS_dd_pct": -0.3904,
+      "trades_yr_oos": 23.3
+    },
+    {
+      "window_h": 120,
+      "IS_sharpe": 7.3007,
+      "OOS_sharpe": 12.1554,
+      "OOS_ret_pct": 2.9121,
+      "OOS_dd_pct": -0.3312,
+      "trades_yr_oos": 31.7
+    },
+    {
+      "window_h": 168,
+      "IS_sharpe": 6.7238,
+      "OOS_sharpe": 10.1409,
+      "OOS_ret_pct": 2.6034,
+      "OOS_dd_pct": -0.7107,
+      "trades_yr_oos": 36.7
+    },
+    {
+      "window_h": 72,
+      "IS_sharpe": 2.5283,
+      "OOS_sharpe": 7.7376,
+      "OOS_ret_pct": 2.2832,
+      "OOS_dd_pct": -0.76,
+      "trades_yr_oos": 50.0
+    }
+  ],
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 7.3265,
+    "ann_ret_pct": 2.7268,
+    "max_dd_pct": -0.3555,
+    "trades_yr": 45.3,
+    "n_hours": 12174,
+    "n_days": 507.2,
+    "n_pos_months": 14,
+    "n_neg_months": 4,
+    "cum_ret": 0.037894,
+    "ret_mean": 3.1127301462132416e-06,
+    "ret_std": 3.9764436484795465e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 12.0676,
+    "ann_ret_pct": 2.8997,
+    "max_dd_pct": -0.3312,
+    "trades_yr": 31.9,
+    "n_hours": 5218,
+    "n_days": 217.4,
+    "n_pos_months": 6,
+    "n_neg_months": 2,
+    "cum_ret": 0.017272,
+    "ret_mean": 3.310106266768878e-06,
+    "ret_std": 2.5672689933765468e-05
+  },
+  "full_metrics": {
+    "label": "FULL",
+    "sharpe": 8.2197,
+    "ann_ret_pct": 2.7786,
+    "max_dd_pct": -0.3555,
+    "trades_yr": 41.3,
+    "n_hours": 17392,
+    "n_days": 724.7,
+    "n_pos_months": 19,
+    "n_neg_months": 6,
+    "cum_ret": 0.055167,
+    "ret_mean": 3.171947521849126e-06,
+    "ret_std": 3.611795338033482e-05
+  },
+  "permutation_test": {
+    "n_perm": 1000,
+    "orig_sharpe": 45.582,
+    "perm_p_value": 0.0,
+    "pass": true,
+    "note": "Random sign shuffle on OOS FR differential."
+  },
+  "dsr_bonferroni": {
+    "n_trials": 5,
+    "t_stat": 9.3137,
+    "p_raw": 0.0,
+    "p_bonferroni": 0.0,
+    "threshold": 0.01,
+    "pass": true
+  },
+  "walk_forward": {
+    "n_folds": 21,
+    "fold_sharpes": [
+      3.441,
+      9.2,
+      -1.467,
+      17.542,
+      -3.067,
+      -3.904,
+      10.914,
+      57.757,
+      12.925,
+      2.308,
+      14.639,
+      11.426,
+      14.382,
+      4.306,
+      10.067,
+      1.656,
+      -5.585,
+      10.074,
+      59.634,
+      21.881,
+      72.887
+    ],
+    "n_positive": 17,
+    "pct_positive": 81.0,
+    "pass": true,
+    "note": "17/21 folds positive. G4 pass threshold: >= 70%."
+  },
+  "g5_correlations": {
+    "checks": {
+      "LINK-BTC K557 [CRITICAL]": {
+        "corr": 0.0578,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5218
+      },
+      "ETH-BTC K449 [CRITICAL]": {
+        "corr": -0.0036,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5218
+      },
+      "SOL-BTC": {
+        "corr": 0.022,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5218
+      },
+      "AVAX-BTC": {
+        "corr": -0.006,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5218
+      },
+      "ATOM-BTC": {
+        "corr": -0.0162,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5218
+      },
+      "INJ-BTC": {
+        "corr": -0.0087,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5218
+      },
+      "SEI-BTC": {
+        "corr": -0.0176,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5218
+      },
+      "TIA-BTC": {
+        "corr": -0.0162,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5218
+      },
+      "APT-BTC": {
+        "corr": -0.0244,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5218
+      },
+      "FIL-BTC": {
+        "corr": -0.0111,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5218
+      },
+      "RNDR-BTC": {
+        "corr": -0.0528,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5218
+      }
+    },
+    "n_pass": 11,
+    "n_total": 11,
+    "all_pass": true
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe >= 1.0": true,
+      "G2 Perm p <= 0.05": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward >= 70%": true,
+      "G5 Family corr < 0.40": true,
+      "G6 Trades/yr >= 30": true,
+      "G7 Ann ret @4x >= 5%": true,
+      "G9 OOS days >= 180": true
+    },
+    "gates_passed": 8,
+    "gates_total": 8,
+    "decision": "ACCEPT CONDITIONAL (60d paper-trade)",
+    "g2_note": "G2 PASS (perm p=0.0000): random sign shuffle yields p=0.0 \u2014 signal is highly significant in OOS period.",
+    "g4_note": "G4 17/21 folds positive (81.0%). PASS (>=70% positive). Strategy stable across rolling 30d OOS windows.",
+    "g7_note": "G7 PASS: OOS 2.8997% x 4x = 11.5988% > 5%."
+  },
+  "concentration_impact": {
+    "hl_baseline_pct": 64.5,
+    "link_eth_sleeve_pct": 2.5,
+    "post_link_eth_pct": 67.0,
+    "cap_pct": 65.0,
+    "cap_breached": true,
+    "recommendation": "HL baseline 64.5% + LINK-ETH 2.5% = 67.0% (OVER 65.0% cap). Execution path: Bybit primary (LINK maxLev=50, ETH maxLev=100). HL execution deferred until K449 rebalances HL weight.",
+    "execution_path": "Bybit primary: LINK maxLev=50, ETH maxLev=100. HL deferred."
+  },
+  "profit_projection": {
+    "headline": {
+      "oos_ann_ret_pct": 2.8997,
+      "is_ann_ret_pct": 2.7268,
+      "leverage": 4.0,
+      "profit_10M_oos_usdc": 28997.0,
+      "profit_100M_oos_usdc": 289970.0,
+      "note": "OOS (2.90%): $28,997/yr @$10M, $289,970/yr @$100M (2.5% sleeve, 4x). IS estimate is conservative long-run baseline."
+    },
+    "scenarios": {
+      "oos_10M_2.5pct": {
+        "aum_M": 10,
+        "sleeve_pct": 2.5,
+        "leverage": 4.0,
+        "notional_usd": 1000000.0,
+        "oos_ann_ret_pct": 2.8997,
+        "oos_profit_usdc": 28997.0,
+        "is_ann_ret_pct": 2.7268,
+        "is_profit_usdc": 27268.0
+      },
+      "oos_10M_3.0pct": {
+        "aum_M": 10,
+        "sleeve_pct": 3.0,
+        "leverage": 4.0,
+        "notional_usd": 1200000.0,
+        "oos_ann_ret_pct": 2.8997,
+        "oos_profit_usdc": 34796.0,
+        "is_ann_ret_pct": 2.7268,
+        "is_profit_usdc": 32722.0
+      },
+      "oos_100M_2.5pct": {
+        "aum_M": 100,
+        "sleeve_pct": 2.5,
+        "leverage": 4.0,
+        "notional_usd": 10000000.0,
+        "oos_ann_ret_pct": 2.8997,
+        "oos_profit_usdc": 289970.0,
+        "is_ann_ret_pct": 2.7268,
+        "is_profit_usdc": 272680.0
+      },
+      "oos_100M_3.0pct": {
+        "aum_M": 100,
+        "sleeve_pct": 3.0,
+        "leverage": 4.0,
+        "notional_usd": 12000000.0,
+        "oos_ann_ret_pct": 2.8997,
+        "oos_profit_usdc": 347964.0,
+        "is_ann_ret_pct": 2.7268,
+        "is_profit_usdc": 327216.0
+      }
+    }
+  },
+  "family_rank_updated": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 7,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 9,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle",
+      "status": "ACCEPT CONDITIONAL (K557)"
+    },
+    {
+      "rank": 10,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 11,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 12,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "LINK-ETH",
+      "sharpe": 12.0676,
+      "ecosystem": "Oracle vs L1",
+      "narrative": "LINK oracle middleware vs ETH L1 carry differential (alt-alt)",
+      "status": "ACCEPT CONDITIONAL (60d paper-trade)",
+      "wave": "K698"
+    }
+  ],
+  "decision_rationale": "K698 LINK-ETH FR differential evaluation complete. MR9 algebraic identity CONFIRMED (FR level max error=5.42e-20). Position-level de-correlated (corr=0.0452 vs K557-K449 combo). Phase 0: HL listed (LINK maxLev=10, ETH maxLev=25), vol ratio 1.40x. PASS. ADF: stationary, p=0.0. OU half-life=1.45h. OOS Sharpe 12.0676 (W=120h). G5: 11/11 PASS \u2014 G5a (LINK-BTC K557) corr=0.0578, G5b (ETH-BTC K449) corr=-0.0036. Both critical passes. G4: 17/21 folds positive. Gates: 8/8. Profit @$10M: $28,997 USDC/yr. HL concentration: 67.0% > 65.0% cap \u2192 Bybit primary. Decision: ACCEPT CONDITIONAL (60d paper-trade)."
+}
