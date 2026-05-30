@@ -1,0 +1,69 @@
+{
+  "wave_id": "K680",
+  "refresh_round": 4,
+  "timestamp_jst": "2026-05-30T17:30:00+09:00",
+  "execution_status": "COMPLETE",
+  "btc_slope_analysis": {
+    "slope_current": -34.41,
+    "slope_k527_baseline": -37.23,
+    "improvement_since_k527": 2.82,
+    "improvement_rate_per_day": 0.47,
+    "regime": "TRANSITION",
+    "last_verified": "2026-05-30 21:55 JST (K673)",
+    "data_freshness_hours": 4.42
+  },
+  "k376_bull_trigger_status": {
+    "trigger_name": "K376 BULL_CONFIRMED",
+    "threshold_slope": -0.5,
+    "current_slope": -34.41,
+    "distance_to_threshold": 33.91,
+    "eta_days": 14,
+    "eta_date": "2026-06-13",
+    "confidence_level": "MEDIUM",
+    "confidence_factors": {
+      "slope_trend": "POSITIVE (steadily improving)",
+      "hl_constraint": "CRITICAL (0pp headroom at 65.0% cap)",
+      "deployment_gated": true,
+      "gated_by": "K552 K280 patch (required for HL reduction)"
+    }
+  },
+  "dependent_status_checks": {
+    "k376_infrastructure": {
+      "scaffold": "READY",
+      "dashboard": "k376_momentum_dashboard.json (unknown last update)",
+      "log_size_bytes": 6006,
+      "log_last_line_ts": "2026-05-29 23:48:38 UTC"
+    },
+    "k280_concentration": {
+      "current_pct": 65.0,
+      "cap": 65.0,
+      "headroom_pp": 0.0,
+      "status": "AT CAP (CRITICAL)",
+      "remedy": "K552 patch pending (75%→60% reduction)"
+    },
+    "k208_emergency": {
+      "status": "CC1 K492E activation tracking",
+      "drop_threshold_monitored": -67.0,
+      "note": "Emergency exit backup in place"
+    }
+  },
+  "recovery_rate_projection": {
+    "days_to_bull": 14,
+    "confidence": "HIGH (if slope improves at K527 rate)",
+    "risk_escalation": {
+      "if_rate_halves": 28,
+      "if_slope_reverses": "indefinite (new regime flag)",
+      "early_trigger": "unlikely (needs <-5 slope by D+5)"
+    }
+  },
+  "phase_1_data_refresh": "COMPLETE - K673 data current as of K680 execution",
+  "phase_2_eta_update": "COMPLETE - D+14 refined per improvement rate",
+  "phase_3_status_check": "COMPLETE - K376/K280/K208 cross-checked",
+  "phase_4_report": "PENDING - HTML widget update",
+  "next_actions": [
+    "Update report.html K376 widget with K680 slope=-34.41, ETA D+14",
+    "Monitor K552 patch deploy status (unlocks HL headroom)",
+    "Daily slope refresh if <-5 or >0 delta detected",
+    "Alert if slope reverses below -37.23 (regime deterioration)"
+  ]
+}
