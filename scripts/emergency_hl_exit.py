@@ -3567,6 +3567,37 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K652: K648 POL-BTC orthog emergency exit flag
+    # K648 = Bybit-only POL+BTC paired (2 legs) when residual EMA_168h > 1.5sigma.
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
+    # Orthog: residual = POL_diff - 0.337443*OP_diff - 0.075509*SEI_diff - (-0.016480)*APT_diff
+    #                  - 0.059789*TIA_diff - 0.042751*FIL_diff - 0.200488*SAND_diff (K648 OLS MF 6-factor).
+    # EMA window: W=168h = 21 x 8h periods (optimal per K648 analysis).
+    # Use --include-k648 to print K648-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k648",
+        dest="include_k648",
+        action="store_true",
+        default=False,
+        help=(
+            "K652: Include K648 POL-BTC 6-factor orthog close summary during emergency exit. "
+            "K648 positions (POL+BTC paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Orthog: residual = POL_diff - 0.337443*OP_diff - 0.075509*SEI_diff "
+            "- (-0.016480)*APT_diff - 0.059789*TIA_diff - 0.042751*FIL_diff - 0.200488*SAND_diff "
+            "(K648 OLS MF 6-factor betas hardcoded). "
+            "EMA window: W=168h = 21 x 8h periods (optimal per K648 analysis). "
+            "HL concentration UNCHANGED (Bybit-only strategy — HL NOT affected). "
+            "OOS Sharpe 23.41 (residual MF W=168h). $4,293,200/yr @$10M @4x (2% sleeve). "
+            "60d paper-trade gate: Realized Sh>=12 + fill>=60% + maxDD<20%. "
+            "Cluster: Polygon L2 / PoS / zkEVM (6-factor unlock: OP+SEI+APT+TIA+FIL+SAND, 47th daemon). "
+            "6-factor unlock: K611 BLOCKED-ROLLUP-SIBLING -> K648 all post-orth corrs < 0.40 PASS. "
+            "Requires: K648 daemon running (com.cryptolab.k648-pol-orthog, 47th daemon). "
+            "See: docs/k302a_runbook.md §48"
+        ),
+    )
+
     # K642: K638 STX-BTC orthog emergency exit flag
     # K638 = Bybit-only STX+BTC paired (2 legs) when residual EMA_504h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -4125,6 +4156,30 @@ USDY sleeve emergency guidance (K415 §21.6):
             logger.info(
                 "K645 BNB-BTC orthog: Bybit-only (NOT HL). "
                 "Use --include-k645 for Bybit close summary (§47). "
+                "HL concentration UNCHANGED at 65%."
+            )
+
+        # K652: K648 POL-BTC orthog close summary (Bybit-only — HL NOT affected)
+        # K648 positions (POL+BTC, Bybit-only) are NOT in the HL exit above.
+        # K648 is Bybit-only: HL concentration UNCHANGED. Use --include-k648 for Bybit summary.
+        if args.include_k648:
+            logger.info("=== K648 POL-BTC ORTHOG CLOSE SUMMARY (K652 §48) ===")
+            logger.info("  K648 POL-BTC orthog: Bybit-only (POL+BTC both legs on Bybit)")
+            logger.info("  Orthog: residual = POL_diff - 0.337443*OP_diff - 0.075509*SEI_diff "
+                        "- (-0.016480)*APT_diff - 0.059789*TIA_diff - 0.042751*FIL_diff "
+                        "- 0.200488*SAND_diff (K648 OLS MF 6-factor, betas hardcoded)")
+            logger.info("  EMA window: W=168h = 21 x 8h periods (optimal per K648 analysis)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: UNCHANGED at 65% (K648 is Bybit-only)")
+            logger.info("  OOS Sharpe 23.41 (residual MF W=168h) | $4,293,200/yr @$10M @4x (2% sleeve)")
+            logger.info("  6-factor unlock: K611 BLOCKED-ROLLUP-SIBLING -> K648 all post-orth < 0.40 PASS")
+            logger.info("  Cluster: Polygon L2 / PoS / zkEVM (AggLayer + MATIC->POL + zkEVM gas + validator re-staking)")
+            logger.info("  60d gate: Realized Sh>=12 + fill>=60% + maxDD<20%")
+            logger.info("  See: docs/k302a_runbook.md §48 (K648 POL orthog playbook)")
+        else:
+            logger.info(
+                "K648 POL-BTC orthog: Bybit-only (NOT HL). "
+                "Use --include-k648 for Bybit close summary (§48). "
                 "HL concentration UNCHANGED at 65%."
             )
 

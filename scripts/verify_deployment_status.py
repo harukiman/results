@@ -364,6 +364,20 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k645_bnb_orthog",
         expected_html_status="SCAFFOLD-READY",  # K650: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=3.5 + fill_rate>=60% + maxDD<20%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k646-algo-orthog",
+        purpose="K646 ALGO-BTC Orthogonalized FR Differential (Enterprise/Utility L1 cluster, FIL-cluster unlock, Bybit-only ALGO+BTC paired, 4x leverage, 8h cycle, OOS Sh 8.11 residual SF W=72h, ~$20,325/yr net @$10M @4x, beta_FIL=0.411 hardcoded, FIL corr 0.6052->0.2546 post-orth PASS, HL concentration UNCHANGED 65%, 60d paper-trade gate, v6.37 candidate 2% sleeve, 46th daemon, K651 scaffold)",
+        scripts=["scripts/k646_algo_orthog_run.py"],
+        log_basename="k646_algo_orthog",
+        expected_html_status="SCAFFOLD-READY",  # K651: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=4 + fill_rate>=60% + maxDD<20%)
+    ),
+    DaemonSpec(
+        label="com.cryptolab.k648-pol-orthog",
+        purpose="K648 POL-BTC 6-Factor Orthogonalized FR Differential (Polygon L2/PoS/zkEVM cluster unlock, Bybit-only POL+BTC paired, 4x leverage, 8h cycle, OOS Sh 23.41 residual MF W=168h, $4,293,200/yr @$10M @4x, beta_OP=0.337443 beta_SEI=0.075509 beta_APT=-0.016480 beta_TIA=0.059789 beta_FIL=0.042751 beta_SAND=0.200488 hardcoded, IS R2=0.3788 OOS R2=0.0114 ADF p=0.0, post-orth all < 0.40 PASS, HL concentration UNCHANGED 65%, 60d paper-trade gate, v6.37 candidate 2% sleeve, 47th daemon, K652 scaffold)",
+        scripts=["scripts/k648_pol_orthog_run.py"],
+        log_basename="k648_pol_orthog",
+        expected_html_status="SCAFFOLD-READY",  # K652: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=12 + fill_rate>=60% + maxDD<20%)
+    ),
 ]
 
 

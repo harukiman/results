@@ -1,0 +1,148 @@
+{
+  "wave": "K651",
+  "strategy": "K646 ALGO-BTC Orthogonalized FR Differential",
+  "run_time_jst": "2026-05-30 12:12 JST",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k646_algo_orthog_run.py",
+        "description": "Phase 1: K646 strategy script (K339 pattern, W=72h, \u03b2_FIL=0.411)",
+        "exists": true,
+        "size_bytes": 45104,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k646-algo-orthog.plist",
+        "description": "Phase 2: 46th daemon plist (StartInterval 28800)",
+        "exists": true,
+        "size_bytes": 2393,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k646_dashboard.json",
+        "description": "Phase 3: Dashboard (residual signal, \u03b2_fil_used, regime)",
+        "exists": true,
+        "size_bytes": 3012,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k646 flag, \u00a748)",
+        "exists": true,
+        "size_bytes": 209032,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K646_ALGO_ORTHOG + SLEEVE_WEIGHTS_V637)",
+        "exists": true,
+        "size_bytes": 53742,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K646_ALGO_ORTHOG: 4.0 + k646_notes)",
+        "exists": true,
+        "size_bytes": 36704,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (46th daemon registry)",
+        "exists": true,
+        "size_bytes": 30874,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a748 (K646 ALGO orthog playbook)",
+        "exists": true,
+        "size_bytes": 364739,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K646 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1562349,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k651_k646_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 14237,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_checks": {
+    "beta_fil_hardcoded": true,
+    "k339_repo_root": true,
+    "paper_trade_default": true,
+    "bybit_primary": true,
+    "post_only": true,
+    "signal_1_5sigma": true,
+    "sleeve_2pct": true,
+    "ema_72h": true,
+    "dashboard_beta_fil": true,
+    "dashboard_regime": true,
+    "dashboard_oos_perf": true,
+    "dashboard_orthog_mech": true,
+    "dashboard_hl_65": true,
+    "cfg_k646_cap": true,
+    "cfg_k646_notes": true,
+    "cfg_beta_fil": true,
+    "emer_include_k646": true,
+    "emer_k646_bybit_note": true,
+    "lev_k646_cap": true,
+    "lev_v637_weights": true,
+    "vds_k646_label": true,
+    "vds_46th_daemon": true,
+    "runbook_section48": true,
+    "runbook_beta_table": true,
+    "runbook_60d_gate": true,
+    "html_k646_scaffold": true,
+    "html_46th_daemon": true
+  },
+  "daemon_count": 47,
+  "dry_run": {
+    "returncode": 0,
+    "success": true,
+    "stdout_len": 3060,
+    "stderr_len": 0,
+    "status": "PASS"
+  },
+  "overall_pass": true,
+  "k646_summary": {
+    "oos_sharpe_residual": 8.11,
+    "oos_sharpe_raw_k522": 10.271,
+    "beta_fil": 0.411,
+    "is_r2": 0.2396,
+    "oos_r2": -0.0282,
+    "fil_corr_raw": 0.6052,
+    "fil_corr_post_orth": 0.2546,
+    "oos_ann_ret_pct": 2.5406,
+    "profit_2pct_4x_10m_usd": 20325,
+    "ema_window_h": 72,
+    "sleeve_pct": 0.02,
+    "leverage": 4.0,
+    "venue": "Bybit primary (ALGOUSDT perp + BTC-USDT-SWAP)",
+    "hl_concentration_pct": 65.0,
+    "daemon_number": "46th",
+    "plist": "scripts/com.cryptolab.k646-algo-orthog.plist",
+    "cluster": "Enterprise/Utility L1 / Algorand PoS VRF",
+    "gate_realized_sharpe": 4.0,
+    "gate_fill_pct": 60,
+    "gate_max_dd_pct": 20,
+    "gate_days": 60,
+    "v637_candidate": true,
+    "orthog_formula": "residual = ALGO_diff - 0.411*FIL_diff",
+    "k522_unblocked": true,
+    "wave_scaffold": "K651"
+  }
+}

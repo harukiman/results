@@ -8973,6 +8973,352 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k638-stx-orthog.plist
 
 ### §47.1 Strategy Overview
 
+K480 BNB-BTC FR Differential was BLOCKED by G5a ETH correlation = 0.435 ≥ 0.40.
+K645 orthogonalizes the BNB signal vs the ETH factor using OLS residualization:
+`residual_t = fr_diff_bnb_t - β_ETH × fr_diff_eth_t`
+
+**Result**: Orthogonalized BNB signal (W=168h): G5 PASS, OOS Sharpe=7.07.
+- β_ETH = 0.539 (IS R²=0.1457)
+- ETH corr: raw 0.435 (BLOCKED-G5a) → post-orth 0.1757 (PASS)
+- OOS Sharpe: 7.07 (residual SF W=168h)
+- Profit: $17,694/yr net @$10M @4x (3% sleeve)
+
+**Cluster**: Binance Ecosystem / BSC L1 (6th orthog, ETH-cluster unlock)
+- BNB FR driven by BSC DEX cycles (PancakeSwap), BNB quarterly burn mechanics,
+  Binance Launchpad/Launchpool IDO demand, and opBNB L2 adoption narrative.
+
+### §47.2 Orthogonalization Mechanism (K645 OLS Single-Factor)
+
+```
+ALGO_diff = BNB_FR  - BTC_FR
+ETH_diff  = ETH_FR  - BTC_FR
+residual  = BNB_diff - β_ETH × ETH_diff
+          = BNB_diff - 0.539 × ETH_diff
+```
+
+| Parameter | Value |
+|-----------|-------|
+| β_ETH (hardcoded) | **0.539** |
+| IS R² | 0.1457 |
+| ETH corr raw | 0.435 (BLOCKED-G5a K480) |
+| ETH corr post-orth | 0.1757 (PASS K645) |
+| OOS Sharpe (residual) | **7.07** (SF W=168h) |
+
+**Note**: β_ETH is HARDCODED at 0.539. No re-OLS in production for stability.
+
+### §47.3 Signal Gate
+
+```
+EMA   = 168h EMA of residual  (W=168h = 21 × 8h periods)
+sigma = 168h rolling std of residual
+Enter when |EMA| > 1.5 × sigma
+```
+
+- W=168h optimal per K645 analysis (SF single-factor ETH)
+- 8h cadence matches FR settlement cycle
+
+### §47.4 Execution (Bybit Primary)
+
+| Parameter | Value |
+|-----------|-------|
+| Venue | Bybit primary (BNBUSDT perp + BTC-USDT-SWAP) |
+| Execution | POST_ONLY parallel (K439 pattern) |
+| Sleeve | 3% of AUM |
+| Leverage | 4x |
+| Per-leg notional @$10M | $600K BNBUSDT + $600K BTC-USDT-SWAP |
+| Total notional @$10M | $1.2M |
+| Margin required @$10M | $300K (3% AUM) |
+| Rebalance trigger | drift > 5% |
+| Close sequence | short leg first (IOC reduce-only), then long leg |
+
+**HL impact**: NONE — Bybit-only. HL concentration UNCHANGED at 65%.
+
+### §47.5 Performance Summary
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe (residual) | **7.07** (SF W=168h) |
+| OOS Sharpe (raw K480) | 8.04 |
+| Sharpe reduction from orthog | −0.97 |
+| ETH corr raw | 0.435 (BLOCKED) |
+| ETH corr post-orth | 0.1757 (PASS) |
+| Ann Return @4x | 1.8431% |
+| **Profit @$10M @4x (3% sleeve)** | **$17,694/yr net** (net 80%) |
+| HL concentration | 65% (unchanged — Bybit-only) |
+
+### §47.6 60-Day Paper-Trade Activation Gate
+
+Gate criteria (K650 scaffold):
+
+| Criterion | Target |
+|-----------|--------|
+| Realized Sharpe | ≥ 3.5 |
+| Fill rate | ≥ 60% |
+| Max drawdown | < 20% |
+| Duration | 60 days |
+
+**Activation**: Set `PAPER_TRADE=False` in plist env after gate passage.
+**Activation sleeve**: 3% of AUM on Bybit (BNB+BTC paired, delta-neutral).
+
+### §47.7 Emergency Exit Protocol
+
+- Use `--include-k645` flag in `scripts/emergency_hl_exit.py`
+- Close sequence: short leg first (IOC reduce-only Bybit), then long leg
+- Both legs on Bybit — HL NOT affected
+- Dashboard at `data/k645_dashboard.json`
+
+```bash
+python3 scripts/emergency_hl_exit.py --include-k645
+python3 scripts/k645_bnb_orthog_run.py --close "emergency_exit"
+```
+
+### §47.8 Regime Monitoring
+
+| Regime | Condition | Action |
+|--------|-----------|--------|
+| BULL_BNB | residual_ema > +1.5σ | Short BNB / Long BTC on Bybit |
+| BEAR_BNB | residual_ema < −1.5σ | Long BNB / Short BTC on Bybit |
+| NEUTRAL | \|residual_ema\| ≤ 1.5σ | No position |
+
+### §47.9 Operational Commands
+
+```bash
+# Status check
+python3 scripts/k645_bnb_orthog_run.py --status
+
+# Paper-trade cycle (dry-run)
+python3 scripts/k645_bnb_orthog_run.py --dry-run
+
+# Rebalance check
+python3 scripts/k645_bnb_orthog_run.py --rebalance
+
+# Close positions
+python3 scripts/k645_bnb_orthog_run.py --close "manual_exit"
+
+# Deploy plist (after 60d gate)
+cp scripts/com.cryptolab.k645-bnb-orthog.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k645-bnb-orthog.plist
+```
+
+### §47.10 Leverage Configuration
+
+```python
+# leverage_manager.py
+"K645_BNB_ORTHOG": 4.0   # K650 cap
+
+# SLEEVE_WEIGHTS_V636 (v6.36 candidate)
+"K645": 0.03   # 3% BNB-BTC orthog (Bybit)
+```
+
+### §47.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k645_bnb_orthog_run.py` | Strategy script (K650 scaffold, K339 pattern) |
+| `data/k645_dashboard.json` | Live state + residual signal + beta_eth_used + regime |
+| `scripts/com.cryptolab.k645-bnb-orthog.plist` | 45th daemon plist (StartInterval 28800, gitignored) |
+| `scripts/emergency_hl_exit.py` | `--include-k645` flag + K645 Bybit close summary |
+| `scripts/leverage_manager.py` | K645_BNB_ORTHOG 4.0 cap + SLEEVE_WEIGHTS_V636 |
+| `data/leverage_config.json` | K645_BNB_ORTHOG: 4.0 + k645_notes |
+| `scripts/verify_deployment_status.py` | 45th daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§47) |
+
+### §47.12 References
+
+| Wave | Description |
+|------|-------------|
+| K650 | This section — K645 BNB orthog production scaffold (45th daemon, v6.36 candidate) |
+| K645 | K645 analysis — BNB ACCEPT CONDITIONAL (OOS Sh 7.07 residual SF ETH W=168h) |
+| K480 | K480 BNB-BTC raw (BLOCKED-G5a, ETH corr=0.435) |
+| K651 | K646 ALGO orthog scaffold (46th daemon, template continuation) |
+
+---
+
+*K650 §47 -- K645 BNB-BTC Orthogonalized FR Differential production scaffold (45th daemon, OOS Sh 7.07 residual SF ETH W=168h $17,694/yr net @$10M @4x, beta_ETH=0.539 hardcoded, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=3.5 fill>=60% maxDD<20%, Binance-ecosystem cluster, v6.36 candidate) -- 2026-05-30*
+
+---
+
+## §48 K646 ALGO-BTC Orthogonalized FR Differential — Production Scaffold Playbook
+
+### §48.1 Strategy Overview
+
+K522 ALGO-BTC FR Differential (OOS Sharpe=10.27) was BLOCKED by G5i FIL cluster
+correlation = 0.6052 ≥ 0.40. K646 orthogonalizes the ALGO signal vs the FIL factor
+using OLS residualization:
+`residual_t = fr_diff_algo_t - β_FIL × fr_diff_fil_t`
+
+**Result**: Orthogonalized ALGO signal (W=72h): G5 PASS, OOS Sharpe=8.11.
+- β_FIL = 0.411 (IS R²=0.2396, OOS R²=−0.0282)
+- FIL corr: raw 0.6052 (BLOCKED-G5i) → post-orth 0.2546 (PASS)
+- OOS Sharpe: 8.11 (residual SF W=72h)
+- Profit: ~$20,325/yr net @$10M @4x (2% sleeve)
+
+**Cluster**: Enterprise/Utility L1 / Algorand PoS VRF (7th orthog, FIL-cluster unlock)
+- ALGO FR driven by Algorand VRF consensus staking cycles, CBDC pilot events,
+  DeFi-lite adoption timing (TinyMan/Folks Finance), and Foundation grant waves.
+
+### §48.2 Orthogonalization Mechanism (K646 OLS Single-Factor)
+
+```
+ALGO_diff = ALGO_FR - BTC_FR
+FIL_diff  = FIL_FR  - BTC_FR
+residual  = ALGO_diff - β_FIL × FIL_diff
+          = ALGO_diff - 0.411 × FIL_diff
+```
+
+| Parameter | Value |
+|-----------|-------|
+| β_FIL (hardcoded) | **0.411** |
+| IS R² | 0.2396 |
+| OOS R² | −0.0282 (diagnostic) |
+| FIL corr raw | 0.6052 (BLOCKED-G5i K522) |
+| FIL corr post-orth | 0.2546 (PASS K646) |
+| OOS Sharpe (residual) | **8.11** (SF W=72h) |
+
+**Note**: β_FIL is HARDCODED at 0.411. No re-OLS in production for stability.
+
+### §48.3 Signal Gate
+
+```
+EMA   = 72h EMA of residual  (W=72h = 9 × 8h periods)
+sigma = 72h rolling std of residual
+Enter when |EMA| > 1.5 × sigma
+```
+
+- W=72h optimal per K646 analysis (SF single-factor FIL)
+- 8h cadence matches FR settlement cycle
+
+### §48.4 Execution (Bybit Primary)
+
+| Parameter | Value |
+|-----------|-------|
+| Venue | Bybit primary (ALGOUSDT perp + BTC-USDT-SWAP) |
+| Execution | POST_ONLY parallel (K439 pattern) |
+| Sleeve | 2% of AUM |
+| Leverage | 4x |
+| Per-leg notional @$10M | $400K ALGOUSDT + $400K BTC-USDT-SWAP |
+| Total notional @$10M | $800K |
+| Margin required @$10M | $200K (2% AUM) |
+| Rebalance trigger | drift > 5% |
+| Close sequence | short leg first (IOC reduce-only), then long leg |
+
+**HL impact**: NONE — Bybit-only. HL concentration UNCHANGED at 65%.
+
+### §48.5 Performance Summary
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe (residual) | **8.11** (SF W=72h) |
+| OOS Sharpe (raw K522) | 10.271 |
+| Sharpe reduction from orthog | −2.16 |
+| FIL corr raw | 0.6052 (BLOCKED) |
+| FIL corr post-orth | 0.2546 (PASS) |
+| Ann Return @4x | 2.5406% |
+| **Profit @$10M @4x (2% sleeve)** | **~$20,325/yr net** (net 80%) |
+| HL concentration | 65% (unchanged — Bybit-only) |
+| Trades/yr | 46.1 |
+| Max DD (OOS) | −0.47% |
+
+### §48.6 60-Day Paper-Trade Activation Gate
+
+Gate criteria (K651 scaffold):
+
+| Criterion | Target |
+|-----------|--------|
+| Realized Sharpe | ≥ 4.0 |
+| Fill rate | ≥ 60% |
+| Max drawdown | < 20% |
+| Duration | 60 days |
+
+**Activation**: Set `PAPER_TRADE=False` in plist env after gate passage.
+**Activation sleeve**: 2% of AUM on Bybit (ALGO+BTC paired, delta-neutral).
+
+### §48.7 Emergency Exit Protocol
+
+- Use `--include-k646` flag in `scripts/emergency_hl_exit.py`
+- Close sequence: short leg first (IOC reduce-only Bybit), then long leg
+- Both legs on Bybit — HL NOT affected
+- Dashboard at `data/k646_dashboard.json`
+
+```bash
+python3 scripts/emergency_hl_exit.py --include-k646
+python3 scripts/k646_algo_orthog_run.py --close "emergency_exit"
+```
+
+### §48.8 Regime Monitoring
+
+| Regime | Condition | Action |
+|--------|-----------|--------|
+| BULL_ALGO | residual_ema > +1.5σ | Short ALGO / Long BTC on Bybit |
+| BEAR_ALGO | residual_ema < −1.5σ | Long ALGO / Short BTC on Bybit |
+| NEUTRAL | \|residual_ema\| ≤ 1.5σ | No position |
+
+### §48.9 Operational Commands
+
+```bash
+# Status check
+python3 scripts/k646_algo_orthog_run.py --status
+
+# Paper-trade cycle (dry-run)
+python3 scripts/k646_algo_orthog_run.py --dry-run
+
+# Rebalance check
+python3 scripts/k646_algo_orthog_run.py --rebalance
+
+# Close positions
+python3 scripts/k646_algo_orthog_run.py --close "manual_exit"
+
+# Deploy plist (after 60d gate)
+cp scripts/com.cryptolab.k646-algo-orthog.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k646-algo-orthog.plist
+```
+
+### §48.10 Leverage Configuration
+
+```python
+# leverage_manager.py
+"K646_ALGO_ORTHOG": 4.0   # K651 cap
+
+# SLEEVE_WEIGHTS_V637 (v6.37 candidate)
+"K646": 0.02   # 2% ALGO-BTC orthog (Bybit)
+```
+
+### §48.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k646_algo_orthog_run.py` | Strategy script (K651 scaffold, K339 pattern) |
+| `data/k646_dashboard.json` | Live state + residual signal + beta_fil_used + regime |
+| `scripts/com.cryptolab.k646-algo-orthog.plist` | 46th daemon plist (StartInterval 28800, gitignored) |
+| `scripts/emergency_hl_exit.py` | `--include-k646` flag + K646 Bybit close summary |
+| `scripts/leverage_manager.py` | K646_ALGO_ORTHOG 4.0 cap + SLEEVE_WEIGHTS_V637 |
+| `data/leverage_config.json` | K646_ALGO_ORTHOG: 4.0 + k646_notes |
+| `scripts/verify_deployment_status.py` | 46th daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§48) |
+| `wave_k651_k646_scaffold.py` | Wave driver/test |
+| `wave_k651_k646_scaffold.json` | Wave result report |
+
+### §48.12 References
+
+| Wave | Description |
+|------|-------------|
+| K651 | This section — K646 ALGO orthog production scaffold (46th daemon, v6.37 candidate) |
+| K646 | K646 analysis — ALGO ACCEPT CONDITIONAL (OOS Sh 8.11 residual SF FIL W=72h) |
+| K522 | K522 ALGO-BTC raw (BLOCKED-G5i, FIL corr=0.6052) |
+| K650 | K645 BNB orthog scaffold (45th daemon, direct scaffold template) |
+| K649 | K649 7-orthog combined backtest (BNB+ALGO confirmed orthog pair) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K651 §48 -- K646 ALGO-BTC Orthogonalized FR Differential production scaffold (46th daemon, OOS Sh 8.11 residual SF FIL W=72h ~$20,325/yr net @$10M @4x, beta_FIL=0.411 hardcoded, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=4 fill>=60% maxDD<20%, Enterprise/Utility L1 / Algorand PoS VRF cluster, v6.37 candidate) -- 2026-05-30*
+
+---
+
+## §47 K645 BNB-BTC Orthogonalized FR Differential — Production Scaffold Playbook
+
+### §47.1 Strategy Overview
+
 K645 implements a delta-neutral paired trade on **BNB-BTC funding rate differential**, orthogonalized against the ETH factor via single-factor OLS regression. BNB (Binance Coin) is the BSC L1 / Binance ecosystem token — FR dynamics are driven by BSC DEX cycles (PancakeSwap dominance), BNB quarterly burn mechanics, Binance Launchpad/Launchpool IDO demand, and opBNB L2 adoption, not shared ETH regulatory co-movement.
 
 | Metric | Value |
