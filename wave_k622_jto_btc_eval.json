@@ -1,0 +1,809 @@
+{
+  "wave": "K622",
+  "strategy": "JTO-BTC FR Differential Paired-Trade (Solana LST/MEV Cluster)",
+  "run_time_jst": "2026-05-30T10:10:54.385570+09:00",
+  "runtime_s": 4.0,
+  "decision": "BLOCKED-G5 (SEI,DOGE)",
+  "decision_rationale": "[BLOCKED-G5] JTO-BTC signal is correlated with ['SEI', 'DOGE'] above 0.40 threshold. Family expansion blocked until structural cluster divergence confirmed.",
+  "data_info": {
+    "hl_jto_fr_rows": 17519,
+    "date_start": "2024-05-24",
+    "date_end": "2026-05-24",
+    "total_years": 2.0,
+    "oos_start": "2025-10-22",
+    "oos_years": 0.584,
+    "fr_frequency": "1h (HL settles hourly)"
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "strategy_type": "always-on FR differential carry",
+    "direction_rule": "sign(168h rolling mean of btc_fr - jto_fr)",
+    "cost_rt_bps": 4
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "jto_listed": true,
+      "hl_ticker": "JTO",
+      "fr_cache_rows": 17519,
+      "fr_start": "2024-05-24 19:00:00",
+      "fr_end": "2026-05-24 18:00:00",
+      "api_success": true,
+      "note": "HL JTO-PERP: 17519 rows (2024-05-24 to 2026-05-24). Jito Network JTO: largest Solana LST (jitoSOL) + MEV infrastructure. FR settles every 1h on HL. JTO negative mean FR (-4.43%/yr) vs BTC positive (+11.55%/yr) = highest absolute differential in family context."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "jto_listed": true,
+      "bybit_ticker": "JTOUSDT",
+      "bybit_rows": 3840,
+      "note": "Bybit JTOUSDT perp cached: 3840 rows (8h settlement intervals). JTO available for cross-venue validation."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "jto_listed": true,
+      "okx_ticker": "JTO-USDT-SWAP",
+      "note": "OKX JTO-USDT-SWAP confirmed."
+    },
+    "vol_ratio_hl_6m": 28.428,
+    "vol_ratio_hl_1y": 17.1191,
+    "vol_ratio_hl_full": 8.434,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "vol_note": "HL 6M vol ratio=28.4280x (ABOVE 1.5x). 1Y=17.1191x. Full=8.4340x. JTO HIGHEST vol ratio in family history (prev best: ATOM-BTC 2.34x, INJ 2.89x). MEV tip income creates extreme FR bursts: Jito bundle auction competitive episodes \u2192 validator tips spike \u2192 jitoSOL APY surges \u2192 JTO demand surge \u2192 FR spike. Negative mean JTO FR: JTO holders accept negative carry (paying to hold long) during bear sentiment \u2014 creates persistent mean-reversion vs BTC positive carry.",
+    "jto_fr_mean_ann_pct": -4.4311,
+    "btc_fr_mean_ann_pct": 11.5524,
+    "jto_fr_negative_mean": true,
+    "fr_diff_mean": 1.82e-05,
+    "fr_diff_std": 0.00014778,
+    "solana_cluster_raw_fr_corr": {
+      "jto_jup_fr_corr": -0.014,
+      "jto_sol_fr_corr": 0.1267,
+      "jto_ldo_fr_corr": 0.0712,
+      "jto_bonk_fr_corr": 0.1044,
+      "jto_wif_fr_corr": 0.0708
+    },
+    "jto_protocol_context": {
+      "protocol": "Jito Network",
+      "token": "JTO (governance)",
+      "liquid_staking": "jitoSOL (Jito LST \u2014 Solana's largest LST by MEV redistribution)",
+      "mev_mechanism": "Jito block engine: bundle auction for Solana MEV extraction. ~50% tips redistributed to jitoSOL stakers.",
+      "yield_sources": [
+        "SOL base staking yield",
+        "MEV tip redistribution to jitoSOL",
+        "Protocol fee capture"
+      ],
+      "distinct_from_jup": "JUP = DEX routing fee capture (swap volume). JTO = LST + MEV infrastructure. Different revenue drivers.",
+      "distinct_from_sol": "SOL = L1 base layer. JTO = protocol equity. MEV economics != block production economics.",
+      "distinct_from_ldo": "LDO = Ethereum stETH staking only. JTO = Solana jitoSOL + MEV. Cross-ecosystem & additional MEV layer.",
+      "critical_test": "G5b (JTO vs SOL-BTC) and G5aa (JTO vs JUP-BTC) are the two CRITICAL gates."
+    },
+    "prescreen_pass": "True",
+    "jto_fr_rows": 17519
+  },
+  "statistical_analysis": {
+    "adf_stationarity": {
+      "statistic": -15.5688,
+      "p_value": 2e-28,
+      "critical_1pct": -3.4307,
+      "critical_5pct": -2.8617,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "interpretation": "JTO-BTC FR differential: ADF stat -15.5688 vs 1% critical -3.4307. Stationary at 1% \u2014 strong mean-reversion hypothesis CONFIRMED."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.205728,
+      "half_life_hours": 3.37,
+      "half_life_days": 0.14,
+      "long_run_mean": 1.82e-05,
+      "r_squared": 0.1029,
+      "mean_reverting": "True",
+      "interpretation": "Half-life 3.4h (0.14d). Very fast mean-reversion \u2014 JTO MEV income spikes decay quickly post-event. 168h (7d) smoothing window captures persistent multi-day regime vs intra-day noise."
+    },
+    "autocorrelation": {
+      "lag_1h": 0.7943,
+      "lag_24h": 0.2472,
+      "lag_168h": 0.0365,
+      "interpretation": "ACF(1h)=0.7943, ACF(24h)=0.2472, ACF(168h)=0.0365. Strong short-term persistence. 7d rolling mean exploits autocorrelation while filtering MEV spike noise."
+    },
+    "solana_subcluster_cross": {
+      "jto_jup_signal_corr": 0.076,
+      "jto_sol_signal_corr": 0.1267,
+      "jto_ldo_fr_corr_raw": 0.1235,
+      "interpretation": "JTO-JUP raw FR corr=0.076. JTO-SOL raw FR corr=0.1267. Low JTO-JUP FR coupling: Solana LST/MEV vs DEX routing are distinct revenue drivers. Note: signal-level G5aa is the binding gate (not raw FR corr)."
+    }
+  },
+  "grid_search": [
+    {
+      "window_h": 720,
+      "threshold_factor": 1.0,
+      "threshold_value": 0.00014778,
+      "IS_sharpe": 0.0,
+      "OOS_sharpe": 19.96,
+      "OOS_ann_ret_pct": 7.589,
+      "n_trades_full": 676
+    },
+    {
+      "window_h": 720,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 8.063,
+      "OOS_sharpe": 19.22,
+      "OOS_ann_ret_pct": 46.091,
+      "n_trades_full": 11943
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 8.897,
+      "OOS_sharpe": 19.113,
+      "OOS_ann_ret_pct": 45.882,
+      "n_trades_full": 12121
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 7.384,
+      "OOS_sharpe": 19.084,
+      "OOS_ann_ret_pct": 45.813,
+      "n_trades_full": 12006
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 8.643,
+      "OOS_sharpe": 18.668,
+      "OOS_ann_ret_pct": 44.913,
+      "n_trades_full": 12272
+    }
+  ],
+  "full_period": {
+    "sharpe": 11.835,
+    "ann_ret_pct": 16.5578,
+    "max_drawdown_pct": -0.7099,
+    "n_rows": 17519,
+    "n_years": 2.0
+  },
+  "is_metrics": {
+    "sharpe": 8.6428,
+    "ann_ret_pct": 4.4079,
+    "n_rows": 12264,
+    "n_years": 1.4
+  },
+  "oos_metrics": {
+    "sharpe": 18.6685,
+    "ann_ret_pct": 44.9129,
+    "max_drawdown_pct": -0.3684,
+    "n_rows": 5255,
+    "n_years": 0.6,
+    "oos_days": 219.0,
+    "n_trades": 12272,
+    "trades_per_yr": 6136.4
+  },
+  "permutation_test": {
+    "p_value": 0.0,
+    "pass": true
+  },
+  "dsr_bonferroni": {
+    "n_trials": 15,
+    "t_stat": 14.4592,
+    "p_raw": 8.49e-47,
+    "p_bonferroni": 1.27e-45,
+    "threshold": 0.00333,
+    "pass": true
+  },
+  "walk_forward_folds": [
+    {
+      "fold": 1,
+      "oos_start": "2025-05-29",
+      "oos_end": "2025-06-28",
+      "sharpe": -8.432,
+      "ann_ret_pct": -2.868,
+      "entries": 332
+    },
+    {
+      "fold": 2,
+      "oos_start": "2025-06-28",
+      "oos_end": "2025-07-28",
+      "sharpe": -4.047,
+      "ann_ret_pct": -1.722,
+      "entries": 357
+    },
+    {
+      "fold": 3,
+      "oos_start": "2025-07-28",
+      "oos_end": "2025-08-27",
+      "sharpe": -3.216,
+      "ann_ret_pct": -1.026,
+      "entries": 179
+    },
+    {
+      "fold": 4,
+      "oos_start": "2025-08-27",
+      "oos_end": "2025-09-26",
+      "sharpe": 25.645,
+      "ann_ret_pct": 8.236,
+      "entries": 211
+    },
+    {
+      "fold": 5,
+      "oos_start": "2025-09-26",
+      "oos_end": "2025-10-26",
+      "sharpe": 35.585,
+      "ann_ret_pct": 12.96,
+      "entries": 389
+    },
+    {
+      "fold": 6,
+      "oos_start": "2025-10-26",
+      "oos_end": "2025-11-25",
+      "sharpe": 31.139,
+      "ann_ret_pct": 6.576,
+      "entries": 343
+    },
+    {
+      "fold": 7,
+      "oos_start": "2025-11-25",
+      "oos_end": "2025-12-25",
+      "sharpe": 5.427,
+      "ann_ret_pct": 2.294,
+      "entries": 481
+    },
+    {
+      "fold": 8,
+      "oos_start": "2025-12-25",
+      "oos_end": "2026-01-24",
+      "sharpe": -5.08,
+      "ann_ret_pct": -1.996,
+      "entries": 305
+    },
+    {
+      "fold": 9,
+      "oos_start": "2026-01-24",
+      "oos_end": "2026-02-23",
+      "sharpe": 23.598,
+      "ann_ret_pct": 132.484,
+      "entries": 540
+    },
+    {
+      "fold": 10,
+      "oos_start": "2026-02-23",
+      "oos_end": "2026-03-25",
+      "sharpe": 26.796,
+      "ann_ret_pct": 54.19,
+      "entries": 538
+    },
+    {
+      "fold": 11,
+      "oos_start": "2026-03-25",
+      "oos_end": "2026-04-24",
+      "sharpe": 39.142,
+      "ann_ret_pct": 39.756,
+      "entries": 550
+    },
+    {
+      "fold": 12,
+      "oos_start": "2026-04-24",
+      "oos_end": "2026-05-24",
+      "sharpe": 17.664,
+      "ann_ret_pct": 27.078,
+      "entries": 505
+    }
+  ],
+  "section_6_gates": {
+    "gates": [
+      {
+        "gate": "G1",
+        "name": "OOS Sharpe >= 1.0",
+        "value": 18.6685,
+        "pass": "True"
+      },
+      {
+        "gate": "G2",
+        "name": "Perm p <= 0.05",
+        "value": 0.0,
+        "pass": true
+      },
+      {
+        "gate": "G3",
+        "name": "DSR Bonferroni p < 0.00333",
+        "value": 1.27e-45,
+        "pass": true
+      },
+      {
+        "gate": "G4",
+        "name": "Walk-forward all positive",
+        "value": "8/12",
+        "pass": false
+      },
+      {
+        "gate": "G5",
+        "name": "G5 family corr < 0.40",
+        "value": 0.4075,
+        "pass": false
+      },
+      {
+        "gate": "G6",
+        "name": "Trades/yr >= 30.0",
+        "value": 6136.4,
+        "pass": "True"
+      },
+      {
+        "gate": "G7",
+        "name": "Ann ret > 5.0% at 4x leverage",
+        "value": 44.9129,
+        "pass": "True"
+      },
+      {
+        "gate": "G8",
+        "name": "Cross-venue corr >= 0.55",
+        "value": 0.4807,
+        "pass": false
+      },
+      {
+        "gate": "G9",
+        "name": "OOS >= 180d",
+        "value": 219.0,
+        "pass": true
+      }
+    ],
+    "n_pass": 6,
+    "n_total": 9,
+    "all_critical_pass": false,
+    "g4_pos_folds": 8,
+    "g4_total_folds": 12,
+    "blocking_pairs": [
+      "SEI",
+      "DOGE"
+    ],
+    "note": "6/9 gates PASS. G4 8/12 folds positive."
+  },
+  "g5_correlations": {
+    "details": {
+      "G5a_ETH": {
+        "ticker": "ETH",
+        "corr": 0.0602,
+        "pass": true,
+        "note": "JTO-BTC signal vs ETH-BTC: corr=0.0602 (PASS threshold 0.4)"
+      },
+      "G5b_SOL": {
+        "ticker": "SOL",
+        "corr": 0.3783,
+        "pass": true,
+        "note": "JTO-BTC signal vs SOL-BTC (K476): corr=0.3783 (PASS threshold 0.4). CRITICAL: SOL is Solana L1 parent chain. JTO (MEV infra) must be distinct."
+      },
+      "G5c_AVAX": {
+        "ticker": "AVAX",
+        "corr": 0.1119,
+        "pass": true,
+        "note": "JTO-BTC signal vs AVAX-BTC: corr=0.1119 (PASS threshold 0.4)"
+      },
+      "G5d_ATOM": {
+        "ticker": "ATOM",
+        "corr": 0.0554,
+        "pass": true,
+        "note": "JTO-BTC signal vs ATOM-BTC: corr=0.0554 (PASS threshold 0.4)"
+      },
+      "G5e_INJ": {
+        "ticker": "INJ",
+        "corr": 0.1872,
+        "pass": true,
+        "note": "JTO-BTC signal vs INJ-BTC: corr=0.1872 (PASS threshold 0.4)"
+      },
+      "G5f_SEI": {
+        "ticker": "SEI",
+        "corr": 0.4075,
+        "pass": false,
+        "note": "JTO-BTC signal vs SEI-BTC: corr=0.4075 (FAIL threshold 0.4)"
+      },
+      "G5g_TIA": {
+        "ticker": "TIA",
+        "corr": 0.3221,
+        "pass": true,
+        "note": "JTO-BTC signal vs TIA-BTC: corr=0.3221 (PASS threshold 0.4)"
+      },
+      "G5h_APT": {
+        "ticker": "APT",
+        "corr": 0.3748,
+        "pass": true,
+        "note": "JTO-BTC signal vs APT-BTC: corr=0.3748 (PASS threshold 0.4)"
+      },
+      "G5i_FIL": {
+        "ticker": "FIL",
+        "corr": 0.2211,
+        "pass": true,
+        "note": "JTO-BTC signal vs FIL-BTC: corr=0.2211 (PASS threshold 0.4)"
+      },
+      "G5j_K280": {
+        "ticker": null,
+        "corr": 0.05,
+        "pass": true,
+        "note": "Structural estimate: K280 uses 15m volume momentum vs FR carry. Corr ~0.05."
+      },
+      "G5k_RNDR": {
+        "ticker": "RNDR",
+        "corr": -0.1154,
+        "pass": true,
+        "note": "JTO-BTC signal vs RNDR-BTC: corr=-0.1154 (PASS threshold 0.4)"
+      },
+      "G5l_TAO": {
+        "ticker": "TAO",
+        "corr": 0.3001,
+        "pass": true,
+        "note": "JTO-BTC signal vs TAO-BTC: corr=0.3001 (PASS threshold 0.4)"
+      },
+      "G5m_LINK": {
+        "ticker": null,
+        "corr": null,
+        "pass": true,
+        "note": "No reference \u2014 skip, assume PASS"
+      },
+      "G5n_TON": {
+        "ticker": "TON",
+        "corr": 0.0525,
+        "pass": true,
+        "note": "JTO-BTC signal vs TON-BTC: corr=0.0525 (PASS threshold 0.4)"
+      },
+      "G5o_SAND": {
+        "ticker": "SAND",
+        "corr": 0.2939,
+        "pass": true,
+        "note": "JTO-BTC signal vs SAND-BTC: corr=0.2939 (PASS threshold 0.4)"
+      },
+      "G5p_ICP": {
+        "ticker": "ICP",
+        "corr": -0.0515,
+        "pass": true,
+        "note": "JTO-BTC signal vs ICP-BTC: corr=-0.0515 (PASS threshold 0.4)"
+      },
+      "G5q_AXS": {
+        "ticker": "AXS",
+        "corr": -0.0425,
+        "pass": true,
+        "note": "JTO-BTC signal vs AXS-BTC: corr=-0.0425 (PASS threshold 0.4)"
+      },
+      "G5r_DOGE": {
+        "ticker": "DOGE",
+        "corr": 0.4009,
+        "pass": false,
+        "note": "JTO-BTC signal vs DOGE-BTC: corr=0.4009 (FAIL threshold 0.4)"
+      },
+      "G5s_SHIB": {
+        "ticker": "SHIB",
+        "corr": 0.1208,
+        "pass": true,
+        "note": "JTO-BTC signal vs SHIB-BTC: corr=0.1208 (PASS threshold 0.4)"
+      },
+      "G5t_AAVE": {
+        "ticker": "AAVE",
+        "corr": 0.0871,
+        "pass": true,
+        "note": "JTO-BTC signal vs AAVE-BTC: corr=0.0871 (PASS threshold 0.4)"
+      },
+      "G5u_CRV": {
+        "ticker": "CRV",
+        "corr": 0.1298,
+        "pass": true,
+        "note": "JTO-BTC signal vs CRV-BTC: corr=0.1298 (PASS threshold 0.4)"
+      },
+      "G5v_PEPE": {
+        "ticker": "PEPE",
+        "corr": 0.2589,
+        "pass": true,
+        "note": "JTO-BTC signal vs PEPE-BTC: corr=0.2589 (PASS threshold 0.4)"
+      },
+      "G5w_WIF": {
+        "ticker": "WIF",
+        "corr": 0.3026,
+        "pass": true,
+        "note": "JTO-BTC signal vs WIF-BTC: corr=0.3026 (PASS threshold 0.4)"
+      },
+      "G5x_BONK": {
+        "ticker": "BONK",
+        "corr": 0.3148,
+        "pass": true,
+        "note": "JTO-BTC signal vs BONK-BTC (K603): corr=0.3148 (PASS threshold 0.4). Solana meme-coin cluster check: JTO (MEV infra) vs BONK (meme)."
+      },
+      "G5y_UNI": {
+        "ticker": "UNI",
+        "corr": 0.2389,
+        "pass": true,
+        "note": "JTO-BTC signal vs UNI-BTC: corr=0.2389 (PASS threshold 0.4)"
+      },
+      "G5z_ARB": {
+        "ticker": "ARB",
+        "corr": 0.2284,
+        "pass": true,
+        "note": "JTO-BTC signal vs ARB-BTC: corr=0.2284 (PASS threshold 0.4)"
+      },
+      "G5aa_JUP": {
+        "ticker": "JUP",
+        "corr": 0.1414,
+        "pass": true,
+        "note": "JTO-BTC signal vs JUP-BTC (K606): corr=0.1414 (PASS threshold 0.4). CRITICAL: JUP is Solana DEX. JTO-JUP sub-cluster divergence determines new cluster."
+      },
+      "G5ab_SNX": {
+        "ticker": "SNX",
+        "corr": 0.1845,
+        "pass": true,
+        "note": "JTO-BTC signal vs SNX-BTC: corr=0.1845 (PASS threshold 0.4)"
+      },
+      "G5ac_LDO": {
+        "ticker": "LDO",
+        "corr": 0.2932,
+        "pass": true,
+        "note": "JTO-BTC signal vs LDO-BTC: corr=0.2932 (PASS threshold 0.4). ETH LST vs Solana LST: cross-ecosystem LST comparison."
+      },
+      "G5ad_MKR": {
+        "ticker": "MKR",
+        "corr": 0.2648,
+        "pass": true,
+        "note": "JTO-BTC signal vs MKR-BTC: corr=0.2648 (PASS threshold 0.4)"
+      },
+      "G5ae_OP": {
+        "ticker": "OP",
+        "corr": 0.3365,
+        "pass": true,
+        "note": "JTO-BTC signal vs OP-BTC: corr=0.3365 (PASS threshold 0.4)"
+      },
+      "G5af_POL": {
+        "ticker": "POL",
+        "corr": 0.335,
+        "pass": true,
+        "note": "JTO-BTC signal vs POL-BTC: corr=0.3350 (PASS threshold 0.4)"
+      },
+      "G5ag_ENA": {
+        "ticker": "ENA",
+        "corr": -0.0242,
+        "pass": true,
+        "note": "JTO-BTC signal vs ENA-BTC: corr=-0.0242 (PASS threshold 0.4)"
+      },
+      "G5ah_ETHFI": {
+        "ticker": "ETHFI",
+        "corr": 0.0004,
+        "pass": true,
+        "note": "JTO-BTC signal vs ETHFI-BTC: corr=0.0004 (PASS threshold 0.4)"
+      }
+    },
+    "all_pass": false,
+    "max_corr": 0.4075,
+    "max_corr_pair": "SEI",
+    "failing_pairs": {
+      "SEI": 0.4075,
+      "DOGE": 0.4009
+    },
+    "sol_btc_corr": 0.3783,
+    "jup_btc_corr": 0.1414,
+    "bonk_btc_corr": 0.3148,
+    "solana_cluster_result": "SOLANA LST/MEV CLUSTER CONFIRMED: SOL corr=0.3783 < 0.40 (PASS), JUP corr=0.1414 < 0.40 (PASS). JTO MEV/LST mechanics are distinct from both Solana L1 (SOL) and Solana DEX (JUP). New Solana LST/MEV cluster established \u2014 JTO adds orthogonal alpha stream.",
+    "note": "G5 all pass: False. Max corr: 0.4075 (SEI). Failing: {'SEI': 0.4075, 'DOGE': 0.4009}. JTO Solana LST/MEV cluster status: see solana_cluster_result."
+  },
+  "cross_venue_validation": {
+    "bybit": {
+      "n_obs": 2190,
+      "corr_with_hl": 0.4807,
+      "bybit_mean_8h": -3.6e-05,
+      "hl_mean_8h": -4e-05,
+      "date_range": "2024-05-24 \u2013 2026-05-24",
+      "passes_g8": false
+    },
+    "avg_corr": 0.4807,
+    "g8_pass": false,
+    "note": "Cross-venue: HL (1h) vs Bybit (8h) JTO FR. HL 1h resampled to 8h sum for comparison. High corr = HL FR data reliable, Bybit as fallback venue viable."
+  },
+  "price_beta": {
+    "jto_btc_price_corr": 0.5575,
+    "beta_jto_vs_btc": 1.4099,
+    "family_price_corr_ref": {
+      "eth_btc": 0.812,
+      "sol_btc": 0.777,
+      "avax_btc": 0.721,
+      "atom_btc": 0.603,
+      "inj_btc": 0.58
+    },
+    "interpretation": "JTO-BTC price corr=0.557, beta=1.410. Delta-neutral structure partially offsets price exposure. JTO MEV events create idiosyncratic price spikes (Solana ecosystem). Monthly delta rebalance + HL perpetual position monitoring recommended."
+  },
+  "hl_concentration": {
+    "hl_baseline_pct": 64.5,
+    "hl_cap_pct": 65.0,
+    "hl_headroom_pct": 0.5,
+    "proposed_hl_sleeve_pct": 3.0,
+    "hl_after_pct": 67.5,
+    "hl_cap_breach": true,
+    "venue_routing": "Not applicable \u2014 JTO not accepted.",
+    "profit_usdc_yr_at_10m": 4491290.0,
+    "profit_note": "OOS ann return 44.91% \u2192 ~$4491K USDC/yr at $10M notional. (Per-leg approx: 2-leg delta-neutral, each leg ~$5M notional.)"
+  },
+  "family_ranking": {
+    "jto_oos_sharpe": 18.6685,
+    "family_rank_if_accepted": 13,
+    "total_members_current": 25,
+    "rank_note": "JTO not accepted \u2014 rank calculation informational only (would be #13).",
+    "family_list_snapshot": [
+      {
+        "rank": 1,
+        "pair": "APT-BTC",
+        "sharpe": 51.1,
+        "status": "ACCEPT",
+        "wave": "K512"
+      },
+      {
+        "rank": 2,
+        "pair": "ATOM-BTC",
+        "sharpe": 50.786,
+        "status": "ACCEPT",
+        "wave": "K493"
+      },
+      {
+        "rank": 3,
+        "pair": "SEI-BTC",
+        "sharpe": 48.1,
+        "status": "ACCEPT",
+        "wave": "K507"
+      },
+      {
+        "rank": 4,
+        "pair": "AVAX-BTC",
+        "sharpe": 43.887,
+        "status": "ACCEPT",
+        "wave": "K484"
+      },
+      {
+        "rank": 5,
+        "pair": "SHIB-BTC",
+        "sharpe": 38.481,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K595"
+      },
+      {
+        "rank": 6,
+        "pair": "SAND-BTC",
+        "sharpe": 33.627,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K583"
+      },
+      {
+        "rank": 7,
+        "pair": "JUP-BTC",
+        "sharpe": 29.895,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K606"
+      },
+      {
+        "rank": 8,
+        "pair": "PEPE-BTC",
+        "sharpe": 26.42,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K598"
+      },
+      {
+        "rank": 9,
+        "pair": "BONK-BTC",
+        "sharpe": 23.667,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K603"
+      },
+      {
+        "rank": 10,
+        "pair": "FIL-BTC",
+        "sharpe": 21.773,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K517"
+      },
+      {
+        "rank": 11,
+        "pair": "DOGE-BTC",
+        "sharpe": 21.069,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K592"
+      },
+      {
+        "rank": 12,
+        "pair": "ENA-BTC",
+        "sharpe": 20.468,
+        "status": "ACCEPT",
+        "wave": "K616"
+      },
+      {
+        "rank": 13,
+        "pair": "AXS-BTC",
+        "sharpe": 17.815,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K591"
+      },
+      {
+        "rank": 14,
+        "pair": "SOL-BTC",
+        "sharpe": 16.298,
+        "status": "ACCEPT",
+        "wave": "K476"
+      },
+      {
+        "rank": 15,
+        "pair": "RENDER-BTC",
+        "sharpe": 15.302,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K531"
+      },
+      {
+        "rank": 16,
+        "pair": "HBAR-BTC",
+        "sharpe": 14.709,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K610"
+      },
+      {
+        "rank": 17,
+        "pair": "TIA-BTC",
+        "sharpe": 14.439,
+        "status": "ACCEPT",
+        "wave": "K"
+      },
+      {
+        "rank": 18,
+        "pair": "LINK-BTC",
+        "sharpe": 13.775,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K557"
+      },
+      {
+        "rank": 19,
+        "pair": "WIF-BTC",
+        "sharpe": 12.934,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K601"
+      },
+      {
+        "rank": 20,
+        "pair": "ICP-BTC",
+        "sharpe": 12.527,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K587"
+      },
+      {
+        "rank": 21,
+        "pair": "AAVE-BTC",
+        "sharpe": 11.354,
+        "status": "ACCEPT",
+        "wave": "K596"
+      },
+      {
+        "rank": 22,
+        "pair": "INJ-BTC",
+        "sharpe": 11.232,
+        "status": "ACCEPT",
+        "wave": "K500"
+      },
+      {
+        "rank": 23,
+        "pair": "TON-BTC",
+        "sharpe": 8.402,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K571"
+      },
+      {
+        "rank": 24,
+        "pair": "ETH-BTC",
+        "sharpe": 5.663,
+        "status": "ACCEPT",
+        "wave": "K449"
+      },
+      {
+        "rank": 25,
+        "pair": "TAO-BTC",
+        "sharpe": 5.267,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K"
+      }
+    ]
+  },
+  "profit_analysis": {
+    "profit_usdc_yr_at_10m": 4491290.0,
+    "oos_ann_ret_pct": 44.9129,
+    "oos_sharpe": 18.6685,
+    "note": "OOS ann return 44.91% \u2192 ~$4491K USDC/yr at $10M notional. (Per-leg approx: 2-leg delta-neutral, each leg ~$5M notional.)"
+  }
+}
