@@ -1,6 +1,61 @@
 # K302a Master Deployment Playbook — Single Source of Truth
-**Version:** 6.40 CANDIDATE | **Updated:** 2026-05-30 13:38 JST | **Wave:** K674 SESSION CAPSTONE (supersedes K666/K657/K643)
-**Status:** ACTIVE USER ACTIVATION GUIDE — v6.40 CANDIDATE: 10 orthog + 3 ETH-base | HL 64.0% (<65% cap) | mid $20.9M @$10M | 5y $112M
+**Version:** 6.40 CANDIDATE | **Updated:** 2026-05-30 14:56 JST | **Wave:** K692 GOVERNANCE v7 QUICK (supersedes K674/K666/K657/K643)
+**Status:** ACTIVE USER ACTIVATION GUIDE — v6.40 CANDIDATE + alt-alt $665K | 57 daemons | HL 64.0% (<65% cap) | mid $21.6M combined @$10M | 5y $112M+
+
+---
+
+## ★★★★★ K692 GOVERNANCE v7 QUICK MODE — 36-Wave Audit (2026-05-30 14:56 JST)
+
+> **K692 SCOPE:** K657→K691 (36 waves) | 57 daemons (5 new) | 44 closed lines (6 new)
+> **ALT-ALT VALIDATED:** 4 ACCEPT + K690 SEI-SOL = combined **$665K @$10M** all Bybit-only
+> **K688 REJECT:** APT-INJ = K679+K684 algebraically (SOL cancels) — algebraic group CLOSED
+> **ETH-base LINE CLOSED:** 3/11 ACCEPT, canonical after K672 11-wave systematic
+> **v6.40 CANDIDATE:** 29 sleeves | HL 64.0% | mid $20.9M/yr @$10M | 5y $112M
+> **COMBINED STACK MID:** ~$21.6M/yr @$10M (K523 range: $15.5M / $21.6M / $49M)
+> **NEW MEMORY RULES:** MR8 Alt-alt algebraic group | MR9 Math identity pre-check
+> **NEXT:** K697 quick (+5w) | K712 full v8 (+20w)
+
+### Alt-Alt Family (NEW K692)
+
+| Daemon | Pair | OOS Sh | Profit @$10M | Status |
+|--------|------|--------|--------------|--------|
+| #55 k679-apt-sol | APT-SOL | 39.285 | $234,781 | SCAFFOLD-READY 60d paper |
+| #55 k682-atom-sol | ATOM-SOL | 43.428 | $214,638 | SCAFFOLD-READY 60d paper |
+| #56 k684-sol-inj | SOL-INJ | 9.647 | $114,316 | SCAFFOLD-READY 60d paper |
+| #57 k686-avax-sol | AVAX-SOL | 50.268 | $102,153 | SCAFFOLD-READY 60d paper |
+| #58(cand) k690-sei-sol | SEI-SOL | 25.109 | $104,774 | SCAFFOLD-PENDING K691 |
+| K688 APT-INJ | — | 23.171 | **REJECT** | Algebraic bridge G5d=0.6137 |
+
+**Combined: $665K @$10M (pending 60d gate, all Bybit-only)**
+
+### New Memory Rules (K692)
+
+| Rule | Key Principle |
+|------|---------------|
+| MR8 Alt-alt algebraic group (K688) | 4-pair {APT-SOL, ATOM-SOL, SOL-INJ, AVAX-SOL} is algebraically closed. Cross-products (APT-INJ, AVAX-ATOM, etc.) = linear combinations of existing pairs. New alt-alt must use token OUTSIDE group (e.g. SEI, TIA, SUI, KAVA). |
+| MR9 Math identity pre-check (K688) | Before backtesting new alt-alt pair: verify algebraic independence (2 min). APT-INJ = K679+K684, TIA-APT uses APT shared with K679/K512. Verify new_pair ≠ linear_combination(existing_pairs). |
+
+### D60 Gate Cascade — 2026-07-29 (ALL Scaffolds)
+
+```bash
+# ALT-ALT — Bybit (execute in Sharpe order)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k686-avax-sol.plist    # Sh=50.27 $102K
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k682-atom-sol.plist    # Sh=43.43 $215K
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k679-apt-sol.plist     # Sh=39.29 $235K
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k690-sei-sol.plist     # Sh=25.11 $105K (pending K691)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k684-sol-inj.plist     # Sh=9.65  $114K
+```
+
+### Critical Concerns (K692 Updated)
+
+| ID | Severity | Issue | Action |
+|----|----------|-------|--------|
+| CC1 | **CRITICAL** | HL 64.0%/65.0% cap — 1pp headroom | K552 FIRST before any new HL sleeve |
+| CC2 | **HIGH** | K280 dashboard stale 100+h | Verify launchctl + force dashboard refresh |
+| CC3 | **HIGH** | BTC TRANSITION slope=-34.41 | Monitor daily; K552 prereq before BULL |
+| CC4 | **HIGH** | D60 gate cascade 2026-07-29 (17 concurrent LIVE) | D30 audit 2026-06-29 |
+| CC5 | MEDIUM | 57 daemons — 0 ACTIVE | Execute Phase A immediately |
+| CC6 | MEDIUM | Alt-alt SOL triple-exposure | Monitor combined SOL notional <15% AUM |
 
 ---
 
