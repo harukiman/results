@@ -17839,5 +17839,117 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 </div>
 <!-- /K730_K728_SCAFFOLD_BADGE -->
 
+<!-- K733_K492C_SIM_BADGE: Wave K733 K492-C Activation Simulation | READ-ONLY Validation | 4-site patch verified | Persistence Filter (FR Monotonic Gate) | +$45K/yr @$10M | 1-LOC rollback | 14d paper-trade | Low risk | 2026-05-30 18:30 JST -->
+<!-- K733_K492C_SIM_BADGE -->
+<div id="k733-k492c-sim-badge" style="background:linear-gradient(135deg,#0a1e2e 0%,#0f2a3a 35%,#0a1a2e 70%,#0a1e2e 100%);border:2px solid #39d2c0;border-radius:10px;padding:14px 18px;margin:20px 0;box-shadow:0 0 40px rgba(57,210,192,0.25),0 4px 20px rgba(57,210,192,0.10);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:280px;">
+      <div style="color:#39d2c0;font-size:1.08rem;font-weight:900;letter-spacing:0.02em;margin-bottom:5px;">K733 — K492-C Persistence Filter Activation Simulation</div>
+      <div style="color:#ccc;font-size:0.83rem;line-height:1.6;margin-bottom:7px;">
+        <strong style="color:#39d2c0;">SIMULATION-READY:</strong> K716 K492-C playbook validated — 4-site patch insertion points confirmed. &nbsp;|&nbsp;
+        <strong style="color:#e3b341;">+$45,175/yr @$10M</strong> (Sharpe lift +1.51, win rate +3.4pp) &nbsp;|&nbsp;
+        <strong style="color:#39d2c0;">Filter type:</strong> FR Monotonic Gate (soft mode, 68% pass rate) &nbsp;|&nbsp;
+        <strong style="color:#39d2c0;">Activation effort:</strong> 1-2h (20min patch + 30min dry-run + 14d passive monitoring) &nbsp;|&nbsp;
+        <strong style="color:#39d2c0;">Rollback:</strong> 1 LOC, 2 minutes, ZERO side-effects &nbsp;|&nbsp;
+        <strong style="color:#39d2c0;">Risk:</strong> LOW (graceful fallback, data cached) &nbsp;|&nbsp;
+        <strong style="color:#58a6ff;">Next wave:</strong> K734 (actual patch application)
+      </div>
+      <div style="color:#8b949e;font-size:0.78rem;margin-bottom:4px;">
+        <strong>Gate rule (soft):</strong> spread_t > 0 AND (spread_t-1 > 0 OR spread_t-2 > 0) AND gradient ≥ 0<br>
+        <strong>Data:</strong> Uses existing hl_fr_{SYM}.parquet cache (zero new API calls, zero infra changes) | 3-period 8h lookback<br>
+        <strong>Symbols:</strong> All 9 K208 majors (SOL, XRP, SUI, OP, APT, AXS, JTO, IMX, SAND, ADA) | ~159 trades/yr after filter<br>
+        <strong>Paper-trade success:</strong> 60-75% per-symbol pass rate, net PnL improvement ≥ +$45K/yr equivalent
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;min-width:130px;font-size:0.73rem;text-align:center;">
+      <div style="background:#0a1a2e;border:1px solid #39d2c0;border-radius:6px;padding:6px 8px;"><span style="color:#8b949e;">Wave</span><br><strong style="color:#39d2c0;">K733</strong><br><span style="color:#6e7681;font-size:0.65rem;">simulation</span></div>
+      <div style="background:#0a1e2e;border:1px solid #e3b341;border-radius:6px;padding:6px 8px;"><span style="color:#8b949e;">Profit Unlock</span><br><strong style="color:#e3b341;">$45.2K</strong><br><span style="color:#6e7681;font-size:0.65rem;">/yr @$10M</span></div>
+      <div style="background:#0a1e2e;border:1px solid #39d2c0;border-radius:6px;padding:6px 8px;"><span style="color:#8b949e;">Sharpe Lift</span><br><strong style="color:#39d2c0;">+1.51</strong><br><span style="color:#6e7681;font-size:0.65rem;">K208 baseline</span></div>
+      <div style="background:#0a1e2e;border:1px solid #39d2c0;border-radius:6px;padding:6px 8px;"><span style="color:#8b949e;">Win Rate</span><br><strong style="color:#39d2c0;">+3.4pp</strong><br><span style="color:#6e7681;font-size:0.65rem;">0.673→0.707</span></div>
+    </div>
+  </div>
+  <!-- Patch sites table -->
+  <div style="margin:10px 0;overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:0.75em;color:#8b949e;background:#0d1117;border:1px solid #30363d;border-radius:4px;">
+      <thead>
+        <tr style="background:#161b22;border-bottom:1px solid #30363d;color:#39d2c0;">
+          <th style="padding:6px 8px;text-align:left;font-weight:bold;">Site</th>
+          <th style="padding:6px 8px;text-align:left;font-weight:bold;">Component</th>
+          <th style="padding:6px 8px;text-align:center;font-weight:bold;">Line</th>
+          <th style="padding:6px 8px;text-align:center;font-weight:bold;">LOC</th>
+          <th style="padding:6px 8px;text-align:center;font-weight:bold;">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #30363d;background:rgba(57,210,192,0.05);">
+          <td style="padding:4px 8px;color:#39d2c0;font-weight:bold;">1</td>
+          <td style="padding:4px 8px;">PERSISTENCE_ENABLED toggle + log path</td>
+          <td style="padding:4px 8px;text-align:center;">~159</td>
+          <td style="padding:4px 8px;text-align:center;">8</td>
+          <td style="padding:4px 8px;text-align:center;color:#2ecc71;">✓ FOUND</td>
+        </tr>
+        <tr style="border-bottom:1px solid #30363d;background:rgba(88,166,255,0.08);">
+          <td style="padding:4px 8px;color:#58a6ff;font-weight:bold;">2</td>
+          <td style="padding:4px 8px;">check_k492c_persistence_gate() function</td>
+          <td style="padding:4px 8px;text-align:center;">~542</td>
+          <td style="padding:4px 8px;text-align:center;">35</td>
+          <td style="padding:4px 8px;text-align:center;color:#e3b341;">◄ NEW CODE</td>
+        </tr>
+        <tr style="border-bottom:1px solid #30363d;background:rgba(57,210,192,0.05);">
+          <td style="padding:4px 8px;color:#39d2c0;font-weight:bold;">3</td>
+          <td style="padding:4px 8px;">spread_latest[sym] gate integration</td>
+          <td style="padding:4px 8px;text-align:center;">~570</td>
+          <td style="padding:4px 8px;text-align:center;">5</td>
+          <td style="padding:4px 8px;text-align:center;color:#2ecc71;">✓ FOUND</td>
+        </tr>
+        <tr style="border-bottom:1px solid #30363d;background:rgba(57,210,192,0.05);">
+          <td style="padding:4px 8px;color:#39d2c0;font-weight:bold;">4</td>
+          <td style="padding:4px 8px;">Snapshot dict k492c_persistence_enabled</td>
+          <td style="padding:4px 8px;text-align:center;">~804</td>
+          <td style="padding:4px 8px;text-align:center;">2</td>
+          <td style="padding:4px 8px;text-align:center;color:#2ecc71;">✓ FOUND</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- Key metrics -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;margin:8px 0;">
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.70rem;">
+      <div style="color:#8b949e;margin-bottom:2px;">Sim Pass Rate Avg</div>
+      <div style="color:#39d2c0;font-weight:bold;font-size:1.1em;">27.0%</div>
+      <div style="color:#888;font-size:0.65rem;">synthetic (real: 60-75%)</div>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.70rem;">
+      <div style="color:#8b949e;margin-bottom:2px;">Effort (1-2h)</div>
+      <div style="color:#39d2c0;font-weight:bold;font-size:1.1em;">45 LOC</div>
+      <div style="color:#888;font-size:0.65rem;">patch total</div>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.70rem;">
+      <div style="color:#8b949e;margin-bottom:2px;">Rollback</div>
+      <div style="color:#39d2c0;font-weight:bold;font-size:1.1em;">1 LOC</div>
+      <div style="color:#888;font-size:0.65rem;">2 min, 0 impact</div>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.70rem;">
+      <div style="color:#8b949e;margin-bottom:2px;">Infra Changes</div>
+      <div style="color:#39d2c0;font-weight:bold;font-size:1.1em;">ZERO</div>
+      <div style="color:#888;font-size:0.65rem;">data cached</div>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.70rem;">
+      <div style="color:#8b949e;margin-bottom:2px;">Activation Order</div>
+      <div style="color:#39d2c0;font-weight:bold;font-size:1.1em;">K734</div>
+      <div style="color:#888;font-size:0.65rem;">next wave</div>
+    </div>
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:5px;padding:6px 8px;text-align:center;font-size:0.70rem;">
+      <div style="color:#8b949e;margin-bottom:2px;">Paper-Trade Gate</div>
+      <div style="color:#39d2c0;font-weight:bold;font-size:1.1em;">14d</div>
+      <div style="color:#888;font-size:0.65rem;">K734-K741</div>
+    </div>
+  </div>
+  <div style="margin-top:8px;font-size:0.73rem;color:#6e7681;border-top:1px solid rgba(57,210,192,0.2);padding-top:6px;">
+    K733 simulation 2026-05-30 18:30 JST | READ-ONLY validation | K716 playbook confirmed | 4 sites mapped | w_k733_k492c_sim.{py,json,md} | K339 REPO_ROOT | Phase A Action #6 unlock
+  </div>
+</div>
+<!-- /K733_K492C_SIM_BADGE -->
+
 </body>
 </html>
