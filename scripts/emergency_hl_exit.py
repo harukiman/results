@@ -4160,6 +4160,72 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K699: K696 ENA-SOL FR Differential emergency exit flag
+    # K696 = Bybit-only ENA+SOL paired (2 legs, SEVENTH ALT-ALT pair, FIRST CROSS-CLUSTER, ACCEPT).
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — Bybit-only preferred, HL stays at 62.5%).
+    # Signal: diff = ENA_FR - SOL_FR (direct alt-alt cross-cluster, W=168h rolling mean, zero threshold).
+    # MR6 ENA cap: K616 (existing ENA-BTC) + K696 (ENA-SOL) combined ENA — close K696 standalone.
+    # SOL-exposure: K696+K694+K690+K686+K684+K682+K679+K476 all share SOL leg — close independently.
+    # Bybit-only: ENA-PERP + SOL-PERP both on Bybit. HL UNCHANGED at 62.5%.
+    # Use --include-k696 to print K696-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k696",
+        dest="include_k696",
+        action="store_true",
+        default=False,
+        help=(
+            "K699: Include K696 ENA-SOL close summary during emergency exit. "
+            "K696 positions (ENA+SOL paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Signal: diff = ENA_FR - SOL_FR (direct alt-alt cross-cluster, W=168h rolling mean, zero threshold). "
+            "HL concentration UNCHANGED at 62.5% (Bybit-only — no HL positions, headroom preserved). "
+            "HL-only would push HL to 65.5% (OVER 65% cap) — Bybit-only mandatory for K696. "
+            "OOS Sharpe 26.93 (SEVENTH ALT-ALT, FIRST CROSS-CLUSTER, ACCEPT 15/17 gates G4 11/12). $93,187/yr net @$10M @4x (3% standalone). "
+            "MR6 ENA cap: K616 ENA-BTC + K696 ENA-SOL combined ENA < 6% AUM — close K696 STANDALONE from K616. "
+            "MR8/MR9: ENA new vertex (outside alt-alt algebraic group). ENA-SOL = K616_dir - K476_dir (K616 perp K476, corr=0.0094). "
+            "G5b K476 corr=0.1765 PASS. G5c K616 corr=-0.7427 signed PASS (PnL corr=0.6723 complementary). "
+            "ENA FR: Ethena sUSDe protocol equity (sUSDe yield = stETH + perp short capture, -7.65%/ann mean). "
+            "SOL FR: DePIN/Retail/meme-coin premium (BONK/WIF/POPCAT, Firedancer, ETF, +7.70% ann persistent). "
+            "Double carry: ENA FR < 0 (37.2% of time) — SHORT ENA earns |ENA FR| + SHORT SOL earns SOL FR simultaneously. "
+            "SOL exposure: K696+K694+K690+K686+K684+K682+K679+K476 share SOL (8 strategies) — close independently, monitor combined SOL notional. "
+            "Cluster: ENA-SOL Alt-Alt FIRST CROSS-CLUSTER (synth stable infra vs SVM retail, 60th daemon MILESTONE). "
+            "Requires: K696 daemon running (com.cryptolab.k696-ena-sol, 60th daemon). "
+            "See: docs/k302a_runbook.md §62"
+        ),
+    )
+
+    # K701: K698 LINK-ETH emergency exit flag
+    # K698 = Bybit-only LINK+ETH paired (2 legs), direct FR differential W=120h rolling mean.
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 64.5%).
+    # Bybit-only: HL-only would push HL from 64.5% to 67.0% > 65% cap.
+    # LINK-ETH: oracle middleware (Chainlink) vs Ethereum L1 (DeFi/staking). 4th ETH-base scaffold.
+    # Use --include-k698 to print K698-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k698",
+        dest="include_k698",
+        action="store_true",
+        default=False,
+        help=(
+            "K701: Include K698 LINK-ETH close summary during emergency exit. "
+            "K698 positions (LINK+ETH paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Signal: diff = LINK_FR - ETH_FR (direct differential, W=120h rolling mean, zero threshold). "
+            "HL concentration UNCHANGED at 64.5% (Bybit-only — HL-only would push to 67.0% > 65% cap). "
+            "OOS Sharpe 12.07 (W=120h, 8/8 §6 gates, oracle vs ETH L1). $28,997/yr net @$10M @4x (2.5% sleeve). "
+            "G5a K557 LINK-BTC critical: corr=0.0578 PASS. G5b K449 ETH-BTC critical: corr=-0.0036 PASS. "
+            "K695 lesson: LINK-SOL REJECTED G5c=0.497. K698 avoids SOL leg — clean oracle expansion. "
+            "MR9: LINK-ETH = LINK-BTC - ETH-BTC (max_err=5.42e-20). Position corr=0.1254 de-correlated. "
+            "K557 coordination: LINK in K557 1.5% + K698 2.5% = 4.0% max combined LINK AUM. "
+            "LINK FR: oracle demand (Chainlink integrations, CCIP, feed launches, MM floor ~1.25e-5/hr). "
+            "ETH FR: DeFi/staking yields (stETH/LST demand, Pectra upgrades, L1 gas). "
+            "Cluster: Oracle middleware vs Ethereum L1 (4th ETH-base scaffold, 1st oracle-ETH pair, 61st daemon). "
+            "Requires: K698 daemon running (com.cryptolab.k698-link-eth, 61st daemon). "
+            "See: docs/k302a_runbook.md §62"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -5071,6 +5137,76 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "Close K694 on Bybit independently of K476/K690. "
                 "Use --include-k694 for Bybit close summary (§61). "
                 "HL concentration UNCHANGED at 62.5%."
+            )
+
+        # K699: K696 ENA-SOL close summary (Bybit-only — HL NOT affected)
+        # K696 positions (ENA+SOL, Bybit-only) are NOT in the HL exit above.
+        # K696 is Bybit-only (HL at 62.5%, Bybit-only mandatory — HL-only would breach 65% cap). HL UNCHANGED.
+        # Close K696 independently of K616 ENA-BTC and K694/K690 SOL strategies (standalone).
+        # MR6: combined ENA notional (K616+K696) < 6% AUM — close K696 standalone, monitor ENA combined.
+        # Note: K696+K694+K690+K686+K684+K682+K679+K476 all share SOL leg — close independently.
+        if args.include_k696:
+            logger.info("=== K696 ENA-SOL CLOSE SUMMARY (K699 §62 ALT-ALT) ===")
+            logger.info("  K696 ENA-SOL: Bybit-only (ENA-PERP + SOL-PERP both legs on Bybit)")
+            logger.info("  SEVENTH ALT-ALT pair, FIRST CROSS-CLUSTER: ENA synth stable infra vs SOL SVM retail")
+            logger.info("  Signal: diff = ENA_FR - SOL_FR (direct alt-alt cross-cluster, W=168h rolling mean, zero threshold)")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BEAR_ENA (dominant 61.5%): short ENA first → sell long SOL second")
+            logger.info("  BULL_ENA (sUSDe surge 38.5%): short SOL first → sell long ENA second")
+            logger.info("  HL concentration: UNCHANGED at 62.5% (K696 is Bybit-only — HL-only would breach 65% cap)")
+            logger.info("  MR8/MR9: ENA new vertex. ENA-SOL = K616_dir - K476_dir (K616 perp K476, corr=0.0094)")
+            logger.info("  MR6 ENA cap: K616 ENA-BTC + K696 ENA-SOL combined ENA < 6% AUM — close K696 STANDALONE")
+            logger.info("  G5b K476 corr=0.1765 PASS. G5c K616 corr=-0.7427 signed PASS (PnL corr K616=0.6723).")
+            logger.info("  SOL exposure: K696+K694+K690+K686+K684+K682+K679+K476 share SOL (8 strategies) — close independently")
+            logger.info("  Double carry: ENA FR < 0 (37.2% of time) — SHORT ENA earns |ENA FR| + SHORT SOL earns SOL FR")
+            logger.info("  ENA FR: Ethena sUSDe protocol equity (-7.65%/ann mean, structurally negative)")
+            logger.info("  SOL FR: DePIN/Retail premium (BONK/WIF/POPCAT, Firedancer, ETF, +7.70% ann)")
+            logger.info("  OOS Sh=26.93 (ACCEPT 15/17 gates, G4 11/12, G6 20.8/yr). $93,187/yr net @$10M @4x (3% sleeve)")
+            logger.info("  ADF stat -13.0808 (strongest stationary in alt-alt family). OU half-life=3.75h STRONG.")
+            logger.info("  60d gate: Realized Sh>=13 + fill>=60% + maxDD<15%")
+            logger.info("  60th daemon MILESTONE: 7th alt-alt accepted, 9th evaluated, FIRST CROSS-CLUSTER")
+            logger.info("  See: docs/k302a_runbook.md §62 (K696 ENA-SOL alt-alt playbook)")
+        else:
+            logger.info(
+                "K696 ENA-SOL: Bybit-only (NOT HL — HL at 62.5%, Bybit-only mandatory). "
+                "K696 positions ARE NOT in the HL exit above (Bybit-only). "
+                "Close K696 on Bybit independently of K616/K694/K690. "
+                "Use --include-k696 for Bybit close summary (§62 alt-alt). "
+                "HL concentration UNCHANGED at 62.5%. MR6 ENA cap: K616+K696 < 6% AUM."
+            )
+
+        # K701: K698 LINK-ETH close summary (Bybit-only — HL NOT affected)
+        # K698 positions (LINK+ETH, Bybit-only) are NOT in the HL exit above.
+        # K698 is Bybit-only (HL at 64.5%, Bybit-only mandatory — HL-only would push to 67.0% > 65% cap). HL UNCHANGED.
+        # K557 LINK leg coordination: close K698 LINK-ETH and K557 LINK-BTC independently.
+        # Combined LINK exposure: K557 ~1.5% + K698 2.5% = 4.0% max LINK AUM — close both on Bybit.
+        if args.include_k698:
+            logger.info("=== K698 LINK-ETH CLOSE SUMMARY (K701 §62) ===")
+            logger.info("  K698 LINK-ETH: Bybit-only (LINK-PERP + ETH-PERP both legs on Bybit)")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_LINK (dominant, 74.5% time): short ETH first → sell long LINK second")
+            logger.info("  BEAR_LINK (ETH premium): short LINK first → sell long ETH second")
+            logger.info("  HL concentration: UNCHANGED at 64.5% (K698 is Bybit-only — HL-only would breach 65% cap)")
+            logger.info("  MR9: LINK-ETH = LINK-BTC - ETH-BTC (FR-level max_err=5.42e-20 confirmed)")
+            logger.info("  Position-level corr=0.1254 de-correlated (different W=120h vs K557 W=168h)")
+            logger.info("  K695 lesson: LINK-SOL REJECTED G5c=0.497. K698 avoids SOL. G5a K557=0.0578 PASS.")
+            logger.info("  G5a corr(K698, K557 LINK-BTC) = 0.0578 PASS (CRITICAL — clean LINK expansion)")
+            logger.info("  G5b corr(K698, K449 ETH-BTC) = -0.0036 PASS (CRITICAL anti-corr)")
+            logger.info("  K557 coord: K557 LINK-BTC ~1.5% + K698 LINK-ETH 2.5% = 4.0% max combined LINK AUM")
+            logger.info("  Close K698 STANDALONE (independent of K557, K449 — de-correlated execution)")
+            logger.info("  LINK FR: oracle middleware anchor ~1.25e-5/hr (DeFi integrations, CCIP, feeds)")
+            logger.info("  ETH FR: DeFi/staking yields (stETH/LST demand, Pectra upgrades, L1 gas)")
+            logger.info("  OOS Sh=12.07 (W=120h), $28,997/yr net @$10M @4x (2.5% sleeve)")
+            logger.info("  60d gate: Realized Sh>=6 + fill>=60% + maxDD<15%")
+            logger.info("  4th ETH-base scaffold, 1st oracle-ETH pair (K629/K658/K661/K698 ETH-base family)")
+            logger.info("  See: docs/k302a_runbook.md §62 (K698 LINK-ETH playbook)")
+        else:
+            logger.info(
+                "K698 LINK-ETH: Bybit-only (NOT HL — HL at 64.5%, Bybit-only mandatory). "
+                "K698 positions ARE NOT in the HL exit above (Bybit-only). "
+                "Close K698 on Bybit independently of K557/K449. "
+                "Use --include-k698 for Bybit close summary (§62). "
+                "HL concentration UNCHANGED at 64.5%."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)

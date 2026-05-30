@@ -469,6 +469,20 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k694_tia_sol",
         expected_html_status="SCAFFOLD-READY",  # K697: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=9 + fill>=60% + maxDD<15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k696-ena-sol",
+        purpose="K696 ENA-SOL FR Differential (SEVENTH ALT-ALT MILESTONE FIRST CROSS-CLUSTER 9th-evaluated, Ethena synth stable infra vs Solana SVM retail, Bybit-only ENA-PERP+SOL-PERP both legs, 4x leverage, 8h cycle, OOS Sh 26.93 W=168h direct alt-alt cross-cluster diff, $93,187/yr net @$10M @4x @3% standalone sleeve, HL 62.5% Bybit-only mandatory HL-only would breach 65% cap, ENA new vertex MR8/MR9 PASS ENA-SOL=K616-K476 K616perp K476 corr=0.0094 independent, G5b K476 corr=0.1765 PASS SOL saturation CRITICAL G5c K616 corr=-0.7427 signed PASS MR6 ENA cap<6%AUM PnL-corr=0.6723 complementary, double carry ENA FR<0 37.2% time SOL_FR+|ENA_FR| both-legs-positive, ADF stat=-13.0808 p=0 strongest-stationary OU hl=3.75h STRONG, regime-dist 61.5% BEAR_ENA 38.5% BULL_ENA, 60d paper-trade gate Realized Sh>=13 fill>=60% maxDD<15%, v6.51 candidate 3% sleeve, 60th daemon MILESTONE 7th alt-alt ACCEPT 15/17 G4 11/12 G6 20.8/yr, K699 scaffold)",
+        scripts=["scripts/k696_ena_sol_run.py"],
+        log_basename="k696_ena_sol",
+        expected_html_status="SCAFFOLD-READY",  # K699: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=13 + fill>=60% + maxDD<15%)
+    ),
+    DaemonSpec(
+        label="com.cryptolab.k698-link-eth",
+        purpose="K698 LINK-ETH FR Differential (oracle middleware vs Ethereum L1, Bybit-only LINK-PERP+ETH-PERP both legs, 4x leverage, 8h cycle, OOS Sh 12.07 W=120h direct diff, $28,997/yr net @$10M @4x @2.5% sleeve, HL 64.5% UNCHANGED Bybit-only mandatory HL-only would push 67%>65% cap, G5a K557 LINK-BTC corr=0.0578 PASS CRITICAL G5b K449 ETH-BTC corr=-0.0036 PASS CRITICAL all 11/11 G5 PASS, MR9 FR identity max_err=5.42e-20 position-level corr=0.1254 de-correlated, K695 LINK-SOL REJECTED G5c=0.497 K698 avoids SOL clean oracle expansion, K557 coord LINK-BTC 1.5%+K698 LINK-ETH 2.5%=4% max combined LINK AUM, LINK FR=Chainlink oracle integrations CCIP feed-launches MM floor ~1.25e-5/hr anchor ETH FR=DeFi staking LST demand Pectra upgrades, ADF stat=-18.82 p=0.0 OU hl=1.45h ultra-fast MR LINK>ETH 74.5% time, 60d paper-trade gate Realized Sh>=6 fill>=60% maxDD<15%, v6.50 candidate 2.5% sleeve, 61st daemon 4th ETH-base scaffold 1st oracle-ETH pair, K701 scaffold)",
+        scripts=["scripts/k698_link_eth_run.py"],
+        log_basename="k698_link_eth",
+        expected_html_status="SCAFFOLD-READY",  # K701: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=6 + fill>=60% + maxDD<15%)
+    ),
 ]
 
 

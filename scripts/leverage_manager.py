@@ -88,6 +88,8 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K686_AVAX_SOL": 4.0,   # K689: AVAX-SOL FR Differential (FOURTH ALT-ALT pair, Bybit-only, 3% standalone sleeve, 4x leverage, OOS Sh 50.27 W=168h direct alt-alt diff, $102,153/yr net @$10M @4x, Avalanche Subnet institutional vs Solana SVM retail, HL 62.5% Bybit-only preferred headroom preserved, K484+K476 algebraic overlap anti-corr=-0.6295 HEDGES K484 — standalone, K682/K679 SOL triple-exposure monitor, 60d gate Sh>=25, 57th daemon 4th alt-alt HIGHEST Sh in family)
     "K690_SEI_SOL":  4.0,   # K693: SEI-SOL FR Differential (FIFTH ALT-ALT pair, Bybit-only, 3% standalone sleeve, 4x leverage, OOS Sh 25.11 W=168h direct alt-alt diff, $104,174/yr net @$10M @4x, Cosmos EVM parallel vs Solana SVM retail, HL 62.5% Bybit-only preferred headroom preserved, K507+K476 algebraic overlap anti-corr=-0.5109 HEDGES K507 — standalone, K682/K686 SOL triple-exposure monitor, 60d gate Sh>=12, 58th daemon 5th alt-alt WF 12/12 UNPRECEDENTED)
     "K694_TIA_SOL":  4.0,   # K697: TIA-SOL FR Differential (SIXTH ALT-ALT pair, Bybit-only, 3% standalone sleeve, 4x leverage, OOS Sh 19.09 W=168h direct alt-alt diff, $58,354/yr net @$10M @4x, Celestia DA infra vs Solana SVM retail cross-architecture, HL 62.5% Bybit-only preferred headroom preserved, TIA new vertex K476 anti-corr=0.2275 PASS SOL saturation check, K691 TIA-APT lesson applied, natural SOL-short hedge to K679+K682+K686+K690, OU half-life=3.46h FASTEST in family, 60d gate Sh>=9, 59th daemon 6th alt-alt CONDITIONAL G4 11/12)
+    "K696_ENA_SOL":  4.0,   # K699: ENA-SOL FR Differential (SEVENTH ALT-ALT MILESTONE, FIRST CROSS-CLUSTER, Bybit-only, 3% standalone sleeve, 4x leverage, OOS Sh 26.93 W=168h direct alt-alt diff, $93,187/yr net @$10M @4x, Ethena synth stable infra vs Solana SVM retail, HL 62.5% Bybit-only preferred headroom preserved, ENA new vertex MR8/MR9 PASS ENA-SOL=K616-K476 corr=0.0094 orthogonal, G5b K476 corr=0.1765 PASS SOL saturation, G5c K616=-0.7427 signed PASS MR6 ENA cap<6%AUM, double carry ENA FR<0 37.2% time, ADF -13.0808 strongest, OU 3.75h STRONG, 60d gate Sh>=13, 60th daemon MILESTONE 7th alt-alt ACCEPT 15/17 G4 11/12)
+    "K698_LINK_ETH": 4.0,   # K701: LINK-ETH FR Differential (oracle vs ETH L1, Bybit-only, 2.5% sleeve, 4x leverage, OOS Sh 12.07 W=120h direct diff, $28,997/yr net @$10M @4x, Chainlink oracle middleware vs Ethereum L1 DeFi/staking, HL 64.5% UNCHANGED Bybit-only mandatory HL-only would push 67%>65% cap, G5a K557 corr=0.0578 PASS CRITICAL G5b K449 corr=-0.0036 PASS CRITICAL, MR9 FR identity max_err=5.42e-20 pos-corr=0.1254 de-corr, K695 lesson LINK-SOL G5c=0.497 BLOCKED K698 avoids SOL, K557 coord LINK 1.5%+K698 2.5%=4% max LINK AUM, 4th ETH-base scaffold 1st oracle-ETH, 60d gate Sh>=6, 61st daemon)
     "K457_basket":    4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
@@ -794,6 +796,51 @@ SLEEVE_WEIGHTS_V645: Dict[str, float] = {
     "K686":    0.03,    # AVAX-SOL FR Differential, 4x leverage, Bybit-only (v6.47 K689 addition, $102,153/yr net @3%, FOURTH ALT-ALT pair Avalanche Subnet institutional vs Solana SVM retail, HL 62.5% Bybit-only headroom preserved, K484+K476 algebraic overlap anti-corr=-0.6295 HEDGES K484 standalone, K682/K679 SOL triple-exposure monitor, 57th daemon 4th alt-alt HIGHEST Sh 50.27)
     "K690":    0.03,    # SEI-SOL FR Differential, 4x leverage, Bybit-only (v6.48 K693 addition, $104,174/yr net @3%, FIFTH ALT-ALT pair Cosmos EVM parallel vs Solana SVM retail, HL 62.5% Bybit-only headroom preserved, K507+K476 algebraic overlap anti-corr=-0.5109 HEDGES K507 standalone, K682/K686 SOL triple-exposure monitor, 58th daemon 5th alt-alt WF 12/12 UNPRECEDENTED)
     "K694":    0.03,    # TIA-SOL FR Differential, 4x leverage, Bybit-only (v6.49 K697 addition, $58,354/yr net @3%, SIXTH ALT-ALT pair Celestia DA vs Solana SVM retail cross-architecture, HL 62.5% Bybit-only headroom preserved, TIA new vertex K476 corr=0.2275 SOL saturation PASS, K691 lesson applied, natural SOL-short hedge, OU 3.46h FASTEST, 59th daemon 6th alt-alt CONDITIONAL G4 11/12)
+    "K696":    0.03,    # ENA-SOL FR Differential, 4x leverage, Bybit-only (v6.51 K699 MILESTONE addition, $93,187/yr net @3%, SEVENTH ALT-ALT FIRST CROSS-CLUSTER ENA synth stable infra vs SOL SVM retail, HL 62.5% Bybit-only headroom preserved, ENA new vertex MR8/MR9 PASS ENA-SOL=K616-K476 corr=0.0094 orthogonal, G5b K476=0.1765 PASS SOL saturation, G5c K616=-0.7427 signed PASS MR6 ENA cap<6%AUM, double carry ENA FR<0 37.2% time, ADF -13.0808 strongest, OU 3.75h STRONG, 60th daemon MILESTONE ACCEPT 15/17 G4 11/12 3rd highest OOS Sh in family)
+    "K698":    0.025,   # LINK-ETH FR Differential, 4x leverage, Bybit-only (v6.50 K701 addition, $28,997/yr net @2.5%, oracle vs ETH L1 Chainlink vs Ethereum DeFi/staking, HL 64.5% UNCHANGED Bybit-only mandatory, G5a K557=0.0578 PASS G5b K449=-0.0036 PASS CRITICAL, MR9 max_err=5.42e-20 pos-corr=0.1254, K695 LINK-SOL BLOCKED K698 avoids SOL, 4th ETH-base 1st oracle-ETH, 61st daemon)
+    "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
+}
+
+# v6.50 candidate weights (proposed in K701 — K698 LINK-ETH 2.5% Bybit-only addition)
+# K698 LINK-ETH: Bybit-only, HL 64.5% UNCHANGED, oracle vs ETH L1 mechanism
+# 4th ETH-base scaffold, 1st oracle-ETH pair (K629 WLD-ETH 49th, K658 SOL-ETH 52nd, K661 AVAX-ETH 53rd, K698 LINK-ETH 61st)
+# K557 LINK coordination: K557 1.5% HL+Bybit + K698 2.5% Bybit = 4.0% max combined LINK AUM
+SLEEVE_WEIGHTS_V646: Dict[str, float] = {
+    "K280":    0.155,   # reduced 2.5pp vs v6.45 to fund K698 LINK-ETH Bybit-only sleeve
+    "K297":    0.20,
+    "sUSDe":   0.05,
+    "K449":    0.05,    # ETH-BTC delta-neutral, 4x leverage, HL-only (v6.16 base, 5%)
+    "K476":    0.015,   # SOL-BTC delta-neutral, 4x leverage, HL-only (dual K658 1.5%)
+    "K484":    0.015,   # AVAX-BTC delta-neutral, 4x leverage, HL-only (dual K661 1.5%)
+    "K493":    0.05,    # ATOM-BTC delta-neutral, 4x leverage, HL-only (v6.24 addition, 5%)
+    "K500":    0.04,    # INJ-BTC delta-neutral, 4x leverage, HL-only (v6.25 addition, 4%)
+    "K507":    0.02,    # SEI-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.27 addition, 2%)
+    "K507_TIA": 0.015, # TIA-BTC delta-neutral, 4x leverage, HL-only 1.5% (dual with K663 TIA-ETH)
+    "K512":    0.02,    # APT-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.28 addition, $302K/yr)
+    "K541":    0.03,    # Stablecoin supply growth, 2x leverage, HL-only (v6.29 K550 addition, $294K/yr)
+    "K521":    0.03,    # Options 25d skew DVOL+skew V4, 2x leverage, HL-only (v6.30 K565 addition, $494K/yr)
+    "K628":    0.02,    # JTO-BTC orthogonalized, 4x leverage, Bybit-only (v6.31 K637 addition, $7.14M/yr)
+    "K631":    0.02,    # WLD-BTC orthogonalized, 4x leverage, Bybit-only (v6.32 K639 addition, $2.9M/yr)
+    "K633":    0.02,    # OP-BTC orthogonalized, 4x leverage, Bybit-only (v6.33 K640 addition, $2.32M/yr)
+    "K635":    0.02,    # IMX-BTC orthogonalized, 4x leverage, Bybit-only (v6.34 K641 addition, $4.78M/yr, Gaming L2 Infra)
+    "K638":    0.015,   # STX-BTC orthogonalized, 4x leverage, Bybit-only (v6.35 K642 addition, $65K/yr net, BTC-L2 cluster)
+    "K645":    0.03,    # BNB-BTC orthogonalized, 4x leverage, Bybit-only (v6.36 K650 addition, $17,694/yr net, Binance-ecosystem)
+    "K646":    0.02,    # ALGO-BTC orthogonalized, 4x leverage, Bybit-only (v6.37 K651 addition, ~$20,325/yr net, Enterprise/Utility L1)
+    "K648":    0.02,    # POL-BTC orthogonalized, 4x leverage, Bybit-only (v6.37 K652 addition, $4,293,200/yr, Polygon L2/zkEVM cluster)
+    "K647":    0.03,    # DOT-BTC orthogonalized, 4x leverage, Bybit-only (v6.38 K653 addition, ~$103,586/yr net, Polkadot relay chain, OOS R²=-4.11 caution)
+    "K629":    0.03,    # WLD-ETH FR Differential, 4x leverage, HL-primary (v6.39 K654 addition, $94,210/yr, Biometric ID Cluster 24, ETH-base fix)
+    "K656":    0.02,    # GALA-BTC dual-factor orthogonalized, 4x leverage, Bybit-only (v6.40 K659 MILESTONE, $48,143/yr net, Gaming Publisher GalaChain)
+    "K663":    0.015,   # TIA-ETH FR Differential, 4x leverage, HL-primary (v6.41 K668 addition, $63,060/yr net, Modular DA Celestia, dual with K507_TIA, 51st daemon)
+    "K658":    0.015,   # SOL-ETH FR Differential, 4x leverage, HL-primary (v6.42 K669 addition, $42,332/yr @1.5%, SOL L1 SVM DePIN-Retail, dual K476 1.5%, 52nd daemon)
+    "K661":    0.015,   # AVAX-ETH FR Differential, 4x leverage, HL-primary (v6.43 K677 addition, $63,416/yr net @1.5%, AVAX Subnet/RWA, ETH-base ACCEPT CONDITIONAL dual K484 1.5%, 53rd daemon)
+    "K587":    0.01,    # ICP-BTC FR Differential, 4x leverage, HL 0.5%+Bybit 0.5% split (v6.43 K678 addition, $21K/yr net @1%, Compute/Cloud cluster, ICP vol 8.40x highest in family, HL maxLev=5x uses 4x, 54th daemon)
+    "K679":    0.03,    # APT-SOL FR Differential, 4x leverage, Bybit-only (v6.44 K683 addition, $234,700/yr net @3%, FIRST ALT-ALT pair Move-VM vs SVM, HL 65.5% OVER cap Bybit-only, K512+K476 overlap standalone, 55th daemon)
+    "K682":    0.02,    # ATOM-SOL FR Differential, 4x leverage, Bybit-only (v6.45 K685 addition, $214,638/yr net @2%, SECOND ALT-ALT pair Cosmos IBC vs SVM, HL 62.5% Bybit preferred, K493+K476 overlap standalone anti-corr=-0.5195 HEDGES K493, 55th daemon 2nd alt-alt)
+    "K684":    0.03,    # SOL-INJ FR Differential, 4x leverage, Bybit-only (v6.46 K687 addition, $114,316/yr net @3%, THIRD ALT-ALT pair SVM DePIN-Retail vs Cosmos-DeFi-Perp, HL 62.5% Bybit-only headroom preserved, K476+K500 algebraic overlap standalone, K679+K684 SOL double-exposure monitor, 56th daemon 3rd alt-alt)
+    "K686":    0.03,    # AVAX-SOL FR Differential, 4x leverage, Bybit-only (v6.47 K689 addition, $102,153/yr net @3%, FOURTH ALT-ALT pair Avalanche Subnet institutional vs Solana SVM retail, HL 62.5% Bybit-only headroom preserved, K484+K476 algebraic overlap anti-corr=-0.6295 HEDGES K484 standalone, K682/K679 SOL triple-exposure monitor, 57th daemon 4th alt-alt HIGHEST Sh 50.27)
+    "K690":    0.03,    # SEI-SOL FR Differential, 4x leverage, Bybit-only (v6.48 K693 addition, $104,174/yr net @3%, FIFTH ALT-ALT pair Cosmos EVM parallel vs Solana SVM retail, HL 62.5% Bybit-only headroom preserved, K507+K476 algebraic overlap anti-corr=-0.5109 HEDGES K507 standalone, K682/K686 SOL triple-exposure monitor, 58th daemon 5th alt-alt WF 12/12 UNPRECEDENTED)
+    "K694":    0.03,    # TIA-SOL FR Differential, 4x leverage, Bybit-only (v6.49 K697 addition, $58,354/yr net @3%, SIXTH ALT-ALT pair Celestia DA vs Solana SVM retail cross-architecture, HL 62.5% Bybit-only headroom preserved, TIA new vertex K476 corr=0.2275 SOL saturation PASS, K691 lesson applied, natural SOL-short hedge, OU 3.46h FASTEST, 59th daemon 6th alt-alt CONDITIONAL G4 11/12)
+    "K698":    0.025,   # LINK-ETH FR Differential, 4x leverage, Bybit-only (v6.50 K701 addition, $28,997/yr net @2.5%, oracle vs ETH L1 Chainlink vs Ethereum DeFi/staking, HL 64.5% UNCHANGED Bybit-only mandatory, G5a K557=0.0578 PASS G5b K449=-0.0036 PASS CRITICAL, MR9 max_err=5.42e-20 pos-corr=0.1254, K695 LINK-SOL BLOCKED K698 avoids SOL, 4th ETH-base 1st oracle-ETH, 61st daemon)
     "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
 }
 
@@ -919,6 +966,8 @@ def compute_position_size(
         "K686":     "K686_AVAX_SOL", # K689: 4x cap for AVAX-SOL paired-trade sleeve (Bybit-only, FOURTH ALT-ALT, 3% standalone, HIGHEST Sh 50.27)
         "K690":     "K690_SEI_SOL",  # K693: 4x cap for SEI-SOL paired-trade sleeve (Bybit-only, FIFTH ALT-ALT, 3% standalone, WF 12/12 UNPRECEDENTED)
         "K694":     "K694_TIA_SOL",  # K697: 4x cap for TIA-SOL paired-trade sleeve (Bybit-only, SIXTH ALT-ALT, 3% standalone, CONDITIONAL G4 11/12, OU 3.46h FASTEST)
+        "K696":     "K696_ENA_SOL",  # K699: 4x cap for ENA-SOL paired-trade sleeve (Bybit-only, SEVENTH ALT-ALT MILESTONE, FIRST CROSS-CLUSTER, 3% standalone, ACCEPT 15/17, OOS Sh=26.93, ADF -13.08 strongest, 60th daemon)
+        "K698":     "K698_LINK_ETH", # K701: 4x cap for LINK-ETH paired-trade sleeve (Bybit-only, oracle vs ETH L1, 2.5% standalone, OOS Sh=12.07, G5a K557=0.0578 G5b K449=-0.0036 CRITICAL PASS, 4th ETH-base 1st oracle-ETH, 61st daemon)
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)

@@ -12211,3 +12211,285 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k694-tia-sol.plist
 ---
 
 *K693 §60 -- K690 SEI-SOL FR Differential production scaffold (58th daemon, FIFTH ALT-ALT pair Cosmos EVM parallel vs Solana SVM retail, OOS Sh 25.11 W=168h direct alt-alt diff $104.2K/yr net @$10M @4x 3% sleeve, Bybit-only HL 62.5% unchanged headroom preserved, K507+K476 algebraic overlap anti-corr=-0.5109 HEDGES K507 standalone, K682/K686 SOL triple-exposure monitor, mid-cap alt-alt SEI/SOL vol=1.32x ADF p=1.01e-23 OU 4.41h STRONG, SEI negative FR -3.65%/ann carry-dominant BEAR_SEI LONG SOL/SHORT SEI carry-positive both legs, G4 WF 12/12 UNPRECEDENTED first in family, 60d gate: Sh>=12 fill>=60% maxDD<15%, v6.48 candidate) -- 2026-05-30*
+
+---
+
+## §62 K698 LINK-ETH FR Differential — Production Scaffold (K701)
+
+**61st daemon | 4th ETH-base scaffold | 1st oracle-ETH pair**
+
+### §62.1 Strategy Overview
+
+K698 LINK-ETH is the 4th ETH-base scaffold and the 1st oracle-ETH pair in the FR differential family.
+
+| Parameter | Value |
+|-----------|-------|
+| Signal | `LINK_FR - ETH_FR` (direct differential) |
+| Window | W=120h (15 x 8h periods, G6-compliant 31.9 trades/yr) |
+| Threshold | Zero (sign of rolling mean) |
+| Leverage | 4x |
+| Sleeve | 2.5% of AUM |
+| Venue | Bybit primary (LINK-PERP + ETH-PERP) |
+| HL impact | UNCHANGED 64.5% (HL-only would push 67.0% > 65% cap) |
+| OOS Sharpe | 12.07 (W=120h, 8/8 §6 gates PASS) |
+| Profit | $28,997/yr net @$10M @4x @2.5% sleeve |
+| Daemon | 61st (com.cryptolab.k698-link-eth) |
+| Gate | 60d paper-trade: Sh>=6 + fill>=60% + maxDD<15% |
+
+### §62.2 Oracle-ETH Mechanism
+
+**Why LINK-ETH works (ETH-base mechanism, K695 lesson applied):**
+
+- **LINK oracle middleware FR**: Chainlink oracle demand cycles. Stable MM floor ~1.25e-5/hr. DeFi feed integration demand, CCIP cross-chain adoption, new protocol feeds, oracle security premium. LINK FR > ETH FR **74.5% of time** (oracle demand anchor persistently premium).
+- **ETH L1 FR**: DeFi/staking yields (stETH/LST demand, Pectra upgrades, L1 gas narrative). More volatile than LINK MM floor.
+- **MR9 algebraic identity**: LINK-ETH = LINK-BTC - ETH-BTC (FR-level max_err=5.42e-20). Position-level de-correlated (corr=0.1254) -- different W=120h window, different trade counts.
+- **K695 lesson**: LINK-SOL REJECTED (G5c corr=0.497 > 0.40 -- LINK shared with K557). K698 avoids SOL leg entirely. G5a corr(K698, K557)=0.0578 PASS.
+
+### §62.3 §6 Gate Results (8/8 PASS)
+
+| Gate | Result | Detail |
+|------|--------|--------|
+| G1 OOS Sharpe >= 1.0 | PASS | OOS Sh=12.07 |
+| G2 Perm p <= 0.05 | PASS | p=0.0 (1000 reshuffles) |
+| G3 DSR Bonferroni | PASS | p=0.0 (5 trials) |
+| G4 Walk-forward >= 70% | PASS | 17/21 folds (81.0%) |
+| G5a K557 LINK-BTC critical | PASS | corr=0.0578 < 0.40 |
+| G5b K449 ETH-BTC critical | PASS | corr=-0.0036 < 0.40 |
+| G6 Trades/yr >= 30 | PASS | 31.9 trades/yr (W=120h) |
+| G7 Ann ret @4x >= 5% | PASS | 2.90% x 4x = 11.60% |
+| G9 OOS days >= 180 | PASS | 217.4d OOS |
+
+### §62.4 Bybit Venue Configuration
+
+HL concentration cap applies:
+- HL baseline (post-K694): 64.5%
+- K698 LINK-ETH 2.5% sleeve if HL-only: 64.5% + 2.5% = **67.0% > 65% cap**
+- **Bybit primary resolves cap breach**: LINK maxLev=50, ETH maxLev=100
+
+### §62.5 K557 LINK Leg Coordination
+
+K557 LINK-BTC (active daemon) also has LINK leg:
+- K557 LINK-BTC: ~1.5% sleeve, HL+Bybit split
+- K698 LINK-ETH: 2.5% sleeve, Bybit-only
+- Combined LINK AUM exposure: **max 4.0%** (K557 1.5% + K698 2.5%)
+- G5a corr(K698, K557) = 0.0578 PASS -- position-level de-correlated
+- Monitor: combined LINK notional when both K557 and K698 active simultaneously
+
+### §62.6 ETH-Base Family Context
+
+| Daemon | Pair | Wave | OOS Sh |
+|--------|------|------|--------|
+| 49th | WLD-ETH | K629/K654 | 19.90 |
+| 52nd | SOL-ETH | K658/K669 | 29.66 |
+| 53rd | AVAX-ETH | K661/K677 | 28.26 |
+| **61st** | **LINK-ETH** | **K698/K701** | **12.07** |
+
+### §62.7 Paper-Trade Monitoring
+
+Monitor `data/k698_dashboard.json` every 8h cycle:
+```bash
+python3 scripts/k698_link_eth_run.py --status
+```
+
+60d gate targets:
+- Realized Sharpe >= 6 (50% of OOS 12.07)
+- Fill rate >= 60%
+- Max drawdown < 15%
+
+### §62.8 Emergency Exit
+
+```bash
+# Quick status
+python3 scripts/k698_link_eth_run.py --status
+
+# Manual close (paper-trade)
+python3 scripts/k698_link_eth_run.py --close "emergency exit"
+
+# Emergency exit with K698 Bybit summary
+python3 scripts/emergency_hl_exit.py --include-k698 --dry-run
+```
+
+### §62.9 Daemon Deployment
+
+```bash
+# Copy plist (from repo scripts/)
+cp scripts/com.cryptolab.k698-link-eth.plist ~/Library/LaunchAgents/
+
+# Load daemon (61st daemon)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k698-link-eth.plist
+
+# Verify loaded
+launchctl list | grep k698
+
+# Start paper-trade cycle manually
+python3 scripts/k698_link_eth_run.py --dry-run
+
+# Check status
+python3 scripts/k698_link_eth_run.py --status
+
+# Verify all deployments (61st daemon check)
+python3 scripts/verify_deployment_status.py
+```
+
+**Activate LIVE** (after 60d gate passage):
+```bash
+# Edit plist: set PAPER_TRADE=False
+# Reload daemon
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k698-link-eth.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k698-link-eth.plist
+```
+
+### §62.10 Deliverable Files
+
+| File | Purpose |
+|------|---------|
+| `scripts/k698_link_eth_run.py` | Phase 1: K698 strategy script (K339 pattern, W=120h, oracle vs ETH L1, Bybit primary) |
+| `scripts/com.cryptolab.k698-link-eth.plist` | Phase 2: 61st daemon plist (StartInterval 28800, Bybit primary) |
+| `data/k698_dashboard.json` | Phase 3: Dashboard (oracle-ETH diff signal, regime, oracle_eth_mechanism) |
+| `scripts/emergency_hl_exit.py` | Phase 4: Emergency exit (--include-k698 flag, §62) |
+| `scripts/leverage_manager.py` | Phase 5: Leverage manager (K698_LINK_ETH cap + SLEEVE_WEIGHTS_V646) |
+| `data/leverage_config.json` | Phase 6: Leverage config (K698_LINK_ETH: 4.0 + k698_notes) |
+| `scripts/verify_deployment_status.py` | Phase 7: Deployment verifier (61st daemon registry) |
+| `docs/k302a_runbook.md` | Phase 8: This section (§62) |
+| `report.html` | Phase 9: HTML report (K698 SCAFFOLD-READY) |
+| `wave_k701_k698_scaffold.py` | Phase 11: Wave driver (this scaffold) |
+
+### §62.11 References
+
+| Wave | Description |
+|------|-------------|
+| K701 | This section -- K698 LINK-ETH scaffold (61st daemon, v6.50 candidate) |
+| K698 | K698 analysis -- LINK-ETH ACCEPT CONDITIONAL (8/8 gates, OOS Sh 12.07) |
+| K697 | K694 TIA-SOL scaffold (59th daemon, SIXTH ALT-ALT, CONDITIONAL G4 11/12) |
+| K695 | K695 LINK-SOL REJECT (G5c corr=0.497 -- LINK-SOL lesson applied in K698) |
+| K677 | K661 AVAX-ETH scaffold (53rd daemon, 3rd ETH-base scaffold) |
+| K669 | K658 SOL-ETH scaffold (52nd daemon, 2nd ETH-base scaffold) |
+| K654 | K629 WLD-ETH scaffold (49th daemon, 1st ETH-base scaffold) |
+| K557 | K557 LINK-BTC FR differential (LINK leg coordination reference) |
+| K449 | K449 ETH-BTC FR differential (ETH leg baseline, G5b reference) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K701 §62 -- K698 LINK-ETH FR Differential production scaffold (61st daemon, 4th ETH-base scaffold 1st oracle-ETH pair, OOS Sh 12.07 W=120h direct diff $28,997/yr net @$10M @4x 2.5% sleeve, Bybit-only HL 64.5% unchanged mandatory, G5a K557=0.0578 PASS CRITICAL G5b K449=-0.0036 PASS CRITICAL 8/8 §6 gates, MR9 FR identity max_err=5.42e-20 pos-corr=0.1254 de-corr, K695 LINK-SOL BLOCKED K698 avoids SOL, K557 coord LINK 1.5%+K698 2.5%=4% max combined LINK AUM, oracle demand anchor ~1.25e-5/hr LINK>ETH 74.5% time, 60d gate: Sh>=6 fill>=60% maxDD<15%, v6.50 candidate) -- 2026-05-30*
+
+---
+
+## §63 K696 ENA-SOL FR Differential (60th Daemon MILESTONE, SEVENTH ALT-ALT, FIRST CROSS-CLUSTER)
+
+*K699 §63 -- K696 ENA-SOL FR Differential production scaffold (60th daemon MILESTONE, SEVENTH ALT-ALT 9th-evaluated FIRST CROSS-CLUSTER, Ethena synth stable infra vs Solana SVM retail, OOS Sh 26.93 W=168h direct alt-alt cross-cluster diff $93.2K/yr net @$10M @4x 3% sleeve, Bybit-only HL 62.5% unchanged headroom preserved HL-only would breach 65% cap, ENA new vertex MR8/MR9 PASS ENA-SOL=K616-K476 K616perp K476 corr=0.0094, G5b K476 corr=0.1765 PASS SOL saturation CRITICAL, G5c K616 corr=-0.7427 signed PASS MR6 ENA cap<6%AUM PnL-corr K616=0.6723 complementary, double carry ENA FR<0 37.2% time SOL+|ENA| both-legs-positive, ADF -13.0808 strongest OU 3.75h STRONG, ACCEPT 15/17 G4 11/12 G6 20.8/yr carry-positive, 60d gate: Sh>=13 fill>=60% maxDD<15%, v6.51 candidate) -- 2026-05-30*
+
+### §63.1 Strategy Overview
+
+**K696 ENA-SOL FR Differential** — SEVENTH alt-alt accepted pair (9th evaluated). Signal: `diff = ENA_FR - SOL_FR`, W=168h rolling mean, zero threshold.
+
+| Parameter | Value |
+|-----------|-------|
+| Signal | `sign(rolling_mean_168h(ENA_FR - SOL_FR))` |
+| Window | W=168h = 21 x 8h periods |
+| Threshold | Zero (sign only) |
+| OOS Sharpe | **26.93** (~216d OOS, 3rd highest in alt-alt family) |
+| OOS Ann Return | $93,187/yr net @$10M @4x (3% standalone sleeve) |
+| Section 6 | **ACCEPT** (15/17 gates PASS: G4 11/12, G6 20.8/yr below threshold) |
+| Daemon | **60th (MILESTONE)** — 7th alt-alt accepted, 9th evaluated |
+| Venue | **Bybit-only** (ENA-PERP + SOL-PERP, both Bybit) |
+| HL Concentration | **62.5% UNCHANGED** (Bybit-only: HL-only = 65.5% OVER cap) |
+| 60d Gate | Realized Sh >= 13, fill >= 60%, maxDD < 15% |
+
+### §63.2 Cross-Cluster Mechanism (FIRST CROSS-CLUSTER Alt-Alt)
+
+K696 is the FIRST cross-cluster alt-alt pair:
+
+**ENA Cluster — Synthetic Stable Infrastructure:**
+- ENA (Ethena governance) = sUSDe protocol equity
+- ENA FR mean = **-7.65%/yr** (structurally NEGATIVE — unique in alt-alt family)
+- Driven by: sUSDe TVL cycles, perp FR regime changes, protocol risk events
+- HypurrFi DROP_LINE (K337/K345): sUSDe TVL 14d -49% confirms ENA FR volatility
+
+**SOL Cluster — Solana SVM Execution Layer:**
+- SOL FR mean = **+7.70%/yr** (persistently positive)
+
+**Double Carry (unique to K696):**
+- ENA FR < 0 (37.2% of time): SHORT ENA earns |ENA FR| + SHORT SOL earns SOL_FR
+- Double carry = SOL_FR + |ENA_FR| simultaneously — unique mechanism in alt-alt family
+
+**Regime Distribution:**
+- 61.5% BEAR_ENA: SOL FR >> ENA FR → LONG SOL / SHORT ENA (carry from SOL premium + double carry)
+- 38.5% BULL_ENA: ENA FR > SOL FR → LONG ENA / SHORT SOL (rare sUSDe demand surge)
+
+### §63.3 MR8/MR9 Algebraic Compliance
+
+| Check | Result |
+|-------|--------|
+| MR8 | ENA NOT in {APT,ATOM,SOL,INJ,AVAX,SEI,TIA} group. ENA = new vertex (synth stable infra). **PASS** |
+| MR9 | ENA-SOL = K616_dir - K476_dir. K616 vs K476 corr = **0.0094** (nearly orthogonal). **PASS** |
+| MR6 | K696 (3%) + K616 existing combined ENA < 6% AUM. PnL corr K616=0.6723 (complementary). **MONITOR** |
+
+### §63.4 SOL Saturation Check
+
+| Check | Corr | Status |
+|-------|------|--------|
+| G5b (K476 SOL-BTC) | 0.1765 | **CRITICAL PASS** |
+| G5c (K616 ENA-BTC) | -0.7427 | **SIGNED PASS** (negative corr expected, ENA new vertex) |
+| G5d–G5i (existing strategies) | -0.18 to +0.27 | All PASS |
+
+SOL appears in 8 strategies after K696. Combined SOL notional (extreme): up to $4.8M @$10M. Monitor.
+
+### §63.5 Venue & HL Concentration
+
+K696 is Bybit-only. HL concentration UNCHANGED at **62.5%**.
+- Pre-K696: 62.5%
+- K696 Bybit-only: 62.5% (unchanged — headroom preserved)
+- K696 HL-only (not allowed): 65.5% OVER 65% cap
+
+### §63.6 Operational Runbook
+
+**Daemon:** `com.cryptolab.k696-ena-sol` (60th daemon MILESTONE)
+**Script:** `scripts/k696_ena_sol_run.py`
+**Logs:** `logs/k696_ena_sol.log` / `logs/k696_ena_sol.err`
+
+**Deploy (after 60d gate passage):**
+```bash
+cp scripts/com.cryptolab.k696-ena-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k696-ena-sol.plist
+# Set PAPER_TRADE=False in plist only after Sh>=13 + fill>=60% + maxDD<15%
+```
+
+**CLI:**
+```bash
+python3 scripts/k696_ena_sol_run.py --status
+python3 scripts/k696_ena_sol_run.py --dry-run
+python3 scripts/k696_ena_sol_run.py --rebalance
+python3 scripts/k696_ena_sol_run.py --close "reason"
+```
+
+**Close Protocol (Emergency):**
+1. SHORT leg first (ENA in BULL_ENA, SOL in BEAR_ENA)
+2. LONG leg second
+3. Both legs Bybit IOC reduce-only
+4. Close K696 STANDALONE (independent of K616 ENA-BTC)
+5. Monitor combined ENA notional (K616+K696 < 6% AUM)
+
+### §63.7 Performance Benchmarks
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe | 26.93 (W=168h, 3rd highest in alt-alt family) |
+| Net profit @$10M @4x @3% | $93,187/yr |
+| G4 WF folds positive | 11/12 (fold 7: Sh=-6.136, 2025-03) |
+| ADF stat | -13.0808 (strongest stationary in alt-alt family) |
+| OU half-life | 3.75h (STRONG) |
+| Double carry events | 37.2% of time |
+
+**Alt-Alt Family Rank:** K686(50.27) > K682(43.43) > K679(39.29) > **K696(26.93)** > K690(25.11) > K694(19.09) > K684(9.65)
+
+### §63.8 References
+
+| Wave | Description |
+|------|-------------|
+| K699 | This section — K696 ENA-SOL scaffold (60th daemon MILESTONE, v6.51 candidate) |
+| K696 | K696 analysis — ENA-SOL ACCEPT (SEVENTH ALT-ALT, FIRST CROSS-CLUSTER, OOS Sh 26.93) |
+| K697 | K694 TIA-SOL scaffold (59th daemon, SIXTH ALT-ALT CONDITIONAL) |
+| K616 | K616 ENA-BTC ACCEPT (ENA anchor, OOS Sh=20.47) |
+| K478 | K476 SOL-BTC scaffold (SOL algebraic component of ENA-SOL) |
+| K266 | §6 strict gate framework |

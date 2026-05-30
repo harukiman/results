@@ -1,0 +1,208 @@
+{
+  "wave": "K701",
+  "strategy": "K698 LINK-ETH FR Differential (oracle middleware vs Ethereum L1, 4th ETH-base scaffold, 1st oracle-ETH pair, Bybit primary, W=120h, 8/8 \u00a76 gates)",
+  "ts_jst": "2026-05-30 15:50 JST",
+  "daemon_number": "61st",
+  "eth_base_rank": "4th ETH-base scaffold (1st oracle-ETH pair)",
+  "oos_sharpe": 12.0676,
+  "w_hours": 120,
+  "sleeve_pct": 0.025,
+  "leverage": 4.0,
+  "profit_10m": 28997,
+  "venue": "Bybit primary (HL 64.5% UNCHANGED)",
+  "gate": "60d paper-trade: Sh>=6 + fill>=60% + maxDD<15%",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k698_link_eth_run.py",
+        "description": "Phase 1: K698 strategy script (K339 pattern, W=120h, oracle vs ETH L1, Bybit primary)",
+        "exists": true,
+        "size_bytes": 50491,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k698-link-eth.plist",
+        "description": "Phase 2: 61st daemon plist (StartInterval 28800, Bybit primary, 4th ETH-base)",
+        "exists": true,
+        "size_bytes": 4701,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k698_dashboard.json",
+        "description": "Phase 3: Dashboard (oracle-ETH diff signal, regime, oracle_eth_mechanism)",
+        "exists": true,
+        "size_bytes": 4428,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k698 flag, \u00a762)",
+        "exists": true,
+        "size_bytes": 278345,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K698_LINK_ETH 4x cap + SLEEVE_WEIGHTS_V646)",
+        "exists": true,
+        "size_bytes": 101006,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K698_LINK_ETH: 4.0 + k698_notes)",
+        "exists": true,
+        "size_bytes": 98333,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (61st daemon registry)",
+        "exists": true,
+        "size_bytes": 45844,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a762 (K698 LINK-ETH playbook)",
+        "exists": true,
+        "size_bytes": 490462,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K698 SCAFFOLD-READY banner)",
+        "exists": true,
+        "size_bytes": 1780674,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k701_k698_scaffold.py",
+        "description": "Phase 11: This wave driver file",
+        "exists": true,
+        "size_bytes": 20118,
+        "status": "PASS"
+      }
+    ],
+    "n_pass": 10,
+    "n_fail": 0,
+    "verdict": "ALL_PASS"
+  },
+  "script_checks": {
+    "k339_repo_root": true,
+    "link_eth_signal": true,
+    "w120h_window": true,
+    "sleeve_025": true,
+    "leverage_4x": true,
+    "bybit_primary": true,
+    "dashboard_path": true,
+    "fr_history_path": true,
+    "paper_trade_default": true,
+    "61st_daemon": true,
+    "oracle_eth_mechanism": true,
+    "g5a_k557_critical": true,
+    "g5b_k449_critical": true,
+    "mr9_identity": true,
+    "k695_lesson": true,
+    "k557_coordination": true
+  },
+  "dashboard_checks": {
+    "wave_k701": true,
+    "oos_sharpe_12": true,
+    "sleeve_025": true,
+    "leverage_4x": true,
+    "venue_bybit": true,
+    "hl_concentration_645": true,
+    "daemon_61st": true,
+    "gate_sharpe_6": true,
+    "oracle_eth_mechanism": true,
+    "g5a_k557_corr": true,
+    "g5b_k449_corr": true,
+    "mr9_max_err": true
+  },
+  "config_checks": {
+    "cfg_k698_cap": true,
+    "cfg_k698_notes": true,
+    "cfg_sleeve_025": true,
+    "cfg_bybit_only": true,
+    "cfg_hl_64_5": true
+  },
+  "emergency_checks": {
+    "emer_include_k698": true,
+    "emer_k698_close_summary": true,
+    "emer_bybit_only_note": true
+  },
+  "leverage_checks": {
+    "lev_k698_cap": true,
+    "lev_k698_025pct": true,
+    "lev_v646": true
+  },
+  "deployment_checks": {
+    "vds_k698_label": true,
+    "vds_61st_daemon": true
+  },
+  "html_checks": {
+    "html_61st_daemon": true,
+    "html_k698_scaffold_ready": true,
+    "html_oracle_eth": false,
+    "html_k701_banner": true
+  },
+  "dry_run": {
+    "returncode": 0,
+    "stdout_lines": [
+      "=== K698 Dashboard (\u2014) ===",
+      "{",
+      "  \"last_poll_jst\": \"\\u2014\",",
+      "  \"fr_link_current\": 0.0,",
+      "  \"fr_eth_current\": 0.0,"
+    ],
+    "stderr_lines": [],
+    "status": "PASS"
+  },
+  "activation_path": {
+    "plist": "scripts/com.cryptolab.k698-link-eth.plist",
+    "log_files": [
+      "logs/k698_link_eth.log",
+      "logs/k698_link_eth.err"
+    ],
+    "dashboard": "data/k698_dashboard.json",
+    "runbook_section": "docs/k302a_runbook.md \u00a762"
+  },
+  "commit_files": [
+    "scripts/k698_link_eth_run.py",
+    "scripts/com.cryptolab.k698-link-eth.plist",
+    "data/k698_dashboard.json",
+    "scripts/emergency_hl_exit.py",
+    "scripts/leverage_manager.py",
+    "data/leverage_config.json",
+    "scripts/verify_deployment_status.py",
+    "docs/k302a_runbook.md",
+    "report.html",
+    "wave_k701_k698_scaffold.py",
+    "wave_k701_k698_scaffold.json"
+  ],
+  "oracle_eth_notes": {
+    "g5a_k557_corr": 0.0578,
+    "g5b_k449_corr": -0.0036,
+    "mr9_fr_identity_err": 5.42e-20,
+    "mr9_pos_corr": 0.1254,
+    "k695_lesson": "LINK-SOL REJECTED (G5c=0.497). K698 avoids SOL. G5a=0.0578 PASS.",
+    "k557_coord_combined": "K557 1.5% + K698 2.5% = 4.0% max combined LINK AUM",
+    "link_gt_eth_pct": 74.5,
+    "link_mm_floor": 1.25e-05,
+    "ou_halflife_h": 1.45,
+    "adf_pvalue": 0.0
+  },
+  "section6_gates": {
+    "G1_oos_sharpe": "PASS (12.07)",
+    "G2_perm_p": "PASS (p=0.0)",
+    "G3_dsr_bonferroni": "PASS (p=0.0, 5 trials)",
+    "G4_walk_forward": "PASS (17/21=81%)",
+    "G5a_k557_link_btc": "PASS (corr=0.0578 CRITICAL)",
+    "G5b_k449_eth_btc": "PASS (corr=-0.0036 CRITICAL)",
+    "G6_trades_yr": "PASS (31.9/yr, W=120h)",
+    "G7_ann_ret_4x": "PASS (11.6% > 5%)",
+    "G9_oos_days": "PASS (217d > 180d)",
+    "total": "8/8 PASS"
+  }
+}
