@@ -16301,3 +16301,317 @@ launchctl list | grep k795
 | K523 | 3-point projection mandate |
 | K518 | 38% realized-to-stated ratio floor |
 | K498 | OKX activation prerequisite (HL% < 65%) |
+
+---
+
+## §85 K794 ME-SOL FR Differential (84th Daemon, TWENTY-SIXTH ALT-ALT, SVM NFT Marketplace × SVM, 23rd Vertex Candidate, RESEARCH_ONLY)
+
+*K797 §85 -- K794 ME-SOL FR Differential production scaffold (84th daemon, TWENTY-SIXTH ALT-ALT scaffold 23rd-vertex-candidate ME SVM-NFT-Marketplace Magic-Eden × Solana SVM, OOS Sh 19.47 IS Sh 19.13 OOS>IS-no-overfit W=84h G6-MARGINAL-30.2/yr-OOS, central $39,100/yr net @$10M @3x 0.25% sleeve K523 3-point $24.8K-$55.4K, HL ONLY ME-PERP+SOL-PERP G8-FAIL-HL-only-HIP-3-$85K/day, CONDITIONAL_ACCEPT_RESEARCH_ONLY 8/9 G8-FAIL, G2 p=0.000 timing-alpha-THIN-+0.45Sh G3-DSR-t=15.04-PASS, G4 WF 11/11 ALL-POSITIVE min_fold_sh=2.43-Fold2, G5 28/28 ALL-PASS max_corr=0.2075-G5z-EIGEN-SOL G5w-PEPE-SOL=0.057-PASS G5y-WIF-SOL=0.013-PASS G5ab-MEME-SOL=0.008-PASS meme-cluster-CLEAR, G6 30.2/yr PASS-MARGINAL G6-fallback=W48h-57/yr, G9 OOS-217d-PASS>=180d, L004-PASS ME-bidirectional carry_full=0.5713 carry_oos=0.5014, L004_DIFF-BORDERLINE full=0.282-BELOW-floor OOS=0.396-PASS G2-overrides monthly-recheck-reduce-sleeve-if-OOS<0.28, RESEARCH_ONLY HARDCODED re-eval-trigger=ME-vol>500K/day+Bybit-listing+G2>+1Sh, ME-vertex-23rd 1st-SVM-NFT-marketplace-cluster MR9-L002-all-future-ME-X-blocked, 3x-leverage-HL-max-ME, 0.25%-sleeve-liquidity-limited-$85K/day) -- 2026-05-31*
+
+### §85.1 Strategy Overview
+
+| Parameter | Value |
+|-----------|-------|
+| Strategy | K794 ME-SOL FR Differential (TWENTY-SIXTH ALT-ALT scaffold) |
+| Wave | K797 (production scaffold) |
+| Daemon | 84th daemon (`com.cryptolab.k794-me-sol`, 8h/28800s) |
+| Mode | **RESEARCH_ONLY** (hardcoded — NOT eligible for live) |
+| Signal | ME_FR - SOL_FR (direct differential, W=84h rolling mean, zero threshold) |
+| OOS Sharpe | 19.47 (W=84h, 217d OOS — G9 PASS) |
+| IS Sharpe | 19.13 (OOS > IS — no directional overfit) |
+| K523 Central | $39,100/yr @$10M @3x @0.25% sleeve |
+| K523 Conservative | $24,763/yr |
+| K523 Optimistic | $55,392/yr |
+| Sleeve | 0.25% ($25K @$10M — liquidity-limited ME $85K/day vol) |
+| Leverage | 3x (HL max for ME HIP-3 token) |
+| Venue | HL ONLY (ME-PERP + SOL-PERP on HL — no Bybit/OKX, G8 FAIL) |
+| HL Cap | 66.8% AT CAP — research-only + paper-gate strict |
+| Decision | CONDITIONAL_ACCEPT_RESEARCH_ONLY 8/9 (G8 FAIL) |
+
+### §85.2 ME vs SOL FR Economics
+
+ME (Magic Eden) is an SVM-native NFT marketplace token. FR is primarily driven by:
+
+- **NFT trading volume cycles**: Magic Eden marketplace fee speculation → FR spikes during NFT seasons
+- **SVM NFT bull/bear cycles**: Solana NFT market rotation vs ETH Blur/OpenSea market share
+- **Multi-chain expansion**: BTC Ordinals + ETH + SOL all listed on ME → cross-chain flow
+- **ME DAO governance**: fee parameter changes, DAO events → speculative FR cycles
+- **HL HIP-3 speculative demand**: retail NFT season → ME FR spikes above carry baseline
+- **SVM DeFi integration**: ME staking, LP incentive flows → additional FR pressure
+
+**Key structural pattern**: ME FR mean = **-0.693 bps/hr** (structurally negative vs SOL +0.088 bps/hr).
+- Edge primary: **structural carry** — SHORT ME earns negative FR consistently.
+- Edge secondary: timing signal adds **thin +0.45 Sh** above pure carry (IS Sh=18.68 → signal Sh=19.13).
+- G2 p=0.000 confirms timing is real, but **carry-dominated edge** — monitor closely.
+
+vol_ratio ME/SOL = **12.66x** (extreme vol ratio). raw_corr = 0.0472 (near-zero FR co-movement).
+
+### §85.3 Gate Results (K794)
+
+| Gate | Value | Threshold | Result |
+|------|-------|-----------|--------|
+| G1 OOS Sharpe | 19.47 | >= 1.0 | PASS |
+| G2 Perm p-value | 0.000 | < 0.05 | PASS |
+| G3 DSR Bonferroni | t=15.04, p=0.000 | < 0.05 | PASS |
+| G4 Walk-forward | 11/11 (min Sh=2.43) | all positive | PASS |
+| G5 Family corr | max=0.2075 (G5z EIGEN-SOL) | < 0.40 | 28/28 PASS |
+| G5w PEPE-SOL | 0.057 | < 0.40 | PASS |
+| G5y WIF-SOL | 0.013 | < 0.40 | PASS |
+| G5ab MEME-SOL | 0.008 | < 0.40 | PASS |
+| G6 Entries/yr OOS | 30.2 | >= 30 | PASS (MARGINAL) |
+| G7 Ann ret 3x | 260.7% | >= 5% | PASS |
+| **G8 Cross-venue** | **HL only ($85K/day)** | **2+ venues** | **FAIL** |
+| G9 OOS days | 217 days | >= 180 | PASS |
+
+**8/9 gates PASS, 1 FAIL (G8)** -> CONDITIONAL_ACCEPT_RESEARCH_ONLY
+
+### §85.4 K523 3-Point Profit Projection (@$10M @3x @0.25%)
+
+| Scenario | Annual Return |
+|----------|--------------|
+| Conservative | $24,763/yr |
+| **Central** | **$39,100/yr** |
+| Optimistic | $55,392/yr |
+| Upper bound | OOS raw return (NOT central -- K523 mandatory) |
+
+### §85.5 RESEARCH_ONLY Flag
+
+RESEARCH_ONLY is **HARDCODED** in `scripts/k794_me_sol_run.py`. It cannot be overridden
+by environment variable. The strategy is **NOT ELIGIBLE for live deployment** until all four
+re-eval triggers are met simultaneously:
+
+1. **ME daily vol > $500K/day** (currently $85K/day -- insufficient liquidity)
+2. **Bybit/OKX ME perp listing confirmed** (G8 FAIL resolution)
+3. **G2 timing alpha > +1 Sh** in updated eval (currently thin +0.45 Sh above carry)
+4. **HL concentration < 65%** (currently 66.8% AT CAP)
+
+After all 4 triggers: re-run K794 eval, then 60d paper gate (Sh>=15, fill>=60%, maxDD<15%).
+
+### §85.6 ME Vertex Rule (MR9 L002)
+
+ME = **23rd vertex candidate** (1st SVM NFT Marketplace cluster).
+
+MR9 L002 rule: all future ME-X paired trades are auto-blocked if CONDITIONAL_ACCEPT confirmed.
+
+### §85.7 L004_DIFF Monthly Recheck
+
+| Trigger | Action |
+|---------|--------|
+| OOS diff_pos < 0.28 (any month) | Reduce sleeve from 0.25% to 0.1% |
+| OOS diff_pos < 0.25 for 2 consecutive months | Suspend strategy; notify governance |
+
+### §85.8 G6 Marginal Monitor + W=48h Fallback
+
+G6 MARGINAL at W=84h (30.2/yr). G6 fallback: W=48h (OOS Sh=19.67, 57/yr).
+
+| Trigger | Action |
+|---------|--------|
+| Monthly entries < 2.5 (30/yr pace) | Switch to W=48h rolling mean |
+
+### §85.9 Daemon Activation (Research/Paper Monitoring Only)
+
+```bash
+# Research/paper monitoring only (RESEARCH_ONLY hardcoded)
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k794-me-sol.plist
+cp scripts/com.cryptolab.k794-me-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k794-me-sol.plist
+launchctl list | grep k794
+```
+
+```bash
+python3 scripts/k794_me_sol_run.py --status
+python3 scripts/k794_me_sol_run.py --dry-run
+```
+
+**WARNING**: Do NOT set PAPER_TRADE=False -- RESEARCH_ONLY is hardcoded in script.
+
+### §85.10 References
+
+| Wave | Description |
+|------|-------------|
+| K793 | Final HIP-3 round 2e -- long-tail axis EXHAUSTED (99/99 confirmed) |
+| K794 | ME-SOL eval (CONDITIONAL_ACCEPT_RESEARCH_ONLY 8/9) |
+| K797 | This section -- K794 ME-SOL scaffold (84th daemon, research-only) |
+| K791 | K788 MEME-SOL scaffold (82nd daemon) |
+| K795 | K795 basket rotation (83rd daemon) |
+| K523 | 3-point projection mandate |
+| K518 | 38% realized-to-stated ratio floor |
+| K498 | OKX activation prerequisite (HL% < 65%) |
+
+---
+
+## §86 K798 Governance v11 / Phase A++ v7.1 Final Synthesis (K744-K796 53-wave)
+
+**Wave:** K798 | **Date:** 2026-05-31 | **Scope:** 53-wave K744-K796 cumulative
+
+### §86.1 Session Summary
+
+| Metric | Value |
+|--------|-------|
+| Waves shipped | 53 (K744-K796) |
+| New ACCEPT (clean) | 3 (AXS, COMP, BIO) |
+| New CONDITIONAL_ACCEPT | 8 (TAO, PEPE, WIF, BLUR, IO, EIGEN, MEME, RESOLV) |
+| Research-only | 1 (ME-SOL: CONDITIONAL_ACCEPT_RESEARCH_ONLY) |
+| REJECT | 9 |
+| BLOCKED (G5/L004) | 7 |
+| SCAFFOLD waves | 22 |
+| SCREEN / GOVERNANCE waves | 7 |
+| New vertex additions | 12 (vertices 13-24) |
+| Daemons: session start | 66 |
+| Daemons: session end | 84 |
+| HIP-3 long-tail status | EXHAUSTED (99/99 K793 confirmed) |
+
+### §86.2 22-Vertex Alt-Alt Family Final State
+
+```
+V = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI, SOL, TIA,      (v1-v12, pre-K744)
+     TAO, PEPE, WIF, BLUR, AXS, IO, EIGEN, COMP, BIO, RESOLV}              (v13-v22, K744-K796)
+R = {MEME (K788), ME (K794)}                                                (research-only)
+```
+
+| V# | Token | Wave | Cluster | OOS Sh | Central $/yr |
+|----|-------|------|---------|--------|-------------|
+| 1 | APT | K512 | Move-VM L1 | 51.1 | $302,000 |
+| 2 | ATOM | K493 | Cosmos IBC hub | 50.8 | $231,000 |
+| 3 | AVAX | K484 | EVM subnet L1 | 43.9 | $75,700 |
+| 4 | BNB | K512 | CEX-chain L1 | 22.1 | $95,000 |
+| 5 | ENA | K719 | Synth-yield | 38.4 | $634,464 |
+| 6 | FIL | K739 | Storage L1 | 14.2 | $42,000 |
+| 7 | HBAR | K735 | Enterprise DLT | 28.5 | $38,000 |
+| 8 | INJ | K500 | DeFi appchain | 11.2 | $124,000 |
+| 9 | LDO | K728 | LST governance | 46.8 | $89,000 |
+| 10 | SEI | K507 | SVM DEX L1 | 12.6 | $65,000 |
+| 11 | SOL | anchor | SVM anchor | — | $187,000 |
+| 12 | TIA | K658 | Modular DA | 29.3 | $112,000 |
+| **13** | **TAO** | **K747** | **AI / GPU compute** | **12.2** | **$17,210** |
+| **14** | **PEPE** | **K754** | **ETH ERC-20 meme** | **44.4** | **$61,880** |
+| **15** | **WIF** | **K759** | **SOL SVM meme** | **24.5** | **$54,245** |
+| **16** | **BLUR** | **K768** | **NFT marketplace** | **15.0** | **$61,000** |
+| **17** | **AXS** | **K769** | **Gaming P2E** | **16.1** | **$123,689** |
+| **18** | **IO** | **K774** | **GPU DePIN** | **19.9** | **$28,009** |
+| **19** | **EIGEN** | **K777** | **Restaking AVS** | **35.9** | **$84,307** |
+| **20** | **COMP** | **K778** | **DeFi governance** | **25.1** | **$207,345** |
+| **21** | **BIO** | **K786** | **DeSci funding** | **23.1** | **$63,652** |
+| **22** | **RESOLV** | **K789** | **RWA synth-dollar** | **23.9** | **$41,539** |
+
+**Research-only (not counted in V):** MEME (K788, OOS Sh=16.0, $14,518/yr) | ME (K794, OOS Sh=19.5, $39,100/yr)
+
+Family capacity: 22 x 21 / 2 = 231 pairs | 36 accepted = 15.6% utilized. HIP-3 single-pair saturation confirmed.
+
+### §86.3 K523 3-Point Uplift v6.51 -> v6.52 -> v7.0 -> v7.1
+
+All figures: K523 mandatory 3-point | K518 38% realized-to-stated ratio | @$10M AUM
+
+| Version | Conservative | Central | Optimistic |
+|---------|-------------|---------|-----------|
+| v6.51 (NON-COMPLIANT) | $817,597 | $1,132,639 | $2,155,457 |
+| v6.52 (Kelly-compliant) | $877,573 | $1,206,749 | $2,366,602 |
+| v7.0 (Phase A++ base stack) | $963,796 | $1,775,957 | $4,509,737 |
+| **v7.1 (K798 final, +12 vertex)** | **$1,143,796** | **$2,222,833** | **$5,379,737** |
+
+**NOTE:** Central ($2.22M) is NOT the upper bound. Conservative = K518 38% floor minimum.
+K763 daily compound ($1.25M central) dominates and is contingent on all sleeves live at v6.52.
+
+### §86.4 Phase A++ v7.1 Activation Order (REFINED)
+
+#### Tier 1 — Day 1 (zero infra risk)
+
+| ID | Title | Daemon | Central $/yr | Time |
+|----|-------|--------|-------------|------|
+| K763 | Daily Compound Scheduler | 73rd | $1,246,830 | 15 min |
+| K755 | HL Builder Rebate | — | $94,208 | 65 min |
+| K753 | K545 Tax Loss Harvester | 70th | $70,300 | 15 min |
+
+#### Tier 2 — Days 2-3 (MANDATORY compliance, fix BEFORE new trades)
+
+| ID | Title | Central $/yr | Time |
+|----|-------|-------------|------|
+| K751 | v6.52 Kelly Sleeve Sizing (MANDATORY) | $74,109 + unlocks T3-T4 | 30 min |
+| K742 | K492-C Persistence Filter Patch | $12,350 | 20 min |
+
+#### Tier 3 — Week 1 (account setup)
+
+| ID | Title | Central $/yr | Time |
+|----|-------|-------------|------|
+| K745 | K498 OKX Integration | $17,943 | 2 hrs |
+| K757 | K485 Bybit Sub-Account | $19,000 | 3 hrs |
+
+#### Tier 4 — Weeks 2-4 (paper-gate elevation, requires K751 + K745 first)
+
+| ID | Pair | Daemon | Cluster | OOS Sh | Central $/yr |
+|----|------|--------|---------|--------|-------------|
+| K747 | TAO-SOL | 69th | AI/GPU | 12.2 | $23,560 |
+| K778 | COMP-SOL | 79th | DeFi-gov | 25.1 | $78,791 |
+| K754 | PEPE-SOL | 71st | ETH-meme | 44.4 | $23,560 |
+| K769 | AXS-SOL | 76th | Gaming/P2E | 16.1 | $47,002 |
+| K777 | EIGEN-SOL | 78th | Restaking | 35.9 | $32,037 |
+| K786 | BIO-SOL | 80th | DeSci | 23.1 | $24,188 |
+| K768 | BLUR-SOL | 75th | NFT | 15.0 | $23,180 |
+| K774 | IO-SOL | 77th | GPU/DePIN | 19.9 | $10,643 |
+| K759 | WIF-SOL | 72nd | SOL-meme | 24.5 | $20,613 |
+| K788 | MEME-SOL | 82nd | Meme-index | 16.0 | $5,517 |
+| K789 | RESOLV-SOL | 81st | Synth-dollar | 23.9 | $15,785 (G9 re-gate Aug 2026) |
+
+**Tier 4 combined central: ~$305,000/yr**
+
+#### Tier 5 — Weeks 4+ (new alpha axes)
+
+| ID | Title | Daemon | Central $/yr |
+|----|-------|--------|-------------|
+| K795 | Multi-Asset Basket Rotation | 83rd | $112,000 (Variant B) |
+| K767 | RWA 4-Provider Diversification | 74th | $30,000 |
+
+### §86.5 Day 1 Action Card (Priority 3)
+
+**Action 1: K751 — Fix compliance violations (MANDATORY FIRST)**
+- Why: HL 66.8% > 65% cap, Bybit 55.7% > 50% cap — live violation NOW. Must fix before any new trades.
+- Command: `python3 scripts/k751_kelly_optimizer.py --dry-run` then `--apply-rebalance`
+- Time: 30 minutes | Reversible: Yes (re-run with old weights)
+
+**Action 2: K763 — Enable daily compounding**
+- Why: $1.25M central realized/yr — largest single lever in Phase A++ stack. Zero risk.
+- Command: Set `COMPOUND_FREQUENCY=daily` in `scripts/k763_compound_scheduler.py` + launchctl load
+- Time: 15 minutes | Reversible: Set `COMPOUND_FREQUENCY=monthly` instantly
+
+**Action 3: K755 — Activate HL builder rebate**
+- Why: $248K/yr gross from existing HL volume. No new positions, no new risk. One env var.
+- Command: Set `HL_BUILDER_CODE=0x<YOUR_WALLET>` in `.env.local` + restart 10 HL daemons
+- Time: 65 minutes (wallet signing included) | Reversible: Unset = silent no-op
+
+**Day 1 total: $1,415,147/yr central realized from 3 actions**
+
+### §86.6 Cluster Lessons from K744-K796
+
+#### L004_DIFF cluster pre-screen (K782 new rule)
+diff_carry (fraction of time LONG-leg FR > SHORT-leg FR) must be 0.30-0.70. Outside range = structural one-sided pair REJECT. 18/25 K785 batch tokens blocked by this rule. Pre-screen all candidates before full §6 eval.
+
+#### G5u FIL-SOL persistent blocker
+FIL-SOL (K739, 68th daemon) creates G5u correlation for storage/data/provenance tokens. Confirmed: PYTH (K749, oracle data), POLYX (K783, compliance data). Any token with storage/DA/provenance theme: run G5u check FIRST.
+
+#### G5j SOL-INJ anti-correlation blocks Gaming-L1
+SOL-INJ (K686) negative correlation creates G5j blocker for L1 gaming chains. SAGA (K784) blocked at -0.422. Pre-screen: raw SOL-INJ FR corr check for Cosmos-adjacent gaming L1.
+
+#### HIP-3 long-tail axis EXHAUSTED (K793)
+99/99 HIP-3 perp universe screened. Failure modes: L004_DIFF (64%), L004 carry>80% (36%), G5 overlap (residual). New alpha axis = regime-aware basket rotation (K795). No new HIP-3 single-pair candidates.
+
+### §86.7 Machine-Readable Files
+
+| File | Description |
+|------|-------------|
+| `wave_k798_governance_v11.py` | Full governance script (K339 REPO_ROOT) |
+| `wave_k798_governance_v11.json` | Exported JSON with all data structures |
+| `wave_k798_governance_v11.md` | This governance markdown |
+| `data/phase_a_plus_v71_status.json` | Machine-readable v7.1 activation queue (20 items) |
+
+### §86.8 References
+
+| Wave | Description |
+|------|-------------|
+| K744 | Alt-alt saturation map (14 ACCEPT / 51 BLOCKED_SOL_TRIANGLE) |
+| K764 | Phase A++ v7.0 governance synthesis (10 items, 4 tiers) |
+| K795 | Basket rotation (83rd daemon, Variant B $112K/yr, long-tail EXHAUSTED) |
+| K793 | HIP-3 round 2e final — 99/99 exhaust complete |
+| K523 | 3-point mandatory projection rule |
+| K518 | 38% realized-to-stated ratio floor |
+| K339 | REPO_ROOT pattern |
+| K498 | OKX activation (Tier 3 prerequisite for HL% < 65%) |

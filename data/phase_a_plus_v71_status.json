@@ -1,0 +1,553 @@
+{
+  "_meta": {
+    "wave": "K798",
+    "title": "Phase A++ v7.1 Activation Queue -- Machine-Readable Status",
+    "generated_jst": "2026-05-31 02:09 JST",
+    "generated_utc": "2026-05-30T17:09:27+00:00",
+    "aum_ref_usd": 10000000,
+    "k523_mandatory": true,
+    "k518_haircut_ratio": 0.38,
+    "oos_paired_haircut": 0.25,
+    "k339_pattern": "REPO_ROOT = Path(__file__).resolve().parent.parent",
+    "live_auto_change_prohibited": true,
+    "session": "K744-K796 53-wave session",
+    "new_vertices": 12,
+    "new_daemons": 18,
+    "daemon_count": 84
+  },
+  "architecture_versions": {
+    "v651": {
+      "label": "v6.51 (current - NON-COMPLIANT)",
+      "violations": [
+        "HL 66.8% > 65% cap",
+        "Bybit 55.7% > 50% cap",
+        "K280 15.5% < 30% floor"
+      ],
+      "k523_realized_conservative": 817597,
+      "k523_realized_central": 1132639,
+      "k523_realized_optimistic": 2155457
+    },
+    "v652": {
+      "label": "v6.52 (Kelly-compliant, user 1-flip)",
+      "violations_fixed": [
+        "HL 53.6% (11.4pp headroom)",
+        "Bybit 43.8% (6.2pp headroom)",
+        "K280 30.0% (at floor)"
+      ],
+      "k523_realized_conservative": 877573,
+      "k523_realized_central": 1206749,
+      "k523_realized_optimistic": 2366602
+    },
+    "v70": {
+      "label": "v7.0 (v6.52 + K763 + K755 + K753 + K498 OKX + K485 Bybit + K492-C)",
+      "k523_realized_conservative": 963796,
+      "k523_realized_central": 1775957,
+      "k523_realized_optimistic": 4509737
+    },
+    "v71": {
+      "label": "v7.1 (v7.0 + 12 new vertex elevations + K795 basket + K767 RWA, K798)",
+      "k523_realized_conservative": 1143796,
+      "k523_realized_central": 2222833,
+      "k523_realized_optimistic": 5379737,
+      "note": "v7.0 base + Tier4 new vertex elevations (11 pairs) + K795 basket (K) + K767 RWA (K). K763 daily compound (.25M central) dominates and is contingent on all sleeves live at v6.52."
+    }
+  },
+  "items": [
+    {
+      "id": "K763",
+      "title": "Daily Compound Scheduler",
+      "tier": 1,
+      "tier_label": "Day 1 - zero infra risk",
+      "status": "SCAFFOLD-READY",
+      "status_code": "READY",
+      "daemon_number": 73,
+      "zero_risk": true,
+      "days_to_activate": 1,
+      "k523": {
+        "realized_conservative": 1337,
+        "realized_central": 1246830,
+        "realized_optimistic": 5182047,
+        "note": "Conservative = scheduling increment only. Central = full AUM compound curve shift @v6.52 r=218%/yr. Contingent on all sleeves live."
+      },
+      "activation_1step": "COMPOUND_FREQUENCY=daily in scripts/k763_compound_scheduler.py + launchctl load",
+      "reversibility": "COMPOUND_FREQUENCY=monthly returns to current behavior instantly",
+      "prerequisites": []
+    },
+    {
+      "id": "K755",
+      "title": "HL Builder Rebate",
+      "tier": 1,
+      "tier_label": "Day 1 - zero risk",
+      "status": "BUILDER-REBATE-READY",
+      "status_code": "READY",
+      "daemon_number": null,
+      "zero_risk": true,
+      "days_to_activate": 1,
+      "k523": {
+        "realized_conservative": 37683,
+        "realized_central": 94208,
+        "realized_optimistic": 188415,
+        "note": "Conservative=10% rebate pool, Central=25%, Optimistic=50%. 10 HL daemons benefit automatically."
+      },
+      "activation_1step": "Set HL_BUILDER_CODE=0x<YOUR_WALLET> in .env.local + restart 10 HL daemons",
+      "reversibility": "Unset HL_BUILDER_CODE -> silent no-op, zero execution impact",
+      "prerequisites": []
+    },
+    {
+      "id": "K753",
+      "title": "K545 Tax Loss Harvester",
+      "tier": 1,
+      "tier_label": "Day 1 - zero risk (paper default)",
+      "status": "SCAFFOLD-READY",
+      "status_code": "READY",
+      "daemon_number": 70,
+      "zero_risk": true,
+      "days_to_activate": 1,
+      "k523": {
+        "realized_conservative": 28120,
+        "realized_central": 70300,
+        "realized_optimistic": 141600,
+        "note": "Conservative=1 harvest/yr @K pool. Central=3 harvests @K pool. Optimistic=6 harvests @M pool. K518 38% applied."
+      },
+      "activation_1step": "launchctl load ~/Library/LaunchAgents/com.cryptolab.k545-tax-harvester.plist",
+      "reversibility": "launchctl unload -- no live trades, paper-only monitoring",
+      "prerequisites": []
+    },
+    {
+      "id": "K751",
+      "title": "v6.52 Kelly Sleeve Sizing (MANDATORY)",
+      "tier": 2,
+      "tier_label": "Days 2-3 - MANDATORY compliance",
+      "status": "SCAFFOLD-READY",
+      "status_code": "MANDATORY",
+      "daemon_number": null,
+      "zero_risk": false,
+      "days_to_activate": 2,
+      "k523": {
+        "realized_conservative": 70136,
+        "realized_central": 74109,
+        "realized_optimistic": 148218,
+        "note": "Conservative = HL cap relief only. Central = full rebalance uplift + headroom for Tier 3-4. Required BEFORE any paper-gate elevation."
+      },
+      "activation_1step": "python3 scripts/k751_kelly_optimizer.py --apply-rebalance (single flip)",
+      "reversibility": "Re-run with old weights file -- fully reversible in <5 min",
+      "prerequisites": []
+    },
+    {
+      "id": "K742",
+      "title": "K492-C Persistence Filter Patch",
+      "tier": 2,
+      "tier_label": "Days 2-3 - MANDATORY compliance",
+      "status": "DIFF-READY",
+      "status_code": "READY",
+      "daemon_number": null,
+      "zero_risk": false,
+      "days_to_activate": 3,
+      "k523": {
+        "realized_conservative": 7600,
+        "realized_central": 12350,
+        "realized_optimistic": 19760,
+        "note": "Reduces false-positive trade signals in K492 FR momentum daemon."
+      },
+      "activation_1step": "git apply wave_k742_k492c_ready.diff && launchctl reload k280",
+      "reversibility": "git apply -R wave_k742_k492c_ready.diff -- instant revert",
+      "prerequisites": [
+        "K751"
+      ]
+    },
+    {
+      "id": "K745",
+      "title": "K498 OKX Integration",
+      "tier": 3,
+      "tier_label": "Week 1 - account setup",
+      "status": "SCAFFOLD-READY",
+      "status_code": "READY",
+      "daemon_number": null,
+      "zero_risk": false,
+      "days_to_activate": 7,
+      "k523": {
+        "realized_conservative": 11964,
+        "realized_central": 17943,
+        "realized_optimistic": 35886,
+        "note": "OKX FR monitoring + capacity expansion. HL cap relief key benefit."
+      },
+      "activation_1step": "Set OKX_API_KEY/SECRET in .env.local + launchctl load k498-okx-fr-monitor",
+      "reversibility": "Unset OKX keys -- OKX daemon exits cleanly, HL continues",
+      "prerequisites": [
+        "K751"
+      ]
+    },
+    {
+      "id": "K757",
+      "title": "K485 Bybit Sub-Account",
+      "tier": 3,
+      "tier_label": "Week 1 - account setup",
+      "status": "SCAFFOLD-READY",
+      "status_code": "READY",
+      "daemon_number": null,
+      "zero_risk": false,
+      "days_to_activate": 7,
+      "k523": {
+        "realized_conservative": 7600,
+        "realized_central": 19000,
+        "realized_optimistic": 38000,
+        "note": "Bybit sub-account reduces concentration risk and unlocks capacity."
+      },
+      "activation_1step": "Create Bybit sub-account + set BYBIT_SUB_API_KEY in .env.local",
+      "reversibility": "Remove sub API keys -- falls back to main Bybit account",
+      "prerequisites": [
+        "K751"
+      ]
+    },
+    {
+      "id": "K747",
+      "title": "TAO-SOL Paper Gate Elevation",
+      "tier": 4,
+      "tier_label": "Weeks 2-4",
+      "status": "PAPER-GATE",
+      "status_code": "PAPER",
+      "daemon_number": 69,
+      "vertex": 13,
+      "cluster": "AI/GPU",
+      "oos_sharpe": 12.23,
+      "zero_risk": false,
+      "days_to_activate": 14,
+      "k523": {
+        "realized_conservative": 12920,
+        "realized_central": 23560,
+        "realized_optimistic": 58876
+      },
+      "activation_1step": "Set PAPER_TRADE=False in scripts/k747_tao_sol_run.py + reload daemon",
+      "reversibility": "Set PAPER_TRADE=True -- instant",
+      "prerequisites": [
+        "K751",
+        "K745"
+      ]
+    },
+    {
+      "id": "K754",
+      "title": "PEPE-SOL Paper Gate Elevation",
+      "tier": 4,
+      "tier_label": "Weeks 2-4",
+      "status": "PAPER-GATE",
+      "status_code": "PAPER",
+      "daemon_number": 71,
+      "vertex": 14,
+      "cluster": "ETH-meme",
+      "oos_sharpe": 44.43,
+      "zero_risk": false,
+      "days_to_activate": 14,
+      "k523": {
+        "realized_conservative": 13208,
+        "realized_central": 23560,
+        "realized_optimistic": 32558
+      },
+      "activation_1step": "Set PAPER_TRADE=False in scripts/k754_pepe_sol_run.py + reload daemon",
+      "reversibility": "Set PAPER_TRADE=True -- instant",
+      "prerequisites": [
+        "K751",
+        "K745"
+      ]
+    },
+    {
+      "id": "K759",
+      "title": "WIF-SOL Paper Gate Elevation",
+      "tier": 4,
+      "tier_label": "Weeks 2-4",
+      "status": "PAPER-GATE",
+      "status_code": "PAPER",
+      "daemon_number": 72,
+      "vertex": 15,
+      "cluster": "SOL-meme",
+      "oos_sharpe": 24.45,
+      "zero_risk": false,
+      "days_to_activate": 21,
+      "k523": {
+        "realized_conservative": 7849,
+        "realized_central": 20613,
+        "realized_optimistic": 29182
+      },
+      "activation_1step": "Set PAPER_TRADE=False in scripts/k759_wif_sol_run.py + reload daemon",
+      "reversibility": "Set PAPER_TRADE=True -- instant",
+      "prerequisites": [
+        "K751",
+        "K745"
+      ]
+    },
+    {
+      "id": "K768",
+      "title": "BLUR-SOL Paper Gate Elevation",
+      "tier": 4,
+      "tier_label": "Weeks 2-4",
+      "status": "PAPER-GATE",
+      "status_code": "PAPER",
+      "daemon_number": 75,
+      "vertex": 16,
+      "cluster": "NFT",
+      "oos_sharpe": 14.98,
+      "zero_risk": false,
+      "days_to_activate": 21,
+      "k523": {
+        "realized_conservative": 14060,
+        "realized_central": 23180,
+        "realized_optimistic": 58140
+      },
+      "activation_1step": "Set PAPER_TRADE=False in scripts/k768_blur_sol_run.py + reload daemon",
+      "reversibility": "Set PAPER_TRADE=True -- instant",
+      "prerequisites": [
+        "K751",
+        "K745"
+      ]
+    },
+    {
+      "id": "K769",
+      "title": "AXS-SOL Paper Gate Elevation",
+      "tier": 4,
+      "tier_label": "Weeks 2-4",
+      "status": "PAPER-GATE",
+      "status_code": "PAPER",
+      "daemon_number": 76,
+      "vertex": 17,
+      "cluster": "Gaming/P2E",
+      "oos_sharpe": 16.05,
+      "zero_risk": false,
+      "days_to_activate": 21,
+      "k523": {
+        "realized_conservative": 29768,
+        "realized_central": 47002,
+        "realized_optimistic": 66586
+      },
+      "activation_1step": "Set PAPER_TRADE=False in scripts/k769_axs_sol_run.py + reload daemon",
+      "reversibility": "Set PAPER_TRADE=True -- instant",
+      "prerequisites": [
+        "K751",
+        "K745"
+      ]
+    },
+    {
+      "id": "K774",
+      "title": "IO-SOL Paper Gate Elevation",
+      "tier": 4,
+      "tier_label": "Weeks 2-4",
+      "status": "PAPER-GATE",
+      "status_code": "PAPER",
+      "daemon_number": 77,
+      "vertex": 18,
+      "cluster": "GPU/DePIN",
+      "oos_sharpe": 19.88,
+      "zero_risk": false,
+      "days_to_activate": 21,
+      "k523": {
+        "realized_conservative": 7983,
+        "realized_central": 10643,
+        "realized_optimistic": 27989
+      },
+      "activation_1step": "Set PAPER_TRADE=False in scripts/k774_io_sol_run.py + reload daemon",
+      "reversibility": "Set PAPER_TRADE=True -- instant",
+      "prerequisites": [
+        "K751",
+        "K745"
+      ]
+    },
+    {
+      "id": "K777",
+      "title": "EIGEN-SOL Paper Gate Elevation",
+      "tier": 4,
+      "tier_label": "Weeks 2-4",
+      "status": "PAPER-GATE",
+      "status_code": "PAPER",
+      "daemon_number": 78,
+      "vertex": 19,
+      "cluster": "Restaking",
+      "oos_sharpe": 35.9,
+      "zero_risk": false,
+      "days_to_activate": 21,
+      "k523": {
+        "realized_conservative": 24027,
+        "realized_central": 32037,
+        "realized_optimistic": 112409
+      },
+      "activation_1step": "Set PAPER_TRADE=False in scripts/k777_eigen_sol_run.py + reload daemon",
+      "reversibility": "Set PAPER_TRADE=True -- instant",
+      "prerequisites": [
+        "K751",
+        "K745"
+      ]
+    },
+    {
+      "id": "K778",
+      "title": "COMP-SOL Paper Gate Elevation",
+      "tier": 4,
+      "tier_label": "Weeks 2-4",
+      "status": "PAPER-GATE",
+      "status_code": "PAPER",
+      "daemon_number": 79,
+      "vertex": 20,
+      "cluster": "DeFi-gov",
+      "oos_sharpe": 25.05,
+      "zero_risk": false,
+      "days_to_activate": 14,
+      "k523": {
+        "realized_conservative": 29941,
+        "realized_central": 78791,
+        "realized_optimistic": 104975
+      },
+      "activation_1step": "Set PAPER_TRADE=False in scripts/k778_comp_sol_run.py + reload daemon",
+      "reversibility": "Set PAPER_TRADE=True -- instant",
+      "prerequisites": [
+        "K751",
+        "K745"
+      ]
+    },
+    {
+      "id": "K786",
+      "title": "BIO-SOL Paper Gate Elevation",
+      "tier": 4,
+      "tier_label": "Weeks 2-4",
+      "status": "PAPER-GATE",
+      "status_code": "PAPER",
+      "daemon_number": 80,
+      "vertex": 21,
+      "cluster": "DeSci",
+      "oos_sharpe": 23.1,
+      "zero_risk": false,
+      "days_to_activate": 21,
+      "k523": {
+        "realized_conservative": 20560,
+        "realized_central": 24188,
+        "realized_optimistic": 63652
+      },
+      "activation_1step": "Set PAPER_TRADE=False in scripts/k786_bio_sol_run.py + reload daemon",
+      "reversibility": "Set PAPER_TRADE=True -- instant",
+      "prerequisites": [
+        "K751",
+        "K745"
+      ]
+    },
+    {
+      "id": "K788",
+      "title": "MEME-SOL Paper Gate Elevation",
+      "tier": 4,
+      "tier_label": "Weeks 2-4",
+      "status": "PAPER-GATE",
+      "status_code": "PAPER",
+      "daemon_number": 82,
+      "vertex": 22,
+      "cluster": "Meme-index",
+      "oos_sharpe": 15.97,
+      "zero_risk": false,
+      "days_to_activate": 21,
+      "k523": {
+        "realized_conservative": 3494,
+        "realized_central": 5517,
+        "realized_optimistic": 7815
+      },
+      "activation_1step": "Set PAPER_TRADE=False in scripts/k788_meme_sol_run.py + reload daemon",
+      "reversibility": "Set PAPER_TRADE=True -- instant",
+      "prerequisites": [
+        "K751",
+        "K745"
+      ]
+    },
+    {
+      "id": "K789",
+      "title": "RESOLV-SOL Paper Gate Elevation",
+      "tier": 4,
+      "tier_label": "Weeks 4+ (G9 re-gate Aug 2026)",
+      "status": "PAPER-GATE",
+      "status_code": "PAPER",
+      "daemon_number": 81,
+      "vertex": null,
+      "cluster": "Synth-dollar",
+      "oos_sharpe": 23.91,
+      "zero_risk": false,
+      "days_to_activate": 60,
+      "k523": {
+        "realized_conservative": 10063,
+        "realized_central": 15785,
+        "realized_optimistic": 41539
+      },
+      "activation_1step": "Set PAPER_TRADE=False in scripts/k789_resolv_sol_run.py after G9 re-gate",
+      "reversibility": "Set PAPER_TRADE=True -- instant",
+      "prerequisites": [
+        "K751",
+        "K745",
+        "K789_G9_recheck_Aug2026"
+      ]
+    },
+    {
+      "id": "K795",
+      "title": "Multi-Asset Basket Rotation",
+      "tier": 5,
+      "tier_label": "Weeks 8+ (60d paper observation)",
+      "status": "PAPER-GATE",
+      "status_code": "PAPER",
+      "daemon_number": 83,
+      "zero_risk": false,
+      "days_to_activate": 60,
+      "k523": {
+        "realized_conservative": 21000,
+        "realized_central": 112000,
+        "realized_optimistic": 285000,
+        "note": "Variant B regime-conditional. Conservative = regime mis-call 40%. Central = 3 regime changes/yr net of K turnover. Optimistic = Variant A+B stack."
+      },
+      "activation_1step": "Set PAPER_TRADE=False in scripts/k795_basket_rotation.py after 60d observation",
+      "reversibility": "Set PAPER_TRADE=True -- instant",
+      "prerequisites": [
+        "K751",
+        "K745"
+      ]
+    },
+    {
+      "id": "K767",
+      "title": "RWA 4-Provider Diversification",
+      "tier": 5,
+      "tier_label": "Week 1+ (parallel with Tier 3)",
+      "status": "SCAFFOLD-READY",
+      "status_code": "READY",
+      "daemon_number": 74,
+      "zero_risk": true,
+      "days_to_activate": 7,
+      "k523": {
+        "realized_conservative": 21000,
+        "realized_central": 30000,
+        "realized_optimistic": 39000,
+        "note": "sUSDe 35% + Spark sUSDS 25% + USDY 25% + Mountain USDM 15%. Blended APY ~4.0% vs sUSDe-only. HHI 1.0->0.26."
+      },
+      "activation_1step": "launchctl load ~/Library/LaunchAgents/com.cryptolab.k767-rwa-diversified.plist",
+      "reversibility": "launchctl unload -- falls back to sUSDe-only allocation",
+      "prerequisites": []
+    }
+  ],
+  "day1_action_card": {
+    "title": "Phase A++ v7.1 Day 1 Action Card",
+    "actions": [
+      {
+        "rank": 1,
+        "id": "K751",
+        "name": "Fix v6.51 compliance violations (MANDATORY)",
+        "time_min": 30,
+        "reversible": true,
+        "k523_central": 74109
+      },
+      {
+        "rank": 2,
+        "id": "K763",
+        "name": "Enable daily compounding",
+        "time_min": 15,
+        "reversible": true,
+        "k523_central": 1246830
+      },
+      {
+        "rank": 3,
+        "id": "K755",
+        "name": "Activate HL builder rebate",
+        "time_min": 65,
+        "reversible": true,
+        "k523_central": 94208
+      }
+    ],
+    "total_day1_central_realized": 1415147,
+    "tier4_combined_central": 388000
+  }
+}
