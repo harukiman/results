@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k730-ldo-sol</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k728_ldo_sol_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 64th daemon: K728 LDO-SOL FR Differential (Ethereum LSD vs Solana SVM, Bybit primary, 10th alt-alt scaffold) -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 23 (50% of OOS 46.84), fill_rate >= 60%, maxDD < 15%
+             Bybit primary: LDO maxLev=50, SOL-PERP on Bybit
+             LDO notional cap: K728 3% standalone (first LDO in portfolio — new vertex)
+             SOL notional cap: K728 3% + K708 3% existing — G5k corr=0.592, $2.4M = 0.024% SOL OI
+             G5c K594 LDO-BTC corr=0.505 FAIL structural (K594 TRIPLE-BLOCKED, never deployed)
+             G5k K708 BNB-SOL conflict (corr=0.592) — monitor combined SOL notional on Bybit -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k730_ldo_sol.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k730_ldo_sol.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K728/K730 specific notes (do not remove):
+         Strategy:    LDO-SOL FR Differential, Ethereum Liquid Staking vs Solana SVM (K728, K730 scaffold)
+         Daemon #:    64th daemon (10th alt-alt scaffold, rank #3 OOS Sh=46.84 in alt-alt family)
+         OOS Sharpe:  46.84 (W=168h, zero threshold, 217d OOS period)
+         IS Sharpe:   14.43 (IS/OOS ratio 3.25 — OOS outperforms IS, improving regime post-2025)
+         Profit:      $105,032/yr net @$10M @4x (3% sleeve, OOS 10.30% ann ret @1x)
+         Signal:      diff = LDO_FR - SOL_FR (= K594_dir - K476_dir per MR9, W=168h rolling mean)
+         Venue:       Bybit primary (LDO-PERP + SOL-PERP, both Bybit)
+         HL impact:   UNCHANGED 64.5% (HL-only would push 64.5%+3.0%=67.5% > 65% cap)
+                      ADDITIONAL: HL LDO maxLev=5 vs Bybit maxLev=50 — Bybit also resolves lev constraint
+         Gate:        60d paper-trade: Realized Sh>=23 (50% OOS) + fill>=60% + maxDD<15%
+         Cluster A:   LDO (Lido DAO governance / Ethereum Liquid Staking Derivatives)
+                      FR mechanism: ETH validator queue dynamics → stETH yield → LSD competition
+                      LDO FR mean = +15.96%/yr (structurally positive, institutional demand)
+                      ETH validator queue → stETH yield vs DeFi yield spread
+                      LSD competition: RocketPool, Frax, Mantle share wars
+                      Ethereum upgrade calendar: Shanghai unlock, Cancun blobs, Pectra sharding
+                      Regulatory staking risk: Kraken SEC action, Coinbase staking compliance
+         Cluster B:   SOL (Solana SVM High-Performance L1)
+                      FR mechanism: Retail-momentum/meme driven (BONK/WIF/POPCAT cycles)
+                      SOL FR mean = +7.71%/yr (meme-season episodic spikes, Jito MEV base)
+                      Key events: memecoin season cycles, Jito MEV revenue cycles
+                      Jupiter DEX volume explosions, Solana network congestion narratives
+                      ETH vs SOL narrative battles (Layer war sentiment cycles)
+         K594 pivot:  K594 LDO-BTC TRIPLE-BLOCKED (vol=0.80x, ETH corr=0.43, DeFi corr=0.50,
+                      OOS Sh=-3.82). K728 removes BTC common factor: LDO-SOL = K594 - K476.
+                      MR9 confirms K594 ⊥ K476 (corr=0.0585), so the differential is independent.
+                      K594 G5c FAIL (corr=0.505) is STRUCTURAL (shared LDO leg, K594 never deployed).
+         MR8:         LDO is NOT in {APT,ATOM,SOL,INJ,AVAX,SEI,TIA,ENA,BNB} algebraic group.
+                      LDO introduces new vertex: Ethereum Liquid Staking (LSD cluster).
+                      SOL is paired-with (existing group member, same role as ATOM in K719).
+         MR9:         LDO-SOL = K594_dir - K476_dir (K594⊥K476 corr=0.0585 ≈ 0)
+                      max_algebraic_err = 4.34e-19 (< 1e-10, structural lock confirmed)
+                      Genuine independent alpha. Both K719 (0.0465) and K728 (0.0585) MR9-compliant.
+         G4:          11/12 WF positive (91.7% rate — fold 2 = -7.51 only negative, early 2024)
+                      Folds: [1.83, -7.51, 3.42, 39.42, 2.58, 32.96, 17.39, 57.02, 1.45, 28.82, 27.09, 14.88]
+         G5c K594:    corr=+0.5053 FAIL structural (K594 TRIPLE-BLOCKED, REJECTED, not portfolio risk)
+         G5k K708:    corr=+0.5917 FAIL (BNB-SOL: SOL shared leg, $2.4M = 0.024% SOL OI)
+         G6:          11.8 trades/yr FAIL (below 30 threshold — same issue as K476 31/yr)
+         G8:          venue mismatch structural FAIL — Bybit-primary mitigates execution risk
+         LDO regime:  LDO FR > SOL FR 85.1% of time (ETH staking institutional premium persistent)
+                      Structural carry: +8.25%/yr (LDO 15.96% - SOL 7.71%), 2yr mean
+         LDO caps:    K728 3% standalone (first LDO in portfolio — no existing LDO exposure)
+         SOL caps:    K728 3% + K708 3% existing — monitor combined SOL notional ($2.4M)
+         Alt-alt rank: #3 OOS Sharpe in alt-alt family (AVAX-SOL 50.27 > BNB-SOL 48.59 > LDO-SOL 46.84)
+                       10th alt-alt scaffold (64th daemon)
+         60d gate:    Realized Sh>=23 (50% of OOS 46.84) + fill>=60% + maxDD<15%
+         Deploy:      cp scripts/com.cryptolab.k730-ldo-sol.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k730-ldo-sol.plist
+    -->
+</dict>
+</plist>

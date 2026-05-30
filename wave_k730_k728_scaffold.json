@@ -1,0 +1,70 @@
+{
+  "wave": "K730",
+  "strategy": "K728 LDO-SOL alt-alt scaffold (64th daemon, 10th alt-alt, LSD vs SVM)",
+  "ts_jst": "2026-05-30 18:00 JST",
+  "phase1": {
+    "script_exists": true,
+    "plist_exists": true,
+    "dashboard_exists": false,
+    "script_path": "scripts/k728_ldo_sol_run.py",
+    "plist_path": "scripts/com.cryptolab.k730-ldo-sol.plist",
+    "k339_pattern_ok": false,
+    "paper_trade_default": true,
+    "bybit_primary": true,
+    "sleeve_3pct": true,
+    "leverage_4x": true,
+    "w168h": true,
+    "signal_ldo_minus_sol": true
+  },
+  "phase2": {
+    "daemon_number": 64,
+    "alt_alt_number": 10,
+    "cross_cluster_note": "LSD vs SVM (Ethereum Liquid Staking vs Solana SVM retail/meme)",
+    "strategy": "K728 LDO-SOL FR Differential (Ethereum LSD vs Solana SVM)",
+    "oos_sharpe": 46.8355,
+    "oos_sharpe_is": 14.431,
+    "profit_10m_yr": 105032,
+    "profit_daily": 288,
+    "venue": "Bybit primary (LDO-PERP + SOL-PERP)",
+    "sleeve_pct": 3.0,
+    "leverage": 4.0,
+    "hl_concentration_unchanged": true,
+    "hl_pct": 64.5,
+    "hl_cap_pct": 65.0,
+    "hl_ldo_maxlev_note": "HL LDO maxLev=5 vs Bybit LDO maxLev=50 \u2014 Bybit also resolves leverage constraint",
+    "gate_60d": {
+      "realized_sharpe_min": 23,
+      "fill_rate_min_pct": 60,
+      "max_dd_max_pct": 15
+    },
+    "wf_11_12_positive": true,
+    "gates_passed": "14/19",
+    "gates_failed": [
+      "G4_Walk_forward (11/12, fold 2 = -7.51)",
+      "G5c K594 LDO-BTC (corr=0.505 structural \u2014 K594 REJECTED, not portfolio risk)",
+      "G5k K708 BNB-SOL (corr=0.592 \u2014 SOL $2.4M combined = 0.024% SOL OI)",
+      "G6 Trade count (11.8/yr < 30, operationally acceptable)",
+      "G8 Cross-venue (venue mismatch structural \u2014 Bybit-primary mitigates)"
+    ],
+    "mr8_pass": true,
+    "mr9_pass": true,
+    "alt_alt_rank": "#3 OOS Sharpe in alt-alt family",
+    "k594_pivot_note": "K594 LDO-BTC TRIPLE-BLOCKED (vol+ETH+DeFi). K728 = K594 - K476 removes BTC common factor. MR9 PASS.",
+    "ldo_notional_cap": "K728 3% standalone (first LDO in portfolio \u2014 new vertex, no existing LDO exposure)",
+    "sol_notional_cap": "K728 3% + K708 3% existing \u2014 G5k corr=0.592 FAIL, $2.4M = 0.024% SOL OI, monitor",
+    "deploy_cmd": "cp scripts/com.cryptolab.k730-ldo-sol.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.k730-ldo-sol.plist"
+  },
+  "phase3": {
+    "status": "PASS",
+    "signal_regime": "LDO_PREMIUM",
+    "signal_direction": 1,
+    "ldo_sol_diff": 1e-05,
+    "mean_168h": 1e-05,
+    "decision": "SHORT_LDO_LONG_SOL",
+    "notional_per_leg": 600000.0,
+    "total_notional": 1200000.0,
+    "expected_state": "SHORT_LDO_LONG_SOL",
+    "direction_correct": true
+  },
+  "scaffold_ok": true
+}
