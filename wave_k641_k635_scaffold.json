@@ -1,0 +1,147 @@
+{
+  "wave": "K641",
+  "strategy": "K635 IMX Orthogonalized FR Differential (MF SHIB+TIA+SEI)",
+  "timestamp_jst": "2026-05-30 11:30 JST",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k635_imx_orthog_run.py",
+        "description": "Phase 1: K635 strategy script (K339 pattern, 3-factor MF)",
+        "exists": true,
+        "size_bytes": 46433,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k635-imx-orthog.plist",
+        "description": "Phase 2: 43rd daemon plist (StartInterval 28800)",
+        "exists": true,
+        "size_bytes": 2259,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k635_dashboard.json",
+        "description": "Phase 3: Dashboard (residual signal, beta_used, regime)",
+        "exists": true,
+        "size_bytes": 2701,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k635 flag)",
+        "exists": true,
+        "size_bytes": 198809,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K635_IMX_ORTHOG + SLEEVE_WEIGHTS_V634)",
+        "exists": true,
+        "size_bytes": 41842,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K635_IMX_ORTHOG: 4.0 + k635_notes)",
+        "exists": true,
+        "size_bytes": 25597,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (43rd daemon registry)",
+        "exists": true,
+        "size_bytes": 27883,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a745 (K635 IMX orthog playbook)",
+        "exists": true,
+        "size_bytes": 337044,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K635 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1541455,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k641_k635_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 13237,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_checks": {
+    "beta_shib_hardcoded": true,
+    "beta_tia_hardcoded": true,
+    "beta_sei_hardcoded": true,
+    "k339_repo_root": true,
+    "paper_trade_default": true,
+    "bybit_primary": true,
+    "post_only": true,
+    "signal_1_5sigma": true,
+    "sleeve_2pct": true,
+    "ema_168h": true,
+    "symbols_correct": true,
+    "dashboard_beta_shib": true,
+    "dashboard_beta_tia": true,
+    "dashboard_beta_sei": true,
+    "dashboard_regime": true,
+    "dashboard_oos_perf": true,
+    "dashboard_orthog_mech": true,
+    "dashboard_hl_65": true,
+    "cfg_k635_cap": true,
+    "cfg_k635_notes": true,
+    "cfg_beta_shib": true,
+    "cfg_beta_tia": true,
+    "cfg_beta_sei": true,
+    "emer_include_k635": true,
+    "emer_k635_summary": true,
+    "lev_k635_cap": true,
+    "lev_v634_weights": true,
+    "vds_43rd_daemon": true,
+    "vds_43rd_label": true,
+    "runbook_section45": true,
+    "runbook_beta_table": true,
+    "runbook_60d_gate": true
+  },
+  "daemon_count": 43,
+  "daemon_ok": true,
+  "dry_run": {
+    "returncode": 0,
+    "success": true,
+    "stdout_len": 2781,
+    "stderr_len": 0,
+    "status": "PASS"
+  },
+  "k635_summary": {
+    "oos_sharpe_residual": 24.81,
+    "oos_sharpe_raw_k612": 41.73,
+    "beta_shib": 0.254,
+    "beta_tia": 0.068,
+    "beta_sei": 0.158,
+    "ema_window_h": 168,
+    "ema_periods": 21,
+    "profit_2pct_usd_yr": 4775120,
+    "sleeve_activation": "2% Bybit (IMX+BTC both legs)",
+    "hl_concentration": "65% UNCHANGED -- Bybit-only",
+    "cluster": "Gaming L2 Infra (ImmutableX StarkEx ZK rollup, 43rd daemon)",
+    "gate_60d": "Realized Sh>=12 + fill>=60% + maxDD<20%",
+    "v634_candidate": "K635 2% Bybit + v6.33 portfolio",
+    "factors_removed": [
+      "SHIB (meme/retail)",
+      "TIA (modular DA)",
+      "SEI (EVM-Cosmos mid-cap)"
+    ]
+  },
+  "overall_status": "PASS"
+}

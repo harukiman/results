@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k635-imx-orthog</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k635_imx_orthog_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 43rd daemon: K635 IMX Orthogonalized FR Differential -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 12, fill_rate >= 60%, maxDD < 20% -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k635_imx_orthog.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k635_imx_orthog.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K635 specific notes (do not remove):
+         Strategy:    IMX-BTC FR Differential, orthogonalized vs SHIB+TIA+SEI (K635 OLS MF)
+         Daemon #:    43rd daemon (K641 scaffold)
+         OOS Sharpe:  24.81 (residual MF W=168h) vs 41.73 raw K612
+         Profit:      $4,775,120/yr @$10M @4x (2% sleeve)
+         beta coefs:  beta_SHIB=0.254  beta_TIA=0.068  beta_SEI=0.158  (HARDCODED, no re-OLS)
+         Venue:       Bybit primary (IMX+BTC both legs; HL IMX maxLev=5 insufficient)
+         HL impact:   NONE — Bybit-only; HL concentration unchanged at 65%
+         Gate:        60d paper-trade: Realized Sh>=12 + fill>=60% + maxDD<20%
+         Cluster:     Gaming L2 Infra (ImmutableX StarkEx ZK rollup)
+         v6.32:       K635 adds 2% Bybit sleeve to v6.31 portfolio
+         Deploy:      cp scripts/com.cryptolab.k635-imx-orthog.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k635-imx-orthog.plist
+    -->
+</dict>
+</plist>
