@@ -4405,6 +4405,52 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K776: K774 IO-SOL alt-alt emergency exit flag
+    # K774 = HL-only IO-PERP+SOL-PERP paired when IO_FR-SOL_FR rolling mean 168h changes sign.
+    # Close protocol: IOC reduce-only on HL (short leg first, then long leg).
+    # IO = 18th vertex (1st GPU-DePIN cluster). HL concentration: 66.8% AT CAP (paper-gate strict).
+    # G9 marginal: OOS=150.2d < 180d. G5s HBAR-SOL monthly recheck (IS=0.352 borderline).
+    # Use --include-k774 to print K774-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k774",
+        dest="include_k774",
+        action="store_true",
+        default=False,
+        help=(
+            "K776: Include K774 IO-SOL close summary during emergency exit. "
+            "K774 positions (IO+SOL paired, HL-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = IO_FR - SOL_FR (direct differential, W=168h rolling mean, zero threshold). "
+            "HL-only: IO-PERP + SOL-PERP both on HL. IO NOT on Bybit (HIP-3 fresh Jan 2025). "
+            "HL concentration 66.8% AT CAP — paper-gate strict (PAPER_TRADE=True default). "
+            "G4 WF 12/12 ALL POSITIVE (min_sh=5.866). "
+            "G5 26/26 PASS (max_corr=0.2778 G5s HBAR-SOL — all well below 0.40). "
+            "G5v IO-SOL vs TAO-SOL corr=0.047 PASS (GPU-DePIN distinct from AI L1). "
+            "G5s HBAR-SOL borderline (IS=0.352, full=0.278) — monthly recheck required. "
+            "G6: 48.6 entries/yr OOS PASS (W=168h G6-safe vs 30/yr threshold). "
+            "G8: STRUCTURAL_NA — IO HIP-3 HL-only (no Bybit listing; K735/K747 precedent). "
+            "G9: MARGINAL OOS=150.2d < 180d — 60d gate compensates; monitor for full 180d. "
+            "OOS Sharpe 19.884 (W=168h, 150.2d OOS). MaxDD OOS=-0.389955%. "
+            "IO FR: GPU compute supply/demand cycles, H100 constraints, io.net utilization, "
+            "DePIN narrative rotations. FR structural negative: -17.9%/yr gross. "
+            "vol_ratio=1.96x (full) / 5.83x (90d) / 13.11x (30d) / 17.26x (K773 snapshot). "
+            "SOL FR: DePIN/Retail Phantom Firedancer ETF +2.59%/yr. Min=-20.51bps cascade. "
+            "Double carry (BEAR_IO structural): SHORT IO -17.9%/yr + LONG SOL +2.59%/yr. "
+            "L003 AVAX: corr=0.2402 PASS. L007 FIL: signal corr=-0.0831 PASS. "
+            "L010 HBAR: corr=0.2212 PASS. L011 SOL: corr=0.1516 PASS. "
+            "L004 IO carry: full=0.519 OOS=0.566 PASS (0.35-0.80 range). "
+            "IO = 18th vertex (1st GPU-DePIN cluster). MR9 L002: all future IO-X blocked. "
+            "V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO} "
+            "K523 3-point: conservative=$21,007 central=$28,009 optimistic=$73,707/yr @$10M @4x @1.5%. "
+            "60d gate: Realized Sh>=10 + fill>=60% + maxDD<15%. "
+            "Live trigger: K498/v6.52 OKX activation (HL% < 65%) + 60d gate + G9 180d + G5s stable. "
+            "Cluster: GPU-DePIN (io.net) × Solana SVM (19th alt-alt, 77th daemon). "
+            "Requires: K774 daemon running (com.cryptolab.k774-io-sol, 77th daemon). "
+            "See: docs/k302a_runbook.md §78"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -5595,6 +5641,52 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "G4 WF 20/21 POSITIVE. G5 FIL-SOL exception: full=0.4398 FAIL OOS=0.2805 PASS. "
                 "BLUR = 16th vertex. Liquidity: HL BLUR $0.6M/day → 0.6% sleeve. "
                 "Use --include-k768 for structured HL close summary (§76)."
+            )
+
+        # ── K774 IO-SOL close summary (K776 §78) ──────────────────────────
+        # HL concentration: 66.8% AT CAP (paper-gate: PAPER_TRADE=True default — no live capital yet).
+        # Live only after K498/v6.52 OKX activation + 60d gate + G9 180d full + G5s stable.
+        if args.include_k774:
+            logger.info("=== K774 IO-SOL CLOSE SUMMARY (K776 §78) ===")
+            logger.info("  K774 IO-SOL: HL-only (IO-PERP + SOL-PERP both legs on HL)")
+            logger.info("  IO NOT on Bybit (HIP-3 fresh listing Jan 2025) — G8=STRUCTURAL_NA")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_IO (GPU spike): short SOL first → sell long IO second")
+            logger.info("  BEAR_IO (SVM season, structural dominant): short IO first → sell long SOL second")
+            logger.info("  HL concentration: 66.8% AT CAP — paper-gate strict")
+            logger.info("  PAPER_TRADE=True default — no live capital until K498/v6.52 OKX reduces HL%")
+            logger.info("  G4 WF: 12/12 ALL POSITIVE (min_sh=5.866) — strong WF validation")
+            logger.info("  G5: 26/26 PASS (max_corr=0.2778 G5s HBAR-SOL — all well below 0.40)")
+            logger.info("  G5v: IO-SOL vs TAO-SOL corr=0.047 PASS (GPU-DePIN distinct from AI L1)")
+            logger.info("  G5s: HBAR-SOL borderline (IS=0.352, full=0.278) — monthly recheck required")
+            logger.info("  G6: 48.6 entries/yr OOS PASS (W=168h G6-safe vs 30/yr threshold)")
+            logger.info("  G8: STRUCTURAL_NA — IO HIP-3 HL-only (no Bybit; K735/K747 precedent)")
+            logger.info("  G9: MARGINAL OOS=150.2d < 180d — 60d gate compensates; monitor 180d")
+            logger.info("  L003 AVAX corr=0.2402 PASS | L007 FIL signal corr=-0.0831 PASS")
+            logger.info("  L010 HBAR corr=0.2212 PASS | L011 SOL corr=0.1516 PASS")
+            logger.info("  L004 IO carry: full=0.519 OOS=0.566 PASS (0.35-0.80 range)")
+            logger.info("  IO = 18th vertex (1st GPU-DePIN cluster). MR9 L002: all future IO-X blocked.")
+            logger.info("  V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO}")
+            logger.info("  IO FR: GPU compute supply/demand (H100 constraints, io.net utilization,")
+            logger.info("         AI hyperscaler demand, DePIN narrative rotations).")
+            logger.info("  IO FR: structural negative -17.9%/yr. vol_ratio=1.96x (full) / 5.83x (90d).")
+            logger.info("  SOL FR: DePIN/Retail Phantom Firedancer ETF +2.59%/yr. Min=-20.51bps cascade.")
+            logger.info("  Double carry (BEAR_IO structural): SHORT IO -17.9%/yr + LONG SOL +2.59%/yr.")
+            logger.info("  MaxDD OOS=-0.389955% | OOS Sh=19.884 (W=168h, 150.2d OOS)")
+            logger.info("  K523 3-point: conservative=$21,007 central=$28,009 optimistic=$73,707/yr")
+            logger.info("  Sleeve 1.5% (HIP-3 HL-only liquidity — IO $1.42M/day)")
+            logger.info("  60d gate: Realized Sh>=10 + fill>=60% + maxDD<15%")
+            logger.info("  Live trigger: K498/v6.52 OKX activation (HL% < 65%) + 60d gate + G9 180d + G5s stable")
+            logger.info("  19th alt-alt scaffold, 77th daemon. HL-only (positions in main HL exit)")
+            logger.info("  See: docs/k302a_runbook.md §78 (K774 IO-SOL playbook)")
+        else:
+            logger.info(
+                "K774 IO-SOL: HL-only (positions ARE in HL exit above — IO-PERP + SOL-PERP on HL). "
+                "HL 66.8% AT CAP — paper-gate strict; no live capital until K498/v6.52 OKX. "
+                "G4 WF 12/12 ALL POSITIVE (min_sh=5.866). IO = 18th vertex (GPU-DePIN). "
+                "G5 26/26 PASS (max_corr=0.2778). G9 marginal: OOS=150.2d < 180d. "
+                "G5s HBAR-SOL monthly recheck (IS=0.352 borderline). "
+                "Use --include-k774 for structured HL close summary (§78)."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)

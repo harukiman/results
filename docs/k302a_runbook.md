@@ -15197,3 +15197,152 @@ python3 scripts/k769_axs_sol_run.py --dry-run
 | K523 | 3-point projection mandate |
 | K518 | 38% realized-to-stated ratio floor |
 | K532 | Governance v5 (HL 65.0% cap rule) |
+
+## §78 K774 IO-SOL FR Differential (77th Daemon, NINETEENTH ALT-ALT, GPU-DePIN × SVM, 18th Vertex)
+
+*K776 §78 -- K774 IO-SOL FR Differential production scaffold (77th daemon, NINETEENTH ALT-ALT 18th-vertex IO GPU-DePIN io.net-compute-marketplace × Solana SVM, OOS Sh 19.884 W=168h G6-safe direct alt-alt diff, central $28,009/yr net @$10M @4x 1.5% sleeve K523 3-point $21K-$74K, HL-only IO-HIP3-NOT-on-Bybit G8=STRUCTURAL_NA K735/K747-precedent, G9-marginal OOS=150.2d<180d 60d-gate-compensates, HL 66.8% AT CAP paper-gate-strict K498/v6.52-activation-required, G4 WF 12/12 all positive min_sh=5.866 strong-WF-validation, G5 26/26 PASS max_corr=0.2778-G5s-HBAR-SOL all-well-below-0.40, G5v IO-SOL-vs-TAO-SOL=0.047-PASS GPU-DePIN-distinct-from-AI-L1, G5s HBAR-SOL-monthly-recheck IS=0.352-borderline, G6 48.6/yr PASS, IO-vertex-18th 1st-GPU-DePIN-cluster MR9-L002-all-future-IO-X-blocked, 60d gate: Sh>=10 fill>=60% maxDD<15% + K498/v6.52-OKX-activation + G9-180d + G5s-stable) -- 2026-05-30*
+
+### §78.1 Strategy Overview
+
+| Parameter | Value |
+|-----------|-------|
+| Strategy | K774 IO-SOL FR Differential (NINETEENTH ALT-ALT pair) |
+| Signal | diff = IO_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold) |
+| OOS Sharpe | 19.884 (W=168h, zero threshold, 150.2d OOS — G9 marginal) |
+| G4 Walk-Forward | 12/12 ALL POSITIVE (min_sh=5.866) |
+| G5 max corr | 0.2778 (G5s HBAR-SOL) — all 26 gates well below 0.40 |
+| G5v | IO-SOL vs TAO-SOL corr=0.047 PASS (GPU-DePIN distinct from AI L1) |
+| G5s monitor | HBAR-SOL borderline IS=0.352, full=0.278 — monthly recheck |
+| G6 entries/yr | 48.6/yr OOS PASS (W=168h vs 30/yr threshold) |
+| G8 venues | STRUCTURAL_NA — IO HIP-3 HL-only (no Bybit listing; K735/K747 precedent) |
+| G9 status | MARGINAL: OOS=150.2d < 180d threshold — 60d gate compensates |
+| L011 | raw_corr(IO,SOL)=0.1516 PASS (< 0.50) |
+| Sleeve | 1.5% of AUM (HIP-3 HL-only liquidity constraint — IO $1.42M/day) |
+| Leverage | 4x |
+| Venue | HL-only (IO-PERP + SOL-PERP). IO NOT on Bybit (HIP-3 fresh Jan 2025). |
+| Daemon | 77th daemon (com.cryptolab.k774-io-sol) |
+| K523 central | $28,009/yr net @$10M @4x @1.5% |
+| Decision | ACCEPT CONDITIONAL (32/33 gates PASS — G9 marginal) |
+
+### §78.2 IO vs SOL FR Economics
+
+**IO (io.net GPU DePIN):**
+- FR structural **negative**: -17.9%/yr gross (persistent shorts dominant)
+- kurtosis=493.47 (extreme spike events from GPU supply shocks)
+- Key drivers: H100 supply constraints, AI hyperscaler demand cycles,
+  io.net network utilization, GPU shortage narratives, IO staking/rewards,
+  HIP-3 listing effects, DePIN narrative rotations
+- vol_ratio vs SOL: 1.96x (full) / 5.83x (90d) / 13.11x (30d) / 17.26x (K773 30d snapshot)
+
+**SOL (Solana SVM L1):**
+- FR structural **positive**: +2.59%/yr (persistent long bias)
+- Key drivers: Phantom adoption, Firedancer upgrade, SOL ETF, SVM DeFi TVL
+- SOL extreme negative: Min=-20.51bps (cascade Feb 2025)
+
+**Double Carry (structural direction BEAR_IO):**
+- SHORT IO collects ~17.9%/yr carry (IO structural negative)
+- LONG SOL collects ~2.59%/yr carry (SOL structural positive)
+- Both legs favorable simultaneously = double carry strategy
+
+**IO vs TAO AI cluster check:**
+- io.net = GPU compute supply aggregation (hardware DePIN)
+- Bittensor TAO = AI model competition (substrate tokenization)
+- G5v IO-SOL vs TAO-SOL signal_corr=0.047 PASS — mechanistically distinct
+
+### §78.3 §6 Gate Results (K774)
+
+| Gate | Result | Value | Threshold |
+|------|--------|-------|-----------|
+| G1 OOS Sharpe | PASS | 19.884 | ≥ 1.0 |
+| G2 Perm p-value | PASS | 0.0000 | < 0.05 |
+| G3 DSR Bonferroni | PASS | t=12.75 p=0.0 | < 0.05/12 |
+| G4 Walk-Forward | PASS | 12/12 positive | all positive |
+| G5 (26 gates) | PASS | max_corr=0.2778 | all < 0.40 |
+| G5v TAO-SOL | PASS | 0.0473 | < 0.40 |
+| G5s HBAR-SOL | PASS | full=0.278 (IS=0.352) | < 0.40 |
+| G6 Trade count | PASS | 48.6/yr | ≥ 30/yr |
+| G7 Ann return | PASS | 57.81% @4x | ≥ 5% |
+| G8 Cross-venue | STRUCTURAL_NA | IO HIP-3 HL-only | K735/K747 waiver |
+| G9 Data sufficiency | MARGINAL | 150.2d OOS | < 180d |
+
+**G9 note**: OOS=150.2d < 180d minimum. IO listed Jan 2025 (~17mo total history).
+60d live gate compensates. Monitor for full 180d before live deployment.
+
+### §78.4 K523 3-Point Profit Projection (@$10M @4x @1.5%)
+
+| Scenario | Annual | Basis |
+|----------|--------|-------|
+| Conservative | $21,007/yr | R2S=38% × OOS-haircut=25% × fee=0.85 |
+| Central | $28,009/yr | R2S=38% × net-fee (K523 mandate) |
+| Optimistic | $73,707/yr | Stated OOS × net-fee |
+| Upper bound | $86,715/yr | OOS raw return (NOT central per K523) |
+
+Notional: $600K (1.5% sleeve × 4x × $10M). OOS 1x return=14.45%/yr.
+
+### §78.5 HL Concentration Status
+
+| Metric | Value |
+|--------|-------|
+| HL pre-K774 | 66.8% |
+| HL post-K774 | 66.8% (UNCHANGED — paper-only) |
+| HL cap | 65.0% |
+| Status | AT CAP — paper-gate STRICT |
+| Live trigger | K498/v6.52 OKX activation reduces HL% below 65% |
+
+### §78.6 IO Vertex Rule (MR9 L002)
+
+IO = **18th vertex** (1st GPU-DePIN cluster):
+```
+V (after K774) = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI, SOL, TIA,
+                   TAO, PEPE, WIF, BLUR, AXS, IO}
+```
+MR9 L002: **All future IO-X pairs are auto-blocked** (IO exhausted as new vertex).
+
+### §78.7 G9 Monitoring Protocol
+
+G9 is marginal (OOS=150.2d < 180d minimum). Actions:
+1. 60d live paper-trade gate compensates for G9 marginal status
+2. At 180d OOS (approx. mid-July 2026), re-run G9 check — if OOS Sh ≥ 10, G9 PASS
+3. Before live deployment, confirm G9 full 180d OOS data available
+4. G5s HBAR-SOL monthly recheck: if IS corr stabilizes ≤ 0.30 → no further concern
+
+### §78.8 60d Paper-Trade Gate
+
+| Criterion | Threshold |
+|-----------|-----------|
+| Realized Sharpe | ≥ 10 (higher than standard 6 — G9 compensation) |
+| Fill rate | ≥ 60% |
+| Max drawdown | < 15% |
+| Additional gate | K498/v6.52 OKX activation required (HL% < 65%) |
+| G9 gate | Full 180d OOS achieved before live |
+| G5s gate | HBAR-SOL corr stable on monthly recheck |
+
+### §78.9 Daemon Activation
+
+```bash
+# Deploy (after all gate conditions met):
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k774-io-sol.plist
+cp scripts/com.cryptolab.k774-io-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k774-io-sol.plist
+launchctl list | grep k774
+```
+
+**Status check:**
+```bash
+python3 scripts/k774_io_sol_run.py --status
+python3 scripts/k774_io_sol_run.py --dry-run
+```
+
+### §78.10 References
+
+| Wave | Description |
+|------|-------------|
+| K773 | HIP-3 Round 2 screen — IO ranked #1 fresh (#2 overall) |
+| K774 | K774 IO-SOL evaluation (ACCEPT CONDITIONAL — 20th alt-alt scaffold evaluated) |
+| K776 | This section — K774 IO-SOL production scaffold (77th daemon) |
+| K498 | OKX activation prerequisite (reduces HL% below 65%) |
+| K523 | 3-point projection mandate |
+| K518 | 38% realized-to-stated ratio floor |
+| K532 | Governance v5 (HL 65.0% cap rule) |
+| K735 | HBAR-SOL precedent (G8 STRUCTURAL_NA HL-only asset) |
+| K747 | TAO-SOL precedent (G8 STRUCTURAL_NA Bybit floor-capped) |
