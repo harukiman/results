@@ -17042,5 +17042,168 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 </div>
 <!-- /K714 K280 HEALTH WIDGET -->
 
+<!-- K716 K492-C PERSISTENCE FILTER ACTION CARD START -->
+<div style="background:#0d1117;border:2px solid rgba(0,255,136,0.45);border-radius:12px;padding:16px;margin:16px 0;font-family:'Segoe UI',sans-serif;max-width:900px;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+    <span style="background:linear-gradient(135deg,rgba(0,255,136,0.25),rgba(88,166,255,0.15));border:1px solid rgba(0,255,136,0.5);border-radius:8px;padding:4px 12px;font-size:0.75rem;font-weight:bold;color:#3fb950;">K716</span>
+    <span style="color:#e6edf3;font-weight:bold;font-size:1.05em;">K492 Variant C — Persistence Filter: Immediate Activation Playbook</span>
+    <span style="background:rgba(0,255,136,0.12);border:1px solid rgba(0,255,136,0.3);border-radius:12px;padding:2px 10px;font-size:0.72rem;color:#3fb950;margin-left:auto;">Phase A Action #6</span>
+  </div>
+
+  <!-- TL;DR bar -->
+  <div style="background:#1a2e1a;border:1px solid rgba(0,255,136,0.3);border-radius:8px;padding:10px 14px;margin-bottom:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;">
+    <div style="text-align:center;">
+      <div style="color:#6e7681;font-size:0.72rem;margin-bottom:2px;">Sharpe Lift (K208)</div>
+      <div style="color:#3fb950;font-size:1.3em;font-weight:bold;">+1.51</div>
+      <div style="color:#888;font-size:0.7rem;">19.12 → 20.63</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="color:#6e7681;font-size:0.72rem;margin-bottom:2px;">Profit @$10M/yr</div>
+      <div style="color:#3fb950;font-size:1.3em;font-weight:bold;">$45,175</div>
+      <div style="color:#888;font-size:0.7rem;">+$451,748 @$100M</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="color:#6e7681;font-size:0.72rem;margin-bottom:2px;">Effort</div>
+      <div style="color:#f39c12;font-size:1.3em;font-weight:bold;">1-2h</div>
+      <div style="color:#888;font-size:0.7rem;">Zero infra change</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="color:#6e7681;font-size:0.72rem;margin-bottom:2px;">Rollback</div>
+      <div style="color:#58a6ff;font-size:1.0em;font-weight:bold;">1 line</div>
+      <div style="color:#888;font-size:0.7rem;">PERSISTENCE_ENABLED = False</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="color:#6e7681;font-size:0.72rem;margin-bottom:2px;">Risk</div>
+      <div style="color:#3fb950;font-size:1.0em;font-weight:bold;">LOW</div>
+      <div style="color:#888;font-size:0.7rem;">Graceful fallback built-in</div>
+    </div>
+  </div>
+
+  <!-- Mechanism -->
+  <div style="margin-bottom:12px;">
+    <div style="color:#58a6ff;font-weight:bold;margin-bottom:6px;font-size:0.9em;">Filter Mechanism</div>
+    <div style="background:#161b22;border-radius:6px;padding:10px;font-family:monospace;font-size:0.82em;color:#a8d8a8;border-left:3px solid rgba(0,255,136,0.4);">
+      spread_t &gt; 0<br>
+      AND (spread_t&#8209;1 &gt; 0 OR spread_t&#8209;2 &gt; 0)<br>
+      AND gradient(spread) &gt;= 0<br>
+      <span style="color:#6e7681;"># Soft gate: 68% pass rate | Win rate 0.673 → 0.707 (+3.4pp gross)</span>
+    </div>
+    <div style="color:#ccc;font-size:0.82em;margin-top:6px;line-height:1.5;">
+      <strong style="color:#e6edf3;">Basis:</strong> FR autocorrelation AR1 ~0.73 (mean across 9 K208 symbols).
+      Monotonic positive spread over 24h (3×8h periods) strongly predicts persistence into next period.
+      Lookback data already in <code style="color:#a8d8a8;">cache/k163_hl/hl_fr_{SYM}.parquet</code> — zero new infrastructure.
+    </div>
+  </div>
+
+  <!-- 1-2h steps -->
+  <div style="margin-bottom:12px;">
+    <div style="color:#58a6ff;font-weight:bold;margin-bottom:6px;font-size:0.9em;">1-2h Activation Steps</div>
+    <table style="width:100%;border-collapse:collapse;font-size:0.82em;">
+      <tr style="color:#aaa;border-bottom:1px solid #30363d;">
+        <th style="text-align:left;padding:3px 6px;">Step</th>
+        <th style="text-align:left;padding:3px 6px;">Action</th>
+        <th style="text-align:center;padding:3px 6px;">Time</th>
+        <th style="text-align:left;padding:3px 6px;">Command / File</th>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;">
+        <td style="padding:4px 6px;color:#58a6ff;font-weight:bold;">1</td>
+        <td style="padding:4px 6px;color:#ccc;">Read K208 integration point</td>
+        <td style="padding:4px 6px;color:#888;text-align:center;">5 min</td>
+        <td style="padding:4px 6px;font-family:monospace;font-size:0.78em;color:#a8d8a8;">grep -n 'compute_k208_spreads' scripts/k280_live_fetch.py</td>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;">
+        <td style="padding:4px 6px;color:#58a6ff;font-weight:bold;">2</td>
+        <td style="padding:4px 6px;color:#ccc;">Apply 45-LOC patch (4 sites)</td>
+        <td style="padding:4px 6px;color:#888;text-align:center;">20 min</td>
+        <td style="padding:4px 6px;font-family:monospace;font-size:0.78em;color:#a8d8a8;">scripts/k280_live_fetch.py — see wave_k716_k492c_playbook.md Phase 3</td>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;">
+        <td style="padding:4px 6px;color:#58a6ff;font-weight:bold;">3</td>
+        <td style="padding:4px 6px;color:#ccc;">Dry-run (toggle = False)</td>
+        <td style="padding:4px 6px;color:#888;text-align:center;">10 min</td>
+        <td style="padding:4px 6px;font-family:monospace;font-size:0.78em;color:#a8d8a8;">python3 scripts/k280_live_fetch.py --no-refresh</td>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;">
+        <td style="padding:4px 6px;color:#3fb950;font-weight:bold;">4</td>
+        <td style="padding:4px 6px;color:#ccc;"><strong>Flip toggle True</strong></td>
+        <td style="padding:4px 6px;color:#f39c12;text-align:center;font-weight:bold;">2 min</td>
+        <td style="padding:4px 6px;font-family:monospace;font-size:0.78em;color:#f39c12;">PERSISTENCE_ENABLED = True &nbsp;← 1-LOC change</td>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;">
+        <td style="padding:4px 6px;color:#58a6ff;font-weight:bold;">5</td>
+        <td style="padding:4px 6px;color:#ccc;">Verify gate active</td>
+        <td style="padding:4px 6px;color:#888;text-align:center;">5 min</td>
+        <td style="padding:4px 6px;font-family:monospace;font-size:0.78em;color:#a8d8a8;">python3 scripts/k280_live_fetch.py --no-refresh | grep K492</td>
+      </tr>
+      <tr>
+        <td style="padding:4px 6px;color:#d29922;font-weight:bold;">6</td>
+        <td style="padding:4px 6px;color:#ccc;">14d paper monitor (passive)</td>
+        <td style="padding:4px 6px;color:#888;text-align:center;">14d</td>
+        <td style="padding:4px 6px;font-family:monospace;font-size:0.78em;color:#888;">tail -20 logs/k492c_persistence_gate.jsonl</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Profit table -->
+  <div style="margin-bottom:12px;">
+    <div style="color:#58a6ff;font-weight:bold;margin-bottom:6px;font-size:0.9em;">Profit Unlock — Combined Context</div>
+    <table style="width:100%;border-collapse:collapse;font-size:0.83em;">
+      <tr style="color:#aaa;border-bottom:1px solid #30363d;">
+        <th style="text-align:left;padding:3px 6px;">Action</th>
+        <th style="text-align:center;padding:3px 6px;">Profit @$10M/yr</th>
+        <th style="text-align:center;padding:3px 6px;">Status</th>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;">
+        <td style="padding:3px 6px;">K552 — K280 75→60% patch</td>
+        <td style="text-align:center;color:#3fb950;">$260,000</td>
+        <td style="text-align:center;color:#f39c12;">PREREQ</td>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;">
+        <td style="padding:3px 6px;"><strong>K492-C — Persistence Filter (K716)</strong></td>
+        <td style="text-align:center;color:#3fb950;font-weight:bold;">$45,175</td>
+        <td style="text-align:center;color:#3fb950;font-weight:bold;">READY NOW</td>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;background:rgba(0,255,136,0.05);">
+        <td style="padding:3px 6px;font-weight:bold;">K552 + K492-C combined</td>
+        <td style="text-align:center;color:#3fb950;font-weight:bold;">$305,175</td>
+        <td style="text-align:center;color:#3fb950;">Day 0</td>
+      </tr>
+      <tr style="border-bottom:1px solid #21262d;">
+        <td style="padding:3px 6px;">Phase A original (5 actions)</td>
+        <td style="text-align:center;color:#f39c12;">$521,000</td>
+        <td style="text-align:center;color:#888;">Prior</td>
+      </tr>
+      <tr style="background:rgba(0,255,136,0.08);">
+        <td style="padding:3px 6px;font-weight:bold;color:#3fb950;">Phase A revised (6 actions — K716)</td>
+        <td style="text-align:center;color:#3fb950;font-weight:bold;font-size:1.05em;">$566,175</td>
+        <td style="text-align:center;color:#3fb950;font-weight:bold;">+$45K delta</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Rollback -->
+  <div style="background:#1a1a2e;border:1px solid rgba(88,166,255,0.25);border-radius:6px;padding:8px 12px;margin-bottom:8px;font-size:0.82em;">
+    <span style="color:#58a6ff;font-weight:bold;">1-Line Rollback:</span>
+    <code style="color:#f39c12;margin-left:8px;">PERSISTENCE_ENABLED = False</code>
+    <span style="color:#888;margin-left:8px;">in scripts/k280_live_fetch.py — restores exact K438 baseline. &lt;2 min. Zero data loss.</span>
+  </div>
+
+  <!-- Files -->
+  <div style="color:#888;font-size:0.78em;line-height:1.6;">
+    <strong style="color:#e6edf3;">Files:</strong>
+    <code style="color:#a8d8a8;">wave_k716_k492c_playbook.py</code> |
+    <code style="color:#a8d8a8;">wave_k716_k492c_playbook.json</code> |
+    <code style="color:#a8d8a8;">wave_k716_k492c_playbook.md</code> |
+    <code style="color:#a8d8a8;">docs/k302a_master_deployment.md</code> (Phase A Action #6 added)
+  </div>
+
+  <div style="color:#666;font-size:0.72em;border-top:1px solid rgba(0,255,136,0.15);padding-top:6px;margin-top:8px;">
+    K716 K492-C Activation Playbook — 2026-05-30 16:55 JST &nbsp;|&nbsp;
+    Sources: K492/K208/K280/K438/K714 &nbsp;|&nbsp;
+    +1.51 Sharpe | $45K/yr @$10M | 1-2h | Zero infra | K339 REPO_ROOT
+  </div>
+</div>
+<!-- /K716 K492-C PERSISTENCE FILTER ACTION CARD -->
+
 </body>
 </html>

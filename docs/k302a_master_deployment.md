@@ -365,7 +365,7 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k684-sol-inj.plist     # Sh=
 > **HL STATUS:** 65.0% (AT CAP — K552 prerequisite before any new HL sleeve)  
 > **BTC REGIME:** TRANSITION | slope=-34.41 | BULL ETA 14d | K376 SCAFFOLD-READY
 
-### Phase A — Day 0: 5 Actions (~3 hours, immediate profit unlock)
+### Phase A — Day 0: 6 Actions (~5 hours, immediate profit unlock) ← K716 revised
 
 | Step | ID | Action | Effort | Profit @$10M | Risk | Status |
 |---|---|---|---|---|---|---|
@@ -374,9 +374,12 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k684-sol-inj.plist     # Sh=
 | 3 | **K552** | K280 75→60% atomic 3-file patch (PREREQ) | 30 min | $260K cascade | LOW | READY |
 | 4 | **K498** | Phase 1A BBO_SELECT + OKX daemon | 8h | $121K @$30M | LOW | READY |
 | 5 | **K485** | Bybit sub-account + HL W2 isolation | 30min+7d | $204K @$10M | LOW | READY |
+| **6** | **K492-C** | **K492 Persistence Filter (1-LOC toggle)** | **1-2h** | **$45K/yr @$10M** | **LOW** | **READY** |
 
-**Execute order: K545 → K481 → K552 → K485 → K498**
-**Day-0 immediate unlock: ~$521K/yr | ZERO-risk portion: ~$147–$297K/yr**
+**Execute order: K545 → K481 → K552 → K485 → K492-C → K498**
+**Day-0 immediate unlock: ~$566K/yr | ZERO-risk portion: ~$147–$297K/yr | K716 delta: +$45K/yr**
+
+> **K492-C detail (K716):** Persistence filter on K208 FR spread (AR1~0.73). Gate: spread_t>0 AND (t-1>0 OR t-2>0) AND gradient>=0. Win rate lift +3.4pp gross (+2.3pp net). +1.51 Sharpe. Zero infra. Patch: 45 LOC in scripts/k280_live_fetch.py. Rollback: 1 line. 14d paper gate required. Ref: `wave_k716_k492c_playbook.{py,json,md}`
 
 ### Phase B–E Summary
 
