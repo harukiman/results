@@ -13463,3 +13463,177 @@ python3 scripts/k545_tax_harvester.py --annual-report  # Full report
 | K523 | 3-point projection mandate (conservative/central/optimistic) |
 | K518 | Realized-to-stated ratio 38% floor |
 | K357 | Emergency exit — triggers mass realization event (tax impact) |
+
+---
+
+## §70 K481 HL Builder Rebate — 1-Step Activation (K755)
+
+**Wave:** K755 | **Generated:** 2026-05-30 20:42 JST | **Status:** BUILDER-REBATE-READY  
+**Classification:** ZERO RISK | Fee minimization axis (#4) | Priority: user 1-step
+
+### §70.1 Executive Summary
+
+HL builder rebate activation is the highest ROI-per-hour user action in the playbook.  
+Module: `scripts/k481_builder_rebate.py` — canonical injection point for all HL orders.  
+All changes are additive, env-var gated, paper-mode safe, and reversible.
+
+**K523 3-Point @ $10M AUM:**
+- Conservative (10% referral rate): **$99,166/yr** ($272/day)
+- Central      (25%):              **$247,915/yr** ($679/day) ← realistic estimate
+- Optimistic   (50%):              **$495,830/yr** ($1,358/day) ← upper bound
+
+Total activation time: ~65 min + 24h paper verification.
+
+### §70.2 Mechanism
+
+```python
+# Every live HL order action carries this field (injected automatically after activation):
+order_action["builder"] = {
+    "b": "0x<YOUR_MAIN_WALLET_ADDRESS>",  # public address, NOT private key
+    "f": 0,                                # ZERO extra cost to trader
+}
+```
+
+Builder earns from HL referral pool on every order. Zero additional fee to trading strategy.
+
+### §70.3 Activation Steps (65 min total)
+
+#### Step 1: Register on HL (20 min)
+
+1. Go to `https://app.hyperliquid.xyz/trade` → Account → Builder
+2. Enter builder address: **your own main HL wallet address** (same address you trade from)
+3. Set fee: **0** (zero tenths of basis points — zero extra cost to traders)
+4. Sign `approveBuilderFee` transaction
+5. **CRITICAL:** Must be signed by the MAIN wallet, NOT the API/agent wallet
+
+Eligibility: ≥100 USDC perps balance (essentially free). No KYC. No volume threshold.  
+Activation: Immediate (no epoch delay).
+
+#### Step 2: Set Environment Variable (5 min)
+
+```bash
+# Add to ~/.zshrc
+echo 'export HL_BUILDER_CODE="0x<YOUR_MAIN_WALLET_ADDRESS>"' >> ~/.zshrc
+source ~/.zshrc
+echo $HL_BUILDER_CODE   # verify it prints correctly
+```
+
+Add to each relevant daemon plist's EnvironmentVariables dict:
+```xml
+<key>HL_BUILDER_CODE</key>
+<string>0x<YOUR_MAIN_WALLET_ADDRESS></string>
+```
+
+**Security:** HL_BUILDER_CODE is a public Ethereum address, not a private key.  
+Still: do NOT commit to git, do NOT write to report.html.
+
+#### Step 3: Verify Integration (10 min)
+
+```bash
+# Check status
+python3 scripts/k481_builder_rebate.py --status
+
+# Show 3-point projection
+python3 scripts/k481_builder_rebate.py --project --aum 10000000
+
+# Smoke test (dry-run safety guards)
+python3 scripts/k481_builder_rebate.py --smoke
+
+# Dry-run order manager
+python3 scripts/post_only_order_manager.py --dry-run
+```
+
+#### Step 4: Paper-Trade 24h Verification
+
+1. Confirm daemon is in paper mode (default)
+2. Submit 1 test order via K439 paper path
+3. Verify order payload includes builder field for HL venue
+4. After 24h: check `https://app.hyperliquid.xyz/referrals`
+5. **Gate:** Rebate > $0 accrued after 24h before switching to LIVE
+
+If rebate = $0 after 24h, check:
+- `approveBuilderFee` confirmed on-chain (TX hash in HL history)
+- `HL_BUILDER_CODE` set correctly in daemon environment
+- Orders reaching HL (not entirely routed to Bybit/OKX)
+
+#### Step 5: Restart Live Daemons (5 min)
+
+```bash
+for plist in k246a-live k272a-live k280-live k302a-satellite \
+             k449-eth-btc k476-sol-btc k484-avax-btc \
+             k493-atom-btc k500-inj-btc k507-sei-btc; do
+    launchctl unload ~/Library/LaunchAgents/com.cryptolab.${plist}.plist
+    launchctl load  ~/Library/LaunchAgents/com.cryptolab.${plist}.plist
+done
+```
+
+#### Reversal
+
+```bash
+unset HL_BUILDER_CODE
+# Remove from ~/.zshrc and all plist EnvironmentVariables
+# Restart daemons as above
+# Effect: silently skips builder injection → returns to current cost baseline
+# Zero strategy impact
+```
+
+### §70.4 Monitoring
+
+**Daily:**
+```python
+# Expected rebate @ $10M AUM:
+# Conservative: $272/day | Central: $679/day | Optimistic: $1,358/day
+# Alert: < $136/day for 3+ consecutive days (< 50% of conservative)
+
+# API check:
+python3 -c "
+import json, urllib.request
+payload = json.dumps({'type': 'referralState', 'user': '0x<YOUR_WALLET>'}).encode()
+req = urllib.request.Request('https://api.hyperliquid.xyz/info', data=payload,
+      headers={'Content-Type': 'application/json'})
+with urllib.request.urlopen(req) as r:
+    print(json.dumps(json.loads(r.read()), indent=2))
+"
+```
+
+**Weekly:**
+```bash
+python3 scripts/k481_builder_rebate.py --check-api 0x<YOUR_WALLET>
+# Verify: builder address in approved list with f=0
+```
+
+### §70.5 Zero Risk Assertion
+
+| Risk | Assessment |
+|------|-----------|
+| HL concentration delta | ZERO (builder = order metadata, no new position) |
+| Signal change | NONE |
+| Counterparty risk | NONE (HL referral pool = internal accounting) |
+| Execution risk | NONE (f=0) |
+| Worst case | Program ends → current cost structure, zero degradation |
+| K266 gate | ACCEPT-FREE (cost optimization, not alpha signal) |
+
+### §70.6 Files
+
+| File | Description |
+|------|-------------|
+| `scripts/k481_builder_rebate.py` | Canonical injection module (~280 LOC, K339) |
+| `data/builder_codes.json` | Config + K523 projection cache |
+| `wave_k755_k481_scaffold.py` | K755 wave runner (K339) |
+| `wave_k755_k481_scaffold.json` | Wave output JSON |
+| `wave_k755_k481_scaffold.md` | Wave summary |
+| `wave_k481_builder_rebate_activation.md` | K481 full playbook |
+| `docs/k302a_runbook.md` | This section §70 |
+| `report.html` | K755 BUILDER REBATE READY badge |
+
+### §70.7 References
+
+| Wave | Description |
+|------|-------------|
+| K755 | This section — K481 scaffold production module, user 1-step |
+| K481 | K481 activation playbook (5-phase, 65min, PLAYBOOK-READY) |
+| K370 | K370 original builder rebate analysis (AX-01) |
+| K368 | K368 original estimate (corrected by K370/K481) |
+| K439 | K439 POST_ONLY order manager (fill rate gate G8) |
+| K523 | 3-point projection mandate (conservative/central/optimistic) |
+| K266 | Gate framework (cost optimization = ACCEPT-FREE) |

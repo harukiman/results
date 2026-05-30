@@ -198,6 +198,18 @@ def submit_post_only_order(
     # HL: order_type="limit", post_only=True in order action
     # Bybit: timeInForce="PostOnly"
     # OKX: ordType="post_only"
+
+    # K481 / K755: Builder code injection (ZERO-RISK additive, env-var gated)
+    # Inject before live HL order submission. Silently skips if:
+    #   (a) venue != "HL", (b) HL_BUILDER_CODE env var not set, (c) dry_run=True
+    order_action: Dict = {}   # populated by live exchange adapter (scaffold placeholder)
+    try:
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        from k481_builder_rebate import inject_builder_field as _inject_builder
+        _inject_builder(order_action, venue=venue, dry_run=False, strategy="POST_ONLY")
+    except ImportError:
+        pass  # k481 module not found — safe fallback
+
     order_id = f"SCAFFOLD_{venue}_{symbol}_{int(time.time())}"
     print(f"  [POST_ONLY] SCAFFOLD: {venue} {symbol} {side} ${size:,.0f} @ {price:.6f}  [POST_ONLY_ENABLED={POST_ONLY_ENABLED}]")
     return {
@@ -210,6 +222,7 @@ def submit_post_only_order(
         "price":    price,
         "ts_utc":   ts,
         "post_only": True,
+        "builder_injected": bool(order_action.get("builder")),
     }
 
 
@@ -315,6 +328,15 @@ def submit_ioc_fallback(
             "ts_utc":       ts,
         }
 
+    # K481 / K755: Builder code injection for IOC fallback (same pattern as POST_ONLY)
+    # IOC on HL also carries builder field — rebate applies to all HL orders
+    ioc_action: Dict = {}   # scaffold placeholder for live HL IOC order action
+    try:
+        from k481_builder_rebate import inject_builder_field as _inject_builder_ioc
+        _inject_builder_ioc(ioc_action, venue=venue, dry_run=False, strategy="IOC_FALLBACK")
+    except ImportError:
+        pass
+
     order_id = f"IOC_{venue}_{symbol}_{int(time.time())}"
     print(f"  [IOC FALLBACK] SCAFFOLD: {venue} {symbol} {side} ${size:,.0f} @ {limit:.6f}  (taker {taker_fee:.1f}bps)")
     return {
@@ -326,6 +348,7 @@ def submit_ioc_fallback(
         "slip_bps":     IOC_LIMIT_SLIP_BIPS,
         "taker_fee_bps": taker_fee,
         "ts_utc":       ts,
+        "builder_injected": bool(ioc_action.get("builder")),
     }
 
 

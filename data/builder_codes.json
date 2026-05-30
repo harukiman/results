@@ -1,0 +1,84 @@
+{
+  "_comment": "K481 Builder Code Configuration — K755 scaffold",
+  "_security": "HL_BUILDER_CODE env var is PREFERRED over this file. Never commit actual wallet addresses to git.",
+  "_note": "Builder code = your HL main wallet address (public, not private key). f=0 always.",
+  "_activation": "See docs/k302a_runbook.md §K481 for 1-step activation guide.",
+  "_wave": "K755",
+  "_generated_utc": "2026-05-30T11:38:07Z",
+
+  "enabled": false,
+  "_enabled_note": "Set to true AFTER approveBuilderFee on-chain confirmed. Env var takes precedence.",
+
+  "venue_overrides": {
+    "HL": {
+      "_comment": "Set builder_code here ONLY as fallback if HL_BUILDER_CODE env var is unavailable.",
+      "_security": "Prefer env var. This field is for disaster recovery / CI only.",
+      "builder_code": "",
+      "_builder_code_note": "Leave empty — set HL_BUILDER_CODE env var instead",
+      "fee_tenths_bp": 0,
+      "_fee_note": "ALWAYS 0. Non-zero would charge extra fees to the trader — prohibited.",
+      "enabled": false
+    },
+    "Bybit": {
+      "_comment": "Bybit Broker Program — future expansion. Not active.",
+      "enabled": false
+    },
+    "OKX": {
+      "_comment": "OKX Affiliate Program — future expansion. Not active.",
+      "enabled": false
+    }
+  },
+
+  "k523_projection_10M": {
+    "_note": "K523 mandatory 3-point @ $10M AUM. Conservative = realistic floor, Central = expected, Optimistic = upper bound.",
+    "conservative_usdc_yr": 99166,
+    "central_usdc_yr": 247915,
+    "optimistic_usdc_yr": 495830,
+    "conservative_daily": 271.7,
+    "central_daily": 679.2,
+    "optimistic_daily": 1358.4,
+    "model": {
+      "hl_fraction": 0.575,
+      "daily_turnover_x": 1.5,
+      "post_only_fill_rate": 0.70,
+      "hl_taker_rate_bps": 4.5,
+      "conservative_rebate_pct": 0.10,
+      "central_rebate_pct": 0.25,
+      "optimistic_rebate_pct": 0.50
+    }
+  },
+
+  "monitoring": {
+    "alert_pct_of_expected": 0.50,
+    "alert_consecutive_days": 3,
+    "weekly_approval_check": true,
+    "referral_api_endpoint": "https://api.hyperliquid.xyz/info",
+    "referral_api_payload_type": "referralState",
+    "builder_fees_api_payload_type": "builderFees"
+  },
+
+  "activation_steps": [
+    "Step 1: Navigate to https://app.hyperliquid.xyz/trade -> Account -> Builder",
+    "Step 2: Submit approveBuilderFee (main wallet signature, f=0, address=your_main_wallet)",
+    "Step 3: export HL_BUILDER_CODE='0x<YOUR_MAIN_WALLET_ADDRESS>' in ~/.zshrc",
+    "Step 4: Add HL_BUILDER_CODE to each daemon plist EnvironmentVariables",
+    "Step 5: python3 scripts/post_only_order_manager.py --dry-run (verify no errors)",
+    "Step 6: Paper-trade 24h, verify builder field appears in HL order payloads",
+    "Step 7: Check HL referral dashboard — rebate > $0 after 24h",
+    "Step 8: Restart live daemons: launchctl unload/load for each k*-live.plist",
+    "Reverse: unset HL_BUILDER_CODE -> silent no-op, no strategy impact"
+  ],
+
+  "affected_daemons": [
+    "com.cryptolab.k246a-live.plist",
+    "com.cryptolab.k272a-live.plist",
+    "com.cryptolab.k280-live.plist",
+    "com.cryptolab.k302a-satellite.plist",
+    "com.cryptolab.k449-eth-btc.plist",
+    "com.cryptolab.k476-sol-btc.plist",
+    "com.cryptolab.k484-avax-btc.plist",
+    "com.cryptolab.k493-atom-btc.plist",
+    "com.cryptolab.k500-inj-btc.plist",
+    "com.cryptolab.k507-sei-btc.plist"
+  ]
+}
