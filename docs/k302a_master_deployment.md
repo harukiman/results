@@ -1,6 +1,104 @@
 # K302a Master Deployment Playbook — Single Source of Truth
-**Version:** 6.40 CANDIDATE | **Updated:** 2026-05-30 14:56 JST | **Wave:** K692 GOVERNANCE v7 QUICK (supersedes K674/K666/K657/K643)
-**Status:** ACTIVE USER ACTIVATION GUIDE — v6.40 CANDIDATE + alt-alt $665K | 57 daemons | HL 64.0% (<65% cap) | mid $21.6M combined @$10M | 5y $112M+
+**Version:** 6.50 MEGA PROPOSAL | **Updated:** 2026-05-30 15:34 JST | **Wave:** K700 MILESTONE (supersedes K692/K674/K666/K657/K643)
+**Status:** v6.50 MEGA PROPOSAL — 35 sleeves | 10 orthog + 3 ETH-base + 7 alt-alts + 8 paired | HL 63.5% (<65% cap) | K523 $15.2M/$21.1M/$48M @$10M | 5y $105M @$10M | v6.50 LIVE target 2027-Q1
+
+---
+
+## ★★★★★★ K700 MILESTONE — v6.50 MEGA Architecture Proposal (2026-05-30 15:34 JST)
+
+> **K700 SCOPE:** K697–K700 | ★★★ MEGA MILESTONE | ALL mechanism families incorporated
+> **SLEEVES:** 35 total (10 orthog + 3 ETH-base + 7 alt-alts + 8 paired-BTC + 9-axis signals + stablecoin)
+> **HL CONCENTRATION:** 63.5% (<65% cap, 1.5pp headroom) — all alt-alts + orthog + K663 Bybit-primary
+> **K523 RANGE:** Conservative $15.2M / Mid $21.1M / Optimistic $48M @$10M AUM
+> **v6.40 K666 BASELINE:** $20.9M mid (29 sleeves) | v6.50 adds +$176K (K694+K696+K698)
+> **ALT-ALT 7 PAIRS TOTAL:** $919K @$10M | ALL Bybit-only
+> **5y PROJECTIONS:** $105M @$10M | $1,054M @$100M | $2,108M @$200M
+> **D60 CASCADE:** 2026-07-29 (14 scaffolds → LIVE, execute in Sharpe order)
+> **v6.50 FULL LIVE TARGET:** 2027-Q1
+
+### v6.50 MEGA: 35 Sleeve Summary
+
+| Family | Count | Waves | Venue | Ann Net @$10M | HL% |
+|--------|-------|-------|-------|---------------|-----|
+| Core Infrastructure | 3 | K280/K297/K376 | HL+Bybit | ~$308K (marginal; K280 base ~$18.1M) | 29.0% |
+| 8 Paired-Trade BTC-base | 8 | K449/K476/K484/K493/K500/K507x2/K512 | HL | $313K | 23.5% |
+| 10 Orthog Bybit | 10 | K628/K631/K633/K635/K638/K645/K646/K647/K648/K656 | Bybit | $827K | 0% |
+| 9-Axis Signals | 4 | K495/K541/K521/K208 | HL+Bybit | $1.27M | 7.5% |
+| Stablecoin Sleeve | 2 | K344/K415 | Ethena/Spark | $28K | 0% |
+| 3 ETH-base | 3 | K629/K658/K663 | HL+Bybit | $136K | 3.5% |
+| 7 Alt-Alt Cross-Cluster | 7 | K679/K682/K684/K686/K690/K694/K696 | Bybit | $919K | 0% |
+| Oracle Cross-Cluster (cond) | 1 | K698 LINK-ETH | Bybit | $25K | 0% |
+| **TOTAL** | **38** | K280→K700 | Mixed | **$21.1M mid** | **63.5%** |
+
+### Alt-Alt Family Status (7 Pairs)
+
+| Wave | Pair | OOS Sh | Net @$10M | Status | Notes |
+|------|------|--------|-----------|--------|-------|
+| K679 | APT-SOL | 39.29 | $234,781 | SCAFFOLD-READY | Move-VM vs SVM. Highest family profit. |
+| K682 | ATOM-SOL | 43.43 | $214,638 | SCAFFOLD-READY | Cosmos IBC vs SVM. |
+| K684 | SOL-INJ | 9.65 | $114,316 | SCAFFOLD-READY | Cosmos DeFi vs SVM. Vol ratio 2.17x. |
+| K686 | AVAX-SOL | 50.27 | $102,153 | SCAFFOLD-READY | Highest Sharpe in family. Anti-corr K484. |
+| K690 | SEI-SOL | 25.11 | $104,774 | SCAFFOLD-READY | G4 12/12 UNPRECEDENTED. Negative-FR leg. |
+| K694 | TIA-SOL | 19.09 | $58,354 | PAPER-60d | **NEW v6.50.** DA vs SVM cross-tier. |
+| K696 | ENA-SOL | 26.93 | $93,187 | PAPER-60d | **NEW v6.50.** First cross-cluster (synth stable vs SVM). |
+| **TOTAL** | | | **$919K** | | All Bybit-only. HL unchanged. |
+
+### New v6.50 Additions (not in v6.40)
+
+| Wave | Strategy | OOS Sh | Net @$10M | Status |
+|------|----------|--------|-----------|--------|
+| K694 | TIA-SOL alt-alt | 19.09 | $58,354 | PAPER-60d (60d gate Sh>=5) |
+| K696 | ENA-SOL alt-alt | 26.93 | $93,187 | PAPER-60d |
+| K698 | LINK-ETH oracle cross-cluster | 12.07 | $24,650 | PAPER-60d (conditional) |
+| **+$176K** | **v6.50 incremental** | | | vs v6.40 $20.9M baseline |
+
+### D60 Cascade — 2026-07-29 (Execute in Sharpe Order)
+
+```bash
+# ALT-ALT — Bybit-only (Sharpe order)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k686-avax-sol.plist    # Sh=50.27 $102K FIRST
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k682-atom-sol.plist    # Sh=43.43 $215K
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k679-apt-sol.plist     # Sh=39.29 $235K
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k690-sei-sol.plist     # Sh=25.11 $105K
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k696-ena-sol.plist     # Sh=26.93 $93K (NEW v6.50)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k694-tia-sol.plist     # Sh=19.09 $58K (NEW v6.50)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k684-sol-inj.plist     # Sh=9.65  $114K LAST
+
+# ORTHOG — Bybit-primary (Sharpe order)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k628-jto-orthog.plist  # Sh=44.63 $357K HIGHEST ALPHA
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k648-pol-orthog.plist  # Sh=23.41
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k647-dot-orthog.plist  # Sh=23.25
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k635-imx-orthog.plist  # Sh=11.94
+
+# ETH-BASE — HL (K552 PREREQ)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k658-sol-eth.plist     # Sh=29.66
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k629-wld-eth.plist     # Sh=19.90
+```
+
+### §6 Gates — v6.50 MEGA
+
+| Gate | Status | Value |
+|------|--------|-------|
+| HL Cap <= 65% | **PASS** | HL=63.5%, headroom 1.5pp |
+| G5 All Sub-Clusters | **PASS** | Max corr: orthog=0.33, ETH-base=0.344, alt-alt=-0.74 signed |
+| MR8 Algebraic Group | **PASS** | TIA/ENA/LINK outside {APT,ATOM,SOL,INJ,AVAX,SEI} group |
+| MR9 Identity Pre-check | **PASS** | K696 corr=0.0094; K698 max_err=5.42e-20 |
+| D60 Paper Gate | PENDING | 2026-07-29 first LIVE eligibility |
+| Combined Sharpe | **PASS** | 9-orthog Sh=32.45 (K655); v6.50 full est >= 15 |
+
+### Critical Concerns (K700 Updated)
+
+| ID | Severity | Issue | Action |
+|----|----------|-------|--------|
+| CC1 | **CRITICAL** | HL 63.5%/65% cap — 1.5pp headroom only | K552 FIRST before any new HL sleeve |
+| CC2 | **CRITICAL** | SOL saturation: 6/7 alt-alt pairs include SOL leg | Monitor combined SOL notional < 15% AUM |
+| CC3 | **HIGH** | BTC TRANSITION slope=-34.41 | K376 scaffold READY, activate on slope > 0 |
+| CC4 | **HIGH** | D60 cascade 2026-07-29: 14 concurrent LIVE | D30 audit 2026-06-29 first |
+| CC5 | **HIGH** | K696 PnL corr vs K616 = 0.672 (shared ENA leg) | ENA notional < 6% AUM (MR6) |
+| CC6 | **HIGH** | K698 HL 67% OVER CAP | Bybit primary LINK-maxLev50 ETH-maxLev100 |
+| CC7 | MEDIUM | HypurrFi DROP_LINE: ENA structural risk | sUSDe TVL monitoring + exit < $500M TVL |
+| CC8 | MEDIUM | 57 daemons — 0 ACTIVE | Execute Phase A Day 0 immediately |
+| CC9 | MEDIUM | Bybit concentration ~37% AUM | K485 sub-account isolation |
 
 ---
 
