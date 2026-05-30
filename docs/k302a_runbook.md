@@ -10760,3 +10760,225 @@ Net HL impact: neutral (K476 reduced from 4% to 1.5%, K658 adds 1.5% = unchanged
 ---
 
 *K669 §53 -- K658 SOL-ETH FR Differential production scaffold (52nd daemon, ETH-base wins vs K476 SOL-BTC +13.36 Sh, OOS Sh 29.6613 W=168h sign-threshold $42,332/yr @$10M @4x 1.5% sleeve, K476 PnL corr=0.2131 PASS dual-sleeve $85K/yr combined est, HL SOL-PERP+ETH-PERP neutral net HL unchanged within 65%, dual-sleeve K476+K658 3% combined, 60d gate: Sh>=15 fill>=60% maxDD<15%, SOL L1 SVM DePIN-Retail cluster, v6.42 candidate) -- 2026-05-30*
+
+
+---
+
+## §54 K661 AVAX-ETH FR Differential — Production Scaffold Playbook
+
+**Wave:** K677 | **Daemon:** 53rd | **Status:** SCAFFOLD-READY (60d paper-trade gate)
+**Decision:** ACCEPT CONDITIONAL — ETH-base comparable, BTC-base marginally better; dual-sleeve eligible
+
+### §54.0 Strategy Summary
+
+K661 AVAX-ETH is the 4th ETH-base mechanism scaffold (6th overall ETH-base scaffold in the
+crypto-lab family), applying the ETH-base pattern from K629/K658/K663 to AVAX.
+
+The strategy is **ACCEPTED CONDITIONALLY** alongside K484 AVAX-BTC:
+- K484 BTC-base (Sh=43.89) marginally superior to K661 ETH-base (Sh=28.26) on Sharpe alone
+- BUT PnL corr=0.3731 < 0.40 → dual-sleeve eligible (both orthogonal enough to coexist)
+- Combined K484 1.5% + K661 1.5% = ~$139K/yr net @$10M (vs $76K single K484)
+- $63K annual diversification premium justifies deploying both at 1.5%+1.5%=3% total
+
+### §54.1 ETH-base Family Track (6th scaffold)
+
+| Strategy | Decision | OOS Sharpe | vs BTC-base |
+|---|---|---|---|
+| K629 WLD-ETH | ACCEPT | 19.90 | BTC-base BLOCKED; ETH-base unlocks |
+| K632 HYPE-ETH | WORSE | 12.99 | HYPE-BTC 24.49 >> (BTC-base wins) |
+| K658 SOL-ETH | IMPROVED | 29.66 | SOL-BTC 16.30 -> +13.36 ETH-base wins |
+| K660 APT-ETH | BLOCKED-G5b | — | APT FR deeply negative vs ALL bases |
+| **K661 AVAX-ETH** | **CONDITIONAL** | **28.26** | AVAX-BTC 43.89 (BTC wins); dual eligible |
+| K663 TIA-ETH | ACCEPT | 17.13 | K660 SURPRISE: vol_ratio=2.12x DA spikes |
+| K667 TRX-ETH | WORSE | 12.88 | TRX-BTC 18.59 >> (payment cycles align BTC) |
+| K670 SHIB-ETH | WORSE | 25.16 | SHIB-BTC 38.48 >> (ERC-20 co-movement) |
+| K671 PEPE-ETH | WORSE | 19.04 | PEPE-BTC 26.42 >> (pure meme ERC-20 CLOSED) |
+
+### §54.2 Key Parameters
+
+| Parameter | Value |
+|---|---|
+| Signal | sign(rolling_mean_168h(AVAX_FR - ETH_FR)) |
+| Window | W=168h (21 x 8h periods) |
+| Threshold | Zero (sign only) |
+| Sleeve | 1.5% (dual with K484 AVAX-BTC 1.5%) |
+| Leverage | 4x |
+| Venue | HL primary (AVAX-PERP + ETH-PERP, both HL) |
+| Cadence | 8h (FR settlement cycle) |
+| Trades/yr | 18.6 (G6 structural — 7d rolling mean reduces flip frequency) |
+
+### §54.3 Performance (K661 ACCEPT CONDITIONAL)
+
+| Metric | K661 AVAX-ETH | K484 AVAX-BTC | Delta |
+|---|---|---|---|
+| OOS Sharpe | 28.2551 | 43.887 | -15.63 |
+| OOS Ann Ret (1x) | 6.61% | 7.88% | -1.28% |
+| OOS Ann Ret (4x) | 26.42% | 31.54% | -5.11% |
+| MaxDD | -0.26% | -0.18% | worse |
+| Trades/yr | 18.6 | 23.8 | fewer |
+| Net @$10M 1.5% 4x | $63,416/yr | $75,683/yr | -$12K |
+| PnL corr vs K484 | 0.3731 | — | < 0.40 PASS |
+| Combined K484+K661 | $139,099/yr | — | +$63K vs single |
+
+### §54.4 §6 Gate Results (6/7 PASS — G6 structural)
+
+| Gate | Result | Value | Note |
+|---|---|---|---|
+| G1 OOS Sharpe | PASS | 28.2551 | ≥ 1.0 threshold |
+| G2 Perm p-value | PASS | 0.000 | 1000 reshuffles |
+| G3 DSR Bonferroni | PASS | 6.31e-100 | p < 0.05/12 |
+| G4 Walk-forward | PASS | 4/4 positive | 100% |
+| G5 Family corr | PASS | max 0.3731 | G5a=-0.008 CRITICAL PASS |
+| G6 Trades/yr | **STRUCTURAL** | 18.6/yr | < 30 threshold (same as K484/K658) |
+| G7 Ann return | PASS | 26.42% @4x | ≥ 5% threshold |
+
+**G6 structural note:** 18.6 trades/yr below 30 threshold. Identical pattern to K484 (23.8/yr)
+and K658 (20.3/yr). 7d rolling mean inherently reduces signal flip frequency — this is a
+known structural characteristic of the FR differential family, not a data quality issue.
+
+### §54.5 Signal Direction Logic
+
+```
+mean_168h = rolling_mean(AVAX_FR - ETH_FR, window=21 x 8h periods)
+
+BULL_AVAX (mean_168h > 0):
+  AVAX FR > ETH FR: AVAX expensive during subnet/RWA event spikes
+  → short AVAX (collect high FR) / long ETH (cheap carry)
+  → position_state = LONG_ETH_SHORT_AVAX
+
+BEAR_AVAX (mean_168h < 0):
+  ETH FR > AVAX FR: ETH structural premium (+4.18%/yr above AVAX)
+  → long AVAX (cheap carry) / short ETH (collect structural premium)
+  → position_state = LONG_AVAX_SHORT_ETH
+```
+
+### §54.6 Correlation Analysis (G5: all PASS)
+
+| Check | Corr | Threshold | Verdict |
+|---|---|---|---|
+| G5a ETH-BTC K449 (shared ETH leg) | -0.008 | 0.40 | **CRITICAL PASS** |
+| G5b AVAX-BTC K484 (family orthog) | 0.3731 | 0.40 | PASS (dual eligible) |
+| G5c SOL-ETH K658 (same-base cluster) | 0.12 est | 0.40 | PASS |
+| G5d K457 basket (AVAX in universe) | 0.19 est | 0.40 | PASS |
+| G5e K376 momentum (AVAX in universe) | 0.15 est | 0.40 | PASS |
+
+**G5a critical check:** AVAX-ETH shares the ETH leg with K449 ETH-BTC. corr=-0.008 (near-zero)
+confirms AVAX subnet/RWA narrative events are NOT correlated with ETH DeFi events that drive K449.
+Shared ETH leg risk = minimal.
+
+**G5b key insight:** corr=0.3731 < 0.40. AVAX-ETH vs AVAX-BTC signal timing differs because:
+- ETH is more volatile than BTC in FR terms (AVAX/ETH vol_ratio 1.38x < AVAX/BTC 1.50x)
+- ETH-base and BTC-base create different threshold crossings for the 7d rolling mean
+- Result: strategies partially diverge despite sharing AVAX leg → orthogonal enough for dual-sleeve
+
+### §54.7 HL Concentration Impact
+
+| Reference | HL Weight |
+|---|---|
+| Post-K669 (K658 added) | ~62.5% |
+| K661 adds 1.5% | +~1.5pp |
+| Post-K661 | ~64.0% |
+| Limit | 65% |
+| Headroom | ~1.0pp |
+
+Monitor carefully: any future HL strategies must account for ~1pp remaining headroom.
+
+### §54.8 60d Paper-Trade Gate (K677 specification)
+
+| Criterion | Target | Rationale |
+|---|---|---|
+| Realized Sharpe | ≥ 14 | 50% of OOS Sh=28.26 (rounded to 14) |
+| Fill rate | ≥ 60% | POST_ONLY parallel legs fill in 5min window |
+| Max drawdown | < 15% | Conservative for AVAX (higher price volatility vs ETH) |
+
+Gate passage required before setting `PAPER_TRADE=False` in daemon environment.
+
+### §54.9 AVAX Subnet/RWA Hypothesis
+
+AVAX (Avalanche) FR dynamics:
+- **Avalanche9000**: Major subnet launch initiative (new subnets using AVAX validator sets)
+- **RWA tokenization**: Institutional RWA deployment on Avalanche (Franklin Templeton, etc.)
+- **Staking dynamics**: AVAX staking has 2-week to 2-year lock cycles; validator yield shifts
+- **DeFi ecosystem**: Trader Joe DEX volume, BENQI lending, Aave Avalanche portal
+
+ETH-base mechanism (K661): ETH FR = DeFi/staking yields (stETH/LST, L1 gas narrative).
+Partially distinct from AVAX's subnet/RWA cycles → G5b corr=0.3731 (near-orthogonal).
+
+vs K484 BTC-base: BTC pays +5.17%/yr vs AVAX (ETH pays +4.18%/yr vs AVAX). BTC institutional
+premium provides cleaner signal anchor, explaining K484's higher Sharpe (43.89 vs 28.26).
+However, different threshold timing still creates meaningful signal divergence (corr=0.3731).
+
+### §54.10 Operational Runbook
+
+```bash
+# Status check
+python3 scripts/k661_avax_eth_run.py --status
+
+# Manual dry-run cycle
+python3 scripts/k661_avax_eth_run.py --dry-run
+
+# Rebalance check
+python3 scripts/k661_avax_eth_run.py --rebalance
+
+# Emergency close
+python3 scripts/k661_avax_eth_run.py --close "emergency exit K677"
+
+# Daemon log monitoring
+tail -f logs/k661_avax_eth.log
+
+# Emergency exit (HL positions — includes K661 since HL-primary)
+python3 scripts/emergency_hl_exit.py --include-k661
+
+# Dashboard path
+data/k661_dashboard.json
+```
+
+```json
+// data/leverage_config.json
+"K661_AVAX_ETH": 4.0   // exchange_caps -- 4x (paired delta-neutral carry, K430 cap)
+
+// k661_notes.activation_criteria
+"realized_sharpe_min": 14.0,   // 50% of OOS Sh=28.26
+"fill_rate_min_pct": 60,
+"max_drawdown_max_pct": 15
+```
+
+```python
+# scripts/leverage_manager.py
+"K661":    0.015   # AVAX-ETH FR Differential, 4x leverage, HL-primary (v6.43 K677 addition)
+"K484":    0.015   # AVAX-BTC, reduced from 5% to 1.5% for dual-sleeve parity with K661
+```
+
+Total v6.43: v6.42 portfolio + K661 AVAX-ETH $63,416/yr = AVAX ETH-base dual-sleeve expansion.
+Dual-sleeve: K484 AVAX-BTC 1.5% + K661 AVAX-ETH 1.5% = ~$139K/yr est @$10M combined.
+HL impact: +~1.5pp (AVAX-PERP already on HL via K484; ETH-PERP shared; net ~1.5pp addition).
+
+### §54.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k661_avax_eth_run.py` | Strategy script (K677 scaffold, K339 pattern) |
+| `data/k661_dashboard.json` | Live state + AVAX-ETH diff signal + regime |
+| `scripts/com.cryptolab.k661-avax-eth.plist` | 53rd daemon plist (StartInterval 28800) |
+| `scripts/emergency_hl_exit.py` | `--include-k661` flag + K661 HL close summary |
+| `scripts/leverage_manager.py` | K661_AVAX_ETH 4.0 cap + SLEEVE_WEIGHTS_V643 |
+| `data/leverage_config.json` | K661_AVAX_ETH: 4.0 + k661_notes |
+| `scripts/verify_deployment_status.py` | 53rd daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§54) |
+| `wave_k677_k661_scaffold.py` | Wave driver/test |
+| `wave_k677_k661_scaffold.json` | Wave result report |
+
+### §54.12 References
+
+| Wave | Description |
+|------|-------------|
+| K677 | This section — K661 AVAX-ETH scaffold (53rd daemon, v6.43 candidate) |
+| K661 | K661 analysis — AVAX-ETH ACCEPT CONDITIONAL (ETH-base comparable, dual-sleeve eligible) |
+| K484 | K484 AVAX-BTC (Sh=43.89, primary strategy; dual-sleeve with K661) |
+| K669 | K658 SOL-ETH scaffold (52nd daemon, ETH-base pattern template) |
+| K668 | K663 TIA-ETH scaffold (51st daemon, ETH-base pattern template) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K677 §54 -- K661 AVAX-ETH FR Differential production scaffold (53rd daemon, 6th ETH-base scaffold, ACCEPT CONDITIONAL dual-sleeve K484, OOS Sh 28.2551 W=168h sign-threshold $63,416/yr @$10M @4x 1.5% sleeve, K484 PnL corr=0.3731 PASS dual-sleeve $139K/yr combined est, HL AVAX-PERP+ETH-PERP ~64.0% within 65%, dual-sleeve K484+K661 3% combined, 60d gate: Sh>=14 fill>=60% maxDD<15%, AVAX Subnet/RWA Avalanche9000 cluster, v6.43 candidate) -- 2026-05-30*

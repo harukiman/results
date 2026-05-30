@@ -413,6 +413,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k658_sol_eth",
         expected_html_status="SCAFFOLD-READY",  # K669: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=15 + fill_rate>=60% + maxDD<15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k661-avax-eth",
+        purpose="K661 AVAX-ETH FR Differential (AVAX Subnet/RWA Avalanche9000 cluster, ETH-base ACCEPT CONDITIONAL vs K484 AVAX-BTC, HL-primary AVAX+ETH both legs, 4x leverage, 8h cycle, OOS Sh 28.26 W=168h direct diff vs K484 Sh=43.89 BTC-base marginally better, $63,416/yr net @$10M @4x @1.5% sleeve, K484 PnL corr=0.3731 PASS dual-sleeve, G5a K449 ETH-BTC critical corr=-0.008 PASS, G5b K484 AVAX-BTC corr=0.3731 PASS, OU halflife=3.7h vol_ratio=1.38x, HL +~1.5pp ~64.0% within 65% limit, dual K484 1.5%+K661 1.5%=$139K/yr net est, 6/7 §6 gates G6 structural 18.6/yr, 60d paper-trade gate, v6.43 candidate 1.5% sleeve, 53rd daemon 6th ETH-base scaffold, K677 scaffold)",
+        scripts=["scripts/k661_avax_eth_run.py"],
+        log_basename="k661_avax_eth",
+        expected_html_status="SCAFFOLD-READY",  # K677: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=14 + fill_rate>=60% + maxDD<15%)
+    ),
 ]
 
 

@@ -878,6 +878,131 @@ def close_k512_paired_positions(
     return True
 
 
+def _detect_k587_paired_positions(positions: List[Dict]) -> Optional[Dict]:
+    """
+    K678 Phase 4: Detect K587 paired positions (ICP long + BTC short, or reverse).
+
+    K587 ICP-BTC = 2 legs split across HL + Bybit:
+      - ICP leg on HL (0.5% of AUM, 4x leverage — HL maxLev=5x for ICP)
+      - BTC leg on Bybit (0.5% of AUM, 4x leverage)
+    Sequential close: short leg first (avoid uncovered short), then long leg.
+    HL portion (ICP) closes on HL; Bybit portion (BTC) closes on Bybit.
+
+    A K587 pair is identified by:
+      - One long leg: ICP or BTC
+      - One short leg: the other of ICP/BTC
+      - HL+Bybit split: ICP on HL, BTC on Bybit (or reverse based on direction)
+
+    Note: ICP is Internet Computer Protocol (Dfinity) — decentralised cloud compute.
+    K587 is the Compute/Cloud cluster ACCEPT CONDITIONAL. OOS Sharpe 12.53.
+    HL+Bybit split: 0.5% HL + 0.5% Bybit (high vol — ICP vol 8.40x vs BTC).
+    HL maxLev ICP = 5x; strategy uses 4x (margin of safety below HL cap).
+    """
+    K587_SYMBOLS = {"ICP", "BTC"}
+    icp_btc = [p for p in positions if p.get("coin", "").upper() in K587_SYMBOLS]
+    if len(icp_btc) < 2:
+        return None
+
+    longs  = [p for p in icp_btc if p.get("side") == "long"]
+    shorts = [p for p in icp_btc if p.get("side") == "short"]
+
+    if not (longs and shorts):
+        return None
+
+    long_pos  = longs[0]
+    short_pos = shorts[0]
+    long_sym  = long_pos["coin"].upper()
+    short_sym = short_pos["coin"].upper()
+
+    if long_sym not in K587_SYMBOLS or short_sym not in K587_SYMBOLS:
+        return None
+    if long_sym == short_sym:
+        return None
+
+    # Determine venue split: ICP on HL, BTC on Bybit (or reverse)
+    long_venue  = "HL"    if long_sym == "ICP"  else "Bybit"
+    short_venue = "HL"    if short_sym == "ICP" else "Bybit"
+
+    return {
+        "detected":        True,
+        "long_symbol":     long_sym,
+        "short_symbol":    short_sym,
+        "long_value_usd":  long_pos.get("value_usd", 0.0),
+        "short_value_usd": short_pos.get("value_usd", 0.0),
+        "long_size":       long_pos.get("size", 0.0),
+        "short_size":      short_pos.get("size", 0.0),
+        "long_venue":      long_venue,
+        "short_venue":     short_venue,
+        "state":           f"LONG_{long_sym}_SHORT_{short_sym}",
+        "split_protocol":  "HL_05PCT_BYBIT_05PCT",
+        "close_protocol":  "short_leg_first_then_long_leg",
+        "hl_max_lev_note": "ICP HL maxLev=5x; strategy uses 4x (margin of safety)",
+        "note":            (
+            f"K587 ICP-BTC paired position — cover {short_sym}@{short_venue} first, "
+            f"then sell {long_sym}@{long_venue}. "
+            "HL+Bybit split: ICP leg on HL (0.5%), BTC leg on Bybit (0.5%) (K678). "
+            "ICP vol 8.40x vs BTC = highest in BTC-base family."
+        ),
+    }
+
+
+def close_k587_paired_positions(
+    plan:    Dict,
+    logger:  "logging.Logger",
+    dry_run: bool = True,
+) -> bool:
+    """
+    K678 Phase 4: Close K587 ICP-BTC paired positions.
+    Sequential: short leg first (avoid uncovered short), then long leg.
+    ICP leg closes on HL; BTC leg closes on Bybit.
+
+    K587 HL+Bybit split:
+      ICP leg → HL (0.5% of AUM, HL maxLev=5x, using 4x)
+      BTC leg → Bybit (0.5% of AUM)
+    Close: cover short (ICP@HL or BTC@Bybit) first → sell long second.
+
+    Args:
+      plan:    exit plan dict (from plan_exit())
+      logger:  logger instance
+      dry_run: True = paper-trade simulation
+
+    Returns True on success (or dry-run), False on error.
+    """
+    k587_detail = plan.get("k587_pair_detail")
+
+    if not k587_detail or not k587_detail.get("detected"):
+        logger.info("  [K587] No K587 ICP-BTC paired position detected (NEUTRAL or 60d paper-trade).")
+        return True
+
+    short_sym   = k587_detail["short_symbol"]
+    long_sym    = k587_detail["long_symbol"]
+    short_val   = k587_detail.get("short_value_usd", 0.0)
+    long_val    = k587_detail.get("long_value_usd", 0.0)
+    short_venue = k587_detail.get("short_venue", "HL")
+    long_venue  = k587_detail.get("long_venue", "Bybit")
+
+    logger.info(f"  [K587] ICP-BTC paired close — {k587_detail['state']}")
+    logger.info(f"    Step 1 (SHORT first): BUY-COVER {short_sym} ${short_val:,.0f}  "
+                f"({short_venue} IOC reduce-only)")
+    logger.info(f"    Step 2 (LONG second): SELL      {long_sym} ${long_val:,.0f}  "
+                f"({long_venue} IOC reduce-only)")
+    logger.info(f"    Split: HL 0.5% (ICP) + Bybit 0.5% (BTC) — close each leg on its venue")
+    logger.info(f"    HL maxLev note: ICP HL maxLev=5x; strategy at 4x (margin of safety)")
+
+    if dry_run:
+        logger.info("    [DRY-RUN] K587 ICP-BTC close simulated — no actual orders submitted")
+        return True
+
+    # LIVE scaffold: IOC close on respective venues (sequential)
+    # Step 1: cover short on its venue (HL or Bybit)
+    logger.info(f"    SCAFFOLD: IOC reduce {short_sym} (cover short) @ {short_venue}")
+    # Step 2: sell long on its venue (HL or Bybit)
+    logger.info(f"    SCAFFOLD: IOC reduce {long_sym} (sell long) @ {long_venue}")
+    logger.info("    SCAFFOLD: K587 close wired but not executed "
+                "(HL+Bybit auth required at live activation)")
+    return True
+
+
 def _detect_k541_position(positions: List[Dict]) -> Optional[Dict]:
     """
     K550 Phase 4: Detect K541 stablecoin supply growth signal positions.
@@ -3772,6 +3897,38 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K677: K661 AVAX-ETH FR Differential emergency exit flag
+    # K661 = HL-primary AVAX+ETH paired (2 legs) when sign(rolling_mean_168h(AVAX_FR - ETH_FR)) != 0.
+    # Close protocol: IOC reduce-only on HL (BOTH legs on HL — HL concentration affected).
+    # Signal: diff = AVAX_FR - ETH_FR (direct, W=168h rolling mean, zero threshold).
+    # ACCEPT CONDITIONAL: OOS Sh=28.26 vs K484 Sh=43.89; PnL corr=0.3731 PASS dual-sleeve.
+    # G5a ETH-BTC K449 corr=-0.008 (CRITICAL shared-leg check — minimal HL ETH leg risk).
+    # Dual-sleeve: K484 AVAX-BTC 1.5% + K661 AVAX-ETH 1.5% = 3.0% total sleeve.
+    # Use --include-k661 to print K661-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k661",
+        dest="include_k661",
+        action="store_true",
+        default=False,
+        help=(
+            "K677: Include K661 AVAX-ETH close summary during emergency exit. "
+            "K661 positions (AVAX+ETH paired, HL-primary) ARE included in HL emergency exit. "
+            "This flag adds a structured K661-specific close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = AVAX_FR - ETH_FR (direct differential, W=168h rolling mean, zero threshold). "
+            "HL concentration: ~64.0% post-K661 (within 65% limit, +~1.5pp from ~62.5%). "
+            "OOS Sharpe 28.26 (6/7 §6 gates, G6 structural 18.6/yr). $63,416/yr net @$10M @4x (1.5% sleeve). "
+            "Dual-sleeve: K484 AVAX-BTC 1.5% + K661 AVAX-ETH 1.5% = ~$139,099/yr net @$10M. "
+            "G5a K449 ETH-BTC corr=-0.008 PASS (CRITICAL: shared ETH leg minimal risk). "
+            "G5b K484 AVAX-BTC corr=0.3731 PASS (family orthogonality — dual eligible). "
+            "ACCEPT CONDITIONAL: BTC-base (K484) marginally superior Sh=43.89; but dual-sleeve justified. "
+            "60d paper-trade gate: Realized Sh>=14 + fill>=60% + maxDD<15%. "
+            "Cluster: AVAX Subnet/RWA (Avalanche9000, RWA tokenization, ETH-base, 53rd daemon). "
+            "Requires: K661 daemon running (com.cryptolab.k661-avax-eth, 53rd daemon). "
+            "See: docs/k302a_runbook.md §54"
+        ),
+    )
+
     # K659: K656 GALA-BTC dual-factor orthog emergency exit flag
     # K656 = Bybit-only GALA+BTC paired (2 legs) when residual rolling_mean_504h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL cap 66.5% > 65%, Bybit-only mandatory).
@@ -4377,6 +4534,31 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "K663 positions ARE included in the HL emergency exit above. "
                 "Use --include-k663 for structured K663 close summary (§52). "
                 "HL concentration ~61.0% (within 65% limit)."
+            )
+
+        # K677: K661 AVAX-ETH close summary (HL-primary — positions ARE in HL exit above)
+        # K661 positions (AVAX+ETH, HL-primary) ARE closed by the HL emergency exit above.
+        # This block adds structured K661-specific close summary when --include-k661 is used.
+        if args.include_k661:
+            logger.info("=== K661 AVAX-ETH FR DIFFERENTIAL CLOSE SUMMARY (K677 §54) ===")
+            logger.info("  K661 AVAX-ETH: HL-primary (AVAX-PERP + ETH-PERP both legs on HL)")
+            logger.info("  Signal: diff = AVAX_FR - ETH_FR (direct, W=168h rolling mean, zero threshold)")
+            logger.info("  ACCEPT CONDITIONAL: OOS Sh=28.26 vs K484 Sh=43.89 (BTC-base marginally better)")
+            logger.info("  PnL corr=0.3731 < 0.40 -> dual-sleeve eligible with K484 AVAX-BTC")
+            logger.info("  G5a K449 ETH-BTC corr=-0.008 (CRITICAL: shared ETH leg minimal risk)")
+            logger.info("  Close: IOC reduce-only HL — short leg first, then long leg")
+            logger.info("  HL concentration: ~64.0% post-K661 (within 65% limit, +~1.5pp from ~62.5%)")
+            logger.info("  OOS Sharpe 28.26 (6/7 §6 gates, G6 structural) | $63,416/yr net @$10M @4x (1.5% sleeve)")
+            logger.info("  Dual-sleeve: K484 AVAX-BTC 1.5% + K661 AVAX-ETH 1.5% = ~$139,099/yr net @$10M")
+            logger.info("  Cluster: AVAX Subnet/RWA (Avalanche9000, RWA tokenization, ETH-base, 53rd daemon)")
+            logger.info("  60d gate: Realized Sh>=14 + fill>=60% + maxDD<15%")
+            logger.info("  See: docs/k302a_runbook.md §54 (K661 AVAX-ETH playbook)")
+        else:
+            logger.info(
+                "K661 AVAX-ETH: HL-primary (AVAX-PERP + ETH-PERP on HL). "
+                "K661 positions ARE included in the HL emergency exit above. "
+                "Use --include-k661 for structured K661 close summary (§54). "
+                "HL concentration ~64.0% (within 65% limit). G5a K449 corr=-0.008 (ETH leg OK)."
             )
 
         # K654: K629 WLD-ETH close summary (HL-primary — positions ARE in HL exit above)

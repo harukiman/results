@@ -1,0 +1,179 @@
+{
+  "wave": "K677",
+  "strategy": "K661 AVAX-ETH FR Differential (ETH-base, AVAX Subnet/RWA Avalanche9000, ACCEPT CONDITIONAL)",
+  "run_time_jst": "2026-05-30 14:01 JST",
+  "overall_status": "PASS",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k661_avax_eth_run.py",
+        "description": "Phase 1: K661 strategy script (K339 pattern, W=168h, ETH-base direct diff)",
+        "exists": true,
+        "size_bytes": 51081,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k661-avax-eth.plist",
+        "description": "Phase 2: 53rd daemon plist (StartInterval 28800)",
+        "exists": true,
+        "size_bytes": 3353,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k661_dashboard.json",
+        "description": "Phase 3: Dashboard (diff signal, regime, eth_base_mechanism)",
+        "exists": true,
+        "size_bytes": 5198,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k661 flag, \u00a754)",
+        "exists": true,
+        "size_bytes": 239189,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K661_AVAX_ETH + SLEEVE_WEIGHTS_V643)",
+        "exists": true,
+        "size_bytes": 82126,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K661_AVAX_ETH: 4.0 + k661_notes)",
+        "exists": true,
+        "size_bytes": 60307,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (53rd daemon registry)",
+        "exists": true,
+        "size_bytes": 36009,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a754 (K661 AVAX-ETH playbook)",
+        "exists": true,
+        "size_bytes": 425958,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K677 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1654952,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k677_k661_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 15532,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_integrity": {
+    "checks": {
+      "k339_repo_root": true,
+      "paper_trade_default": true,
+      "sleeve_1_5pct": true,
+      "leverage_4x": true,
+      "rolling_168h": true,
+      "zero_threshold": true,
+      "hl_primary": true,
+      "post_only": true,
+      "accept_conditional": true,
+      "direct_diff_no_ols": true,
+      "symbols_avax_eth_only": true,
+      "dashboard_path": true,
+      "g5b_corr_0_3731": true,
+      "dual_sleeve_note": true,
+      "g5a_corr_critical": true,
+      "53rd_daemon": true,
+      "dashboard_regime": true,
+      "dashboard_gate_sh14": true,
+      "dashboard_sleeve_015": true,
+      "cfg_k661_cap": true,
+      "cfg_k661_notes": true,
+      "cfg_sleeve_015": true,
+      "cfg_g5b_corr": true,
+      "emer_include_k661": true,
+      "emer_k661_hl_note": true,
+      "lev_k661_cap": true,
+      "lev_v643_weights": true,
+      "lev_k661_015pct": true,
+      "vds_k661_label": true,
+      "vds_53rd_daemon": true,
+      "runbook_section54": true,
+      "runbook_dual_sleeve": true,
+      "runbook_g5a_critical": true,
+      "html_k677_scaffold": true
+    },
+    "pass": 34,
+    "fail": 0
+  },
+  "dry_run": {
+    "status": "PASS",
+    "returncode": 0,
+    "stdout_lines": [
+      "=== K661 Dashboard (2026-05-30 14:01 JST) ===",
+      "{",
+      "  \"last_poll_jst\": \"2026-05-30 14:01 JST\",",
+      "  \"mean_168h\": 0.0,",
+      "  \"diff_sigma\": 1e-08,"
+    ],
+    "stderr_lines": []
+  },
+  "scaffold_summary": {
+    "daemon_number": "53rd",
+    "eth_base_scaffold_rank": "6th ETH-base scaffold",
+    "strategy": "K661 AVAX-ETH FR Differential",
+    "decision": "ACCEPT CONDITIONAL \u2014 dual-sleeve with K484 eligible",
+    "signal": "sign(rolling_mean_168h(AVAX_FR - ETH_FR))",
+    "threshold": "zero (sign only)",
+    "ema_window_h": 168,
+    "leverage": 4.0,
+    "sleeve_pct": 0.015,
+    "venue": "HL primary (AVAX-PERP + ETH-PERP, both HL perps)",
+    "oos_sharpe": 28.2551,
+    "k484_sharpe": 43.887,
+    "sharpe_delta_vs_k484": -15.6319,
+    "oos_ann_ret_pct": 6.6058,
+    "profit_net_yr_10m": 63416,
+    "dual_sleeve_net_yr": 139099,
+    "diversification_premium": 63416,
+    "g5a_corr_k449_critical": -0.008,
+    "g5b_corr_k484_family": 0.3731,
+    "g5b_verdict": "PASS (< 0.40) \u2014 dual-sleeve eligible with K484",
+    "hl_concentration_pct": 64.0,
+    "paper_gate": "60d: Sh>=14 + fill>=60% + maxDD<15%",
+    "activation_status": "SCAFFOLD-READY",
+    "plist": "scripts/com.cryptolab.k661-avax-eth.plist",
+    "log_files": [
+      "logs/k661_avax_eth.log",
+      "logs/k661_avax_eth.err"
+    ]
+  },
+  "deliverable_files": [
+    "scripts/k661_avax_eth_run.py",
+    "scripts/com.cryptolab.k661-avax-eth.plist",
+    "data/k661_dashboard.json",
+    "scripts/emergency_hl_exit.py  (--include-k661 added)",
+    "scripts/leverage_manager.py   (K661_AVAX_ETH cap + SLEEVE_WEIGHTS_V643)",
+    "data/leverage_config.json     (K661_AVAX_ETH: 4.0 + k661_notes)",
+    "scripts/verify_deployment_status.py  (53rd daemon)",
+    "docs/k302a_runbook.md         (\u00a754 added)",
+    "report.html                   (K677 row added)",
+    "wave_k677_k661_scaffold.py    (this file)",
+    "wave_k677_k661_scaffold.json  (this report)"
+  ]
+}
