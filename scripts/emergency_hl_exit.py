@@ -4298,6 +4298,46 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K761: K759 WIF-SOL alt-alt emergency exit flag
+    # K759 = HL primary WIF+SOL paired (2 legs) on HL (WIF-PERP + SOL-PERP).
+    # Close protocol: IOC reduce-only on HL (short leg first, then long leg).
+    # Signal: W=168h rolling mean of (WIF_FR - SOL_FR), zero threshold. G6-safe (31.2/yr).
+    # HL concentration: 66.8% AT CAP (K751 audit, paper-gate strict — PAPER_TRADE=True until K498/v6.52).
+    # G4 WF 12/12 ALL POSITIVE (min_sh=9.895). G5 all PASS (max_corr=0.3819 G5w PEPE-SOL).
+    # G5w PEPE-SOL=0.382 (0.018 margin) → reduced sleeve 2.0% (vs 2.5% standard).
+    # L011 borderline: raw_corr(WIF,SOL)=0.487 — monthly recheck required.
+    # WIF = 15th vertex. MR9 L002: all future WIF-X pairs blocked.
+    # Use --include-k759 to print K759-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k759",
+        dest="include_k759",
+        action="store_true",
+        default=False,
+        help=(
+            "K761: Include K759 WIF-SOL close summary during emergency exit. "
+            "K759 positions (WIF+SOL paired, HL primary) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = WIF_FR - SOL_FR (direct differential, W=168h rolling mean, zero threshold). "
+            "HL primary: WIF-PERP + SOL-PERP both on HL. Bybit fallback (WIFUSDT). "
+            "HL concentration 66.8% AT CAP (K751 audit — paper-gate strict — PAPER_TRADE=True default). "
+            "G4 WF 12/12 ALL POSITIVE (min_sh=9.895). G5 all PASS (max_corr=0.3819 G5w PEPE-SOL). "
+            "G5w PEPE-SOL=0.382 (0.018 margin) → reduced sleeve 2.0% (vs 2.5% standard). "
+            "G6: 31.2 entries/yr OOS PASS (W=168h G6-safe vs 30/yr minimum). "
+            "OOS Sharpe 24.45 (W=168h). MaxDD OOS=-0.216% (very contained). "
+            "L011 raw_corr(WIF,SOL)=0.487 PASS (< 0.50 SOL-ecosystem threshold, borderline). "
+            "OOS L011 corr=0.054 (near-zero — regime-switch cleans signal). Monthly recheck. "
+            "L003 AVAX: raw_corr=0.3823 PASS. L010 HBAR: raw_corr=0.4011 PASS. "
+            "WIF = 15th vertex. MR9 L002: all future WIF-X auto-blocked. "
+            "K523 central $54,245/yr net @$10M @4x (2.0% sleeve, reduced from 2.5%). "
+            "60d gate: Realized Sh>=6 + fill>=60% + maxDD<15%. "
+            "Live trigger: K498/v6.52 OKX activation (HL% < 65%) + 60d gate. "
+            "Cluster: Solana meme × Solana SVM (17th alt-alt, 72nd daemon). "
+            "Requires: K759 daemon running (com.cryptolab.k759-wif-sol, 72nd daemon). "
+            "See: docs/k302a_runbook.md §72"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -5357,6 +5397,50 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "G4 WF 12/12 ALL POSITIVE (min_sh=5.56). PEPE = 14th vertex. "
                 "L003/L010 proximity warning: monthly AVAX/HBAR recheck. "
                 "Use --include-k754 for structured HL close summary (§71)."
+            )
+
+        # K761: K759 WIF-SOL alt-alt close summary (HL primary — positions ARE in HL exit above)
+        # K759 positions (WIF+SOL, HL primary) are included in the main HL exit plan above.
+        # HL 66.8% AT CAP (paper-gate: PAPER_TRADE=True default — no live capital yet).
+        # Live only after K498/v6.52 OKX activation + 60d gate passage.
+        if args.include_k759:
+            logger.info("=== K759 WIF-SOL CLOSE SUMMARY (K761 §72) ===")
+            logger.info("  K759 WIF-SOL: HL primary (WIF-PERP + SOL-PERP both legs on HL)")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_WIF (SOL meme season): short SOL first → sell long WIF second")
+            logger.info("  BEAR_WIF (SVM season dominant): short WIF first → sell long SOL second")
+            logger.info("  HL concentration: 66.8% AT CAP (K751 audit — paper-gate strict)")
+            logger.info("  PAPER_TRADE=True default — no live capital until K498/v6.52 OKX reduces HL%")
+            logger.info("  G4 WF: 12/12 ALL POSITIVE (min_sh=9.895) — strong WF validation")
+            logger.info("  G5: all PASS (max_corr=0.3819 G5w PEPE-SOL — 0.018 margin below 0.40)")
+            logger.info("  G5w: PEPE-SOL=0.382 proximity → reduced sleeve 2.0% (vs 2.5% standard)")
+            logger.info("  G6: 31.2 entries/yr OOS PASS (W=168h G6-safe vs 30/yr minimum)")
+            logger.info("  G8: HL+Bybit+OKX confirmed (WIFUSDT, 3-venue presence CONFIRMED)")
+            logger.info("  L011 WIF-SOL corr=0.487 PASS (< 0.50 SOL-ecosystem threshold, borderline)")
+            logger.info("  L011 OOS corr=0.054 (near-zero — regime-switch cleans signal in OOS)")
+            logger.info("  L003 AVAX corr=0.3823 PASS | L010 HBAR corr=0.4011 PASS")
+            logger.info("  L004 OOS carry=77.5% PASS (full 87.2% warn — meme carry artifact)")
+            logger.info("  L007 FIL-SOL pre-screen=0.3318 PASS")
+            logger.info("  WIF = 15th vertex (SOL meme cluster). MR9 L002: all future WIF-X blocked.")
+            logger.info("  V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF}")
+            logger.info("  WIF FR: SOL-native meme, BONK/WIF/POPCAT rotation, CEX listings, SVM DEX.")
+            logger.info("  WIF FR: vol_ratio=1.347x, P99=1.416bps Max=3.164bps. Q2 2024 +0.13bps diff.")
+            logger.info("  SOL FR: DePIN/Retail Phantom Firedancer ETF +8.82%/ann. Min=-20.51bps cascade.")
+            logger.info("  MaxDD OOS=-0.216% (very contained — differential mean-reversion well-behaved)")
+            logger.info("  OOS Sh=24.45 (W=168h), K523 central $54,245/yr net @$10M @4x (2.0% sleeve)")
+            logger.info("  K523 3-point: conservative=$20,655 central=$54,245 optimistic=$76,847/yr")
+            logger.info("  60d gate: Realized Sh>=6 + fill>=60% + maxDD<15%")
+            logger.info("  Live trigger: K498/v6.52 OKX activation (HL% < 65%) + 60d gate passage")
+            logger.info("  17th alt-alt scaffold, 72nd daemon. HL primary (positions in main HL exit)")
+            logger.info("  Cross-sleeve: WIF-SOL (2.0%) + PEPE-SOL (2.0%) = 4.0% meme-vs-SOL combined")
+            logger.info("  See: docs/k302a_runbook.md §72 (K759 WIF-SOL playbook)")
+        else:
+            logger.info(
+                "K759 WIF-SOL: HL primary (positions ARE in HL exit above — WIF-PERP + SOL-PERP on HL). "
+                "HL 66.8% AT CAP (K751 audit — paper-gate strict; no live capital until K498/v6.52 OKX). "
+                "G4 WF 12/12 ALL POSITIVE (min_sh=9.895). WIF = 15th vertex. "
+                "G5w PEPE-SOL=0.382 proximity → 2.0% sleeve. L011 WIF-SOL=0.487 monthly recheck. "
+                "Use --include-k759 for structured HL close summary (§72)."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)

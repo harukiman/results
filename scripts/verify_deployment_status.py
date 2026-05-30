@@ -504,6 +504,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k754_pepe_sol",
         expected_html_status="SCAFFOLD-READY",  # K756: plist in scripts/ (gitignored); activate after 60d gate (Sh>=6 + fill>=60% + maxDD<15%) AND K498/v6.52 OKX reduces HL% below 65%
     ),
+    DaemonSpec(
+        label="com.cryptolab.k759-wif-sol",
+        purpose="K759 WIF-SOL FR Differential (SEVENTEENTH ALT-ALT pair 15th-vertex WIF Solana-native meme × Solana SVM, HL primary WIF-PERP+SOL-PERP Bybit fallback WIFUSDT OKX confirmed, 4x leverage, 8h cycle, OOS Sh 24.45 W=168h G6-safe direct alt-alt diff, central $54,245/yr net @$10M @4x @2.0% sleeve K523 3-point $20.7K-$76.8K/yr, HL 66.8% AT CAP paper-gate-strict K751-audit K498/v6.52-activation-required, G4 WF 12/12-positive min_sh=9.895 strong-WF-validation, G5 all-PASS max_corr=0.3819-G5w-PEPE-SOL 0.018-margin-below-0.40, G5w PEPE-SOL=0.382 proximity-0.018-margin-reduced-sleeve-2.0pct, G6 31.2/yr PASS W=168h-family-standard G6-compliant, G8 HL+Bybit+OKX-all-venues-confirmed WIF-standard-denomination, L011 raw_corr(WIF,SOL)=0.487-PASS-borderline SOL-ecosystem-threshold-0.50 OOS=0.054-near-zero monthly-recheck, L003 AVAX-corr=0.3823-PASS, L004 OOS-carry=77.5%-PASS full-87.2%-warn-meme-artifact, L007 FIL-corr=0.3318-PASS, L010 HBAR-corr=0.4011-PASS, WIF-vertex 15th V={APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF} MR9-L002-all-future-WIF-X-blocked, WIF FR=SOL-native-meme BONK/WIF/POPCAT-rotation CEX-listings Coinbase-Apr2024 SVM-DEX-Raydium/Jupiter vol_ratio=1.347x P99=1.416bps Max=3.164bps Q2-2024-peak+0.13bps-diff, SOL FR=DePIN/Retail Phantom Firedancer ETF +8.82%/ann Min=-20.51bps cascade, MaxDD-OOS=-0.216% very-contained diff-mean-reversion, cross-sleeve WIF-SOL+PEPE-SOL=4.0%-combined-meme-vs-SOL, 60d paper-trade gate Realized Sh>=6 fill>=60% maxDD<15% + K498/v6.52-OKX-activation-required, live-trigger=K498/v6.52-reduces-HL%<65%+60d-gate, 72nd daemon 17th alt-alt CONDITIONAL HL-cap-66.8%, K761 scaffold)",
+        scripts=["scripts/k759_wif_sol_run.py"],
+        log_basename="k759_wif_sol",
+        expected_html_status="SCAFFOLD-READY",  # K761: plist in scripts/ (gitignored); activate after 60d gate (Sh>=6 + fill>=60% + maxDD<15%) AND K498/v6.52 OKX reduces HL% below 65%
+    ),
 ]
 
 

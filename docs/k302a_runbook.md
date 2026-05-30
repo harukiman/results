@@ -13963,4 +13963,186 @@ Close protocol: IOC reduce-only, SHORT leg first, then LONG leg.
 | K747 | K747 TAO-SOL ACCEPT CONDITIONAL (13th vertex, preceding scaffold pattern) |
 | K498 | K498 OKX integration scaffold (HL cap relief required before live activation) |
 | K523 | K523 3-point projection mandate (conservative/central/optimistic) |
+
+---
+
+## §72 K759 WIF-SOL FR Differential (72nd Daemon, SEVENTEENTH ALT-ALT, SOL Meme × SVM, 15th Vertex)
+
+*K761 §72 -- K759 WIF-SOL FR Differential production scaffold (72nd daemon, SEVENTEENTH ALT-ALT 15th-vertex WIF SOL-native meme dogwifhat × Solana SVM, OOS Sh 24.45 W=168h G6-safe direct alt-alt diff, central $54,245/yr net @$10M @4x 2.0% sleeve K523 3-point $20.7K-$76.8K, HL primary HL 66.8% AT CAP paper-gate-strict K751-audit K498/v6.52-activation-required, G4 WF 12/12 all positive min_sh=9.895 strong-WF-validation, G5 all PASS max_corr=0.3819-G5w-PEPE-SOL 0.018-margin, G5w PEPE-SOL=0.382 proximity-reduced-sleeve-2.0pct, G6 31.2/yr PASS W=168h-family-standard, G8 HL+Bybit+OKX confirmed, L011 WIF-SOL=0.487-PASS-borderline SOL-ecosystem-threshold monthly-recheck, WIF-vertex-15th MR9-L002-all-future-WIF-X-blocked, 60d gate: Sh>=6 fill>=60% maxDD<15% + K498/v6.52-OKX-activation) -- 2026-05-30*
+
+### §72.1 Strategy Overview
+
+| Parameter | Value |
+|-----------|-------|
+| Strategy | K759 WIF-SOL FR Differential (SEVENTEENTH ALT-ALT pair) |
+| Signal | diff = WIF_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold) |
+| OOS Sharpe | 24.4547 (W=168h, zero threshold, ~210d OOS) |
+| G4 Walk-Forward | 12/12 ALL POSITIVE (min_sh=9.895) |
+| G5 max corr | 0.3819 (G5w PEPE-SOL) — 0.018 margin below 0.40 threshold |
+| G5w note | PEPE-SOL proximity=0.382 → reduced sleeve 2.0% (vs 2.5% standard) |
+| G6 entries/yr | 31.2/yr OOS PASS (W=168h vs 30/yr minimum) |
+| G8 venues | HL+Bybit+OKX confirmed (3-venue CONFIRMED) |
+| L011 | raw_corr(WIF,SOL)=0.487 PASS (< 0.50, OOS=0.054 near-zero, borderline) |
+| Sleeve | 2.0% of AUM (reduced from 2.5% — G5w PEPE-SOL proximity) |
+| Leverage | 4x |
+| Daemon | 72nd (seventeenth alt-alt pair, CONDITIONAL_ACCEPT) |
+| HL status | 66.8% AT CAP — paper-gate strict (K751 audit) |
+| Vertex | WIF = 15th vertex (SOL meme cluster). MR9 L002: all future WIF-X blocked. |
+
+### §72.2 WIF vs SOL FR Economics
+
+**WIF FR drivers (dogwifhat — SOL-native SPL meme, launched Jan 2024):**
+- BONK/WIF/POPCAT rotation cycles: meme season timing on Solana
+- WIF CEX listings (Coinbase Apr 2024, Binance): listing catalysts
+- Meme coin retail FOMO cycles: social media virality (Twitter/TikTok)
+- SVM on-chain DEX liquidity (Raydium/Jupiter WIF pairs)
+- Amplifies SOL FR by ~1.3x during Solana bull peaks (vol_ratio=1.347x)
+- P99=1.416bps, Max=3.164bps/hr peak. Q2 2024: WIF +0.34bps vs SOL +0.22bps (+0.13bps diff)
+- WIF liquidation cascade mirrors SOL: WIF min=-18.98bps vs SOL min=-20.51bps
+
+**SOL FR drivers (Solana SVM L1):**
+- DePIN/Retail adoption premium (Phantom wallet, Firedancer upgrade)
+- SOL ETF speculation and institutional narrative flows
+- SVM DeFi TVL (Jupiter/Drift/Jito ecosystem)
+- +8.82%/ann persistently positive (structural retail demand)
+- Extreme negative: -20.51bps (liquidation cascade Feb 2025)
+
+**Alt-alt mechanism:** Both SOL-ecosystem but distinct FR timing — meme rotation peaks vs SVM infra cycles.
+OOS FR corr=0.054 (near-zero in OOS despite full-period corr=0.487). Regime-switch cleans signal.
+
+### §72.3 §6 Gate Results (K759)
+
+| Gate | Value | Result |
+|------|-------|--------|
+| G1 OOS Sharpe | 24.4547 | PASS |
+| G2 Permutation | p=0.000 | PASS |
+| G3 DSR Bonferroni | best OOS Sh=28.07 (W=48h) over 12 configs | PASS |
+| G4 Walk-Forward | 12/12 positive (mean Sh=30.76, min_sh=9.895) | PASS |
+| G5 Family corr | max=0.3819 G5w PEPE-SOL (all below 0.40) | PASS |
+| G5w PEPE-SOL | 0.382 (0.018 margin) → sleeve reduced to 2.0% | NOTE |
+| G6 Entries/yr | 31.2/yr OOS (W=168h) | PASS |
+| G7 Ann return | 48.22% levered OOS | PASS |
+| G8 Cross-venue | HL+Bybit+OKX confirmed | PASS |
+| G9 OOS days | 210d | PASS |
+| L011 SOL-ecosystem | raw_corr(WIF,SOL)=0.487 < 0.50 | PASS (borderline) |
+
+### §72.4 K523 3-Point Profit Projection (@$10M @4x @2.0%)
+
+| Scenario | Annual Net | Basis |
+|----------|-----------|-------|
+| Conservative | $20,655/yr | R2S=38% floor (K518), OOS haircut 25% |
+| **Central** | **$54,245/yr** | **60% realized-to-stated (K523 mandate)** |
+| Optimistic | $76,847/yr | Near-full OOS realization (SOL meme peak) |
+
+Note: 2.0% sleeve ($200K margin @$10M) → $800K total notional @4x. Reduced from 2.5% due to G5w proximity.
+Cross-sleeve: WIF-SOL (2.0%) + PEPE-SOL (2.0%) = 4.0% combined meme-vs-SOL cluster sleeve.
+
+### §72.5 HL Concentration Status
+
+| Metric | Value |
+|--------|-------|
+| HL % before K759 | 66.8% (K751 audit, K756 scaffold) |
+| K759 capital impact | +0.0% (PAPER-ONLY — no live capital added) |
+| HL % after K759 | 66.8% (unchanged — paper-gate strict) |
+| HL cap ceiling | 65.0% (post-K532 governance) |
+| Status | OVER CAP — paper-gate mandatory until K498/v6.52 |
+
+### §72.6 WIF Vertex Rule (MR9 L002)
+
+- WIF = 15th alt-alt vertex added to V
+- V = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI, SOL, TIA, TAO, PEPE, WIF}
+- MR9 L002: all future WIF-X pairs are auto-blocked (WIF exhausted as new vertex)
+- WIF-SOL is the only permissible WIF-X pair given V at K759
+- Next candidates from non-SOL-meme cluster (BONK would be blocked by WIF-BONK MR9 equivalence)
+
+### §72.7 G5w Cross-Sleeve Monitor
+
+G5w (PEPE-SOL): full_corr=0.382, 0.018 margin below 0.40 threshold.
+- WIF-SOL and PEPE-SOL share the SOL leg — both are meme-vs-SOL signals
+- ETH meme (PEPE, cross-chain ERC-20) vs SOL meme (WIF, SOL-native SPL)
+- Combined meme-vs-SOL cluster sleeve: 2.0% (WIF-SOL) + 2.0% (PEPE-SOL) = 4.0%
+- Monthly recheck: if OOS live G5w corr approaches 0.40, reduce WIF-SOL sleeve to 1.5%
+
+### §72.8 60d Paper-Trade Gate
+
+| Condition | Target | Status |
+|-----------|--------|--------|
+| Realized Sharpe | >= 6.0 | IN_PROGRESS |
+| Fill rate | >= 60% | IN_PROGRESS |
+| Max drawdown | < 15% | IN_PROGRESS |
+| K498/v6.52 gate | HL% < 65% | PENDING |
+| L011 monthly recheck | corr(WIF,SOL) < 0.50 OOS | REQUIRED |
+| G5w monthly recheck | corr(WIF-SOL, PEPE-SOL) < 0.40 | REQUIRED |
+
+### §72.9 Daemon Activation
+
+**Paper-trade (default — safe):**
+```bash
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k759-wif-sol.plist
+cp scripts/com.cryptolab.k759-wif-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k759-wif-sol.plist
+launchctl list | grep k759
+```
+
+**Status check:**
+```bash
+python3 scripts/k759_wif_sol_run.py --status
+python3 scripts/k759_wif_sol_run.py --dry-run
+```
+
+**Manual close (paper-trade):**
+```bash
+python3 scripts/k759_wif_sol_run.py --close "scheduled exit"
+```
+
+**Live activation (only after all gates passed):**
+```bash
+# 1. Verify K498/v6.52 OKX active and HL% < 65%
+# 2. Verify 60d gate: Sh>=6 + fill>=60% + maxDD<15%
+# 3. Verify L011 monthly recheck: corr(WIF,SOL) < 0.50 OOS
+# 4. Verify G5w recheck: corr(WIF-SOL, PEPE-SOL) < 0.40
+# 5. Edit plist: change PAPER_TRADE to False
+# 6. Reload daemon
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k759-wif-sol.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k759-wif-sol.plist
+```
+
+### §72.10 Emergency Exit Protocol
+
+K759 WIF-SOL positions (HL primary) are included in the main HL emergency exit:
+```bash
+python3 scripts/emergency_hl_exit.py --dry-run --include-k759
+python3 scripts/emergency_hl_exit.py --include-k759
+```
+
+Close protocol: IOC reduce-only, SHORT leg first, then LONG leg.
+- BULL_WIF (SOL meme season): short SOL first → sell long WIF second
+- BEAR_WIF (SVM season): short WIF first → sell long SOL second
+
+### §72.11 Deliverable Files
+
+| File | Description |
+|------|-------------|
+| `scripts/k759_wif_sol_run.py` | Phase 1: K759 strategy script (K339 pattern, W=168h, HL primary, SOL meme × SVM) |
+| `scripts/com.cryptolab.k759-wif-sol.plist` | Phase 2: 72nd daemon (8h interval, PAPER_TRADE=True default) |
+| `data/leverage_config.json` | Phase 3: K759_WIF_SOL: 4.0 + k759_notes |
+| `scripts/verify_deployment_status.py` | Phase 4: Registry +1 (com.cryptolab.k759-wif-sol) |
+| `scripts/emergency_hl_exit.py` | Phase 5: Emergency exit (--include-k759 flag, §72) |
+| `docs/k302a_runbook.md` | Phase 6: This section (§72) |
+| `data/k759_dashboard.json` | Phase 7: Initial scaffold state |
+| `wave_k761_k759_scaffold.json` | Phase 8: Wave output JSON |
+| `wave_k761_k759_scaffold.md` | Phase 9: Wave summary |
+| `report.html` | Phase 10: K761 scaffold badge |
+
+### §72.12 References
+
+| Wave | Description |
+|------|-------------|
+| K761 | This section — K759 WIF-SOL scaffold (72nd daemon, 17th alt-alt, K523 central $54K/yr) |
+| K759 | K759 evaluation wave (WIF-SOL FR Differential CONDITIONAL_ACCEPT, W=168h, OOS Sh=24.45) |
+| K756 | K756 K754 PEPE-SOL scaffold (71st daemon, 16th alt-alt, 14th vertex PEPE) |
+| K754 | K754 K756 PEPE-SOL ACCEPT CONDITIONAL (14th vertex, G5w proximity source) |
+| K751 | K751 Kelly sizing audit (HL concentration 66.8% confirmed, v6.52 optimization) |
+| K498 | K498 OKX integration scaffold (HL cap relief required before live activation) |
+| K523 | K523 3-point projection mandate (conservative/central/optimistic) |
 | K439 | K439 POST_ONLY paired execution (fill rate gate G8) |
