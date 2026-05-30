@@ -15061,3 +15061,139 @@ Close protocol: IOC reduce-only, SHORT leg first, then LONG leg.
 | K751 | K751 Kelly sizing audit (HL concentration 66.8% confirmed, v6.52 optimization) |
 | K498 | K498 OKX integration scaffold (HL cap relief required before live activation — condition 3) |
 | K523 | K523 3-point projection mandate (conservative/central/optimistic) |
+
+## §77 K769 AXS-SOL FR Differential (76th Daemon, EIGHTEENTH ALT-ALT, Gaming P2E × SVM, 16th Vertex)
+
+*K771 §77 -- K769 AXS-SOL FR Differential production scaffold (76th daemon, EIGHTEENTH ALT-ALT 16th-vertex AXS Gaming-P2E Axie-Infinity × Solana SVM, OOS Sh 16.05 W=168h G6-safe direct alt-alt diff, central $123,689/yr net @$10M @4x 1.5% sleeve K523 3-point $78.3K-$175.2K, HL primary HL 66.8% AT CAP paper-gate-strict K498/v6.52-activation-required, G4 WF 12/12 all positive min_sh=5.9193 mean=16.8423 strong-WF-validation, G5 all PASS max_corr=-0.2796-G5n-ENA-SOL all-23-gates-well-below-0.40, G6 31.1/yr PASS W=168h-family-standard, G8 HL+Bybit-confirmed OKX-pending, Bybit-730d-primary-backtest HL-from-2026-01-18-3040rows, AXS-vertex-16th MR9-L002-all-future-AXS-X-blocked, 60d gate: Sh>=6 fill>=60% maxDD<15% + K498/v6.52-OKX-activation) -- 2026-05-30*
+
+### §77.1 Strategy Overview
+
+| Parameter | Value |
+|-----------|-------|
+| Strategy | K769 AXS-SOL FR Differential (EIGHTEENTH ALT-ALT pair) |
+| Signal | diff = AXS_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold) |
+| OOS Sharpe | 16.0543 (W=168h, zero threshold, ~211d OOS) |
+| G4 Walk-Forward | 12/12 ALL POSITIVE (min_sh=5.9193, mean=16.8423) |
+| G5 max corr | -0.2796 (G5n ENA-SOL) — all 23 gates well below 0.40 |
+| G5 note | No proximity warnings. AXS Gaming P2E structurally orthogonal to family. |
+| G6 entries/yr | 31.1/yr OOS PASS (W=168h vs 20/yr long-tail minimum) |
+| G8 venues | HL+Bybit confirmed (OKX pending — 2-venue confirmed) |
+| L011 | raw_corr(AXS,SOL)=0.1916 PASS (< 0.50, OOS=0.1182 near-zero) |
+| Sleeve | 1.5% of AUM (long-tail liquidity — AXS HIP-3 HL listing 2026-01-18) |
+| Leverage | 4x |
+| Daemon | 76th (eighteenth alt-alt pair, CLEAN ACCEPT) |
+| HL status | 66.8% AT CAP — paper-gate strict |
+| Vertex | AXS = 16th vertex (Gaming P2E cluster). MR9 L002: all future AXS-X blocked. |
+| Data | Bybit 730d primary (backtest), HL from 2026-01-18 3040 rows (OOS live) |
+
+### §77.2 AXS vs SOL FR Economics
+
+**AXS FR drivers (Axie Infinity — Gaming P2E, RON-chain governance):**
+- Gaming P2E adoption cycles: Axie Origins V3+ seasonal content releases
+- SLP burn/mint economics: in-game token supply mechanics
+- AXS staking governance APR: treasury staking reward cycles
+- NFT Axie breeding demand: marketplace floor price + breeding liquidity cycles
+- Southeast Asian retail speculation (Philippines/Indonesia primary P2E markets)
+- P2E tournament event spikes (Axie World Championship seasons)
+- Ronin sidechain upgrades (RON airdrop, bridge activity, validator set changes)
+- Vol ratio vs SOL: 5.24x (full Bybit), 6.37x (30d), 8.88x (OOS), 16.23x (HL 1h)
+- AXS carry: 41% positive (full) / 32% OOS — net negative bias (gaming bear market)
+
+**SOL FR drivers (Solana SVM L1):**
+- DePIN/Retail adoption premium (Phantom wallet, Firedancer upgrade)
+- SOL ETF speculation and institutional narrative flows
+- SVM DeFi TVL (Jupiter/Drift/Jito ecosystem)
+- +8.82%/ann persistently positive (structural retail demand)
+- Extreme negative: -20.51bps (liquidation cascade Feb 2025)
+
+**Alt-alt mechanism:** Gaming P2E cycle (Axie game versions, SLP economics) is structurally orthogonal to Solana SVM cycle (Firedancer, validator rewards, meme). raw_corr(AXS, SOL) = 0.19 (Bybit full), 0.1182 (OOS) — essentially orthogonal.
+
+### §77.3 §6 Gate Results (K769)
+
+| Gate | Value | Result |
+|------|-------|--------|
+| G1 OOS Sharpe | 16.0543 | PASS |
+| G2 Permutation | p=0.000 | PASS |
+| G3 DSR Bonferroni | best OOS Sh=16.98 (W=80h) over 9 configs — all > 15.0 | PASS |
+| G4 Walk-Forward | 12/12 positive (mean Sh=16.84, min_sh=5.9193) | PASS |
+| G5 Family corr | max=-0.2796 G5n ENA-SOL (all 23 gates well below 0.40) | PASS |
+| G6 Entries/yr | 31.1/yr OOS (W=168h, long-tail threshold 20/yr) | PASS |
+| G7 Ann return | 183.24% levered OOS | PASS |
+| G8 Cross-venue | HL+Bybit confirmed (OKX pending) | PASS |
+| G9 OOS days | 211d | PASS |
+| L003 AVAX | raw_corr=0.149 < 0.45 | PASS |
+| L004 carry | 41% full / 32% OOS (gaming bear net negative) | PASS |
+| L007 FIL | raw_corr=0.1711 < 0.45 | PASS |
+| L010 HBAR | raw_corr=-0.0355 < 0.45 | PASS |
+| L011 SOL-direct | raw_corr=0.1916 < 0.50, OOS=0.1182 | PASS |
+
+### §77.4 K523 3-Point Profit Projection (@$10M @4x @1.5%)
+
+| Scenario | Annual Net | Basis |
+|----------|-----------|-------|
+| Conservative | $78,337/yr | R2S=38% floor (K518), OOS haircut 25% |
+| **Central** | **$123,689/yr** | **60% realized-to-stated (K523 mandate)** |
+| Optimistic | $175,227/yr | Near-full OOS realization (Gaming P2E cycle peak) |
+
+Note: 1.5% sleeve ($150K margin @$10M) → $600K total notional @4x. Long-tail liquidity constraint: AXS HIP-3 HL listing from 2026-01-18. Max sleeve 2.0%.
+
+### §77.5 HL Concentration Status
+
+| Metric | Value |
+|--------|-------|
+| HL % before K769 | 66.8% (K761/K770 reference) |
+| K769 capital impact | +0.0% (PAPER-ONLY — no live capital added) |
+| HL % after K769 | 66.8% (unchanged — paper-gate strict) |
+| HL cap ceiling | 65.0% (post-K532 governance) |
+| Status | OVER CAP — paper-gate mandatory until K498/v6.52 |
+
+### §77.6 AXS Vertex Rule (MR9 L002)
+
+- AXS = 16th alt-alt vertex added to V
+- V = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI, SOL, TIA, TAO, PEPE, WIF, AXS}
+- MR9 L002: all future AXS-X pairs are auto-blocked (AXS exhausted as new vertex)
+- AXS-SOL is the only permissible AXS-X pair given V at K769
+- Gaming P2E cluster: AXS (Axie Infinity) is the first and only Gaming P2E vertex
+
+### §77.7 Grid Robustness (9 configs, all Sh > 15.0)
+
+All 9 grid configs produced OOS Sh > 15.0 — extremely robust edge:
+- Best: W=80h T=0.0 OOS Sh=16.98
+- Canonical: W=168h T=0.0 OOS Sh=16.05 (family standard)
+- Min across 9 configs: 15.43
+
+### §77.8 60d Paper-Trade Gate
+
+| Condition | Target | Status |
+|-----------|--------|--------|
+| Realized Sharpe | >= 6.0 | IN_PROGRESS |
+| Fill rate | >= 60% | IN_PROGRESS |
+| Max drawdown | < 15% | IN_PROGRESS |
+| K498/v6.52 gate | HL% < 65% | PENDING |
+
+### §77.9 Daemon Activation
+
+**Paper-trade (default — safe):**
+```bash
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k769-axs-sol.plist
+cp scripts/com.cryptolab.k769-axs-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k769-axs-sol.plist
+launchctl list | grep k769
+```
+
+**Status check:**
+```bash
+python3 scripts/k769_axs_sol_run.py --status
+python3 scripts/k769_axs_sol_run.py --dry-run
+```
+
+### §77.10 References
+
+| Wave | Description |
+|------|-------------|
+| K769 | K769 AXS-SOL evaluation (CLEAN ACCEPT — 19th alt-alt scaffold) |
+| K771 | This section — K769 AXS-SOL production scaffold (76th daemon) |
+| K498 | OKX activation prerequisite (reduces HL% below 65%) |
+| K523 | 3-point projection mandate |
+| K518 | 38% realized-to-stated ratio floor |
+| K532 | Governance v5 (HL 65.0% cap rule) |

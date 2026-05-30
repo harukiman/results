@@ -4338,6 +4338,42 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K771: K769 AXS-SOL alt-alt emergency exit flag
+    # K769 = HL primary AXS-PERP+SOL-PERP paired when AXS_FR-SOL_FR rolling mean 168h changes sign.
+    # Close protocol: IOC reduce-only on HL (short leg first, then long leg).
+    # AXS = 16th vertex (Gaming P2E cluster). HL concentration: 66.8% AT CAP (paper-gate strict).
+    # Use --include-k769 to print K769-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k769",
+        dest="include_k769",
+        action="store_true",
+        default=False,
+        help=(
+            "K771: Include K769 AXS-SOL close summary during emergency exit. "
+            "K769 positions (AXS+SOL paired, HL primary) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = AXS_FR - SOL_FR (direct differential, W=168h rolling mean, zero threshold). "
+            "HL primary: AXS-PERP + SOL-PERP both on HL. Bybit fallback (AXSUSDT). "
+            "HL concentration 66.8% AT CAP — paper-gate strict (PAPER_TRADE=True default). "
+            "G4 WF 12/12 ALL POSITIVE (min_sh=5.9193, mean=16.8423). "
+            "G5 all PASS (max_corr=-0.2796 G5n ENA-SOL — all 23 gates well below 0.40). "
+            "G6: 31.1 entries/yr OOS PASS (W=168h G6-safe vs 20/yr long-tail minimum). "
+            "OOS Sharpe 16.05 (W=168h). MaxDD OOS=-0.5311%. "
+            "Data: Bybit 730d primary (backtest), HL from 2026-01-18 (OOS live). "
+            "L003 AVAX: raw_corr=0.149 PASS. L007 FIL: raw_corr=0.1711 PASS. "
+            "L010 HBAR: raw_corr=-0.0355 PASS. L011 SOL: raw_corr=0.1916 PASS (OOS=0.1182). "
+            "L004: AXS carry 41% full / 32% OOS PASS (net negative bias — gaming bear). "
+            "AXS = 16th vertex. MR9 L002: all future AXS-X auto-blocked. "
+            "K523 central $123,689/yr net @$10M @4x (1.5% sleeve, long-tail constraint). "
+            "60d gate: Realized Sh>=6 + fill>=60% + maxDD<15%. "
+            "Live trigger: K498/v6.52 OKX activation (HL% < 65%) + 60d gate. "
+            "Cluster: Gaming P2E × Solana SVM (18th alt-alt, 76th daemon). "
+            "Requires: K769 daemon running (com.cryptolab.k769-axs-sol, 76th daemon). "
+            "See: docs/k302a_runbook.md §73"
+        ),
+    )
+
     # Use --include-k768 to print K768-specific HL close summary during emergency exit.
     parser.add_argument(
         "--include-k768",
@@ -5472,6 +5508,47 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "G4 WF 12/12 ALL POSITIVE (min_sh=9.895). WIF = 15th vertex. "
                 "G5w PEPE-SOL=0.382 proximity → 2.0% sleeve. L011 WIF-SOL=0.487 monthly recheck. "
                 "Use --include-k759 for structured HL close summary (§72)."
+            )
+
+        # ── K769 AXS-SOL close summary (K771 §73) ──────────────────────────
+        # HL concentration: 66.8% AT CAP (paper-gate: PAPER_TRADE=True default — no live capital yet).
+        # Live only after K498/v6.52 OKX activation + 60d gate passage.
+        if args.include_k769:
+            logger.info("=== K769 AXS-SOL CLOSE SUMMARY (K771 §73) ===")
+            logger.info("  K769 AXS-SOL: HL primary (AXS-PERP + SOL-PERP both legs on HL)")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_AXS (Gaming P2E season): short SOL first → sell long AXS second")
+            logger.info("  BEAR_AXS (SVM season dominant): short AXS first → sell long SOL second")
+            logger.info("  HL concentration: 66.8% AT CAP — paper-gate strict")
+            logger.info("  PAPER_TRADE=True default — no live capital until K498/v6.52 OKX reduces HL%")
+            logger.info("  G4 WF: 12/12 ALL POSITIVE (min_sh=5.9193, mean=16.8423) — strong WF validation")
+            logger.info("  G5: all PASS (max_corr=-0.2796 G5n ENA-SOL — all 23 gates well below 0.40)")
+            logger.info("  G6: 31.1 entries/yr OOS PASS (W=168h G6-safe vs 20/yr long-tail minimum)")
+            logger.info("  G8: HL+Bybit confirmed (AXS HL from 2026-01-18; Bybit 730d primary for backtest)")
+            logger.info("  L003 AVAX corr=0.149 PASS | L007 FIL corr=0.1711 PASS")
+            logger.info("  L010 HBAR corr=-0.0355 PASS | L011 SOL corr=0.1916 PASS (OOS=0.1182)")
+            logger.info("  L004 AXS carry: 41% full / 32% OOS PASS (net negative — gaming bear market)")
+            logger.info("  AXS = 16th vertex (Gaming P2E cluster). MR9 L002: all future AXS-X blocked.")
+            logger.info("  V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,AXS}")
+            logger.info("  AXS FR: Gaming P2E (Axie Origins seasonal, SLP burn/mint, AXS staking APR,")
+            logger.info("          NFT breeding, SEA retail speculation, P2E tournaments, Ronin upgrades).")
+            logger.info("  AXS FR: vol_ratio=5.24x (full), 8.88x (OOS), 16.23x (HL 1h).")
+            logger.info("  SOL FR: DePIN/Retail Phantom Firedancer ETF +8.82%/ann. Min=-20.51bps cascade.")
+            logger.info("  MaxDD OOS=-0.5311% | raw_corr(AXS,SOL)=0.19 (Bybit) — essentially orthogonal")
+            logger.info("  OOS Sh=16.05 (W=168h), K523 central $123,689/yr net @$10M @4x (1.5% sleeve)")
+            logger.info("  K523 3-point: conservative=$78,337 central=$123,689 optimistic=$175,227/yr")
+            logger.info("  Sleeve 1.5% (long-tail liquidity — AXS HIP-3 HL listing 2026-01-18)")
+            logger.info("  60d gate: Realized Sh>=6 + fill>=60% + maxDD<15%")
+            logger.info("  Live trigger: K498/v6.52 OKX activation (HL% < 65%) + 60d gate passage")
+            logger.info("  18th alt-alt scaffold, 76th daemon. HL primary (positions in main HL exit)")
+            logger.info("  See: docs/k302a_runbook.md §73 (K769 AXS-SOL playbook)")
+        else:
+            logger.info(
+                "K769 AXS-SOL: HL primary (positions ARE in HL exit above — AXS-PERP + SOL-PERP on HL). "
+                "HL 66.8% AT CAP — paper-gate strict; no live capital until K498/v6.52 OKX. "
+                "G4 WF 12/12 ALL POSITIVE (min_sh=5.9193). AXS = 16th vertex (Gaming P2E). "
+                "G5 all PASS (max_corr=-0.2796). Sleeve 1.5% (long-tail liquidity constraint). "
+                "Use --include-k769 for structured HL close summary (§73)."
             )
 
         # K770: K768 BLUR-SOL alt-alt close summary (HL primary — positions ARE in HL exit above)
