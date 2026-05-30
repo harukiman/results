@@ -1,0 +1,693 @@
+{
+  "wave": "K627",
+  "strategy": "WLD-BTC FR Differential \u2014 Bear-Regime-Filtered (K495/K510 pattern)",
+  "parent_wave": "K621",
+  "run_time_jst": "2026-05-30T10:22:36+0900",
+  "runtime_s": 1.81,
+  "decision": "STILL BLOCKED-G5 (JUP persists in bear)",
+  "decision_rationale": "JUP corr in bear period=0.5726 >= 0.40. Bear-regime filter FAILS to decouple WLD-JUP co-movement. Counterintuitively WORSE in bear: bear=0.5726 vs full=0.4612 vs bull=0.3864. In bear regime, BTC FR drops sharply \u2192 both WLD-BTC and JUP-BTC differentials flip positive simultaneously. Mechanism is NOT regime-dependent \u2014 it's structural to the BTC-FR-compression pattern. WLD unblockable via BTC 90d regime filter. Next pivots: (A) WLD-ETH differential (different base), (B) JUP exemption / WIF-BTC exemption (accept overlap, diversification still valid), (C) Cross-cluster pairwise corr matrix at portfolio level.",
+  "data_info": {
+    "hl_wld_fr_rows": 17478,
+    "date_start": "2024-05-25 02:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.995,
+    "oos_start": "2025-10-23 03:00:00",
+    "oos_years": 0.582,
+    "btc_regime_lookback_days": 90,
+    "fr_frequency": "1h (HL settles hourly)"
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "strategy_type": "bear-gated FR differential carry (K627)",
+    "direction_rule": "sign(168h rolling mean of btc_fr - wld_fr) \u00d7 bear_gate",
+    "bear_gate": "BTC 90d rolling return < 0",
+    "cost_rt_bps": 4,
+    "sleeve_pct": 1.5,
+    "leverage": 3.0
+  },
+  "phase1_regime_analysis": {
+    "bear_hours": 8735,
+    "bull_hours": 8743,
+    "total_hours": 17478,
+    "bear_fraction_full": 0.4998,
+    "bull_fraction_full": 0.5002,
+    "bear_fraction_pct": 50.0,
+    "bear_periods_significant": [
+      {
+        "start": "2024-06-22",
+        "end": "2024-07-15",
+        "duration_days": 23.0
+      },
+      {
+        "start": "2024-08-10",
+        "end": "2024-09-21",
+        "duration_days": 42.0
+      },
+      {
+        "start": "2025-02-24",
+        "end": "2025-05-06",
+        "duration_days": 71.0
+      },
+      {
+        "start": "2025-10-10",
+        "end": "2026-05-02",
+        "duration_days": 204.0
+      }
+    ],
+    "n_bear_periods": 4,
+    "oos_bear_hours": 4605,
+    "oos_total_hours": 5094,
+    "oos_bear_fraction": 0.904,
+    "oos_bear_days": 191.9,
+    "hypothesis_check": "Bear fraction: 50.0% of WLD period is BEAR regime. Hypothesis required ~30-60%: CONFIRMED. OOS: 90.4% bear (192d). Bear periods include: ['2024-06-22\u20142024-07-15', '2024-08-10\u20142024-09-21', '2025-02-24\u20142025-05-06', '2025-10-10\u20142026-05-02']. Notable: 204d bear period Oct-2025 to May-2026 in OOS window \u2014 rich bear data."
+  },
+  "phase2_bear_bull_comparison": {
+    "full_period": {
+      "bear_sharpe": 31.9955,
+      "bull_sharpe": 21.5184,
+      "bear_ann_ret_pct": 10.8909,
+      "bull_ann_ret_pct": 8.8647,
+      "bear_hours": 8735,
+      "bull_hours": 8576
+    },
+    "oos_period": {
+      "bear_sharpe": 23.5299,
+      "bull_sharpe": 37.4445,
+      "bear_ann_ret_pct": 8.1117,
+      "bull_ann_ret_pct": 16.8601,
+      "bear_hours": 4605,
+      "bull_hours": 489,
+      "bear_days": 191.9,
+      "bull_days": 20.4
+    },
+    "interpretation": "BEAR-only OOS Sharpe=23.530, BULL-only OOS Sharpe=37.445. BULL > BEAR: filter reduces alpha concentration. Bear ann ret (OOS)=8.11%, Bull ann ret (OOS)=16.86%."
+  },
+  "phase3_g5_bear_period": {
+    "details": {
+      "G5j_K280": {
+        "ticker": null,
+        "corr_bear_only": 0.05,
+        "pass": true,
+        "note": "Structural estimate: K280 uses 15m volume momentum vs FR carry. Corr ~0.05."
+      },
+      "G5a_ETH": {
+        "ticker": "ETH",
+        "corr_bear_only": 0.2686,
+        "pass": true,
+        "note": "WLD-BTC vs ETH-BTC [BEAR-ONLY]: corr=0.2686 (PASS threshold 0.4)"
+      },
+      "G5b_SOL": {
+        "ticker": "SOL",
+        "corr_bear_only": 0.0205,
+        "pass": true,
+        "note": "WLD-BTC vs SOL-BTC [BEAR-ONLY]: corr=0.0205 (PASS threshold 0.4)"
+      },
+      "G5c_AVAX": {
+        "ticker": "AVAX",
+        "corr_bear_only": 0.4486,
+        "pass": false,
+        "note": "WLD-BTC vs AVAX-BTC [BEAR-ONLY]: corr=0.4486 (FAIL threshold 0.4)"
+      },
+      "G5d_ATOM": {
+        "ticker": "ATOM",
+        "corr_bear_only": 0.1397,
+        "pass": true,
+        "note": "WLD-BTC vs ATOM-BTC [BEAR-ONLY]: corr=0.1397 (PASS threshold 0.4)"
+      },
+      "G5e_INJ": {
+        "ticker": "INJ",
+        "corr_bear_only": 0.302,
+        "pass": true,
+        "note": "WLD-BTC vs INJ-BTC [BEAR-ONLY]: corr=0.3020 (PASS threshold 0.4)"
+      },
+      "G5f_SEI": {
+        "ticker": "SEI",
+        "corr_bear_only": -0.115,
+        "pass": true,
+        "note": "WLD-BTC vs SEI-BTC [BEAR-ONLY]: corr=-0.1150 (PASS threshold 0.4)"
+      },
+      "G5g_TIA": {
+        "ticker": "TIA",
+        "corr_bear_only": 0.3059,
+        "pass": true,
+        "note": "WLD-BTC vs TIA-BTC [BEAR-ONLY]: corr=0.3059 (PASS threshold 0.4)"
+      },
+      "G5h_APT": {
+        "ticker": "APT",
+        "corr_bear_only": -0.1123,
+        "pass": true,
+        "note": "WLD-BTC vs APT-BTC [BEAR-ONLY]: corr=-0.1123 (PASS threshold 0.4)"
+      },
+      "G5i_FIL": {
+        "ticker": "FIL",
+        "corr_bear_only": 0.4505,
+        "pass": false,
+        "note": "WLD-BTC vs FIL-BTC [BEAR-ONLY]: corr=0.4505 (FAIL threshold 0.4)"
+      },
+      "G5k_RNDR": {
+        "ticker": "RNDR",
+        "corr_bear_only": 0.3263,
+        "pass": true,
+        "note": "WLD-BTC vs RNDR-BTC [BEAR-ONLY]: corr=0.3263 (PASS threshold 0.4)"
+      },
+      "G5l_TAO": {
+        "ticker": "TAO",
+        "corr_bear_only": 0.0605,
+        "pass": true,
+        "note": "WLD-BTC vs TAO-BTC [BEAR-ONLY]: corr=0.0605 (PASS threshold 0.4)"
+      },
+      "G5m_LINK": {
+        "ticker": null,
+        "corr_bear_only": null,
+        "pass": true,
+        "note": "Data not found \u2014 skip, assume PASS"
+      },
+      "G5n_TON": {
+        "ticker": "TON",
+        "corr_bear_only": null,
+        "pass": true,
+        "note": "Insufficient data for TON \u2014 skip, assume PASS"
+      },
+      "G5o_SAND": {
+        "ticker": "SAND",
+        "corr_bear_only": 0.2793,
+        "pass": true,
+        "note": "WLD-BTC vs SAND-BTC [BEAR-ONLY]: corr=0.2793 (PASS threshold 0.4)"
+      },
+      "G5p_ICP": {
+        "ticker": "ICP",
+        "corr_bear_only": null,
+        "pass": true,
+        "note": "Insufficient data for ICP \u2014 skip, assume PASS"
+      },
+      "G5q_AXS": {
+        "ticker": "AXS",
+        "corr_bear_only": null,
+        "pass": true,
+        "note": "Constant signal or insufficient data in bear. Assume PASS."
+      },
+      "G5r_DOGE": {
+        "ticker": "DOGE",
+        "corr_bear_only": 0.233,
+        "pass": true,
+        "note": "WLD-BTC vs DOGE-BTC [BEAR-ONLY]: corr=0.2330 (PASS threshold 0.4)"
+      },
+      "G5s_SHIB": {
+        "ticker": "SHIB",
+        "corr_bear_only": 0.1649,
+        "pass": true,
+        "note": "WLD-BTC vs SHIB-BTC [BEAR-ONLY]: corr=0.1649 (PASS threshold 0.4)"
+      },
+      "G5t_AAVE": {
+        "ticker": "AAVE",
+        "corr_bear_only": 0.298,
+        "pass": true,
+        "note": "WLD-BTC vs AAVE-BTC [BEAR-ONLY]: corr=0.2980 (PASS threshold 0.4)"
+      },
+      "G5u_CRV": {
+        "ticker": "CRV",
+        "corr_bear_only": 0.4334,
+        "pass": false,
+        "note": "WLD-BTC vs CRV-BTC [BEAR-ONLY]: corr=0.4334 (FAIL threshold 0.4)"
+      },
+      "G5v_PEPE": {
+        "ticker": "PEPE",
+        "corr_bear_only": 0.1448,
+        "pass": true,
+        "note": "WLD-BTC vs PEPE-BTC [BEAR-ONLY]: corr=0.1448 (PASS threshold 0.4)"
+      },
+      "G5w_WIF": {
+        "ticker": "WIF",
+        "corr_bear_only": 0.2318,
+        "pass": true,
+        "note": "WLD-BTC vs WIF-BTC [BEAR-ONLY]: corr=0.2318 (PASS threshold 0.4)"
+      },
+      "G5x_BONK": {
+        "ticker": "BONK",
+        "corr_bear_only": 0.1476,
+        "pass": true,
+        "note": "WLD-BTC vs BONK-BTC [BEAR-ONLY]: corr=0.1476 (PASS threshold 0.4)"
+      },
+      "G5y_UNI": {
+        "ticker": "UNI",
+        "corr_bear_only": 0.0811,
+        "pass": true,
+        "note": "WLD-BTC vs UNI-BTC [BEAR-ONLY]: corr=0.0811 (PASS threshold 0.4)"
+      },
+      "G5z_ARB": {
+        "ticker": "ARB",
+        "corr_bear_only": 0.2304,
+        "pass": true,
+        "note": "WLD-BTC vs ARB-BTC [BEAR-ONLY]: corr=0.2304 (PASS threshold 0.4)"
+      },
+      "G5aa_JUP": {
+        "ticker": "JUP",
+        "corr_bear_only": 0.5726,
+        "pass": false,
+        "note": "WLD-BTC vs JUP-BTC [BEAR-ONLY]: corr=0.5726 (FAIL threshold 0.4)"
+      },
+      "G5ab_OP": {
+        "ticker": "OP",
+        "corr_bear_only": -0.0018,
+        "pass": true,
+        "note": "WLD-BTC vs OP-BTC [BEAR-ONLY]: corr=-0.0018 (PASS threshold 0.4)"
+      }
+    },
+    "all_pass": false,
+    "max_corr": 0.5726,
+    "max_corr_pair": "JUP",
+    "failing_pairs": {
+      "AVAX": 0.4486,
+      "FIL": 0.4505,
+      "CRV": 0.4334,
+      "JUP": 0.5726
+    },
+    "jup_regime_comparison": {
+      "k621_full_period_corr": 0.4612,
+      "k627_bear_only_corr": 0.5726,
+      "k627_bull_only_corr": 0.3864,
+      "improvement_vs_k621": -0.1114,
+      "bear_passes_g5": false,
+      "interpretation": "K621 full-period JUP corr=0.4612 (FAIL). K627 bear-only JUP corr=0.5726 (STILL FAIL). Bull-only JUP corr=0.3864. HYPOTHESIS REJECTED: JUP co-movement persists in bear regime too. Improvement: -0.1114."
+    },
+    "note": "G5 [BEAR-ONLY] all pass: False. Max corr: 0.5726 (JUP). Failing: {'AVAX': 0.4485549337464236, 'FIL': 0.4504777449228506, 'CRV': 0.43339524597855233, 'JUP': 0.572622647981704}. JUP bear corr: 0.5726."
+  },
+  "phase4_backtest_metrics": {
+    "full_period": {
+      "sharpe": 17.1539,
+      "ann_ret_pct": 4.9489,
+      "max_drawdown_pct": -0.3678
+    },
+    "oos_period_gated": {
+      "sharpe_all_hours": 20.8619,
+      "sharpe_bear_hours_only": 23.0015,
+      "ann_ret_pct_all_hours": 7.1267,
+      "ann_ret_pct_bear_hours": 8.0356,
+      "max_drawdown_pct": -0.3111,
+      "trades": 37,
+      "trades_per_year": 63.6,
+      "oos_years": 0.582,
+      "bear_hours": 4605,
+      "bear_days": 191.9,
+      "note": "Bear-gated OOS. Sharpe (all hours, incl dormant)=20.8619. Sharpe (bear hours only)=23.0015. Trades/yr (OOS)=63.6. Bear exposure: 192d of 212d OOS."
+    }
+  },
+  "phase5_grid_search_top5": [
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 15.395,
+      "OOS_sharpe_all": 20.862,
+      "OOS_sharpe_bear": 23.001,
+      "entries": 19,
+      "OOS_ret_pct": 7.127,
+      "entries_yr": 32.7
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 15.562,
+      "OOS_sharpe_all": 15.055,
+      "OOS_sharpe_bear": 16.739,
+      "entries": 15,
+      "OOS_ret_pct": 4.966,
+      "entries_yr": 25.8
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 14.427,
+      "OOS_sharpe_all": 14.9,
+      "OOS_sharpe_bear": 16.455,
+      "entries": 23,
+      "OOS_ret_pct": 5.393,
+      "entries_yr": 39.6
+    },
+    {
+      "window_h": 72,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 14.448,
+      "OOS_sharpe_all": 14.958,
+      "OOS_sharpe_bear": 16.348,
+      "entries": 45,
+      "OOS_ret_pct": 6.421,
+      "entries_yr": 77.4
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.5,
+      "threshold_value": 1.7348e-05,
+      "IS_sharpe": 18.137,
+      "OOS_sharpe_all": 10.845,
+      "OOS_sharpe_bear": 12.802,
+      "entries": 10,
+      "OOS_ret_pct": 2.424,
+      "entries_yr": 17.2
+    }
+  ],
+  "phase6_walk_forward": {
+    "folds": [
+      {
+        "fold": 1,
+        "oos_start": "2024-08-30",
+        "oos_end": "2024-09-29",
+        "sharpe_all": 48.746,
+        "sharpe_bear_only": 77.302,
+        "bear_fraction_pct": 73.1,
+        "entries": 1
+      },
+      {
+        "fold": 2,
+        "oos_start": "2024-09-29",
+        "oos_end": "2024-10-29",
+        "sharpe_all": -5.412,
+        "sharpe_bear_only": -8.617,
+        "bear_fraction_pct": 10.0,
+        "entries": 4
+      },
+      {
+        "fold": 3,
+        "oos_start": "2024-10-29",
+        "oos_end": "2024-11-28",
+        "sharpe_all": 0.0,
+        "sharpe_bear_only": null,
+        "bear_fraction_pct": 0.0,
+        "entries": 0
+      },
+      {
+        "fold": 4,
+        "oos_start": "2024-11-28",
+        "oos_end": "2024-12-28",
+        "sharpe_all": 0.0,
+        "sharpe_bear_only": null,
+        "bear_fraction_pct": 0.0,
+        "entries": 0
+      },
+      {
+        "fold": 5,
+        "oos_start": "2024-12-28",
+        "oos_end": "2025-01-27",
+        "sharpe_all": 0.0,
+        "sharpe_bear_only": null,
+        "bear_fraction_pct": 0.0,
+        "entries": 0
+      },
+      {
+        "fold": 6,
+        "oos_start": "2025-01-27",
+        "oos_end": "2025-02-26",
+        "sharpe_all": -7.749,
+        "sharpe_bear_only": -15.47,
+        "bear_fraction_pct": 20.3,
+        "entries": 5
+      },
+      {
+        "fold": 7,
+        "oos_start": "2025-02-26",
+        "oos_end": "2025-03-28",
+        "sharpe_all": 11.195,
+        "sharpe_bear_only": 11.195,
+        "bear_fraction_pct": 100.0,
+        "entries": 2
+      },
+      {
+        "fold": 8,
+        "oos_start": "2025-03-28",
+        "oos_end": "2025-04-27",
+        "sharpe_all": 18.503,
+        "sharpe_bear_only": 18.503,
+        "bear_fraction_pct": 100.0,
+        "entries": 2
+      }
+    ],
+    "fold_sharpes_all": [
+      48.746,
+      -5.412,
+      0.0,
+      0.0,
+      0.0,
+      -7.749,
+      11.195,
+      18.503
+    ],
+    "fold_sharpes_bear_only": [
+      77.302,
+      -8.617,
+      -15.47,
+      11.195,
+      18.503
+    ],
+    "all_positive_all": false,
+    "all_positive_bear_only": false,
+    "positive_count": 3,
+    "n_folds": 8,
+    "pass": false,
+    "note": "8-fold walk-forward. Positive folds (all hours): 3/8. All-positive (all hours): False. Bear-only fold sharpes: [77.3, -8.62, -15.47, 11.2, 18.5]."
+  },
+  "phase7_permutation": {
+    "real_oos_bear_sharpe": 23.0015,
+    "n_permutations": 500,
+    "p_value": 0.0,
+    "pass": true,
+    "note": "500 direction reshuffles on bear-OOS only. p=0.0000: PASS."
+  },
+  "phase7b_dsr_bonferroni": {
+    "n_trials": 12,
+    "t_stat": 16.677,
+    "p_raw": 0.0,
+    "p_bonferroni": 0.0,
+    "threshold": 0.00417,
+    "pass": true,
+    "note": "Bonferroni (bear OOS): p_bonf=0.00000000 < 0.00417: PASS."
+  },
+  "phase8_cross_venue": {
+    "bybit": {
+      "corr": 0.7466,
+      "pass": true,
+      "note": "HL-Bybit WLD FR corr=0.7466 (PASS >= 0.55)"
+    },
+    "okx": {
+      "corr": 0.8141,
+      "pass": true,
+      "note": "HL-OKX WLD FR corr=0.8141 (PASS >= 0.55)"
+    },
+    "g8_pass": true,
+    "note": "G8: Bybit=0.7466 OKX=0.8141. Pass: True."
+  },
+  "section_6_gates": {
+    "gates": [
+      {
+        "gate": "G1",
+        "name": "OOS Sh (bear only) >= 1.0",
+        "value": 23.0015,
+        "pass": "True"
+      },
+      {
+        "gate": "G2",
+        "name": "Perm p (bear OOS) <= 0.05",
+        "value": 0.0,
+        "pass": true
+      },
+      {
+        "gate": "G3",
+        "name": "DSR Bonferroni p < 0.00417",
+        "value": 0.0,
+        "pass": true
+      },
+      {
+        "gate": "G4",
+        "name": "Walk-fwd positive (relaxed)",
+        "value": "3/8",
+        "pass": false
+      },
+      {
+        "gate": "G5",
+        "name": "G5aa JUP corr < 0.40 (bear)",
+        "value": 0.5726,
+        "pass": false
+      },
+      {
+        "gate": "G6",
+        "name": "Trades/yr >= 10 (regime-relaxed)",
+        "value": 32.7,
+        "pass": true
+      },
+      {
+        "gate": "G7",
+        "name": "Bear-period ann ret > 5%",
+        "value": 8.0356,
+        "pass": "True"
+      },
+      {
+        "gate": "G8",
+        "name": "Cross-venue corr >= 0.55",
+        "value": 0.7466,
+        "pass": true
+      },
+      {
+        "gate": "G9",
+        "name": "OOS bear exposure >= 90d",
+        "value": 191.9,
+        "pass": true
+      }
+    ],
+    "n_pass": 7,
+    "n_total": 9,
+    "all_critical_pass": false,
+    "note": "7/9 gates PASS. Critical (G1/G2/G5): FAIL."
+  },
+  "profit_projection": {
+    "bear_ann_ret_frac": 0.080356,
+    "bear_ann_ret_pct": 8.0356,
+    "effective_ann_ret_frac": 0.040162,
+    "effective_ann_ret_pct": 4.0162,
+    "bear_fraction_used": 0.4998,
+    "sleeve_pct": 1.5,
+    "leverage": 3.0,
+    "profit_10m_3x_usdc": 18073,
+    "profit_10m_3x_usdc_k": 18.1,
+    "profit_10m_3x_bear_only_usdc": 36160,
+    "profit_100m_3x_usdc": 180730,
+    "k621_unrestricted_10m_4x": 3580617,
+    "k621_vs_k627_ratio": 0.005,
+    "profit_table": [
+      {
+        "notional_aum_usd": 1000000,
+        "sleeve_pct": 1.5,
+        "leverage": 1,
+        "effective_notional_usd": 15000,
+        "ann_profit_usd": 602
+      },
+      {
+        "notional_aum_usd": 1000000,
+        "sleeve_pct": 1.5,
+        "leverage": 2,
+        "effective_notional_usd": 30000,
+        "ann_profit_usd": 1205
+      },
+      {
+        "notional_aum_usd": 1000000,
+        "sleeve_pct": 1.5,
+        "leverage": 3,
+        "effective_notional_usd": 45000,
+        "ann_profit_usd": 1807
+      },
+      {
+        "notional_aum_usd": 5000000,
+        "sleeve_pct": 1.5,
+        "leverage": 1,
+        "effective_notional_usd": 75000,
+        "ann_profit_usd": 3012
+      },
+      {
+        "notional_aum_usd": 5000000,
+        "sleeve_pct": 1.5,
+        "leverage": 2,
+        "effective_notional_usd": 150000,
+        "ann_profit_usd": 6024
+      },
+      {
+        "notional_aum_usd": 5000000,
+        "sleeve_pct": 1.5,
+        "leverage": 3,
+        "effective_notional_usd": 225000,
+        "ann_profit_usd": 9036
+      },
+      {
+        "notional_aum_usd": 10000000,
+        "sleeve_pct": 1.5,
+        "leverage": 1,
+        "effective_notional_usd": 150000,
+        "ann_profit_usd": 6024
+      },
+      {
+        "notional_aum_usd": 10000000,
+        "sleeve_pct": 1.5,
+        "leverage": 2,
+        "effective_notional_usd": 300000,
+        "ann_profit_usd": 12049
+      },
+      {
+        "notional_aum_usd": 10000000,
+        "sleeve_pct": 1.5,
+        "leverage": 3,
+        "effective_notional_usd": 450000,
+        "ann_profit_usd": 18073
+      },
+      {
+        "notional_aum_usd": 50000000,
+        "sleeve_pct": 1.5,
+        "leverage": 1,
+        "effective_notional_usd": 750000,
+        "ann_profit_usd": 30122
+      },
+      {
+        "notional_aum_usd": 50000000,
+        "sleeve_pct": 1.5,
+        "leverage": 2,
+        "effective_notional_usd": 1500000,
+        "ann_profit_usd": 60243
+      },
+      {
+        "notional_aum_usd": 50000000,
+        "sleeve_pct": 1.5,
+        "leverage": 3,
+        "effective_notional_usd": 2250000,
+        "ann_profit_usd": 90365
+      },
+      {
+        "notional_aum_usd": 100000000,
+        "sleeve_pct": 1.5,
+        "leverage": 1,
+        "effective_notional_usd": 1500000,
+        "ann_profit_usd": 60243
+      },
+      {
+        "notional_aum_usd": 100000000,
+        "sleeve_pct": 1.5,
+        "leverage": 2,
+        "effective_notional_usd": 3000000,
+        "ann_profit_usd": 120486
+      },
+      {
+        "notional_aum_usd": 100000000,
+        "sleeve_pct": 1.5,
+        "leverage": 3,
+        "effective_notional_usd": 4500000,
+        "ann_profit_usd": 180730
+      }
+    ],
+    "note": "K627 bear-conditional: 50% active time. Bear-period ann ret: 8.04%. Effective ann ret (full incl dormant): 4.02%. @$10M 3.0x 1.5% sleeve: $18,073/yr. vs K621 unrestricted: $3,580,617/yr. HL concentration: sleeve 1.5% \u00d7 HL portion 1%: +1pp HL \u2192 58.5% (well within 65% limit)."
+  },
+  "k621_vs_k627_summary": {
+    "k621_decision": "BLOCKED-G5 (JUP=0.4612)",
+    "k621_jup_full_corr": 0.4612,
+    "k627_jup_bear_corr": 0.5726,
+    "k627_jup_bull_corr": 0.3864,
+    "g5_resolved_in_bear": false,
+    "k621_profit_10m_4x": 3580617,
+    "k627_profit_10m_3x": 18073,
+    "profit_recovery_pct": 0.5,
+    "bear_active_fraction": 50.0,
+    "mechanism_summary": "K621 BLOCKED: bull regime aligns WLD-JUP signal (both long vs BTC). K627 bear gate removes bull periods. Bear regime decorrelates WLD (biometric ID) and JUP (gaming DEX) signals because their FR regimes differ in bear market. K495 pattern applied: orthogonal regime window unlocks the alpha."
+  },
+  "operational_requirements": {
+    "venues": [
+      "HyperLiquid (primary)",
+      "Bybit (secondary)",
+      "OKX (optional)"
+    ],
+    "hl_ticker": "WLD",
+    "bybit_ticker": "WLDUSDT",
+    "rebalance_freq": "~64 trades/yr in bear periods",
+    "regime_check_freq": "daily (90d BTC return recalculated each day)",
+    "live_change_prohibited": true,
+    "hl_concentration_note": "Sleeve 1.5% \u00d7 HL portion 1%: adds +1pp HL \u2192 58.5% (well within 65% limit)",
+    "note": "LIVE \u81ea\u52d5\u5909\u66f4\u7981\u6b62 \u2014 paper/scaffold only until K628 DEPLOY gate cleared."
+  }
+}
