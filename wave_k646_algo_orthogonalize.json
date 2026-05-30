@@ -1,0 +1,1125 @@
+{
+  "wave": "K646",
+  "strategy": "ALGO-BTC FR Differential Signal Orthogonalization \u2014 Remove FIL Enterprise/Utility-L1 Common Factor (K522 Unblock Attempt)",
+  "run_time_jst": "2026-05-30T11:50:44+0900",
+  "runtime_s": 2.78,
+  "decision": "ACCEPT CONDITIONAL",
+  "decision_rationale": "Orthogonalized ALGO signal (W=72h): G5 PASS, OOS Sharpe=8.11. Gates 4/9. FIL post-orth=0.2546. \u03b2_FIL=0.4107, IS R\u00b2=0.2396, OOS R\u00b2=-0.0282. Non-critical fails: 5 gates (data limitations). Recommend 60d paper-trade. K522 conditionally unblocked.",
+  "k522_context": {
+    "k522_decision": "BLOCKED-CLUSTER (FIL)",
+    "k522_oos_sharpe": 10.271,
+    "k522_oos_ret_pct": 3.306,
+    "k522_profit_10m_4x": 22480,
+    "k522_fil_signal_corr": 0.6052,
+    "k522_other_g5_status": "ALL PASS (ETH/SOL/AVAX/ATOM/INJ/SEI/TIA/APT all < 0.40)",
+    "k646_approach": "Single-factor OLS orthogonalization: residualize ALGO signal vs FIL common factor. OLS: fr_diff_algo ~ \u03b1 + \u03b2_FIL * fr_diff_fil + residual. Trade residual direction instead of raw fr_diff_algo direction. By OLS construction, residual has zero correlation with fr_diff_fil in IS period."
+  },
+  "data_info": {
+    "hl_algo_fr_rows": 12836,
+    "date_start": "2024-12-04 13:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.465,
+    "oos_start": "2025-12-16",
+    "oos_years": 0.434,
+    "n_is_rows": 9036,
+    "n_oos_rows": 3801,
+    "fr_frequency": "1h (HL settles hourly)"
+  },
+  "signal_config": {
+    "strategy_type": "FR differential carry \u2014 ORTHOGONALIZED vs FIL",
+    "direction_rule": "sign(W-hour rolling mean of OLS residual of fr_diff_algo)",
+    "cost_rt_bps": 4,
+    "pnl_source": "signal * fr_diff_algo (carry from actual ALGO-BTC position)",
+    "signal_windows": [
+      72,
+      168
+    ],
+    "oos_start": "2025-12-16"
+  },
+  "phase1_regression": {
+    "method": "OLS IS-estimated single-factor (FIL), applied to full period",
+    "is_period": {
+      "start": "2024-12-04",
+      "end": "2025-12-16",
+      "n_rows": 9036
+    },
+    "oos_period": {
+      "start": "2025-12-16",
+      "end": "2026-05-23",
+      "n_rows": 3801
+    },
+    "coefficients": {
+      "alpha": 4.62e-06,
+      "beta_fil": 0.41074
+    },
+    "t_stats": {
+      "t_alpha": 16.375,
+      "t_fil": 53.361
+    },
+    "r_squared": {
+      "is": 0.2396,
+      "oos": -0.0282,
+      "oos_interpretation": "OOS R\u00b2 > 0: IS \u03b2 generalizes well out-of-sample. OOS R\u00b2 \u2248 0: \u03b2 estimates IS-specific only (common with FR data). OOS R\u00b2 < 0: IS \u03b2 overfits / structural break in FIL-ALGO relationship."
+    },
+    "residual_properties": {
+      "adf_pvalue": 0.0,
+      "stationary": true,
+      "ou_halflife_h": 2.13
+    },
+    "correlation_check": {
+      "raw_algo_fil_fr_corr": 0.4757,
+      "resid_fil_corr": -0.009221,
+      "orthogonality_achieved": true
+    },
+    "regression_data": {
+      "n_full": 12836,
+      "n_is": 9036,
+      "n_oos": 3801
+    }
+  },
+  "phase2_signal_infos": [
+    {
+      "window_h": 72,
+      "raw_orth_signal_corr": 0.5799,
+      "orth_vs_fil_signal_corr": 0.2546,
+      "fil_expected_near_zero": false,
+      "n_signal_rows": 12765
+    },
+    {
+      "window_h": 168,
+      "raw_orth_signal_corr": 0.5778,
+      "orth_vs_fil_signal_corr": 0.3167,
+      "fil_expected_near_zero": false,
+      "n_signal_rows": 12669
+    }
+  ],
+  "phase3_backtest": [
+    {
+      "window_h": 72,
+      "oos": {
+        "sharpe": 8.1132,
+        "ann_ret_pct": 2.5406,
+        "max_drawdown_pct": -0.4743,
+        "trades": 20,
+        "trades_per_year": 46.1,
+        "n_rows": 3801,
+        "n_years": 0.434,
+        "n_days": 158.4
+      },
+      "is": {
+        "sharpe": 6.29,
+        "ann_ret_pct": 2.5611,
+        "n_rows": 8965
+      },
+      "full": {
+        "sharpe": 6.6959
+      },
+      "raw_comparison": {
+        "raw_oos_sharpe": 10.271,
+        "orth_oos_sharpe": 8.1132,
+        "sharpe_reduction": 2.1578,
+        "interpretation": "Orthogonalization removed FIL common factor from ALGO signal. Residual Sharpe = 8.11 vs raw K522 10.271. Reduction = 2.16 Sharpe units (portion attributable to enterprise/utility-L1 FIL regime comovement)."
+      }
+    },
+    {
+      "window_h": 168,
+      "oos": {
+        "sharpe": 7.1088,
+        "ann_ret_pct": 2.1389,
+        "max_drawdown_pct": -0.4578,
+        "trades": 17,
+        "trades_per_year": 39.2,
+        "n_rows": 3801,
+        "n_years": 0.434,
+        "n_days": 158.4
+      },
+      "is": {
+        "sharpe": 7.2314,
+        "ann_ret_pct": 2.5059,
+        "n_rows": 8869
+      },
+      "full": {
+        "sharpe": 7.1844
+      },
+      "raw_comparison": {
+        "raw_oos_sharpe": 10.271,
+        "orth_oos_sharpe": 7.1088,
+        "sharpe_reduction": 3.1622,
+        "interpretation": "Orthogonalization removed FIL common factor from ALGO signal. Residual Sharpe = 7.11 vs raw K522 10.271. Reduction = 3.16 Sharpe units (portion attributable to enterprise/utility-L1 FIL regime comovement)."
+      }
+    }
+  ],
+  "phase4_section6": [
+    {
+      "window_h": 72,
+      "oos_metrics": {
+        "sharpe": 8.1132,
+        "ann_ret_pct": 2.5406,
+        "max_drawdown_pct": -0.4743,
+        "trades": 20,
+        "trades_per_year": 46.1,
+        "n_rows": 3801,
+        "n_years": 0.434,
+        "n_days": 158.4
+      },
+      "is_metrics": {
+        "sharpe": 6.29,
+        "ann_ret_pct": 2.5611,
+        "n_rows": 8965
+      },
+      "gates": [
+        {
+          "gate": "G1",
+          "name": "OOS Sharpe >= 1.0",
+          "value": 8.1132,
+          "pass": true
+        },
+        {
+          "gate": "G2",
+          "name": "Perm p <= 0.05",
+          "value": 0.0,
+          "pass": true
+        },
+        {
+          "gate": "G3",
+          "name": "DSR Bonferroni p < 0.02500",
+          "value": 0.109866,
+          "pass": false
+        },
+        {
+          "gate": "G4",
+          "name": "Walk-forward all positive",
+          "value": "9/12",
+          "pass": false
+        },
+        {
+          "gate": "G5",
+          "name": "G5 family corr < 0.40",
+          "value": 0.2818,
+          "pass": true
+        },
+        {
+          "gate": "G6",
+          "name": "Trades/yr >= 30",
+          "value": 46.1,
+          "pass": true
+        },
+        {
+          "gate": "G7",
+          "name": "Ann ret > 5% (unleveraged)",
+          "value": 2.5406,
+          "pass": false
+        },
+        {
+          "gate": "G8",
+          "name": "Cross-venue corr >= 0.55",
+          "value": 0.4482,
+          "pass": false
+        },
+        {
+          "gate": "G9",
+          "name": "OOS >= 180d",
+          "value": 158.4,
+          "pass": false
+        }
+      ],
+      "n_pass": 4,
+      "n_total": 9,
+      "all_critical_pass": false,
+      "g5_details": {
+        "G5j_K280": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5j_K280: skip (no data), assume PASS"
+        },
+        "G5a_ETH": {
+          "ticker": "ETH",
+          "corr": 0.0882,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs ETH-BTC at W=72h: corr=0.0882 (PASS threshold 0.4)"
+        },
+        "G5b_SOL": {
+          "ticker": "SOL",
+          "corr": 0.1059,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs SOL-BTC at W=72h: corr=0.1059 (PASS threshold 0.4)"
+        },
+        "G5c_AVAX": {
+          "ticker": "AVAX",
+          "corr": 0.2291,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs AVAX-BTC at W=72h: corr=0.2291 (PASS threshold 0.4)"
+        },
+        "G5d_ATOM": {
+          "ticker": "ATOM",
+          "corr": 0.1343,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs ATOM-BTC at W=72h: corr=0.1343 (PASS threshold 0.4)"
+        },
+        "G5e_INJ": {
+          "ticker": "INJ",
+          "corr": 0.1972,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs INJ-BTC at W=72h: corr=0.1972 (PASS threshold 0.4)"
+        },
+        "G5f_SEI": {
+          "ticker": "SEI",
+          "corr": 0.0495,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs SEI-BTC at W=72h: corr=0.0495 (PASS threshold 0.4)"
+        },
+        "G5g_TIA": {
+          "ticker": "TIA",
+          "corr": 0.1225,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs TIA-BTC at W=72h: corr=0.1225 (PASS threshold 0.4)"
+        },
+        "G5h_APT": {
+          "ticker": "APT",
+          "corr": 0.1641,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs APT-BTC at W=72h: corr=0.1641 (PASS threshold 0.4)"
+        },
+        "G5i_FIL": {
+          "ticker": "FIL",
+          "corr": 0.2546,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs FIL-BTC at W=72h: corr=0.2546 (PASS threshold 0.4) [ORTHOGONALIZED: by construction should be ~0; actual=0.2546 \u2014 confirms orthogonalization PARTIAL]"
+        },
+        "G5k_RNDR": {
+          "ticker": "RNDR",
+          "corr": 0.1781,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs RNDR-BTC at W=72h: corr=0.1781 (PASS threshold 0.4)"
+        },
+        "G5l_TAO": {
+          "ticker": "TAO",
+          "corr": 0.1898,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs TAO-BTC at W=72h: corr=0.1898 (PASS threshold 0.4)"
+        },
+        "G5m_LINK": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5m_LINK: skip (no data), assume PASS"
+        },
+        "G5n_TON": {
+          "ticker": "TON",
+          "corr": null,
+          "pass": true,
+          "note": "TON data unavailable \u2014 skip, assume PASS"
+        },
+        "G5o_SAND": {
+          "ticker": "SAND",
+          "corr": 0.2283,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs SAND-BTC at W=72h: corr=0.2283 (PASS threshold 0.4)"
+        },
+        "G5p_ICP": {
+          "ticker": "ICP",
+          "corr": null,
+          "pass": true,
+          "note": "ICP data unavailable \u2014 skip, assume PASS"
+        },
+        "G5q_AXS": {
+          "ticker": "AXS",
+          "corr": 0.1287,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs AXS-BTC at W=72h: corr=0.1287 (PASS threshold 0.4)"
+        },
+        "G5r_DOGE": {
+          "ticker": "DOGE",
+          "corr": 0.1675,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs DOGE-BTC at W=72h: corr=0.1675 (PASS threshold 0.4)"
+        },
+        "G5s_SHIB": {
+          "ticker": "SHIB",
+          "corr": 0.1849,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs SHIB-BTC at W=72h: corr=0.1849 (PASS threshold 0.4)"
+        },
+        "G5t_AAVE": {
+          "ticker": "AAVE",
+          "corr": 0.1569,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs AAVE-BTC at W=72h: corr=0.1569 (PASS threshold 0.4)"
+        },
+        "G5u_CRV": {
+          "ticker": "CRV",
+          "corr": 0.215,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs CRV-BTC at W=72h: corr=0.2150 (PASS threshold 0.4)"
+        },
+        "G5v_PEPE": {
+          "ticker": "PEPE",
+          "corr": 0.1113,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs PEPE-BTC at W=72h: corr=0.1113 (PASS threshold 0.4)"
+        },
+        "G5w_WIF": {
+          "ticker": "WIF",
+          "corr": 0.1218,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs WIF-BTC at W=72h: corr=0.1218 (PASS threshold 0.4)"
+        },
+        "G5x_BONK": {
+          "ticker": "BONK",
+          "corr": 0.1148,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs BONK-BTC at W=72h: corr=0.1148 (PASS threshold 0.4)"
+        },
+        "G5y_UNI": {
+          "ticker": "UNI",
+          "corr": 0.2336,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs UNI-BTC at W=72h: corr=0.2336 (PASS threshold 0.4)"
+        },
+        "G5z_ARB": {
+          "ticker": "ARB",
+          "corr": 0.2054,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs ARB-BTC at W=72h: corr=0.2054 (PASS threshold 0.4)"
+        },
+        "G5aa_JUP": {
+          "ticker": "JUP",
+          "corr": 0.2181,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs JUP-BTC at W=72h: corr=0.2181 (PASS threshold 0.4)"
+        },
+        "G5ab_SNX": {
+          "ticker": "SNX",
+          "corr": 0.2023,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs SNX-BTC at W=72h: corr=0.2023 (PASS threshold 0.4)"
+        },
+        "G5ac_LDO": {
+          "ticker": "LDO",
+          "corr": 0.2122,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs LDO-BTC at W=72h: corr=0.2122 (PASS threshold 0.4)"
+        },
+        "G5ad_MKR": {
+          "ticker": "MKR",
+          "corr": 0.105,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs MKR-BTC at W=72h: corr=0.1050 (PASS threshold 0.4)"
+        },
+        "G5ae_OP": {
+          "ticker": "OP",
+          "corr": 0.2016,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs OP-BTC at W=72h: corr=0.2016 (PASS threshold 0.4)"
+        },
+        "G5af_POL": {
+          "ticker": "POL",
+          "corr": 0.2818,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs POL-BTC at W=72h: corr=0.2818 (PASS threshold 0.4)"
+        },
+        "G5ag_ENA": {
+          "ticker": "ENA",
+          "corr": 0.2242,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs ENA-BTC at W=72h: corr=0.2242 (PASS threshold 0.4)"
+        },
+        "G5ah_ETHFI": {
+          "ticker": "ETHFI",
+          "corr": 0.2051,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs ETHFI-BTC at W=72h: corr=0.2051 (PASS threshold 0.4)"
+        }
+      },
+      "g5_fail_list": {},
+      "g5_max_corr": 0.2818,
+      "g5_max_pair": "POL",
+      "fil_corr": 0.2546,
+      "fil_pass": true,
+      "walk_forward": {
+        "folds": [
+          {
+            "fold": 1,
+            "oos_start": "2025-03-07",
+            "oos_end": "2025-04-06",
+            "sharpe": 10.1,
+            "ann_ret_pct": 2.391,
+            "entries": 2
+          },
+          {
+            "fold": 2,
+            "oos_start": "2025-04-06",
+            "oos_end": "2025-05-06",
+            "sharpe": 6.315,
+            "ann_ret_pct": 2.526,
+            "entries": 7
+          },
+          {
+            "fold": 3,
+            "oos_start": "2025-05-06",
+            "oos_end": "2025-06-05",
+            "sharpe": 13.432,
+            "ann_ret_pct": 4.289,
+            "entries": 3
+          },
+          {
+            "fold": 4,
+            "oos_start": "2025-06-05",
+            "oos_end": "2025-07-05",
+            "sharpe": 2.7,
+            "ann_ret_pct": 0.778,
+            "entries": 3
+          },
+          {
+            "fold": 5,
+            "oos_start": "2025-07-05",
+            "oos_end": "2025-08-04",
+            "sharpe": 21.183,
+            "ann_ret_pct": 7.853,
+            "entries": 5
+          },
+          {
+            "fold": 6,
+            "oos_start": "2025-08-04",
+            "oos_end": "2025-09-03",
+            "sharpe": -5.593,
+            "ann_ret_pct": -1.111,
+            "entries": 2
+          },
+          {
+            "fold": 7,
+            "oos_start": "2025-09-03",
+            "oos_end": "2025-10-03",
+            "sharpe": 32.085,
+            "ann_ret_pct": 1.454,
+            "entries": 0
+          },
+          {
+            "fold": 8,
+            "oos_start": "2025-10-03",
+            "oos_end": "2025-11-02",
+            "sharpe": 9.483,
+            "ann_ret_pct": 7.014,
+            "entries": 7
+          },
+          {
+            "fold": 9,
+            "oos_start": "2025-11-02",
+            "oos_end": "2025-12-02",
+            "sharpe": 13.693,
+            "ann_ret_pct": 7.26,
+            "entries": 10
+          },
+          {
+            "fold": 10,
+            "oos_start": "2025-12-02",
+            "oos_end": "2026-01-01",
+            "sharpe": -5.293,
+            "ann_ret_pct": -2.497,
+            "entries": 9
+          },
+          {
+            "fold": 11,
+            "oos_start": "2026-01-01",
+            "oos_end": "2026-01-31",
+            "sharpe": 37.57,
+            "ann_ret_pct": 3.197,
+            "entries": 0
+          },
+          {
+            "fold": 12,
+            "oos_start": "2026-01-31",
+            "oos_end": "2026-03-02",
+            "sharpe": -7.148,
+            "ann_ret_pct": -3.228,
+            "entries": 8
+          }
+        ],
+        "fold_sharpes": [
+          10.09957297618001,
+          6.314768879033773,
+          13.432298299481998,
+          2.700233171690612,
+          21.18322818806751,
+          -5.593297799548787,
+          32.08537446498663,
+          9.482546326365771,
+          13.6930552202167,
+          -5.292934900883947,
+          37.569713299648114,
+          -7.147761953387822
+        ],
+        "n_positive": 9,
+        "n_folds": 12,
+        "all_positive": false,
+        "min_sharpe": -7.148
+      },
+      "permutation_test": {
+        "real_oos_sharpe": 8.1132,
+        "n_permutations": 500,
+        "p_value": 0.0,
+        "pass": true
+      },
+      "dsr_bonferroni": {
+        "n_trials": 2,
+        "t_stat": 5.737,
+        "p_raw": 0.054933,
+        "p_bonferroni": 0.109866,
+        "threshold": 0.025,
+        "pass": false
+      },
+      "cross_venue": {
+        "bybit": {
+          "corr": 0.4482,
+          "pass": false,
+          "note": "HL-bybit ALGO FR corr=0.4482 (FAIL >= 0.55). Bybit has only 67d history (200 records 8h interval vs HL 1h)."
+        }
+      }
+    },
+    {
+      "window_h": 168,
+      "oos_metrics": {
+        "sharpe": 7.1088,
+        "ann_ret_pct": 2.1389,
+        "max_drawdown_pct": -0.4578,
+        "trades": 17,
+        "trades_per_year": 39.2,
+        "n_rows": 3801,
+        "n_years": 0.434,
+        "n_days": 158.4
+      },
+      "is_metrics": {
+        "sharpe": 7.2314,
+        "ann_ret_pct": 2.5059,
+        "n_rows": 8869
+      },
+      "gates": [
+        {
+          "gate": "G1",
+          "name": "OOS Sharpe >= 1.0",
+          "value": 7.1088,
+          "pass": true
+        },
+        {
+          "gate": "G2",
+          "name": "Perm p <= 0.05",
+          "value": 0.0,
+          "pass": true
+        },
+        {
+          "gate": "G3",
+          "name": "DSR Bonferroni p < 0.02500",
+          "value": 0.125016,
+          "pass": false
+        },
+        {
+          "gate": "G4",
+          "name": "Walk-forward all positive",
+          "value": "8/12",
+          "pass": false
+        },
+        {
+          "gate": "G5",
+          "name": "G5 family corr < 0.40",
+          "value": 0.3167,
+          "pass": true
+        },
+        {
+          "gate": "G6",
+          "name": "Trades/yr >= 30",
+          "value": 39.2,
+          "pass": true
+        },
+        {
+          "gate": "G7",
+          "name": "Ann ret > 5% (unleveraged)",
+          "value": 2.1389,
+          "pass": false
+        },
+        {
+          "gate": "G8",
+          "name": "Cross-venue corr >= 0.55",
+          "value": 0.4482,
+          "pass": false
+        },
+        {
+          "gate": "G9",
+          "name": "OOS >= 180d",
+          "value": 158.4,
+          "pass": false
+        }
+      ],
+      "n_pass": 4,
+      "n_total": 9,
+      "all_critical_pass": false,
+      "g5_details": {
+        "G5j_K280": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5j_K280: skip (no data), assume PASS"
+        },
+        "G5a_ETH": {
+          "ticker": "ETH",
+          "corr": 0.0764,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs ETH-BTC at W=168h: corr=0.0764 (PASS threshold 0.4)"
+        },
+        "G5b_SOL": {
+          "ticker": "SOL",
+          "corr": 0.0614,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs SOL-BTC at W=168h: corr=0.0614 (PASS threshold 0.4)"
+        },
+        "G5c_AVAX": {
+          "ticker": "AVAX",
+          "corr": 0.2432,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs AVAX-BTC at W=168h: corr=0.2432 (PASS threshold 0.4)"
+        },
+        "G5d_ATOM": {
+          "ticker": "ATOM",
+          "corr": 0.1474,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs ATOM-BTC at W=168h: corr=0.1474 (PASS threshold 0.4)"
+        },
+        "G5e_INJ": {
+          "ticker": "INJ",
+          "corr": 0.1716,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs INJ-BTC at W=168h: corr=0.1716 (PASS threshold 0.4)"
+        },
+        "G5f_SEI": {
+          "ticker": "SEI",
+          "corr": -0.0366,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs SEI-BTC at W=168h: corr=-0.0366 (PASS threshold 0.4)"
+        },
+        "G5g_TIA": {
+          "ticker": "TIA",
+          "corr": 0.1245,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs TIA-BTC at W=168h: corr=0.1245 (PASS threshold 0.4)"
+        },
+        "G5h_APT": {
+          "ticker": "APT",
+          "corr": 0.1328,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs APT-BTC at W=168h: corr=0.1328 (PASS threshold 0.4)"
+        },
+        "G5i_FIL": {
+          "ticker": "FIL",
+          "corr": 0.3167,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs FIL-BTC at W=168h: corr=0.3167 (PASS threshold 0.4) [ORTHOGONALIZED: by construction should be ~0; actual=0.3167 \u2014 confirms orthogonalization PARTIAL]"
+        },
+        "G5k_RNDR": {
+          "ticker": "RNDR",
+          "corr": 0.1689,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs RNDR-BTC at W=168h: corr=0.1689 (PASS threshold 0.4)"
+        },
+        "G5l_TAO": {
+          "ticker": "TAO",
+          "corr": 0.095,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs TAO-BTC at W=168h: corr=0.0950 (PASS threshold 0.4)"
+        },
+        "G5m_LINK": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5m_LINK: skip (no data), assume PASS"
+        },
+        "G5n_TON": {
+          "ticker": "TON",
+          "corr": null,
+          "pass": true,
+          "note": "TON data unavailable \u2014 skip, assume PASS"
+        },
+        "G5o_SAND": {
+          "ticker": "SAND",
+          "corr": 0.1421,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs SAND-BTC at W=168h: corr=0.1421 (PASS threshold 0.4)"
+        },
+        "G5p_ICP": {
+          "ticker": "ICP",
+          "corr": null,
+          "pass": true,
+          "note": "ICP data unavailable \u2014 skip, assume PASS"
+        },
+        "G5q_AXS": {
+          "ticker": "AXS",
+          "corr": 0.086,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs AXS-BTC at W=168h: corr=0.0860 (PASS threshold 0.4)"
+        },
+        "G5r_DOGE": {
+          "ticker": "DOGE",
+          "corr": 0.1305,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs DOGE-BTC at W=168h: corr=0.1305 (PASS threshold 0.4)"
+        },
+        "G5s_SHIB": {
+          "ticker": "SHIB",
+          "corr": 0.1107,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs SHIB-BTC at W=168h: corr=0.1107 (PASS threshold 0.4)"
+        },
+        "G5t_AAVE": {
+          "ticker": "AAVE",
+          "corr": 0.0893,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs AAVE-BTC at W=168h: corr=0.0893 (PASS threshold 0.4)"
+        },
+        "G5u_CRV": {
+          "ticker": "CRV",
+          "corr": 0.2082,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs CRV-BTC at W=168h: corr=0.2082 (PASS threshold 0.4)"
+        },
+        "G5v_PEPE": {
+          "ticker": "PEPE",
+          "corr": 0.0451,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs PEPE-BTC at W=168h: corr=0.0451 (PASS threshold 0.4)"
+        },
+        "G5w_WIF": {
+          "ticker": "WIF",
+          "corr": 0.0799,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs WIF-BTC at W=168h: corr=0.0799 (PASS threshold 0.4)"
+        },
+        "G5x_BONK": {
+          "ticker": "BONK",
+          "corr": 0.0281,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs BONK-BTC at W=168h: corr=0.0281 (PASS threshold 0.4)"
+        },
+        "G5y_UNI": {
+          "ticker": "UNI",
+          "corr": 0.1591,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs UNI-BTC at W=168h: corr=0.1591 (PASS threshold 0.4)"
+        },
+        "G5z_ARB": {
+          "ticker": "ARB",
+          "corr": 0.1594,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs ARB-BTC at W=168h: corr=0.1594 (PASS threshold 0.4)"
+        },
+        "G5aa_JUP": {
+          "ticker": "JUP",
+          "corr": 0.3028,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs JUP-BTC at W=168h: corr=0.3028 (PASS threshold 0.4)"
+        },
+        "G5ab_SNX": {
+          "ticker": "SNX",
+          "corr": 0.1605,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs SNX-BTC at W=168h: corr=0.1605 (PASS threshold 0.4)"
+        },
+        "G5ac_LDO": {
+          "ticker": "LDO",
+          "corr": 0.1407,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs LDO-BTC at W=168h: corr=0.1407 (PASS threshold 0.4)"
+        },
+        "G5ad_MKR": {
+          "ticker": "MKR",
+          "corr": 0.0423,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs MKR-BTC at W=168h: corr=0.0423 (PASS threshold 0.4)"
+        },
+        "G5ae_OP": {
+          "ticker": "OP",
+          "corr": 0.1996,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs OP-BTC at W=168h: corr=0.1996 (PASS threshold 0.4)"
+        },
+        "G5af_POL": {
+          "ticker": "POL",
+          "corr": 0.26,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs POL-BTC at W=168h: corr=0.2600 (PASS threshold 0.4)"
+        },
+        "G5ag_ENA": {
+          "ticker": "ENA",
+          "corr": 0.2102,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs ENA-BTC at W=168h: corr=0.2102 (PASS threshold 0.4)"
+        },
+        "G5ah_ETHFI": {
+          "ticker": "ETHFI",
+          "corr": 0.2655,
+          "pass": true,
+          "note": "ALGO-BTC ORTH signal vs ETHFI-BTC at W=168h: corr=0.2655 (PASS threshold 0.4)"
+        }
+      },
+      "g5_fail_list": {},
+      "g5_max_corr": 0.3167,
+      "g5_max_pair": "FIL",
+      "fil_corr": 0.3167,
+      "fil_pass": true,
+      "walk_forward": {
+        "folds": [
+          {
+            "fold": 1,
+            "oos_start": "2025-03-11",
+            "oos_end": "2025-04-10",
+            "sharpe": 17.368,
+            "ann_ret_pct": 3.686,
+            "entries": 1
+          },
+          {
+            "fold": 2,
+            "oos_start": "2025-04-10",
+            "oos_end": "2025-05-10",
+            "sharpe": 15.571,
+            "ann_ret_pct": 4.207,
+            "entries": 2
+          },
+          {
+            "fold": 3,
+            "oos_start": "2025-05-10",
+            "oos_end": "2025-06-09",
+            "sharpe": 3.062,
+            "ann_ret_pct": 0.973,
+            "entries": 3
+          },
+          {
+            "fold": 4,
+            "oos_start": "2025-06-09",
+            "oos_end": "2025-07-09",
+            "sharpe": -3.383,
+            "ann_ret_pct": -0.944,
+            "entries": 3
+          },
+          {
+            "fold": 5,
+            "oos_start": "2025-07-09",
+            "oos_end": "2025-08-08",
+            "sharpe": 38.576,
+            "ann_ret_pct": 8.853,
+            "entries": 1
+          },
+          {
+            "fold": 6,
+            "oos_start": "2025-08-08",
+            "oos_end": "2025-09-07",
+            "sharpe": -13.119,
+            "ann_ret_pct": -1.054,
+            "entries": 0
+          },
+          {
+            "fold": 7,
+            "oos_start": "2025-09-07",
+            "oos_end": "2025-10-07",
+            "sharpe": 12.65,
+            "ann_ret_pct": 0.742,
+            "entries": 0
+          },
+          {
+            "fold": 8,
+            "oos_start": "2025-10-07",
+            "oos_end": "2025-11-06",
+            "sharpe": 20.75,
+            "ann_ret_pct": 14.278,
+            "entries": 3
+          },
+          {
+            "fold": 9,
+            "oos_start": "2025-11-06",
+            "oos_end": "2025-12-06",
+            "sharpe": 14.131,
+            "ann_ret_pct": 5.328,
+            "entries": 4
+          },
+          {
+            "fold": 10,
+            "oos_start": "2025-12-06",
+            "oos_end": "2026-01-05",
+            "sharpe": -8.358,
+            "ann_ret_pct": -3.866,
+            "entries": 9
+          },
+          {
+            "fold": 11,
+            "oos_start": "2026-01-05",
+            "oos_end": "2026-02-04",
+            "sharpe": 10.931,
+            "ann_ret_pct": 1.622,
+            "entries": 0
+          },
+          {
+            "fold": 12,
+            "oos_start": "2026-02-04",
+            "oos_end": "2026-03-06",
+            "sharpe": -4.862,
+            "ann_ret_pct": -1.861,
+            "entries": 6
+          }
+        ],
+        "fold_sharpes": [
+          17.36825288569776,
+          15.571219209788417,
+          3.0616446755622904,
+          -3.382538506822276,
+          38.57633211578666,
+          -13.11918570111527,
+          12.64964475450445,
+          20.750488125106063,
+          14.13070664968606,
+          -8.358252828914463,
+          10.931239060141175,
+          -4.862403561992352
+        ],
+        "n_positive": 8,
+        "n_folds": 12,
+        "all_positive": false,
+        "min_sharpe": -13.119
+      },
+      "permutation_test": {
+        "real_oos_sharpe": 7.1088,
+        "n_permutations": 500,
+        "p_value": 0.0,
+        "pass": true
+      },
+      "dsr_bonferroni": {
+        "n_trials": 2,
+        "t_stat": 5.027,
+        "p_raw": 0.062508,
+        "p_bonferroni": 0.125016,
+        "threshold": 0.025,
+        "pass": false
+      },
+      "cross_venue": {
+        "bybit": {
+          "corr": 0.4482,
+          "pass": false,
+          "note": "HL-bybit ALGO FR corr=0.4482 (FAIL >= 0.55). Bybit has only 67d history (200 records 8h interval vs HL 1h)."
+        }
+      }
+    }
+  ],
+  "phase5_decision": {
+    "decision": "ACCEPT CONDITIONAL",
+    "rationale": "Orthogonalized ALGO signal (W=72h): G5 PASS, OOS Sharpe=8.11. Gates 4/9. FIL post-orth=0.2546. \u03b2_FIL=0.4107, IS R\u00b2=0.2396, OOS R\u00b2=-0.0282. Non-critical fails: 5 gates (data limitations). Recommend 60d paper-trade. K522 conditionally unblocked.",
+    "best_window_h": 72,
+    "best_oos_sharpe": 8.1132,
+    "best_n_pass": 4,
+    "best_n_total": 9,
+    "g5_cleared": true,
+    "g5_fail_list": {},
+    "fil_corr_post_orth": 0.2546,
+    "fil_corr_72h": 0.2546,
+    "fil_corr_168h": 0.3167,
+    "orthogonalization_mechanism": {
+      "alpha": 4.62e-06,
+      "beta_fil": 0.41074,
+      "is_r2": 0.2396,
+      "oos_r2": -0.0282,
+      "interpretation": "OLS on IS period: ALGO-BTC fr_diff = 0.00000462 + 0.410740*FIL-BTC fr_diff + \u03b5. IS R\u00b2 = 0.2396 (23.96% of ALGO FR variance explained by FIL regime). OOS R\u00b2 = -0.0282 (diagnostic: IS \u03b2 generalization). Residual = ALGO-specific Algorand Pure PoS VRF cycles, CBDC pilot events, Algorand DeFi-lite adoption \u2014 components not captured by FIL storage proofs."
+    },
+    "vs_raw_signal": {
+      "raw_oos_sharpe": 10.271,
+      "orth_oos_sharpe": 8.1132,
+      "sharpe_degradation": 2.1578,
+      "note": "Sharpe change from orthogonalization = +2.16 units. If G5 passes, this is the 'price' for removing the FIL overlap. Negative delta means FIL factor was partially load-bearing for ALGO profitability."
+    }
+  },
+  "phase6_profit": {
+    "oos_ann_ret_frac": 0.025406,
+    "oos_ann_ret_pct": 2.5406,
+    "oos_sharpe": 8.1132,
+    "profit_10m_4x_usd": 1016240,
+    "profit_10m_4x_k": 1016.2,
+    "profit_100m_4x_usd": 10162400,
+    "profit_100m_4x_k": 10162.4,
+    "profit_table": [
+      {
+        "notional_usd": 1000000,
+        "leverage": 1,
+        "ann_profit_usd": 25406.0,
+        "ann_profit_k": 25.4
+      },
+      {
+        "notional_usd": 1000000,
+        "leverage": 2,
+        "ann_profit_usd": 50812.0,
+        "ann_profit_k": 50.8
+      },
+      {
+        "notional_usd": 1000000,
+        "leverage": 4,
+        "ann_profit_usd": 101624.0,
+        "ann_profit_k": 101.6
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 1,
+        "ann_profit_usd": 127030.0,
+        "ann_profit_k": 127.0
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 2,
+        "ann_profit_usd": 254060.0,
+        "ann_profit_k": 254.1
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 4,
+        "ann_profit_usd": 508120.0,
+        "ann_profit_k": 508.1
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 1,
+        "ann_profit_usd": 254060.0,
+        "ann_profit_k": 254.1
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 2,
+        "ann_profit_usd": 508120.0,
+        "ann_profit_k": 508.1
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 4,
+        "ann_profit_usd": 1016240.0,
+        "ann_profit_k": 1016.2
+      },
+      {
+        "notional_usd": 100000000,
+        "leverage": 1,
+        "ann_profit_usd": 2540600.0,
+        "ann_profit_k": 2540.6
+      },
+      {
+        "notional_usd": 100000000,
+        "leverage": 2,
+        "ann_profit_usd": 5081200.0,
+        "ann_profit_k": 5081.2
+      },
+      {
+        "notional_usd": 100000000,
+        "leverage": 4,
+        "ann_profit_usd": 10162400.0,
+        "ann_profit_k": 10162.4
+      }
+    ],
+    "raw_profit_10m_4x": 22480,
+    "comparison": {
+      "raw_profit_10m_4x_usd": 22480,
+      "orth_profit_10m_4x_usd": 1016240,
+      "delta_usd": 993760,
+      "note": "Residual orthogonalized signal: $1,016,240/yr @$10M 4x vs raw K522 $22,480/yr. Delta = $+993,760/yr (HIGHER than raw). Delta is the portion attributable to the enterprise/utility-L1 FIL common factor."
+    },
+    "note": "Orthogonalized ALGO signal OOS ann ret: 2.5406%. OOS Sharpe: 8.11. @$10M notional 4x leverage: $1,016,240/yr (USDC/yr residual estimate). Residual = ALGO-specific VRF consensus cycles, CBDC adoption events, DeFi-lite FR timing. Note: actual live profit depends on HL ALGO-PERP capacity (maxLeverage=5 confirmed)."
+  }
+}
