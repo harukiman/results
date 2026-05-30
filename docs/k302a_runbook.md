@@ -14859,3 +14859,205 @@ Under `BEAR_1_FALLBACK_ACTIVE.flag`:
 | K523 | 3-point projection mandate |
 | K518 | 38% realized-to-stated ratio floor |
 | K297 | K297' satellite sleeve (PAXG/SPX funding rate carry) |
+
+---
+
+## §76 K768 BLUR-SOL FR Differential (75th Daemon, EIGHTEENTH ALT-ALT, NFT Marketplace × SVM, 16th Vertex)
+
+*K770 §76 -- K768 BLUR-SOL FR Differential production scaffold (75th daemon, EIGHTEENTH ALT-ALT 16th-vertex BLUR Ethereum-L1-NFT-marketplace × Solana SVM, OOS Sh 14.98 W=168h G6-safe direct alt-alt diff, central $61,000/yr net @$10M @4x 0.6% sleeve K523 3-point $37K-$153K, HL primary HL 66.8% AT CAP paper-gate-strict K751-audit, G4 WF 20/21-positive positive_frac=0.952 strong-WF-validation, G5 FIL-SOL-full=0.4398-FAIL OOS=0.2805-PASS SOL-anchor-contamination-exception, G6 38.2/yr PASS W=168h-family-standard, G8 HL+Bybit confirmed BLUR-HL-2024-05 BLURUSDT-4594rows, L003 AVAX=0.0445-PASS L007 FIL=0.0478-PASS raw-FR-independence-confirmed, L010 HBAR=0.0784-PASS L011 SOL=0.0603-PASS, liquidity-limited HL-BLUR-$0.6M/day 0.6%-sleeve $60K-pos-max, BLUR-vertex-16th MR9-L002-all-future-BLUR-X-blocked, 4-live-conditions: G5-FIL-SOL-90d-OOS<0.40 + vol>$1M/day + HL%<65% + NFT-governance-review, 60d gate: Sh>=6 fill>=60% maxDD<15%) -- 2026-05-30*
+
+### §76.1 Strategy Overview
+
+**K768 BLUR-SOL FR Differential** — EIGHTEENTH alt-alt pair (NFT marketplace × SVM cross-cluster). Signal: `diff = BLUR_FR - SOL_FR`, W=168h rolling mean, zero threshold.
+
+| Field | Value |
+|-------|-------|
+| Strategy | K768 BLUR-SOL FR Differential (EIGHTEENTH ALT-ALT pair) |
+| Daemon | 75th daemon |
+| OOS Sharpe | 14.9799 (W=168h, zero threshold, ~210d OOS) |
+| G4 WF | 20/21 POSITIVE (positive_frac=0.952) |
+| G5 | FIL-SOL full=0.4398 FAIL / OOS=0.2805 PASS (SOL-anchor exception) |
+| G6 | 38.2 entries/yr OOS PASS (W=168h family standard) |
+| G8 | HL+Bybit confirmed (BLUR: HL 2024-05, Bybit BLURUSDT 4594 rows) |
+| Sleeve | 0.6% (liquidity-limited: HL BLUR $0.6M/day → $60K max position) |
+| Leverage | 4x |
+| Venue | HL primary (BLUR-PERP + SOL-PERP), Bybit fallback (BLURUSDT) |
+| HL cap | 66.8% AT CAP (K751 audit) — paper-gate strict |
+| Central ROI | $61,000/yr @$10M @4x @0.6% (K523 3-point: $37K-$153K) |
+| BLUR vertex | 16th. MR9 L002: all future BLUR-X pairs auto-blocked |
+
+### §76.2 BLUR vs SOL FR Economics
+
+**BLUR FR drivers (Ethereum L1 NFT marketplace, Blur.io, Oct 2022):**
+- NFT bull cycles: BAYC Q1-2023, Pudgy Penguins Q4-2023—Q1-2024, SOL NFT Q1-2024
+- Royalty mechanism battles: Blur vs OpenSea (2023: Blur captures 60%+ NFT volume)
+- NFT lending protocol: Blur Blend (peer-to-peer perpetual NFT loans, May 2023)
+- Wash-trading airdrop seasons: Blur S1 (Feb 2023), S2 (Oct 2023), S3 (2024)
+- Ethereum L1 congestion + NFT gas price cycles
+- Extreme fat-tail spikes: kurtosis=575.70. Max: 0.008065 (2026-04-01). 64 events > 0.0001
+- Full vol ratio: 6.77x vs SOL. 2026-04 spike month: 83.49x. 30d recent: 3.56x
+
+**SOL FR drivers (Solana SVM L1):**
+- SVM infrastructure: Firedancer upgrades, validator rewards, SVM DeFi TVL
+- Solana ETF narrative flows, retail momentum, Phantom wallet adoption
+- Meme-coin seasons: BONK/WIF/POPCAT/PENGU rotation cycles
+- Persistently positive: +8.79%/ann mean. Extreme negative: -20.51bps (Feb 2025 cascade)
+
+**Cross-cluster divergence:**
+- NFT cultural events (BAYC floor price, Pudgy Penguins viral) → BLUR FR spikes
+- SVM ecosystem sentiment (Firedancer launch, ETF news) → SOL FR steady/elevated
+- BLUR can spike 10-50x normal range during NFT seasons while SOL FR stays muted
+- MaxDD OOS = -0.68% (very contained — differential mean-reversion well-behaved)
+
+### §76.3 §6 Gate Results (K768)
+
+| Gate | Value | Threshold | Result |
+|------|-------|-----------|--------|
+| G1 OOS Sharpe | 14.9799 | >= 2.0 | PASS |
+| G2 IS Sharpe | 22.8114 | >= 8.0 | PASS |
+| G3 Bonferroni | 4.9933 | >= 1.0 | PASS |
+| G4 WF positive | 20/21 (0.952) | >= 60% | PASS |
+| G5 Signal corr | FIL-SOL full=0.4398 | < 0.40 | **FAIL (exception)** |
+| G5 OOS corr | FIL-SOL OOS=0.2805 | < 0.40 | PASS (OOS governs) |
+| G6 Entries/yr | 38.2/yr OOS | >= 30/yr | PASS |
+| G7 Ann return | $215K/yr @1% sleeve | > $10K/yr | PASS |
+| G8 Cross-venue | HL+Bybit confirmed | Both listed | PASS |
+| G9 History | 721 days | >= 180 days | PASS |
+
+**G5 FIL-SOL exception (SOL-anchor contamination):**
+- Full-period corr: 0.4398 FAIL (> 0.40 gate). IS corr: 0.5112. OOS corr: 0.2805 PASS.
+- Mechanism: both BLUR-SOL and FIL-SOL short SOL when SOL FR dominates IS period.
+- Raw FR independence confirmed: L007 raw_corr(BLUR_fr, FIL_fr) = 0.0478 (< 0.45 PASS).
+- OOS trend: 0.2805 < IS 0.5112 — contamination decreases in OOS (structural divergence).
+- CONDITIONAL_ACCEPT: 4 live-elevation conditions required before deployment.
+
+### §76.4 K523 3-Point Profit Projection (@$10M @4x @0.6%)
+
+| Scenario | @$10M @4x @0.6% sleeve | Note |
+|----------|------------------------|------|
+| Conservative | $37,000/yr | R2S×0.38 (K518 floor) |
+| **Central** | **$61,000/yr** | Base case — report this |
+| Optimistic | $153,000/yr | HL BLUR vol grows to $2.5M/day (condition 2) |
+
+Note: 0.6% sleeve → ~$60K position @$10M; central per K768 eval json=$61K/yr.
+Optimistic assumes HL BLUR daily volume grows to $2.5M/day (live-elevation condition 2 met).
+
+### §76.5 HL Concentration Status
+
+| Parameter | Value | Status |
+|-----------|-------|--------|
+| HL concentration (post-K761) | 66.8% | AT CAP |
+| HL ceiling | 65.0% | AT CAP |
+| K768 sleeve | 0.6% (paper-only) | No live capital added |
+| K768 impact | PAPER-ONLY | No change to 66.8% |
+| Live trigger (HL) | K498/v6.52 OKX activation | Required (condition 3) |
+
+### §76.6 BLUR Vertex Rule (MR9 L002)
+
+- BLUR = 16th vertex added to V at K768
+- V = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI, SOL, TIA, TAO, PEPE, WIF, BLUR}
+- MR9 L002: all future BLUR-X pairs auto-blocked (BLUR exhausted as new vertex)
+- BLUR-SOL is the only permissible BLUR-X pair given V at K768
+
+### §76.7 G5 FIL-SOL Governance Note
+
+- SOL-anchor contamination: BLUR-SOL and FIL-SOL both short SOL when SOL FR dominates
+- IS corr=0.5112 (IS-period SOL domination drives correlation)
+- OOS corr=0.2805 (OOS: NFT-specific events decouple BLUR from SOL-anchor regime)
+- Rolling 90d OOS monitoring required as live condition 1
+- FIL-SOL capacity sharing implicit: total SOL-short exposure elevated when both strategies active
+
+### §76.8 4 Live-Elevation Conditions (K770 Governance)
+
+ALL 4 conditions must be simultaneously met before PAPER_TRADE=False:
+
+| # | Condition | Current Status |
+|---|-----------|---------------|
+| 1 | G5 FIL-SOL rolling 90d OOS corr < 0.40 | 0.2805 PASS (borderline — monitor monthly) |
+| 2 | HL BLUR daily volume > $1M/day sustained | $0.6M/day — SUB-THRESHOLD |
+| 3 | HL cap < 65% (K498/v6.52 OKX) | 66.8% AT CAP |
+| 4 | Governance review: NFT marketplace cluster | OPEN (no family precedent) |
+
+### §76.9 60d Paper-Trade Gate
+
+| Gate | Target | Status |
+|------|--------|--------|
+| Realized Sharpe | >= 6.0 | IN_PROGRESS |
+| Fill rate | >= 60% | IN_PROGRESS |
+| Max drawdown | < 15% | IN_PROGRESS |
+| 4 live conditions | ALL 4 met | OPEN |
+
+### §76.10 Daemon Activation
+
+```bash
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k768-blur-sol.plist
+cp scripts/com.cryptolab.k768-blur-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k768-blur-sol.plist
+launchctl list | grep k768
+```
+
+**Status check:**
+```bash
+python3 scripts/k768_blur_sol_run.py --status
+python3 scripts/k768_blur_sol_run.py --dry-run
+```
+
+**Manual close (paper-trade):**
+```bash
+python3 scripts/k768_blur_sol_run.py --close "scheduled exit"
+```
+
+**Live activation (only after all conditions passed):**
+```bash
+# 1. Verify all 4 live-elevation conditions (K770) met
+# 2. Verify 60d gate: Sh>=6 + fill>=60% + maxDD<15%
+# 3. Verify K498/v6.52 OKX active and HL% < 65%
+# 4. Verify G5 FIL-SOL 90d OOS corr < 0.40
+# 5. Verify HL BLUR vol > $1M/day (30d sustained)
+# 6. Governance sign-off: NFT marketplace cluster approved
+# 7. Edit plist: change PAPER_TRADE to False
+# 8. Reload daemon
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k768-blur-sol.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k768-blur-sol.plist
+```
+
+### §76.11 Emergency Exit Protocol
+
+K768 BLUR-SOL positions (HL primary) are included in the main HL emergency exit:
+```bash
+python3 scripts/emergency_hl_exit.py --dry-run --include-k768
+python3 scripts/emergency_hl_exit.py --include-k768
+```
+
+Close protocol: IOC reduce-only, SHORT leg first, then LONG leg.
+- BULL_BLUR (NFT season): short SOL first → sell long BLUR second
+- BEAR_BLUR (SVM season): short BLUR first → sell long SOL second
+
+**Liquidity note:** BLUR-PERP on HL at $0.6M/day volume. $60K position (0.6% sleeve) = 10% daily vol. IOC close should fill within 1h at normal market conditions.
+
+### §76.12 Deliverable Files
+
+| File | Description |
+|------|-------------|
+| `scripts/k768_blur_sol_run.py` | Phase 1: K768 strategy script (K339 pattern, W=168h, HL primary, NFT marketplace × SVM) |
+| `scripts/com.cryptolab.k768-blur-sol.plist` | Phase 2: 75th daemon (8h interval, PAPER_TRADE=True default) |
+| `data/leverage_config.json` | Phase 3: K768_BLUR_SOL: 4.0 + k768_notes |
+| `scripts/verify_deployment_status.py` | Phase 4: Registry +1 (com.cryptolab.k768-blur-sol) |
+| `scripts/emergency_hl_exit.py` | Phase 5: Emergency exit (--include-k768 flag, §76) |
+| `docs/k302a_runbook.md` | Phase 6: This section (§76) |
+| `data/k768_dashboard.json` | Phase 7: Initial scaffold state |
+| `wave_k770_k768_scaffold.json` | Phase 8: Wave output JSON |
+| `wave_k770_k768_scaffold.py` | Phase 9: Scaffold verification runner |
+| `report.html` | Phase 10: K770 scaffold badge |
+
+### §76.13 References
+
+| Wave | Description |
+|------|-------------|
+| K770 | This section — K768 BLUR-SOL scaffold (75th daemon, 18th alt-alt, K523 central $61K/yr) |
+| K768 | K768 evaluation wave (BLUR-SOL FR Differential CONDITIONAL_ACCEPT, W=168h, OOS Sh=14.98) |
+| K766 | K766 HL long-tail screen (BLUR standout: vol_ratio=39.8x 30d snapshot, K767-K769 queue) |
+| K761 | K761 K759 WIF-SOL scaffold (72nd daemon, 17th alt-alt, 15th vertex WIF) |
+| K751 | K751 Kelly sizing audit (HL concentration 66.8% confirmed, v6.52 optimization) |
+| K498 | K498 OKX integration scaffold (HL cap relief required before live activation — condition 3) |
+| K523 | K523 3-point projection mandate (conservative/central/optimistic) |

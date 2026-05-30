@@ -4338,6 +4338,37 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # Use --include-k768 to print K768-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k768",
+        dest="include_k768",
+        action="store_true",
+        default=False,
+        help=(
+            "K770: Include K768 BLUR-SOL close summary during emergency exit. "
+            "K768 positions (BLUR+SOL paired, HL primary) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = BLUR_FR - SOL_FR (direct differential, W=168h rolling mean, zero threshold). "
+            "HL primary: BLUR-PERP + SOL-PERP both on HL. Bybit fallback (BLURUSDT). "
+            "HL concentration 66.8% AT CAP (K751 audit — paper-gate strict — PAPER_TRADE=True default). "
+            "G4 WF 20/21 POSITIVE (positive_frac=0.952). G5 FIL-SOL full=0.4398 FAIL (OOS=0.2805 PASS). "
+            "G5 SOL-anchor exception documented. OOS corr 0.2805 < IS 0.5112 (contamination reduces OOS). "
+            "G6: 38.2 entries/yr OOS PASS (W=168h family standard G6-safe vs 30/yr minimum). "
+            "OOS Sharpe 14.98 (W=168h). MaxDD OOS=-0.68% (very contained). "
+            "Liquidity cap: HL BLUR $0.6M/day → 10% daily vol rule → $60K max position → 0.6% sleeve. "
+            "L003 AVAX: raw_corr=0.0445 PASS. L007 FIL: raw_corr=0.0478 PASS (raw FR independence). "
+            "L010 HBAR: raw_corr=0.0784 PASS. L011 SOL: raw_corr=0.0603 PASS. "
+            "BLUR = 16th vertex. MR9 L002: all future BLUR-X auto-blocked. "
+            "K523 central $61,000/yr net @$10M @4x (0.6% sleeve, liquidity-limited). "
+            "4 live conditions: G5-FIL-SOL 90d OOS<0.40 + vol>$1M/day + HL%<65% + governance. "
+            "60d gate: Realized Sh>=6 + fill>=60% + maxDD<15%. "
+            "Cluster: Ethereum L1 NFT marketplace × Solana SVM (18th alt-alt, 75th daemon). "
+            "Requires: K768 daemon running (com.cryptolab.k768-blur-sol, 75th daemon). "
+            "See: docs/k302a_runbook.md §76"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -5441,6 +5472,52 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "G4 WF 12/12 ALL POSITIVE (min_sh=9.895). WIF = 15th vertex. "
                 "G5w PEPE-SOL=0.382 proximity → 2.0% sleeve. L011 WIF-SOL=0.487 monthly recheck. "
                 "Use --include-k759 for structured HL close summary (§72)."
+            )
+
+        # K770: K768 BLUR-SOL alt-alt close summary (HL primary — positions ARE in HL exit above)
+        # K768 positions (BLUR+SOL, HL primary) are included in the main HL exit plan above.
+        # HL 66.8% AT CAP (paper-gate: PAPER_TRADE=True default — no live capital yet).
+        # Live only after all 4 live-elevation conditions met (K770) + 60d gate passage.
+        if args.include_k768:
+            logger.info("=== K768 BLUR-SOL CLOSE SUMMARY (K770 §76) ===")
+            logger.info("  K768 BLUR-SOL: HL primary (BLUR-PERP + SOL-PERP both legs on HL)")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_BLUR (NFT season): short SOL first → sell long BLUR second")
+            logger.info("  BEAR_BLUR (SVM season dominant): short BLUR first → sell long SOL second")
+            logger.info("  HL concentration: 66.8% AT CAP (K751 audit — paper-gate strict)")
+            logger.info("  PAPER_TRADE=True default — no live capital until all 4 live conditions met")
+            logger.info("  G4 WF: 20/21 POSITIVE (positive_frac=0.952) — strong WF validation")
+            logger.info("  G5: FIL-SOL full=0.4398 FAIL / OOS=0.2805 PASS (SOL-anchor exception)")
+            logger.info("  G5 mechanism: both BLUR-SOL and FIL-SOL short SOL when SOL FR dominates IS.")
+            logger.info("  G5 raw FR independence: L007 raw_corr(BLUR,FIL)=0.0478 PASS. OOS governs.")
+            logger.info("  G6: 38.2 entries/yr OOS PASS (W=168h family standard G6-safe vs 30/yr min)")
+            logger.info("  G8: HL+Bybit confirmed (BLUR: HL 2024-05, Bybit BLURUSDT 4594 rows 2023-02+)")
+            logger.info("  Liquidity cap: HL BLUR $0.6M/day → 10% daily vol rule → $60K max position")
+            logger.info("  Sleeve: 0.6% (@$10M) — liquidity-limited. Bybit BLURUSDT higher volume.")
+            logger.info("  L003 AVAX corr=0.0445 PASS | L007 FIL corr=0.0478 PASS | L010 HBAR corr=0.0784 PASS")
+            logger.info("  L011 SOL corr=0.0603 PASS (< 0.50 SOL-ecosystem threshold)")
+            logger.info("  BLUR = 16th vertex (NFT marketplace cluster). MR9 L002: all future BLUR-X blocked.")
+            logger.info("  V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR}")
+            logger.info("  BLUR FR: Blur.io NFT marketplace, NFT bull cycles BAYC/Pudgy/SOL-NFT,")
+            logger.info("    royalty battles, NFT lending Blur Blend, airdrop wash-trading seasons.")
+            logger.info("    kurtosis=575.70. Max spike: 0.008065 (2026-04-01). 64 events>0.0001.")
+            logger.info("    Full vol ratio: 6.77x vs SOL. 2026-04 spike month: 83.49x.")
+            logger.info("  SOL FR: DePIN/Retail Phantom Firedancer ETF +8.79%/ann. Min=-20.51bps cascade.")
+            logger.info("  MaxDD OOS=-0.68% (contained — differential mean-reversion well-behaved)")
+            logger.info("  OOS Sh=14.98 (W=168h), K523 central $61,000/yr net @$10M @4x (0.6% sleeve)")
+            logger.info("  K523 3-point: conservative=$37,000 central=$61,000 optimistic=$153,000/yr")
+            logger.info("  4 live conditions: G5-FIL-SOL 90d OOS<0.40 + vol>$1M/day + HL%<65% + governance")
+            logger.info("  60d gate: Realized Sh>=6 + fill>=60% + maxDD<15%")
+            logger.info("  Live trigger: all 4 live-elevation conditions (K770) + 60d gate passage")
+            logger.info("  18th alt-alt scaffold, 75th daemon. HL primary (positions in main HL exit)")
+            logger.info("  See: docs/k302a_runbook.md §76 (K768 BLUR-SOL playbook)")
+        else:
+            logger.info(
+                "K768 BLUR-SOL: HL primary (positions ARE in HL exit above — BLUR-PERP + SOL-PERP on HL). "
+                "HL 66.8% AT CAP (K751 audit — paper-gate strict; no live capital until 4 conditions met). "
+                "G4 WF 20/21 POSITIVE. G5 FIL-SOL exception: full=0.4398 FAIL OOS=0.2805 PASS. "
+                "BLUR = 16th vertex. Liquidity: HL BLUR $0.6M/day → 0.6% sleeve. "
+                "Use --include-k768 for structured HL close summary (§76)."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)

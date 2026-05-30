@@ -1,0 +1,122 @@
+{
+  "wave": "K770",
+  "strategy": "K768 BLUR-SOL FR Differential Alt-Alt (Ethereum L1 NFT marketplace \u00d7 Solana SVM \u2014 16th vertex)",
+  "run_time_jst": "2026-05-30 22:34 JST",
+  "k768_result": {
+    "decision": "CONDITIONAL_ACCEPT",
+    "g4_wf": "20/21 POSITIVE (positive_frac=0.952)",
+    "g5_result": "G1-G4+G6-G9 ALL PASS. G5 FIL-SOL full=0.4398 FAIL (OOS=0.2805 PASS). SOL-anchor exception documented.",
+    "g5_fil_sol": {
+      "full": 0.4398,
+      "is": 0.5112,
+      "oos": 0.2805,
+      "exception": "SOL-anchor contamination. Raw FR independent: L007=0.0478."
+    },
+    "g6_entries_yr": 38.2,
+    "g6_note": "W=168h family standard G6-safe vs 30/yr minimum",
+    "g8_result": "HL+Bybit confirmed (BLUR: HL 2024-05, Bybit BLURUSDT 4594 rows 2023-02+)",
+    "oos_sharpe": 14.9799,
+    "max_dd_oos_pct": -0.0068,
+    "w_hours": 168,
+    "sleeve_pct": 0.006,
+    "sleeve_note": "0.6% LIQUIDITY-LIMITED (HL BLUR $0.6M/day \u2192 $60K pos max, 10% daily vol rule)",
+    "leverage": 4.0,
+    "venue": "HL primary (BLUR-PERP + SOL-PERP), Bybit fallback (BLURUSDT)",
+    "hl_concentration": 66.8,
+    "paper_gate_strict": true,
+    "live_trigger": "ALL 4 live-elevation conditions (K770) + 60d gate passage",
+    "blur_vertex": "16th vertex. MR9 L002: all future BLUR-X auto-blocked.",
+    "l003_avax_corr": 0.0445,
+    "l004_carry": "IS=0.836 OOS=0.482 PASS",
+    "l007_fil_corr": 0.0478,
+    "l010_hbar_corr": 0.0784,
+    "l011_sol_corr": 0.0603
+  },
+  "k523_projection": {
+    "conservative_yr": 37000,
+    "central_yr": 61000,
+    "optimistic_yr": 153000,
+    "sleeve_pct": 0.006,
+    "note": "K523 mandatory 3-point. Central=$61K @$10M @4x @0.6% (liquidity-limited)."
+  },
+  "gate_60d": {
+    "realized_sharpe_min": 6.0,
+    "fill_rate_min_pct": 60,
+    "max_drawdown_max_pct": 15,
+    "live_conditions": [
+      "G5 FIL-SOL rolling 90d OOS corr < 0.40 (currently 0.2805 PASS \u2014 borderline)",
+      "HL BLUR daily volume > $1M/day sustained (currently $0.6M \u2014 sub-threshold)",
+      "HL cap < 65% via K498/v6.52 OKX activation (currently 66.8% AT CAP)",
+      "Governance review of NFT marketplace cluster (no family precedent \u2014 K770 open)"
+    ]
+  },
+  "daemon": {
+    "number": "75th",
+    "label": "com.cryptolab.k768-blur-sol",
+    "script": "scripts/k768_blur_sol_run.py",
+    "interval_s": 28800
+  },
+  "scaffold_verification": {
+    "all_pass": true,
+    "gates_passed": 7,
+    "gates_total": 7,
+    "checks": {
+      "phase1_run_script": {
+        "path": "scripts/k768_blur_sol_run.py",
+        "exists": true,
+        "pass": true
+      },
+      "phase2_plist": {
+        "path": "scripts/com.cryptolab.k768-blur-sol.plist",
+        "exists": true,
+        "pass": true
+      },
+      "phase3_leverage_config": {
+        "path": "data/leverage_config.json",
+        "k768_entry_exists": true,
+        "pass": true
+      },
+      "phase4_verify_deployment": {
+        "path": "scripts/verify_deployment_status.py",
+        "k768_entry_exists": true,
+        "pass": true
+      },
+      "phase5_emergency_exit": {
+        "path": "scripts/emergency_hl_exit.py",
+        "k768_flag_exists": true,
+        "pass": true
+      },
+      "phase6_runbook": {
+        "path": "docs/k302a_runbook.md",
+        "k768_section_exists": true,
+        "pass": true
+      },
+      "phase7_dashboard": {
+        "path": "data/k768_dashboard.json",
+        "exists": true,
+        "pass": true
+      }
+    },
+    "ts_jst": "2026-05-30 22:34 JST"
+  },
+  "vertex_set_after_k768": [
+    "APT",
+    "ATOM",
+    "AVAX",
+    "BNB",
+    "ENA",
+    "FIL",
+    "HBAR",
+    "INJ",
+    "LDO",
+    "SEI",
+    "SOL",
+    "TIA",
+    "TAO",
+    "PEPE",
+    "WIF",
+    "BLUR"
+  ],
+  "alt_alt_family_count": 18,
+  "nft_cluster_note": "First NFT marketplace protocol in alt-alt universe. Governance review required (condition 4)."
+}
