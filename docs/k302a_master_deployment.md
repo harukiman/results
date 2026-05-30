@@ -1,6 +1,72 @@
 # K302a Master Deployment Playbook — Single Source of Truth
-**Version:** 6.50 MEGA | **Updated:** 2026-05-30 16:35 JST | **Wave:** K712 (supersedes K709/K700/K692/K674/K666/K657/K643)
+**Version:** 6.50 MEGA | **Updated:** 2026-05-30 17:03 JST | **Wave:** K718 (supersedes K717/K712/K709/K700/K692/K674/K666/K657/K643)
 **Status:** v6.50 MEGA — 35 sleeves | 10 orthog + 4 ETH-base + 8 alt-alts + 8 paired | HL 63.5% (<65% cap) | K523 $15.2M/$21.1M/$48.0M @$10M | 5y $95M–$115M @$10M | v6.50 LIVE target 2027-Q1
+
+## ★★★★ K718 CAPSTONE UPDATE — K674 incremental (2026-05-30 17:03 JST)
+
+> **K718 SCOPE:** K674 capstone incremental update for user readability. Consolidates K700/K712/K714/K716/K717 major updates.
+> **FILES:** `wave_k718_capstone_update.{py,json,md}` | **Quick start:** `python3 wave_k718_capstone_update.py`
+
+### K718 Session Totals (K674 → K718)
+
+| Metric | K674 | K718 | Delta |
+|--------|------|------|-------|
+| Waves | 225 | **268+** | +43 |
+| Daemons | 52 | **62** | +10 (K712 verified) |
+| Mechanism scaffolds | 14 | **22** | +8 alt-alt |
+| Architecture | v6.40 | **v6.50 MEGA** | +$176K/yr |
+| Portfolio mid/yr | $20.9M | **$21.1M** | +$176K |
+| Phase A actions | 5 | **6** | +K492-C |
+| Phase A immediate | $521K | **$566K** | +$45K |
+| Combined activation | — | **$4.5M** | Phase A + D60 |
+
+### New Mechanism Summaries (K718)
+
+**Alt-alt family — 8 ACCEPTs** (all new since K674):
+K679 APT-SOL (Sh=39.29, $235K) | K682 ATOM-SOL (Sh=43.43, $215K) | K684 SOL-INJ (Sh=9.65, $114K)
+K686 AVAX-SOL (Sh=50.27, $102K) | K690 SEI-SOL (Sh=25.11, $105K) | K694 TIA-SOL (Sh=19.09, $58K COND)
+K696 ENA-SOL (Sh=26.93, $93K) | K708 BNB-SOL (Sh=48.59, $75K) | **Combined: $997K/yr @$10M**
+
+**ETH-base family — 4 ACCEPTs** (+K698 LINK-ETH since K674):
+K629 WLD-ETH ($94K) | K658 SOL-ETH ($42K) | K663 TIA-ETH ($74K) | K698 LINK-ETH ($29K COND)
+**Combined: $239K/yr @$10M** | Triple discriminator: vol_ratio≥2x AND ETH cycle align AND raw_fr_corr<0.45
+
+**K492-C immediate (K714):** +1.51 Sharpe, +3.4pp win rate, zero infra change. Phase A step 4.
+
+**Algebraic group rules (MR8/MR9):**
+- MR8: PoW/SHA-256 fork assets inherit BTC-base signal — pre-screen X-BTC corr before alt-alt backtest
+- MR9: A-B = K_A-BTC − K_B-BTC algebraically when both have BTC-base strategies — max_err < 1e-10 = structural lock
+
+### Phase A Revised (6 actions, $566K immediate)
+
+| # | Wave | Label | Effort | Risk | Profit/yr |
+|---|------|-------|--------|------|-----------|
+| A1 | K545 | Tax Harvester Plist | 5 min | **ZERO** | +$47K @$10M |
+| A2 | K481 | HL Builder Rebate | 30 min | **ZERO** | +$99–248K @$10M |
+| A3 | K552 | K280 75→60% Patch [PREREQ] | 30 min | LOW | +$260K unlock |
+| **A4** | **K492C** | **K492-C Persistence Filter** | **90 min** | LOW | **+$45K @$10M** |
+| A5 | K498 | OKX BBO_SELECT Router | 8h | LOW | +$121K @$30M |
+| A6 | K485 | Bybit Sub-Account | 30min+7d | LOW | +$2.2M @$25M |
+
+**Combined activation (Phase A + D60):** $4,505,745/yr @$10M
+
+### Memory Rules MR1–MR11 (K718 consolidated)
+
+| Rule | Source | Key |
+|------|--------|-----|
+| MR1 Orthogonalization | K628 | G5-blocked → OLS factor extract → residual |
+| MR2 ETH-base triple discriminator | K672 | vol_ratio≥2x AND ETH cycle AND corr<0.45 |
+| MR3 Load-bearing factor | K634 | IS R²>0.40 + OOS R²<0.10 → safe to remove |
+| MR4 Vol pre-screen | K662/K663 | 2min vol_ratio check; <2x skip |
+| MR5 Cycle alignment | K667 | ETH cycles = DeFi/staking/L2 only |
+| MR6 Paired-trade 3-cond | K480/K484/K490 | Sh≥8 AND G5 corr<0.40 AND G5b<0.40 |
+| MR7 HL builder rebate | K481 | $99–248K/yr ZERO risk Day 0 |
+| **MR8 Alt-Alt G5a Block** | **K707** | PoW/shared-leg structural pre-screen mandatory |
+| **MR9 Algebraic group** | **K688** | A-B = K_A-K_B max_err<1e-10 = lock |
+| **MR10 Window sensitivity** | **K615** | Sh >2x across windows = walk-forward required |
+| **MR11 K523 range** | **K523** | $15.2M/$21.1M/$48.0M always — no single-point |
+
+---
 
 ---
 
