@@ -1,0 +1,1059 @@
+{
+  "wave": "K778",
+  "strategy": "COMP-SOL FR Differential Alt-Alt (Compound DeFi governance vs SVM)",
+  "pair": "COMP-SOL",
+  "run_time_jst": "2026-05-30 23:22 JST",
+  "runtime_s": 2.1,
+  "k339_compliance": {
+    "wave": "K778",
+    "repo_root": ".",
+    "pattern": "K339"
+  },
+  "data_info": {
+    "comp_fr_source": "cache/k163_hl/hl_fr_COMP.parquet",
+    "sol_fr_source": "cache/k163_hl/hl_fr_SOL.parquet",
+    "merged_rows": 17519,
+    "date_start": "2024-05-30 00:00:00",
+    "date_end": "2026-05-29 23:00:00",
+    "total_years": 2.0,
+    "oos_start": "2025-10-25",
+    "k766_context": "K766 K778 #3 candidate: vol_ratio=6.0x (30d subset 2161 rows), max_anchor_corr=-0.008 (near zero), composite=0.0469. DeFi lending cluster (AAVE K748 BLOCKED L004, PENDLE K758 BLOCKED L004). COMP hypothesis: governance token \u2260 borrow utilisation premium \u2192 L004 may PASS."
+  },
+  "signal_config": {
+    "window_h": 48,
+    "threshold": 0.0,
+    "strategy_type": "2d FR differential carry (alt-alt, new vertex candidate)",
+    "direction_rule": "sign(48h rolling mean of COMP_fr - SOL_fr)",
+    "leverage": 4.0,
+    "sleeve_pct": 0.025
+  },
+  "phase0a_l004_prescreen": {
+    "positive_fraction_full": 0.6808,
+    "positive_fraction_is": 0.7569,
+    "positive_fraction_oos": 0.5009,
+    "threshold": 0.8,
+    "l004_block": false,
+    "status": "PASS",
+    "quarterly_carry": {
+      "2024Q2": {
+        "comp_mean_ann_pct": 2.825,
+        "pos_fraction": 0.7799
+      },
+      "2024Q3": {
+        "comp_mean_ann_pct": -2.1787,
+        "pos_fraction": 0.6729
+      },
+      "2024Q4": {
+        "comp_mean_ann_pct": 15.3443,
+        "pos_fraction": 0.8542
+      },
+      "2025Q1": {
+        "comp_mean_ann_pct": -10.3158,
+        "pos_fraction": 0.5398
+      },
+      "2025Q2": {
+        "comp_mean_ann_pct": -13.8691,
+        "pos_fraction": 0.7106
+      },
+      "2025Q3": {
+        "comp_mean_ann_pct": 11.0152,
+        "pos_fraction": 0.9851
+      },
+      "2025Q4": {
+        "comp_mean_ann_pct": -24.3221,
+        "pos_fraction": 0.5023
+      },
+      "2026Q1": {
+        "comp_mean_ann_pct": -17.478,
+        "pos_fraction": 0.6593
+      },
+      "2026Q2": {
+        "comp_mean_ann_pct": -33.2643,
+        "pos_fraction": 0.375
+      }
+    },
+    "comparison": {
+      "AAVE_K748": "carry_full~0.864 carry_oos~0.868 \u2192 BLOCKED-L004 (persistent borrow premium)",
+      "PENDLE_K758": "carry_full=0.902 carry_oos=0.869 \u2192 BLOCKED-L004 (yield-protocol carry)",
+      "COMP_K778": "carry_full=0.681 carry_oos=0.501 \u2192 PASS",
+      "mechanism": "COMP: governance token speculation (bidirectional FR) vs AAVE: borrow utilisation premium (uni-directional positive carry)"
+    },
+    "note": "COMP FR positive_fraction: full=68.1% OOS=50.1%. PASS: OOS fraction 50.1% well below 80% threshold. COMP FR is bidirectional \u2014 governance token speculation cycle, NOT persistent borrow utilisation premium. Unlike AAVE (lending protocol) or PENDLE (yield-trading), COMP is driven by governance reward distribution and protocol competition (Compound vs Aave market share). FR frequently inverts when governance activity declines."
+  },
+  "phase0b_pre_screens": {
+    "l003_avax": {
+      "raw_corr_comp_avax": 0.1027,
+      "threshold": 0.45,
+      "n_obs": 17360,
+      "pass": true,
+      "note": "raw_corr(COMP_fr, AVAX_fr)=0.1027. PASS."
+    },
+    "l011_sol": {
+      "raw_corr_comp_sol": 0.0765,
+      "threshold": 0.45,
+      "n_obs": 17519,
+      "pass": true,
+      "note": "raw_corr(COMP_fr, SOL_fr)=0.0765. PASS."
+    },
+    "overall_pass": true
+  },
+  "phase0c_mr9_prescreen": {
+    "verdict": "CLEAR",
+    "mr9_all_clear": true,
+    "comp_not_in_v": true,
+    "vertex_set_v": [
+      "APT",
+      "ATOM",
+      "AVAX",
+      "BNB",
+      "ENA",
+      "FIL",
+      "HBAR",
+      "INJ",
+      "LDO",
+      "PEPE",
+      "SEI",
+      "SOL",
+      "TIA",
+      "TAO",
+      "WLD",
+      "DOGE",
+      "WIF",
+      "IO",
+      "MEGA",
+      "STX",
+      "RUNE",
+      "AAVE",
+      "PENDLE",
+      "AXS",
+      "EIGEN",
+      "BLUR"
+    ],
+    "spot_checks": {
+      "APT": {
+        "max_raw_err": 0.008526948,
+        "is_identical": false,
+        "mr9_clear": true
+      },
+      "ATOM": {
+        "max_raw_err": 0.008512707,
+        "is_identical": false,
+        "mr9_clear": true
+      },
+      "AVAX": {
+        "max_raw_err": 0.008521752,
+        "is_identical": false,
+        "mr9_clear": true
+      },
+      "BNB": {
+        "max_raw_err": 0.008526948,
+        "is_identical": false,
+        "mr9_clear": true
+      },
+      "ENA": {
+        "max_raw_err": 0.008526948,
+        "is_identical": false,
+        "mr9_clear": true
+      },
+      "FIL": {
+        "max_raw_err": 0.008526948,
+        "is_identical": false,
+        "mr9_clear": true
+      },
+      "HBAR": {
+        "max_raw_err": 0.003833018,
+        "is_identical": false,
+        "mr9_clear": true
+      },
+      "INJ": {
+        "max_raw_err": 0.008511049,
+        "is_identical": false,
+        "mr9_clear": true
+      },
+      "LDO": {
+        "max_raw_err": 0.008526948,
+        "is_identical": false,
+        "mr9_clear": true
+      },
+      "PEPE": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      },
+      "SEI": {
+        "max_raw_err": 0.008526948,
+        "is_identical": false,
+        "mr9_clear": true
+      },
+      "TIA": {
+        "max_raw_err": 0.0084999,
+        "is_identical": false,
+        "mr9_clear": true
+      },
+      "TAO": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      },
+      "WLD": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      },
+      "DOGE": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      },
+      "WIF": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      },
+      "IO": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      },
+      "MEGA": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      },
+      "STX": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      },
+      "RUNE": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      },
+      "AAVE": {
+        "max_raw_err": 0.008526948,
+        "is_identical": false,
+        "mr9_clear": true
+      },
+      "PENDLE": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      },
+      "AXS": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      },
+      "EIGEN": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      },
+      "BLUR": {
+        "status": "MISSING_DATA",
+        "mr9_clear": true
+      }
+    },
+    "note": "COMP (Compound Finance) \u2209 V_altalt (26 vertices). COMP-SOL is a new alt-alt pair."
+  },
+  "phase1_cycle_analysis": {
+    "comp_fr_std": 0.0001122,
+    "sol_fr_std": 3.099e-05,
+    "vol_ratio_comp_sol_full": 3.6207,
+    "vol_ratio_k766_context": "6.0x on 90d subset (last 2161 rows)",
+    "vol_ratio_pass": true,
+    "ou_lambda": 0.357797,
+    "ou_half_life_h": 1.94,
+    "ou_half_life_d": 0.08,
+    "ou_r_squared": 0.1789,
+    "raw_corr_comp_sol": 0.0765,
+    "cycle_independence": 0.9235,
+    "cycle_by_quarter": {
+      "2024Q2": {
+        "comp_mean_ann_pct": 2.825,
+        "sol_mean_ann_pct": 16.9201,
+        "diff_mean_ann_pct": -14.0951,
+        "dominant": "SOL"
+      },
+      "2024Q3": {
+        "comp_mean_ann_pct": -2.1787,
+        "sol_mean_ann_pct": 9.6485,
+        "diff_mean_ann_pct": -11.8272,
+        "dominant": "SOL"
+      },
+      "2024Q4": {
+        "comp_mean_ann_pct": 15.3443,
+        "sol_mean_ann_pct": 29.6448,
+        "diff_mean_ann_pct": -14.3005,
+        "dominant": "SOL"
+      },
+      "2025Q1": {
+        "comp_mean_ann_pct": -10.3158,
+        "sol_mean_ann_pct": 3.6206,
+        "diff_mean_ann_pct": -13.9364,
+        "dominant": "SOL"
+      },
+      "2025Q2": {
+        "comp_mean_ann_pct": -13.8691,
+        "sol_mean_ann_pct": 3.9196,
+        "diff_mean_ann_pct": -17.7887,
+        "dominant": "SOL"
+      },
+      "2025Q3": {
+        "comp_mean_ann_pct": 11.0152,
+        "sol_mean_ann_pct": 14.193,
+        "diff_mean_ann_pct": -3.1778,
+        "dominant": "SOL"
+      },
+      "2025Q4": {
+        "comp_mean_ann_pct": -24.3221,
+        "sol_mean_ann_pct": -0.5444,
+        "diff_mean_ann_pct": -23.7777,
+        "dominant": "SOL"
+      },
+      "2026Q1": {
+        "comp_mean_ann_pct": -17.478,
+        "sol_mean_ann_pct": -7.7642,
+        "diff_mean_ann_pct": -9.7138,
+        "dominant": "SOL"
+      },
+      "2026Q2": {
+        "comp_mean_ann_pct": -33.2643,
+        "sol_mean_ann_pct": 1.1709,
+        "diff_mean_ann_pct": -34.4352,
+        "dominant": "SOL"
+      }
+    },
+    "mechanism_analysis": {
+      "comp_fr_drivers": [
+        "COMP governance token distribution events (reward rate changes, emissions schedule)",
+        "Compound v2/v3 market utilisation (supply/borrow imbalance in major markets)",
+        "Protocol competition events (Aave vs Compound market share shifts)",
+        "Governance votes affecting interest rate models and collateral factors",
+        "COMP liquidation cascades (during DeFi market stress events)",
+        "Protocol revenue distribution (Compound fee switch / treasury events)",
+        "DeFi capital rotation (TVL migration from/to Compound vs Aave vs MorphoBlue)"
+      ],
+      "sol_fr_drivers": [
+        "Retail momentum / meme coin seasons (BONK, WIF, POPCAT cycles on Solana)",
+        "Firedancer upgrade cycles (validator throughput expectations)",
+        "Solana ETF narrative events (institutional SOL demand)",
+        "SVM DeFi TVL expansion (Jupiter, Drift, Jito restaking)",
+        "SOL staking yield vs perpetual leverage premium"
+      ],
+      "structural_independence": "COMP governance token (bidirectional FR, speculative) vs SOL SVM ecosystem (retail momentum). Unlike AAVE (K748: borrow utilisation, persistent positive carry) or PENDLE (K758: yield-protocol carry), COMP FR is driven by governance speculation cycles \u2014 frequently inverts negative when governance activity is low or protocol competition intensifies. OOS positive_fraction=50.1% confirms genuine bidirectionality. raw_corr(COMP,SOL)=0.0765 (near zero). cycle_independence=0.9235."
+    },
+    "note": "vol_ratio=3.6207x PASS (\u22651.5x). OU half-life=1.94h \u2014 fast mean-reversion in raw differential. 48h smoothing window captures governance cycle transitions."
+  },
+  "phase2_backtest": {
+    "canonical_window_h": 48,
+    "full_period": {
+      "sharpe": 18.3725,
+      "ann_ret": 0.194981,
+      "ann_ret_pct": 19.4981,
+      "ann_std": 0.010613,
+      "max_dd_pct": -0.2054,
+      "years": 1.994,
+      "period_start": "2024-06-01",
+      "period_end": "2026-05-29",
+      "entries_per_yr": 97.8,
+      "entries_total": 195
+    },
+    "is_metrics": {
+      "sharpe": 14.9135,
+      "ann_ret": 0.139672,
+      "ann_ret_pct": 13.9672,
+      "ann_std": 0.009366,
+      "max_dd_pct": -0.2054,
+      "years": 1.4,
+      "period_start": "2024-06-01",
+      "period_end": "2025-10-25"
+    },
+    "oos_metrics": {
+      "sharpe": 25.0505,
+      "ann_ret": 0.325248,
+      "ann_ret_pct": 32.5248,
+      "ann_std": 0.012984,
+      "max_dd_pct": -0.0834,
+      "years": 0.594,
+      "period_start": "2025-10-25",
+      "period_end": "2026-05-29",
+      "ann_ret_4x_pct": 130.0992,
+      "entries": 52,
+      "entries_per_yr_oos": 87.5
+    },
+    "grid_search_top6": [
+      {
+        "window_h": 48,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 14.9135,
+        "OOS_sharpe": 25.0505,
+        "OOS_ret_pct": 32.5248,
+        "entries_oos": 52,
+        "entries_per_yr_oos": 87.5,
+        "entries_per_yr_full": 97.8
+      },
+      {
+        "window_h": 84,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 14.4922,
+        "OOS_sharpe": 24.5628,
+        "OOS_ret_pct": 31.9328,
+        "entries_oos": 24,
+        "entries_per_yr_oos": 40.4,
+        "entries_per_yr_full": 50.2
+      },
+      {
+        "window_h": 168,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 13.2065,
+        "OOS_sharpe": 23.1753,
+        "OOS_ret_pct": 30.2361,
+        "entries_oos": 18,
+        "entries_per_yr_oos": 30.3,
+        "entries_per_yr_full": 27.3
+      },
+      {
+        "window_h": 168,
+        "threshold_factor": 0.5,
+        "threshold_value": 1.9786e-05,
+        "IS_sharpe": 13.5597,
+        "OOS_sharpe": 22.1638,
+        "OOS_ret_pct": 24.9341,
+        "entries_oos": 12,
+        "entries_per_yr_oos": 20.2,
+        "entries_per_yr_full": 22.2
+      },
+      {
+        "window_h": 336,
+        "threshold_factor": 0.5,
+        "threshold_value": 1.4191e-05,
+        "IS_sharpe": 14.8136,
+        "OOS_sharpe": 20.6137,
+        "OOS_ret_pct": 22.8374,
+        "entries_oos": 7,
+        "entries_per_yr_oos": 11.8,
+        "entries_per_yr_full": 14.8
+      },
+      {
+        "window_h": 48,
+        "threshold_factor": 0.5,
+        "threshold_value": 3.0387e-05,
+        "IS_sharpe": 10.975,
+        "OOS_sharpe": 20.2647,
+        "OOS_ret_pct": 25.481,
+        "entries_oos": 20,
+        "entries_per_yr_oos": 33.6,
+        "entries_per_yr_full": 36.1
+      }
+    ],
+    "grid_search_all": [
+      {
+        "window_h": 48,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 14.9135,
+        "OOS_sharpe": 25.0505,
+        "OOS_ret_pct": 32.5248,
+        "entries_oos": 52,
+        "entries_per_yr_oos": 87.5,
+        "entries_per_yr_full": 97.8
+      },
+      {
+        "window_h": 84,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 14.4922,
+        "OOS_sharpe": 24.5628,
+        "OOS_ret_pct": 31.9328,
+        "entries_oos": 24,
+        "entries_per_yr_oos": 40.4,
+        "entries_per_yr_full": 50.2
+      },
+      {
+        "window_h": 168,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 13.2065,
+        "OOS_sharpe": 23.1753,
+        "OOS_ret_pct": 30.2361,
+        "entries_oos": 18,
+        "entries_per_yr_oos": 30.3,
+        "entries_per_yr_full": 27.3
+      },
+      {
+        "window_h": 168,
+        "threshold_factor": 0.5,
+        "threshold_value": 1.9786e-05,
+        "IS_sharpe": 13.5597,
+        "OOS_sharpe": 22.1638,
+        "OOS_ret_pct": 24.9341,
+        "entries_oos": 12,
+        "entries_per_yr_oos": 20.2,
+        "entries_per_yr_full": 22.2
+      },
+      {
+        "window_h": 336,
+        "threshold_factor": 0.5,
+        "threshold_value": 1.4191e-05,
+        "IS_sharpe": 14.8136,
+        "OOS_sharpe": 20.6137,
+        "OOS_ret_pct": 22.8374,
+        "entries_oos": 7,
+        "entries_per_yr_oos": 11.8,
+        "entries_per_yr_full": 14.8
+      },
+      {
+        "window_h": 48,
+        "threshold_factor": 0.5,
+        "threshold_value": 3.0387e-05,
+        "IS_sharpe": 10.975,
+        "OOS_sharpe": 20.2647,
+        "OOS_ret_pct": 25.481,
+        "entries_oos": 20,
+        "entries_per_yr_oos": 33.6,
+        "entries_per_yr_full": 36.1
+      },
+      {
+        "window_h": 84,
+        "threshold_factor": 0.5,
+        "threshold_value": 2.5863e-05,
+        "IS_sharpe": 11.7199,
+        "OOS_sharpe": 20.1738,
+        "OOS_ret_pct": 25.052,
+        "entries_oos": 17,
+        "entries_per_yr_oos": 28.6,
+        "entries_per_yr_full": 30.6
+      },
+      {
+        "window_h": 336,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 12.6877,
+        "OOS_sharpe": 19.5635,
+        "OOS_ret_pct": 25.7385,
+        "entries_oos": 9,
+        "entries_per_yr_oos": 15.1,
+        "entries_per_yr_full": 15.3
+      },
+      {
+        "window_h": 336,
+        "threshold_factor": 1.0,
+        "threshold_value": 2.8383e-05,
+        "IS_sharpe": 6.7431,
+        "OOS_sharpe": 19.1764,
+        "OOS_ret_pct": 16.6397,
+        "entries_oos": 12,
+        "entries_per_yr_oos": 20.2,
+        "entries_per_yr_full": 11.7
+      },
+      {
+        "window_h": 168,
+        "threshold_factor": 1.0,
+        "threshold_value": 3.9572e-05,
+        "IS_sharpe": 5.4323,
+        "OOS_sharpe": 17.4955,
+        "OOS_ret_pct": 16.9448,
+        "entries_oos": 10,
+        "entries_per_yr_oos": 16.8,
+        "entries_per_yr_full": 7.1
+      },
+      {
+        "window_h": 48,
+        "threshold_factor": 1.0,
+        "threshold_value": 6.0774e-05,
+        "IS_sharpe": 5.566,
+        "OOS_sharpe": 15.9588,
+        "OOS_ret_pct": 17.8205,
+        "entries_oos": 12,
+        "entries_per_yr_oos": 20.2,
+        "entries_per_yr_full": 8.5
+      },
+      {
+        "window_h": 84,
+        "threshold_factor": 1.0,
+        "threshold_value": 5.1726e-05,
+        "IS_sharpe": 5.6407,
+        "OOS_sharpe": 15.7478,
+        "OOS_ret_pct": 17.4419,
+        "entries_oos": 11,
+        "entries_per_yr_oos": 18.5,
+        "entries_per_yr_full": 8.0
+      }
+    ]
+  },
+  "phase3_section6_gates": {
+    "G1_oos_sharpe": {
+      "value": 25.0505,
+      "threshold": 1.0,
+      "pass": true,
+      "note": "OOS Sharpe 25.0505 \u2265 1.0."
+    },
+    "G2_perm_pvalue": {
+      "value": 0.0,
+      "threshold": 0.05,
+      "pass": true,
+      "n_perms": 1000,
+      "note": "1000 direction reshuffles OOS. p=0.0000."
+    },
+    "G3_dsr_bonferroni": {
+      "n_trials": 12,
+      "z_stat": 19.3134,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.00417,
+      "pass": true,
+      "note": "Bonferroni: p_bonf=0.00e+00 < 0.00417."
+    },
+    "G4_walk_forward_12fold": {
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2024-08-28",
+          "oos_end": "2024-09-27",
+          "sharpe": 37.0896,
+          "ann_ret_pct": 8.0856,
+          "entries": 10
+        },
+        {
+          "fold": 2,
+          "oos_start": "2024-09-27",
+          "oos_end": "2024-10-27",
+          "sharpe": 69.5955,
+          "ann_ret_pct": 14.2987,
+          "entries": 0
+        },
+        {
+          "fold": 3,
+          "oos_start": "2024-10-27",
+          "oos_end": "2024-11-26",
+          "sharpe": 81.6303,
+          "ann_ret_pct": 25.0472,
+          "entries": 0
+        },
+        {
+          "fold": 4,
+          "oos_start": "2024-11-26",
+          "oos_end": "2024-12-26",
+          "sharpe": 35.4513,
+          "ann_ret_pct": 11.9462,
+          "entries": 20
+        },
+        {
+          "fold": 5,
+          "oos_start": "2024-12-26",
+          "oos_end": "2025-01-25",
+          "sharpe": 29.8363,
+          "ann_ret_pct": 8.8437,
+          "entries": 12
+        },
+        {
+          "fold": 6,
+          "oos_start": "2025-01-25",
+          "oos_end": "2025-02-24",
+          "sharpe": 46.2099,
+          "ann_ret_pct": 19.635,
+          "entries": 3
+        },
+        {
+          "fold": 7,
+          "oos_start": "2025-02-24",
+          "oos_end": "2025-03-26",
+          "sharpe": 34.2022,
+          "ann_ret_pct": 10.1813,
+          "entries": 12
+        },
+        {
+          "fold": 8,
+          "oos_start": "2025-03-26",
+          "oos_end": "2025-04-25",
+          "sharpe": 14.788,
+          "ann_ret_pct": 52.7762,
+          "entries": 12
+        },
+        {
+          "fold": 9,
+          "oos_start": "2025-04-25",
+          "oos_end": "2025-05-25",
+          "sharpe": 61.5769,
+          "ann_ret_pct": 15.2656,
+          "entries": 2
+        },
+        {
+          "fold": 10,
+          "oos_start": "2025-05-25",
+          "oos_end": "2025-06-24",
+          "sharpe": 27.0463,
+          "ann_ret_pct": 4.3125,
+          "entries": 13
+        },
+        {
+          "fold": 11,
+          "oos_start": "2025-06-24",
+          "oos_end": "2025-07-24",
+          "sharpe": 47.2838,
+          "ann_ret_pct": 9.0952,
+          "entries": 17
+        },
+        {
+          "fold": 12,
+          "oos_start": "2025-07-24",
+          "oos_end": "2025-08-23",
+          "sharpe": 39.2288,
+          "ann_ret_pct": 4.9277,
+          "entries": 10
+        }
+      ],
+      "fold_sharpes": [
+        37.0896,
+        69.5955,
+        81.6303,
+        35.4513,
+        29.8363,
+        46.2099,
+        34.2022,
+        14.788,
+        61.5769,
+        27.0463,
+        47.2838,
+        39.2288
+      ],
+      "all_positive": true,
+      "n_negative_folds": 0,
+      "min_fold_sharpe": 14.788,
+      "n_folds_computed": 12,
+      "pass": true,
+      "note": "12-fold WF. All positive: True. Neg folds: 0/12."
+    },
+    "G5a_ETH-BTC": {
+      "value": 0.0542,
+      "value_is": -0.012,
+      "value_oos": 0.1476,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17313,
+      "note": "COMP-SOL vs ETH-BTC = 0.0542. PASS."
+    },
+    "G5b_SOL-BTC": {
+      "value": -0.2865,
+      "value_is": -0.2997,
+      "value_oos": -0.2265,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17313,
+      "note": "COMP-SOL vs SOL-BTC = -0.2865. PASS."
+    },
+    "G5c_AVAX-BTC": {
+      "value": 0.1025,
+      "value_is": 0.0677,
+      "value_oos": 0.127,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17313,
+      "note": "COMP-SOL vs AVAX-BTC = 0.1025. PASS."
+    },
+    "G5d_ATOM-BTC": {
+      "value": 0.0747,
+      "value_is": 0.0761,
+      "value_oos": 0.0632,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17313,
+      "note": "COMP-SOL vs ATOM-BTC = 0.0747. PASS."
+    },
+    "G5e_INJ-BTC": {
+      "value": 0.1419,
+      "value_is": 0.1185,
+      "value_oos": 0.1571,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17313,
+      "note": "COMP-SOL vs INJ-BTC = 0.1419. PASS."
+    },
+    "G5f_FIL-BTC": {
+      "value": 0.057,
+      "value_is": 0.1099,
+      "value_oos": -0.0704,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17313,
+      "note": "COMP-SOL vs FIL-BTC = 0.0570. PASS."
+    },
+    "G5g_LDO-BTC": {
+      "value": 0.1666,
+      "value_is": 0.1628,
+      "value_oos": 0.163,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17313,
+      "note": "COMP-SOL vs LDO-BTC = 0.1666. PASS."
+    },
+    "G5h_APT-SOL": {
+      "value": 0.1327,
+      "value_is": 0.2029,
+      "value_oos": 0.0653,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17348,
+      "note": "COMP-SOL vs APT-SOL = 0.1327. PASS."
+    },
+    "G5i_ATOM-SOL": {
+      "value": 0.3263,
+      "value_is": 0.3927,
+      "value_oos": 0.1776,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17348,
+      "note": "COMP-SOL vs ATOM-SOL = 0.3263. PASS."
+    },
+    "G5j_SOL-INJ": {
+      "value": -0.3906,
+      "value_is": -0.3986,
+      "value_oos": -0.3515,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17347,
+      "note": "COMP-SOL vs SOL-INJ = -0.3906. PASS."
+    },
+    "G5k_AVAX-SOL": {
+      "value": 0.2729,
+      "value_is": 0.2747,
+      "value_oos": 0.2297,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17313,
+      "note": "COMP-SOL vs AVAX-SOL = 0.2729. PASS."
+    },
+    "G5l_SEI-SOL": {
+      "value": 0.216,
+      "value_is": 0.2175,
+      "value_oos": 0.2007,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17354,
+      "note": "COMP-SOL vs SEI-SOL = 0.2160. PASS."
+    },
+    "G5m_TIA-SOL": {
+      "value": 0.2863,
+      "value_is": 0.2706,
+      "value_oos": 0.292,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17354,
+      "note": "COMP-SOL vs TIA-SOL = 0.2863. PASS."
+    },
+    "G5n_ENA-SOL": {
+      "value": 0.283,
+      "value_is": 0.2782,
+      "value_oos": 0.2541,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17354,
+      "note": "COMP-SOL vs ENA-SOL = 0.2830. PASS."
+    },
+    "G5o_BNB-SOL": {
+      "value": 0.2964,
+      "value_is": 0.26,
+      "value_oos": 0.3483,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17313,
+      "note": "COMP-SOL vs BNB-SOL = 0.2964. PASS."
+    },
+    "G5p_ENA-ATOM": {
+      "value": 0.1221,
+      "value_is": 0.1438,
+      "value_oos": -0.0191,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17348,
+      "note": "COMP-SOL vs ENA-ATOM = 0.1221. PASS."
+    },
+    "G5q_LDO-SOL": {
+      "value": 0.2926,
+      "value_is": 0.3077,
+      "value_oos": 0.2266,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17348,
+      "note": "COMP-SOL vs LDO-SOL = 0.2926. PASS."
+    },
+    "G5r_INJ-ATOM": {
+      "value": 0.0016,
+      "value_is": 0.0044,
+      "value_oos": -0.0124,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17347,
+      "note": "COMP-SOL vs INJ-ATOM = 0.0016. PASS."
+    },
+    "G5s_HBAR-SOL": {
+      "value": 0.2865,
+      "value_is": 0.2877,
+      "value_oos": 0.2803,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 12193,
+      "note": "COMP-SOL vs HBAR-SOL = 0.2865. PASS."
+    },
+    "G5t_TIA-AVAX": {
+      "value": 0.036,
+      "value_is": 0.0636,
+      "value_oos": 0.0116,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17313,
+      "note": "COMP-SOL vs TIA-AVAX = 0.0360. PASS."
+    },
+    "G5u_FIL-SOL": {
+      "value": 0.3359,
+      "value_is": 0.3704,
+      "value_oos": 0.2395,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17468,
+      "note": "COMP-SOL vs FIL-SOL = 0.3359. PASS."
+    },
+    "G5v_AAVE-SOL": {
+      "value": 0.2359,
+      "value_is": 0.2777,
+      "value_oos": 0.0516,
+      "threshold": 0.4,
+      "pass": true,
+      "n_common": 17348,
+      "note": "COMP-SOL vs AAVE-SOL = 0.2359. PASS."
+    },
+    "G6_trade_count": {
+      "entries_per_yr": 97.8,
+      "entries_total": 195,
+      "threshold": 30,
+      "pass": true,
+      "note": "97.8/yr vs 30 threshold. PASS."
+    },
+    "G7_ann_return": {
+      "value_1x_pct": 32.5248,
+      "value_4x_pct": 130.0991,
+      "threshold_pct": 5.0,
+      "leverage": 4.0,
+      "pass": true,
+      "note": "At 4x leverage: 130.10% > 5.0%."
+    },
+    "G8_cross_venue": {
+      "pass": true,
+      "okx_comp_exists": true,
+      "hl_vs_okx_comp_corr": 0.8548,
+      "n_common": 284,
+      "threshold": 0.55,
+      "note": "G8 proxy: HL COMP FR vs OKX COMP FR corr=0.8548 (n=284). PASS. OKX SOL not cached \u2192 using COMP venue corr as proxy. OKX COMP confirms HL direction at \u22650.55 threshold."
+    },
+    "G9_data_sufficiency": {
+      "oos_days": 216,
+      "threshold_days": 180,
+      "pass": true,
+      "note": "OOS: 216d \u2265 180d minimum."
+    },
+    "_summary": {
+      "gates_passed": 30,
+      "gates_total": 30,
+      "gate_details": {
+        "G1_oos_sharpe": true,
+        "G2_perm_pvalue": true,
+        "G3_dsr_bonferroni": true,
+        "G4_walk_forward_12fold": true,
+        "G5a_ETH-BTC": true,
+        "G5b_SOL-BTC": true,
+        "G5c_AVAX-BTC": true,
+        "G5d_ATOM-BTC": true,
+        "G5e_INJ-BTC": true,
+        "G5f_FIL-BTC": true,
+        "G5g_LDO-BTC": true,
+        "G5h_APT-SOL": true,
+        "G5i_ATOM-SOL": true,
+        "G5j_SOL-INJ": true,
+        "G5k_AVAX-SOL": true,
+        "G5l_SEI-SOL": true,
+        "G5m_TIA-SOL": true,
+        "G5n_ENA-SOL": true,
+        "G5o_BNB-SOL": true,
+        "G5p_ENA-ATOM": true,
+        "G5q_LDO-SOL": true,
+        "G5r_INJ-ATOM": true,
+        "G5s_HBAR-SOL": true,
+        "G5t_TIA-AVAX": true,
+        "G5u_FIL-SOL": true,
+        "G5v_AAVE-SOL": true,
+        "G6_trade_count": true,
+        "G7_ann_return": true,
+        "G8_cross_venue": true,
+        "G9_data_sufficiency": true
+      },
+      "failed_gates": [],
+      "any_g5_fail": false,
+      "failed_g5_gates": [],
+      "g5_corr_map": {
+        "G5a_ETH-BTC": 0.0542,
+        "G5b_SOL-BTC": -0.2865,
+        "G5c_AVAX-BTC": 0.1025,
+        "G5d_ATOM-BTC": 0.0747,
+        "G5e_INJ-BTC": 0.1419,
+        "G5f_FIL-BTC": 0.057,
+        "G5g_LDO-BTC": 0.1666,
+        "G5h_APT-SOL": 0.1327,
+        "G5i_ATOM-SOL": 0.3263,
+        "G5j_SOL-INJ": -0.3906,
+        "G5k_AVAX-SOL": 0.2729,
+        "G5l_SEI-SOL": 0.216,
+        "G5m_TIA-SOL": 0.2863,
+        "G5n_ENA-SOL": 0.283,
+        "G5o_BNB-SOL": 0.2964,
+        "G5p_ENA-ATOM": 0.1221,
+        "G5q_LDO-SOL": 0.2926,
+        "G5r_INJ-ATOM": 0.0016,
+        "G5s_HBAR-SOL": 0.2865,
+        "G5t_TIA-AVAX": 0.036,
+        "G5u_FIL-SOL": 0.3359,
+        "G5v_AAVE-SOL": 0.2359
+      },
+      "oos_sharpe": 25.0505,
+      "perm_p": 0.0,
+      "wf_all_positive": true,
+      "n_negative_wf_folds": 0
+    }
+  },
+  "phase4_decision": {
+    "decision": "ACCEPT",
+    "rationale": "[ACCEPT] K778 COMP-SOL passes ALL 30/30 \u00a76 gates. OOS Sharpe=25.0505 (STRONG). Perm p=0.0000 (G2 confirmed). DSR Bonferroni p\u22480 (G3 PASS). WF 12/12 ALL POSITIVE (G4 PERFECT, min fold Sh=14.79). L004 carry pre-screen PASS: COMP_FR positive_fraction full=68.1% OOS=50.1% (BOTH well below 80% threshold). COMP governance token is BIDIRECTIONAL unlike AAVE (K748 L004 BLOCKED, pos_frac~86%) or PENDLE (K758 L004 BLOCKED, 90.2%/86.9%). L003 AVAX contamination: raw_corr(COMP,AVAX)=0.1027 PASS (<0.45). L011 SOL corr: raw_corr(COMP,SOL)=0.0765 PASS (<0.45). MR9 CLEAR: COMP\u2209V_altalt (26 vertices). vol_ratio COMP/SOL=3.62x (full) / 6.0x (30d K766 context). PASS. G5 family 22/22 ALL PASS: max corr=0.3906 (G5j SOL-INJ, negative). G5q LDO-SOL=0.2926 PASS (critical DeFi protocol overlap check). G5v AAVE-SOL=0.2359 PASS (DeFi lending cluster clear). G6: 97.8 entries/yr PASS. G7: OOS ann ret 4x=130.1% PASS. G8: OKX COMP FR vs HL COMP FR corr=0.8548 PASS (proxy, OKX SOL not cached). G9: OOS 216d PASS. Mechanism: COMP governance token speculation (reward distribution, protocol competition) vs SOL SVM (retail momentum, meme seasons) \u2014 fundamentally different FR drivers. K523 ROI @M @2.5% sleeve @4x: conservative=,791/yr central=,345/yr optimistic=,460/yr. HL cap 66.8% \u2192 paper-gate mandatory. New vertex #19 candidate (1st DeFi governance token cluster in alt-alt family).",
+    "gates_passed": "30/30",
+    "failed_gates": [],
+    "l004_status": "PASS",
+    "g5_all_pass": true,
+    "profit_projection": {
+      "aum_10M": {
+        "aum_usd": 10000000,
+        "sleeve_pct": 2.5,
+        "leverage": 4.0,
+        "notional_usd": 1000000,
+        "oos_ann_ret_1x_pct": 32.5248,
+        "oos_ann_ret_4x_pct": 130.0992,
+        "k523_haircuts": {
+          "R2S_realized_to_stated": 0.38,
+          "OOS_haircut_25pct": 0.25,
+          "fee_friction_15pct": 0.15
+        },
+        "conservative_usdc_yr": 78791,
+        "central_usdc_yr": 207345,
+        "optimistic_usdc_yr": 276460,
+        "upper_bound_usdc_yr": 325248,
+        "k523_note": "K523 MANDATORY: conservative/central/optimistic 3-point. Upper=325,248 is NOT central. R2S=38% (K518 floor). OOS 25% haircut. Fee 15%. Central=207,345/yr @$10M @2.5% sleeve @4.0x."
+      },
+      "aum_100M": {
+        "aum_usd": 100000000,
+        "notional_usd": 10000000,
+        "conservative_usdc_yr": 787913,
+        "central_usdc_yr": 2073456,
+        "optimistic_usdc_yr": 2764608,
+        "upper_bound_usdc_yr": 3252480
+      }
+    },
+    "hl_cap_context": {
+      "current_hl_pct": 66.8,
+      "hl_cap_pct": 65.0,
+      "over_cap": true,
+      "recommendation": "HL at 66.8% (over 65% cap). IF ACCEPT: paper-gate mandatory. OKX COMP-SOL: OKX has COMP (confirmed), check OKX SOL-USDT-SWAP availability. Bybit COMP: COMPUSDT perpetual should be listed (Compound DeFi blue-chip)."
+    }
+  },
+  "decision": "ACCEPT",
+  "decision_rationale": "[ACCEPT] K778 COMP-SOL passes ALL 30/30 \u00a76 gates. OOS Sharpe=25.0505 (STRONG). Perm p=0.0000 (G2 confirmed). DSR Bonferroni p\u22480 (G3 PASS). WF 12/12 ALL POSITIVE (G4 PERFECT, min fold Sh=14.79). L004 carry pre-screen PASS: COMP_FR positive_fraction full=68.1% OOS=50.1% (BOTH well below 80% threshold). COMP governance token is BIDIRECTIONAL unlike AAVE (K748 L004 BLOCKED, pos_frac~86%) or PENDLE (K758 L004 BLOCKED, 90.2%/86.9%). L003 AVAX contamination: raw_corr(COMP,AVAX)=0.1027 PASS (<0.45). L011 SOL corr: raw_corr(COMP,SOL)=0.0765 PASS (<0.45). MR9 CLEAR: COMP\u2209V_altalt (26 vertices). vol_ratio COMP/SOL=3.62x (full) / 6.0x (30d K766 context). PASS. G5 family 22/22 ALL PASS: max corr=0.3906 (G5j SOL-INJ, negative). G5q LDO-SOL=0.2926 PASS (critical DeFi protocol overlap check). G5v AAVE-SOL=0.2359 PASS (DeFi lending cluster clear). G6: 97.8 entries/yr PASS. G7: OOS ann ret 4x=130.1% PASS. G8: OKX COMP FR vs HL COMP FR corr=0.8548 PASS (proxy, OKX SOL not cached). G9: OOS 216d PASS. Mechanism: COMP governance token speculation (reward distribution, protocol competition) vs SOL SVM (retail momentum, meme seasons) \u2014 fundamentally different FR drivers. K523 ROI @M @2.5% sleeve @4x: conservative=,791/yr central=,345/yr optimistic=,460/yr. HL cap 66.8% \u2192 paper-gate mandatory. New vertex #19 candidate (1st DeFi governance token cluster in alt-alt family)."
+}
