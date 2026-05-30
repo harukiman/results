@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k633-op-orthog</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k633_op_orthog_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 42nd daemon: K633 OP Orthogonalized FR Differential -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 5, fill_rate >= 60%, maxDD < 20% -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k633_op_orthog.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k633_op_orthog.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K633 specific notes (do not remove):
+         Strategy:    OP-BTC FR Differential, orthogonalized vs FIL (K633 OLS)
+         Daemon #:    42nd daemon (K640 scaffold)
+         OOS Sharpe:  12.68 (residual W=72h) vs raw K609=32.91 / K618=29.13
+         Profit:      $2,318,640/yr potential @$10M @4x (full)
+         2% sleeve:   $46,373/yr carry contribution
+         β coefs:     β_FIL=0.542224  (HARDCODED, no re-OLS)
+         IS R²:       0.3283 (32.83% OP FR variance explained by FIL factor)
+         FIL corr:    raw=0.4298 (G5 BLOCKED) → post-orth=0.0749 (G5 PASS)
+         Venue:       Bybit primary (OP+BTC both legs)
+         HL impact:   NONE — Bybit-only; HL concentration unchanged at 65%
+         Gate:        60d paper-trade: Realized Sh>=5 + fill>=60% + maxDD<20%
+         Cluster:     L2 Rollup / Optimism Superchain (L2 cluster unlock)
+         v6.33:       K633 adds 2% Bybit sleeve to v6.32 portfolio
+         Deploy:      cp scripts/com.cryptolab.k633-op-orthog.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k633-op-orthog.plist
+    -->
+</dict>
+</plist>

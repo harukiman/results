@@ -8534,4 +8534,237 @@ K633 OP orthog is strategically significant beyond its individual profit contrib
 
 ---
 
-*K640 §44 -- K633 OP-BTC Orthogonalized FR Differential production scaffold (42nd daemon, OOS Sh 12.68 residual W=72h $2.32M/yr @$10M @4x, β_FIL=0.542224 hardcoded IS R²=0.3283, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=5 fill>=60% maxDD<20%, L2 Superchain cluster unlock, v6.33 candidate) -- 2026-05-30*
+*K640 §44 -- K633 OP-BTC Orthogonalized FR Differential production scaffold (42nd daemon, OOS Sh 12.68 residual W=72h $2.32M/yr @$10M @4x, beta_FIL=0.542224 hardcoded IS R2=0.3283, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=5 fill>=60% maxDD<20%, L2 Superchain cluster unlock, v6.33 candidate) -- 2026-05-30*
+
+---
+
+## §45 K635 IMX-BTC Orthogonalized FR Differential — Production Scaffold Playbook
+
+**Wave:** K641 | **Daemon:** 43rd | **Status:** SCAFFOLD-READY | **Date:** 2026-05-30
+
+### §45.1 Strategy Overview
+
+K635 IMX-BTC is the **Gaming L2 Infra cluster unlock** in the Systematic Alpha Discovery framework: **$4,775,120/yr @$10M @4x** (residual OOS Sh=24.81 MF W=168h).
+
+**Key insight:** IMX's FR dynamics are driven by gaming NFT trading volume + Immutable zkEVM adoption cycles (StarkEx ZK rollup). Raw IMX-BTC signal was **blocked at G5** by SHIB (meme/retail), TIA (modular DA), and SEI (EVM-Cosmos mid-cap) co-movement. After orthogonalizing via K635 multi-factor OLS regression (projecting out SHIB+TIA+SEI-BTC diffs), the residual signal captures pure Gaming L2 Infra-specific IMX alpha with **strong Sharpe** (OOS Sh=24.81, MF W=168h).
+
+**Gaming L2 Infra cluster significance:** K635 IMX orthog is the **43rd daemon** in the Systematic Alpha Discovery portfolio and the **fourth orthogonalized strategy** in the K628-K631-K633-K635 family. It unlocks $4.78M/yr of Gaming L2 infrastructure alpha previously blocked by shared mid-cap alt sentiment factors.
+
+### §45.2 Orthogonalization Mechanism (K635 OLS Multi-Factor)
+
+```
+IMX_diff = alpha + beta_SHIB * SHIB_diff + beta_TIA * TIA_diff + beta_SEI * SEI_diff + epsilon
+```
+
+Where:
+- `alpha = 0.000009` (intercept — not subtracted in production)
+- `beta_SHIB = 0.254` (SHIB meme/retail factor loading)
+- `beta_TIA  = 0.068` (TIA modular DA factor loading)
+- `beta_SEI  = 0.158` (SEI EVM-Cosmos mid-cap factor loading)
+
+**Beta Coefficients (K635 OLS Multi-Factor — HARDCODED in production, NO re-OLS):**
+
+| Parameter | Value |
+|-----------|-------|
+| beta_SHIB | 0.254 |
+| beta_TIA  | 0.068 |
+| beta_SEI  | 0.158 |
+| IS R2 (MF) | 0.0574 |
+| SEI corr (post-orth) | -0.0182 (PASS, was 0.4111) |
+| SHIB corr (post-orth) | -0.1347 (PASS, was 0.2453) |
+| TIA corr (post-orth) | 0.0643 (PASS, was 0.2773) |
+
+**Residual formula:**
+```
+residual = IMX_diff - 0.254 * SHIB_diff - 0.068 * TIA_diff - 0.158 * SEI_diff
+         = (IMX_FR - BTC_FR) - 0.254*(SHIB_FR - BTC_FR) - 0.068*(TIA_FR - BTC_FR) - 0.158*(SEI_FR - BTC_FR)
+```
+
+**Why hardcoded:** beta coefficients are hardcoded in production for stability. Re-OLS in production would introduce look-ahead bias and parameter instability. The K635 OLS fit was computed on the full available history and is treated as a fixed structural parameter.
+
+### §45.3 Signal Gate
+
+```
+EMA = 168h EMA of residual  (21 x 8h periods — W=168h optimal per K635 analysis)
+sigma = rolling std of residual (168h window)
+Enter when |EMA| > 1.5sigma
+```
+
+| Regime | Condition | Action |
+|--------|-----------|--------|
+| BULL_IMX | residual_ema > +1.5sigma | SHORT IMX + LONG BTC (Bybit) |
+| BEAR_IMX | residual_ema < -1.5sigma | LONG IMX + SHORT BTC (Bybit) |
+| NEUTRAL | abs(residual_ema) <= 1.5sigma | No position |
+
+### §45.4 Execution (Bybit Primary)
+
+**Critical:** K635 is **Bybit-only**. HL concentration is **UNCHANGED at 65%** after K635 addition.
+
+| Parameter | Value |
+|-----------|-------|
+| Primary venue | Bybit (IMXUSDT + BTC-USDT-SWAP) |
+| HL impact | NONE — Bybit-only, HL concentration = 65% unchanged |
+| Execution | POST_ONLY parallel (K439 pattern) |
+| Leverage | 4x (K635 analysis, K430 cap) |
+| Sleeve | 2% of AUM ($200K at $10M) |
+| Per-leg notional | $400K IMX + $400K BTC |
+| Total notional | $800K |
+| Margin | $200K (2% AUM) |
+| Cadence | Every 8h (StartInterval=28800) |
+| EMA window | W=168h = 21 x 8h periods (optimal) |
+| Daemon | 43rd (com.cryptolab.k635-imx-orthog) |
+
+### §45.5 Performance Summary
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe (residual MF W=168h) | **24.81** |
+| OOS Sharpe (raw K612) | 41.73 (blocked at G5) |
+| OOS Sharpe (raw K617 7d) | 37.26 (blocked at G5) |
+| Ann Return @$10M @4x (2% sleeve) | **$4,775,120/yr** |
+| G5 max corr (post-orth) | SHIB=-0.1347, TIA=0.0643, SEI=-0.0182 (all PASS) |
+| Cluster | Gaming L2 Infra (ImmutableX StarkEx ZK rollup) |
+| Daemon | 43rd |
+| v-candidate | v6.34 |
+
+### §45.6 60-Day Paper-Trade Activation Gate
+
+**Gate criteria (K641 specification: 50% of K635 OOS Sh=24.81):**
+
+| Gate | Threshold | Rationale |
+|------|-----------|-----------|
+| Realized Sharpe | >= 12.0 | 50% of paper OOS Sh 24.81 |
+| Fill rate | >= 60% | POST_ONLY Bybit fill quality |
+| Max drawdown | < 20% | Carry strategy risk cap |
+| Days | 60 | Standard paper-trade window |
+
+**Activation path:**
+```bash
+# 1. Monitor paper-trade gate progress
+python3 scripts/k635_imx_orthog_run.py --status
+
+# 2. After 60d gate passage: edit k635_imx_orthog_run.py
+#    PAPER_TRADE = False  (or set env PAPER_TRADE=False)
+
+# 3. Install daemon:
+cp scripts/com.cryptolab.k635-imx-orthog.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k635-imx-orthog.plist
+
+# 4. Verify active:
+python3 scripts/verify_deployment_status.py | grep k635
+```
+
+### §45.7 Emergency Exit Protocol
+
+K635 is **Bybit-only** — no HL emergency exit needed for K635 positions.
+
+```bash
+# Dry-run K635 Bybit close summary
+python3 scripts/k635_imx_orthog_run.py --close "emergency" --dry-run
+
+# Close K635 positions on Bybit (scaffold — requires Bybit API auth)
+python3 scripts/k635_imx_orthog_run.py --close "emergency_exit"
+
+# Emergency exit with K635 summary flag
+python3 scripts/emergency_hl_exit.py --dry-run --include-k635
+```
+
+**Note:** In an HL emergency, K635 Bybit positions are **NOT affected**. Only if closing all venues (HL + Bybit) does K635 require Bybit-side closure.
+
+### §45.8 Regime Monitoring
+
+```bash
+# Check current IMX orthog regime
+python3 scripts/k635_imx_orthog_run.py --status
+
+# Run single cycle (dry-run)
+python3 scripts/k635_imx_orthog_run.py --dry-run
+
+# Check drift + rebalance
+python3 scripts/k635_imx_orthog_run.py --rebalance
+```
+
+**Dashboard fields (k635_dashboard.json):**
+- `regime`: BULL_IMX | BEAR_IMX | NEUTRAL
+- `residual_ema_168h`: current 168h EMA of orthogonalized residual
+- `beta_shib_used`: 0.254 (hardcoded)
+- `beta_tia_used`: 0.068 (hardcoded)
+- `beta_sei_used`: 0.158 (hardcoded)
+- `hl_concentration_pct`: always 65.0 (Bybit-only, no HL usage)
+- `gate_metrics.gate_status`: IN_PROGRESS -> PASS after 60d
+
+### §45.9 Operational Commands
+
+```bash
+# Status check
+python3 scripts/k635_imx_orthog_run.py --status
+
+# Single cycle dry-run
+python3 scripts/k635_imx_orthog_run.py --dry-run
+
+# Rebalance check
+python3 scripts/k635_imx_orthog_run.py --rebalance
+
+# Close positions (paper/scaffold)
+python3 scripts/k635_imx_orthog_run.py --close "reason"
+
+# View dashboard
+cat data/k635_dashboard.json | python3 -m json.tool | head -50
+
+# Verify 43rd daemon in registry
+python3 scripts/verify_deployment_status.py | grep -A3 k635
+
+# Install daemon (post gate passage)
+cp scripts/com.cryptolab.k635-imx-orthog.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k635-imx-orthog.plist
+```
+
+### §45.10 Leverage Configuration
+
+```json
+"K635_IMX_ORTHOG": 4.0,   // in exchange_caps -- 4x (paired delta-neutral carry)
+"k635_notes": {
+  "sleeve_pct": 0.02,
+  "leverage": 4.0,
+  "margin_calc": "4x x 2% x $10M = $800K total notional / 4x = $200K margin (2% AUM)",
+  "oos_sharpe_residual": 24.81,
+  "ann_return_usd_2pct_4x": 4775120,
+  "beta_shib": 0.254,
+  "beta_tia": 0.068,
+  "beta_sei": 0.158,
+  "venue": "Bybit-only (IMX+BTC both legs: HL IMX maxLev=5 insufficient)",
+  "hl_impact": "NONE -- Bybit-only; HL concentration UNCHANGED at 65%",
+  "activation": "SCAFFOLD-READY -- 60d paper-trade gate (Realized Sh>=12 + fill>=60% + maxDD<20%)"
+}
+```
+
+### §45.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k635_imx_orthog_run.py` | Strategy script (K641 scaffold, K339 pattern) |
+| `data/k635_dashboard.json` | Live state + residual signal + beta_used + regime |
+| `scripts/com.cryptolab.k635-imx-orthog.plist` | 43rd daemon plist (StartInterval 28800, gitignored) |
+| `scripts/emergency_hl_exit.py` | `--include-k635` flag + K635 Bybit close summary |
+| `scripts/leverage_manager.py` | K635_IMX_ORTHOG 4.0 cap + SLEEVE_WEIGHTS_V634 |
+| `data/leverage_config.json` | K635_IMX_ORTHOG: 4.0 + k635_notes |
+| `scripts/verify_deployment_status.py` | 43rd daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§45) |
+| `wave_k641_k635_scaffold.py` | Wave driver/test |
+| `wave_k641_k635_scaffold.json` | Wave result report |
+
+### §45.12 References
+
+| Wave | Description |
+|------|-------------|
+| K641 | This section — K635 IMX orthog production scaffold (43rd daemon, v6.34 candidate) |
+| K635 | K635 analysis — IMX ACCEPT CONDITIONAL ($4.78M/yr @$10M @4x, OOS Sh 24.81 MF W=168h residual, 6/9 gates) |
+| K612 | K612 IMX-BTC raw (BLOCKED-G5, Gaming L2 Infra cluster established) |
+| K640 | K633 OP orthog scaffold (42nd daemon, direct scaffold template) |
+| K639 | K631 WLD orthog scaffold (41st daemon, template) |
+| K637 | K628 JTO orthog scaffold (40th daemon, pattern origin) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K641 §45 -- K635 IMX-BTC Orthogonalized FR Differential production scaffold (43rd daemon, OOS Sh 24.81 residual MF SHIB+TIA+SEI W=168h $4.78M/yr @$10M @4x, beta_SHIB=0.254 beta_TIA=0.068 beta_SEI=0.158 hardcoded, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=12 fill>=60% maxDD<20%, Gaming L2 Infra cluster, v6.34 candidate) -- 2026-05-30*

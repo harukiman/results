@@ -1,0 +1,141 @@
+{
+  "wave": "K640",
+  "strategy": "K633 OP-BTC Orthogonalized FR Differential",
+  "timestamp_jst": "2026-05-30 11:29 JST",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k633_op_orthog_run.py",
+        "description": "Phase 1: K633 strategy script (K339 pattern, W=72h, \u03b2_FIL=0.542224)",
+        "exists": true,
+        "size_bytes": 44645,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k633-op-orthog.plist",
+        "description": "Phase 2: 42nd daemon plist (StartInterval 28800)",
+        "exists": true,
+        "size_bytes": 2401,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k633_dashboard.json",
+        "description": "Phase 3: Dashboard (residual signal, \u03b2_fil_used, regime)",
+        "exists": true,
+        "size_bytes": 3000,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k633 flag, \u00a744)",
+        "exists": true,
+        "size_bytes": 198809,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K633_OP_ORTHOG + SLEEVE_WEIGHTS_V633)",
+        "exists": true,
+        "size_bytes": 41842,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K633_OP_ORTHOG: 4.0 + k633_notes)",
+        "exists": true,
+        "size_bytes": 25597,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (42nd daemon registry)",
+        "exists": true,
+        "size_bytes": 27883,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a744 (K633 OP orthog playbook)",
+        "exists": true,
+        "size_bytes": 337044,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K633 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1541455,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k640_k633_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 13640,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_checks": {
+    "beta_fil_hardcoded": true,
+    "k339_repo_root": true,
+    "paper_trade_default": true,
+    "bybit_primary": true,
+    "post_only": true,
+    "signal_1_5sigma": true,
+    "sleeve_2pct": true,
+    "ema_72h": true,
+    "dashboard_beta_fil": true,
+    "dashboard_regime": true,
+    "dashboard_oos_perf": true,
+    "dashboard_orthog_mech": true,
+    "dashboard_hl_65": true,
+    "cfg_k633_cap": true,
+    "cfg_k633_notes": true,
+    "cfg_beta_fil": true,
+    "emer_include_k633": true,
+    "emer_k633_bybit_note": true,
+    "lev_k633_cap": true,
+    "lev_v633_weights": true,
+    "vds_k633_label": true,
+    "vds_42nd_daemon": true,
+    "runbook_section44": true,
+    "runbook_beta_table": true,
+    "runbook_60d_gate": true
+  },
+  "daemon_count": 43,
+  "daemon_ok": true,
+  "dry_run": {
+    "returncode": 0,
+    "success": true,
+    "stdout_len": 3041,
+    "stderr_len": 0,
+    "status": "PASS"
+  },
+  "k633_summary": {
+    "oos_sharpe_residual": 12.6841,
+    "oos_sharpe_raw_k609": 32.91,
+    "oos_sharpe_raw_k618": 29.13,
+    "ema_window_h": 72,
+    "beta_fil": 0.542224,
+    "is_r2": 0.3283,
+    "oos_r2": -0.3797,
+    "fil_corr_raw": 0.4298,
+    "fil_corr_post_orth": 0.0749,
+    "arb_corr_post_orth": 0.2787,
+    "ann_ret_pct_oos": 5.7966,
+    "profit_full_4x_usd_yr": 2318640,
+    "profit_2pct_sleeve_usd_yr": 46373,
+    "sleeve_activation": "2% Bybit (OP+BTC both legs)",
+    "hl_concentration": "65% UNCHANGED \u2014 Bybit-only",
+    "cluster": "L2 Rollup / Optimism Superchain (#42 daemon, L2 cluster unlock)",
+    "gate_60d": "Realized Sh>=5 + fill>=60% + maxDD<20%",
+    "v633_candidate": "K633 2% Bybit + v6.32 portfolio = v6.33",
+    "l2_cluster_significance": "First confirmed L2-rollup-specific FR alpha cluster"
+  },
+  "overall_status": "PASS"
+}
