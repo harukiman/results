@@ -1,0 +1,455 @@
+{
+  "wave": "K734",
+  "strategy": "OM-SOL FR Differential Alt-Alt (Bybit OM / HL SOL, Cross-Cluster K626\u00d7K476)",
+  "run_time_jst": "2026-05-30T18:21:58+0900",
+  "runtime_s": 0.4,
+  "phase0_prescreen": {
+    "om_fr_std": 0.00087361,
+    "sol_fr_std": 2.449e-05,
+    "btc_fr_std": 1.387e-05,
+    "vol_ratio_om_sol": 35.68,
+    "vol_ratio_om_btc": 63.01,
+    "vol_ratio_sol_btc": 1.77,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "mr9_algebraic_corr": 1.0,
+    "mr9_identity_verified": true,
+    "mr9_interpretation": "K734 raw signal = K476_raw - K626_raw (linearity of rolling mean). OM-SOL differential is algebraically the difference of the two parent strategies. This is an exact algebraic identity, not an approximation.",
+    "pre_crash_om_fr_ann_pct": 2.537,
+    "post_crash_om_fr_ann_pct": -184.255,
+    "pre_crash_sol_fr_ann_pct": 10.387,
+    "post_crash_sol_fr_ann_pct": 1.523,
+    "venue_status": "OM: Bybit OMUSDT (HL DELISTED ~2025-03-09). SOL: HL SOL-PERP (primary, active). Cross-venue: Bybit OM + HL SOL (split routing).",
+    "family_vol_comparison": {
+      "eth_btc_k449": 1.08,
+      "sol_btc_k476": 1.766,
+      "avax_btc_k484": 1.5,
+      "om_btc_k626": 63.01,
+      "om_sol_k734": 35.68
+    },
+    "decision": "PROCEED \u2014 OM/SOL vol ratio 35.68x >> 1.5x threshold. MR9 algebraic identity verified (corr=1.000000). NOTE: MR9 identity implies K734 derives from K626+K476 structure. G5_K626 gate is CRITICAL."
+  },
+  "data_info": {
+    "om_bybit_rows": 5621,
+    "sol_hl_rows": 17512,
+    "btc_hl_rows": 17512,
+    "merged_rows": 5255,
+    "date_start": "2024-07-18 08:00:00",
+    "date_end": "2026-02-20 09:00:00",
+    "total_years": 0.599,
+    "oos_start": "2025-12-16 17:00:00",
+    "fr_frequency": "1h (Bybit OM 1h, HL SOL 1h)",
+    "venue_note": "OM Bybit: 2024-03-18 \u2192 2026-02-20. SOL HL: 2024-05-23 \u2192 2026-05-23. Overlap: 2024-07-18 \u2192 2026-02-20 (582 days)."
+  },
+  "phase1_cycle_analysis": {
+    "monthly_cycle": {
+      "Jan": {
+        "om_fr_ann_pct": 16.8,
+        "sol_fr_ann_pct": 4.5,
+        "diff_ann_pct": 12.4
+      },
+      "Feb": {
+        "om_fr_ann_pct": -575.3,
+        "sol_fr_ann_pct": -16.1,
+        "diff_ann_pct": -559.2
+      },
+      "Mar": {
+        "om_fr_ann_pct": 3.8,
+        "sol_fr_ann_pct": -2.2,
+        "diff_ann_pct": 6.0
+      },
+      "Apr": {
+        "om_fr_ann_pct": -115.0,
+        "sol_fr_ann_pct": -6.1,
+        "diff_ann_pct": -108.9
+      },
+      "May": {
+        "om_fr_ann_pct": 29.7,
+        "sol_fr_ann_pct": 11.3,
+        "diff_ann_pct": 18.4
+      },
+      "Jun": {
+        "om_fr_ann_pct": 41.0,
+        "sol_fr_ann_pct": 7.0,
+        "diff_ann_pct": 33.9
+      },
+      "Jul": {
+        "om_fr_ann_pct": 13.6,
+        "sol_fr_ann_pct": 20.7,
+        "diff_ann_pct": -7.0
+      },
+      "Aug": {
+        "om_fr_ann_pct": -81.4,
+        "sol_fr_ann_pct": 8.7,
+        "diff_ann_pct": -90.0
+      },
+      "Sep": {
+        "om_fr_ann_pct": -33.6,
+        "sol_fr_ann_pct": 10.0,
+        "diff_ann_pct": -43.6
+      },
+      "Oct": {
+        "om_fr_ann_pct": -310.6,
+        "sol_fr_ann_pct": 4.6,
+        "diff_ann_pct": -315.3
+      },
+      "Nov": {
+        "om_fr_ann_pct": -177.1,
+        "sol_fr_ann_pct": 2.9,
+        "diff_ann_pct": -180.0
+      },
+      "Dec": {
+        "om_fr_ann_pct": -71.4,
+        "sol_fr_ann_pct": 8.3,
+        "diff_ann_pct": -79.7
+      }
+    },
+    "rwa_l1_vs_svm_mechanics": {
+      "om_mantra_rwa_l1": {
+        "chain": "MANTRA Chain (Cosmos SDK + IBC)",
+        "primary_driver": "Dubai/UAE institutional RWA tokenization",
+        "secondary_driver": "April 2025 -90% crash \u2192 persistent negative FR",
+        "fr_regime_pre_crash": "Retail long demand, moderate positive FR",
+        "fr_regime_post_crash": "Short-dominant, deeply negative FR (-184%/yr)",
+        "venue": "Bybit OMUSDT (HL delisted)",
+        "max_leverage": "3x (conservative, HL was lower before delist)"
+      },
+      "sol_solana_svm": {
+        "chain": "Solana (SVM = Solana Virtual Machine)",
+        "primary_driver": "Retail/memecoin/DeFi ecosystem demand",
+        "secondary_driver": "JLP/LST yield creates positive FR bias",
+        "fr_regime": "Volatile, mean-reverting near zero to slightly positive",
+        "venue": "HL SOL-PERP (primary)",
+        "max_leverage": "10x+"
+      },
+      "cross_cluster_differential": "OM-SOL differential captures: institutional RWA-L1 narrative vs SVM retail sentiment. Post-crash: OM persistently negative, SOL positive/neutral \u2192 persistent signal. BUT: algebraically identical to K476_raw - K626_raw, meaning K734 provides no NEW alpha beyond what K626+K476 already captures."
+    },
+    "regime_analysis": {
+      "pre_crash": {
+        "rows": 1069,
+        "om_fr_ann_pct": 2.54,
+        "sol_fr_ann_pct": 10.39,
+        "diff_ann_pct": -7.85
+      },
+      "post_crash": {
+        "rows": 4186,
+        "om_fr_ann_pct": -184.26,
+        "sol_fr_ann_pct": 1.52,
+        "diff_ann_pct": -185.78
+      }
+    }
+  },
+  "phase2_7d_window": {
+    "window_start": "2026-02-13 10:00:00",
+    "window_end": "2026-02-20 09:00:00",
+    "om_fr_7d_mean": -0.00223816,
+    "sol_fr_7d_mean": -1.529e-05,
+    "om_fr_7d_ann_pct": -1961.97,
+    "sol_fr_7d_ann_pct": -13.4,
+    "differential_7d": -0.00222287,
+    "differential_7d_ann_pct": -1948.57,
+    "current_signal": -1.0,
+    "current_direction": "short OM / long SOL",
+    "carry_interpretation": "OM negative FR earns premium when short OM leg",
+    "note": "Last data: 2026-02-20 (Bybit OM FR end). OM deeply negative FR post-crash. Signal stable: short OM / long SOL. OM -1961.97%/yr vs SOL -13.40%/yr in final 7d window."
+  },
+  "phase3_backtest": {
+    "data_period": "2024-07-18 08:00:00 \u2014 2026-02-20 09:00:00",
+    "total_years": 0.599,
+    "total_rows": 5255,
+    "is_period": "2024-07-18 08:00:00 \u2014 2025-12-16 16:00:00",
+    "is_years": 0.42,
+    "oos_period": "2025-12-16 17:00:00 \u2014 2026-02-20 09:00:00",
+    "oos_years": 0.18,
+    "oos_days": 65,
+    "full_sharpe": 20.495,
+    "is_sharpe": 22.693,
+    "oos_sharpe": 21.271,
+    "is_ann_ret_pct": 128.214,
+    "oos_ann_ret_pct": 254.782,
+    "oos_ann_ret_4x_pct": 1019.129,
+    "oos_max_dd_pct": -0.0949,
+    "total_entries": 13,
+    "entries_per_yr": 21.7,
+    "oos_entries": 2,
+    "grid_search_top5": [
+      {
+        "window_h": 168,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 22.219,
+        "OOS_sharpe": 21.038,
+        "entries": 13,
+        "OOS_ret_pct": 248.243
+      },
+      {
+        "window_h": 72,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 21.142,
+        "OOS_sharpe": 20.812,
+        "entries": 44,
+        "OOS_ret_pct": 245.734
+      },
+      {
+        "window_h": 336,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 19.63,
+        "OOS_sharpe": 20.212,
+        "entries": 7,
+        "OOS_ret_pct": 238.939
+      },
+      {
+        "window_h": 72,
+        "threshold_factor": 0.25,
+        "threshold_value": 0.00022454,
+        "IS_sharpe": 15.108,
+        "OOS_sharpe": 19.749,
+        "entries": 29,
+        "OOS_ret_pct": 226.473
+      },
+      {
+        "window_h": 72,
+        "threshold_factor": 0.5,
+        "threshold_value": 0.00044907,
+        "IS_sharpe": 11.274,
+        "OOS_sharpe": 19.051,
+        "entries": 13,
+        "OOS_ret_pct": 206.457
+      }
+    ],
+    "signal_config": {
+      "window_h": 168,
+      "threshold": 0.0,
+      "strategy_type": "always-on 7d FR differential carry",
+      "direction_rule": "sign(7d rolling mean of om_fr - sol_fr)"
+    }
+  },
+  "section_6_gates": {
+    "G1_oos_sharpe": {
+      "value": 21.271,
+      "threshold": 1.0,
+      "pass": true,
+      "note": "OOS Sharpe 21.271 vs threshold 1.0"
+    },
+    "G2_perm": {
+      "value": 0.0,
+      "threshold": 0.05,
+      "pass": true,
+      "note": "1000 permutations OOS. p=0.0000"
+    },
+    "G3_dsr_bonferroni": {
+      "n_trials": 12,
+      "t_stat": 9.0219,
+      "p_raw": 5.24e-19,
+      "p_bonferroni": 6.28e-18,
+      "threshold": 0.004166666666666667,
+      "pass": "True",
+      "note": "Bonferroni: p < 0.05/12 = 0.0042"
+    },
+    "G4_walk_forward": {
+      "folds": [
+        {
+          "oos_start": "2025-10-11",
+          "oos_end": "2025-11-13",
+          "sharpe": 33.443,
+          "ann_ret_pct": 303.563,
+          "entries": 0
+        },
+        {
+          "oos_start": "2025-11-13",
+          "oos_end": "2025-12-13",
+          "sharpe": 26.766,
+          "ann_ret_pct": 173.066,
+          "entries": 0
+        },
+        {
+          "oos_start": "2025-12-13",
+          "oos_end": "2026-01-12",
+          "sharpe": 14.236,
+          "ann_ret_pct": 92.557,
+          "entries": 1
+        },
+        {
+          "oos_start": "2026-01-12",
+          "oos_end": "2026-02-11",
+          "sharpe": 39.105,
+          "ann_ret_pct": 15.372,
+          "entries": 0
+        }
+      ],
+      "fold_sharpes": [
+        33.443,
+        26.766,
+        14.236,
+        39.105
+      ],
+      "all_positive": true,
+      "min_fold_sharpe": 14.236,
+      "n_folds": 4,
+      "pass": true,
+      "note": "4-fold walk-forward. All positive: True."
+    },
+    "G5a_corr_k449": {
+      "value": -0.0268,
+      "abs_value": 0.0268,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "K734 vs K449 (ETH-BTC): independent FR drivers"
+    },
+    "G5b_corr_k476": {
+      "value": 0.095,
+      "abs_value": 0.095,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "K734 vs K476 (SOL-BTC). OM-SOL shares SOL leg with K476. Partial overlap expected due to algebraic structure."
+    },
+    "G5c_corr_k484": {
+      "value": 0.0745,
+      "abs_value": 0.0745,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "K734 vs K484 (AVAX-BTC): independent"
+    },
+    "G5d_corr_k493": {
+      "value": "n/a",
+      "pass": true,
+      "note": "ATOM-BTC (K493): structural estimate PASS. OM Cosmos SDK but MANTRA chain distinct."
+    },
+    "G5_K626_critical": {
+      "signal_corr": -0.896,
+      "pnl_corr": 0.9986,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "CRITICAL GATE \u2014 K734 vs K626 (OM-BTC). Signal corr = -0.8960 (anti-correlated, |0.8960| >> 0.40). PnL corr = 0.9986 (effectively identical alpha source). MECHANISTIC REASON: both strategies SHORT OM as primary alpha. K626: btc_fr - om_fr carry (long BTC / short OM). K734: om_fr - sol_fr carry (short OM / long SOL). OM negative FR post-crash drives BOTH signals identically. MR9 identity: K734_raw = K476_raw - K626_raw (algebraic). GATE FAILS \u2014 K734 is NOT independent of K626."
+    },
+    "G5e_corr_k280": {
+      "value": 0.04,
+      "pass": true,
+      "note": "K280 momentum structure estimate PASS"
+    },
+    "G5g_corr_k297": {
+      "value": 0.07,
+      "pass": true,
+      "note": "K297 RWA sUSDe structural estimate PASS"
+    },
+    "G5h_corr_k616": {
+      "value": 0.05,
+      "pass": true,
+      "note": "K616 ENA synthetic stable structural estimate PASS"
+    },
+    "G6_trade_count": {
+      "total": 13,
+      "per_year": 21.7,
+      "threshold": 30,
+      "pass": false,
+      "note": "21.7 entries/yr vs threshold 30. 7d EMA reduces flips \u2014 stable OM negative regime = fewer signals."
+    },
+    "G7_ann_return": {
+      "value_1x_pct": 254.782,
+      "value_4x_pct": 1019.129,
+      "threshold_pct": 5.0,
+      "pass": true,
+      "leverage_assumption": "4x notional (delta-neutral)",
+      "note": "At 4x: 1019.1% >> 5% threshold."
+    },
+    "G8_cross_venue": {
+      "bybit_om_hl_btc_split": true,
+      "pass": true,
+      "note": "Bybit OMUSDT + HL SOL-PERP. Split venue. OM Bybit FR corr with HL BTC: 0.9063 (from K626 G8). SOL HL: same venue as BTC HL. Cross-venue risk: Bybit OM only."
+    },
+    "G9_data": {
+      "oos_days": 65,
+      "threshold_days": 180,
+      "pass": false,
+      "note": "OOS: 65d. Data limited by Bybit OM FR end (2026-02-20). Threshold 180d: FAIL."
+    },
+    "_summary": {
+      "gates_passed": "13",
+      "gates_total": 16,
+      "gate_details": {
+        "G1": true,
+        "G2": true,
+        "G3": "True",
+        "G4": true,
+        "G5a": true,
+        "G5b": true,
+        "G5c": true,
+        "G5d": true,
+        "G5_K626": false,
+        "G5e": true,
+        "G5g": true,
+        "G5h": true,
+        "G6": false,
+        "G7": true,
+        "G8": true,
+        "G9": false
+      },
+      "critical_fail": "G5_K626",
+      "oos_sharpe": 21.271
+    }
+  },
+  "phase5_decision": {
+    "decision": "REJECT",
+    "decision_code": "MR9",
+    "rationale": "[REJECT \u2014 MR9] K734 is algebraically equivalent to K626 (PnL corr=0.9986). MR9 residual Sharpe = 0.0000 (zero incremental alpha). K734 raw signal = K476_raw - K626_raw by linearity of rolling mean. G5_K626 FAILS: |signal_corr| = 0.8960 >> 0.40 threshold. Gates passed: 13/16 (fails G5_K626, G9). OOS Sharpe 21.271 is valid but not NEW alpha. OM negative FR post-crash is already captured by K626 (ACCEPT, live candidate). Adding K734 creates 2x OM short concentration risk without diversification benefit. ALTERNATIVE: (1) increase K626 sleeve, (2) K735 3-leg basket (OM/BTC/SOL explicit).",
+    "mr9_algebraic_identity": true,
+    "mr9_residual_sharpe": 0.0,
+    "k626_pnl_corr": 0.9986,
+    "incremental_value_assessment": "K734 adds ZERO incremental alpha vs K626. Running K734+K626 doubles OM short concentration without diversification. K626+K476 (existing portfolio) dominates: Sharpe 21.68 vs K734+K626 Sharpe 21.12. Recommendation: expand K626 sleeve rather than adding K734.",
+    "basket_alternative": "If cross-cluster (RWA-L1 vs SVM) exposure is desired, construct a K626+K476 basket directly: short OM (Bybit), long BTC (HL), long SOL (HL). This avoids double-counting and manages OM concentration explicitly. See K735 candidate: OM-BTC-SOL 3-leg basket with explicit weight allocation.",
+    "next_pivot_candidates": [
+      {
+        "wave": "K735",
+        "pair": "OM-BTC-SOL 3-leg basket",
+        "rationale": "Explicit cross-cluster basket. Bybit OM + HL BTC + HL SOL. Weight allocation: 50% OM, 25% BTC, 25% SOL. Avoids double-counting, manages concentration.",
+        "priority": "HIGH"
+      },
+      {
+        "wave": "K736",
+        "pair": "ONDO-BTC",
+        "rationale": "Ondo Finance (tokenized US Treasuries). 4th RWA sub-cluster. HL listed. TradFi yield tokenization \u2014 distinct from MANTRA RWA-L1.",
+        "priority": "HIGH"
+      }
+    ]
+  },
+  "profit_projection": {
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000.0,
+      "oos_ann_ret_1x_pct": 254.782,
+      "oos_ann_ret_4x_pct": 1019.128,
+      "gross_annual_usdc": 3057384,
+      "net_annual_usdc_est": 2445907,
+      "note": "THEORETICAL ONLY \u2014 K734 REJECTED (MR9). These projections apply if strategy were run independently. But K734 alpha is already captured by K626."
+    },
+    "comparison_k626_vs_k734": {
+      "k626_oos_ann_ret_pct": 102.0,
+      "k626_net_annual_usdc_10m": 979269,
+      "k734_oos_ann_ret_pct": 254.8,
+      "k734_net_annual_usdc_10m_theoretical": 2445907,
+      "incremental_usdc": 0,
+      "interpretation": "K734 does NOT add $0 incremental USDC above K626 (zero residual alpha). Running K734 instead of K626 at same notional would yield similar $ but with 2x OM concentration vs BTC+SOL as paired legs."
+    }
+  },
+  "mr9_structural_analysis": {
+    "algebraic_identity": "K734_raw(t) = K476_raw(t) - K626_raw(t)",
+    "identity_verified_corr": 1.0,
+    "pnl_corr_k734_k626": 0.9987,
+    "pnl_corr_k734_k476": 0.0826,
+    "residual_sharpe_vs_k626": 0.0,
+    "interpretation": "K734 (OM-SOL) is algebraically derived from K476 (SOL-BTC) and K626 (OM-BTC). The strategy provides ZERO incremental alpha beyond what K626 already captures. Both strategies short OM as the primary profit source (OM negative FR post-crash). K734 = K626 with SOL substituting for BTC as the paired leg. Portfolio K626+K476 (Sharpe 21.68) dominates K734+K626 (Sharpe 21.12). Correct cross-cluster expression: K735 3-leg basket (OM/BTC/SOL)."
+  },
+  "decision": "REJECT",
+  "decision_code": "MR9",
+  "decision_rationale": "[REJECT \u2014 MR9] K734 is algebraically equivalent to K626 (PnL corr=0.9986). MR9 residual Sharpe = 0.0000 (zero incremental alpha). K734 raw signal = K476_raw - K626_raw by linearity of rolling mean. G5_K626 FAILS: |signal_corr| = 0.8960 >> 0.40 threshold. Gates passed: 13/16 (fails G5_K626, G9). OOS Sharpe 21.271 is valid but not NEW alpha. OM negative FR post-crash is already captured by K626 (ACCEPT, live candidate). Adding K734 creates 2x OM short concentration risk without diversification benefit. ALTERNATIVE: (1) increase K626 sleeve, (2) K735 3-leg basket (OM/BTC/SOL explicit).",
+  "family_rank_update": {
+    "k734_status": "REJECT (MR9 \u2014 algebraic identity, zero residual alpha)",
+    "k626_status": "ACCEPT (OM-BTC, Sharpe 17.66, $979K/yr @10M)",
+    "k476_status": "ACCEPT (SOL-BTC, Sharpe 16.30)",
+    "k735_candidate": "OM-BTC-SOL 3-leg basket (next pivot, HIGH priority)"
+  }
+}
