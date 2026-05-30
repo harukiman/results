@@ -1,0 +1,332 @@
+{
+  "wave": "K660",
+  "strategy": "APT-ETH FR Differential Paired-Trade (ETH-base mechanism test on K512 family #1)",
+  "parent_waves": [
+    "K512 (APT-BTC ACCEPT)",
+    "K629 (WLD-ETH ETH-base mechanism)",
+    "K658 (SOL-ETH ACCEPT)"
+  ],
+  "run_time_jst": "2026-05-30T12:45:50+0900",
+  "runtime_s": 1.27,
+  "decision": "BTC-BASE WINS \u2014 KEEP K512",
+  "decision_rationale": "K660 APT-ETH BLOCKED-G5b. APT-ETH vs APT-BTC K512 OOS PnL corr=0.966 >> 0.40 threshold. ROOT CAUSE: APT FR deeply negative (-1.4%/yr) relative to both ETH (+10.6%/yr) and BTC (+11.6%/yr). Both K660 and K512 are predominantly LONG APT \u2014 signal is in lockstep (same directional bet, different short leg). ETH-base does NOT provide orthogonal alpha for APT family #1. K512 BTC-base retained (OOS Sh=51.10, $302K/yr @$10M). Contrast: K658 SOL-ETH succeeded (SOL FR balanced near ETH, less extreme). VERDICT: APT-ETH is REDUNDANT \u2014 not a separate strategy.",
+  "data_info": {
+    "apt_fr_rows": 17484,
+    "date_start": "2024-05-24 20:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.993,
+    "oos_start": "2025-10-16 19:00:00",
+    "oos_days": 218,
+    "fr_frequency": "1h (HL settles hourly)",
+    "apt_fr_mean_ann_pct": -1.4035,
+    "eth_fr_mean_ann_pct": 10.5175,
+    "btc_fr_mean_ann_pct": 11.5527,
+    "apt_eth_diff_mean_ann_pct": -11.921,
+    "apt_eth_vol_ratio": 2.6396,
+    "vol_ratio_pass": true,
+    "structural_note": "APT FR deeply negative (-1.4%/yr). ETH FR positive (+10.6%/yr). APT-ETH diff = -11.9%/yr \u2192 predominantly short ETH, long APT (signal=-1). Same directional exposure as K512 APT-BTC (both long APT). This structural identity is the root cause of G5b FAIL (corr=0.966)."
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "base_asset": "ETH (K629 mechanism applied to APT)",
+    "instrument": "APT-PERP vs ETH-PERP (HL 1h FR differential)",
+    "signal_type": "FR differential carry \u2014 sign(rolling_mean(apt_fr - eth_fr))",
+    "direction": "predominantly short ETH, long APT (APT FR deeply negative vs ETH)",
+    "k512_direction": "predominantly short BTC, long APT (APT FR deeply negative vs BTC)",
+    "structural_problem": "Both K660 and K512 are long APT \u2014 no orthogonality"
+  },
+  "statistical_analysis": {
+    "adf": {
+      "adf_stat": -11.6806,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617,
+      "note": "APT-ETH FR diff stationary=YES at 5%"
+    },
+    "ou": {
+      "theta": 0.110868,
+      "half_life_h": 6.3,
+      "mean_reverting": true,
+      "note": "APT-ETH is mean-reverting (half-life 6.3h)"
+    },
+    "vol_ratio_apt_eth": 2.6396,
+    "vol_ratio_pass": true,
+    "vol_ratio_note": "APT/ETH vol ratio = 2.6396x (>= 1.5 threshold)"
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 31.5784,
+    "ann_ret_pct": 15.3331,
+    "ann_ret_4x_pct": 61.3322,
+    "max_dd_pct": -0.741,
+    "entries_yr": 28.4,
+    "n_days": 721.0,
+    "n_hours": 17316,
+    "cum_ret": 0.302673
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 19.9592,
+    "ann_ret_pct": 8.3192,
+    "ann_ret_4x_pct": 33.2769,
+    "max_dd_pct": -0.741,
+    "entries_yr": 39.3,
+    "n_days": 502.0,
+    "n_hours": 12070,
+    "cum_ret": 0.114339
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 54.2743,
+    "ann_ret_pct": 31.5545,
+    "ann_ret_4x_pct": 126.2181,
+    "max_dd_pct": -0.2409,
+    "entries_yr": 3.4,
+    "n_days": 218.0,
+    "n_hours": 5246,
+    "cum_ret": 0.188334
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 84,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 20.3398,
+      "OOS_sharpe": 54.4569,
+      "OOS_ret_pct": 31.8573,
+      "entries_yr": 6.7
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 20.6483,
+      "OOS_sharpe": 54.2743,
+      "OOS_ret_pct": 31.5545,
+      "entries_yr": 3.4
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 22.2168,
+      "OOS_sharpe": 53.2314,
+      "OOS_ret_pct": 31.1067,
+      "entries_yr": 3.4
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 23.2209,
+      "OOS_sharpe": 52.7911,
+      "OOS_ret_pct": 30.8974,
+      "entries_yr": 3.4
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.25,
+      "threshold_value": 1.181e-05,
+      "IS_sharpe": 11.816,
+      "OOS_sharpe": 50.7002,
+      "OOS_ret_pct": 29.9789,
+      "entries_yr": 6.7
+    }
+  ],
+  "section6_gates": {
+    "gates": {
+      "G1_oos_sharpe": {
+        "value": 54.2743,
+        "threshold": ">= 1.0",
+        "pass": true,
+        "note": "OOS annualised Sharpe >= 1.0"
+      },
+      "G2_perm_pvalue": {
+        "value": 0.0,
+        "threshold": "<= 0.05",
+        "pass": true,
+        "real_sharpe": 54.2743,
+        "perm_mean_stat": -1.4e-07,
+        "perm_p_value": 0.0,
+        "n_perm": 1000,
+        "note": "1000 direction reshuffles, OOS, n_oos=5246 periods"
+      },
+      "G3_dsr_bonferroni": {
+        "pass": true,
+        "n_trials": 12,
+        "t_stat": 42.0007,
+        "p_raw": 0.0,
+        "p_bonferroni": 0.0,
+        "threshold": 0.00417,
+        "note": "Bonferroni: p < 0.05/12 = 0.00417"
+      },
+      "G4_walk_forward": {
+        "pass": true,
+        "fold_sharpes": [
+          5.4087,
+          27.3307,
+          41.3103,
+          70.8984
+        ],
+        "all_positive": true,
+        "n_folds": 4,
+        "note": "4-fold chronological walk-forward"
+      },
+      "G5_family_corr": {
+        "pass": false,
+        "checks": {
+          "g5a_eth_btc_k449": {
+            "label": "ETH-BTC K449 (CRITICAL: shared ETH base leg)",
+            "corr": 0.0099,
+            "threshold": 0.4,
+            "pass": true,
+            "note": "APT-ETH shares ETH leg with ETH-BTC K449. Critical overlap check."
+          },
+          "g5b_apt_btc_k512": {
+            "label": "APT-BTC K512 (CRITICAL: same APT alt token \u2014 family same-alt check)",
+            "corr": 0.966,
+            "threshold": 0.4,
+            "pass": false,
+            "note": "APT-ETH shares APT leg with APT-BTC K512. Both predominantly LONG APT (APT FR deeply negative: -1.4%/yr << ETH 10.6%/yr << BTC 11.6%/yr). Expected high correlation \u2014 this is the CRITICAL blocking check."
+          },
+          "g5c_sol_eth_k658": {
+            "label": "SOL-ETH K658 (same ETH-base sub-cluster, different alt)",
+            "corr": 0.0496,
+            "threshold": 0.4,
+            "pass": true,
+            "note": "APT-ETH vs SOL-ETH. Same ETH base, distinct alt token ecosystems."
+          },
+          "g5d_wld_eth_k629": {
+            "label": "WLD-ETH K629 (same ETH-base cluster, biometric ID token)",
+            "corr": 0.0292,
+            "threshold": 0.4,
+            "pass": true,
+            "note": "APT-ETH vs WLD-ETH. Distinct narratives: Move-VM vs biometric ID."
+          }
+        },
+        "n_pass": 3,
+        "n_total": 4,
+        "all_pass": false,
+        "g5b_critical_fail": true,
+        "verdict": "BLOCKED-G5b: APT-ETH vs APT-BTC K512 OOS PnL corr=0.966 >> 0.40. Both strategies are predominantly LONG APT (ETH-base does NOT provide independent alpha for APT family #1). Keep K512 BTC-base."
+      },
+      "G6_trade_count": {
+        "value": 3.4,
+        "threshold": ">= 30.0",
+        "pass": false,
+        "note": "Entry events per year (OOS). 7d EMA reduces flip frequency."
+      },
+      "G7_ann_return": {
+        "pass": true,
+        "value_1x_pct": 31.5545,
+        "value_4x_pct": 126.2181,
+        "threshold_pct": 5.0,
+        "note": "At 4x leverage: ann_ret * 4 > 5%"
+      }
+    },
+    "gates_passed": 5,
+    "total_gates": 7,
+    "oos_sharpe": 54.2743,
+    "oos_ann_ret_pct": 31.5545,
+    "structural_fails": [
+      "G6: low trade freq (7d window reduces flips)",
+      "G5b: APT-ETH vs APT-BTC corr=0.966 \u2014 BLOCKED-G5b"
+    ],
+    "gate_list_passed": [
+      "G1_oos_sharpe",
+      "G2_perm_pvalue",
+      "G3_dsr_bonferroni",
+      "G4_walk_forward",
+      "G7_ann_return"
+    ]
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a_eth_btc_k449": {
+        "label": "ETH-BTC K449 (CRITICAL: shared ETH base leg)",
+        "corr": 0.0099,
+        "threshold": 0.4,
+        "pass": true,
+        "note": "APT-ETH shares ETH leg with ETH-BTC K449. Critical overlap check."
+      },
+      "g5b_apt_btc_k512": {
+        "label": "APT-BTC K512 (CRITICAL: same APT alt token \u2014 family same-alt check)",
+        "corr": 0.966,
+        "threshold": 0.4,
+        "pass": false,
+        "note": "APT-ETH shares APT leg with APT-BTC K512. Both predominantly LONG APT (APT FR deeply negative: -1.4%/yr << ETH 10.6%/yr << BTC 11.6%/yr). Expected high correlation \u2014 this is the CRITICAL blocking check."
+      },
+      "g5c_sol_eth_k658": {
+        "label": "SOL-ETH K658 (same ETH-base sub-cluster, different alt)",
+        "corr": 0.0496,
+        "threshold": 0.4,
+        "pass": true,
+        "note": "APT-ETH vs SOL-ETH. Same ETH base, distinct alt token ecosystems."
+      },
+      "g5d_wld_eth_k629": {
+        "label": "WLD-ETH K629 (same ETH-base cluster, biometric ID token)",
+        "corr": 0.0292,
+        "threshold": 0.4,
+        "pass": true,
+        "note": "APT-ETH vs WLD-ETH. Distinct narratives: Move-VM vs biometric ID."
+      }
+    },
+    "n_pass": 3,
+    "n_total": 4,
+    "all_pass": false,
+    "max_corr": 0.966,
+    "g5b_critical_fail": true,
+    "pass": false,
+    "verdict": "BLOCKED-G5b: APT-ETH vs APT-BTC K512 OOS PnL corr=0.966 >> 0.40. Both strategies are predominantly LONG APT (ETH-base does NOT provide independent alpha for APT family #1). Keep K512 BTC-base."
+  },
+  "comparison_btc_vs_eth_base": {
+    "K512_APT_BTC": {
+      "oos_sharpe": 51.102,
+      "oos_ann_ret_1x_pct": 29.627,
+      "gates_pass": 12,
+      "status": "ACCEPT (baseline, BTC-base)",
+      "net_yr_10M": 302195
+    },
+    "K660_APT_ETH": {
+      "oos_sharpe": 54.2743,
+      "oos_ann_ret_1x_pct": 31.5545,
+      "gates_pass": 5,
+      "status": "BTC-BASE WINS \u2014 KEEP K512",
+      "net_yr_10M": 321855
+    },
+    "differential_sharpe": 3.1723,
+    "k660_vs_k512_oos_pnl_corr": 0.966,
+    "k660_vs_k512_signal_corr": -0.8853,
+    "signal_agreement_rate": 0.0132,
+    "winner": "K512 BTC-base (K660 BLOCKED-G5b \u2014 same directional APT bet)",
+    "insight": "HIGH SIGNAL CORRELATION PARADOX: K660 OOS Sh (54.27) > K512 Sh (51.10), yet both strategies are structurally identical (long APT). K660 'wins' on Sharpe because ETH FR is slightly more stable than BTC FR as base (lower residual noise in ETH-APT diff vs BTC-APT diff). But the alpha SOURCE is identical: receiving APT's structural FR discount. LESSON: When alt FR is extremely negative vs ALL base assets, ETH-base switch does not add orthogonality. Contrast with WLD/SOL: those had balanced FR that allowed directional flip."
+  },
+  "profit_projection": {
+    "strategy": "APT-ETH FR differential paired-trade (K660)",
+    "sleeve_pct": 3.0,
+    "leverage": 4.0,
+    "oos_ann_ret_1x_pct": 31.5545,
+    "oos_ann_ret_4x_pct": 126.218,
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "notional_usd": 1200000,
+      "gross_usdc_yr": 378654,
+      "net_usdc_yr": 321855,
+      "daily_usdc": 881
+    },
+    "note": "3% sleeve, 4x leverage, 15% friction buffer. OOS ann ret (1x): 31.55%.",
+    "comparison_note": "K512 APT-BTC net: $302,195/yr @$10M. K660 APT-ETH net: $321,855/yr. Diff: $+19,660/yr \u2014 but BLOCKED-G5b (corr=0.966)."
+  },
+  "decision_framework": {
+    "K629_lesson": "ETH-base unlocks WLD (was BLOCKED-G5 on BTC-JUP cluster)",
+    "K632_lesson": "ETH-base WORSE for HYPE (K632 Sh < HYPE-BTC Sh) \u2192 keep BTC",
+    "K658_lesson": "ETH-base BETTER for SOL (K658 Sh=29.66 > K476 Sh=16.30)",
+    "K660_lesson": "ETH-base REDUNDANT for APT (corr=0.966 with K512). APT FR is deeply negative vs ALL major bases \u2192 always long APT. ETH-base offers marginally higher Sharpe but BLOCKED-G5b. PATTERN: ETH-base helps when alt FR is AMBIGUOUS (near ETH level). ETH-base fails when alt FR is extreme (far below both BTC and ETH).",
+    "eth_base_applicability_rule": "ETH-base works when: alt_fr is near ETH level (balanced differential). ETH-base fails when: alt_fr is extreme negative (always long alt regardless of base). APT FR (-1.4%/yr) vs ETH (10.6%/yr) vs BTC (11.6%/yr): APT is 12pp below ETH and 13pp below BTC \u2192 no directional ambiguity.",
+    "final_verdict": "KEEP K512 APT-BTC. K660 APT-ETH is structurally redundant."
+  }
+}
