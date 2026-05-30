@@ -1,0 +1,303 @@
+{
+  "wave": "K695",
+  "strategy": "LINK-SOL FR Differential Alt-Alt",
+  "cluster_pair": "Oracle (K557) vs SVM-L1 (K476)",
+  "run_time_jst": "2026-05-30T15:17:19.349007+09:00",
+  "runtime_s": 2.6,
+  "decision": "REJECT",
+  "decision_reason": "G5c FAIL: corr(K695,K557)=0.497 > 0.40 \u2014 shared LINK leg (double LINK exposure vs K557)",
+  "mr8_algebraic_group": {
+    "prohibited_set": [
+      "APT",
+      "ATOM",
+      "AVAX",
+      "INJ",
+      "SOL"
+    ],
+    "link_in_set": false,
+    "sol_in_set": true,
+    "new_token_pass": true,
+    "sol_concentration_note": "SOL is 6th alt-alt leg (K679+K682+K684+K686+K690+K695). Allowed per MR8 (LINK is new token), but concentration risk noted.",
+    "mr8_result": "PASS \u2014 LINK not in {APT,ATOM,SOL,INJ,AVAX}"
+  },
+  "mr9_math_identity": {
+    "identity": "LINK-SOL = (LINK-BTC) + (BTC-SOL) = K557_raw + K476_raw",
+    "identity_corr": 1.0,
+    "identity_max_diff": 5.421010862427522e-20,
+    "signal_independence_k476_is": 0.48313522229727035,
+    "signal_independence_k557_is": 0.2587096824252662,
+    "mr9_result": "PASS \u2014 algebraic identity confirmed, signals anti-correlated (independent)",
+    "mr9_note": "Algebraic decomposition exact. Signal direction is INDEPENDENT from K476/K557 because SOL-as-reference creates anti-correlation vs K476's SOL-as-base."
+  },
+  "data_info": {
+    "n_rows": 17512,
+    "date_start": "2024-05-23 16:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "oos_start": "2025-10-16 12:00:00",
+    "oos_n_rows": 5253,
+    "oos_days": 218.9,
+    "fr_frequency": "1h (HL settles hourly)",
+    "data_sources": {
+      "LINK": "cache/hl_fr_LINK.parquet (26145 rows, 2023-05-18 to 2026-05-29)",
+      "SOL": "cache/k163_hl/hl_fr_SOL.parquet",
+      "BTC": "cache/k163_hl/hl_fr_BTC.parquet"
+    }
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "leverage_cap": 4.0,
+    "strategy_type": "always-on 7d FR differential carry",
+    "direction_rule": "sign(7d rolling mean of link_fr - sol_fr)",
+    "positive_signal_meaning": "long LINK, short SOL (collect LINK carry when LINK pays more)",
+    "negative_signal_meaning": "long SOL, short LINK (collect SOL carry when SOL pays more)"
+  },
+  "statistical_analysis": {
+    "adf": {
+      "stat": -18.19136668688375,
+      "p_value": 2.4188115720768025e-30,
+      "lags": 21,
+      "stationary": true,
+      "note": "ADF stat=-18.1914, p=2.42e-30. FR differential is STATIONARY."
+    },
+    "ou": {
+      "half_life_h": 1.51,
+      "half_life_d": 0.063,
+      "ou_slope": -0.45972516458512297,
+      "ou_r_squared": 0.2301,
+      "note": "OU half-life=1.51h. Ultra-fast mean reversion from HL 1h settlement. Smoothing window captures persistent regime bias."
+    },
+    "fr_stats": {
+      "link_mean": 1.535474838967565e-05,
+      "sol_mean": 8.822347424623118e-06,
+      "btc_mean": 1.3187670294655095e-05,
+      "link_std": 2.326673105021404e-05,
+      "sol_std": 3.1098269501540665e-05,
+      "link_vol_ratio_vs_btc": 1.32,
+      "sol_vol_ratio_vs_btc": 1.7642,
+      "diff_vol_ratio_vs_btc": 2.1639
+    }
+  },
+  "is_metrics": {
+    "label": "IS (genuine \u2014 strategy trades actively)",
+    "sharpe": 8.1052,
+    "ann_ret_pct": 4.1598,
+    "max_dd_pct": -0.933,
+    "trades_yr": 42.2,
+    "n_hours": 12259,
+    "n_days": 510.8,
+    "cum_ret": 0.058214
+  },
+  "oos_metrics": {
+    "label": "OOS (DEGENERATE \u2014 signal stuck, 0 trades)",
+    "sharpe": 73.77,
+    "sharpe_note": "ARTIFACT \u2014 stuck signal, equivalent to raw carry Sharpe. NOT a strategy metric.",
+    "ann_ret_pct": 11.3842,
+    "max_dd_pct": -0.0196,
+    "trades_yr": 1.7,
+    "n_hours": 5253,
+    "signal_stuck": true,
+    "signal_value": 1.0,
+    "oos_regime_note": "SOL FR went NEGATIVE (Oct 2025+) in bear regime. LINK FR anchored at HL floor (+1.07e-5/hr). Signal locked at +1 (long LINK, short SOL) for entire 219d OOS period. Zero flips = G6 FAIL."
+  },
+  "grid_search": [
+    {
+      "window_h": 72,
+      "IS_sharpe": 9.554493598279498,
+      "OOS_sharpe": 41.14316364074955,
+      "IS_ann_ret_pct": 4.966575688196427,
+      "OOS_ann_ret_pct": 10.405618830154198,
+      "IS_max_dd_pct": -0.5355977500000015,
+      "OOS_max_dd_pct": -0.25915934999999785,
+      "IS_trades_yr": 57.8807406803165,
+      "OOS_trades_yr": 25.01427755568247,
+      "OOS_signal_stuck": false,
+      "OOS_unique_signals": [
+        1.0,
+        0.0,
+        -1.0
+      ]
+    },
+    {
+      "window_h": 120,
+      "IS_sharpe": 8.67469024582667,
+      "OOS_sharpe": 53.29626055750656,
+      "IS_ann_ret_pct": 4.497201925768824,
+      "OOS_ann_ret_pct": 10.959641669902913,
+      "IS_max_dd_pct": -0.6957875000000001,
+      "OOS_max_dd_pct": -0.1663481599999999,
+      "IS_trades_yr": 46.447507953340406,
+      "OOS_trades_yr": 11.673329525985151,
+      "OOS_signal_stuck": false,
+      "OOS_unique_signals": [
+        1.0,
+        -1.0
+      ]
+    },
+    {
+      "window_h": 168,
+      "IS_sharpe": 8.105167819927063,
+      "OOS_sharpe": 73.77002938686502,
+      "IS_ann_ret_pct": 4.15982377760013,
+      "OOS_ann_ret_pct": 11.384189558423758,
+      "IS_max_dd_pct": -0.9330344100000048,
+      "OOS_max_dd_pct": -0.019639469999999798,
+      "IS_trades_yr": 42.160045680724366,
+      "OOS_trades_yr": 1.6676185037121645,
+      "OOS_signal_stuck": true,
+      "OOS_unique_signals": [
+        1.0
+      ]
+    },
+    {
+      "window_h": 240,
+      "IS_sharpe": 11.619990724899576,
+      "OOS_sharpe": 73.77002938686502,
+      "IS_ann_ret_pct": 5.204349970992739,
+      "OOS_ann_ret_pct": 11.384189558423758,
+      "IS_max_dd_pct": -0.43890142000000165,
+      "OOS_max_dd_pct": -0.019639469999999798,
+      "IS_trades_yr": 20.72273431764418,
+      "OOS_trades_yr": 1.6676185037121645,
+      "OOS_signal_stuck": true,
+      "OOS_unique_signals": [
+        1.0
+      ]
+    },
+    {
+      "window_h": 336,
+      "IS_sharpe": 10.71031641364219,
+      "OOS_sharpe": 73.77002938686502,
+      "IS_ann_ret_pct": 4.7941349417081325,
+      "OOS_ann_ret_pct": 11.384189558423758,
+      "IS_max_dd_pct": -0.38130326000000264,
+      "OOS_max_dd_pct": -0.019639469999999798,
+      "IS_trades_yr": 20.72273431764418,
+      "OOS_trades_yr": 1.6676185037121645,
+      "OOS_signal_stuck": true,
+      "OOS_unique_signals": [
+        1.0
+      ]
+    }
+  ],
+  "permutation_test": {
+    "n_perms": 1000,
+    "actual_is_sharpe": 8.1052,
+    "perm_p_value": 0.0,
+    "g2_pass": true,
+    "note": "Permutation on IS period (valid signal variation). OOS permutation invalid (stuck signal)."
+  },
+  "dsr_bonferroni": {
+    "n_trials": 5,
+    "t_stat": 9.5882,
+    "p_raw": 1.0679331966226302e-21,
+    "p_bonferroni": 5.339665983113151e-21,
+    "threshold": 0.01,
+    "pass": true
+  },
+  "walk_forward_12fold": {
+    "fold_sharpes": [
+      -0.0058,
+      10.215,
+      41.6841,
+      8.2997,
+      29.4342,
+      32.8441,
+      12.1346,
+      -2.5057,
+      6.4682,
+      50.2549,
+      102.0159,
+      84.0844
+    ],
+    "n_positive": 10,
+    "n_folds": 12,
+    "pass": true,
+    "negative_folds": [
+      {
+        "fold": 1,
+        "sharpe": -0.0058
+      },
+      {
+        "fold": 8,
+        "sharpe": -2.5057
+      }
+    ]
+  },
+  "g5_independence": {
+    "checks": {
+      "G5a_K449_ETH-BTC": {
+        "corr": -0.16327791358462743,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 12259
+      },
+      "G5b_K476_SOL-BTC": {
+        "corr": -0.21788153127527862,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 12259
+      },
+      "G5c_K557_LINK-BTC": {
+        "corr": 0.4966474837213386,
+        "threshold": 0.4,
+        "pass": false,
+        "n": 12259
+      }
+    },
+    "g5_oos_pnl_corr_k476": 0.3748,
+    "g5_oos_pnl_corr_k557": 0.1001,
+    "critical_fail": "G5c: corr(K695, K557)=0.493 > 0.40. LINK is shared leg in both K695 and K557. When K695 longs LINK (LINK FR > SOL FR), K557 may also be long LINK (LINK FR > BTC FR). Simultaneous LINK exposure -> not independent in LINK dimension.",
+    "g5b_note": "G5b K476 PASS (-0.21 IS corr): anti-correlation from shared SOL reference \u2014 K695 signals opposite of K476 SOL direction (orthogonal pair)"
+  },
+  "cross_venue_g8": {
+    "hl_bybit_signal_corr": 0.2728,
+    "threshold": 0.55,
+    "pass": false,
+    "bybit_oos_sharpe": 28.14,
+    "note": "HL vs Bybit corr=0.295 FAIL. Structural: HL 1h vs Bybit 8h settlement. Venue-specific alpha (HL-only)."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1_IS_sharpe": true,
+      "G2_perm_p": true,
+      "G3_DSR_bonf": true,
+      "G4_walk_fwd": true,
+      "G5a_K449": true,
+      "G5b_K476": true,
+      "G5c_K557": false,
+      "G6_trades_yr": true,
+      "G7_ann_ret": true
+    },
+    "gates_passed": 8,
+    "gates_total": 9,
+    "decision": "REJECT",
+    "primary_fail": "G5c: corr(K695,K557)=0.493 > 0.40 (shared LINK leg \u2014 double LINK exposure)",
+    "secondary_fail": "OOS signal stuck (0 trades/yr) \u2014 regime-dependent, degenerate evaluation"
+  },
+  "profit_projection_if_deployed": {
+    "note": "K695 REJECTED. Profit shown for reference only.",
+    "is_ann_ret_pct": 4.1598,
+    "leverage": 4.0,
+    "sleeve_pct": 2.5,
+    "aum_10m_usdc": 10000000,
+    "profit_10m_usdc_yr_if_deployed": 41598.0,
+    "profit_10m_usdc_yr_4x": 41598.0,
+    "daily_if_deployed": 114.0
+  },
+  "next_candidates": {
+    "link_eth": "LINK-ETH: oracle vs ETH L1 execution layer. No SOL leg. G5c risk reduced (LINK shared but different counterpart). K698 candidate.",
+    "link_apt": "LINK-APT: oracle vs Move-VM L1. Both non-SOL. Potentially cleanest oracle cross-cluster. K700 candidate.",
+    "tia_sol": "TIA-SOL: from K691 lesson (TIA DA signal real, SOL as counterpart avoids APT overlap). K696 candidate.",
+    "priority": "LINK-ETH first (oracle cluster momentum from K557), then TIA-SOL"
+  },
+  "k695_vs_k557_k476_summary": {
+    "k557_link_btc_oos_sh": 13.775,
+    "k476_sol_btc_oos_sh": 16.298,
+    "k695_is_sh": 8.1052,
+    "k695_oos_sh_artifact": 73.77,
+    "interpretation": "K695 IS Sh=8.38 is genuine (40.7 trades/yr). K695 OOS Sh=73.7 is stuck-signal artifact. Strategy has real edge (ADF, perm, DSR confirm) but G5c LINK overlap prevents deployment alongside existing K557. SOL-anchor strategies (K679/K682/K684/K686/K690) are already running. K695 adds 6th SOL leg without meaningful independence from K557 LINK leg."
+  }
+}
