@@ -1,0 +1,182 @@
+{
+  "wave": "K652",
+  "strategy": "K648 POL 6-Factor Orthogonalized FR Differential (MF OP+SEI+APT+TIA+FIL+SAND W=168h)",
+  "timestamp_jst": "2026-05-30 12:16 JST",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k648_pol_orthog_run.py",
+        "description": "Phase 1: K648 strategy script (K339 pattern, 6-factor MF)",
+        "exists": true,
+        "size_bytes": 53172,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k648-pol-orthog.plist",
+        "description": "Phase 2: 47th daemon plist (StartInterval 28800)",
+        "exists": true,
+        "size_bytes": 2634,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k648_dashboard.json",
+        "description": "Phase 3: Dashboard (residual signal, betas_used, regime)",
+        "exists": true,
+        "size_bytes": 4087,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k648 flag)",
+        "exists": true,
+        "size_bytes": 210775,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K648_POL_ORTHOG + SLEEVE_WEIGHTS_V637)",
+        "exists": true,
+        "size_bytes": 53742,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K648_POL_ORTHOG: 4.0 + k648_notes)",
+        "exists": true,
+        "size_bytes": 39839,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (47th daemon registry)",
+        "exists": true,
+        "size_bytes": 30874,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a749 (K648 POL 6-factor orthog playbook)",
+        "exists": true,
+        "size_bytes": 374651,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K648 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1562349,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k652_k648_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 16467,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_checks": {
+    "beta_op_hardcoded": true,
+    "beta_sei_hardcoded": true,
+    "beta_apt_hardcoded": true,
+    "beta_tia_hardcoded": true,
+    "beta_fil_hardcoded": true,
+    "beta_sand_hardcoded": true,
+    "k339_repo_root": true,
+    "paper_trade_default": true,
+    "bybit_primary": true,
+    "post_only": true,
+    "signal_1_5sigma": true,
+    "sleeve_2pct": true,
+    "ema_168h": true,
+    "6factor_formula": true,
+    "hl_unchanged_65": true,
+    "dashboard_beta_op": true,
+    "dashboard_beta_sei": true,
+    "dashboard_beta_apt": true,
+    "dashboard_beta_tia": true,
+    "dashboard_beta_fil": true,
+    "dashboard_beta_sand": true,
+    "dashboard_regime": true,
+    "dashboard_oos_perf": true,
+    "dashboard_orthog": true,
+    "dashboard_hl_65": true,
+    "cfg_k648_cap": true,
+    "cfg_k648_notes": true,
+    "cfg_beta_op": true,
+    "cfg_beta_sand": true,
+    "cfg_oos_sharpe": true,
+    "emer_include_k648": true,
+    "emer_k648_summary": true,
+    "emer_bybit_only_note": true,
+    "emer_6factor_formula": true,
+    "lev_k648_cap": true,
+    "lev_v637_weights": true,
+    "lev_k648_sleeve": true,
+    "vds_47th_daemon": true,
+    "vds_47th_label": true,
+    "runbook_section49": true,
+    "runbook_beta_table": true,
+    "runbook_60d_gate": true,
+    "runbook_4_29m": true
+  },
+  "daemon_count": 47,
+  "daemon_ok": true,
+  "dry_run": {
+    "returncode": 0,
+    "success": true,
+    "stdout_len": 4135,
+    "stderr_len": 0,
+    "status": "PASS"
+  },
+  "k648_summary": {
+    "oos_sharpe_residual": 23.407,
+    "oos_sharpe_raw_k611": 46.5229,
+    "k611_status": "BLOCKED-ROLLUP-SIBLING (6 factors exceed G5)",
+    "k611_blockers": {
+      "OP": 0.5178,
+      "SEI": 0.4935,
+      "APT": 0.5064,
+      "TIA": 0.4203,
+      "FIL": 0.4427,
+      "SAND": 0.4274
+    },
+    "oos_ann_ret_pct": 10.733,
+    "beta_op": 0.337443,
+    "beta_sei": 0.075509,
+    "beta_apt": -0.01648,
+    "beta_tia": 0.059789,
+    "beta_fil": 0.042751,
+    "beta_sand": 0.200488,
+    "is_r2": 0.3788,
+    "oos_r2": 0.0114,
+    "adf_pvalue": 0.0,
+    "ou_halflife_h": 3.55,
+    "post_orth_corrs": {
+      "OP": -0.096,
+      "SEI": 0.007,
+      "APT": 0.03,
+      "TIA": 0.005,
+      "FIL": 0.011,
+      "SAND": 0.03
+    },
+    "profit_2pct_usd_yr": 4293200,
+    "profit_2pct_k": 4293.2,
+    "sleeve_activation": "2% Bybit (POL+BTC both legs)",
+    "hl_concentration": "65% UNCHANGED \u2014 Bybit-only",
+    "cluster": "Polygon L2 / PoS / zkEVM (Polygon-specific unlock, 47th daemon)",
+    "gate_60d": "Realized Sh>=12 + fill>=60% + maxDD<20%",
+    "v637_candidate": "K648 2% Bybit + v6.36 portfolio",
+    "ema_window": "W=168h (21 x 8h periods)",
+    "daemon_number": "47th",
+    "plist_label": "com.cryptolab.k648-pol-orthog",
+    "orthog_formula": "residual = POL_diff - 0.337443*OP_diff - 0.075509*SEI_diff - (-0.016480)*APT_diff - 0.059789*TIA_diff - 0.042751*FIL_diff - 0.200488*SAND_diff",
+    "polygon_alpha_hypothesis": "POL FR dynamics: AggLayer aggregation proof demand cycles (distinct from OP/ARB rollup) + MATIC->POL migration Sep 2024 rebranding premium + Polygon zkEVM gas fee adoption (distinct from OP/ARB optimistic sequencer) + POL staking/validator re-staking demand (BFT validator set) \u2014 all orthogonal to OP+SEI+APT+TIA+FIL+SAND common factors after 6-factor OLS"
+  },
+  "overall_status": "PASS"
+}

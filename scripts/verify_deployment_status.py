@@ -378,6 +378,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k648_pol_orthog",
         expected_html_status="SCAFFOLD-READY",  # K652: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=12 + fill_rate>=60% + maxDD<20%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k647-dot-orthog",
+        purpose="K647 DOT-BTC Orthogonalized FR Differential (Governance/Staking cluster, INJ-cluster unlock, Bybit-only DOT+BTC paired, 4x leverage, 8h cycle, OOS Sh 23.25 residual SF W=168h, ~$103,586/yr net @$10M @4x, beta_INJ=0.642 hardcoded, INJ corr 0.4229->0.037 post-orth PASS, HL 65%->64% 1pp headroom, 60d paper-trade gate STRICT OOS R2=-4.11, v6.38 candidate 3% sleeve, 48th daemon, K653 scaffold)",
+        scripts=["scripts/k647_dot_orthog_run.py"],
+        log_basename="k647_dot_orthog",
+        expected_html_status="SCAFFOLD-READY",  # K653: plist in scripts/ (gitignored); activate after 60d gate STRICT (Realized Sh>=12 + fill_rate>=60% + maxDD<15%, OOS R²=-4.11 caution)
+    ),
 ]
 
 

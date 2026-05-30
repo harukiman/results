@@ -3654,6 +3654,37 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K653: K647 DOT-BTC orthog emergency exit flag
+    # K647 = Bybit-only DOT+BTC paired (2 legs) when residual EMA_168h > 1.5sigma.
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration 64% after add, 1pp headroom).
+    # Orthog: residual = DOT_diff - 0.642*INJ_diff (K647 OLS SF, beta hardcoded).
+    # EMA window: W=168h = 21 x 8h periods (optimal per K647 analysis).
+    # OOS R²=-4.11 STRUCTURAL BREAK WARNING — IS beta re-OLS every 30d mandatory.
+    # Use --include-k647 to print K647-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k647",
+        dest="include_k647",
+        action="store_true",
+        default=False,
+        help=(
+            "K653: Include K647 DOT-BTC orthog close summary during emergency exit. "
+            "K647 positions (DOT+BTC paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Orthog: residual = DOT_diff - 0.642*INJ_diff (K647 OLS SF beta hardcoded). "
+            "EMA window: W=168h = 21 x 8h periods (optimal per K647 analysis). "
+            "HL concentration 64% (1pp headroom from 65% — 3% split HL 1.5%+Bybit 1.5%). "
+            "OOS Sharpe 23.25 (residual SF W=168h). ~$103,586/yr net @$10M @4x (3% sleeve). "
+            "60d paper-trade gate STRICT: Realized Sh>=12 + fill>=60% + maxDD<15% (OOS R²=-4.11 caution). "
+            "IS beta re-OLS every 30d mandatory (structural break: IS DOT-INJ corr=0.616 -> OOS=0.045). "
+            "Cluster: Governance/Staking / Polkadot relay chain (INJ-cluster unlock, 8th orthog, 48th daemon). "
+            "INJ unlock: K513 BLOCKED (corr=0.4229) -> K647 post-orth=0.037 PASS. "
+            "Requires: K647 daemon running (com.cryptolab.k647-dot-orthog, 48th daemon). "
+            "K647 on Bybit: DOT_diff - 0.642*INJ_diff (K653 scaffold). "
+            "See: docs/k302a_runbook.md §49"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).

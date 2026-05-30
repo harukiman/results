@@ -33,7 +33,8 @@
     "K638_STX_ORTHOG": 4.0,
     "K645_BNB_ORTHOG": 4.0,
     "K648_POL_ORTHOG": 4.0,
-    "K646_ALGO_ORTHOG": 4.0
+    "K646_ALGO_ORTHOG": 4.0,
+    "K647_DOT_ORTHOG": 4.0
   },
   "k457_basket_notes": {
     "sleeve_pct": 0.05,
@@ -685,5 +686,51 @@
     "daemon_number": "46th",
     "plist": "scripts/com.cryptolab.k646-algo-orthog.plist",
     "k646_hypothesis": "Algorand (ALGO) Pure PoS VRF consensus creates Enterprise/Utility-L1-specific FR dynamics; after projecting out FIL (distributed storage economy, beta=0.411) factor loadings via K646 single-factor OLS, the residual captures pure Algorand-PoS alpha (OOS Sh=8.11 SF W=72h). VRF consensus staking cycles, CBDC pilot events (Marshall Islands etc.), DeFi-lite adoption timing, and Foundation grant waves drive ALGO FR orthogonally to shared FIL enterprise/utility-L1 narrative components."
+  },
+  "k647_notes": {
+    "sleeve_pct": 0.03,
+    "bybit_sleeve_pct": 0.03,
+    "hl_sleeve_pct": 0.0,
+    "leverage": 4.0,
+    "leverage_cap": 4.0,
+    "margin_calc": "4x x 3% sleeve x $10M = $1.2M total notional / 4x = $300K margin (3% of AUM)",
+    "margin_pct_of_aum_10M": "3%",
+    "per_leg_notional": "$600K DOT + $600K BTC (Bybit, equal weight)",
+    "oos_sharpe_residual": 23.25,
+    "oos_sharpe_raw_k513": 43.562,
+    "oos_r2": -4.1139,
+    "oos_r2_warning": "STRUCTURAL BREAK: IS DOT-INJ corr=0.616 -> OOS corr=0.045. IS beta re-OLS every 30d mandatory.",
+    "is_r2": 0.3798,
+    "ema_window_h": 168,
+    "ema_periods": 21,
+    "ann_return_usd_3pct_4x_net": 103586,
+    "ann_return_usd_3pct_4x_gross": 129483,
+    "beta_inj": 0.642,
+    "orthog_formula": "residual = DOT_diff - 0.642*INJ_diff",
+    "beta_hardcoded_note": "beta HARDCODED per K647 OLS single-factor — no re-OLS in production for stability. IS beta re-OLS every 30d mandatory for drift check (OOS R²=-4.11 caution).",
+    "g5_pass": true,
+    "inj_corr_raw": 0.4229,
+    "inj_corr_post_orth": 0.037,
+    "cluster": "Governance/Staking / Polkadot relay chain (INJ-cluster unlock, 8th orthog, 48th daemon)",
+    "cluster_rationale": "DOT Polkadot relay chain (Substrate); FR driven by 28d staking unbonding cycles, OpenGov referendum timing, parachain slot auction events, relay chain upgrade cycles, XCM adoption waves — orthogonal to INJ Cosmos DEX/DeFi CW orderbook dynamics after OLS residualization",
+    "hl_concentration_pct_after_add": 64.0,
+    "hl_headroom_pp": 1.0,
+    "hl_impact": "1pp headroom: HL 65%->64% (3% split: HL 1.5% + Bybit 1.5%)",
+    "venue": "Bybit primary (DOT+BTC both legs on Bybit; DOTUSDT perp + BTC-USDT-SWAP)",
+    "execution": "POST_ONLY parallel (K439 paired execution pattern), Bybit-only",
+    "v637_candidate": "v6.37 + K647 3% Bybit = v6.38 combined (Governance/Staking cluster)",
+    "paper_gate_days": 60,
+    "activation_criteria": {
+      "realized_sharpe_min": 12.0,
+      "fill_rate_min_pct": 60,
+      "max_drawdown_max_pct": 15,
+      "days_required": 60,
+      "note": "STRICTER gate due to OOS R²=-4.11 structural break warning"
+    },
+    "activation": "SCAFFOLD-READY — 60d paper-trade gate STRICT (Realized Sh>=12 + fill>=60% + maxDD<15%, OOS R²=-4.11 caution)",
+    "wave": "K653",
+    "daemon_number": "48th",
+    "plist": "scripts/com.cryptolab.k647-dot-orthog.plist",
+    "k647_hypothesis": "Polkadot (DOT) relay chain (Substrate) creates Governance/Staking-specific FR dynamics; after projecting out INJ (Cosmos DEX/DeFi, CW orderbook, beta=0.642) factor loadings via K647 single-factor OLS, the residual captures pure Polkadot relay-chain alpha (OOS Sh=23.25 SF W=168h). 28d staking unbonding cycles, OpenGov referendum timing, parachain slot auction events, relay chain upgrade cycles, and XCM adoption waves drive DOT FR orthogonally to shared INJ Cosmos-family narrative components. OOS R²=-4.11 structural break warning: IS DOT-INJ corr=0.616 decouples to OOS corr=0.045 — signal survives (OOS Sh=23.25) but IS beta drift monitoring is mandatory every 30d."
   }
 }
