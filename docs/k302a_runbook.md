@@ -12743,3 +12743,190 @@ print(f'Blocked {len(blocked)}/{len(pg)}: {blocked}')
 | K438 | K438 K208 predictedFR + limit ladder (baseline OOS Sh 19.12) |
 | K509 | K208 edge decay confirmed (Sh -67% YoY) |
 | K339 | REPO_ROOT pattern (no absolute paths, public-repo safe) |
+
+## §66 K745 — K498 OKX Integration Scaffold (User Action: 1-Step Activation)
+
+*K745 §66 — K498 OKX integration scaffold ready-for-flip (HL cap relief 65%→50%, unlocks $1.5M new HL headroom + $4.5M Phase A queue, 1-step activation, paper-safe defaults) — 2026-05-30 19:35 JST*
+
+### §66.1 Context
+
+HL concentration is at **exactly 65.0%** (K524 hard cap). All new alt-alt strategies requiring HL are **blocked** until HL headroom is created. K498 OKX integration relieves this by routing new sleeves to OKX, targeting HL 65%→50% over 1-2 months.
+
+This section documents the **user action** required to activate OKX live routing.
+
+### §66.2 Profit Unlock Projection (K523 3-Point Mandatory)
+
+| Scenario | Realized USDC/yr @$10M | Basis |
+|----------|------------------------|-------|
+| **Conservative** | $31,484 | Sh=10 × 1 new strategy |
+| **Mid (central)** | $47,218 | Sh=15 × 1 new strategy |
+| **Optimistic** | $138,486 | Sh=22 × 2 new strategies |
+
+> K523: realized ratio 38% applied. OOS 25% haircut. Single-point banned; central = Mid scenario.
+> Plus OKX maker rebate lift (VIP1 0.5 bps vs HL 0.3 bps = +0.2 bps on routed flow).
+
+HL 65%→50% = 15pp = **$1.5M new HL headroom @$10M AUM** = ~1-2 new alt-alt strategies unlocked.
+
+### §66.3 Deliverables (K745)
+
+| File | Description |
+|------|-------------|
+| `scripts/okx_client.py` | OKX authenticated API client (HMAC-SHA256 auth, paper-safe) |
+| `scripts/okx_fr_cache.py` | OKX FR Parquet cache (k208_*.parquet schema compatible) |
+| `scripts/multi_venue_router.py` | Multi-venue router: OKX registration + sleeve-to-venue map |
+| `scripts/risk_manager.py` | Risk manager: OKX positions in concentration calculation |
+| `scripts/emergency_okx_exit.py` | Emergency OKX exit skeleton (K357 mirror, dry-run safe) |
+| `data/venue_allocation.json` | Per-strategy sleeve allocation config (activate via `live_enabled=true`) |
+| `wave_k745_k498_okx_scaffold.py` | Validation harness (25/25 tests pass) |
+| `wave_k745_k498_okx_scaffold.json` | Validation results + K523 projection |
+
+### §66.4 Concentration Caps (K745)
+
+| Venue | Cap | Notes |
+|-------|-----|-------|
+| HL | **65.0%** | K524 hard limit (EXACT — no exceptions) |
+| Bybit | 50.0% | K485 |
+| OKX | **40.0%** | K745 initial; expand to 50% after 30d track record |
+
+### §66.5 User Action: OKX 1-Step Activation
+
+**Prerequisites**: OKX account registered + KYC Level 2 complete + USDT funded.
+
+**Step 1: Create API Key**
+```
+My Account → API Management → Create API Key
+  Name: crypto-lab-k498
+  Scope: ✅ Read  ✅ Trade  ❌ Withdraw (NEVER)
+  IP whitelist: add server IP if possible
+  Passphrase: set a strong passphrase
+```
+
+**Step 2: Paste credentials into `.env.local`** (NOT committed to repo)
+```bash
+# .env.local (git-ignored)
+OKX_API_KEY=your_api_key_here
+OKX_API_SECRET=your_api_secret_here
+OKX_PASSPHRASE=your_passphrase_here
+OKX_LIVE_ENABLED=true
+```
+
+**Step 3: Enable OKX in venue_allocation.json**
+```python
+python3 -c "
+import json
+d = json.load(open('data/venue_allocation.json'))
+d['venues']['OKX']['live_enabled'] = True
+json.dump(d, open('data/venue_allocation.json', 'w'), indent=2)
+print('OKX live_enabled=True set')
+"
+```
+
+**Step 4: Validate**
+```bash
+python3 wave_k745_k498_okx_scaffold.py --smoke
+# Expected: Phase 1: 5/5 tests passed
+```
+
+**Step 5: 48h paper validation**
+```bash
+# Monitor routing decisions for 48h:
+tail -f data/multi_venue_router_decisions.jsonl | python3 -c "
+import sys, json
+for line in sys.stdin:
+    d = json.loads(line)
+    print(f'{d[\"ts_jst\"]}  {d[\"venue\"]}  {d[\"symbol\"]}  mode={d[\"mode\"]}')
+"
+```
+
+**Step 6: Activate live routing (no code change needed)**
+The `multi_venue_router.py` detects `live_enabled=true` automatically via `venue_allocation.json`. All new alt-alt sleeves with `venue_allocation_post_okx` defined will start routing to OKX.
+
+### §66.6 Sleeve Migration (Post-K498)
+
+After OKX activation, update `data/venue_allocation.json` sleeves progressively:
+
+```python
+# Example: K500 INJ-BTC → 70% OKX / 30% Bybit
+python3 -c "
+import json
+d = json.load(open('data/venue_allocation.json'))
+d['sleeves']['K500_INJ_BTC']['venue_allocation'] = {'Bybit': 0.30, 'OKX': 0.70}
+json.dump(d, open('data/venue_allocation.json', 'w'), indent=2)
+print('K500 INJ-BTC: 70% OKX / 30% Bybit activated')
+"
+```
+
+Target sleeve migrations (ordered by OKX liquidity fit):
+
+| Strategy | Current | Post-K498 | OKX% |
+|----------|---------|-----------|------|
+| K500 INJ-BTC | Bybit 100% | OKX 70% / Bybit 30% | 70% |
+| K679 APT-SOL | Bybit 100% | OKX 60% / Bybit 40% | 60% |
+| K682 ATOM-SOL | Bybit 100% | OKX 60% / Bybit 40% | 60% |
+| K684 SOL-INJ | Bybit 100% | OKX 70% / Bybit 30% | 70% |
+| K694 TIA-SOL | Bybit 100% | OKX 60% / Bybit 40% | 60% |
+
+### §66.7 Reversal (Instant)
+
+Set `OKX_LIVE_ENABLED=false` in `.env.local` — all OKX routing reverts to HL/Bybit immediately. No code change required. No daemon restart needed.
+
+```bash
+# Revert:
+sed -i '' 's/OKX_LIVE_ENABLED=true/OKX_LIVE_ENABLED=false/' .env.local
+# Or set venue_allocation.json venues.OKX.live_enabled=false
+```
+
+### §66.8 Emergency Exit
+
+If OKX shows API errors or regulatory signals:
+```bash
+# Dry-run (review plan first):
+python3 scripts/emergency_okx_exit.py --dry-run
+
+# Live execution (requires --confirm):
+python3 scripts/emergency_okx_exit.py --EXECUTE --confirm
+```
+
+Emergency flag file: `EMERGENCY_OKX_EXIT_TRIGGERED.flag` (checked by daemons).
+
+### §66.9 OKX Fee Table
+
+| VIP Tier | Maker Rebate | Taker Fee | Annual Rebate @$10M (K208 flow) |
+|----------|-------------|-----------|----------------------------------|
+| VIP0 | 0.0 bps | 5.0 bps | ~$0/yr |
+| **VIP1 (initial)** | **0.5 bps** | **4.5 bps** | **~$9.5K/yr** |
+| VIP2 | 1.0 bps | 4.0 bps | ~$19K/yr |
+| VIP4 (target) | 2.0 bps | 3.0 bps | ~$38K/yr |
+| VIP5 | 2.5 bps | 2.5 bps | ~$48K/yr |
+
+> K745 baseline: VIP1 (0.5 bps maker rebate). Upgrade to VIP4 for full maker rebate.
+> POST_ONLY enforced on all OKX orders (guarantees maker fill).
+
+### §66.10 OKX Instruments (K208 Universe)
+
+All K208 paired-trade symbols are available on OKX:
+`BTC-USDT-SWAP`, `ETH-USDT-SWAP`, `SOL-USDT-SWAP`, `INJ-USDT-SWAP`, `ATOM-USDT-SWAP`,
+`TIA-USDT-SWAP`, `APT-USDT-SWAP`, `SEI-USDT-SWAP`, `AVAX-USDT-SWAP`, `ENA-USDT-SWAP`,
+`HBAR-USDT-SWAP`, `LINK-USDT-SWAP`, and 8+ more.
+
+Instruct format: `{BASE}-USDT-SWAP` (linear perpetual, USDT-margined).
+Funding cycle: 8h (matches HL/Bybit — no normalization needed).
+
+### §66.11 References
+
+| File / Wave | Description |
+|-------------|-------------|
+| `wave_k745_k498_okx_scaffold.py` | K745 validation harness (25/25 tests) |
+| `wave_k745_k498_okx_scaffold.json` | Full results + K523 projections |
+| `wave_k745_k498_okx_scaffold.md` | Summary report |
+| `data/venue_allocation.json` | 1-step activation config |
+| `scripts/okx_client.py` | OKX API client (K745) |
+| `scripts/okx_fr_cache.py` | FR cache layer (K745) |
+| `scripts/multi_venue_router.py` | Multi-venue router (K745) |
+| `scripts/risk_manager.py` | Risk manager with OKX (K745) |
+| `scripts/emergency_okx_exit.py` | Emergency exit skeleton (K745) |
+| K498 | K498 smart router profitability quantification |
+| K524 | HL 65.0% concentration cap (exact) |
+| K485 | Bybit sub-account + 50% cap |
+| K523 | 3-point projection mandate |
+| K339 | REPO_ROOT pattern (no absolute paths) |

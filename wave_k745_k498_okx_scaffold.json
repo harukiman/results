@@ -1,0 +1,276 @@
+{
+  "wave": "K745",
+  "date": "2026-05-30",
+  "generated_jst": "2026-05-30 19:34 JST",
+  "all_ok": true,
+  "total_pass": 25,
+  "total_tests": 25,
+  "elapsed_s": 10.62,
+  "phases": {
+    "phase1_smoke": {
+      "phase": 1,
+      "name": "OKX Public API Smoke Test",
+      "tests": {
+        "funding_rate": {
+          "ok": true,
+          "symbol": "BTC-USDT-SWAP",
+          "funding_rate": 4.28112218211e-05,
+          "annualized_pct": 4.6878,
+          "error": ""
+        },
+        "fr_history": {
+          "ok": true,
+          "records": 10
+        },
+        "ticker": {
+          "ok": true,
+          "last": 73593.5
+        },
+        "paired_trade_family_fr": {
+          "ok": true,
+          "symbols": {
+            "INJ-USDT-SWAP": {
+              "ok": true,
+              "fr": -0.0005036119479886,
+              "ann": -55.1455
+            },
+            "SOL-USDT-SWAP": {
+              "ok": true,
+              "fr": 6.20032518556e-05,
+              "ann": 6.7894
+            },
+            "ATOM-USDT-SWAP": {
+              "ok": true,
+              "fr": -0.0002169540875494,
+              "ann": -23.7565
+            }
+          }
+        },
+        "paper_order": {
+          "ok": true,
+          "mode": "paper",
+          "order_id": "PAPER_1780137288064"
+        }
+      },
+      "pass": 5,
+      "total": 5,
+      "ok": true
+    },
+    "phase2_cache": {
+      "phase": 2,
+      "name": "FR Cache Layer",
+      "tests": {
+        "import_ok": {
+          "ok": true,
+          "cache_dir": "cache"
+        },
+        "schema_check": {
+          "ok": true,
+          "columns": [
+            "fundingTime",
+            "fundingRate",
+            "realizedRate",
+            "symbol"
+          ],
+          "rows": 90,
+          "has_required": true,
+          "has_extra_okx_cols": false,
+          "note": "existing HL cache: may lack venue/annualized_pct cols (added by new OKX writer)"
+        },
+        "manifest": {
+          "ok": true,
+          "symbols_cached": []
+        },
+        "venue_allocation_json": {
+          "ok": true,
+          "has_okx": true,
+          "has_sleeves": true
+        }
+      },
+      "pass": 4,
+      "total": 4,
+      "ok": true
+    },
+    "phase3_router": {
+      "phase": 3,
+      "name": "Multi-Venue Router",
+      "tests": {
+        "import": {
+          "ok": true
+        },
+        "hl_cap_routing": {
+          "ok": true,
+          "venue": "Bybit",
+          "capped": [
+            "HL"
+          ],
+          "hl_pct": 0.65
+        },
+        "concentration_snapshot": {
+          "ok": true,
+          "hl_pct": 0.65,
+          "bybit_pct": 0.2,
+          "okx_pct": 0.0,
+          "violations": [
+            "HL"
+          ]
+        },
+        "paired_routing": {
+          "ok": true,
+          "long_venue": "Bybit",
+          "short_venue": "Bybit"
+        },
+        "post_only_enforcement": {
+          "ok": true,
+          "post_only": true
+        },
+        "dashboard_write": {
+          "ok": true,
+          "path": "multi_venue_router_dashboard.json"
+        }
+      },
+      "pass": 6,
+      "total": 6,
+      "ok": true
+    },
+    "phase4_risk": {
+      "phase": 4,
+      "name": "Risk Manager OKX",
+      "tests": {
+        "import": {
+          "ok": true
+        },
+        "okx_cap_defined": {
+          "ok": true,
+          "okx_cap": 0.4,
+          "expected": 0.4
+        },
+        "okx_trade_allow": {
+          "ok": true,
+          "allow": true,
+          "current_pct": 0.0,
+          "projected_pct": 0.05,
+          "cap": 0.4
+        },
+        "hl_relief_projection": {
+          "ok": true,
+          "hl_before": 0.65,
+          "hl_after": 0.5,
+          "relief_pp": 0.15,
+          "okx_cap_ok": true,
+          "unlocked_usd": 1500000.0
+        },
+        "hl_cap_block": {
+          "ok": true,
+          "allow": false,
+          "reason": "CAP_EXCEEDED"
+        },
+        "report_write": {
+          "ok": true,
+          "path": "risk_manager_report.json"
+        }
+      },
+      "pass": 6,
+      "total": 6,
+      "ok": true
+    },
+    "phase5_exit": {
+      "phase": 5,
+      "name": "Emergency Exit Dry-Run",
+      "tests": {
+        "import": {
+          "ok": true
+        },
+        "dry_run_exit": {
+          "ok": true,
+          "mode": "dry_run",
+          "final_status": "PARTIAL_CLOSE: 1 positions remain",
+          "close_results": 1
+        },
+        "status_check": {
+          "ok": true,
+          "has_credentials": false
+        }
+      },
+      "pass": 3,
+      "total": 3,
+      "ok": true
+    },
+    "phase6_projection": {
+      "phase": 6,
+      "name": "Profit Unlock Projection (K523 3-point)",
+      "aum_usd": 10000000.0,
+      "hl_current_pct": 0.65,
+      "hl_target_pct": 0.5,
+      "relief_pp": 0.15000000000000002,
+      "new_hl_headroom_usd": 1500000.0000000002,
+      "sleeve_pct": 0.03,
+      "max_new_strategies": 5,
+      "oos_haircut": 0.25,
+      "k523_realized_ratio": 0.38,
+      "conservative": {
+        "sharpe_assumption": 10.0,
+        "new_strategies": 1,
+        "alt_alt_usdc_yr": 82814.0,
+        "okx_rebate_lift_yr": 38.0,
+        "total_usdc_yr": 82852.0,
+        "realized_ratio": 0.38,
+        "realized_usdc_yr": 31484.0
+      },
+      "mid": {
+        "sharpe_assumption": 15.0,
+        "new_strategies": 1,
+        "alt_alt_usdc_yr": 124221.0,
+        "okx_rebate_lift_yr": 38.0,
+        "total_usdc_yr": 124259.0,
+        "realized_ratio": 0.38,
+        "realized_usdc_yr": 47218.0
+      },
+      "optimistic": {
+        "sharpe_assumption": 22.0,
+        "new_strategies": 2,
+        "alt_alt_usdc_yr": 364381.0,
+        "okx_rebate_lift_yr": 57.0,
+        "total_usdc_yr": 364438.0,
+        "realized_ratio": 0.38,
+        "realized_usdc_yr": 138486.0
+      },
+      "central": {
+        "sharpe_assumption": 15.0,
+        "new_strategies": 1,
+        "alt_alt_usdc_yr": 124221.0,
+        "okx_rebate_lift_yr": 38.0,
+        "total_usdc_yr": 124259.0,
+        "realized_ratio": 0.38,
+        "realized_usdc_yr": 47218.0
+      },
+      "note": "K523: 3-point mandatory. Single number is upper bound, not central. Realized ratio 38% (K518 floor). OOS 25% haircut on paired-trade. Conservative: $31,484/yr | Mid (central): $47,218/yr | Optimistic: $138,486/yr",
+      "ok": true
+    }
+  },
+  "deliverables": {
+    "scripts/okx_client.py": "K745 OKX authenticated API client (auth + paper-safe)",
+    "scripts/okx_fr_cache.py": "OKX FR Parquet cache layer (k208 schema compatible)",
+    "scripts/multi_venue_router.py": "Multi-venue router with OKX registration + sleeve map",
+    "scripts/risk_manager.py": "Risk manager: OKX positions in concentration calc",
+    "scripts/emergency_okx_exit.py": "Emergency OKX exit skeleton (K357 mirror)",
+    "data/venue_allocation.json": "Per-strategy sleeve-to-venue allocation config",
+    "wave_k745_k498_okx_scaffold.py": "This validation harness",
+    "wave_k745_k498_okx_scaffold.json": "Validation results",
+    "wave_k745_k498_okx_scaffold.md": "Summary report"
+  },
+  "profit_unlock_k523": {
+    "conservative_yr": 31484.0,
+    "mid_yr": 47218.0,
+    "optimistic_yr": 138486.0,
+    "hl_relief_pp": 0.15000000000000002,
+    "new_headroom_usd": 1500000.0000000002,
+    "note": "K523: 3-point mandatory. Single number is upper bound, not central. Realized ratio 38% (K518 floor). OOS 25% haircut on paired-trade. Conservative: $31,484/yr | Mid (central): $47,218/yr | Optimistic: $138,486/yr"
+  },
+  "activation": {
+    "1_step": "OKX_LIVE_ENABLED=true in .env.local + live_enabled=true in venue_allocation.json",
+    "revert": "OKX_LIVE_ENABLED=false \u2192 all routing reverts to HL/Bybit instantly",
+    "docs": "docs/k302a_runbook.md \u00a766"
+  },
+  "status": "K745 K498 OKX SCAFFOLD READY"
+}

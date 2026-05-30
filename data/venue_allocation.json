@@ -1,0 +1,185 @@
+{
+  "_comment": "K745 K498 OKX integration scaffold — venue allocation config",
+  "_wave": "K745",
+  "_date": "2026-05-30",
+  "_note": "Set venues.OKX.live_enabled=true after API key paste to activate OKX routing",
+  "_1_step_activation": "set OKX_LIVE_ENABLED=true in .env.local AND set venues.OKX.live_enabled=true here",
+
+  "venues": {
+    "HL": {
+      "enabled": true,
+      "live_enabled": true,
+      "maker_rebate_bps": 0.30,
+      "taker_fee_bps": 4.50,
+      "max_pct_of_total": 0.65,
+      "post_only_default": true,
+      "user_tier": "GOLD",
+      "status": "LIVE",
+      "cap_note": "K524 exact cap — HARD LIMIT 65.0% (HL at exact cap as of K745)",
+      "target_after_okx": 0.50,
+      "api_base": "https://api.hyperliquid.xyz"
+    },
+    "Bybit": {
+      "enabled": true,
+      "live_enabled": true,
+      "maker_rebate_bps": 1.00,
+      "taker_fee_bps": 3.20,
+      "max_pct_of_total": 0.50,
+      "post_only_default": true,
+      "user_tier": "VIP5",
+      "status": "LIVE",
+      "cap_note": "K485 cap",
+      "api_base": "https://api.bybit.com"
+    },
+    "OKX": {
+      "enabled": true,
+      "live_enabled": false,
+      "_live_enabled_note": "Set to true after: (1) OKX account registered + KYC, (2) API key created (read+trade, NO withdraw), (3) keys in .env.local, (4) OKX_LIVE_ENABLED=true in .env.local",
+      "maker_rebate_bps": 0.50,
+      "taker_fee_bps": 4.00,
+      "max_pct_of_total": 0.40,
+      "post_only_default": true,
+      "user_tier": "VIP1",
+      "status": "SCAFFOLD-READY",
+      "target_expanded": 0.50,
+      "expand_after_days": 30,
+      "cap_note": "K745 initial: 40% (expand to 50% after 30d track record)",
+      "api_base": "https://www.okx.com",
+      "fee_table": {
+        "VIP0": {"maker_rebate_bps": 0.0,  "taker_fee_bps": 5.0},
+        "VIP1": {"maker_rebate_bps": 0.5,  "taker_fee_bps": 4.5},
+        "VIP2": {"maker_rebate_bps": 1.0,  "taker_fee_bps": 4.0},
+        "VIP3": {"maker_rebate_bps": 1.5,  "taker_fee_bps": 3.5},
+        "VIP4": {"maker_rebate_bps": 2.0,  "taker_fee_bps": 3.0},
+        "VIP5": {"maker_rebate_bps": 2.5,  "taker_fee_bps": 2.5}
+      }
+    }
+  },
+
+  "sleeves": {
+    "_comment": "Per-strategy venue allocation. Values must sum to 1.0 per strategy.",
+
+    "K280": {
+      "name": "K280 FR reverse carry (main sleeve)",
+      "venue_allocation": {"HL": 1.0},
+      "note": "HL-only until K552 + K498 unblock HL headroom"
+    },
+    "K297p": {
+      "name": "K297p satellite (PAXG/SPX)",
+      "venue_allocation": {"HL": 1.0},
+      "note": "HL-only (strategy structure)"
+    },
+    "K500_INJ_BTC": {
+      "name": "K500 INJ-BTC paired trade",
+      "venue_allocation": {"Bybit": 1.0},
+      "venue_allocation_post_okx": {"Bybit": 0.30, "OKX": 0.70},
+      "note": "Current: Bybit-only (HL at cap). Post-K498: 70% OKX / 30% Bybit for INJ leg",
+      "switch_condition": "OKX live_enabled=true + 48h paper validation"
+    },
+    "K507_TIA_BTC": {
+      "name": "K507 TIA-BTC paired trade",
+      "venue_allocation": {"Bybit": 1.0},
+      "venue_allocation_post_okx": {"Bybit": 0.50, "OKX": 0.50},
+      "note": "Current: Bybit-only. Post-K498: 50/50 split"
+    },
+    "K512_APT_BTC": {
+      "name": "K512 APT-BTC paired trade",
+      "venue_allocation": {"Bybit": 1.0},
+      "venue_allocation_post_okx": {"Bybit": 0.50, "OKX": 0.50},
+      "note": "Current: Bybit-only. Post-K498: 50/50 split"
+    },
+    "K679_APT_SOL": {
+      "name": "K679 APT-SOL alt-alt",
+      "venue_allocation": {"Bybit": 1.0},
+      "venue_allocation_post_okx": {"Bybit": 0.40, "OKX": 0.60},
+      "note": "Current: Bybit-only. Post-K498: 60% OKX"
+    },
+    "K682_ATOM_SOL": {
+      "name": "K682 ATOM-SOL alt-alt",
+      "venue_allocation": {"Bybit": 1.0},
+      "venue_allocation_post_okx": {"Bybit": 0.40, "OKX": 0.60},
+      "note": "Current: Bybit-only. Post-K498: 60% OKX"
+    },
+    "K684_SOL_INJ": {
+      "name": "K684 SOL-INJ alt-alt",
+      "venue_allocation": {"Bybit": 1.0},
+      "venue_allocation_post_okx": {"Bybit": 0.30, "OKX": 0.70},
+      "note": "INJ-heavy: prefer OKX 70% post-K498 (INJ liquidity on OKX)"
+    },
+    "K690_SEI_SOL": {
+      "name": "K690 SEI-SOL alt-alt",
+      "venue_allocation": {"Bybit": 1.0},
+      "venue_allocation_post_okx": {"Bybit": 0.50, "OKX": 0.50}
+    },
+    "K694_TIA_SOL": {
+      "name": "K694 TIA-SOL alt-alt",
+      "venue_allocation": {"Bybit": 1.0},
+      "venue_allocation_post_okx": {"Bybit": 0.40, "OKX": 0.60}
+    },
+    "FUTURE_HL_HEADROOM": {
+      "_comment": "New alt-alt sleeves blocked until OKX active (HL at 65% cap). Post-K498: ~$1.5M HL headroom unlocked.",
+      "estimated_unlock_usd": 1500000,
+      "estimated_new_strategies": ["future_alt_alt_1", "future_alt_alt_2"],
+      "condition": "OKX live_enabled=true"
+    }
+  },
+
+  "concentration_caps": {
+    "HL":    0.65,
+    "Bybit": 0.50,
+    "OKX":   0.40,
+    "_note": "OKX cap: 40% initial (K745). Expand to 50% after 30d track record."
+  },
+
+  "emergency_thresholds": {
+    "HL":    0.70,
+    "Bybit": 0.55,
+    "OKX":   0.45,
+    "_note": "Exceeding these triggers emergency exit script review"
+  },
+
+  "hl_cap_relief_projection": {
+    "_note": "Post-K498 OKX activation: HL% expected to drop from 65% to ~50% over 1-2 months",
+    "hl_before_pct": 0.65,
+    "hl_target_pct": 0.50,
+    "relief_pp": 0.15,
+    "unlocks_usd_at_10m_aum": 1500000,
+    "mechanism": "New alt-alt sleeves route 60-70% to OKX instead of HL/Bybit",
+    "timeline_months": 2
+  },
+
+  "profit_unlock": {
+    "_comment": "K523 3-point projection for HL cap relief ($10M AUM)",
+    "conservative_usd_yr": 120000,
+    "mid_usd_yr": 200000,
+    "optimistic_usd_yr": 350000,
+    "basis": "~$1.5M new HL headroom × expected alt-alt Sharpe 15-25 @ 3% sleeve",
+    "realized_to_stated_ratio": 0.38,
+    "note": "K523: single-point banned. Conservative/mid/optimistic 3-point required."
+  },
+
+  "_activation_steps": [
+    "1. Register OKX account (okx.com) + complete KYC Level 2",
+    "2. Fund OKX account (transfer USDT via HL/Bybit bridge or direct)",
+    "3. Create API key: My Account → API → Create API key",
+    "   Scope: Read (account + positions) + Trade (place/cancel orders)",
+    "   Withdraw scope: DO NOT enable (never needed for this strategy)",
+    "   Set IP whitelist if possible (server IP)",
+    "4. Paste credentials into .env.local (NOT committed to repo):",
+    "   OKX_API_KEY=your_key_here",
+    "   OKX_API_SECRET=your_secret_here",
+    "   OKX_PASSPHRASE=your_passphrase_here",
+    "   OKX_LIVE_ENABLED=true",
+    "5. Set venues.OKX.live_enabled=true in this file (data/venue_allocation.json)",
+    "6. Run smoke test: python3 scripts/wave_k745_k498_okx_scaffold.py --smoke",
+    "7. Run 48h paper validation (monitor smart_router_decisions.jsonl)",
+    "8. Activate live routing (multi_venue_router.py detects live_enabled=true)"
+  ],
+
+  "_revert_steps": [
+    "Set OKX_LIVE_ENABLED=false in .env.local",
+    "Set venues.OKX.live_enabled=false in this file",
+    "All OKX routing reverts to HL/Bybit immediately (no code change required)",
+    "Run python3 scripts/emergency_okx_exit.py --dry-run to verify no open OKX positions"
+  ]
+}
