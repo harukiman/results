@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k696-ena-sol</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k696_ena_sol_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 60th daemon MILESTONE: K696 ENA-SOL FR Differential (SEVENTH ALT-ALT, FIRST CROSS-CLUSTER, Bybit-only, ACCEPT) -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 13, fill_rate >= 60%, maxDD < 15%
+             ACCEPT: 15/17 gates PASS (G4 11/12, G6 20.8/yr below threshold).
+             Monitor fold-7 pattern (2025-03 regime negative). -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k696_ena_sol.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k696_ena_sol.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K696 specific notes (do not remove):
+         Strategy:    ENA-SOL FR Differential, SEVENTH ALT-ALT pair (K696, K699 scaffold)
+         Daemon #:    60th daemon MILESTONE (7th alt-alt accepted, 9th evaluated)
+         OOS Sharpe:  26.93 (W=168h, zero threshold, ~216d OOS period)
+         Profit:      $93,187/yr net @$10M @4x (3% standalone sleeve)
+         Signal:      diff = ENA_FR - SOL_FR (direct alt-alt cross-cluster, W=168h rolling mean, zero threshold)
+         Venue:       Bybit-only (ENA-PERP + SOL-PERP, both Bybit)
+         HL impact:   UNCHANGED 62.5% (Bybit-only preferred — 2.5pp headroom preserved)
+         Gate:        60d paper-trade: Realized Sh>=13 + fill>=60% + maxDD<15%
+         Cluster:     ENA-SOL Alt-Alt (FIRST CROSS-CLUSTER: Ethena synth stable infra vs Solana SVM retail)
+         ACCEPT:      15/17 gates PASS. G4=11/12 (fold 7 negative 2025-03). G6=20.8/yr below threshold.
+                      All other gates (G1-G3, G5a-G5i, G7-G9) PASS.
+         CROSS-CLUSTER: ENA cluster (Ethena synthetic stable infrastructure, sUSDe protocol equity)
+                        vs SOL cluster (Solana SVM L1 execution, retail speculation).
+                        ENA and SOL operate in orthogonal economic cycles.
+         Double carry: ENA FR < 0 (37.2% of time) → both legs carry-positive simultaneously.
+                       Double carry = SOL_FR + |ENA_FR| (unique in alt-alt family).
+         ENA drivers: sUSDe protocol equity (sUSDe APY = perp FR capture).
+                      FR driven by: sUSDe TVL cycles, perp FR regime changes, protocol risk events.
+                      ENA FR mean = -7.65%/yr (structurally negative on average).
+                      HypurrFi DROP_LINE event (K337/K345): sUSDe TVL 14d -49% confirms volatility.
+         SOL drivers: DePIN/Retail meme-coin season (BONK/WIF/POPCAT), Firedancer hype,
+                      SOL ETF speculation, validator economics. +7.70%/ann persistent.
+         MR8/MR9:     ENA is NOT in existing alt-alt algebraic group {APT,ATOM,SOL,INJ,AVAX,SEI,TIA}.
+                      ENA-SOL = K616_dir - K476_dir. K616 vs K476 corr=0.0094 (orthogonal). PASS.
+         MR6 ENA cap: K616 (existing ENA-BTC) + K696 (ENA-SOL) combined ENA < 6% AUM.
+                      ENA capital: K616 ~3% + K696 3% = 6% AUM (at cap). Monitor closely.
+         G5b:         corr(K696, K476)=0.1765 (SOL saturation PASS — critical gate).
+         G5c:         corr(K696, K616)=-0.7427 (signed convention PASS — ENA new vertex).
+                      PnL corr K616=0.6723 (high but complementary mechanics).
+         K616 math:   ENA-SOL = K616_dir - K476_dir (algebraic decomposition).
+                      Portfolio: K476+K616+K696 forms FR triangle with additive alpha.
+         SOL exposure: K696+K679+K682+K684+K686+K690+K694+K476 — 8 strategies share SOL.
+                       Combined SOL notional: up to 8x $600K = $4.8M @$10M (extreme case).
+                       Monitor combined SOL notional across all 8 strategies.
+         Regime dist: 61.5% BEAR_ENA (SHORT SOL / LONG ENA — dominant, carry from SOL FR premium).
+                      38.5% BULL_ENA (SHORT ENA / LONG SOL — rare sUSDe demand surge).
+         OU / ADF:    OU half-life=3.75h (STRONG). ADF stat -13.0808 (strongest in alt-alt family).
+         Trades/yr:   ~20.8 expected (W=168h, zero threshold, G6 below 30 threshold — carry-positive).
+         Deploy:      cp scripts/com.cryptolab.k696-ena-sol.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k696-ena-sol.plist
+    -->
+</dict>
+</plist>
