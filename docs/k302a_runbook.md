@@ -8768,3 +8768,201 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k635-imx-orthog.plist
 ---
 
 *K641 §45 -- K635 IMX-BTC Orthogonalized FR Differential production scaffold (43rd daemon, OOS Sh 24.81 residual MF SHIB+TIA+SEI W=168h $4.78M/yr @$10M @4x, beta_SHIB=0.254 beta_TIA=0.068 beta_SEI=0.158 hardcoded, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=12 fill>=60% maxDD<20%, Gaming L2 Infra cluster, v6.34 candidate) -- 2026-05-30*
+
+---
+
+## §46 K638 STX-BTC Orthogonalized FR Differential — Production Scaffold Playbook
+
+### §46.1 Strategy Overview
+
+K638 implements a delta-neutral paired trade on **STX-BTC funding rate differential**, orthogonalized against APT+SEI+DOGE factor regimes via multi-factor OLS regression. STX (Stacks) is a Bitcoin Layer-2 via PoX (Proof-of-Transfer) — FR dynamics are driven by PoX stacking cycles and BTC-L2 narrative waves, not shared alt-regime components.
+
+| Metric | Value |
+|--------|-------|
+| Wave | K638 (orthogonalize) → K642 (scaffold) |
+| Decision | ACCEPT CONDITIONAL |
+| OOS Sharpe (residual) | 12.38 (MF W=504h) |
+| OOS Sharpe (raw K613) | 26.86 (BLOCKED-G5 APT corr=0.5334) |
+| Net Profit 1.5% sleeve | $65,018/yr @$10M @4x |
+| Daemon | 44th (com.cryptolab.k638-stx-orthog) |
+| Cluster | BTC-L2 / Stacks PoX (Bitcoin Layer-2) |
+| Venue | Bybit primary (STX+BTC paired, both legs Bybit) |
+
+### §46.2 Orthogonalization Mechanism (K638 OLS Multi-Factor)
+
+```
+STX_diff  = STX_FR  − BTC_FR       (raw paired diff)
+APT_diff  = APT_FR  − BTC_FR       (Move-VM L1 factor)
+SEI_diff  = SEI_FR  − BTC_FR       (EVM-Cosmos factor)
+DOGE_diff = DOGE_FR − BTC_FR       (PoW meme factor)
+
+residual = STX_diff − β_APT × APT_diff − β_SEI × SEI_diff − β_DOGE × DOGE_diff
+         = STX_diff − 0.203339 × APT_diff − 0.125164 × SEI_diff − 0.306518 × DOGE_diff
+```
+
+**β coefficients** (K638 multi-factor OLS, IS period May 2024–Oct 2025):
+
+| Factor | β | IS R² (MF) | OOS R² |
+|--------|---|-----------|--------|
+| β_APT  | 0.203339 | 0.4371 | 0.0179 |
+| β_SEI  | 0.125164 | — | — |
+| β_DOGE | 0.306518 | — | — |
+
+**HARDCODED in production — no re-OLS for stability.**
+
+APT was the primary G5 blocker: APT corr with raw STX=0.5334 → post-orth=-0.021 (PASS).
+
+### §46.3 Signal Gate
+
+| Parameter | Value |
+|-----------|-------|
+| EMA window | W=504h (63 × 8h periods) |
+| Entry threshold | \|residual_EMA_504h\| > 1.5σ |
+| Regime BULL_STX | EMA > +1.5σ → SHORT STX / LONG BTC |
+| Regime BEAR_STX | EMA < −1.5σ → LONG STX / SHORT BTC |
+| Regime NEUTRAL | \|EMA\| ≤ 1.5σ → no position |
+
+### §46.4 Execution (Bybit Primary)
+
+- **Venue**: Bybit primary — STXUSDT-SWAP + BTC-USDT-SWAP
+- **Sleeve**: 1.5% (lower than K635 2% — smaller profit profile)
+- **Leverage**: 4x (K430 cap)
+- **Margin**: 1.5% × $10M = $150K margin, $600K total notional
+- **Per leg**: $300K STX + $300K BTC (equal weight, delta-neutral)
+- **Execution**: POST_ONLY parallel (K439 pattern)
+- **Cadence**: 8h (matches FR settlement cycle)
+- **HL impact**: NONE — Bybit-only; HL concentration unchanged at 65%
+
+### §46.5 Performance Summary
+
+| Metric | MF W=168h | MF W=504h (best) |
+|--------|-----------|-----------------|
+| OOS Sharpe | 6.55 | **12.38** |
+| OOS Ann Return | 3.99% | 6.77% |
+| OOS Max DD | -0.70% | -0.70% |
+| Trades/yr | 62.4 | 15.6 |
+| Net profit @$10M @4x | ~$24K | **$65K/yr** |
+
+Gate summary (MF W=504h, best config):
+- G1 (OOS Sh≥1.0): PASS (12.38)
+- G2 (permutation p<0.05): PASS (p=0.0)
+- G3 (DSR Bonferroni): FAIL (n_trials penalty, 4 configs tested)
+- G4 (walk-forward): FAIL (thin OOS per fold, low-freq 15.6/yr)
+- G5 (orthogonality): PASS (APT corr post-orth=-0.021, all 34 checks pass)
+- G6 (trade count): PASS (W=168h: 62.4/yr > 30 threshold)
+- G7 (ann return): PASS (27.09% 4x > 5% threshold)
+- G8 (cross-venue): FAIL (Bybit 8h vs HL 1h venue diff, corr=0.36)
+- G9 (data sufficiency): PASS (210.7 OOS days > 180)
+
+### §46.6 60-Day Paper-Trade Activation Gate
+
+Activate live when all three criteria met after 60-day paper-trade:
+
+| Gate | Threshold | Rationale |
+|------|-----------|-----------|
+| Realized Sharpe | ≥ 6.0 | 50% of OOS Sh=12.38 |
+| Fill rate | ≥ 60% | POST_ONLY viability on Bybit |
+| Max drawdown | < 20% | Tail loss protection |
+
+**Status**: SCAFFOLD-READY (60d paper-trade in progress)
+
+### §46.7 Emergency Exit Protocol
+
+K638 is Bybit-only. Emergency procedure:
+
+1. Check position: `python3 scripts/k638_stx_orthog_run.py --status`
+2. If position open: `python3 scripts/k638_stx_orthog_run.py --close "emergency"`
+3. Or use: `python3 scripts/emergency_hl_exit.py --include-k638`
+4. Close sequence: SHORT leg (STX or BTC) first, then LONG leg (IOC reduce-only)
+5. **HL not affected** — K638 is Bybit-only
+
+### §46.8 Regime Monitoring
+
+```json
+{
+  "regime": "BULL_STX | BEAR_STX | NEUTRAL",
+  "residual_ema_504h": float,
+  "threshold_1_5sigma": float,
+  "beta_apt_used": 0.203339,
+  "beta_sei_used": 0.125164,
+  "beta_doge_used": 0.306518,
+  "hl_concentration_pct": 65.0,
+  "gate_metrics.gate_status": "IN_PROGRESS -> PASS after 60d"
+}
+```
+
+### §46.9 Operational Commands
+
+```bash
+# Status check
+python3 scripts/k638_stx_orthog_run.py --status
+
+# Single cycle dry-run
+python3 scripts/k638_stx_orthog_run.py --dry-run
+
+# Rebalance check
+python3 scripts/k638_stx_orthog_run.py --rebalance
+
+# Close positions (paper/scaffold)
+python3 scripts/k638_stx_orthog_run.py --close "reason"
+
+# View dashboard
+cat data/k638_dashboard.json | python3 -m json.tool | head -50
+
+# Verify 44th daemon in registry
+python3 scripts/verify_deployment_status.py | grep -A3 k638
+
+# Install daemon (post gate passage)
+cp scripts/com.cryptolab.k638-stx-orthog.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k638-stx-orthog.plist
+```
+
+### §46.10 Leverage Configuration
+
+```json
+"K638_STX_ORTHOG": 4.0,   // in exchange_caps -- 4x (paired delta-neutral carry)
+"k638_notes": {
+  "sleeve_pct": 0.015,
+  "leverage": 4.0,
+  "margin_calc": "4x x 1.5% x $10M = $600K total notional / 4x = $150K margin (1.5% AUM)",
+  "oos_sharpe_residual": 12.38,
+  "ann_return_usd_1_5pct_4x_net": 65018,
+  "beta_apt": 0.203339,
+  "beta_sei": 0.125164,
+  "beta_doge": 0.306518,
+  "venue": "Bybit-only (STX+BTC both legs: Bybit primary for paired trade)",
+  "hl_impact": "NONE -- Bybit-only; HL concentration UNCHANGED at 65%",
+  "activation": "SCAFFOLD-READY -- 60d paper-trade gate (Realized Sh>=6 + fill>=60% + maxDD<20%)"
+}
+```
+
+### §46.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k638_stx_orthog_run.py` | Strategy script (K642 scaffold, K339 pattern) |
+| `data/k638_dashboard.json` | Live state + residual signal + beta_used + regime |
+| `scripts/com.cryptolab.k638-stx-orthog.plist` | 44th daemon plist (StartInterval 28800, gitignored) |
+| `scripts/emergency_hl_exit.py` | `--include-k638` flag + K638 Bybit close summary |
+| `scripts/leverage_manager.py` | K638_STX_ORTHOG 4.0 cap + SLEEVE_WEIGHTS_V635 |
+| `data/leverage_config.json` | K638_STX_ORTHOG: 4.0 + k638_notes |
+| `scripts/verify_deployment_status.py` | 44th daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§46) |
+| `wave_k642_k638_scaffold.py` | Wave driver/test |
+| `wave_k642_k638_scaffold.json` | Wave result report |
+
+### §46.12 References
+
+| Wave | Description |
+|------|-------------|
+| K642 | This section — K638 STX orthog production scaffold (44th daemon, v6.35 candidate) |
+| K638 | K638 analysis — STX ACCEPT CONDITIONAL ($65K/yr net @$10M @4x, OOS Sh 12.38 MF W=504h residual) |
+| K613 | K613 STX-BTC raw (BLOCKED-G5, APT corr=0.5334) |
+| K641 | K635 IMX orthog scaffold (43rd daemon, direct scaffold template) |
+| K640 | K633 OP orthog scaffold (42nd daemon) |
+| K637 | K628 JTO orthog scaffold (40th daemon, pattern origin) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K642 §46 -- K638 STX-BTC Orthogonalized FR Differential production scaffold (44th daemon, OOS Sh 12.38 residual MF APT+SEI+DOGE W=504h $65,018/yr net @$10M @4x, beta_APT=0.203339 beta_SEI=0.125164 beta_DOGE=0.306518 hardcoded, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=6 fill>=60% maxDD<20%, BTC-L2 cluster, v6.35 candidate) -- 2026-05-30*

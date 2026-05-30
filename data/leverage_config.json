@@ -29,7 +29,8 @@
     "K628_JTO_ORTHOG": 4.0,
     "K631_WLD_ORTHOG": 4.0,
     "K633_OP_ORTHOG":  4.0,
-    "K635_IMX_ORTHOG": 4.0
+    "K635_IMX_ORTHOG": 4.0,
+    "K638_STX_ORTHOG": 4.0
   },
   "k457_basket_notes": {
     "sleeve_pct": 0.05,
@@ -504,5 +505,47 @@
     "daemon_number": "43rd",
     "plist": "scripts/com.cryptolab.k635-imx-orthog.plist",
     "k635_hypothesis": "ImmutableX (StarkEx ZK rollup) for NFT/gaming creates Gaming L2 Infra-specific FR dynamics; after projecting out SHIB (meme/retail, beta=0.254), TIA (modular DA, beta=0.068), and SEI (EVM-Cosmos, beta=0.158) factor loadings via K635 multi-factor OLS, the residual captures pure Gaming L2 Infra alpha (OOS Sh=24.81 MF W=168h). Gaming NFT trading activity + Immutable zkEVM adoption cycles drive IMX FR orthogonally to shared mid-cap alt regimes."
+  },
+  "k638_notes": {
+    "sleeve_pct": 0.015,
+    "bybit_sleeve_pct": 0.015,
+    "hl_sleeve_pct": 0.0,
+    "leverage": 4.0,
+    "leverage_cap": 4.0,
+    "margin_calc": "4x x 1.5% sleeve x $10M = $600K total notional / 4x = $150K margin (1.5% of AUM)",
+    "margin_pct_of_aum_10M": "1.5%",
+    "per_leg_notional": "$300K STX + $300K BTC (Bybit, equal weight)",
+    "oos_sharpe_residual": 12.38,
+    "oos_sharpe_raw_k613": 26.8576,
+    "ema_window_h": 504,
+    "ema_periods": 63,
+    "ann_return_usd_1_5pct_4x_net": 65018,
+    "ann_return_usd_1_5pct_4x_gross": 81272,
+    "beta_apt": 0.203339,
+    "beta_sei": 0.125164,
+    "beta_doge": 0.306518,
+    "orthog_formula": "residual = STX_diff - 0.203339*APT_diff - 0.125164*SEI_diff - 0.306518*DOGE_diff",
+    "beta_hardcoded_note": "beta HARDCODED per K638 OLS multi-factor — no re-OLS in production for stability",
+    "g5_pass": true,
+    "cluster": "BTC-L2 / Stacks PoX (Bitcoin Layer-2, 44th daemon)",
+    "cluster_rationale": "STX PoX Proof-of-Transfer BTC-L2; FR driven by PoX stacking cycles + BTC-L2 narrative waves — orthogonal to APT Move-VM L1, SEI EVM-Cosmos mid-cap, DOGE PoW meme factor regimes",
+    "hl_concentration_pct_after_add": 65.0,
+    "hl_headroom_pp": 0.0,
+    "hl_impact": "NONE — Bybit-only strategy; HL concentration UNCHANGED at 65%",
+    "venue": "Bybit primary (STX+BTC both legs on Bybit; Bybit primary for paired trade)",
+    "execution": "POST_ONLY parallel (K439 paired execution pattern), Bybit-only",
+    "v634_candidate": "v6.34 + K638 1.5% Bybit = v6.35 combined (BTC-L2 cluster)",
+    "paper_gate_days": 60,
+    "activation_criteria": {
+      "realized_sharpe_min": 6.0,
+      "fill_rate_min_pct": 60,
+      "max_drawdown_max_pct": 20,
+      "days_required": 60
+    },
+    "activation": "SCAFFOLD-READY — 60d paper-trade gate (Realized Sh>=6 + fill>=60% + maxDD<20%)",
+    "wave": "K642",
+    "daemon_number": "44th",
+    "plist": "scripts/com.cryptolab.k638-stx-orthog.plist",
+    "k638_hypothesis": "Stacks (STX) PoX Proof-of-Transfer BTC-L2 creates BTC-L2-specific FR dynamics; after projecting out APT (Move-VM L1, beta=0.203339), SEI (EVM-Cosmos, beta=0.125164), and DOGE (PoW meme, beta=0.306518) factor loadings via K638 multi-factor OLS, the residual captures pure BTC-L2/PoX alpha (OOS Sh=12.38 MF W=504h). PoX stacking cycles + Bitcoin Layer-2 narrative waves drive STX FR orthogonally to shared alt-regime components."
   }
 }

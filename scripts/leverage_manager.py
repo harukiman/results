@@ -71,6 +71,7 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K631_WLD_ORTHOG": 4.0,         # K639: WLD-BTC orthogonalized (v6.32 candidate, Bybit-only, 2% sleeve, 4x leverage, OOS Sh 18.04 residual W=72h, $2.9M/yr @$10M, Biometric ID cluster, beta_JUP=0.458795)
     "K633_OP_ORTHOG":  4.0,         # K640: OP-BTC orthogonalized (v6.33 candidate, Bybit-only, 2% sleeve, 4x leverage, OOS Sh 12.68 residual W=72h, $2.32M/yr @$10M @4x, L2 Superchain cluster unlock, beta_FIL=0.542224)
     "K635_IMX_ORTHOG": 4.0,         # K641: IMX-BTC orthogonalized (v6.34 candidate, Bybit-only, 2% sleeve, 4x leverage, OOS Sh 24.81 residual MF W=168h, $4.78M/yr @$10M @4x, Gaming L2 Infra cluster, beta_SHIB=0.254 beta_TIA=0.068 beta_SEI=0.158)
+    "K638_STX_ORTHOG": 4.0,         # K642: STX-BTC orthogonalized (v6.35 candidate, Bybit-only, 1.5% sleeve, 4x leverage, OOS Sh 12.38 residual MF W=504h, $65,018/yr net @$10M @4x, BTC-L2 cluster, beta_APT=0.203339 beta_SEI=0.125164 beta_DOGE=0.306518)
     "K457_basket":    4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
@@ -334,6 +335,36 @@ SLEEVE_WEIGHTS_V634: Dict[str, float] = {
     "K631":    0.02,    # WLD-BTC orthogonalized, 4x leverage, Bybit-only (v6.32 K639 addition, $2.9M/yr)
     "K633":    0.02,    # OP-BTC orthogonalized, 4x leverage, Bybit-only (v6.33 K640 addition, $2.32M/yr)
     "K635":    0.02,    # IMX-BTC orthogonalized, 4x leverage, Bybit-only (v6.34 K641 addition, $4.78M/yr, Gaming L2 Infra)
+    "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
+}
+
+# v6.35 candidate weights (proposed in K642 — not yet active)
+# K638 STX-BTC orthogonalized 1.5% Bybit sleeve added to v6.34 combined portfolio
+# OOS Sh 12.38 (residual MF APT+SEI+DOGE W=504h), $65,018/yr net @$10M @4x (1.5% sleeve)
+# Bybit-only: HL concentration UNCHANGED at 65% (K638 uses Bybit for STX+BTC)
+# Orthog beta HARDCODED: beta_APT=0.203339, beta_SEI=0.125164, beta_DOGE=0.306518 (K638 OLS MF)
+# 60d paper-trade gate: Realized Sh>=6 + fill>=60% + maxDD<20%
+# BTC-L2 cluster: STX PoX Proof-of-Transfer Bitcoin Layer-2
+# Total combined v6.35: v6.34 portfolio + K638 $65K/yr = incremental BTC-L2 alpha
+SLEEVE_WEIGHTS_V635: Dict[str, float] = {
+    "K280":    0.355,   # reduced 1.5pp vs v6.34 to fund K638 STX orthog sleeve
+    "K297":    0.20,
+    "sUSDe":   0.05,
+    "K449":    0.05,    # ETH-BTC delta-neutral, 4x leverage, HL-only (v6.16 base, 5%)
+    "K476":    0.04,    # SOL-BTC delta-neutral, 4x leverage, HL-only (v6.21 addition, 4%)
+    "K484":    0.05,    # AVAX-BTC delta-neutral, 4x leverage, HL-only (v6.23 addition, 5%)
+    "K493":    0.05,    # ATOM-BTC delta-neutral, 4x leverage, HL-only (v6.24 addition, 5%)
+    "K500":    0.04,    # INJ-BTC delta-neutral, 4x leverage, HL-only (v6.25 addition, 4%)
+    "K507":    0.02,    # SEI-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.27 addition, 2%)
+    "K507_TIA": 0.01,  # TIA-BTC delta-neutral, 4x leverage, HL-only 1% (v6.28 K524 addition, $51K/yr)
+    "K512":    0.02,    # APT-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.28 addition, $302K/yr)
+    "K541":    0.03,    # Stablecoin supply growth, 2x leverage, HL-only (v6.29 K550 addition, $294K/yr)
+    "K521":    0.03,    # Options 25d skew DVOL+skew V4, 2x leverage, HL-only (v6.30 K565 addition, $494K/yr)
+    "K628":    0.02,    # JTO-BTC orthogonalized, 4x leverage, Bybit-only (v6.31 K637 addition, $7.14M/yr)
+    "K631":    0.02,    # WLD-BTC orthogonalized, 4x leverage, Bybit-only (v6.32 K639 addition, $2.9M/yr)
+    "K633":    0.02,    # OP-BTC orthogonalized, 4x leverage, Bybit-only (v6.33 K640 addition, $2.32M/yr)
+    "K635":    0.02,    # IMX-BTC orthogonalized, 4x leverage, Bybit-only (v6.34 K641 addition, $4.78M/yr, Gaming L2 Infra)
+    "K638":    0.015,   # STX-BTC orthogonalized, 4x leverage, Bybit-only (v6.35 K642 addition, $65K/yr net, BTC-L2 cluster)
     "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
 }
 

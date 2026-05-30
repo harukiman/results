@@ -1,0 +1,141 @@
+{
+  "wave": "K642",
+  "strategy": "K638 STX Orthogonalized FR Differential",
+  "timestamp_jst": "2026-05-30 11:40 JST",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k638_stx_orthog_run.py",
+        "description": "Phase 1: K638 strategy script (K339 pattern, W=504h, beta_APT=0.203339)",
+        "exists": true,
+        "size_bytes": 46460,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k638-stx-orthog.plist",
+        "description": "Phase 2: 44th daemon plist (StartInterval 28800)",
+        "exists": true,
+        "size_bytes": 2264,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k638_dashboard.json",
+        "description": "Phase 3: Dashboard (residual signal, beta_used, regime)",
+        "exists": true,
+        "size_bytes": 3069,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k638 flag, \u00a746)",
+        "exists": true,
+        "size_bytes": 201992,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K638_STX_ORTHOG + SLEEVE_WEIGHTS_V635)",
+        "exists": true,
+        "size_bytes": 44531,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K638_STX_ORTHOG: 4.0 + k638_notes)",
+        "exists": true,
+        "size_bytes": 28051,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (44th daemon registry)",
+        "exists": true,
+        "size_bytes": 28566,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a746 (K638 STX orthog playbook)",
+        "exists": true,
+        "size_bytes": 344781,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K638 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1549948,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k642_k638_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 13027,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_checks": {
+    "beta_apt_hardcoded": true,
+    "beta_sei_hardcoded": true,
+    "beta_doge_hardcoded": true,
+    "k339_repo_root": true,
+    "paper_trade_default": true,
+    "bybit_primary": true,
+    "post_only": true,
+    "signal_1_5sigma": true,
+    "sleeve_1_5pct": true,
+    "ema_504h": true,
+    "dashboard_beta_apt": true,
+    "dashboard_beta_sei": true,
+    "dashboard_beta_doge": true,
+    "dashboard_regime": true,
+    "dashboard_oos_perf": true,
+    "dashboard_orthog_mech": true,
+    "dashboard_hl_65": true,
+    "cfg_k638_cap": true,
+    "cfg_k638_notes": true,
+    "cfg_beta_apt": true,
+    "cfg_beta_doge": true,
+    "emer_include_k638": true,
+    "emer_k638_summary": true,
+    "emer_bybit_only_note": true,
+    "lev_k638_cap": true,
+    "lev_v635_weights": true,
+    "vds_44th_daemon": true,
+    "vds_44th_label": true,
+    "runbook_section46": true,
+    "runbook_beta_table": true,
+    "runbook_60d_gate": true
+  },
+  "daemon_count": 44,
+  "daemon_ok": true,
+  "dry_run": {
+    "returncode": 0,
+    "success": true,
+    "stdout_len": 3157,
+    "stderr_len": 0,
+    "status": "PASS"
+  },
+  "k638_summary": {
+    "oos_sharpe_residual": 12.38,
+    "oos_sharpe_raw_k613": 26.8576,
+    "beta_apt": 0.203339,
+    "beta_sei": 0.125164,
+    "beta_doge": 0.306518,
+    "profit_1_5pct_net_usd_yr": 65018,
+    "profit_1_5pct_gross_usd_yr": 81272,
+    "sleeve_activation": "1.5% Bybit (STX+BTC both legs)",
+    "hl_concentration": "65% UNCHANGED \u2014 Bybit-only",
+    "cluster": "BTC-L2 / Stacks PoX (Bitcoin Layer-2, 44th daemon)",
+    "gate_60d": "Realized Sh>=6 + fill>=60% + maxDD<20%",
+    "v635_candidate": "K638 1.5% Bybit + v6.34 portfolio",
+    "ema_window": "W=504h (63 x 8h periods)"
+  },
+  "overall_status": "PASS"
+}

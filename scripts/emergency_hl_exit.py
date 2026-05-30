@@ -3539,6 +3539,33 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K642: K638 STX-BTC orthog emergency exit flag
+    # K638 = Bybit-only STX+BTC paired (2 legs) when residual EMA_504h > 1.5sigma.
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
+    # Orthog: residual = STX_diff - 0.203339*APT_diff - 0.125164*SEI_diff - 0.306518*DOGE_diff (K638 OLS MF, beta hardcoded).
+    # EMA window: W=504h = 63 x 8h periods (optimal per K638 analysis).
+    # Use --include-k638 to print K638-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k638",
+        dest="include_k638",
+        action="store_true",
+        default=False,
+        help=(
+            "K642: Include K638 STX-BTC orthog close summary during emergency exit. "
+            "K638 positions (STX+BTC paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Orthog: residual = STX_diff - 0.203339*APT_diff - 0.125164*SEI_diff - 0.306518*DOGE_diff (K638 OLS MF beta hardcoded). "
+            "EMA window: W=504h = 63 x 8h periods (optimal per K638 analysis). "
+            "HL concentration UNCHANGED (Bybit-only strategy — HL NOT affected). "
+            "OOS Sharpe 12.38 (residual MF W=504h). $65,018/yr net @$10M @4x (1.5% sleeve). "
+            "60d paper-trade gate: Realized Sh>=6 + fill>=60% + maxDD<20%. "
+            "Cluster: BTC-L2 / Stacks PoX (Bitcoin Layer-2, PoX stacking cycles). "
+            "Requires: K638 daemon running (com.cryptolab.k638-stx-orthog, 44th daemon). "
+            "See: docs/k302a_runbook.md §46"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -4019,6 +4046,27 @@ USDY sleeve emergency guidance (K415 §21.6):
             logger.info(
                 "K635 IMX-BTC orthog: Bybit-only (NOT HL). "
                 "Use --include-k635 for Bybit close summary (§44). "
+                "HL concentration UNCHANGED at 65%."
+            )
+
+        # K642: K638 STX-BTC orthog close summary (Bybit-only — HL NOT affected)
+        # K638 positions (STX+BTC, Bybit-only) are NOT in the HL exit above.
+        # K638 is Bybit-only: HL concentration UNCHANGED. Use --include-k638 for Bybit summary.
+        if args.include_k638:
+            logger.info("=== K638 STX-BTC ORTHOG CLOSE SUMMARY (K642 §46) ===")
+            logger.info("  K638 STX-BTC orthog: Bybit-only (STX+BTC both legs on Bybit)")
+            logger.info("  Orthog: residual = STX_diff - 0.203339*APT_diff - 0.125164*SEI_diff - 0.306518*DOGE_diff (K638 OLS MF, beta hardcoded)")
+            logger.info("  EMA window: W=504h = 63 x 8h periods (optimal per K638 analysis)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: UNCHANGED at 65% (K638 is Bybit-only)")
+            logger.info("  OOS Sharpe 12.38 (residual MF W=504h) | $65,018/yr net @$10M @4x (1.5% sleeve)")
+            logger.info("  Cluster: BTC-L2 / Stacks PoX (Bitcoin Layer-2, PoX stacking cycles)")
+            logger.info("  60d gate: Realized Sh>=6 + fill>=60% + maxDD<20%")
+            logger.info("  See: docs/k302a_runbook.md §46 (K638 STX orthog playbook)")
+        else:
+            logger.info(
+                "K638 STX-BTC orthog: Bybit-only (NOT HL). "
+                "Use --include-k638 for Bybit close summary (§46). "
                 "HL concentration UNCHANGED at 65%."
             )
 

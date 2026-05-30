@@ -350,6 +350,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k635_imx_orthog",
         expected_html_status="SCAFFOLD-READY",  # K641: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=12 + fill_rate>=60% + maxDD<20%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k638-stx-orthog",
+        purpose="K638 STX-BTC Orthogonalized FR Differential (BTC-L2 cluster, Bybit-only STX+BTC paired, 4x leverage, 8h cycle, OOS Sh 12.38 residual MF W=504h, $65,018/yr net @$10M @4x, beta_APT=0.203339 beta_SEI=0.125164 beta_DOGE=0.306518 hardcoded, HL concentration UNCHANGED 65%, 60d paper-trade gate, v6.35 candidate 1.5% sleeve, 44th daemon)",
+        scripts=["scripts/k638_stx_orthog_run.py"],
+        log_basename="k638_stx_orthog",
+        expected_html_status="SCAFFOLD-READY",  # K642: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=6 + fill_rate>=60% + maxDD<20%)
+    ),
 ]
 
 
