@@ -1,0 +1,640 @@
+{
+  "wave": "K703",
+  "strategy": "WLD-SOL FR Differential Alt-Alt (Biometric ID \u00d7 SVM cross-cluster)",
+  "run_time_jst": "2026-05-30T15:58:15+0900",
+  "runtime_s": 4.11,
+  "decision": "BLOCKED-G5a",
+  "decision_rationale": "[BLOCKED-G5a] WLD-SOL signal corr vs K621(WLD-BTC)=0.6340 >= 0.4. WLD shared leg co-movement: WLD-SOL and WLD-BTC signals co-move. Structural: WLD leg is common \u2192 signals correlated via WLD FR behavior.",
+  "data_info": {
+    "hl_wld_sol_overlap_rows": 17478,
+    "date_start": "2024-05-25 02:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.995,
+    "oos_start": "2025-10-23 03:00:00",
+    "oos_years": 0.582,
+    "fr_frequency": "1h (HL settles hourly)",
+    "direct_alt_alt": "WLD-SOL direct differential (no BTC/ETH reference leg)"
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "strategy_type": "always-on WLD-SOL FR differential carry (direct alt-alt)",
+    "direction_rule": "sign(168h rolling mean of sol_fr - wld_fr)",
+    "base_asset": "NONE (direct alt-alt, no BTC/ETH leg)",
+    "cost_rt_bps": 4,
+    "sleeve_pct": 3.0,
+    "leverage": 4.0
+  },
+  "phase0_prescreen": {
+    "hl_wld_venue": {
+      "venue": "HL",
+      "wld_listed": true,
+      "hl_ticker": "WLD",
+      "wld_fr_rows": 17478,
+      "fr_start": "2024-05-25 02:00:00",
+      "fr_end": "2026-05-23 08:00:00",
+      "note": "HL WLD-PERP: 17478 rows. FR settlement: 1h intervals. Biometric ID / OpenAI narrative."
+    },
+    "hl_sol_venue": {
+      "venue": "HL",
+      "sol_listed": true,
+      "hl_ticker": "SOL",
+      "sol_fr_rows": 17478,
+      "note": "HL SOL-PERP: DePIN/Retail/Firedancer. FR settlement: 1h intervals."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "wld_exists": true,
+      "wld_ticker": "WLDUSDT",
+      "sol_exists": true,
+      "sol_ticker": "SOLUSDT",
+      "note": "Bybit dual-leg: WLDUSDT + SOLUSDT perp available (8h settlement). HL cap avoided."
+    },
+    "vol_ratio_wld_sol_6m": 1.8664,
+    "vol_ratio_wld_sol_1y": 0.8435,
+    "vol_ratio_wld_sol_full": 1.1288,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "vol_note": "WLD/SOL 6M vol ratio=1.8664x (ABOVE 1.5x). 1Y=0.8435x. Full=1.1288x. WLD Biometric ID: narrative-driven vol spikes vs SOL DePIN/retail baseline.",
+    "wld_fr_mean_ann_pct": 5.0223,
+    "sol_fr_mean_ann_pct": 7.7043,
+    "fr_diff_mean": 3.06e-06,
+    "fr_diff_std": 3.985e-05,
+    "fr_diff_mean_ann_pct": 2.6819,
+    "wld_sol_raw_fr_corr": 0.2803,
+    "mr8_check": {
+      "wld_in_prohibited_set": false,
+      "prohibited_set": [
+        "APT",
+        "ATOM",
+        "SOL",
+        "INJ",
+        "AVAX"
+      ],
+      "mr8_pass": true,
+      "note": "WLD \u2209 {APT,ATOM,SOL,INJ,AVAX} \u2014 Biometric ID vertex. New unique cluster entry. MR8: PASS."
+    },
+    "prescreen_pass": "True",
+    "overlap_rows": 17478
+  },
+  "phase1_statistical": {
+    "adf_stationarity": {
+      "statistic": -9.1324,
+      "p_value": 0.0,
+      "critical_1pct": -3.4307,
+      "critical_5pct": -2.8617,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "interpretation": "WLD-SOL FR differential ADF stat=-9.1324 (1% critical=-3.4307). Stationary at 1%: True. Mean-reversion CONFIRMED for direct alt-alt differential."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.182153,
+      "half_life_hours": 3.81,
+      "half_life_days": 0.159,
+      "long_run_mean": 3.05e-06,
+      "r_squared": 0.0911,
+      "mean_reverting": "True",
+      "interpretation": "WLD-SOL half-life: 3.81h (0.159d). Direct alt-alt: WLD narrative vs SOL DePIN creates persistent differential. 168h (7d) smoothing captures regime shifts. Long-run mean=0.00000305."
+    },
+    "autocorrelation": {
+      "lag_1h": 0.8178,
+      "lag_24h": 0.4172,
+      "lag_168h": 0.2356,
+      "interpretation": "ACF(1h)=0.8178, ACF(24h)=0.4172, ACF(168h)=0.2356. Persistence structure confirms 7d rolling mean exploits inertia."
+    },
+    "mr9_algebraic_identity": {
+      "identity": "WLD-SOL = K621(WLD-BTC) - K476(SOL-BTC) = (BTC_FR - WLD_FR) - (BTC_FR - SOL_FR) = SOL_FR - WLD_FR",
+      "fr_level_max_error": 0.0,
+      "algebraic_corr": 1.0,
+      "mr9_pass": true,
+      "note": "MR9: WLD-SOL = K621_raw - K476_raw. FR identity max_err=1.08e-19. corr=1.000000. Position-level decoupling determined by G5a/G5b signal correlations. Algebraic construction confirmed \u2014 now test if POSITION signals are independent."
+    }
+  },
+  "full_period": {
+    "sharpe": 23.8937,
+    "ann_ret_pct": 11.5111,
+    "max_drawdown_pct": -0.8404
+  },
+  "is_metrics": {
+    "sharpe": 26.4574,
+    "ann_ret_pct": 12.5147,
+    "n_rows": 12384,
+    "n_years": 1.414
+  },
+  "oos_metrics": {
+    "sharpe": 18.0885,
+    "ann_ret_pct": 9.0712,
+    "ann_ret_4x_pct": 36.2848,
+    "max_drawdown_pct": -0.8404,
+    "trades": 16,
+    "trades_per_year": 27.5,
+    "n_rows": 5094,
+    "n_years": 0.582
+  },
+  "phase3_grid_search_top5": [
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 28.745,
+      "OOS_sharpe": 28.063,
+      "entries": 5,
+      "OOS_ret_pct": 10.4,
+      "entries_yr": 8.6
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 25.619,
+      "OOS_sharpe": 26.722,
+      "entries": 5,
+      "OOS_ret_pct": 9.999,
+      "entries_yr": 8.6
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.5,
+      "threshold_value": 1.99233e-05,
+      "IS_sharpe": 21.059,
+      "OOS_sharpe": 22.308,
+      "entries": 9,
+      "OOS_ret_pct": 6.006,
+      "entries_yr": 15.5
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.5,
+      "threshold_value": 1.99233e-05,
+      "IS_sharpe": 16.227,
+      "OOS_sharpe": 20.265,
+      "entries": 7,
+      "OOS_ret_pct": 4.563,
+      "entries_yr": 12.0
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 26.457,
+      "OOS_sharpe": 18.088,
+      "entries": 16,
+      "OOS_ret_pct": 9.071,
+      "entries_yr": 27.5
+    }
+  ],
+  "phase4_walk_forward": {
+    "folds": [
+      {
+        "fold": 1,
+        "oos_start": "2025-10-16",
+        "oos_end": "2025-11-15",
+        "sharpe": 3.296,
+        "ann_ret_pct": 1.507,
+        "entries": 3
+      },
+      {
+        "fold": 2,
+        "oos_start": "2025-11-15",
+        "oos_end": "2025-12-15",
+        "sharpe": -7.508,
+        "ann_ret_pct": -5.176,
+        "entries": 7
+      },
+      {
+        "fold": 3,
+        "oos_start": "2025-12-15",
+        "oos_end": "2026-01-14",
+        "sharpe": -3.952,
+        "ann_ret_pct": -1.992,
+        "entries": 4
+      },
+      {
+        "fold": 4,
+        "oos_start": "2026-01-14",
+        "oos_end": "2026-02-13",
+        "sharpe": 11.191,
+        "ann_ret_pct": 6.271,
+        "entries": 4
+      },
+      {
+        "fold": 5,
+        "oos_start": "2026-02-13",
+        "oos_end": "2026-03-15",
+        "sharpe": 73.852,
+        "ann_ret_pct": 14.248,
+        "entries": 1
+      },
+      {
+        "fold": 6,
+        "oos_start": "2026-03-15",
+        "oos_end": "2026-04-14",
+        "sharpe": 31.686,
+        "ann_ret_pct": 7.482,
+        "entries": 1
+      },
+      {
+        "fold": 7,
+        "oos_start": "2026-04-14",
+        "oos_end": "2026-05-14",
+        "sharpe": 35.001,
+        "ann_ret_pct": 25.115,
+        "entries": 4
+      }
+    ],
+    "fold_sharpes": [
+      3.296,
+      -7.508,
+      -3.952,
+      11.191,
+      73.852,
+      31.686,
+      35.001
+    ],
+    "all_positive": false,
+    "positive_count": 5,
+    "min_fold_sharpe": -7.508,
+    "n_folds_computed": 7,
+    "pass": false,
+    "note": "7-fold walk-forward (IS 90d / OOS 30d per fold). Positive folds: 5/7. All folds positive: False. Min fold Sharpe: -7.508."
+  },
+  "phase5_permutation": {
+    "real_oos_sharpe": 18.0885,
+    "n_permutations": 500,
+    "p_value": 0.0,
+    "pass": true,
+    "note": "500 direction reshuffles OOS. p=0.0000 <= 0.05: PASS."
+  },
+  "phase5b_dsr_bonferroni": {
+    "n_trials": 12,
+    "t_stat": 13.7937,
+    "p_raw": 0.0,
+    "p_bonferroni": 0.0,
+    "threshold": 0.00417,
+    "pass": true,
+    "note": "Bonferroni: p_bonf=0.00000000 < 0.05/12 = 0.00417: PASS."
+  },
+  "phase6_g5_correlations": {
+    "details": {
+      "G5a_K621_WLD_BTC": {
+        "ticker": "WLD-BTC",
+        "corr": 0.634,
+        "pass": false,
+        "note": "WLD-SOL signal vs K621 WLD-BTC: corr=0.6340 (FAIL threshold 0.4) [CRITICAL: WLD shared leg \u2014 algebraic overlap check]"
+      },
+      "G5b_K476_SOL_BTC": {
+        "ticker": "SOL-BTC",
+        "corr": -0.3089,
+        "pass": true,
+        "note": "WLD-SOL signal vs K476 SOL-BTC: corr=-0.3089 (PASS threshold 0.4) [CRITICAL: SOL shared leg \u2014 SOL saturation check]"
+      },
+      "G5c_K629_WLD_ETH": {
+        "ticker": "WLD-ETH",
+        "corr": 0.6914,
+        "pass": false,
+        "note": "WLD-SOL signal vs K629 WLD-ETH: corr=0.6914 (FAIL threshold 0.4) [WLD shared leg \u2014 ETH-base variant, K629 ACCEPT]"
+      },
+      "G5d_K684_SOL_INJ": {
+        "ticker_a": "SOL",
+        "ticker_b": "INJ",
+        "corr": 0.3898,
+        "pass": true,
+        "note": "WLD-SOL vs K684 SOL-INJ corr=0.3898 (PASS threshold 0.4) [SOL shared \u2014 alt-alt family member]"
+      },
+      "G5e_K686_AVAX_SOL": {
+        "ticker_a": "AVAX",
+        "ticker_b": "SOL",
+        "corr": -0.4719,
+        "pass": false,
+        "note": "WLD-SOL vs K686 AVAX-SOL corr=-0.4719 (FAIL threshold 0.4) [SOL shared \u2014 AVAX-SOL alt-alt]"
+      },
+      "G5f_K690_SEI_SOL": {
+        "ticker_a": "SEI",
+        "ticker_b": "SOL",
+        "corr": -0.2341,
+        "pass": true,
+        "note": "WLD-SOL vs K690 SEI-SOL corr=-0.2341 (PASS threshold 0.4) [SOL shared \u2014 SEI-SOL alt-alt]"
+      },
+      "G5g_K696_ENA_SOL": {
+        "ticker_a": "ENA",
+        "ticker_b": "SOL",
+        "corr": -0.3118,
+        "pass": true,
+        "note": "WLD-SOL vs K696 ENA-SOL corr=-0.3118 (PASS threshold 0.4) [SOL shared \u2014 ENA-SOL cross-cluster alt-alt]"
+      },
+      "G5h_K694_TIA_SOL": {
+        "ticker_a": "TIA",
+        "ticker_b": "SOL",
+        "corr": -0.4398,
+        "pass": false,
+        "note": "WLD-SOL vs K694 TIA-SOL corr=-0.4398 (FAIL threshold 0.4) [SOL shared \u2014 TIA-SOL alt-alt]"
+      },
+      "G5i_K679_APT_SOL": {
+        "ticker_a": "APT",
+        "ticker_b": "SOL",
+        "corr": 0.1591,
+        "pass": true,
+        "note": "WLD-SOL vs K679 APT-SOL corr=0.1591 (PASS threshold 0.4) [SOL shared \u2014 first alt-alt]"
+      },
+      "G5j_K682_ATOM_SOL": {
+        "ticker_a": "ATOM",
+        "ticker_b": "SOL",
+        "corr": -0.2116,
+        "pass": true,
+        "note": "WLD-SOL vs K682 ATOM-SOL corr=-0.2116 (PASS threshold 0.4) [SOL shared \u2014 Cosmos vs SVM]"
+      },
+      "G5k_K449_ETH_BTC": {
+        "ticker_a": "ETH",
+        "ticker_b": "BTC",
+        "corr": 0.0795,
+        "pass": true,
+        "note": "WLD-SOL vs K449 ETH-BTC corr=0.0795 (PASS threshold 0.4) [baseline paired-trade]"
+      },
+      "G5l_K484_AVAX_BTC": {
+        "ticker_a": "AVAX",
+        "ticker_b": "BTC",
+        "corr": -0.1967,
+        "pass": true,
+        "note": "WLD-SOL vs K484 AVAX-BTC corr=-0.1967 (PASS threshold 0.4) "
+      },
+      "G5m_K493_ATOM_BTC": {
+        "ticker_a": "ATOM",
+        "ticker_b": "BTC",
+        "corr": -0.0487,
+        "pass": true,
+        "note": "WLD-SOL vs K493 ATOM-BTC corr=-0.0487 (PASS threshold 0.4) "
+      },
+      "G5n_K500_INJ_BTC": {
+        "ticker_a": "INJ",
+        "ticker_b": "BTC",
+        "corr": -0.1282,
+        "pass": true,
+        "note": "WLD-SOL vs K500 INJ-BTC corr=-0.1282 (PASS threshold 0.4) "
+      },
+      "G5o_K698_LINK_ETH": {
+        "ticker": "LINK-ETH",
+        "corr": null,
+        "pass": true,
+        "note": "LINK data missing \u2014 skip"
+      }
+    },
+    "all_pass": false,
+    "max_corr": 0.6914,
+    "max_corr_pair": "G5c_K629_WLD_ETH",
+    "failing_pairs": {
+      "G5a_K621_WLD_BTC": 0.634,
+      "G5c_K629_WLD_ETH": 0.6914,
+      "G5e_K686_AVAX_SOL": -0.4719,
+      "G5h_K694_TIA_SOL": -0.4398
+    },
+    "critical_checks": {
+      "G5a_K621_WLD_BTC": 0.634,
+      "G5b_K476_SOL_BTC": -0.3089,
+      "G5c_K629_WLD_ETH": 0.6914
+    },
+    "note": "G5 all pass: False. Max corr: 0.6914 (G5c_K629_WLD_ETH). Failing: {'G5a_K621_WLD_BTC': 0.634, 'G5c_K629_WLD_ETH': 0.6914, 'G5e_K686_AVAX_SOL': -0.4719, 'G5h_K694_TIA_SOL': -0.4398}. G5a K621(WLD-BTC) corr=0.6340 (FAIL). G5b K476(SOL-BTC) corr=-0.3089 (PASS). G5c K629(WLD-ETH) corr=0.6914 (FAIL). WLD-SOL cross-cluster: Biometric ID \u00d7 SVM L1 \u2014 minimal narrative overlap expected."
+  },
+  "phase7_cross_venue": {
+    "WLD_bybit": {
+      "corr": 0.7117,
+      "pass": true,
+      "note": "HL-Bybit WLD FR corr=0.7117 (PASS >= 0.55)"
+    },
+    "SOL_bybit": {
+      "corr": 0.5747,
+      "pass": true,
+      "note": "HL-Bybit SOL FR corr=0.5747 (PASS >= 0.55)"
+    },
+    "g8_pass": true,
+    "note": "G8 leg-based: Bybit WLD=0.7117 Bybit SOL=0.5747. G8 pass: True. Bybit dual-leg: both WLD+SOL on Bybit (HL cap avoidance)."
+  },
+  "section_6_gates": {
+    "gates": [
+      {
+        "gate": "G1",
+        "name": "OOS Sharpe >= 1.0",
+        "value": 18.08847552587241,
+        "pass": true
+      },
+      {
+        "gate": "G2",
+        "name": "Perm p <= 0.05",
+        "value": 0.0,
+        "pass": true
+      },
+      {
+        "gate": "G3",
+        "name": "DSR Bonferroni p < 0.00417",
+        "value": 0.0,
+        "pass": true
+      },
+      {
+        "gate": "G4",
+        "name": "Walk-forward >= 80% positive",
+        "value": "5/7",
+        "pass": false
+      },
+      {
+        "gate": "G5",
+        "name": "G5 family corr < 0.40",
+        "value": 0.6914,
+        "pass": false
+      },
+      {
+        "gate": "G6",
+        "name": "Trades/yr >= 30",
+        "value": 27.51472320376914,
+        "pass": false
+      },
+      {
+        "gate": "G7",
+        "name": "Ann ret > 5% at 4x leverage",
+        "value": 36.28477302520613,
+        "pass": true
+      },
+      {
+        "gate": "G8",
+        "name": "Cross-venue corr >= 0.55",
+        "value": 0.7117,
+        "pass": true
+      },
+      {
+        "gate": "G9",
+        "name": "OOS >= 180d",
+        "value": 212.2,
+        "pass": true
+      }
+    ],
+    "n_pass": 6,
+    "n_total": 9,
+    "all_critical_pass": false,
+    "note": "6/9 gates PASS. Critical (G1/G2/G3/G5): SOME FAIL."
+  },
+  "family_rank": {
+    "wld_sol_oos_sharpe": 18.08847552587241,
+    "family_rank_if_accepted": 8,
+    "total_members_including_k703": 15,
+    "rank_note": "WLD-SOL Sh=18.088 would rank #8 of 15 members. Biometric ID \u00d7 SVM cross-cluster \u2014 new vertex WLD in alt-alt graph."
+  },
+  "hl_concentration": {
+    "current_hl_pct": 63.5,
+    "k703_sleeve_pct": 3.0,
+    "hl_portion_pct": 0.0,
+    "bybit_portion_pct": 3.0,
+    "new_hl_pct_if_accept": 63.5,
+    "headroom_to_65pct_limit": 1.5,
+    "within_k357_limits": true,
+    "note": "Current HL: 63.5% (K700 milestone, 1.5pp headroom). K703 WLD-SOL: BYBIT DUAL-LEG (both legs on Bybit \u2014 HL unchanged at 63.5%). Bybit WLD=WLDUSDT + Bybit SOL=SOLUSDT. HL concentration PRESERVED. No additional HL pressure."
+  },
+  "profit_projection": {
+    "oos_ann_ret_frac": 0.090712,
+    "oos_ann_ret_pct": 9.0712,
+    "sleeve_pct": 3.0,
+    "leverage": 4.0,
+    "profit_10m_4x_usdc": 108854,
+    "profit_10m_4x_usdc_k": 108.9,
+    "profit_table": [
+      {
+        "notional_aum_usd": 1000000,
+        "sleeve_pct": 3.0,
+        "leverage": 1,
+        "effective_notional_usd": 30000,
+        "ann_profit_usd": 2721
+      },
+      {
+        "notional_aum_usd": 1000000,
+        "sleeve_pct": 3.0,
+        "leverage": 2,
+        "effective_notional_usd": 60000,
+        "ann_profit_usd": 5443
+      },
+      {
+        "notional_aum_usd": 1000000,
+        "sleeve_pct": 3.0,
+        "leverage": 4,
+        "effective_notional_usd": 120000,
+        "ann_profit_usd": 10885
+      },
+      {
+        "notional_aum_usd": 5000000,
+        "sleeve_pct": 3.0,
+        "leverage": 1,
+        "effective_notional_usd": 150000,
+        "ann_profit_usd": 13607
+      },
+      {
+        "notional_aum_usd": 5000000,
+        "sleeve_pct": 3.0,
+        "leverage": 2,
+        "effective_notional_usd": 300000,
+        "ann_profit_usd": 27214
+      },
+      {
+        "notional_aum_usd": 5000000,
+        "sleeve_pct": 3.0,
+        "leverage": 4,
+        "effective_notional_usd": 600000,
+        "ann_profit_usd": 54427
+      },
+      {
+        "notional_aum_usd": 10000000,
+        "sleeve_pct": 3.0,
+        "leverage": 1,
+        "effective_notional_usd": 300000,
+        "ann_profit_usd": 27214
+      },
+      {
+        "notional_aum_usd": 10000000,
+        "sleeve_pct": 3.0,
+        "leverage": 2,
+        "effective_notional_usd": 600000,
+        "ann_profit_usd": 54427
+      },
+      {
+        "notional_aum_usd": 10000000,
+        "sleeve_pct": 3.0,
+        "leverage": 4,
+        "effective_notional_usd": 1200000,
+        "ann_profit_usd": 108854
+      },
+      {
+        "notional_aum_usd": 50000000,
+        "sleeve_pct": 3.0,
+        "leverage": 1,
+        "effective_notional_usd": 1500000,
+        "ann_profit_usd": 136068
+      },
+      {
+        "notional_aum_usd": 50000000,
+        "sleeve_pct": 3.0,
+        "leverage": 2,
+        "effective_notional_usd": 3000000,
+        "ann_profit_usd": 272136
+      },
+      {
+        "notional_aum_usd": 50000000,
+        "sleeve_pct": 3.0,
+        "leverage": 4,
+        "effective_notional_usd": 6000000,
+        "ann_profit_usd": 544272
+      },
+      {
+        "notional_aum_usd": 100000000,
+        "sleeve_pct": 3.0,
+        "leverage": 1,
+        "effective_notional_usd": 3000000,
+        "ann_profit_usd": 272136
+      },
+      {
+        "notional_aum_usd": 100000000,
+        "sleeve_pct": 3.0,
+        "leverage": 2,
+        "effective_notional_usd": 6000000,
+        "ann_profit_usd": 544272
+      },
+      {
+        "notional_aum_usd": 100000000,
+        "sleeve_pct": 3.0,
+        "leverage": 4,
+        "effective_notional_usd": 12000000,
+        "ann_profit_usd": 1088543
+      }
+    ],
+    "note": "WLD-SOL always-on. OOS ann ret: 9.0712%. @$10M 4.0x 3.0% sleeve: $108,854/yr. Bybit dual-leg \u2014 no HL concentration impact. Cross-cluster carry: WLD biometric ID narrative \u00d7 SOL SVM DePIN/retail dynamics."
+  },
+  "mr8_mr9_summary": {
+    "mr8_pass": true,
+    "mr8_note": "WLD \u2209 {APT,ATOM,SOL,INJ,AVAX} \u2014 new biometric ID vertex in alt-alt graph",
+    "mr9_pass": true,
+    "mr9_identity": "WLD-SOL = K621(WLD-BTC raw) - K476(SOL-BTC raw) = SOL_FR - WLD_FR",
+    "mr9_fr_max_err": 0.0,
+    "mr9_algebraic_corr": 1.0,
+    "position_level_check": "G5a/G5b signal correlations determine if positions are decoupled"
+  },
+  "cross_cluster_analysis": {
+    "wld_cluster": "Biometric Identity (K621) \u2014 Sam Altman PoP, OpenAI tie-in, regulatory catalysts",
+    "sol_cluster": "Solana SVM L1 (K476) \u2014 DePIN, retail meme-coin (BONK/WIF), Firedancer ETF",
+    "cross_cluster_hypothesis": "WLD FR = episodic narrative (biometric law, Sam Altman events, World ID milestones). SOL FR = persistent retail/DePIN premium (structural SOL>WLD carry expected). Narratives are ORTHOGONAL: regulatory/AI-identity vs DePIN/gaming/meme. Expected: low signal correlation with both K621 (WLD-BTC) and K476 (SOL-BTC).",
+    "carry_direction": "SOL structurally pays more than WLD: SOL 7.70%/yr vs WLD 5.02%/yr \u2192 dominant carry: long WLD / short SOL (collect SOL premium while paying WLD discount)",
+    "sol_saturation_risk": "SOL appears in 9 existing strategies (K476/K679/K682/K684/K686/K690/K694/K695/K696). K703 must demonstrate G5b SOL-BTC corr < 0.40 to confirm independence despite SOL leg overlap."
+  },
+  "operational_requirements": {
+    "venues": [
+      "Bybit primary (both WLD + SOL legs) \u2014 HL cap avoidance",
+      "OKX secondary (WLD: WLD-USDT-SWAP, SOL: SOL-USDT-SWAP)"
+    ],
+    "bybit_tickers": {
+      "WLD": "WLDUSDT",
+      "SOL": "SOLUSDT"
+    },
+    "strategy_legs": {
+      "leg_a": "SOL-PERP (Bybit, short when SOL_FR > WLD_FR)",
+      "leg_b": "WLD-PERP (Bybit, long when SOL_FR > WLD_FR)",
+      "direction_rule": "sign(SOL_FR_7d_avg - WLD_FR_7d_avg)"
+    },
+    "hl_impact": "ZERO \u2014 Bybit dual-leg. HL remains at 63.5% (1.5pp headroom preserved).",
+    "rebalance_freq": "~28 trades/yr",
+    "live_change_prohibited": true,
+    "note": "LIVE \u81ea\u52d5\u5909\u66f4\u7981\u6b62 \u2014 paper/scaffold only until K704 scaffold gate clearance."
+  }
+}
