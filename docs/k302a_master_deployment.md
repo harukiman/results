@@ -1,6 +1,79 @@
 # K302a Master Deployment Playbook — Single Source of Truth
-**Version:** 6.50 MEGA PROPOSAL | **Updated:** 2026-05-30 16:20 JST | **Wave:** K709 (supersedes K700/K692/K674/K666/K657/K643)
-**Status:** v6.50 MEGA PROPOSAL — 35 sleeves | 10 orthog + 3 ETH-base + 7 alt-alts + 8 paired | HL 63.5% (<65% cap) | K523 $15.2M/$21.1M/$48M @$10M | 5y $105M @$10M | v6.50 LIVE target 2027-Q1
+**Version:** 6.50 MEGA | **Updated:** 2026-05-30 16:35 JST | **Wave:** K712 (supersedes K709/K700/K692/K674/K666/K657/K643)
+**Status:** v6.50 MEGA — 35 sleeves | 10 orthog + 4 ETH-base + 8 alt-alts + 8 paired | HL 63.5% (<65% cap) | K523 $15.2M/$21.1M/$48.0M @$10M | 5y $95M–$115M @$10M | v6.50 LIVE target 2027-Q1
+
+---
+
+## ★★ K712 GOVERNANCE v8 SECTION — Full Mode Audit (2026-05-30 16:35 JST)
+
+> **K712 SCOPE:** Full governance v8 — K692-K711 (20-wave audit). Cadence-scheduled (every 20 waves).
+> **FILES:** `wave_k712_governance_v8.{py,json,md}` | **Quick start:** `python3 wave_k712_governance_v8.py`
+
+### K712 Wave Audit Summary
+
+| Category | Count | Key Waves |
+|----------|-------|-----------|
+| ACCEPT | 3 | K696 ENA-SOL (Sh=26.93), K708 BNB-SOL (Sh=48.59), K695 REJECT → LINK-ETH path |
+| CONDITIONAL | 3 | K694 TIA-SOL (G4 11/12), K698 LINK-ETH (H1 oracle), K708 BNB-SOL (60d paper) |
+| REJECT | 1 | K695 LINK-SOL (cross-cluster signal fail) |
+| BLOCKED-G5a | 2 | K703 WLD-SOL (corr=0.634), K707 BCH-SOL (corr=0.517, PoW fork rule) |
+| SCAFFOLD | 5 | K693/K697/K699/K701/K710 |
+| GOVERNANCE | 5 | K692 v7 quick, K702 defensive verify, K706 production audit, K709 Day 0, K711 final |
+| MILESTONE | 2 | K700 v6.50 MEGA, K705 D60 cascade playbook |
+
+### v6.50 vs v6.40 Delta (K712 verified)
+
+| Component | USD/yr @$10M |
+|-----------|-------------|
+| v6.40 mid baseline (K692 verified) | $20,900,000 |
+| + K694 TIA-SOL CONDITIONAL | +$58,354 |
+| + K696 ENA-SOL ACCEPT | +$93,187 |
+| + K698 LINK-ETH H1 CONDITIONAL | +$24,650 |
+| **v6.50 mid (K712 final)** | **$21,076,191** |
+
+**8 alt-alt pairs combined:** $946,853/yr | **4 ETH-base combined:** $197,192/yr
+
+### Daemon Registry Update (K712)
+
+- K692 snapshot: **57 daemons**
+- K712 new: **+5** (K693 SEI-SOL, K697 TIA-SOL, K699 ENA-SOL, K701 LINK-ETH, K710 BNB-SOL)
+- K712 total: **62 daemons** | Mismatches: **0**
+- Source: K702 Pre-Execution Defensive Verify (2026-05-30 15:47 JST) + K710 scaffold
+
+### New Closed Lines (K712)
+
+| # | Line | Wave | Reason |
+|---|------|------|--------|
+| 45 | WLD-SOL Alt-Alt | K703 | G5a: corr vs K621=0.634 ≥ 0.4 (biometric ID shared leg) |
+| 46 | BCH-SOL Alt-Alt (PoW Fork Rule) | K707 | G5a: corr vs K605=0.517 ≥ 0.4 (PoW SHA-256 structural) |
+
+**Cumulative closed lines: 46**
+
+### New Rules Formalized (K712)
+
+- **Alt-Alt G5a Block Rule (K707):** PoW/SHA-256 fork assets structurally inherit BTC-base signal. Pre-screen X-BTC corr BEFORE full backtest.
+- **ETH-base H1 Conditional (K698):** LINK-ETH = 4th ETH-base, H1 oracle-ETH sleeve. Bybit-primary when HL > 65% cap.
+
+### Critical Actions (K712 confirmed)
+
+| Priority | Wave | Action | Profit Unlock |
+|----------|------|--------|--------------|
+| ★★★ PREREQ | K552 | K280 75→60% patch | +$260K/yr (K376/K449/K629) |
+| ★★ ZERO-RISK | K481 | HL Builder Rebate | +$99-248K/yr |
+| ★ ZERO-RISK | K545 | Tax Harvester Plist | +$47K/yr |
+| ★★ MEDIUM | K498 | OKX Smart Router | +$121K/yr (deferrable D1-D2) |
+| ★ LONG-GATE | K485 | Bybit Sub Scaling | +$2.2M/yr @$25M |
+
+**Grand total:** $4,505,745/yr | D60 cascade Jul 29: +$1,642,745/yr
+
+### Cadence (K712)
+
+- K692 Quick v7 (5 waves) → K712 Full v8 (20 waves) ← CURRENT
+- Next: **K717 Quick** (5 out) | **K732 Full v9** (20 out)
+- D60 cascade: **2026-07-29** (14 scaffolds, 5-day Jul 29–Aug 2)
+- v6.50 LIVE: **2027-Q1**
+
+---
 
 ---
 
