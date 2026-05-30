@@ -1,6 +1,82 @@
 # K302a Master Deployment Playbook — Single Source of Truth
-**Version:** 6.40 CANDIDATE | **Updated:** 2026-05-30 13:05 JST | **Wave:** K666 v6.40 proposal (supersedes K657/K643)
-**Status:** ACTIVE USER ACTIVATION GUIDE — v6.40 CANDIDATE: 10 orthog + WLD-ETH + SOL-ETH | HL 63.5% (<65%) | mid $20.9M @$10M
+**Version:** 6.40 CANDIDATE | **Updated:** 2026-05-30 13:38 JST | **Wave:** K674 SESSION CAPSTONE (supersedes K666/K657/K643)
+**Status:** ACTIVE USER ACTIVATION GUIDE — v6.40 CANDIDATE: 10 orthog + 3 ETH-base | HL 64.0% (<65% cap) | mid $20.9M @$10M | 5y $112M
+
+---
+
+## ★★★★ K674 SESSION CAPSTONE — Phase A User Activation Roadmap (2026-05-30 13:38 JST)
+
+> **SESSION SCOPE:** K449→K673 (225 waves) | 52 daemons | 14 mechanism scaffolds  
+> **v6.40 CANDIDATE:** 29 sleeves | HL 64.0% | mid $20.9M/yr @$10M | 5y $112M  
+> **K523 MANDATORY RANGE:** conservative $15M / mid $20.9M / optimistic $48M @$10M  
+> **HL STATUS:** 65.0% (AT CAP — K552 prerequisite before any new HL sleeve)  
+> **BTC REGIME:** TRANSITION | slope=-34.41 | BULL ETA 14d | K376 SCAFFOLD-READY
+
+### Phase A — Day 0: 5 Actions (~3 hours, immediate profit unlock)
+
+| Step | ID | Action | Effort | Profit @$10M | Risk | Status |
+|---|---|---|---|---|---|---|
+| 1 | **K545** | Tax harvester plist load | 5 min | $47K/yr | **ZERO** | READY |
+| 2 | **K481** | HL approveBuilderFee registration | 30 min | $99–248K/yr | **ZERO** | READY |
+| 3 | **K552** | K280 75→60% atomic 3-file patch (PREREQ) | 30 min | $260K cascade | LOW | READY |
+| 4 | **K498** | Phase 1A BBO_SELECT + OKX daemon | 8h | $121K @$30M | LOW | READY |
+| 5 | **K485** | Bybit sub-account + HL W2 isolation | 30min+7d | $204K @$10M | LOW | READY |
+
+**Execute order: K545 → K481 → K552 → K485 → K498**
+**Day-0 immediate unlock: ~$521K/yr | ZERO-risk portion: ~$147–$297K/yr**
+
+### Phase B–E Summary
+
+| Phase | Window | Key Actions | Profit Unlock |
+|---|---|---|---|
+| B | D7–D30 | K449-family Week 1–5 rollout, paper gates | $500K–$1.2M/yr incremental |
+| C | D14 | K376 BULL activation (BTC slope trigger) | $247K/yr |
+| D | D60 | 14 scaffolds paper→LIVE (2026-07-29) | $1.08M/yr |
+| E | D90–D180 | v6.40 full LIVE, K521 options, governance | $295K/yr (K521) |
+
+### Critical Concerns (K674 Updated)
+
+| ID | Severity | Issue | Action |
+|----|----------|-------|--------|
+| CC1 | **CRITICAL** | HL 65.0%/65.0% cap — 0pp headroom | Apply K552 FIRST before any new HL sleeve |
+| CC2 | **HIGH** | K280 dashboard stale 124h+ | Verify daemon, force dashboard refresh |
+| CC3 | **HIGH** | BTC TRANSITION slope=-34.41, BULL ETA 14d | Monitor daily; K552 before BULL |
+| CC4 | MEDIUM | K208 -67% decay | K492E activation, exit gracefully |
+| CC5 | MEDIUM | 52 daemons — 0 ACTIVE | Execute Phase A→E roadmap |
+| CC6 | LOW | K633/K647/K656/K663 dashboards missing | Will populate after first paper cycle |
+
+### 14-Scaffold D60 Activation Sequence (ETA 2026-07-29)
+
+```bash
+# ORTHOG — Bybit (10 scaffolds, execute in Sharpe order)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k628-jto-orthog.plist   # X1 $357K Sh=18.30
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k635-imx-orthog.plist   # X4 $96K  Sh=24.81
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k648-pol-orthog.plist   # X9 $86K  Sh=23.41
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k647-dot-orthog.plist   # X8 $80K  Sh=23.25
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k638-stx-orthog.plist   # X5 $54K  Sh=12.38
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k631-wld-orthog.plist   # X2 $58K  Sh=18.04
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k646-algo-orthog.plist  # X7 $20K  Sh=8.11
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k656-gala-orthog.plist  # X10 $14K Sh=8.32
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k645-bnb-orthog.plist   # X6 $15K  Sh=7.07
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k633-op-orthog.plist    # X3 $46K  Sh=12.68
+
+# ETH-BASE — HL (3 scaffolds, verify HL <= 65% before each)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k629-wld-eth.plist      # $94K Sh=19.90
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k658-sol-eth.plist      # $42K Sh=29.66
+# K663 TIA-ETH → v6.41 proposal (evaluate after D60)
+```
+
+### Memory Rules Quick Reference (K674 Consolidated)
+
+| Rule | Source | Key Principle |
+|---|---|---|
+| MR1 Orthogonalization | K628 | G5-blocked → OLS factor extract → residual retest. Never reject without trying. |
+| MR2 ETH-base triple | K672 | vol_ratio>=2x AND ETH-cycle-align AND raw_fr_corr<0.45. 27% accept rate. |
+| MR3 Load-bearing | K634 | IS R²>0.40 = load-bearing risk. Check OOS R²<0.10 before removing factor. |
+| MR4 Vol pre-screen | K662 | vol_ratio<2x → skip ETH-base test (2min pre-check). |
+| MR5 Cycle alignment | K667 | DeFi/staking/L2 cycles → ETH-base wins. Payment/buyback cycles → BTC-base. |
+| MR6 Paired-trade | K480 | OOS Sh>=8 AND G5 corr<0.40 AND G5b PnL corr<0.40. All 3 required. |
+| MR7 HL rebate | K481 | approveBuilderFee = $99–248K/yr ZERO risk. Day 0 priority #1. |
 
 ---
 
