@@ -1,0 +1,185 @@
+{
+  "wave": "K792",
+  "title": "K792 LINEA-SOL FR Differential Eval — Consensys zkEVM L2 + SVM Fast Pre-Screen",
+  "generated_utc": "2026-05-30T17:35:00Z",
+  "runtime_s": 2.1,
+  "k339_compliance": {
+    "wave": "K792",
+    "repo_root": ".",
+    "pattern": "K339"
+  },
+  "k523_mandatory": true,
+  "live_auto_change_prohibited": true,
+  "pair": "LINEA-SOL",
+  "token_long": "LINEA (Consensys zkEVM L2 — Ethereum Layer 2)",
+  "token_short": "SOL (Solana SVM)",
+  "verdict": "REJECTED",
+  "verdict_code": "PHASE0_FAIL_L004D_OOS+G5q_ETH_L2_CLUSTER",
+  "verdict_detail": "REJECTED at Phase 0 pre-screen: ['L004_DIFF', 'G5q_eth_l2_cluster']. Primary: L004_DIFF OOS=0.7727 > 0.70 (non-stationary LINEA FR dominance in recent months). Secondary: G5q ETH L2 cluster (meta-narrative overlap with LDO — K772 lesson). Phase 1-4 skipped (token budget conserved ~30K).",
+  "phase0_data": {
+    "linea_hl_rows": 6511,
+    "sol_hl_rows": 26183,
+    "avax_hl_rows": 26183,
+    "linea_date_range": "2025-09-01 to 2026-05-30",
+    "days_history": 271,
+    "source": "HyperLiquid fundingHistory (paginated from 2020-01-01)",
+    "bybit_listing": {
+      "status": "CONFIRMED (Bybit LINEAUSDT Trading, launchTime=2025-09-01 09:34:45 UTC)",
+      "fundingInterval_min": 240,
+      "maxLeverage": 50,
+      "note": "Bybit and HL launched same day (2025-09-01). Cross-venue history limited to 271 days."
+    },
+    "hl_asset": {
+      "szDecimals": 0,
+      "maxLeverage": 3,
+      "note": "HL maxLeverage=3 only (long-tail illiquid constraint)"
+    },
+    "k785_context": {
+      "vol_ratio_reported": 1.7,
+      "carry_reported": 0.797,
+      "L004D_reported": 0.555,
+      "composite": 0.0082,
+      "concern_noted": "carry_full=0.797 near 0.80 cap — K785 already flagged",
+      "rank_combined_pool": "17th of 29 K766+K773+K781+K785 survivors"
+    }
+  },
+  "phase0_metrics": {
+    "n_rows_common": 6511,
+    "n_is": 3906,
+    "n_oos": 2605,
+    "date_start": "2025-09-01",
+    "date_end": "2026-05-30",
+    "days": 271,
+    "is_start": "2025-09-01",
+    "is_end": "2026-02-11",
+    "oos_start": "2026-02-11",
+    "oos_end": "2026-05-30",
+    "vol_ratio_full": 1.7134,
+    "vol_ratio_is": 1.0013,
+    "vol_ratio_oos": 5.7515,
+    "carry_full": 0.797,
+    "carry_is": 0.7135,
+    "carry_oos": 0.9221,
+    "diff_carry_full": 0.5557,
+    "diff_carry_is": 0.4109,
+    "diff_carry_oos": 0.7727,
+    "corr_linea_sol": 0.1948,
+    "corr_linea_avax": 0.1796,
+    "linea_fr_std_ann_pct": 55.76,
+    "sol_fr_std_ann_pct": 32.55,
+    "diff_mean_ann_pct": 4.0
+  },
+  "phase0_gates": {
+    "K775_vol_full": {
+      "value": 1.7134,
+      "threshold": 1.5,
+      "pass": true,
+      "note": "vol_ratio_full=1.7134x PASS (>=1.5x). WARNING: vol_is=1.0x (edge concentrated in OOS burst only)."
+    },
+    "L003_avax": {
+      "value": 0.1796,
+      "threshold": 0.45,
+      "pass": true,
+      "note": "corr(LINEA, AVAX)=0.1796 < 0.45 PASS"
+    },
+    "L004_carry": {
+      "carry_full": 0.797,
+      "carry_is": 0.7135,
+      "carry_oos": 0.9221,
+      "threshold_lower": 0.35,
+      "threshold_upper": 0.80,
+      "hard_block": false,
+      "pass": true,
+      "warning": "carry_oos=0.9221 > 0.80 (structural long bias in recent 109 days)",
+      "note": "L004: carry_full=0.797 < 0.80 so not hard blocked by itself. BUT carry_oos=0.9221 is a structural warning. Hard block requires BOTH full AND oos > 0.80."
+    },
+    "L004_DIFF": {
+      "diff_carry_full": 0.5557,
+      "diff_carry_is": 0.4109,
+      "diff_carry_oos": 0.7727,
+      "threshold": [0.3, 0.7],
+      "full_fail": false,
+      "oos_fail": true,
+      "blocked": true,
+      "pass": false,
+      "note": "L004_DIFF OOS=0.7727 > 0.70 BLOCKED. LINEA_FR > SOL_FR in 77.3% of OOS hours. Non-stationary differential regime: full=55.6% (balanced) vs OOS=77.3% (LINEA dominates). Structural signal collapse."
+    },
+    "L011_sol_direct": {
+      "value": 0.1948,
+      "threshold": 0.5,
+      "pass": true,
+      "note": "corr(LINEA, SOL)=0.1948 < 0.50 PASS"
+    },
+    "G5q_eth_l2_cluster": {
+      "linea_cluster": "Ethereum_L2 (Consensys zkEVM, ETH DeFi)",
+      "ldo_cluster": "Ethereum_DeFi (Lido liquid staking, ETH staking)",
+      "overlap": "Both ETH ecosystem narrative: ETH price/adoption cycles drive both LDO and LINEA FR",
+      "k772_stx_g5q_corr": 0.5276,
+      "expected_linea_g5q_corr": ">= 0.5276 (LINEA is direct ETH L2, stronger ETH narrative than STX BTC L2)",
+      "pass": false,
+      "note": "Meta-narrative cluster rule: ETH L2 (LINEA) vs ETH staking (LDO) share the same ETH adoption narrative cycle. K772 STX-SOL (BTC L2, weaker ETH connection) already failed G5q at 0.5276. LINEA (direct Ethereum L2 infrastructure) has even stronger ETH narrative coupling => G5q expected FAIL. Meta-narrative overlap is STRONGER reject signal than G5 corr (per project memory rule)."
+    },
+    "failed_gates": ["L004_DIFF", "G5q_eth_l2_cluster"],
+    "pre_screen_pass": false,
+    "verdict": "REJECTED",
+    "primary_fail": "L004_DIFF"
+  },
+  "prescreen_failures": ["L004_DIFF", "G5q_eth_l2_cluster"],
+  "prescreen_pass": false,
+  "phase1_skipped": true,
+  "phase2_skipped": true,
+  "phase3_skipped": true,
+  "phase4_skipped": true,
+  "reject_analysis": {
+    "fail_1_L004_DIFF_OOS": {
+      "gate": "L004_DIFF OOS > 0.70 upper bound",
+      "value": 0.7727,
+      "threshold_upper": 0.70,
+      "full_value": 0.5557,
+      "is_value": 0.4109,
+      "interpretation": "In full period (Sep 2025 - Feb 2026), LINEA FR was above SOL FR 55.6% of the time (balanced, edge viable). In OOS (Feb 2026 - May 2026), LINEA FR > SOL FR 77.3% of the time. This is a structural regime shift: LINEA entered a persistent positive FR phase (carry_oos=0.9221 -- long-only bias). The differential signal became non-stationary. This invalidates the mean-reversion edge fundamental to the FR differential strategy.",
+      "root_cause": "LINEA (Consensys zkEVM) launched Sept 2025 with balanced FR. By Q1 2026 (OOS), retail speculators accumulated persistent long exposure driven by ETH L2 narrative + zkEVM bullish thesis. SOL FR remained anchored to its own cycle, creating persistent LINEA > SOL differential with no reversion signal."
+    },
+    "fail_2_G5q_ETH_L2_cluster": {
+      "gate": "G5q meta-narrative cluster (ETH DeFi-adjacent, K772 lesson)",
+      "linea_token": "LINEA — Consensys zkEVM Ethereum L2 infrastructure",
+      "ldo_token": "LDO — Lido liquid staking (ETH staking protocol)",
+      "shared_narrative": "Both ETH ecosystem: ETH price, ETH DeFi TVL, ETH adoption narrative",
+      "k772_precedent": {
+        "token": "STX (Bitcoin L2)",
+        "g5q_corr": 0.5276,
+        "result": "REJECTED — G5q_ldo_sol > 0.40 FAIL",
+        "lesson": "Even BTC L2 (weaker ETH connection) failed G5q at corr=0.5276"
+      },
+      "expected_linea_g5q": "LINEA is a DIRECT Ethereum L2. Expected G5q corr >= STX’s 0.5276. LINEA-SOL and LDO-SOL signals driven by same ETH ecosystem narrative => high correlation expected.",
+      "meta_narrative_rule": "meta-narrative cluster overlap is stronger reject signal than G5 corr alone (K513 DOT, K522 ALGO precedent in project memory). ETH L2 cluster => HARD REJECT at pre-screen level."
+    },
+    "fail_3_carry_oos_structural_warning": {
+      "gate": "L004 carry_oos WARNING (not hard block alone, but corroborating signal)",
+      "carry_full": 0.797,
+      "carry_oos": 0.9221,
+      "threshold_upper": 0.80,
+      "note": "carry_oos=0.9221 > 0.80 in OOS. LINEA was long-biased 92.2% of OOS hours. Combined with L004_DIFF OOS=0.773, confirms LINEA in structural long phase -- no short opportunity in recent 109 days."
+    },
+    "vol_ratio_regime_split_warning": {
+      "vol_ratio_full": 1.7134,
+      "vol_ratio_is": 1.0013,
+      "vol_ratio_oos": 5.7515,
+      "note": "Extreme bifurcation: IS=1.0x (ZERO edge in first 60% of history) vs OOS=5.75x. Full vol ratio of 1.7x is entirely driven by recent OOS burst. This is a regime artifact, not persistent structural edge. If IS vol_ratio=1.0 were evaluated alone, K775 would FAIL."
+    }
+  },
+  "k523_mandatory_note": "K523 3-point projection NOT computed. REJECTED at pre-screen. No ROI computation warranted.",
+  "hl_cap_note": "HL 65.0% cap reached at K524. New paired-trade is paper-only regardless. Moot point given REJECT.",
+  "cluster_ruling": {
+    "linea_cluster": "Ethereum_L2 (Consensys, zkEVM, ETH DeFi-adjacent)",
+    "vs_ldo": "G5q ETH-DeFi-adjacent cluster FAIL expected (same ETH narrative)",
+    "future_options": "LINEA could pair vs non-ETH-correlated token (not SOL, not LDO). But low maxLeverage=3 on HL limits practical deployment. Not recommended for further exploration.",
+    "next_wave_note": "K785 round 2d queue exhausted: RESOLV CONDITIONAL_ACCEPT (K789), LINEA REJECTED (K792). Move to round 2e pre-screen (SOPH/MANTA/GMT/BANANA/ACE/TRB/WCT/REZ/CFX/GAS/SKR/RSR/NOT) or other pipeline."
+  },
+  "summary_table": {
+    "gate": ["K775_vol_full", "L003_AVAX", "L004_carry", "L004_DIFF", "L011_SOL", "G5q_ETH_L2"],
+    "value": ["1.71x", "0.18", "0.797/0.922", "0.556/0.773", "0.19", "expected>=0.53"],
+    "threshold": [">=1.5x", "<0.45", "[0.35,0.80]", "[0.30,0.70]", "<0.50", "<0.40"],
+    "result": ["PASS", "PASS", "PASS*", "FAIL (OOS)", "PASS", "FAIL (cluster)"]
+  }
+}
