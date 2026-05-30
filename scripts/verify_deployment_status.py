@@ -420,6 +420,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k661_avax_eth",
         expected_html_status="SCAFFOLD-READY",  # K677: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=14 + fill_rate>=60% + maxDD<15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k587-icp-btc",
+        purpose="K587 ICP-BTC FR Differential (Compute/Cloud cluster Internet Computer Protocol Dfinity, BTC-base paired-trade, HL+Bybit split 0.5%+0.5%, 4x leverage, 8h cycle, OOS Sh 12.53 W=168h EMA ICP FR-BTC FR, $21K/yr net @$10M @4x @1% sleeve, ICP vol 8.40x highest in BTC-base family, HL maxLev=5x uses 4x margin of safety, neuron staking unlock cycles SNS DAO launches canister compute demand waves orthogonal FR dynamics, 60d paper-trade gate Realized Sh>=6 fill>=60% maxDD<20%, v6.43 candidate 1% sleeve, 54th daemon, K678 scaffold)",
+        scripts=["scripts/k587_icp_btc_run.py"],
+        log_basename="k587_icp_btc",
+        expected_html_status="SCAFFOLD-READY",  # K678: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=6 + fill>=60% + maxDD<20%)
+    ),
 ]
 
 

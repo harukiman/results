@@ -10982,3 +10982,176 @@ HL impact: +~1.5pp (AVAX-PERP already on HL via K484; ETH-PERP shared; net ~1.5p
 ---
 
 *K677 §54 -- K661 AVAX-ETH FR Differential production scaffold (53rd daemon, 6th ETH-base scaffold, ACCEPT CONDITIONAL dual-sleeve K484, OOS Sh 28.2551 W=168h sign-threshold $63,416/yr @$10M @4x 1.5% sleeve, K484 PnL corr=0.3731 PASS dual-sleeve $139K/yr combined est, HL AVAX-PERP+ETH-PERP ~64.0% within 65%, dual-sleeve K484+K661 3% combined, 60d gate: Sh>=14 fill>=60% maxDD<15%, AVAX Subnet/RWA Avalanche9000 cluster, v6.43 candidate) -- 2026-05-30*
+
+---
+
+## §55 K587 ICP-BTC FR Differential — Production Scaffold Playbook
+
+**Wave:** K678 | **Daemon:** 54th | **Status:** SCAFFOLD-READY (60d paper-trade gate)
+**Decision:** ACCEPT CONDITIONAL — Compute/Cloud cluster, highest-vol BTC-base family member
+
+### §55.0 Strategy Summary
+
+K587 ICP-BTC FR Differential is the production scaffold for Internet Computer Protocol (Dfinity)
+vs BTC funding rate carry, the founding strategy of the **Compute/Cloud cluster**.
+
+Key characteristics:
+- **Highest volatility** in BTC-base paired-trade family: ICP vol 8.40x vs BTC
+- **HL maxLev = 5x** for ICP (HL hard limit); strategy uses **4x** (25% margin of safety)
+- **HL+Bybit split** (0.5% + 0.5%) to distribute high-vol risk across venues
+- **$21K/yr net** @ $10M AUM, 1% sleeve, 4x leverage
+- OOS Sharpe 12.53 (W=168h EMA, sign threshold ±0.00001)
+- 54th daemon (K678 scaffold)
+
+### §55.1 ICP Compute/Cloud Hypothesis
+
+ICP (Internet Computer Protocol, Dfinity Foundation) creates structurally distinct FR dynamics
+from BTC due to the decentralised cloud compute business model:
+
+1. **Neuron staking cycles**: ICP staked in governance neurons (2-week to 8-year dissolve delays)
+   — periodic unlock events create liquid ICP spikes → perp demand surges
+2. **SNS DAO launches**: Service Nervous System DAO launches require ICP → episodic demand
+3. **Canister compute demand**: ICP canisters (smart contracts) burn cycles (ICP-denominated compute
+   fee) — developer demand waves create orthogonal FR spikes vs BTC monetary demand
+4. **Chain-key cryptography**: Major protocol upgrades (threshold ECDSA, BLS signatures, VETkeys)
+   → speculative FR events orthogonal to BTC macro
+5. **Vol 8.40x vs BTC**: ICP's distinct compute narrative drives higher vol than any other
+   BTC-base family member — necessitating HL+Bybit split and HL maxLev awareness
+
+### §55.2 Key Parameters
+
+| Parameter | Value |
+|---|---|
+| Signal | EMA(ICP_FR - BTC_FR, W=168h) > +threshold or < -threshold |
+| Window | W=168h (21 × 8h settlement periods) |
+| Threshold | ±0.00001 (same as BTC-base family) |
+| Sleeve | 1% total (HL 0.5% + Bybit 0.5%) |
+| Leverage | 4x (below HL maxLev=5x for ICP) |
+| Venue | HL 0.5% (ICP leg) + Bybit 0.5% (BTC leg) |
+| Cadence | 8h (FR settlement cycle) |
+| Cluster | Compute/Cloud (Internet Computer Protocol, Dfinity) |
+
+### §55.3 Performance (K587 ACCEPT CONDITIONAL)
+
+| Metric | Value | Note |
+|---|---|---|
+| OOS Sharpe | 12.53 | W=168h EMA, sign threshold |
+| OOS Ann Ret (1% sleeve, 4x) | $21,000/yr | Net of costs @$10M |
+| ICP vol multiple | 8.40x vs BTC | HIGHEST in BTC-base family |
+| HL maxLev ICP | 5x | HL hard limit; strategy uses 4x |
+| 60d gate | Realized Sh ≥ 6 | 50% of OOS 12.53 |
+
+### §55.4 Signal Direction Logic
+
+```
+ema_168h = exponential_MA(ICP_FR - BTC_FR, alpha=2/(21+1))
+
+ICP FR > BTC FR (ema_168h > +0.00001):
+  → short ICP (collect high FR) / long BTC (cheap carry)
+  → position_state = LONG_BTC_SHORT_ICP
+  → ICP short on HL (0.5%, HL maxLev=5x uses 4x), BTC long on Bybit (0.5%)
+
+BTC FR > ICP FR (ema_168h < -0.00001):
+  → short BTC (collect high FR) / long ICP (cheap carry)
+  → position_state = LONG_ICP_SHORT_BTC
+  → ICP long on HL (0.5%, HL maxLev=5x uses 4x), BTC short on Bybit (0.5%)
+
+Neutral: no position
+```
+
+### §55.5 HL Concentration Analysis
+
+| Reference | HL Weight | Note |
+|---|---|---|
+| Post-K677 K661 AVAX-ETH | ~64.0% | K661 added 1.5pp |
+| K587 ICP adds 0.5% | +0.5pp | HL portion only (0.5% not 1%) |
+| Post-K587 estimated | ~64.5% | Within 65% limit |
+| Headroom remaining | ~0.5pp | Monitor carefully |
+
+K587 HL+Bybit split keeps HL impact minimal (+0.5pp vs full 1% HL-only).
+HL maxLev=5x for ICP → 4x leverage provides margin of safety below HL hard limit.
+
+### §55.6 60d Paper-Trade Gate (K678 specification)
+
+| Criterion | Target | Rationale |
+|---|---|---|
+| Realized Sharpe | ≥ 6 | 50% of OOS Sh=12.53 (K678 spec) |
+| Fill rate | ≥ 60% | POST_ONLY parallel HL+Bybit (0.5%+0.5%) |
+| Max drawdown | < 20% | Relaxed: ICP highest-vol family member (8.40x) |
+
+Gate passage required before setting `PAPER_TRADE=False` in daemon environment.
+Relaxed DD gate (20% vs 15% standard) reflects ICP's highest-vol characteristic.
+
+### §55.7 Operational Runbook
+
+```bash
+# Status check
+python3 scripts/k587_icp_btc_run.py --status
+
+# Manual dry-run cycle
+python3 scripts/k587_icp_btc_run.py --dry-run
+
+# Rebalance check
+python3 scripts/k587_icp_btc_run.py --rebalance
+
+# Emergency close
+python3 scripts/k587_icp_btc_run.py --close "emergency exit K678"
+
+# Daemon log monitoring
+tail -f logs/k587_icp_btc.log
+
+# Deployment verification
+python3 scripts/verify_deployment_status.py | grep -i icp
+
+# Dashboard path
+data/k587_dashboard.json
+```
+
+```json
+// data/leverage_config.json
+"K587_ICP_BTC": 4.0   // exchange_caps -- 4x (HL maxLev ICP=5x; uses 4x for margin of safety)
+
+// k587_notes.activation_criteria
+"realized_sharpe_min": 6.0,    // 50% of OOS Sh=12.53
+"fill_rate_min_pct": 60,
+"max_drawdown_max_pct": 20     // relaxed: ICP highest-vol family member
+```
+
+```python
+# scripts/leverage_manager.py
+"K587":    0.01   # ICP-BTC FR Differential, 4x, HL 0.5%+Bybit 0.5% split (v6.43 K678 addition, 54th daemon)
+```
+
+Notional at $10M / 1% / 4x:
+- HL capital: $50K × 4x = $200K (ICP leg on HL)
+- Bybit capital: $50K × 4x = $200K (BTC leg on Bybit)
+- Total notional: $400K | Margin: $100K (1% of AUM)
+
+### §55.8 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k587_icp_btc_run.py` | Strategy script (K678 scaffold, K339 pattern) |
+| `data/k587_dashboard.json` | Live state + ICP-BTC diff signal |
+| `scripts/com.cryptolab.k587-icp-btc.plist` | 54th daemon plist (StartInterval 28800) |
+| `scripts/emergency_hl_exit.py` | `_detect_k587_paired_positions` + `close_k587_paired_positions` |
+| `scripts/leverage_manager.py` | K587_ICP_BTC 4.0 cap + SLEEVE_WEIGHTS_V644 K587=1% |
+| `data/leverage_config.json` | K587_ICP_BTC: 4.0 + k587_notes |
+| `scripts/verify_deployment_status.py` | 54th daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§55) |
+| `wave_k678_k587_scaffold.py` | Wave driver/test |
+| `wave_k678_k587_scaffold.json` | Wave result report |
+
+### §55.9 References
+
+| Wave | Description |
+|------|-------------|
+| K678 | This section — K587 ICP-BTC scaffold (54th daemon, v6.43 candidate) |
+| K587 | K587 analysis — ICP ACCEPT CONDITIONAL (Compute/Cloud cluster, OOS Sh 12.53) |
+| K524 | K507 TIA-BTC scaffold (37th daemon, BTC-base family template) |
+| K520 | K512 APT-BTC scaffold (36th daemon, HL+Bybit split template) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K678 §55 -- K587 ICP-BTC FR Differential production scaffold (54th daemon, Compute/Cloud cluster Internet Computer Protocol Dfinity, OOS Sh 12.53 W=168h EMA $21K/yr net @$10M @4x 1% sleeve, ICP vol 8.40x highest in BTC-base family, HL maxLev=5x uses 4x margin of safety, HL+Bybit split 0.5%+0.5% HL ~64.5% within 65%, 60d gate: Sh>=6 fill>=60% maxDD<20%, v6.43 candidate) -- 2026-05-30*

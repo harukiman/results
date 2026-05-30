@@ -1,0 +1,109 @@
+{
+  "wave": "K678",
+  "strategy": "K587 ICP-BTC FR Differential",
+  "generated_jst": "2026-05-30 14:07 JST",
+  "total_tests": 14,
+  "passed": 14,
+  "failed": 0,
+  "results": [
+    {
+      "name": "script_exists",
+      "status": "PASS",
+      "detail": "scripts/k587_icp_btc_run.py exists (925 lines)"
+    },
+    {
+      "name": "plist_exists",
+      "status": "PASS",
+      "detail": "com.cryptolab.k587-icp-btc.plist: label + StartInterval=28800 OK"
+    },
+    {
+      "name": "dashboard_exists",
+      "status": "PASS",
+      "detail": "data/k587_dashboard.json: state=LONG_BTC_SHORT_ICP, OOS Sh=12.53, $21,000/yr"
+    },
+    {
+      "name": "dry_run",
+      "status": "PASS",
+      "detail": "dry-run: K587 ICP-BTC Cycle Complete (exit 0) + HL maxLev check PASS"
+    },
+    {
+      "name": "dashboard_written",
+      "status": "PASS",
+      "detail": "dashboard: wave=K678, sleeve=1% (HL 0.5% + Bybit 0.5%), HL maxLev=5.0x, ICP vol 8.4x"
+    },
+    {
+      "name": "notional_sizing",
+      "status": "PASS",
+      "detail": "notional: HL=$200,000 + Bybit=$200,000 = $400,000 total, $100,000 margin (1% @$10M x 4x)"
+    },
+    {
+      "name": "fr_differential_logic",
+      "status": "PASS",
+      "detail": "FR logic: positive\u2192LONG_BTC_SHORT_ICP (ICP@HL short), negative\u2192LONG_ICP_SHORT_BTC, neutral\u2192None"
+    },
+    {
+      "name": "emergency_exit_detect",
+      "status": "PASS",
+      "detail": "detect_k587: detected=True, LONG ICP@HL, SHORT BTC@Bybit, split=HL_05PCT_BYBIT_05PCT"
+    },
+    {
+      "name": "leverage_manager_k587",
+      "status": "PASS",
+      "detail": "leverage_manager: K587_ICP_BTC cap=4.0, SLEEVE_WEIGHTS_V644 K587=1%, total=108%"
+    },
+    {
+      "name": "leverage_config_k587",
+      "status": "PASS",
+      "detail": "leverage_config.json: K587_ICP_BTC=4.0, k587_notes OOS Sh 12.53 $21,000/yr, HL maxLev=5.0x, ICP vol 8.4x"
+    },
+    {
+      "name": "verify_deployment_k587",
+      "status": "PASS",
+      "detail": "verify_deployment_status: K587 54th daemon registered"
+    },
+    {
+      "name": "runbook_section",
+      "status": "PASS",
+      "detail": "docs/k302a_runbook.md: \u00a755 present with OOS Sh 12.53, $21K/yr, Compute/Cloud, maxLev"
+    },
+    {
+      "name": "report_html_k587",
+      "status": "PASS",
+      "detail": "report.html: K587 monitoring row present"
+    },
+    {
+      "name": "hl_max_lev_check",
+      "status": "PASS",
+      "detail": "HL maxLev=5.0x | strategy=4.0x | margin=20% below cap | ICP vol=8.4x vs BTC"
+    }
+  ],
+  "k587_spec": {
+    "oos_sharpe": 12.53,
+    "ann_return_usd": 21000,
+    "sleeve_pct": 0.01,
+    "leverage": 4.0,
+    "hl_sleeve_pct": 0.005,
+    "bybit_sleeve_pct": 0.005,
+    "hl_max_lev_icp": 5.0,
+    "icp_vol_multiple_vs_btc": 8.4,
+    "w_hours": 168,
+    "daemon_number": 54,
+    "cluster": "Compute/Cloud \u2014 Internet Computer Protocol (Dfinity)",
+    "split_protocol": "HL 0.5% (ICP leg) + Bybit 0.5% (BTC leg)"
+  },
+  "activation_gate": {
+    "oos_sharpe_min": 6.0,
+    "fill_rate_min_pct": 60,
+    "max_drawdown_pct": 20,
+    "duration_days": 60,
+    "status": "SCAFFOLD-READY",
+    "note": "Relaxed DD gate (20% vs 15%) for ICP highest-vol 8.40x"
+  },
+  "hl_concentration": {
+    "post_k677_pre_k587": 64.0,
+    "k587_hl_adds_pp": 0.5,
+    "post_k587_estimate": 64.5,
+    "limit": 65.0,
+    "headroom_pp": 0.5
+  }
+}
