@@ -1,6 +1,98 @@
 # K302a Master Deployment Playbook — Single Source of Truth
-**Version:** 6.50 MEGA PROPOSAL | **Updated:** 2026-05-30 15:34 JST | **Wave:** K700 MILESTONE (supersedes K692/K674/K666/K657/K643)
+**Version:** 6.50 MEGA PROPOSAL | **Updated:** 2026-05-30 16:20 JST | **Wave:** K709 (supersedes K700/K692/K674/K666/K657/K643)
 **Status:** v6.50 MEGA PROPOSAL — 35 sleeves | 10 orthog + 3 ETH-base + 7 alt-alts + 8 paired | HL 63.5% (<65% cap) | K523 $15.2M/$21.1M/$48M @$10M | 5y $105M @$10M | v6.50 LIVE target 2027-Q1
+
+---
+
+## ★★★ K709 DAY 0 SECTION — Unified Execution Sheet (2026-05-30 16:20 JST)
+
+> **K709 SCOPE:** Consolidates K674/K702/K706/K705/K700/K561/K539 into single user-actionable Day 0 sheet  
+> **FILES:** `wave_k709_day0_sheet.{py,json,md}` | **Quick start:** `python3 wave_k709_day0_sheet.py`
+
+### Day 0 Profit Summary
+
+| Scope | USD/yr | Effort |
+|-------|--------|--------|
+| Phase A immediate (K481 conservative + K545) | **+$146,300/yr @$10M** | ~1.25h |
+| Phase A full mid (all 5 actions) | **+$2,863,000/yr @$30M** | ~3.5h |
+| D60 cascade (2026-07-29, 14 scaffolds) | **+$1,642,745/yr @$10M** | Jul 29-Aug 2 |
+| Grand total mid | **$4,505,745/yr** | Phase A + D60 |
+
+### Day 0 Sequence (~3.5 hours)
+
+```
+Morning block (1.25hr, ZERO risk first):
+  T+0:00  A1 K545  5 min   Tax Harvester plist load             +$47K/yr
+  T+0:05  A2 K481  30 min  HL Builder Rebate (ZERO risk)        +$99-248K/yr
+  T+0:35  A3 K552  30 min  K280 75→60% patch [PREREQ]           +$260K unlock
+
+Parallel start (immediate, 7d background gate):
+  T+0:00  A5 K485  30 min  Bybit sub-account + 7d gate          +$2.2M/yr @$25M
+
+OKX block (when API ready, deferrable D1-D2):
+  T+1:30  A4 K498  8h      OKX BBO_SELECT smart router          +$121K/yr @$30M
+```
+
+### Phase A: 5 Actions at a Glance
+
+| # | Wave | Label | Effort | Risk | Profit/yr | Prereq |
+|---|------|-------|--------|------|-----------|--------|
+| A1 | K545 | Tax Harvester Plist | 5 min | **ZERO** | +$47K @$10M (JPN) | advisor confirm |
+| A2 | K481 | HL Builder Rebate | 30 min | **ZERO** | +$99-248K @$10M | main wallet + HL UI |
+| A3 | K552 | K280 75→60% Patch | 30 min | LOW | +$260K unlock (K376+K449) | git clean |
+| A4 | K498 | OKX BBO_SELECT Router | 8h | LOW | +$121K @$30M | OKX API key |
+| A5 | K485 | Bybit Sub-Account | 30min+7d | LOW | +$2.2M @$25M | Bybit KYC |
+
+**Reference:** `wave_k709_day0_sheet.md` (full paste-ready commands for all 5 actions)  
+**Status check:** `python3 wave_k709_day0_sheet.py --status`  
+**Pre-flight:** `python3 wave_k709_day0_sheet.py --preflight`  
+**Rollback:** `python3 wave_k709_day0_sheet.py --rollback A3`
+
+### Phase B: D7-D14 K376 BULL Watch
+
+```bash
+python3 scripts/k376_regime_trigger_monitor.py --status
+# If BULL_CONFIRMED:
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k376-momentum.plist
+```
+Profit: +$247K/yr max | $126K/yr regime-weighted. K497 daemon auto-monitors.
+
+### Phase C: D60 Cascade (2026-07-29)
+
+**14 scaffolds | +$1,642,745/yr @$10M | 5 days (Jul 29 – Aug 2)**  
+**CRITICAL PREREQ:** A3 K552 patch applied before cascade for K629 WLD-ETH eligibility  
+**Reference:** `wave_k705_d60_cascade.md` — full per-scaffold checklist + HL trajectory
+
+| Day | Strategies | Cumulative/yr | HL% |
+|-----|-----------|---------------|-----|
+| D+0 Jul29 | K686 AVAX-SOL, K682 ATOM-SOL, K628 JTO-orthog | $673,817 | 63.5% |
+| D+1 Jul30 | K679 APT-SOL, K658 SOL-ETH (+1.5pp), K696 ENA-SOL | $1,044,117 | **65.0% AT CAP** |
+| D+2 Jul31 | K690 SEI-SOL, K648 POL-orthog, K647 DOT-orthog | $1,315,215 | 65.0% |
+| D+3 Aug01 | K663 TIA-ETH, K629 WLD-ETH COND (+2.0pp), K694 TIA-SOL | $1,503,779 | 65.0% |
+| D+4 Aug02 | K698 LINK-ETH, K684 SOL-INJ | **$1,642,745** | 65.0% |
+
+**Constraint:** Max 3/day | Sharpe-descending order | 24h monitoring between batches  
+**K629 HARD STOP:** DO NOT load if HL >= 63.0%
+
+### Required Env Vars (never commit to git)
+
+| Var | Action | Set command |
+|-----|--------|-------------|
+| `HL_BUILDER_CODE` | A2 K481 | `echo 'export HL_BUILDER_CODE="0x<ADDR>"' >> ~/.zshrc` |
+| `OKX_API_KEY` / `OKX_API_SECRET` / `OKX_PASSPHRASE` | A4 K498 | `echo 'export OKX_API_KEY="..."' >> ~/.zshrc` |
+| `BYBIT_SUB1_API_KEY` / `BYBIT_SUB1_SECRET` | A5 K485 | `echo 'export BYBIT_SUB1_API_KEY="..."' >> ~/.zshrc` |
+
+### Checkpoints
+
+| Date | Milestone | Verify |
+|------|-----------|--------|
+| D+7 (Jun 6) | K481 rebate live; K545 daemon; K552 confirmed | `launchctl list \| grep cryptolab` |
+| D+14 (Jun 13) | K498 routing >= 40% non-HL; K376 BULL check | `tail -20 data/smart_router_decisions.jsonl` |
+| D+21 (Jun 20) | K485 7d gate complete; capital transfer decision | Bybit UI sub-account check |
+| D+30 (Jun 29) | D30 paper audit: all 14 scaffolds Sharpe/fill/DD | `python3 scripts/verify_deployment_status.py` |
+| D+60 (Jul 29) | D60 cascade execute (14 scaffolds, Sharpe order) | `wave_k705_d60_cascade.md` |
+
+---
 
 ---
 
