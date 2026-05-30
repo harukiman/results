@@ -1,6 +1,96 @@
 # K302a Master Deployment Playbook — Single Source of Truth
-**Version:** 6.51 | **Updated:** 2026-05-30 18:30 JST | **Wave:** K724 (supersedes K723/K718/K712/K709/K700/K692/K674/K666/K657/K643)
-**Status:** v6.51 — 35 sleeves | 10 orthog + 4 ETH-base + 9 alt-alts + 8 paired | HL 64.5% (<65% cap) | K523 $15.6M/$21.8M/$48.6M @$10M | 5y $109M @$10M | v6.51 LIVE target 2027-Q1
+**Version:** 6.51 | **Updated:** 2026-05-30 18:05 JST | **Wave:** K732 (supersedes K724/K723/K718/K712/K709/K700/K692/K674/K666/K657/K643)
+**Status:** v6.51 — 35 sleeves | 10 orthog + 4 ETH-base + 11 alt-alts + 8 paired | HL 64.5% (<65% cap) | K523 $15.6M/$21.81M/$48.6M @$10M | 5y $109M-$115M @$10M | v6.51 LIVE target 2027-Q1
+
+## ★★★ K732 GOVERNANCE v9 FULL MODE — K712-K731 (20-Wave Audit) — 2026-05-30 18:05 JST
+
+> **K732 SCOPE:** Full governance v9. 20-wave audit K712-K731. 64 daemons (65 in-flight). 11 alt-alts. MR12 added. K376 INDETERMINATE. K552 PREREQ.
+> **FILES:** `wave_k732_governance_v9.{py,json,md}` | **Quick start:** `python3 wave_k732_governance_v9.py`
+
+### K732 Governance v9 Summary
+
+| Metric | K712 v8 | K732 v9 | Delta | Note |
+|--------|---------|---------|-------|------|
+| **Waves audited** | 20 (K692-K711) | 20 (K712-K731) | — | cadence maintained |
+| **ACCEPT** | 3 | **5** | +2 | K719 ENA-ATOM + K729 INJ-ATOM |
+| **CONDITIONAL** | 3 | 3 | 0 | K728 LDO-SOL added |
+| **REJECT** | 1 | **0** | -1 | no rejects this round |
+| **SCAFFOLD** | 5 | **6** | +1 | K721/K724/K725/K726/K730/K731 |
+| **GOVERNANCE** | 5 | 5 | 0 | K712-K717 quick + misc |
+| **MILESTONE** | 2 | **1** | -1 | K718 capstone |
+| **Daemons** | 62 | **64** | +3 | 65 in-flight K731 |
+| **Alt-alts** | 8 | **11** | +3 | K719/K728/K729 |
+| **v6.51 mid @$10M** | $21.08M | **$21.81M** | +$730K | +K719+K729 |
+| **Memory rules** | 9 (MR9 latest) | **12** | +3 | MR10/MR11/MR12 |
+| **Closed lines cumulative** | 46 | **50** | +4 | K715/K376/K725/K727 |
+| **HL concentration** | 63.5% | **64.5%** | +1pp | K719 Bybit-only |
+| **K376 status** | TRANSITION ~14d | **INDETERMINATE** | worse | MR12 K497 authoritative |
+
+### Wave Decision Summary (K712-K731)
+
+| Wave | Category | Title | Key Outcome |
+|------|----------|-------|-------------|
+| K712 | GOVERNANCE | v8 Full Mode | 62 daemons, $21.1M, $4.5M cascade |
+| K713 | GOVERNANCE | Daily K376/K208/HL Refresh | K208 -67% confirmed |
+| K714 | GOVERNANCE | K280 Health & K492-C Readiness | K492-C immediate $45K |
+| K715 | GOVERNANCE | ONDO-SOL Evaluation | PATH CLEARED |
+| K716 | GOVERNANCE | K492-C Activation Playbook | Phase A Action #6 formalized |
+| K717 | GOVERNANCE | v8 Quick (K712-K716) | K492-C added, 62 daemons confirmed |
+| K718 | MILESTONE | Capstone K449-K717 | 268+ waves, 62 daemons, v6.50 $21.1M |
+| **K719** | **ACCEPT** | **ENA-ATOM Alt-Alt (LARGEST)** | **OOS Sh=29.67, 12/12 WF, $634K** |
+| K720 | GOVERNANCE | BTC Slope Quick Check | 622d ETA INVALID (K722 reconciles) |
+| K721 | SCAFFOLD | K719 ENA-ATOM Scaffold | 63rd daemon |
+| K722 | GOVERNANCE | K376 Methodology Reconciliation | K497 sole truth established |
+| K723 | GOVERNANCE | K376 INDETERMINATE Defensive | Phase B indefinitely deferred |
+| K724 | SCAFFOLD | v6.51 Incremental Update | 63 daemons, $21.81M mid |
+| K725 | SCAFFOLD | K449 Week 1 LIVE Playbook | K449 priority escalated |
+| K726 | SCAFFOLD | MR12 K376 Formalization | **(SMA_20d_today-SMA_20d_20d_ago)/20>=0 7d** |
+| K727 | GOVERNANCE | Production State Final Snapshot | 7 launchctl active, HL 64.5% verified |
+| **K728** | **CONDITIONAL** | **LDO-SOL Alt-Alt (10th)** | **OOS Sh=46.84, 60d paper** |
+| **K729** | **ACCEPT** | **INJ-ATOM Alt-Alt (1st intra-Cosmos)** | **OOS Sh=18.75, Cosmos triangle CLOSED** |
+| K730 | SCAFFOLD | K728 LDO-SOL Scaffold | 64th daemon |
+| K731 | SCAFFOLD | K729 INJ-ATOM Scaffold | 65th daemon IN FLIGHT |
+
+### Alt-Alt Family — 11 Members (K732 Snapshot)
+
+| # | Wave | Pair | OOS Sh | Net/yr @$10M | Status |
+|---|------|------|--------|-------------|--------|
+| 1 | K686 | AVAX-SOL | 50.27 | $102,153 | ACCEPT |
+| 2 | K708 | BNB-SOL | 48.59 | $75,011 | ACCEPT |
+| 3 | K728 | LDO-SOL | 46.84 | $105,032 | CONDITIONAL 60d |
+| 4 | K682 | ATOM-SOL | 43.43 | $214,638 | ACCEPT |
+| 5 | K679 | APT-SOL | 39.29 | $234,781 | ACCEPT |
+| 6 | K719 | ENA-ATOM | 29.67 | **$634,464** | **ACCEPT LARGEST** |
+| 7 | K696 | ENA-SOL | 26.93 | $93,187 | ACCEPT |
+| 8 | K690 | SEI-SOL | 25.11 | $104,774 | ACCEPT |
+| 9 | K729 | INJ-ATOM | 18.75 | $214,389 | ACCEPT intra-Cosmos |
+| 10 | K694 | TIA-SOL | 19.09 | $58,354 | CONDITIONAL |
+| 11 | K684 | SOL-INJ | 9.65 | $114,316 | ACCEPT |
+| — | **TOTAL** | | | **$1,951,099** | |
+
+### MR12 — K376 Trigger Methodology (NEW K726)
+
+```
+MR12: K376 BULL_CONFIRMED = (SMA_20d_today - SMA_20d_20d_ago) / 20 >= 0.0
+      for 7 CONSECUTIVE calendar days
+Authority: scripts/k376_regime_trigger_monitor.py (K497 daemon)
+Current: slope = -34.41/day, 0 days positive → INDETERMINATE
+Invalid ETA sources: K720 622d (metric error), K680 14d (hardcoded), K577 5d (stale)
+```
+
+### Critical Action Items (K732)
+
+1. **K552 D0 FIRST** — K280 75→60% patch frees 7.5pp HL headroom, unblocks $260K/yr
+2. **K492-C immediate** — 1-2h patch, $45,175/yr, K208 Sharpe +1.51 (K208 -67% defense)
+3. **D30 audit 2026-06-29** — verify 17 scaffolds (14 D60 + K719/K728/K729)
+4. **D60 cascade 2026-07-29** — 14 scaffolds live, $1.643M/yr unlock, 5-day window
+5. **K376 auto-arm via K497** — MR12 trigger auto-fires when slope >= 0 for 7d
+
+### Cadence
+- Next quick: **K737** (5 waves out)
+- Next full: **K752 v10** (20 waves out)
+
+---
 
 ## ★ K724 v6.51 INCREMENTAL UPDATE — K719 ENA-ATOM ACCEPTED (2026-05-30 18:30 JST)
 
