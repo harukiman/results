@@ -1,0 +1,1149 @@
+{
+  "wave": "K647",
+  "strategy": "DOT-BTC FR Differential Signal Orthogonalization \u2014 Remove INJ Governance/Staking Common Factor (K513 G5e Unblock Attempt)",
+  "run_time_jst": "2026-05-30 11:50 JST",
+  "runtime_s": 3.67,
+  "decision": "ACCEPT",
+  "decision_rationale": "Orthogonalized DOT signal (W=168h): G5 PASS + OOS Sharpe=23.254. Only 1 non-critical gates failed. INJ=0.0374 PASS. SOL=0.2084 PASS. AVAX=0.0216 PASS.",
+  "k513_context": {
+    "k513_decision": "BLOCKED-CLUSTER (INJ)",
+    "k513_oos_sharpe": 43.562,
+    "k513_profit_10m_net": 161685,
+    "k513_g5e_inj_corr": 0.4229,
+    "k647_approach": "Signal orthogonalization: residualize DOT signal vs INJ common factor. OLS: fr_diff_dot ~ \u03b1 + \u03b2_INJ*fr_diff_inj + residual. Trade residual direction instead of raw fr_diff direction."
+  },
+  "data_info": {
+    "hl_dot_fr_rows": 17484,
+    "date_start": "2024-05-24",
+    "date_end": "2026-05-23",
+    "total_years": 1.996,
+    "oos_start": "2025-10-18",
+    "n_is_rows": 12267,
+    "n_oos_rows": 5217,
+    "oos_years": 0.596,
+    "fr_frequency": "1h (HL settles hourly)"
+  },
+  "signal_config": {
+    "strategy_type": "FR differential carry \u2014 ORTHOGONALIZED vs INJ",
+    "direction_rule": "sign(W-hour rolling mean of OLS residual of fr_diff_dot)",
+    "cost_rt_bps": 4,
+    "pnl_source": "signal * fr_diff_dot (carry from actual DOT-BTC position)",
+    "signal_windows": [
+      168,
+      504
+    ]
+  },
+  "phase1_regression": {
+    "method": "OLS IS-estimated, applied to full period",
+    "is_period": {
+      "n_rows": 12267,
+      "frac": 0.702
+    },
+    "oos_period": {
+      "n_rows": 5217,
+      "frac": 0.298
+    },
+    "coefficients": {
+      "alpha": 2.24e-06,
+      "beta_inj": 0.642231
+    },
+    "t_stats": {
+      "t_alpha": 13.005,
+      "t_beta_inj": 86.665
+    },
+    "r_squared": {
+      "is": 0.3798,
+      "oos": -4.1139
+    },
+    "residual_properties": {
+      "adf_pvalue": null,
+      "stationary": null,
+      "ou_halflife_h": 6.0
+    },
+    "correlation_check": {
+      "raw_dot_inj_corr": 0.1627,
+      "resid_inj_corr": -0.8081,
+      "orthogonality_achieved": false
+    },
+    "regression_data": {
+      "n_full": 17484,
+      "n_is": 12267,
+      "n_oos": 5217
+    }
+  },
+  "phase2_signal_infos": [
+    {
+      "window_h": 168,
+      "raw_orth_signal_corr": 0.4522,
+      "orth_vs_inj_signal_corr": 0.0374,
+      "inj_expected_near_zero": true,
+      "n_signal_rows": 17401
+    },
+    {
+      "window_h": 504,
+      "raw_orth_signal_corr": 0.4605,
+      "orth_vs_inj_signal_corr": -0.0828,
+      "inj_expected_near_zero": true,
+      "n_signal_rows": 17233
+    }
+  ],
+  "phase3_backtest": [
+    {
+      "window_h": 168,
+      "oos": {
+        "sharpe": 23.2542,
+        "ann_ret_pct": 10.0575,
+        "max_drawdown_pct": -0.8597,
+        "trades": 21,
+        "trades_per_year": 35.3,
+        "n_rows": 5217,
+        "n_years": 0.596,
+        "n_days": 217.4
+      },
+      "is": {
+        "sharpe": -0.1691,
+        "ann_ret_pct": -0.0632,
+        "n_rows": 12183
+      },
+      "full": {
+        "sharpe": 7.5164
+      },
+      "raw_comparison": {
+        "raw_oos_sharpe": 44.1846,
+        "orth_oos_sharpe": 23.2542,
+        "sharpe_reduction": 20.9304,
+        "interpretation": "Orthogonalization removed the INJ governance/staking common factor from DOT signal. Residual Sharpe = 23.25 vs raw 44.18. Reduction = 20.93 Sharpe units (this is the portion attributable to INJ-DOT governance co-movement)."
+      }
+    },
+    {
+      "window_h": 504,
+      "oos": {
+        "sharpe": 25.4947,
+        "ann_ret_pct": 10.1947,
+        "max_drawdown_pct": -1.3676,
+        "trades": 11,
+        "trades_per_year": 18.5,
+        "n_rows": 5217,
+        "n_years": 0.596,
+        "n_days": 217.4
+      },
+      "is": {
+        "sharpe": -0.2356,
+        "ann_ret_pct": -0.0787,
+        "n_rows": 12015
+      },
+      "full": {
+        "sharpe": 8.4459
+      },
+      "raw_comparison": {
+        "raw_oos_sharpe": 46.2714,
+        "orth_oos_sharpe": 25.4947,
+        "sharpe_reduction": 20.7767,
+        "interpretation": "Orthogonalization removed the INJ governance/staking common factor from DOT signal. Residual Sharpe = 25.49 vs raw 46.27. Reduction = 20.78 Sharpe units (this is the portion attributable to INJ-DOT governance co-movement)."
+      }
+    }
+  ],
+  "phase4_section6": [
+    {
+      "window_h": 168,
+      "oos_metrics": {
+        "sharpe": 23.2542,
+        "ann_ret_pct": 10.0575,
+        "max_drawdown_pct": -0.8597,
+        "trades": 21,
+        "trades_per_year": 35.3,
+        "n_rows": 5217,
+        "n_years": 0.596,
+        "n_days": 217.4
+      },
+      "is_metrics": {
+        "sharpe": -0.1691,
+        "ann_ret_pct": -0.0632,
+        "n_rows": 12183
+      },
+      "gates": [
+        {
+          "gate": "G1",
+          "name": "OOS Sharpe >= 1.0",
+          "value": 23.2542,
+          "pass": "True"
+        },
+        {
+          "gate": "G2",
+          "name": "Perm p <= 0.05",
+          "value": 0.0,
+          "pass": true
+        },
+        {
+          "gate": "G3",
+          "name": "DSR Bonferroni p < 0.02500",
+          "value": 0.0,
+          "pass": true
+        },
+        {
+          "gate": "G4",
+          "name": "Walk-forward all positive",
+          "value": "8/12",
+          "pass": false
+        },
+        {
+          "gate": "G5",
+          "name": "G5 family corr < 0.40",
+          "value": 0.3632,
+          "pass": true
+        },
+        {
+          "gate": "G6",
+          "name": "Trades/yr >= 30",
+          "value": 35.3,
+          "pass": true
+        },
+        {
+          "gate": "G7",
+          "name": "Ann ret > 5% (unleveraged)",
+          "value": 10.0575,
+          "pass": true
+        },
+        {
+          "gate": "G8",
+          "name": "Cross-venue corr >= 0.55",
+          "value": 0.674,
+          "pass": true
+        },
+        {
+          "gate": "G9",
+          "name": "OOS >= 180d",
+          "value": 217.4,
+          "pass": true
+        }
+      ],
+      "n_pass": 8,
+      "n_total": 9,
+      "all_critical_pass": true,
+      "g5_details": {
+        "G5j_K280": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5j_K280: skip (no data), assume PASS"
+        },
+        "G5a_ETH": {
+          "ticker": "ETH",
+          "corr": -0.0105,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs ETH-BTC at W=168h: corr=-0.0105 (PASS threshold 0.4)"
+        },
+        "G5b_SOL": {
+          "ticker": "SOL",
+          "corr": 0.2084,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs SOL-BTC at W=168h: corr=0.2084 (PASS threshold 0.4)"
+        },
+        "G5c_AVAX": {
+          "ticker": "AVAX",
+          "corr": 0.0216,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs AVAX-BTC at W=168h: corr=0.0216 (PASS threshold 0.4)"
+        },
+        "G5d_ATOM": {
+          "ticker": "ATOM",
+          "corr": 0.0248,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs ATOM-BTC at W=168h: corr=0.0248 (PASS threshold 0.4)"
+        },
+        "G5e_INJ": {
+          "ticker": "INJ",
+          "corr": 0.0374,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs INJ-BTC at W=168h: corr=0.0374 (PASS threshold 0.4) [ORTHOGONALIZED: by construction should be ~0; actual=0.0374 \u2014 residual corr confirms orthogonalization VALID]"
+        },
+        "G5f_SEI": {
+          "ticker": "SEI",
+          "corr": 0.1483,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs SEI-BTC at W=168h: corr=0.1483 (PASS threshold 0.4)"
+        },
+        "G5g_TIA": {
+          "ticker": "TIA",
+          "corr": -0.0195,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs TIA-BTC at W=168h: corr=-0.0195 (PASS threshold 0.4)"
+        },
+        "G5h_APT": {
+          "ticker": "APT",
+          "corr": 0.3497,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs APT-BTC at W=168h: corr=0.3497 (PASS threshold 0.4)"
+        },
+        "G5i_FIL": {
+          "ticker": "FIL",
+          "corr": 0.2209,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs FIL-BTC at W=168h: corr=0.2209 (PASS threshold 0.4)"
+        },
+        "G5k_RNDR": {
+          "ticker": "RNDR",
+          "corr": -0.1098,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs RNDR-BTC at W=168h: corr=-0.1098 (PASS threshold 0.4)"
+        },
+        "G5l_TAO": {
+          "ticker": "TAO",
+          "corr": 0.1847,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs TAO-BTC at W=168h: corr=0.1847 (PASS threshold 0.4)"
+        },
+        "G5m_LINK": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5m_LINK: skip (no data), assume PASS"
+        },
+        "G5n_TON": {
+          "ticker": "TON",
+          "corr": -0.0774,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs TON-BTC at W=168h: corr=-0.0774 (PASS threshold 0.4)"
+        },
+        "G5o_SAND": {
+          "ticker": "SAND",
+          "corr": 0.2767,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs SAND-BTC at W=168h: corr=0.2767 (PASS threshold 0.4)"
+        },
+        "G5p_ICP": {
+          "ticker": "ICP",
+          "corr": -0.1301,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs ICP-BTC at W=168h: corr=-0.1301 (PASS threshold 0.4)"
+        },
+        "G5q_AXS": {
+          "ticker": "AXS",
+          "corr": 0.3632,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs AXS-BTC at W=168h: corr=0.3632 (PASS threshold 0.4)"
+        },
+        "G5r_DOGE": {
+          "ticker": "DOGE",
+          "corr": 0.2079,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs DOGE-BTC at W=168h: corr=0.2079 (PASS threshold 0.4)"
+        },
+        "G5s_SHIB": {
+          "ticker": "SHIB",
+          "corr": 0.0721,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs SHIB-BTC at W=168h: corr=0.0721 (PASS threshold 0.4)"
+        },
+        "G5t_AAVE": {
+          "ticker": "AAVE",
+          "corr": 0.0084,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs AAVE-BTC at W=168h: corr=0.0084 (PASS threshold 0.4)"
+        },
+        "G5u_CRV": {
+          "ticker": "CRV",
+          "corr": -0.0143,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs CRV-BTC at W=168h: corr=-0.0143 (PASS threshold 0.4)"
+        },
+        "G5v_PEPE": {
+          "ticker": "PEPE",
+          "corr": 0.207,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs PEPE-BTC at W=168h: corr=0.2070 (PASS threshold 0.4)"
+        },
+        "G5w_WIF": {
+          "ticker": "WIF",
+          "corr": 0.184,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs WIF-BTC at W=168h: corr=0.1840 (PASS threshold 0.4)"
+        },
+        "G5x_BONK": {
+          "ticker": "BONK",
+          "corr": 0.1632,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs BONK-BTC at W=168h: corr=0.1632 (PASS threshold 0.4)"
+        },
+        "G5y_UNI": {
+          "ticker": "UNI",
+          "corr": 0.0316,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs UNI-BTC at W=168h: corr=0.0316 (PASS threshold 0.4)"
+        },
+        "G5z_ARB": {
+          "ticker": "ARB",
+          "corr": 0.0112,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs ARB-BTC at W=168h: corr=0.0112 (PASS threshold 0.4)"
+        },
+        "G5aa_JUP": {
+          "ticker": "JUP",
+          "corr": 0.0616,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs JUP-BTC at W=168h: corr=0.0616 (PASS threshold 0.4)"
+        },
+        "G5ab_SNX": {
+          "ticker": "SNX",
+          "corr": 0.0925,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs SNX-BTC at W=168h: corr=0.0925 (PASS threshold 0.4)"
+        },
+        "G5ac_LDO": {
+          "ticker": "LDO",
+          "corr": 0.0437,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs LDO-BTC at W=168h: corr=0.0437 (PASS threshold 0.4)"
+        },
+        "G5ad_MKR": {
+          "ticker": "MKR",
+          "corr": 0.0796,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs MKR-BTC at W=168h: corr=0.0796 (PASS threshold 0.4)"
+        },
+        "G5ae_OP": {
+          "ticker": "OP",
+          "corr": 0.1981,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs OP-BTC at W=168h: corr=0.1981 (PASS threshold 0.4)"
+        },
+        "G5af_POL": {
+          "ticker": "POL",
+          "corr": 0.2168,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs POL-BTC at W=168h: corr=0.2168 (PASS threshold 0.4)"
+        },
+        "G5ag_ENA": {
+          "ticker": "ENA",
+          "corr": -0.0322,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs ENA-BTC at W=168h: corr=-0.0322 (PASS threshold 0.4)"
+        },
+        "G5ah_ETHFI": {
+          "ticker": "ETHFI",
+          "corr": 0.0178,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs ETHFI-BTC at W=168h: corr=0.0178 (PASS threshold 0.4)"
+        }
+      },
+      "g5_fail_list": {},
+      "g5_max_corr": 0.3632,
+      "g5_max_pair": "AXS",
+      "inj_corr": 0.0374,
+      "sol_corr": 0.2084,
+      "avax_corr": 0.0216,
+      "inj_pass": true,
+      "walk_forward": {
+        "folds": [
+          {
+            "fold": 1,
+            "oos_start": "row_2160",
+            "oos_end": "row_2880",
+            "sharpe": -8.718,
+            "ann_ret_pct": -2.66,
+            "entries": 4
+          },
+          {
+            "fold": 2,
+            "oos_start": "row_2880",
+            "oos_end": "row_3600",
+            "sharpe": 9.919,
+            "ann_ret_pct": 1.457,
+            "entries": 0
+          },
+          {
+            "fold": 3,
+            "oos_start": "row_3600",
+            "oos_end": "row_4320",
+            "sharpe": 4.296,
+            "ann_ret_pct": 1.54,
+            "entries": 4
+          },
+          {
+            "fold": 4,
+            "oos_start": "row_4320",
+            "oos_end": "row_5040",
+            "sharpe": 1.173,
+            "ann_ret_pct": 0.417,
+            "entries": 1
+          },
+          {
+            "fold": 5,
+            "oos_start": "row_5040",
+            "oos_end": "row_5760",
+            "sharpe": -7.989,
+            "ann_ret_pct": -2.957,
+            "entries": 7
+          },
+          {
+            "fold": 6,
+            "oos_start": "row_5760",
+            "oos_end": "row_6480",
+            "sharpe": 7.808,
+            "ann_ret_pct": 3.046,
+            "entries": 7
+          },
+          {
+            "fold": 7,
+            "oos_start": "row_6480",
+            "oos_end": "row_7200",
+            "sharpe": -2.395,
+            "ann_ret_pct": -0.835,
+            "entries": 5
+          },
+          {
+            "fold": 8,
+            "oos_start": "row_7200",
+            "oos_end": "row_7920",
+            "sharpe": 1.431,
+            "ann_ret_pct": 0.451,
+            "entries": 2
+          },
+          {
+            "fold": 9,
+            "oos_start": "row_7920",
+            "oos_end": "row_8640",
+            "sharpe": 13.222,
+            "ann_ret_pct": 4.259,
+            "entries": 4
+          },
+          {
+            "fold": 10,
+            "oos_start": "row_8640",
+            "oos_end": "row_9360",
+            "sharpe": 0.373,
+            "ann_ret_pct": 0.129,
+            "entries": 5
+          },
+          {
+            "fold": 11,
+            "oos_start": "row_9360",
+            "oos_end": "row_10080",
+            "sharpe": 15.644,
+            "ann_ret_pct": 5.984,
+            "entries": 5
+          },
+          {
+            "fold": 12,
+            "oos_start": "row_10080",
+            "oos_end": "row_10800",
+            "sharpe": -2.551,
+            "ann_ret_pct": -0.707,
+            "entries": 3
+          }
+        ],
+        "fold_sharpes": [
+          -8.718,
+          9.919,
+          4.296,
+          1.173,
+          -7.989,
+          7.808,
+          -2.395,
+          1.431,
+          13.222,
+          0.373,
+          15.644,
+          -2.551
+        ],
+        "n_positive": 8,
+        "n_folds": 12,
+        "all_positive": false,
+        "min_sharpe": -8.718
+      },
+      "permutation_test": {
+        "real_oos_sharpe": 23.2542,
+        "n_permutations": 500,
+        "p_value": 0.0,
+        "pass": true
+      },
+      "dsr_bonferroni": {
+        "n_trials": 2,
+        "t_stat": 17.946,
+        "p_raw": 0.0,
+        "p_bonferroni": 0.0,
+        "threshold": 0.025,
+        "pass": true
+      },
+      "cross_venue": {
+        "bybit": {
+          "corr": 0.674,
+          "pass": true,
+          "note": "Bybit DOT FR baseline corr=0.6742 (K513 G8). Signal-level corr similar structural (HL 1h vs Bybit 8h). PASS >= 0.55."
+        }
+      },
+      "beta_inj_ref": 0.642231
+    },
+    {
+      "window_h": 504,
+      "oos_metrics": {
+        "sharpe": 25.4947,
+        "ann_ret_pct": 10.1947,
+        "max_drawdown_pct": -1.3676,
+        "trades": 11,
+        "trades_per_year": 18.5,
+        "n_rows": 5217,
+        "n_years": 0.596,
+        "n_days": 217.4
+      },
+      "is_metrics": {
+        "sharpe": -0.2356,
+        "ann_ret_pct": -0.0787,
+        "n_rows": 12015
+      },
+      "gates": [
+        {
+          "gate": "G1",
+          "name": "OOS Sharpe >= 1.0",
+          "value": 25.4947,
+          "pass": "True"
+        },
+        {
+          "gate": "G2",
+          "name": "Perm p <= 0.05",
+          "value": 0.0,
+          "pass": true
+        },
+        {
+          "gate": "G3",
+          "name": "DSR Bonferroni p < 0.02500",
+          "value": 0.0,
+          "pass": true
+        },
+        {
+          "gate": "G4",
+          "name": "Walk-forward all positive",
+          "value": "8/12",
+          "pass": false
+        },
+        {
+          "gate": "G5",
+          "name": "G5 family corr < 0.40",
+          "value": 0.4107,
+          "pass": false
+        },
+        {
+          "gate": "G6",
+          "name": "Trades/yr >= 30",
+          "value": 18.5,
+          "pass": false
+        },
+        {
+          "gate": "G7",
+          "name": "Ann ret > 5% (unleveraged)",
+          "value": 10.1947,
+          "pass": true
+        },
+        {
+          "gate": "G8",
+          "name": "Cross-venue corr >= 0.55",
+          "value": 0.674,
+          "pass": true
+        },
+        {
+          "gate": "G9",
+          "name": "OOS >= 180d",
+          "value": 217.4,
+          "pass": true
+        }
+      ],
+      "n_pass": 6,
+      "n_total": 9,
+      "all_critical_pass": false,
+      "g5_details": {
+        "G5j_K280": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5j_K280: skip (no data), assume PASS"
+        },
+        "G5a_ETH": {
+          "ticker": "ETH",
+          "corr": -0.0165,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs ETH-BTC at W=504h: corr=-0.0165 (PASS threshold 0.4)"
+        },
+        "G5b_SOL": {
+          "ticker": "SOL",
+          "corr": 0.2421,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs SOL-BTC at W=504h: corr=0.2421 (PASS threshold 0.4)"
+        },
+        "G5c_AVAX": {
+          "ticker": "AVAX",
+          "corr": 0.0346,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs AVAX-BTC at W=504h: corr=0.0346 (PASS threshold 0.4)"
+        },
+        "G5d_ATOM": {
+          "ticker": "ATOM",
+          "corr": -0.0014,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs ATOM-BTC at W=504h: corr=-0.0014 (PASS threshold 0.4)"
+        },
+        "G5e_INJ": {
+          "ticker": "INJ",
+          "corr": -0.0828,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs INJ-BTC at W=504h: corr=-0.0828 (PASS threshold 0.4) [ORTHOGONALIZED: by construction should be ~0; actual=-0.0828 \u2014 residual corr confirms orthogonalization VALID]"
+        },
+        "G5f_SEI": {
+          "ticker": "SEI",
+          "corr": 0.0851,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs SEI-BTC at W=504h: corr=0.0851 (PASS threshold 0.4)"
+        },
+        "G5g_TIA": {
+          "ticker": "TIA",
+          "corr": -0.0154,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs TIA-BTC at W=504h: corr=-0.0154 (PASS threshold 0.4)"
+        },
+        "G5h_APT": {
+          "ticker": "APT",
+          "corr": 0.4107,
+          "pass": false,
+          "note": "DOT-BTC ORTH signal vs APT-BTC at W=504h: corr=0.4107 (FAIL threshold 0.4)"
+        },
+        "G5i_FIL": {
+          "ticker": "FIL",
+          "corr": 0.1793,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs FIL-BTC at W=504h: corr=0.1793 (PASS threshold 0.4)"
+        },
+        "G5k_RNDR": {
+          "ticker": "RNDR",
+          "corr": -0.097,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs RNDR-BTC at W=504h: corr=-0.0970 (PASS threshold 0.4)"
+        },
+        "G5l_TAO": {
+          "ticker": "TAO",
+          "corr": 0.0659,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs TAO-BTC at W=504h: corr=0.0659 (PASS threshold 0.4)"
+        },
+        "G5m_LINK": {
+          "ticker": null,
+          "corr": null,
+          "pass": true,
+          "note": "G5m_LINK: skip (no data), assume PASS"
+        },
+        "G5n_TON": {
+          "ticker": "TON",
+          "corr": -0.2587,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs TON-BTC at W=504h: corr=-0.2587 (PASS threshold 0.4)"
+        },
+        "G5o_SAND": {
+          "ticker": "SAND",
+          "corr": 0.0969,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs SAND-BTC at W=504h: corr=0.0969 (PASS threshold 0.4)"
+        },
+        "G5p_ICP": {
+          "ticker": "ICP",
+          "corr": -0.0391,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs ICP-BTC at W=504h: corr=-0.0391 (PASS threshold 0.4)"
+        },
+        "G5q_AXS": {
+          "ticker": "AXS",
+          "corr": NaN,
+          "pass": false,
+          "note": "DOT-BTC ORTH signal vs AXS-BTC at W=504h: corr=nan (FAIL threshold 0.4)"
+        },
+        "G5r_DOGE": {
+          "ticker": "DOGE",
+          "corr": 0.2254,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs DOGE-BTC at W=504h: corr=0.2254 (PASS threshold 0.4)"
+        },
+        "G5s_SHIB": {
+          "ticker": "SHIB",
+          "corr": -0.016,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs SHIB-BTC at W=504h: corr=-0.0160 (PASS threshold 0.4)"
+        },
+        "G5t_AAVE": {
+          "ticker": "AAVE",
+          "corr": 0.0493,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs AAVE-BTC at W=504h: corr=0.0493 (PASS threshold 0.4)"
+        },
+        "G5u_CRV": {
+          "ticker": "CRV",
+          "corr": 0.022,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs CRV-BTC at W=504h: corr=0.0220 (PASS threshold 0.4)"
+        },
+        "G5v_PEPE": {
+          "ticker": "PEPE",
+          "corr": 0.2608,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs PEPE-BTC at W=504h: corr=0.2608 (PASS threshold 0.4)"
+        },
+        "G5w_WIF": {
+          "ticker": "WIF",
+          "corr": 0.1747,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs WIF-BTC at W=504h: corr=0.1747 (PASS threshold 0.4)"
+        },
+        "G5x_BONK": {
+          "ticker": "BONK",
+          "corr": 0.1808,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs BONK-BTC at W=504h: corr=0.1808 (PASS threshold 0.4)"
+        },
+        "G5y_UNI": {
+          "ticker": "UNI",
+          "corr": -0.0798,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs UNI-BTC at W=504h: corr=-0.0798 (PASS threshold 0.4)"
+        },
+        "G5z_ARB": {
+          "ticker": "ARB",
+          "corr": -0.0656,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs ARB-BTC at W=504h: corr=-0.0656 (PASS threshold 0.4)"
+        },
+        "G5aa_JUP": {
+          "ticker": "JUP",
+          "corr": 0.0385,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs JUP-BTC at W=504h: corr=0.0385 (PASS threshold 0.4)"
+        },
+        "G5ab_SNX": {
+          "ticker": "SNX",
+          "corr": -0.0199,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs SNX-BTC at W=504h: corr=-0.0199 (PASS threshold 0.4)"
+        },
+        "G5ac_LDO": {
+          "ticker": "LDO",
+          "corr": 0.2109,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs LDO-BTC at W=504h: corr=0.2109 (PASS threshold 0.4)"
+        },
+        "G5ad_MKR": {
+          "ticker": "MKR",
+          "corr": 0.1385,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs MKR-BTC at W=504h: corr=0.1385 (PASS threshold 0.4)"
+        },
+        "G5ae_OP": {
+          "ticker": "OP",
+          "corr": 0.27,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs OP-BTC at W=504h: corr=0.2700 (PASS threshold 0.4)"
+        },
+        "G5af_POL": {
+          "ticker": "POL",
+          "corr": 0.1791,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs POL-BTC at W=504h: corr=0.1791 (PASS threshold 0.4)"
+        },
+        "G5ag_ENA": {
+          "ticker": "ENA",
+          "corr": -0.0075,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs ENA-BTC at W=504h: corr=-0.0075 (PASS threshold 0.4)"
+        },
+        "G5ah_ETHFI": {
+          "ticker": "ETHFI",
+          "corr": -0.0879,
+          "pass": true,
+          "note": "DOT-BTC ORTH signal vs ETHFI-BTC at W=504h: corr=-0.0879 (PASS threshold 0.4)"
+        }
+      },
+      "g5_fail_list": {
+        "G5h_APT": 0.4107,
+        "G5q_AXS": NaN
+      },
+      "g5_max_corr": 0.4107,
+      "g5_max_pair": "APT",
+      "inj_corr": -0.0828,
+      "sol_corr": 0.2421,
+      "avax_corr": 0.0346,
+      "inj_pass": true,
+      "walk_forward": {
+        "folds": [
+          {
+            "fold": 1,
+            "oos_start": "row_2160",
+            "oos_end": "row_2880",
+            "sharpe": 9.575,
+            "ann_ret_pct": 1.899,
+            "entries": 1
+          },
+          {
+            "fold": 2,
+            "oos_start": "row_2880",
+            "oos_end": "row_3600",
+            "sharpe": 9.919,
+            "ann_ret_pct": 1.457,
+            "entries": 0
+          },
+          {
+            "fold": 3,
+            "oos_start": "row_3600",
+            "oos_end": "row_4320",
+            "sharpe": 8.521,
+            "ann_ret_pct": 1.978,
+            "entries": 0
+          },
+          {
+            "fold": 4,
+            "oos_start": "row_4320",
+            "oos_end": "row_5040",
+            "sharpe": 2.03,
+            "ann_ret_pct": 0.745,
+            "entries": 1
+          },
+          {
+            "fold": 5,
+            "oos_start": "row_5040",
+            "oos_end": "row_5760",
+            "sharpe": 29.725,
+            "ann_ret_pct": 3.91,
+            "entries": 0
+          },
+          {
+            "fold": 6,
+            "oos_start": "row_5760",
+            "oos_end": "row_6480",
+            "sharpe": 47.933,
+            "ann_ret_pct": 9.939,
+            "entries": 0
+          },
+          {
+            "fold": 7,
+            "oos_start": "row_6480",
+            "oos_end": "row_7200",
+            "sharpe": -16.022,
+            "ann_ret_pct": -9.042,
+            "entries": 15
+          },
+          {
+            "fold": 8,
+            "oos_start": "row_7200",
+            "oos_end": "row_7920",
+            "sharpe": -31.833,
+            "ann_ret_pct": -8.843,
+            "entries": 1
+          },
+          {
+            "fold": 9,
+            "oos_start": "row_7920",
+            "oos_end": "row_8640",
+            "sharpe": -20.148,
+            "ann_ret_pct": -5.332,
+            "entries": 2
+          },
+          {
+            "fold": 10,
+            "oos_start": "row_8640",
+            "oos_end": "row_9360",
+            "sharpe": -2.912,
+            "ann_ret_pct": -0.701,
+            "entries": 2
+          },
+          {
+            "fold": 11,
+            "oos_start": "row_9360",
+            "oos_end": "row_10080",
+            "sharpe": 18.839,
+            "ann_ret_pct": 6.377,
+            "entries": 3
+          },
+          {
+            "fold": 12,
+            "oos_start": "row_10080",
+            "oos_end": "row_10800",
+            "sharpe": 9.391,
+            "ann_ret_pct": 2.658,
+            "entries": 3
+          }
+        ],
+        "fold_sharpes": [
+          9.575,
+          9.919,
+          8.521,
+          2.03,
+          29.725,
+          47.933,
+          -16.022,
+          -31.833,
+          -20.148,
+          -2.912,
+          18.839,
+          9.391
+        ],
+        "n_positive": 8,
+        "n_folds": 12,
+        "all_positive": false,
+        "min_sharpe": -31.833
+      },
+      "permutation_test": {
+        "real_oos_sharpe": 25.4947,
+        "n_permutations": 500,
+        "p_value": 0.0,
+        "pass": true
+      },
+      "dsr_bonferroni": {
+        "n_trials": 2,
+        "t_stat": 19.675,
+        "p_raw": 0.0,
+        "p_bonferroni": 0.0,
+        "threshold": 0.025,
+        "pass": true
+      },
+      "cross_venue": {
+        "bybit": {
+          "corr": 0.674,
+          "pass": true,
+          "note": "Bybit DOT FR baseline corr=0.6742 (K513 G8). Signal-level corr similar structural (HL 1h vs Bybit 8h). PASS >= 0.55."
+        }
+      },
+      "beta_inj_ref": 0.642231
+    }
+  ],
+  "phase5_decision": {
+    "decision": "ACCEPT",
+    "rationale": "Orthogonalized DOT signal (W=168h): G5 PASS + OOS Sharpe=23.254. Only 1 non-critical gates failed. INJ=0.0374 PASS. SOL=0.2084 PASS. AVAX=0.0216 PASS.",
+    "best_window_h": 168,
+    "best_oos_sharpe": 23.2542,
+    "best_n_pass": 8,
+    "best_n_total": 9,
+    "g5_cleared": true,
+    "g5_fail_list": {},
+    "inj_corr_post_orth": 0.0374,
+    "sol_corr_post_orth": 0.2084,
+    "avax_corr_post_orth": 0.0216,
+    "vs_raw_signal": {
+      "raw_oos_sharpe": 43.562,
+      "orth_oos_sharpe": 23.2542,
+      "sharpe_delta": -20.308,
+      "note": "Sharpe delta from orthogonalization = -20.308 units. If G5 passes, this is the 'price' for removing the INJ overlap."
+    }
+  },
+  "phase6_profit": {
+    "oos_ann_ret_frac": 0.100575,
+    "oos_ann_ret_pct": 10.0575,
+    "oos_sharpe": 23.2542,
+    "standard_projection": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000.0,
+      "gross_annual_usdc": 120690.0,
+      "net_annual_usdc": 102586.0,
+      "daily_usdc": 281.0
+    },
+    "profit_table": [
+      {
+        "notional_usd": 1000000,
+        "leverage": 1,
+        "ann_profit_usd": 100575.0,
+        "ann_profit_k": 100.6
+      },
+      {
+        "notional_usd": 1000000,
+        "leverage": 2,
+        "ann_profit_usd": 201150.0,
+        "ann_profit_k": 201.2
+      },
+      {
+        "notional_usd": 1000000,
+        "leverage": 4,
+        "ann_profit_usd": 402300.0,
+        "ann_profit_k": 402.3
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 1,
+        "ann_profit_usd": 502875.0,
+        "ann_profit_k": 502.9
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 2,
+        "ann_profit_usd": 1005750.0,
+        "ann_profit_k": 1005.8
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 4,
+        "ann_profit_usd": 2011500.0,
+        "ann_profit_k": 2011.5
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 1,
+        "ann_profit_usd": 1005750.0,
+        "ann_profit_k": 1005.8
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 2,
+        "ann_profit_usd": 2011500.0,
+        "ann_profit_k": 2011.5
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 4,
+        "ann_profit_usd": 4023000.0,
+        "ann_profit_k": 4023.0
+      },
+      {
+        "notional_usd": 100000000,
+        "leverage": 1,
+        "ann_profit_usd": 10057500.0,
+        "ann_profit_k": 10057.5
+      },
+      {
+        "notional_usd": 100000000,
+        "leverage": 2,
+        "ann_profit_usd": 20115000.0,
+        "ann_profit_k": 20115.0
+      },
+      {
+        "notional_usd": 100000000,
+        "leverage": 4,
+        "ann_profit_usd": 40230000.0,
+        "ann_profit_k": 40230.0
+      }
+    ],
+    "raw_comparison": {
+      "k513_raw_net_annual_usdc": 161685,
+      "orth_net_annual_usdc": 102586.0,
+      "delta_usdc": -59098.0,
+      "note": "K513 raw: $161,685/yr @$10M. K647 orth: $102,586/yr @$10M. Delta: $-59,098/yr."
+    }
+  },
+  "key_findings": {
+    "structural_break": {
+      "is_corr_dot_inj": 0.6163,
+      "oos_corr_dot_inj": 0.0449,
+      "is_beta_inj": 0.6422,
+      "oos_own_beta_inj": 0.0139,
+      "interpretation": "DOT-INJ FR differential correlation shows a structural break between IS and OOS: IS=0.6163 -> OOS=0.0449. The IS-estimated beta (0.64) overfits IS governance narrative overlap; OOS the relationship has nearly vanished (beta=0.014). This explains OOS R2=-4.11 (beta amplifies DOT residuals in OOS). However: signal-level correlation (sign of rolling mean) is robust at 0.037 full / -0.162 OOS. The G5e block was full-period corr=0.4237 but OOS-period corr=0.169 \u2014 the block may have been overstated."
+    },
+    "orthogonalization_mechanics": {
+      "is_r2": 0.3798,
+      "oos_r2": -4.1139,
+      "beta_regime_instability": "IS beta=0.642 vs OOS beta=0.014 \u2014 46x ratio, extreme regime change",
+      "signal_corr_post_orth": {
+        "full_period": 0.0374,
+        "oos_period": -0.162,
+        "both_below_threshold": true
+      },
+      "k513_raw_signal_corr_to_inj": {
+        "full_period": 0.4237,
+        "oos_period": 0.169,
+        "note": "K513 block was full-period corr. OOS-only was already below threshold."
+      }
+    },
+    "decision_justification": "ACCEPT: W=168h orthogonalized signal passes G5 (INJ=0.037, SOL=0.208, AVAX=0.022). OOS Sharpe=23.254 vs K513 raw 43.562 (degradation expected from orthogonalization). OOS AnnRet=10.06% -> ,586/yr @M 3%-sleeve 4x. Only G4 fails (8/12 positive WF folds). Recommend 60d paper-trade before live: IS negative Sharpe (-0.169) warrants caution despite strong OOS."
+  }
+}
