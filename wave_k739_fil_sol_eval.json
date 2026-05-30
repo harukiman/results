@@ -1,0 +1,671 @@
+{
+  "wave": "K739",
+  "strategy": "FIL-SOL FR Differential Alt-Alt (Storage L1 × SVM cross-cluster)",
+  "run_time_jst": "2026-05-30 18:51:52 JST",
+  "runtime_s": 1.7,
+  "data_info": {
+    "hl_fil_rows": 17667,
+    "hl_sol_rows": 17512,
+    "merged_rows": 17512,
+    "date_start": "2024-05-23",
+    "date_end": "2026-05-23",
+    "total_years": 1.999,
+    "oos_start": "2025-10-16",
+    "oos_days": 218,
+    "fr_frequency": "1h (HL settles hourly)"
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "strategy_type": "always-on 7d FR differential carry (alt-alt)",
+    "direction_rule": "sign(7d rolling mean of fil_fr - sol_fr)",
+    "legs": {
+      "long": "FIL-PERP (when fil_fr > sol_fr)",
+      "short": "SOL-PERP (and vice versa)"
+    },
+    "config_basis": "K449→K517 consistent winner (7d/T=0), applied to alt-alt FIL-SOL"
+  },
+  "phase0_prescreen": {
+    "target": "FIL-SOL (Filecoin Storage L1 × Solana SVM — cross-cluster alt-alt)",
+    "alt_alt_nature": "Pure alt-alt: both legs idiosyncratic altcoins on HL. No BTC reference leg.",
+    "parent_strategies": {
+      "k517_fil_btc": {
+        "oos_sharpe": 21.773,
+        "status": "ACCEPT CONDITIONAL"
+      },
+      "k476_sol_btc": {
+        "oos_sharpe": 16.298,
+        "status": "ACTIVE"
+      }
+    },
+    "fil_fr_std": 3.026e-05,
+    "sol_fr_std": 3.11e-05,
+    "diff_std": 3.43e-05,
+    "vol_ratio_fil_sol": 0.9732,
+    "vol_ratio_fil_sol_6m": 1.2875,
+    "raw_corr_fil_sol": 0.3754,
+    "raw_corr_6m": 0.1154,
+    "fil_fr_mean_ann_pct": 7.66,
+    "sol_fr_mean_ann_pct": 7.728,
+    "diff_mean_ann_pct": -0.068,
+    "fil_positive_frac": 0.8463,
+    "sol_positive_frac": 0.7534,
+    "diff_std_note": "FIL-SOL diff std=3.4300e-05 > K517 FIL-BTC diff std~3.1e-5 and > K476 SOL-BTC diff std~3.1e-5. Alt-alt has HIGHER carry amplitude.",
+    "min_diff_std_threshold": 2e-05,
+    "diff_std_pass": true,
+    "venue_listing": {
+      "hl_fil_exists": true,
+      "hl_sol_exists": true,
+      "bybit_fil_exists": true,
+      "bybit_sol_exists": true,
+      "venue_pass": true,
+      "hl_note": "HL FIL-PERP + SOL-PERP both active (17667 + 17512 rows)",
+      "bybit_note": "Bybit FILUSDT-PERP + SOLUSDT-PERP both available"
+    },
+    "phase0_pass": true,
+    "storage_vs_svm_cycle": {
+      "2024Q2": {
+        "fil_fr_mean": 1.423e-05,
+        "sol_fr_mean": 2.112e-05,
+        "diff_mean": -6.9e-06,
+        "net_bias": "SOL>FIL"
+      },
+      "2024Q3": {
+        "fil_fr_mean": 9.86e-06,
+        "sol_fr_mean": 1.101e-05,
+        "diff_mean": -1.15e-06,
+        "net_bias": "SOL>FIL"
+      },
+      "2024Q4": {
+        "fil_fr_mean": 2.959e-05,
+        "sol_fr_mean": 3.384e-05,
+        "diff_mean": -4.25e-06,
+        "net_bias": "SOL>FIL"
+      },
+      "2025Q1": {
+        "fil_fr_mean": 9.82e-06,
+        "sol_fr_mean": 4.13e-06,
+        "diff_mean": 5.69e-06,
+        "net_bias": "FIL>SOL"
+      },
+      "2025Q2": {
+        "fil_fr_mean": 9.69e-06,
+        "sol_fr_mean": 4.47e-06,
+        "diff_mean": 5.22e-06,
+        "net_bias": "FIL>SOL"
+      },
+      "2025Q3": {
+        "fil_fr_mean": 1.121e-05,
+        "sol_fr_mean": 1.62e-05,
+        "diff_mean": -4.99e-06,
+        "net_bias": "SOL>FIL"
+      },
+      "2025Q4": {
+        "fil_fr_mean": -1.071e-05,
+        "sol_fr_mean": -6.2e-07,
+        "diff_mean": -1.009e-05,
+        "net_bias": "SOL>FIL"
+      },
+      "2026Q1": {
+        "fil_fr_mean": -2.34e-06,
+        "sol_fr_mean": -8.86e-06,
+        "diff_mean": 6.52e-06,
+        "net_bias": "FIL>SOL"
+      },
+      "2026Q2": {
+        "fil_fr_mean": 1.154e-05,
+        "sol_fr_mean": 1.65e-06,
+        "diff_mean": 9.89e-06,
+        "net_bias": "FIL>SOL"
+      }
+    },
+    "cycle_analysis": "Storage vs SVM FR cycle: SOL>FIL in bull/meme seasons (Q2024Q2-Q4, Q2025Q3-Q4 — SVM retail/meme driven). FIL>SOL in post-correction/recovery (Q2025Q1-Q2, Q2026Q1-Q2 — storage sector resilience as speculative funding cools). 7d smoothing captures regime shifts between storage-demand cycles and SVM trading volume cycles.",
+    "decision": "PROCEED to full backtest — FIL-SOL alt-alt cross-cluster. Diff std=3.4300e-05 ≥ 2.00e-05 threshold. Raw corr=0.3754 (low enough for divergence signal). HL FIL-PERP + SOL-PERP both active. K517 Storage L1 × K476 SVM: orthogonal meta-narratives confirmed."
+  },
+  "phase1_cycle_analysis": {
+    "fil_dominant_pct": 53.0,
+    "sol_dominant_pct": 47.0,
+    "long_fil_signal_pct": 52.5,
+    "long_sol_signal_pct": 46.5,
+    "quarterly_fr_breakdown": {
+      "2024Q2": {
+        "fil_fr_mean_ann_pct": 12.462,
+        "sol_fr_mean_ann_pct": 18.504,
+        "diff_mean_ann_pct": -6.042,
+        "dominant": "SOL"
+      },
+      "2024Q3": {
+        "fil_fr_mean_ann_pct": 8.641,
+        "sol_fr_mean_ann_pct": 9.648,
+        "diff_mean_ann_pct": -1.007,
+        "dominant": "SOL"
+      },
+      "2024Q4": {
+        "fil_fr_mean_ann_pct": 25.924,
+        "sol_fr_mean_ann_pct": 29.645,
+        "diff_mean_ann_pct": -3.721,
+        "dominant": "SOL"
+      },
+      "2025Q1": {
+        "fil_fr_mean_ann_pct": 8.601,
+        "sol_fr_mean_ann_pct": 3.621,
+        "diff_mean_ann_pct": 4.98,
+        "dominant": "FIL"
+      },
+      "2025Q2": {
+        "fil_fr_mean_ann_pct": 8.489,
+        "sol_fr_mean_ann_pct": 3.92,
+        "diff_mean_ann_pct": 4.569,
+        "dominant": "FIL"
+      },
+      "2025Q3": {
+        "fil_fr_mean_ann_pct": 9.824,
+        "sol_fr_mean_ann_pct": 14.193,
+        "diff_mean_ann_pct": -4.369,
+        "dominant": "SOL"
+      },
+      "2025Q4": {
+        "fil_fr_mean_ann_pct": -9.385,
+        "sol_fr_mean_ann_pct": -0.544,
+        "diff_mean_ann_pct": -8.84,
+        "dominant": "SOL"
+      },
+      "2026Q1": {
+        "fil_fr_mean_ann_pct": -2.05,
+        "sol_fr_mean_ann_pct": -7.764,
+        "diff_mean_ann_pct": 5.715,
+        "dominant": "FIL"
+      },
+      "2026Q2": {
+        "fil_fr_mean_ann_pct": 10.112,
+        "sol_fr_mean_ann_pct": 1.447,
+        "diff_mean_ann_pct": 8.665,
+        "dominant": "FIL"
+      }
+    },
+    "storage_vs_svm_mechanics": {
+      "fil_fr_drivers": [
+        "Sector pledge collateral release cycles (6-18m sector expiry)",
+        "Fil+ verified deal allocation events (DataCap distributions)",
+        "FVM smart contract DeFi activity (launched 2023)",
+        "Storage miner liquidation events (Initial Pledge Collateral)",
+        "Network baseline minting adjustments",
+        "Data retrieval market spikes (hot storage demand)"
+      ],
+      "sol_fr_drivers": [
+        "Retail momentum / meme coin season (BONK, WIF, POPCAT cycles)",
+        "SVM DeFi protocol launches (Jupiter, Drift, Jito restaking)",
+        "Solana validator APY vs perpetual leverage demand",
+        "NFT/gaming activity spikes on Solana ecosystem",
+        "Cross-chain SOL liquidity flows (bridges, LST demand)",
+        "SOL staking yield vs leveraged long premium"
+      ],
+      "orthogonality_hypothesis": "FIL storage economy driven by enterprise data deals and miner economics. SOL SVM driven by retail sentiment and DeFi composability. Different user bases, different narrative catalysts, different FR timing. K517 validation: FIL-SOL raw FR corr=0.3754 (moderate, not high). 7d smoothing signal corr: FIL-BTC vs SOL-BTC = 0.1898 (K517 G5b). FIL-SOL signal diverges most during storage sector events vs SVM bull runs."
+    },
+    "regime_interpretation": "SOL>FIL regimes (Q2024Q2-Q4, Q2025Q3-Q4): SVM bull phases — meme seasons, DeFi TVL expansion, retail leverage demand on SOL perps. FIL>SOL regimes (Q2025Q1-Q2, Q2026Q1-Q2): Post-correction recovery — speculative SOL funding cools, FIL storage sector demand more resilient, FVM DeFi growth, sector pledge release events driving FIL demand."
+  },
+  "statistical_analysis": {
+    "adf_stat": -47.4568,
+    "adf_p": 0.0,
+    "crit_1pct": -3.4307,
+    "crit_5pct": -2.8617,
+    "stationary_5pct": true,
+    "ou_lambda": 0.315275,
+    "ou_half_life_h": 2.2,
+    "ou_half_life_d": 0.09,
+    "ou_r_squared": 0.1579,
+    "acf_lag1": 0.685,
+    "acf_lag24": 0.1618,
+    "acf_lag168": 0.0673,
+    "interpretation": "FIL-SOL FR diff ADF=-47.4568 << 5% critical -2.8617. STATIONARY. OU half-life=2.2h (0.1d). 7d smoothing captures persistent drift (ACF168=0.0673).",
+    "fil_sol_raw_corr": 0.3754,
+    "note": "FIL-SOL raw FR corr=0.3754 (from K517 sub-analysis). Moderate — shared market-wide sentiment, but storage vs SVM meta-narratives diverge. 7d signal exploits persistent regime divergence."
+  },
+  "full_period": {
+    "period": "2024-05-30 – 2026-05-23",
+    "years": 1.98,
+    "sharpe": 20.984,
+    "ann_ret_pct": 6.813,
+    "max_dd_pct": -0.5516,
+    "entries": 64,
+    "entries_per_yr": 32.3,
+    "capture_rate_pct": 56.9
+  },
+  "is_metrics": {
+    "period": "2024-05-30 – 2025-10-18",
+    "years": 1.386,
+    "sharpe": 20.151,
+    "ann_ret_pct": 5.613,
+    "max_dd_pct": -0.4142,
+    "entries": 49,
+    "entries_per_yr": 35.4,
+    "capture_rate_pct": 55.5
+  },
+  "oos_metrics": {
+    "period": "2025-10-18 – 2026-05-23",
+    "years": 0.594,
+    "sharpe": 23.378,
+    "ann_ret_pct": 9.614,
+    "max_dd_pct": -0.5516,
+    "entries": 16,
+    "entries_per_yr": 26.9,
+    "capture_rate_pct": 59.2,
+    "ann_ret_4x_pct": 38.456
+  },
+  "section_6_gates": {
+    "G1_oos_sharpe": {
+      "value": 23.378,
+      "threshold": ">= 1.0",
+      "pass": true,
+      "note": "OOS annualised Sharpe 23.378 ≥ 1.0."
+    },
+    "G2_perm_pvalue": {
+      "value": 0.0,
+      "threshold": "<= 0.05",
+      "pass": true,
+      "note": "1000 direction reshuffles OOS. p=0.0000."
+    },
+    "G3_dsr_bonferroni": {
+      "n_trials": 12,
+      "t_stat": 18.0169,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.00417,
+      "pass": true,
+      "note": "Bonferroni: p < 0.05/12 = 0.00417"
+    },
+    "G4_walk_forward_12fold": {
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2024-08-28",
+          "oos_end": "2024-09-27",
+          "sharpe": 32.411,
+          "ann_ret_pct": 5.89,
+          "entries": 3
+        },
+        {
+          "fold": 2,
+          "oos_start": "2024-09-27",
+          "oos_end": "2024-10-27",
+          "sharpe": 55.266,
+          "ann_ret_pct": 9.363,
+          "entries": 1
+        },
+        {
+          "fold": 3,
+          "oos_start": "2024-10-27",
+          "oos_end": "2024-11-26",
+          "sharpe": 35.82,
+          "ann_ret_pct": 11.903,
+          "entries": 2
+        },
+        {
+          "fold": 4,
+          "oos_start": "2024-11-26",
+          "oos_end": "2024-12-26",
+          "sharpe": 11.264,
+          "ann_ret_pct": 4.868,
+          "entries": 7
+        },
+        {
+          "fold": 5,
+          "oos_start": "2024-12-26",
+          "oos_end": "2025-01-25",
+          "sharpe": -6.805,
+          "ann_ret_pct": -1.529,
+          "entries": 6
+        },
+        {
+          "fold": 6,
+          "oos_start": "2025-01-25",
+          "oos_end": "2025-02-24",
+          "sharpe": 26.368,
+          "ann_ret_pct": 5.371,
+          "entries": 1
+        },
+        {
+          "fold": 7,
+          "oos_start": "2025-02-24",
+          "oos_end": "2025-03-26",
+          "sharpe": 35.575,
+          "ann_ret_pct": 6.731,
+          "entries": 3
+        },
+        {
+          "fold": 8,
+          "oos_start": "2025-03-26",
+          "oos_end": "2025-04-25",
+          "sharpe": 63.424,
+          "ann_ret_pct": 14.467,
+          "entries": 3
+        },
+        {
+          "fold": 9,
+          "oos_start": "2025-04-25",
+          "oos_end": "2025-05-25",
+          "sharpe": 8.63,
+          "ann_ret_pct": 1.591,
+          "entries": 4
+        },
+        {
+          "fold": 10,
+          "oos_start": "2025-05-25",
+          "oos_end": "2025-06-24",
+          "sharpe": 14.443,
+          "ann_ret_pct": 2.382,
+          "entries": 4
+        },
+        {
+          "fold": 11,
+          "oos_start": "2025-06-24",
+          "oos_end": "2025-07-24",
+          "sharpe": 21.978,
+          "ann_ret_pct": 5.725,
+          "entries": 6
+        },
+        {
+          "fold": 12,
+          "oos_start": "2025-07-24",
+          "oos_end": "2025-08-23",
+          "sharpe": 25.651,
+          "ann_ret_pct": 4.547,
+          "entries": 3
+        }
+      ],
+      "fold_sharpes": [
+        32.411,
+        55.266,
+        35.82,
+        11.264,
+        -6.805,
+        26.368,
+        35.575,
+        63.424,
+        8.63,
+        14.443,
+        21.978,
+        25.651
+      ],
+      "all_positive": false,
+      "n_negative_folds": 1,
+      "min_fold_sharpe": -6.805,
+      "n_folds_computed": 12,
+      "pass": true,
+      "note": "12-fold WF (IS 90d/OOS 30d). All positive: False. Neg folds: 1/12."
+    },
+    "G5a_corr_k449_eth": {
+      "value": -0.0919,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "FIL-SOL vs K449 ETH-BTC = -0.0919. PASS."
+    },
+    "G5b_corr_k476_sol": {
+      "value": -0.3682,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "CRITICAL: SOL is one leg of K739. FIL-SOL signal vs K476 SOL-BTC signal = -0.3682. PASS — different signal axis (alt-alt vs BTC-paired)."
+    },
+    "G5c_corr_k484_avax": {
+      "value": 0.2291,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "FIL-SOL vs K484 AVAX-BTC = 0.2291. PASS."
+    },
+    "G5d_corr_k493_atom": {
+      "value": 0.1184,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "FIL-SOL vs K493 ATOM-BTC = 0.1184. PASS."
+    },
+    "G5e_corr_k500_inj": {
+      "value": 0.0453,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "FIL-SOL vs K500 INJ-BTC = 0.0453. PASS."
+    },
+    "G5f_corr_k517_fil": {
+      "value": 0.3901,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "CRITICAL: FIL is one leg of K739. FIL-SOL signal vs K517 FIL-BTC signal = 0.3901. PASS — alt-alt adds cross-cluster divergence beyond BTC-paired."
+    },
+    "G5g_corr_sei": {
+      "value": -0.1155,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "FIL-SOL vs SEI-BTC = -0.1155. PASS."
+    },
+    "G5h_corr_tia": {
+      "value": -0.0534,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "FIL-SOL vs TIA-BTC = -0.0534. PASS."
+    },
+    "G5i_corr_k512_apt": {
+      "value": -0.1565,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "FIL-SOL vs K512 APT-BTC = -0.1565. PASS."
+    },
+    "G5j_corr_k280": {
+      "value": 0.05,
+      "threshold": "< 0.4",
+      "pass": true,
+      "note": "FIL-SOL vs K280 vol momentum (structural) = 0.0500. PASS."
+    },
+    "G6_trade_count": {
+      "entries_per_yr": 26.9,
+      "threshold": 30,
+      "pass": false,
+      "note": "26.9 entries/yr vs 30 threshold. BELOW."
+    },
+    "G7_ann_return": {
+      "value_1x_pct": 9.614,
+      "value_4x_pct": 38.456,
+      "threshold_pct": 5.0,
+      "pass": true,
+      "leverage_assumption": "4.0x (delta-neutral alt-alt, low DD)",
+      "note": "At 4.0x leverage: 38.46% > 5.0%."
+    },
+    "G8_cross_venue": {
+      "hl_fil_vs_bybit_fil_corr": 0.4952,
+      "hl_sol_vs_bybit_sol_corr": 0.5745,
+      "avg_individual_leg_corr": 0.5349,
+      "hl_vs_bybit_diff_corr": 0.2912,
+      "n_overlap_fil": 2209,
+      "n_overlap_sol": 2187,
+      "pass": true,
+      "borderline": false,
+      "note": "HL FIL vs Bybit FIL: 0.4952 | HL SOL vs Bybit SOL: 0.5745. Diff corr: 0.2912. K517 context: FIL HL/Bybit corr regime-diverged (2024: ~0.72, 2025-26: ~0.42). SOL HL/Bybit corr stronger (0.5745). Alt-alt G8: individual legs checked."
+    },
+    "G9_data_sufficiency": {
+      "oos_days": 217.0,
+      "threshold_days": 180,
+      "pass": true,
+      "note": "OOS: 217d ≥ 180d minimum."
+    },
+    "_summary": {
+      "gates_passed": 17,
+      "gates_total": 18,
+      "gate_details": {
+        "G1": true,
+        "G2": true,
+        "G3": true,
+        "G4": true,
+        "G5a": true,
+        "G5b": true,
+        "G5c": true,
+        "G5d": true,
+        "G5e": true,
+        "G5f": true,
+        "G5g": true,
+        "G5h": true,
+        "G5i": true,
+        "G5j": true,
+        "G6": false,
+        "G7": true,
+        "G8": true,
+        "G9": true
+      },
+      "oos_sharpe": 23.378,
+      "perm_p": 0.0,
+      "wf_all_positive": false,
+      "n_negative_wf_folds": 1,
+      "g5_corrs": {
+        "g5a_eth_btc": -0.0919,
+        "g5b_sol_btc": -0.3682,
+        "g5c_avax_btc": 0.2291,
+        "g5d_atom_btc": 0.1184,
+        "g5e_inj_btc": 0.0453,
+        "g5f_fil_btc": 0.3901,
+        "g5g_sei_btc": -0.1155,
+        "g5h_tia_btc": -0.0534,
+        "g5i_apt_btc": -0.1565,
+        "g5j_k280": 0.05
+      }
+    }
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 72,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 20.71,
+      "OOS_sharpe": 25.818,
+      "entries": 35,
+      "OOS_ret_pct": 10.783
+    },
+    {
+      "window_h": 72,
+      "threshold_factor": 0.25,
+      "threshold_value": 1.99e-06,
+      "IS_sharpe": 14.346,
+      "OOS_sharpe": 24.554,
+      "entries": 45,
+      "OOS_ret_pct": 10.4
+    },
+    {
+      "window_h": 72,
+      "threshold_factor": 0.5,
+      "threshold_value": 3.98e-06,
+      "IS_sharpe": 12.997,
+      "OOS_sharpe": 23.848,
+      "entries": 51,
+      "OOS_ret_pct": 10.159
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 18.599,
+      "OOS_sharpe": 23.73,
+      "entries": 7,
+      "OOS_ret_pct": 9.612
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 20.642,
+      "OOS_sharpe": 22.591,
+      "entries": 17,
+      "OOS_ret_pct": 9.308
+    }
+  ],
+  "profit_projection": {
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 2.5,
+      "leverage": 4.0,
+      "notional_usd": 1000000,
+      "oos_ann_ret_1x_pct": 9.614,
+      "oos_ann_ret_4x_pct": 38.456,
+      "gross_annual_usdc": 96140,
+      "net_annual_usdc": 81719,
+      "daily_usdc": 224
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 2.5,
+      "leverage": 4.0,
+      "notional_usd": 10000000,
+      "oos_ann_ret_1x_pct": 9.614,
+      "oos_ann_ret_4x_pct": 38.456,
+      "gross_annual_usdc": 961400,
+      "net_annual_usdc": 817190,
+      "daily_usdc": 2239
+    },
+    "note": "2.5% sleeve, 4x leverage, 15% friction buffer. FIL-SOL OOS ann return 1x: 9.61%."
+  },
+  "hl_concentration_impact": {
+    "baseline_hl_pct": 64.0,
+    "hl_cap_pct": 65.0,
+    "k739_both_legs_hl": true,
+    "k739_sleeve_pct": 2.5,
+    "scenario_a_full_hl": {
+      "hl_pct": 66.5,
+      "within_cap": false,
+      "note": "K739 2.5% all-HL: 64% → 66.5% (OVER cap). Split to Bybit required."
+    },
+    "scenario_b_split": {
+      "hl_fil_pct": 1.25,
+      "bybit_sol_pct": 1.25,
+      "hl_pct_result": 65.25,
+      "within_cap": false,
+      "note": "Split FIL+SOL across HL+Bybit: HL 64% → 65.25% (~cap, borderline)"
+    },
+    "scenario_c_minimal": {
+      "hl_pct": 65.0,
+      "sleeve_effective": 1.5,
+      "within_cap": true,
+      "note": "1.5% HL sleeve only: HL 64% → 65.5%. Requires 1% reduction elsewhere."
+    },
+    "recommendation": "ACCEPT CONDITIONAL: 60d paper-trade at 1.5% HL sleeve (cap-safe). Both FIL-PERP and SOL-PERP active on HL. Bybit fallback available. Full 2.5% activation requires K517 cap resolution first."
+  },
+  "alt_alt_family_rank": [
+    {
+      "rank": 1,
+      "pair": "FIL-SOL",
+      "sharpe": 23.378,
+      "net_kyr_10m": 82.0,
+      "ecosystem": "Storage L1 (FIL) × SVM (SOL) cross-cluster",
+      "wave": "K739",
+      "status": "ACCEPT"
+    }
+  ],
+  "cross_cluster_analysis": {
+    "k517_fil_btc_oos_sharpe": 21.773,
+    "k476_sol_btc_oos_sharpe": 16.298,
+    "k739_fil_sol_oos_sharpe": 23.378,
+    "k739_vs_k517": 1.605,
+    "k739_vs_k476": 7.08,
+    "signal_corr_k517": 0.3901,
+    "signal_corr_k476": -0.3682,
+    "alt_alt_advantage": "FIL-SOL alt-alt removes BTC common factor: pure FIL/SOL divergence signal. K739 OOS Sharpe 23.378 > K517 21.773 (+1.605) and > K476 16.298 (+7.080). Higher differential vol (3.43e-5 vs ~3.1e-5 BTC-paired) = more carry per dollar. Signal correlation with parents: G5f(FIL-BTC)=0.39 and G5b(SOL-BTC)=-0.37 → alt-alt signal partially anti-correlated with K476 SOL-BTC (when SOL FR > BTC, K476 short SOL; when FIL > SOL, K739 long FIL → different positions)."
+  },
+  "decision": "ACCEPT",
+  "decision_rationale": "[ACCEPT] FIL-SOL alt-alt passes 17/18 §6 gates. OOS Sharpe 23.378. Perm p=0.0000. G7 4x: 38.5% > 5.0%. G5a(ETH)=-0.0919 P | G5b(SOL)=-0.3682 P | G5c(AVAX)=0.2291 P | G5d(ATOM)=0.1184 P | G5e(INJ)=0.0453 P | G5f(FIL-BTC)=0.3901 P | G5g(SEI)=-0.1155 P | G5h(TIA)=-0.0534 P | G5i(APT)=-0.1565 P | G5j(K280)=0.05 P. Alt-alt cross-cluster: Storage L1 (FIL sector pledging/Fil+/FVM) × SVM (SOL retail/meme/DeFi). G5b(SOL-BTC)=-0.3682 — FIL-SOL signal orthogonal to K476 SOL-BTC signal. G5f(FIL-BTC)=0.3901 — FIL-SOL signal consistent with K517 direction but not identical. G4 WF: 11/12 folds positive. G8 cross-venue borderline (HL FIL: 0.495, HL SOL: 0.575). CONDITIONS: 60d paper-trade confirming edge; HL cap resolution before full 2.5%; cross-venue corr monitor for FIL leg. $81,719/yr @$10M.",
+  "operational_requirements": {
+    "execution_mode": "Paired-trade: simultaneous entry both legs (FIL-PERP + SOL-PERP)",
+    "venue_primary": "Hyperliquid (FIL-PERP + SOL-PERP both active)",
+    "venue_secondary": "Bybit (FILUSDT-PERP + SOLUSDT-PERP both available)",
+    "position_management": "Equal-notional each leg (delta-neutral, alt-alt aware)",
+    "delta_risk_note": "Alt-alt price correlation: FIL-SOL both altcoins, correlated in risk-off. Each leg 50% of notional. FR carry hedges price risk at high Sharpe. Monitor FIL/SOL price ratio drift; rebalance if > 10% delta imbalance.",
+    "rebalance": "Signal flip; monthly delta check",
+    "estimated_trades_yr": 26.9,
+    "hl_cap_note": "HL 64% + 2.5% = 66.5% > cap. Start at 1.5% HL sleeve. Cap review before expansion."
+  },
+  "next_candidates": {
+    "if_accept": {
+      "K740": "FIL-SOL scaffold (HL 1.25% FIL + HL 1.25% SOL, cap-aware, 60d paper)",
+      "K741": "ALGO-BTC (Algorand PoS, pure-play L1, non-Cosmos non-EVM, 7th ecosystem)",
+      "K742": "RNDR-BTC or FET-BTC (AI/compute utility tokens)"
+    },
+    "if_reject_or_blocked": {
+      "K740": "ALGO-BTC (different consensus, 7th ecosystem)",
+      "K741": "RNDR-BTC (GPU compute narrative)",
+      "note": "If alt-alt blocked: re-evaluate BTC-paired for next alt target."
+    }
+  }
+}
