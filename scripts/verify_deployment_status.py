@@ -483,6 +483,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k698_link_eth",
         expected_html_status="SCAFFOLD-READY",  # K701: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=6 + fill>=60% + maxDD<15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k747-tao-sol",
+        purpose="K747 TAO-SOL FR Differential (FIFTEENTH ALT-ALT pair 13th-vertex TAO Bittensor AI L1 compute marketplace vs Solana SVM retail, HL-only TAO-PERP+SOL-PERP both legs maxLeverage=5 index=116, 4x leverage, 8h cycle, OOS Sh 12.233 W=168h direct alt-alt diff, central $17,210/yr net @$10M @4x @2.5% sleeve K523 3-point $12,907-$45,289/yr, HL 65.0% AT CAP paper-gate-strict HL-only mandatory Bybit-TAO 84.6% floor-capped G8-FAIL-structural, G4 WF 12/12 ALL-POSITIVE UNPRECEDENTED best-WF-in-family, G5b K476 corr=0.2229 SOL-saturation PASS G5c AVAX-BTC=0.0126 PASS G5k AVAX-SOL=0.1286 PASS AVAX-cluster-bypass confirmed, K746 ONDO-SOL BLOCKED G5c=-0.4148 G5k=-0.5842 TAO AI-compute-marketplace != AVAX-subnet-appchain DISTINCT, G8-FAIL K735-HBAR-SOL precedent-applies same-structural-pattern HL-only-viable, TAO-vertex 13th V={APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO} MR9-L002-all-future-TAO-X-blocked, TAO FR=GPU-scarcity-NVDA/H100 Bittensor-subnet-launches institutional-AI-adoption +16.34%/ann TAO-dominant-100%-quarters, SOL FR=DePIN/Retail meme-coin BONK/WIF Firedancer ETF +7.706%/ann persistent, ADF stat=-12.2254 p=0.0 OU hl=2.0h FAST vol-ratio=1.5734x above-1.5x-threshold, 60d paper-trade gate Realized Sh>=6 fill>=60% maxDD<15% + K498-OKX-activation-required, live-trigger=K498-OKX-reduces-HL%<65%+60d-gate, 69th daemon 15th alt-alt CONDITIONAL G8-FAIL, K750 scaffold)",
+        scripts=["scripts/k747_tao_sol_run.py"],
+        log_basename="k747_tao_sol",
+        expected_html_status="SCAFFOLD-READY",  # K750: plist in scripts/ (gitignored); activate after 60d gate (Sh>=6 + fill>=60% + maxDD<15%) AND K498 OKX reduces HL% below 65%
+    ),
 ]
 
 

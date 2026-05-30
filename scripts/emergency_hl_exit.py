@@ -4226,6 +4226,41 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K750: K747 TAO-SOL alt-alt emergency exit flag
+    # K747 = HL-only TAO+SOL paired (2 legs) on HL (TAO-PERP + SOL-PERP, maxLeverage=5).
+    # Close protocol: IOC reduce-only on HL (short leg first, then long leg).
+    # Signal: W=168h rolling mean of (TAO_FR - SOL_FR), zero threshold.
+    # HL concentration: 65.0% AT CAP (paper-gate strict — PAPER_TRADE=True until K498 OKX).
+    # G8 FAIL: Bybit TAO 84.6% floor-capped (structural). K735 precedent. HL-only mandatory.
+    # G4 WF 12/12 ALL POSITIVE — UNPRECEDENTED (best WF in alt-alt family).
+    # TAO = 13th vertex. MR9 L002: all future TAO-X pairs blocked.
+    # Use --include-k747 to print K747-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k747",
+        dest="include_k747",
+        action="store_true",
+        default=False,
+        help=(
+            "K750: Include K747 TAO-SOL close summary during emergency exit. "
+            "K747 positions (TAO+SOL paired, HL-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = TAO_FR - SOL_FR (direct differential, W=168h rolling mean, zero threshold). "
+            "HL-only: TAO-PERP + SOL-PERP both on HL (maxLeverage=5, asset index=116). "
+            "HL concentration 65.0% AT CAP (paper-gate strict — PAPER_TRADE=True default). "
+            "G8 FAIL: Bybit TAO 84.6% floor-capped (structural). K735 HBAR-SOL precedent. "
+            "OOS Sharpe 12.233 (W=168h). G4 WF 12/12 ALL POSITIVE — UNPRECEDENTED. "
+            "G5c AVAX bypass: 0.0126 PASS (AI L1 != AVAX subnet cluster). "
+            "TAO = 13th vertex. MR9 L002: all future TAO-X auto-blocked. "
+            "K523 central $17,210/yr net @$10M @4x (2.5% sleeve). "
+            "60d gate: Realized Sh>=6 + fill>=60% + maxDD<15%. "
+            "Live trigger: K498 OKX activation (HL% < 65%) + 60d gate. "
+            "Cluster: Bittensor AI L1 × Solana SVM (15th alt-alt, 69th daemon). "
+            "Requires: K747 daemon running (com.cryptolab.k747-tao-sol, 69th daemon). "
+            "See: docs/k302a_runbook.md §63"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -5207,6 +5242,44 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "Close K698 on Bybit independently of K557/K449. "
                 "Use --include-k698 for Bybit close summary (§62). "
                 "HL concentration UNCHANGED at 64.5%."
+            )
+
+        # K750: K747 TAO-SOL alt-alt close summary (HL-only — positions ARE in HL exit above)
+        # K747 positions (TAO+SOL, HL-only) are included in the main HL exit plan above.
+        # HL 65.0% AT CAP (paper-gate: PAPER_TRADE=True default — no live capital yet).
+        # Live only after K498 OKX activation + 60d gate passage.
+        if args.include_k747:
+            logger.info("=== K747 TAO-SOL CLOSE SUMMARY (K750 §63) ===")
+            logger.info("  K747 TAO-SOL: HL-only (TAO-PERP + SOL-PERP both legs on HL)")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_TAO (dominant — TAO AI premium >> SOL retail): short SOL first → sell long TAO second")
+            logger.info("  BEAR_TAO (rare — SOL meme spike): short TAO first → sell long SOL second")
+            logger.info("  HL concentration: 65.0% AT CAP (paper-gate — PAPER_TRADE=True until K498 OKX)")
+            logger.info("  G8 FAIL: Bybit TAO 84.6% floor-capped (structural venue noise, not signal failure)")
+            logger.info("  K735 G8 precedent: HBAR-SOL ACCEPT CONDITIONAL with same structural pattern")
+            logger.info("  HL TAO: maxLeverage=5, asset index=116, $12.3M/24h volume (liquid)")
+            logger.info("  G4 WF: 12/12 ALL POSITIVE — UNPRECEDENTED (best WF in alt-alt family)")
+            logger.info("  G5b corr(K747, K476 SOL-BTC) = 0.2229 PASS (SOL saturation)")
+            logger.info("  G5c corr(K747, K484 AVAX-BTC) = 0.0126 PASS (AVAX cluster bypass)")
+            logger.info("  G5k corr(K747, K687 AVAX-SOL) = 0.1286 PASS (AVAX-SOL cluster bypass)")
+            logger.info("  K746 ONDO: BLOCKED G5c=-0.4148/G5k=-0.5842. K747 TAO: 0.013/0.129 PASS.")
+            logger.info("  AI L1 compute marketplace (GPU scarcity) != AVAX subnet appchain (institutional).")
+            logger.info("  TAO = 13th vertex. MR9 L002: all future TAO-X pairs auto-blocked.")
+            logger.info("  TAO FR: Bittensor AI compute (GPU scarcity/NVDA cycles, subnet launches, +16.34%/ann)")
+            logger.info("  SOL FR: DePIN/Retail meme-coin (BONK/WIF/POPCAT, Firedancer, ETF, +7.706%/ann)")
+            logger.info("  OOS Sh=12.233 (W=168h), K523 central $17,210/yr net @$10M @4x (2.5% sleeve)")
+            logger.info("  K523 3-point: conservative=$12,907 central=$17,210 optimistic=$45,289/yr")
+            logger.info("  60d gate: Realized Sh>=6 + fill>=60% + maxDD<15%")
+            logger.info("  Live trigger: K498 OKX activation (HL% < 65%) + 60d gate passage")
+            logger.info("  15th alt-alt scaffold, 69th daemon. HL-only (positions in main HL exit)")
+            logger.info("  See: docs/k302a_runbook.md §63 (K747 TAO-SOL playbook)")
+        else:
+            logger.info(
+                "K747 TAO-SOL: HL-only (positions ARE in HL exit above — TAO-PERP + SOL-PERP on HL). "
+                "HL 65.0% AT CAP (paper-gate — PAPER_TRADE=True default; no live capital until K498 OKX). "
+                "G4 WF 12/12 ALL POSITIVE — UNPRECEDENTED. TAO = 13th vertex. "
+                "Use --include-k747 for structured HL close summary (§63). "
+                "G8 FAIL: Bybit TAO floor-capped. K735 precedent applies."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)

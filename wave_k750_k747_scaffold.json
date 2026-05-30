@@ -1,0 +1,84 @@
+{
+  "wave": "K750",
+  "strategy": "K747 TAO-SOL FR Differential Alt-Alt (AI L1 \u00d7 SVM \u2014 13th vertex)",
+  "run_time_jst": "2026-05-30 20:12 JST",
+  "k747_result": {
+    "decision": "ACCEPT CONDITIONAL",
+    "gates_passed": 28,
+    "gates_total": 29,
+    "g8_fail_reason": "Bybit TAO 84.6% floor-capped (structural venue noise, not signal)",
+    "g4_wf": "12/12 ALL POSITIVE \u2014 UNPRECEDENTED",
+    "oos_sharpe": 12.233,
+    "w_hours": 168,
+    "sleeve_pct": 2.5,
+    "leverage": 4.0,
+    "venue": "HL-only (TAO-PERP + SOL-PERP)",
+    "hl_concentration": 65.0,
+    "paper_gate_strict": true,
+    "live_trigger": "K498 OKX activation + 60d gate",
+    "tao_vertex": "13th vertex. MR9 L002: all future TAO-X blocked.",
+    "avax_bypass": "G5c=0.013 PASS, G5k=0.129 PASS (AI L1 \u2260 AVAX subnet)"
+  },
+  "k523_projection": {
+    "conservative_yr": 12907,
+    "central_yr": 17210,
+    "optimistic_yr": 45289,
+    "upper_bound_yr": 53281,
+    "note": "K523 mandatory 3-point. Upper bound \u2260 central."
+  },
+  "gate_60d": {
+    "realized_sharpe_min": 6.0,
+    "fill_rate_min_pct": 60,
+    "max_drawdown_max_pct": 15,
+    "additional_gate": "K498 OKX activation (HL% must drop below 65%)"
+  },
+  "daemon": {
+    "number": "69th",
+    "label": "com.cryptolab.k747-tao-sol",
+    "script": "scripts/k747_tao_sol_run.py",
+    "interval_s": 28800
+  },
+  "scaffold_verification": {
+    "all_pass": true,
+    "gates_passed": 7,
+    "gates_total": 7,
+    "checks": {
+      "phase1_run_script": {
+        "path": "scripts/k747_tao_sol_run.py",
+        "exists": true,
+        "pass": true
+      },
+      "phase2_plist": {
+        "path": "scripts/com.cryptolab.k747-tao-sol.plist",
+        "exists": true,
+        "pass": true
+      },
+      "phase3_leverage_config": {
+        "path": "data/leverage_config.json",
+        "k747_entry_exists": true,
+        "pass": true
+      },
+      "phase4_verify_deployment": {
+        "path": "scripts/verify_deployment_status.py",
+        "k747_entry_exists": true,
+        "pass": true
+      },
+      "phase5_emergency_exit": {
+        "path": "scripts/emergency_hl_exit.py",
+        "k747_flag_exists": true,
+        "pass": true
+      },
+      "phase6_runbook": {
+        "path": "docs/k302a_runbook.md",
+        "k747_section_exists": true,
+        "pass": true
+      },
+      "phase7_dashboard": {
+        "path": "data/k747_dashboard.json",
+        "exists": true,
+        "pass": true
+      }
+    },
+    "ts_jst": "2026-05-30 20:12 JST"
+  }
+}

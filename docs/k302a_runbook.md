@@ -12930,3 +12930,187 @@ Funding cycle: 8h (matches HL/Bybit — no normalization needed).
 | K485 | Bybit sub-account + 50% cap |
 | K523 | 3-point projection mandate |
 | K339 | REPO_ROOT pattern (no absolute paths) |
+
+---
+
+## §67 K747 TAO-SOL FR Differential (69th Daemon, FIFTEENTH ALT-ALT, AI L1 × SVM, 13th Vertex)
+
+*K750 §67 -- K747 TAO-SOL FR Differential production scaffold (69th daemon, FIFTEENTH ALT-ALT 13th-vertex TAO Bittensor AI L1 compute marketplace vs Solana SVM retail, OOS Sh 12.233 W=168h direct alt-alt diff, central $17,210/yr net @$10M @4x 2.5% sleeve K523 3-point $12.9K-$45.3K, HL-only HL 65.0% AT CAP paper-gate-strict Bybit-TAO 84.6% floor-capped G8-FAIL-structural K735-precedent, G4 WF 12/12 ALL POSITIVE UNPRECEDENTED best-WF-in-family, G5c AVAX-bypass 0.013 PASS vs ONDO-G5c=-0.415-FAIL AI-L1-distinct-from-AVAX-subnet, TAO-vertex-13th MR9-L002-all-future-TAO-X-blocked, 60d gate: Sh>=6 fill>=60% maxDD<15% + K498-OKX-activation, live-trigger=K498-OKX-reduces-HL%<65%) -- 2026-05-30*
+
+### §67.1 Strategy Overview
+
+**K747 TAO-SOL FR Differential** — FIFTEENTH alt-alt pair (AI L1 × SVM cross-cluster). Signal: `diff = TAO_FR - SOL_FR`, W=168h rolling mean, zero threshold.
+
+| Parameter | Value |
+|-----------|-------|
+| Signal | `sign(rolling_mean_168h(TAO_FR - SOL_FR))` |
+| Window | W=168h (21 × 8h periods) |
+| Threshold | zero (sign only) |
+| Venue | HL-only (TAO-PERP + SOL-PERP both on HL) |
+| Leverage | 4x |
+| Sleeve | 2.5% (paper-gate strict) |
+| Daemon | 69th (com.cryptolab.k747-tao-sol) |
+| OOS Sharpe | 12.233 |
+| G4 WF | 12/12 ALL POSITIVE (UNPRECEDENTED) |
+| G8 | FAIL (Bybit TAO 84.6% floor-capped — structural) |
+| HL concentration | 65.0% AT CAP (paper-only) |
+| 60d gate | Sh>=6 + fill>=60% + maxDD<15% |
+| Live trigger | K498 OKX activation + 60d gate |
+| TAO vertex | 13th (MR9 L002: all TAO-X blocked) |
+
+### §67.2 TAO vs SOL FR Economics
+
+**TAO (Bittensor AI L1)** — compute marketplace for AI model training and inference:
+- GPU scarcity cycles: NVDA/H100 AI peaks drive TAO validator staking demand
+- Bittensor subnet launch events: new subnet = higher validator staking competition
+- Institutional AI adoption: validator set expansion, compute market pricing
+- TAO staking/subnet yield vs perpetual leverage premium differential
+- AI regulation events (SEC/CFTC AI asset classification)
+- Mean FR: **+16.34%/ann** — TAO dominant 100% of quarters in history
+
+**SOL (Solana SVM L1)** — retail execution layer:
+- Retail meme-coin seasons (BONK, WIF, POPCAT cycles)
+- Firedancer upgrade hype + Solana ETF narrative events
+- SVM DeFi TVL expansion (Jupiter, Drift Protocol, Jito restaking)
+- NFT/gaming/AI agent cycles on Solana ecosystem
+- Mean FR: **+7.706%/ann** — persistently positive structural retail demand
+
+**Cross-cluster independence**: AI compute marketplace (GPU scarcity, ML research, subnet economics) vs SVM execution layer (retail DeFi, meme speculation). Completely different demand drivers ensure structural independence of FR cycles.
+
+### §67.3 §6 Gate Results (K747)
+
+| Gate | Value | Threshold | Result |
+|------|-------|-----------|--------|
+| G1 OOS Sharpe | 12.233 | ≥1.0 | PASS |
+| G2 Permutation p | 0.0000 | <0.05 | PASS |
+| G3 DSR Bonferroni | t=12.70, p=0.0 | <0.00417 | PASS |
+| G4 Walk-Forward | **12/12 ALL POSITIVE** | ≥8/12 | **PASS (UNPRECEDENTED)** |
+| G5b K476 SOL-BTC | 0.2229 | <0.40 | PASS |
+| G5c K484 AVAX-BTC | **+0.0126** | <0.40 | **PASS (AVAX bypass)** |
+| G5k K687 AVAX-SOL | **+0.1286** | <0.40 | **PASS (AVAX bypass)** |
+| G5 all others (18) | all <0.40 | <0.40 | PASS (21/21 G5 total) |
+| G6 Trade count | 33.7/yr | ≥30 | PASS |
+| G7 Ann return 4x | 21.313% | ≥5% | PASS |
+| G8 Cross-venue | 0.2651 | ≥0.55 | **FAIL** (Bybit TAO floor-capped) |
+| G9 Data sufficiency | 216.6d | ≥180d | PASS |
+
+**Result: ACCEPT CONDITIONAL (28/29 gates PASS)**
+
+G8 FAIL explanation: Bybit TAO 84.6% at FR floor (0.0001/0.00005 min tick). Structural venue noise — not a signal quality failure. K735 HBAR-SOL precedent: same G8 structural pattern → ACCEPT CONDITIONAL. HL TAO is liquid ($12.3M/24h volume, maxLeverage=5, asset index=116).
+
+**AVAX cluster bypass**: K746 ONDO-SOL was BLOCKED (G5c=-0.4148, G5k=-0.5842) because RWA/institutional ONDO overlaps with AVAX institutional DeFi narrative. K747 TAO-SOL clears: G5c=+0.013, G5k=+0.129. AI compute marketplace ≠ AVAX subnet appchain customization.
+
+### §67.4 K523 3-Point Profit Projection (@$10M @4x @2.5%)
+
+| Scenario | Annual (USD) |
+|----------|-------------|
+| Conservative | $12,907/yr |
+| **Central** | **$17,210/yr** |
+| Optimistic | $45,289/yr |
+| Upper bound | $53,281/yr |
+
+> K523 mandatory: upper bound ≠ central. R2S=38% floor (K518). OOS 25% haircut. Fee friction 15%.
+
+### §67.5 HL Concentration Status
+
+| State | HL% |
+|-------|-----|
+| Pre-K747 (baseline) | 65.0% |
+| K747 live deploy (2.5% all-HL) | 67.5% — OVER CAP |
+| K747 paper-only (current) | **65.0% UNCHANGED** |
+
+**Paper-gate strict**: HL 65.0% AT CAP. Any live K747 capital would push to 67.5% (OVER 65% ceiling). Deploy live only after K498 OKX activation reduces HL% below 65%.
+
+### §67.6 TAO Vertex Rule (MR9 L002)
+
+TAO is the **13th vertex** added to the alt-alt graph V:
+```
+V = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI, SOL, TIA, TAO}
+```
+Per MR9 L002: all future TAO-X pairs are **automatically blocked** (TAO exhausted as new vertex). TAO-SOL is the only permissible TAO-X pair given V at K747.
+
+### §67.7 60d Paper-Trade Gate
+
+Monitor `data/k747_dashboard.json` every 8h cycle:
+
+```bash
+python3 scripts/k747_tao_sol_run.py --status
+```
+
+Gate conditions (ALL required):
+1. Realized Sharpe ≥ 6 (over 60d paper-trade period)
+2. Fill rate ≥ 60%
+3. Max drawdown < 15%
+4. **K498 OKX activation** (HL% must drop below 65.0%)
+
+```bash
+# Manual status check:
+python3 scripts/k747_tao_sol_run.py --status
+
+# Manual close (paper-trade):
+python3 scripts/k747_tao_sol_run.py --close "scheduled exit"
+
+# Emergency exit (HL):
+python3 scripts/emergency_hl_exit.py --include-k747 --dry-run
+```
+
+### §67.8 Daemon Activation
+
+After 60d gate passage AND K498 OKX activation:
+
+```bash
+cp scripts/com.cryptolab.k747-tao-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k747-tao-sol.plist
+launchctl list | grep k747
+python3 scripts/k747_tao_sol_run.py --dry-run
+python3 scripts/k747_tao_sol_run.py --status
+```
+
+Set `PAPER_TRADE=False` in plist (after gate + K498 OKX):
+```bash
+# Edit plist: change <string>True</string> → <string>False</string> under PAPER_TRADE
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k747-tao-sol.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k747-tao-sol.plist
+```
+
+### §67.9 Emergency Exit Protocol
+
+K747 positions (TAO-PERP + SOL-PERP) are HL-only — included in main HL exit:
+
+```bash
+# Dry-run (review plan):
+python3 scripts/emergency_hl_exit.py --include-k747 --dry-run
+
+# Close protocol: SHORT first (avoid naked short), then LONG
+# BULL_TAO (dominant): short SOL → sell long TAO
+# BEAR_TAO (rare): short TAO → sell long SOL
+```
+
+### §67.10 Deliverable Files
+
+| File | Purpose |
+|------|---------|
+| `scripts/k747_tao_sol_run.py` | Phase 1: K747 strategy script (K339 pattern, W=168h, HL-only, AI L1 × SVM) |
+| `scripts/com.cryptolab.k747-tao-sol.plist` | Phase 2: 69th daemon plist (StartInterval 28800, HL-only, PAPER_TRADE=True) |
+| `data/leverage_config.json` | Phase 3: Leverage config (K747_TAO_SOL: 4.0 + k747_notes) |
+| `scripts/verify_deployment_status.py` | Phase 4: Deployment verifier (69th daemon registry) |
+| `scripts/emergency_hl_exit.py` | Phase 5: Emergency exit (--include-k747 flag, §67) |
+| `docs/k302a_runbook.md` | Phase 6: This section (§67) |
+| `data/k747_dashboard.json` | Phase 7: Dashboard (AI L1 × SVM diff signal, regime, tao_vertex_rule) |
+| `wave_k750_k747_scaffold.json` | Phase 8: Scaffold results JSON |
+| `wave_k750_k747_scaffold.md` | Phase 9: Scaffold summary markdown |
+| `wave_k750_k747_scaffold.py` | Phase 10: Wave driver script |
+
+### §67.11 References
+
+| Wave | Description |
+|------|-------------|
+| K750 | This section — K747 TAO-SOL scaffold (69th daemon, 15th alt-alt, K523 central $17.2K/yr) |
+| K747 | K747 analysis — TAO-SOL ACCEPT CONDITIONAL (28/29 gates, OOS Sh 12.233, G4 12/12) |
+| K746 | K746 ONDO-SOL BLOCKED (G5c=-0.4148/G5k=-0.5842 AVAX institutional cluster) |
+| K744 | K744 Alt-alt universe scan (TAO ranked #2 new vertex, vol_ratio=1.573x, score=1.763) |
+| K741 | K739 FIL-SOL scaffold (68th daemon, FOURTEENTH ALT-ALT, Storage L1 × SVM) |
+| K735 | K735 HBAR-SOL (G8 FAIL precedent — same structural Bybit floor pattern → CONDITIONAL) |
+| K498 | K498 OKX activation (required to unlock K747 live deployment — reduce HL% below 65%) |
+| K524 | HL 65.0% concentration cap (exact — K747 at cap in paper-gate mode) |
+| K523 | 3-point projection mandate (conservative/central/optimistic required) |
