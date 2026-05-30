@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k684-sol-inj</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k684_sol_inj_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 56th daemon: K684 SOL-INJ FR Differential (THIRD ALT-ALT pair, Bybit-only) -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 5, fill_rate >= 60%, maxDD < 15% -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k684_sol_inj.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k684_sol_inj.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K684 specific notes (do not remove):
+         Strategy:    SOL-INJ FR Differential, THIRD ALT-ALT pair (K684, K687 scaffold)
+         Daemon #:    56th daemon
+         OOS Sharpe:  9.65 (W=168h, zero threshold, 216d OOS period)
+         Profit:      $114,316/yr net @$10M @4x (3% standalone sleeve)
+         Signal:      diff = SOL_FR - INJ_FR (direct alt-alt, W=168h rolling mean, zero threshold)
+         Venue:       Bybit-only (SOL-PERP + INJ-PERP, both Bybit)
+         HL impact:   UNCHANGED 62.5% (Bybit-only preferred — 2.5pp headroom preserved)
+         Gate:        60d paper-trade: Realized Sh>=5 + fill>=60% + maxDD<15%
+         Cluster:     SOL-INJ Alt-Alt (SVM DePIN-Retail vs Cosmos-DeFi-Perp, THIRD ALT-ALT)
+         SOL drivers: DePIN/Retail meme-coin season (BONK/WIF), Firedancer hype, ETF speculation
+                      Persistently positive +7.7% ann (structural retail demand premium)
+         INJ drivers: Cosmos DeFi perp DEX liquidations, INJ burn mechanics, IBC bridge, Cosmos TVL
+                      Episodic +3.6% ann (mean-reverting Cosmos DeFi dynamics)
+         K476+K500:   Algebraic overlap: SOL-INJ = K476_dir - K500_dir — run K684 STANDALONE
+         K679 SOL:    K684 + K679 share SOL leg — monitor combined SOL exposure
+         Standalone:  K684 3% Bybit sleeve independent of K476 SOL-BTC + K500 INJ-BTC
+         Trades/yr:   ~52 expected (W=168h, zero threshold, similar to K679/K683 family)
+         Deploy:      cp scripts/com.cryptolab.k684-sol-inj.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k684-sol-inj.plist
+    -->
+</dict>
+</plist>

@@ -11507,3 +11507,177 @@ data/k682_dashboard.json
 ---
 
 *K685 §57 -- K682 ATOM-SOL FR Differential production scaffold (55th daemon 2nd alt-alt pair Cosmos IBC vs SVM, OOS Sh 43.43 W=168h direct alt-alt diff $214.6K/yr net @$10M @4x 2% sleeve, Bybit-only HL 62.5% unchanged, K493+K476 algebraic overlap anti-corr=-0.5195 HEDGES K493 standalone, 60d gate: Sh>=22 fill>=60% maxDD<15%, v6.45 candidate) -- 2026-05-30*
+
+---
+
+## §58 K684 SOL-INJ FR Differential — Production Scaffold Playbook
+
+> Wave: K687 | Daemon: 56th | Strategy: K684 SOL-INJ FR Differential (THIRD ALT-ALT pair)
+
+SOL-INJ is the **THIRD ALT-ALT pair** in the portfolio — no BTC or ETH base asset.
+Signal: `diff = SOL_FR - INJ_FR` (direct differential, W=168h rolling mean, zero threshold).
+Both SOL-PERP and INJ-PERP execute on **Bybit** (Scenario C: both legs Bybit preserves HL headroom).
+HL stays at 62.5% (unchanged — 2.5pp headroom preserved vs 65% cap).
+
+### §58.0 Strategy Summary
+
+| Parameter | Value |
+|-----------|-------|
+| Pair | SOL-INJ (Solana SVM vs Injective Cosmos DeFi perp) |
+| Signal | `diff = SOL_FR - INJ_FR` (direct alt-alt, W=168h rolling mean) |
+| Threshold | Zero (sign of rolling mean only) |
+| OOS Sharpe | 9.65 (216d OOS period, 2025-10-18 to 2026-05-23) |
+| OOS Ann Ret (1x) | 11.21% |
+| Net Profit | $114,316/yr @$10M @4x @3% sleeve |
+| Venue | Bybit-only (SOL-PERP + INJ-PERP) |
+| Sleeve | 3% standalone |
+| Leverage | 4x |
+| Daemon | 56th |
+
+### §58.1 Key Parameters
+
+```
+SLEEVE_PCT          = 0.030   # 3% standalone Bybit sleeve
+LEVERAGE            = 4.0     # 4x (K430 cap)
+EMA_PERIOD_HOURS    = 168     # W=168h rolling mean (21 x 8h periods)
+SIGNAL_SIGMA_MULT   = 0.0     # zero threshold (sign only)
+DRIFT_REBALANCE_PCT = 0.05    # 5% drift rebalance trigger
+SYMBOLS             = ("SOL", "INJ")
+```
+
+### §58.2 Performance (K684 ACCEPT — 12/13 gates)
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe | 9.65 |
+| OOS Period | 216 days (2025-10-18 to 2026-05-23) |
+| OOS Ann Ret | 11.21% (1x) / 44.83% (4x) |
+| IS Sharpe | 5.78 |
+| G4 Walk-forward | 6/12 folds positive (structural for alt-alt) |
+| ADF | p < 1e-30 (strongly stationary) |
+| OU half-life | 5.42h (STRONG mean-reversion) |
+| G8 cross-venue | 0.7855 (Bybit diff vs HL) |
+| Daemon | 56th |
+
+### §58.3 Signal Direction Logic
+
+| Regime | Condition | Long | Short | Rationale |
+|--------|-----------|------|-------|-----------|
+| BULL_SOL | mean_168h > 0 | INJ | SOL | SOL FR premium → collect SOL FR (short SOL), carry INJ |
+| BEAR_SOL | mean_168h < 0 | SOL | INJ | INJ FR spike → collect INJ FR (short INJ), carry SOL |
+| NEUTRAL | mean_168h == 0 | — | — | Zero exactly (rare) |
+
+### §58.4 K476+K500 Algebraic Overlap Warning
+
+Mathematical identity:
+```
+SOL_FR - INJ_FR = (SOL_FR - BTC_FR) - (INJ_FR - BTC_FR) = K476_dir - K500_dir
+```
+
+| Strategy | Leg 1 | Leg 2 | Note |
+|----------|-------|-------|------|
+| K476 SOL-BTC | LONG SOL | SHORT BTC | HL-only, 1.5% sleeve |
+| K500 INJ-BTC | LONG INJ | SHORT BTC | HL+Bybit, sleeve |
+| K684 SOL-INJ | LONG SOL OR INJ | SHORT INJ OR SOL | Bybit-only, 3% standalone |
+
+**Algebraic overlap**: K684 = K476_direction - K500_direction algebraically.
+**K679 SOL-exposure**: K684 and K679 APT-SOL both have SOL leg — SOL double-exposure if both active.
+**Default (K687)**: K684 STANDALONE — run with its own 3% sleeve; K476 and K500 unchanged.
+**Rebalance option**: reduce K476 to 1% + K500 to 2% + K684 3% for cleaner SOL-INJ net exposure.
+
+### §58.5 Venue & HL Concentration
+
+```
+HL concentration: 62.5% (within 65% cap — 2.5pp headroom)
+K684 impact: NONE (both SOL-PERP + INJ-PERP on Bybit — Scenario C)
+Bybit: SOL-PERP and INJ-PERP both listed on Bybit perps
+Post-K684 HL: still 62.5% (unchanged — Bybit-only preserves headroom)
+```
+
+Scenario analysis:
+- Scenario A (HL-only both): 62.5% + 3% = 65.5% OVER cap — REJECTED
+- Scenario B (SOL Bybit + INJ HL): 64.0% (within cap, 1pp headroom) — marginal
+- Scenario C (both Bybit): 62.5% UNCHANGED — **PREFERRED (K687 spec)**
+
+### §58.6 60d Paper-Trade Gate (K687 specification)
+
+| Gate | Threshold | Rationale |
+|------|-----------|-----------|
+| Realized Sharpe | ≥ 5 | Conservative gate vs OOS Sh=9.65 |
+| Fill rate | ≥ 60% | Minimum execution quality |
+| Max drawdown | < 15% | Capital protection |
+| Days | 60 | Minimum observation period |
+
+### §58.7 Emergency Close Procedure
+
+**K684 is Bybit-only — NOT in HL emergency exit.**
+
+```bash
+# Check K684 position
+python3 scripts/k684_sol_inj_run.py --status
+
+# Dry-run close
+python3 scripts/k684_sol_inj_run.py --close "emergency" --dry-run
+
+# Emergency exit summary (Bybit)
+python3 scripts/emergency_hl_exit.py --include-k684 --dry-run
+
+# Close sequence: short leg first (avoid naked short), then long leg
+# Step 1: IOC reduce-only SHORT leg on Bybit
+# Step 2: IOC reduce-only LONG leg on Bybit
+# K476+K500: close K684 STANDALONE — do NOT assume K476/K500 as hedges
+# K679 SOL: close K684 independently of K679 (both standalone)
+```
+
+### §58.8 Daemon Deployment
+
+```bash
+# Plist location (K687 scaffold)
+scripts/com.cryptolab.k684-sol-inj.plist
+
+# Deploy (after 60d gate passage)
+cp scripts/com.cryptolab.k684-sol-inj.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k684-sol-inj.plist
+
+# Verify
+launchctl list | grep k684
+
+# Log files
+logs/k684_sol_inj.log
+logs/k684_sol_inj.err
+
+# Dashboard
+data/k684_dashboard.json
+```
+
+### §58.9 Deliverable Files
+
+| File | Description |
+|------|-------------|
+| `scripts/k684_sol_inj_run.py` | Phase 1: K684 strategy script (K339 pattern, W=168h, alt-alt direct diff) |
+| `scripts/com.cryptolab.k684-sol-inj.plist` | Phase 2: 56th daemon plist (StartInterval 28800) |
+| `data/k684_dashboard.json` | Phase 3: Dashboard (diff signal, regime, alt_alt_mechanism) |
+| `scripts/emergency_hl_exit.py` | Phase 4: Emergency exit (--include-k684 flag, §58) |
+| `scripts/leverage_manager.py` | Phase 5: Leverage manager (K684_SOL_INJ cap + SLEEVE_WEIGHTS_V645) |
+| `data/leverage_config.json` | Phase 6: Leverage config (K684_SOL_INJ: 4.0 + k684_notes) |
+| `scripts/verify_deployment_status.py` | Phase 7: Deployment verifier (56th daemon registry) |
+| `docs/k302a_runbook.md` | Phase 8: This section (§58) |
+| `report.html` | Phase 9: HTML report (K684 SCAFFOLD-READY) |
+| `wave_k687_k684_scaffold.py` | Phase 11: Wave driver |
+| `wave_k687_k684_scaffold.json` | Phase 12: Wave result report |
+
+### §58.10 References
+
+| Wave | Description |
+|------|-------------|
+| K687 | This section — K684 SOL-INJ scaffold (56th daemon, v6.46 candidate) |
+| K684 | K684 analysis — SOL-INJ ACCEPT (THIRD ALT-ALT, OOS Sh 9.65) |
+| K685 | K682 ATOM-SOL scaffold (SECOND ALT-ALT, 55th daemon 2nd alt-alt) |
+| K683 | K679 APT-SOL scaffold (FIRST ALT-ALT, 55th daemon) |
+| K499 | K493 ATOM-BTC scaffold (algebraic overlap K493+K476) |
+| K478 | K476 SOL-BTC scaffold (algebraic overlap K476+K500) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K687 §58 -- K684 SOL-INJ FR Differential production scaffold (56th daemon, THIRD ALT-ALT pair SVM DePIN-Retail vs Cosmos-DeFi-Perp, OOS Sh 9.65 W=168h direct alt-alt diff $114.3K/yr net @$10M @4x 3% sleeve, Bybit-only HL 62.5% unchanged headroom preserved, K476+K500 algebraic overlap standalone, K679+K684 SOL double-exposure monitor, 60d gate: Sh>=5 fill>=60% maxDD<15%, v6.46 candidate) -- 2026-05-30*
