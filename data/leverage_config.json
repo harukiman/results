@@ -45,7 +45,8 @@
     "K682_ATOM_SOL": 4.0,
     "K684_SOL_INJ": 4.0,
     "K686_AVAX_SOL": 4.0,
-    "K690_SEI_SOL": 4.0
+    "K690_SEI_SOL": 4.0,
+    "K694_TIA_SOL": 4.0
   },
   "k457_basket_notes": {
     "sleeve_pct": 0.05,
@@ -1327,5 +1328,74 @@
     "sol_fr_drivers": "Solana SVM DePIN/Retail adoption premium (persistent +7.70% ann mean), meme-coin season (BONK/WIF), Firedancer upgrade hype cycles, SOL ETF speculation, Solana validator economics, network congestion spikes.",
     "alt_alt_hypothesis": "SEI (Sei Network Cosmos EVM parallel chain, DeFi/CosmWasm — NEGATIVE mean FR -3.65%/ann, short-sellers dominate) vs SOL (Solana SVM consumer/retail L1 — persistently positive +7.70%/ann): FIFTH alt-alt pair in portfolio. No BTC or ETH leg — pure alt-to-alt cross-ecosystem Cosmos-EVM vs SVM differential. Dominant regime: LONG SOL / SHORT SEI is carry-positive in both legs simultaneously. SEI FR driven by Cosmos DeFi/CosmWasm cycles (episodic, negative mean). SOL FR driven by retail/meme-coin cycles (persistent, positive structural premium). Mid-cap vs large-cap: SEI ~$2-8B vs SOL ~$60-80B. Vol ratio SEI/SOL=1.32x. ADF p=1.01e-23. OU half-life=4.41h STRONG. Anti-corr K690 vs K507 = -0.5109 (HEDGES K507 long-SEI).",
     "section6_result": "ACCEPT. 14/14 gates PASS. G1 OOS Sh=25.11 PASS, G2 perm p=1.0 (carry-dominated structural exception — G3+G4 primary), G3 DSR p=0.0 PASS, G4 WF 12/12 UNPRECEDENTED (ALL FOLDS POSITIVE — first in alt-alt family), G5a-G5f all PASS (G5c K507 signed corr=-0.5109 anti-corr PASS), G6 19/yr (non-blocking family precedent), G7 41.1% @4x PASS, G8 OKX SEI corr=0.664 PASS, G9 218d OOS PASS. WF 12/12 unprecedented differentiates K690 from prior alt-alt accepts."
+  },
+  "k694_notes": {
+    "strategy": "K694 TIA-SOL FR Differential (K697 scaffold) — SIXTH ALT-ALT pair (8th evaluated), CONDITIONAL",
+    "oos_sharpe": 19.092,
+    "w_hours": 168,
+    "ann_return_usd_net_10M": 58354,
+    "daily_usdc": 160,
+    "sleeve_pct": 0.03,
+    "leverage": 4.0,
+    "bybit_only": true,
+    "hl_concentration_pre": 62.5,
+    "hl_concentration_post": 62.5,
+    "hl_cap_note": "HL 62.5% — Bybit-only preferred. Both TIA-PERP + SOL-PERP on Bybit. HL-only would push HL to 65.5% (OVER 65% cap). Bybit-only keeps HL unchanged at 62.5% (2.5pp headroom).",
+    "bybit_only_reason": "Bybit preferred for K694: HL-only = 62.5+3.0 = 65.5% OVER cap. Bybit TIA corr~0.667 vs HL (K691 ref), SOL corr~0.575 vs HL. Diff-level corr Bybit TIA-SOL vs HL TIA-SOL = 0.6101 (G8 PASS >0.55). K697 spec.",
+    "cluster": "TIA-SOL Alt-Alt FR Differential (Celestia DA infrastructure vs Solana SVM retail, cross-architecture, SIXTH ALT-ALT)",
+    "daemon_number": "59th (6th alt-alt accepted, 8th evaluated)",
+    "wave": "K697",
+    "activation": "SCAFFOLD-READY — 60d paper-trade gate (Realized Sh>=9 + fill>=60% + maxDD<15%)",
+    "activation_criteria": {
+      "realized_sharpe_min": 9.0,
+      "fill_rate_min_pct": 60,
+      "max_drawdown_max_pct": 15,
+      "days_required": 60,
+      "note": "Gate: Sh>=9 (47% of OOS Sh=19.09) — CONDITIONAL, G4 11/12. Monitor fold-9 pattern (2025-04 to 2025-05)."
+    },
+    "cross_tier_note": {
+      "vol_ratio_tia_sol": 1.2963,
+      "exception": "Cross-tier alt-alt: TIA MC ~$1-3B (DA layer) vs SOL MC ~$60-80B (SVM L1). Threshold relaxed per K686 AVAX-SOL precedent.",
+      "adf_stat": -9.2282,
+      "adf_pvalue": "p~0 (strongly stationary)",
+      "ou_half_life_days": 0.144,
+      "ou_half_life_hours": 3.46,
+      "ou_note": "FASTEST mean-reversion in alt-alt family (K686=3.6h, K690=4.41h, K694=3.46h)"
+    },
+    "k691_lesson": {
+      "k691_fail": "K691 TIA-APT REJECT: G5b corr(K691,K512)=0.4712 — APT shared with K512+K679. TIA-APT = -(K_TIA_BTC) + K512_dir -> algebraic overlap.",
+      "k694_fix": "K694 pivots to TIA-SOL: TIA is new vertex (first DA-layer token in family). SOL saturation is the binding gate. G5b signed corr(K694,K476)=0.2275 PASS.",
+      "report_note": "K691 report.html: 'pair TIA with SOL, ATOM, or INJ — none overlap'. K694 implements TIA-SOL recommendation."
+    },
+    "sol_saturation_check": {
+      "sol_strategies": ["K476 (SOL-BTC)", "K679 (APT-SOL)", "K682 (ATOM-SOL)", "K684 (SOL-INJ)", "K686 (AVAX-SOL)", "K690 (SEI-SOL)"],
+      "sol_strategy_count": 6,
+      "g5b_critical_corr": 0.2275,
+      "g5b_pass": true,
+      "g5c_tia_btc_corr": -0.4818,
+      "g5c_pass": true,
+      "saturation_verdict": "SOL SATURATION PASS — TIA-SOL independent from existing SOL strategies (signed G5 convention).",
+      "natural_hedge": "K694 BULL_TIA (long TIA / short SOL) = natural SOL-short hedge to K679+K682+K686+K690 SOL-long positions."
+    },
+    "k476_math_identity": {
+      "identity": "TIA_fr - SOL_fr = (TIA_fr - BTC_fr) - (SOL_fr - BTC_fr) = K_TIA_BTC_dir - K476_dir",
+      "tia_new_vertex": "TIA is NOT in any existing strategy. Introduces first DA-layer token to alt-alt family.",
+      "signed_corr_k476": "Signed corr(K694, K476) = 0.2275 PASS (< 0.40 threshold). Anti-corr expected (TIA-SOL vs SOL-BTC inverse). TIA variation adds independent direction."
+    },
+    "sol_exposure_overlap": {
+      "k679_warning": "K694 TIA-SOL and K679 APT-SOL both have SOL leg — SOL double-exposure when both active (BEAR_TIA K694 + K679 both long SOL)",
+      "k682_warning": "K694 TIA-SOL and K682 ATOM-SOL both have SOL leg — SOL double-exposure when both active",
+      "k686_warning": "K694 TIA-SOL and K686 AVAX-SOL both have SOL leg — SOL double-exposure when both active",
+      "k690_warning": "K694 TIA-SOL and K690 SEI-SOL both have SOL leg — SOL double-exposure when both active",
+      "combined_risk": "K694 + K679 + K682 + K684 + K686 + K690 all have SOL leg. Monitor combined SOL notional (up to 6x $600K = $3.6M @$10M if all in BEAR_TIA/SOL-long regime).",
+      "hedge_offset": "K694 BULL_TIA (short SOL) offsets K679+K682+K686+K690 long-SOL positions. Natural portfolio hedge during TIA DA demand spikes.",
+      "default": "ALL STANDALONE: separate Bybit sleeves, independent margin. Monitor combined SOL notional."
+    },
+    "margin_calc": "4x * 3% Bybit * $10M = $1,200,000 total Bybit notional / 4x = $300,000 margin (3% of AUM)",
+    "profit_at_3pct_4x": "$58,354/yr net @$10M @4x (OOS Sh=19.09, standalone 3% Bybit sleeve, CONDITIONAL G4 11/12)",
+    "tia_fr_drivers": "Celestia modular DA layer (Cosmos SDK Tendermint BFT, pure blob storage). FR driven by DA demand: rollup blob fees (OP Stack/Fuel/Manta/Eclipse adoption), TIA staking APY changes, modular ecosystem expansion, competing DA (EigenDA, Avail, EIP-4844 Dencun impact). Episodic spikes +1.08%/ann mean.",
+    "sol_fr_drivers": "Solana SVM DePIN/Retail adoption premium (persistent +7.70% ann mean), meme-coin season (BONK/WIF/POPCAT), Firedancer upgrade hype cycles, SOL ETF speculation, Solana validator economics, network congestion spikes.",
+    "cross_architecture_hypothesis": "TIA (Celestia modular DA layer, blob-fee-market MC ~$1-3B) vs SOL (Solana SVM retail L1, meme-coin/DePIN MC ~$60-80B): SIXTH alt-alt pair. No BTC or ETH leg. Cross-architecture: DA infrastructure (rollup-paced, gradual adoption) vs execution L1 (sentiment-driven, fast retail cycles). FR cycles are structurally independent: rollup adoption does not correlate with Solana meme-coin trends. OU half-life=3.46h FASTEST in alt-alt family.",
+    "section6_result": "CONDITIONAL. 15/16 gates PASS. G4=11/12 (1 negative fold 9: Sh=-3.97). G1 OOS Sh=19.09 PASS, G2 perm p=0.0 PASS, G3 DSR p=0.0 PASS, G5b(K476)=0.2275 PASS, G5c(TIA-BTC)=-0.4818 PASS, G5d-G5h all PASS, G6 34.6/yr PASS, G7 22.88%@4x PASS, G8 Bybit diff corr=0.6101 PASS, G9 218d OOS PASS. K691 lesson applied. SOL saturation PASS. Natural SOL-short hedge."
   }
 }

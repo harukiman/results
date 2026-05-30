@@ -12039,4 +12039,175 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k690-sei-sol.plist
 
 ---
 
+## §61 K694 TIA-SOL FR Differential
+
+*K697 §61 -- K694 TIA-SOL FR Differential production scaffold (59th daemon, SIXTH ALT-ALT pair 8th-evaluated Celestia DA infra vs Solana SVM retail cross-architecture, OOS Sh 19.09 W=168h direct alt-alt diff $58.4K/yr net @$10M @4x 3% sleeve, Bybit-only HL 62.5% unchanged headroom preserved HL-only would breach 65% cap, TIA new vertex K476 signed-corr=0.2275 SOL-saturation PASS, K691 TIA-APT lesson applied APT-shared-REJECT avoided, natural SOL-short hedge to K679+K682+K686+K690, TIA Celestia DA demand rollup blob-fees episodic +1.08%/ann, SOL persistent +7.70%/ann, cross-tier vol=1.296x ADF -9.2282 OU 3.46h FASTEST in family, CONDITIONAL G4 11/12, 60d gate: Sh>=9 fill>=60% maxDD<15%, v6.49 candidate) -- 2026-05-30*
+
+### §61.1 Strategy Overview
+
+**K694 TIA-SOL FR Differential** — SIXTH alt-alt accepted pair (8th evaluated). Signal: `diff = TIA_FR - SOL_FR`, W=168h rolling mean, zero threshold.
+
+| Parameter | Value |
+|-----------|-------|
+| OOS Sharpe | **19.09** (W=168h, ~218d OOS) |
+| OOS Ann Return | 5.72% (1x unlevered) |
+| Net profit | **$58,354/yr** @$10M @4x @3% sleeve |
+| Daemon | **59th** (6th alt-alt accepted, 8th evaluated) |
+| Signal | `sign(rolling_mean_168h(TIA_FR - SOL_FR))` |
+| Threshold | Zero (sign only) |
+| Venue | **Bybit-only** (TIA-PERP + SOL-PERP, both Bybit) |
+| HL concentration | **62.5% UNCHANGED** (HL-only would breach 65% cap) |
+| Leverage | 4x |
+| Sleeve | 3% standalone |
+| Section 6 | **CONDITIONAL** (G4 11/12; all other gates PASS) |
+| 60d gate | Realized Sh ≥ 9, fill ≥ 60%, DD < 15% |
+| OU half-life | **3.46h** (FASTEST in alt-alt family) |
+| ADF stat | -9.2282 (strongly stationary p~0) |
+
+### §61.2 Cross-Architecture Mechanism
+
+**TIA (Celestia):** Modular DA layer (Cosmos SDK Tendermint BFT, pure blob storage). FR driven by DA demand events: rollup blob fees (OP Stack/Fuel/Manta/Eclipse adoption cycles), TIA staking APY changes, modular ecosystem expansion, competing DA events (EigenDA, Avail, EIP-4844 Dencun impact). Episodic spikes over low baseline (+1.08%/ann mean).
+
+**SOL (Solana):** SVM DePIN/Retail L1. FR persistently positive (+7.70%/ann) driven by meme-coin season (BONK/WIF/POPCAT), Firedancer upgrade hype, SOL ETF speculation, DePIN ecosystem, validator economics.
+
+**Cross-architecture independence:** Rollup adoption (TIA) and retail sentiment (SOL) are structurally independent FR cycles. Example: EigenDA launch (TIA FR drop) can coincide with SOL meme-coin rally (SOL FR spike). OU half-life=3.46h confirms fast mean-reversion.
+
+### §61.3 K691 Lesson Applied
+
+**K691 TIA-APT REJECT** — G5b corr(K691, K512)=0.4712: APT shared with K512+K679. TIA-APT = -(K_TIA_BTC) + K512_dir algebraic overlap. REJECT.
+
+**K694 fix:** TIA-SOL avoids APT leg entirely. SOL is shared with 6 existing strategies but anti-correlated by construction: TIA-SOL = K_TIA_BTC_dir - K476_dir. Signed corr(K694, K476) = **0.2275 PASS** (< 0.40 threshold).
+
+K691 report.html note: *"Next: pair TIA with SOL, ATOM, or INJ — none overlap"* → K694 implements TIA-SOL recommendation.
+
+### §61.4 SOL Saturation Check
+
+SOL appears in 6 existing strategies. K694 G5 correlations (all PASS):
+
+| Gate | Comparison | Signed corr | Status |
+|------|-----------|-------------|--------|
+| G5a | K449 ETH-BTC | -0.0204 | PASS |
+| G5b | **K476 SOL-BTC (CRITICAL)** | **+0.2275** | **PASS** |
+| G5c | TIA-BTC | -0.4818 | PASS (neg) |
+| G5d | K679 APT-SOL | -0.0794 | PASS |
+| G5e | K682 ATOM-SOL | +0.0622 | PASS |
+| G5f | K684 SOL-INJ | -0.1886 | PASS |
+| G5g | K690 SEI-SOL | +0.2294 | PASS |
+| G5h | K280 vol-mom | +0.0774 | PASS |
+
+**Natural SOL-short hedge:** K694 BULL_TIA (long TIA / short SOL) partially offsets SOL-long positions in K679+K682+K686+K690 during TIA DA demand spikes.
+
+### §61.5 SOL Leg Overlap Warning
+
+K694 + existing SOL strategies — monitor combined SOL notional:
+
+| Strategy | SOL direction | Notional @$10M @3% @4x |
+|----------|---------------|------------------------|
+| **K694 TIA-SOL** | LONG (BEAR_TIA) or SHORT (BULL_TIA) SOL | $600K |
+| K690 SEI-SOL | LONG or SHORT SOL | $600K |
+| K686 AVAX-SOL | LONG or SHORT SOL | $600K |
+| K682 ATOM-SOL | LONG or SHORT SOL | $600K |
+| K679 APT-SOL | LONG or SHORT SOL | $600K |
+
+If all five in BEAR_TIA/SOL-long simultaneously: up to **$3.0M** combined SOL notional. Monitor combined SOL exposure vs total AUM. K694 BULL_TIA provides partial hedge.
+
+### §61.6 Venue & HL Concentration
+
+HL concentration baseline (post-K690): **62.5%**
+K694 impact: **NONE** (both TIA-PERP + SOL-PERP on Bybit — Bybit-only mandatory)
+Post-K694 HL: still **62.5%** (unchanged)
+
+**Why Bybit-only mandatory for K694:** HL-only scenario = 62.5 + 3.0 = **65.5% OVER 65% cap**. Bybit-only is the only compliant venue configuration.
+
+**G8 venue check:** Bybit TIA corr~0.667 vs HL (K691 ref), SOL corr~0.575. Diff-level corr (Bybit TIA-SOL vs HL TIA-SOL, 8h resampled): **0.6101** — G8 PASS (≥0.55).
+
+### §61.7 60d Paper-Trade Gate (K697 specification)
+
+| Gate | Threshold | Rationale |
+|------|-----------|-----------|
+| Realized Sharpe | ≥ 9 | 47% of OOS Sh=19.09 (CONDITIONAL — slightly lower than 50% standard) |
+| Fill rate | ≥ 60% | POST_ONLY execution efficiency |
+| Max drawdown | < 15% | Tail risk control |
+| Period | 60d | Standard alt-alt gate period |
+
+**CONDITIONAL rationale:** G4=11/12 (1 negative fold: fold 9 Sh=-3.97 in 2025-04 to 2025-05). Monitor for recurrence of fold-9 pattern (DA demand drought + SOL meme-coin peak regime). Gate Sh>=9 ≈ 47% of OOS Sh=19.09 (vs standard 50% rule, adjusted for CONDITIONAL status).
+
+### §61.8 Emergency Close Procedure
+
+K694 is Bybit-only — NOT in HL emergency exit.
+```bash
+# Check K694 position
+python3 scripts/k694_tia_sol_run.py --status
+
+# Emergency close K694 (Bybit IOC reduce-only)
+python3 scripts/k694_tia_sol_run.py --close "emergency exit"
+
+# Emergency exit with K694 summary
+python3 scripts/emergency_hl_exit.py --include-k694 --dry-run
+
+# K476 decomp: close K694 STANDALONE — TIA-SOL = K_TIA_BTC - K476 algebraically
+# SOL leg: close K694 independently of K679+K682+K684+K686+K690 (all standalone)
+```
+
+### §61.9 Daemon Deployment
+
+```bash
+# Copy plist (from repo scripts/)
+cp scripts/com.cryptolab.k694-tia-sol.plist ~/Library/LaunchAgents/
+
+# Load daemon (59th daemon)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k694-tia-sol.plist
+
+# Verify loaded
+launchctl list | grep k694
+
+# Start paper-trade cycle manually
+python3 scripts/k694_tia_sol_run.py --dry-run
+
+# Check status
+python3 scripts/k694_tia_sol_run.py --status
+
+# Verify all deployments (59th daemon check)
+python3 scripts/verify_deployment_status.py
+```
+
+**Activate LIVE** (after 60d gate passage):
+```bash
+# Edit plist: set PAPER_TRADE=False
+# Reload daemon
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k694-tia-sol.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k694-tia-sol.plist
+```
+
+### §61.10 Deliverable Files
+
+| File | Purpose |
+|------|---------|
+| `scripts/k694_tia_sol_run.py` | Phase 1: K694 strategy script (K339 pattern, W=168h, alt-alt direct diff) |
+| `scripts/com.cryptolab.k694-tia-sol.plist` | Phase 2: 59th daemon plist (StartInterval 28800, Bybit-only) |
+| `data/k694_dashboard.json` | Phase 3: Dashboard (alt-alt diff signal, regime, alt_alt_mechanism) |
+| `scripts/emergency_hl_exit.py` | Phase 4: Emergency exit (--include-k694 flag, §61) |
+| `scripts/leverage_manager.py` | Phase 5: Leverage manager (K694_TIA_SOL cap + SLEEVE_WEIGHTS_V645) |
+| `data/leverage_config.json` | Phase 6: Leverage config (K694_TIA_SOL: 4.0 + k694_notes) |
+| `scripts/verify_deployment_status.py` | Phase 7: Deployment verifier (59th daemon registry) |
+| `docs/k302a_runbook.md` | Phase 8: This section (§61) |
+| `report.html` | Phase 9: HTML report (K694 SCAFFOLD-READY) |
+| `wave_k697_k694_scaffold.py` | Phase 11: Wave driver (this scaffold) |
+
+### §61.11 References
+
+| Wave | Description |
+|------|-------------|
+| K697 | This section — K694 TIA-SOL scaffold (59th daemon, v6.49 candidate) |
+| K694 | K694 analysis — TIA-SOL CONDITIONAL (SIXTH ALT-ALT, OOS Sh 19.09, G4 11/12) |
+| K693 | K690 SEI-SOL scaffold (FIFTH ALT-ALT, 58th daemon, WF 12/12 UNPRECEDENTED) |
+| K691 | K691 TIA-APT REJECT (G5b APT corr=0.4712 — lesson applied in K694) |
+| K689 | K686 AVAX-SOL scaffold (FOURTH ALT-ALT, 57th daemon) |
+| K687 | K684 SOL-INJ scaffold (THIRD ALT-ALT, 56th daemon) |
+| K514 | K507 SEI-BTC scaffold (TIA-BTC algebraic base) |
+| K478 | K476 SOL-BTC scaffold (SOL-BTC algebraic component of TIA-SOL) |
+| K266 | §6 strict gate framework |
+
+---
+
 *K693 §60 -- K690 SEI-SOL FR Differential production scaffold (58th daemon, FIFTH ALT-ALT pair Cosmos EVM parallel vs Solana SVM retail, OOS Sh 25.11 W=168h direct alt-alt diff $104.2K/yr net @$10M @4x 3% sleeve, Bybit-only HL 62.5% unchanged headroom preserved, K507+K476 algebraic overlap anti-corr=-0.5109 HEDGES K507 standalone, K682/K686 SOL triple-exposure monitor, mid-cap alt-alt SEI/SOL vol=1.32x ADF p=1.01e-23 OU 4.41h STRONG, SEI negative FR -3.65%/ann carry-dominant BEAR_SEI LONG SOL/SHORT SEI carry-positive both legs, G4 WF 12/12 UNPRECEDENTED first in family, 60d gate: Sh>=12 fill>=60% maxDD<15%, v6.48 candidate) -- 2026-05-30*

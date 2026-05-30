@@ -462,6 +462,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k690_sei_sol",
         expected_html_status="SCAFFOLD-READY",  # K693: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=12 + fill>=60% + maxDD<15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k694-tia-sol",
+        purpose="K694 TIA-SOL FR Differential (SIXTH ALT-ALT pair 8th-evaluated Celestia DA infra vs Solana SVM retail cross-architecture, Bybit-only TIA-PERP+SOL-PERP both legs, 4x leverage, 8h cycle, OOS Sh 19.09 W=168h direct alt-alt diff, $58,354/yr net @$10M @4x @3% standalone sleeve, HL 62.5% Bybit-only mandatory HL-only would breach 65% cap, TIA new vertex K476 signed-corr=0.2275 SOL-saturation PASS, K691 TIA-APT lesson applied APT-shared-REJECT avoided, natural SOL-short hedge to K679+K682+K686+K690, TIA FR=Celestia DA demand rollup blob-fees OP-Stack episodic +1.08%ann, SOL FR=DePIN/Retail meme-coin BONK/WIF Firedancer ETF +7.70%ann persistent, cross-tier TIA~$1-3B vs SOL~$60-80B vol=1.296x ADF -9.2282 OU 3.46h FASTEST, 60d paper-trade gate Realized Sh>=9 fill>=60% maxDD<15%, v6.49 candidate 3% sleeve, 59th daemon 6th alt-alt CONDITIONAL G4 11/12, K697 scaffold)",
+        scripts=["scripts/k694_tia_sol_run.py"],
+        log_basename="k694_tia_sol",
+        expected_html_status="SCAFFOLD-READY",  # K697: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=9 + fill>=60% + maxDD<15%)
+    ),
 ]
 
 

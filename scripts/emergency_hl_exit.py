@@ -4126,6 +4126,40 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K697: K694 TIA-SOL FR Differential emergency exit flag
+    # K694 = Bybit-only TIA+SOL paired (2 legs, SIXTH ALT-ALT pair, CONDITIONAL).
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — Bybit-only preferred, HL stays at 62.5%).
+    # Signal: diff = TIA_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold).
+    # K476 overlap: TIA-SOL = K_TIA_BTC - K476_dir — close K694 standalone.
+    # SOL-exposure: K694+K679+K682+K684+K686+K690 all share SOL leg — close independently.
+    # Bybit-only: TIA-PERP + SOL-PERP both on Bybit. HL UNCHANGED at 62.5%.
+    # Use --include-k694 to print K694-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k694",
+        dest="include_k694",
+        action="store_true",
+        default=False,
+        help=(
+            "K697: Include K694 TIA-SOL close summary during emergency exit. "
+            "K694 positions (TIA+SOL paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Signal: diff = TIA_FR - SOL_FR (direct alt-alt differential, W=168h rolling mean, zero threshold). "
+            "HL concentration UNCHANGED at 62.5% (Bybit-only — no HL positions, headroom preserved). "
+            "HL-only would push HL to 65.5% (OVER 65% cap) — Bybit-only mandatory for K694. "
+            "OOS Sharpe 19.09 (SIXTH ALT-ALT pair, CONDITIONAL G4 11/12). $58,354/yr net @$10M @4x (3% standalone). "
+            "K691 lesson: TIA-APT REJECT (G5b APT corr=0.4712). K694 TIA-SOL: SOL saturation PASS (corr=0.2275). "
+            "K476 decomposition: TIA-SOL = K_TIA_BTC_dir - K476_dir. Close K694 STANDALONE. "
+            "Natural SOL-short hedge: K694 BULL_TIA offsets SOL-long in K679+K682+K686+K690. "
+            "SOL exposure: K694+K679+K682+K684+K686+K690 all have SOL leg — close independently, monitor SOL notional. "
+            "TIA FR: Celestia DA demand (rollup blob fees, episodic +1.08%/ann). "
+            "SOL FR: DePIN/Retail/meme-coin premium (BONK/WIF/POPCAT, Firedancer, ETF, +7.70% ann). "
+            "Cluster: TIA-SOL Alt-Alt (Celestia DA vs Solana SVM retail, SIXTH ALT-ALT, 59th daemon). "
+            "Requires: K694 daemon running (com.cryptolab.k694-tia-sol, 59th daemon). "
+            "See: docs/k302a_runbook.md §61"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -5008,6 +5042,34 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "K690 positions ARE NOT in the HL exit above (Bybit-only). "
                 "Close K690 on Bybit independently of K507/K476. "
                 "Use --include-k690 for Bybit close summary (§60). "
+                "HL concentration UNCHANGED at 62.5%."
+            )
+
+        # K697: K694 TIA-SOL close summary (Bybit-only — HL NOT affected)
+        # K694 positions (TIA+SOL, Bybit-only) are NOT in the HL exit above.
+        # K694 is Bybit-only (HL at 62.5%, Bybit-only mandatory — HL-only would breach 65% cap). HL UNCHANGED.
+        # Close K694 independently of K476 TIA-BTC and K690 SEI-SOL (standalone).
+        # Note: K694+K679+K682+K684+K686+K690 all share SOL leg — close independently, monitor SOL notional.
+        if args.include_k694:
+            logger.info("=== K694 TIA-SOL CLOSE SUMMARY (K697 §61) ===")
+            logger.info("  K694 TIA-SOL: Bybit-only (TIA-PERP + SOL-PERP both legs on Bybit)")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BEAR_TIA (dominant): short TIA first → sell long SOL second")
+            logger.info("  BULL_TIA (DA spike): short SOL first → sell long TIA second")
+            logger.info("  HL concentration: UNCHANGED at 62.5% (K694 is Bybit-only — HL-only would breach 65% cap)")
+            logger.info("  K476 decomp: TIA-SOL = K_TIA_BTC - K476_dir — close K694 STANDALONE")
+            logger.info("  K691 lesson: TIA-APT REJECT (APT G5b=0.4712). K694 SOL saturation=0.2275 PASS.")
+            logger.info("  SOL exposure: K694+K679+K682+K684+K686+K690 share SOL leg — close independently")
+            logger.info("  Natural SOL-short hedge: K694 BULL_TIA offsets SOL-long in K679+K682+K686+K690")
+            logger.info("  OU half-life: 3.46h (FASTEST in alt-alt family). Cross-arch: Celestia DA vs SVM retail.")
+            logger.info("  60d gate: Realized Sh>=9 + fill>=60% + maxDD<15%")
+            logger.info("  See: docs/k302a_runbook.md §61 (K694 TIA-SOL playbook)")
+        else:
+            logger.info(
+                "K694 TIA-SOL: Bybit-only (NOT HL — HL at 62.5%, Bybit-only mandatory). "
+                "K694 positions ARE NOT in the HL exit above (Bybit-only). "
+                "Close K694 on Bybit independently of K476/K690. "
+                "Use --include-k694 for Bybit close summary (§61). "
                 "HL concentration UNCHANGED at 62.5%."
             )
 
