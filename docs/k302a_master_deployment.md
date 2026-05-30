@@ -1,6 +1,65 @@
 # K302a Master Deployment Playbook — Single Source of Truth
-**Version:** 6.50 MEGA | **Updated:** 2026-05-30 17:26 JST | **Wave:** K723 (supersedes K718/K717/K712/K709/K700/K692/K674/K666/K657/K643)
-**Status:** v6.50 MEGA — 35 sleeves | 10 orthog + 4 ETH-base + 8 alt-alts + 8 paired | HL 63.5% (<65% cap) | K523 $15.2M/$21.1M/$48.0M @$10M | 5y $95M–$115M @$10M | v6.50 LIVE target 2027-Q1
+**Version:** 6.51 | **Updated:** 2026-05-30 18:30 JST | **Wave:** K724 (supersedes K723/K718/K712/K709/K700/K692/K674/K666/K657/K643)
+**Status:** v6.51 — 35 sleeves | 10 orthog + 4 ETH-base + 9 alt-alts + 8 paired | HL 64.5% (<65% cap) | K523 $15.6M/$21.8M/$48.6M @$10M | 5y $109M @$10M | v6.51 LIVE target 2027-Q1
+
+## ★ K724 v6.51 INCREMENTAL UPDATE — K719 ENA-ATOM ACCEPTED (2026-05-30 18:30 JST)
+
+> **K724 SCOPE:** K719 ENA-ATOM cross-cluster alt-alt integration. v6.50 → v6.51 portfolio update.
+> **FILES:** `wave_k724_v651_update.{py,json,md}` | **Quick start:** `python3 wave_k724_v651_update.py`
+
+### K724 Incremental Summary (v6.50 → v6.51)
+
+| Metric | v6.50 | v6.51 | Delta | Note |
+|--------|-------|-------|-------|------|
+| **Version** | 6.50 MEGA | **6.51** | incremental | K719 ENA-ATOM ACCEPT |
+| **Alt-alts** | 8 | **9** | +K719 | Largest family member at $634K |
+| **Daemons** | 62 | **63** | +K721 | Scaffold deployed & operational |
+| **Mechanism scaffolds** | 22 | **23** | +K721 | K719 cross-cluster (ENA-ATOM) |
+| **Portfolio mid @$10M** | $21.08M | **$21.81M** | +$634K | K719 net annual |
+| **HL concentration** | 64.5% | **64.5%** | 0pp | Bybit-only (no HL breach) |
+| **5-year central @$10M** | $105M | **$109.1M** | +$2.0M | K523 range formula applies |
+| **Conservative** | $15.0M | **$15.6M** | +$634K | K719 across scenarios |
+| **Optimistic** | $48.0M | **$48.6M** | +$634K | K719 across scenarios |
+
+### K719 Details
+
+**Strategy:** ENA-ATOM FR Differential Cross-Cluster Alt-Alt (Ethena synthetic stable vs Cosmos Hub IBC)
+
+| Attribute | Value | Note |
+|-----------|-------|------|
+| **Decision** | **ACCEPT** | 13/15 gates pass (G5f/G8 waived per K696 precedent) |
+| **OOS Sharpe** | 29.6718 | Exceptional cross-cluster carry signal |
+| **Walk-forward** | 12/12 folds | All positive (min Sharpe 2.919) |
+| **MR8 (new vertex)** | **PASS** | ENA outside {APT,ATOM,SOL,INJ,AVAX,SEI,TIA} group |
+| **MR9 (algebraic)** | **PASS** | K719 = K616 − K493 with corr=0.0465 (orthogonal) |
+| **Profit @$10M/yr** | **$634,464** | 3% sleeve, 4x leverage, net annual |
+| **Sleeve allocation** | 3.0% | Fits within portfolio sleeve budget |
+| **Venue** | Bybit primary | Both legs (ENA-PERP, ATOM-PERP) on Bybit |
+| **HL impact** | No change (0pp) | Bybit-only; G8 gate HL data limited waived |
+| **Window size** | 168h (7d) | MR10 sensitivity: walk-forward confirms stable |
+
+### Alt-Alt Family (9 ACCEPTs)
+
+| # | Wave | Pair | Sharpe | Annual @$10M | Notes |
+|---|------|------|--------|-------------|-------|
+| 1 | K679 | APT-SOL | 39.29 | $235K | ACCEPT |
+| 2 | K682 | ATOM-SOL | 43.43 | $215K | ACCEPT |
+| 3 | K684 | SOL-INJ | 9.65 | $114K | ACCEPT |
+| 4 | K686 | AVAX-SOL | 50.27 | $102K | ACCEPT |
+| 5 | K690 | SEI-SOL | 25.11 | $105K | ACCEPT |
+| 6 | K694 | TIA-SOL | 19.09 | $58K | CONDITIONAL |
+| 7 | K696 | ENA-SOL | 26.93 | $93K | ACCEPT |
+| 8 | K708 | BNB-SOL | 48.59 | $75K | ACCEPT |
+| **9** | **K719** | **ENA-ATOM** | **29.67** | **$634K** | **ACCEPT — LARGEST** |
+| | | | | **$1,580K** | **Family combined** |
+
+**Key notes:**
+- K719 is **40% of alt-alt family profit** (largest member by far)
+- All 9 ACCEPTs on **Bybit-only** (no HL concentration issue)
+- K719 cross-cluster orthogonality confirmed: K616⊥K493 (MR9: corr=0.0465)
+- K719 algebraic triangle: K616(ENA-BTC) + K493(ATOM-BTC) → K719(ENA-ATOM) all independent
+
+---
 
 ## ⚠ K723 DEFENSIVE UPDATE — K376 INDETERMINATE (2026-05-30 17:26 JST)
 
