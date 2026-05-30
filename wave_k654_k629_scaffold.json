@@ -1,0 +1,165 @@
+{
+  "wave": "K654",
+  "strategy": "K629 WLD-ETH FR Differential (ETH-base, Biometric ID Cluster 24)",
+  "run_time_jst": "2026-05-30 12:31 JST",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k629_wld_eth_run.py",
+        "description": "Phase 1: K629 strategy script (K339 pattern, W=168h, ETH-base direct diff)",
+        "exists": true,
+        "size_bytes": 44895,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k629-wld-eth.plist",
+        "description": "Phase 2: 49th daemon plist (StartInterval 28800)",
+        "exists": true,
+        "size_bytes": 2650,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k629_dashboard.json",
+        "description": "Phase 3: Dashboard (diff signal, regime, eth_base_mechanism)",
+        "exists": true,
+        "size_bytes": 3367,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k629 flag, \u00a750)",
+        "exists": true,
+        "size_bytes": 218163,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K629_WLD_ETH + SLEEVE_WEIGHTS_V639)",
+        "exists": true,
+        "size_bytes": 60921,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K629_WLD_ETH: 4.0 + k629_notes)",
+        "exists": true,
+        "size_bytes": 43126,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (49th daemon registry)",
+        "exists": true,
+        "size_bytes": 32416,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a750 (K629 WLD-ETH playbook)",
+        "exists": true,
+        "size_bytes": 391545,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K629 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1568003,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k654_k629_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 15436,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_checks": {
+    "k339_repo_root": true,
+    "paper_trade_default": true,
+    "sleeve_3pct": true,
+    "leverage_4x": true,
+    "ema_168h": true,
+    "signal_1_5sigma": true,
+    "hl_primary": true,
+    "post_only": true,
+    "eth_base_mechanism": true,
+    "direct_diff_no_ols": true,
+    "symbols_wld_eth_only": true,
+    "dashboard_path": true,
+    "dashboard_regime": true,
+    "dashboard_oos_perf": true,
+    "dashboard_eth_mech": true,
+    "dashboard_hl_595": true,
+    "dashboard_gate_sh10": true,
+    "cfg_k629_cap": true,
+    "cfg_k629_notes": true,
+    "cfg_sleeve_3pct": true,
+    "cfg_jup_corr": true,
+    "emer_include_k629": true,
+    "emer_k629_hl_note": true,
+    "lev_k629_cap": true,
+    "lev_v639_weights": true,
+    "lev_k629_3pct": true,
+    "vds_k629_label": true,
+    "vds_49th_daemon": true,
+    "runbook_section50": true,
+    "runbook_eth_base": true,
+    "runbook_60d_gate": true,
+    "html_k629_scaffold": true,
+    "html_49th_daemon": true
+  },
+  "daemon_count": 49,
+  "dry_run": {
+    "returncode": 0,
+    "success": true,
+    "stdout_len": 3415,
+    "stderr_len": 0,
+    "status": "PASS"
+  },
+  "overall_pass": true,
+  "k629_summary": {
+    "oos_sharpe": 19.9017,
+    "oos_sharpe_is": 29.9396,
+    "is_oos_ratio": 0.665,
+    "oos_ann_ret_pct": 7.85,
+    "profit_3pct_4x_10m": 94210,
+    "signal": "diff = WLD_FR - ETH_FR (direct, W=168h EMA, 1.5sigma)",
+    "ema_window_h": 168,
+    "sleeve_pct": 0.03,
+    "leverage": 4.0,
+    "venue": "HL primary (WLD-PERP + ETH-PERP both on HL)",
+    "hl_concentration_pre": 57.5,
+    "hl_concentration_post": 59.5,
+    "hl_headroom_pp": 5.5,
+    "jup_btc_corr": 0.3437,
+    "eth_btc_corr": -0.2052,
+    "adf_pvalue": 0.0,
+    "ou_halflife_h": 5.7,
+    "walk_forward_pos": "11/12 (91.7%)",
+    "perm_pvalue": 0.0,
+    "dsr_pvalue": 0.0,
+    "trades_per_yr": 48.2,
+    "max_drawdown_pct": 0.71,
+    "calmar": 28.0,
+    "gates_passed": 9,
+    "gates_total": 9,
+    "daemon_number": "49th",
+    "plist": "scripts/com.cryptolab.k629-wld-eth.plist",
+    "cluster": "Biometric ID / World ID (Cluster 24, ETH-base unlock)",
+    "gate_realized_sharpe": 10.0,
+    "gate_fill_pct": 60,
+    "gate_max_dd_pct": 15,
+    "gate_days": 60,
+    "v639_candidate": true,
+    "escalation_chain": "K621 BLOCKED-G5 -> K624 BLOCKED-G5G6 -> K627 STILL-BLOCKED -> K629 PASS",
+    "anti_corr_k449": "ETH-BTC (K449) corr=-0.2052 (anti-correlated: diversification benefit)",
+    "wave_scaffold": "K654"
+  }
+}
