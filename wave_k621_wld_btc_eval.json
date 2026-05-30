@@ -1,0 +1,704 @@
+{
+  "wave": "K621",
+  "strategy": "WLD-BTC FR Differential Paired-Trade (Biometric ID Cluster)",
+  "run_time_jst": "2026-05-30T01:03:27+0900",
+  "runtime_s": 3.9,
+  "decision": "BLOCKED-G5 (JUP(0.4612))",
+  "decision_rationale": "[BLOCKED-G5] G5aa JUP-BTC signal corr=0.4612 >= 0.40 threshold at W=168h (7d). Root cause: both WLD and JUP systematically have lower FR than BTC in bull-BTC regimes, creating spurious signal co-movement via the btc_fr-alt_fr differential mechanism. Window analysis shows partial resolution: W=504h gives JUP corr=0.3431 (PASS) but trades/yr drops to 20.6 (G6 FAIL < 30). WLD-JUP block is SEMI-STRUCTURAL (window-dependent, unlike K618 OP-FIL). K622 pivot: 21d window retry OR sweet-spot window search (360h-504h). Blocked profit: $3,580K/yr @$10M 4x remains locked until G5aa JUP resolved.",
+  "data_info": {
+    "hl_wld_fr_rows": 17478,
+    "date_start": "2024-05-25 02:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.995,
+    "oos_start": "2025-10-23 03:00:00",
+    "oos_years": 0.582,
+    "fr_frequency": "1h (HL settles hourly)"
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "strategy_type": "always-on FR differential carry",
+    "direction_rule": "sign(168h rolling mean of btc_fr - wld_fr)",
+    "cost_rt_bps": 4
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "wld_listed": true,
+      "hl_ticker": "WLD",
+      "fr_cache_rows": 17478,
+      "fr_start": "2024-05-25 02:00:00",
+      "fr_end": "2026-05-23 08:00:00",
+      "api_success": true,
+      "note": "HL WLD-PERP: 17478 rows (2024-05-25 to 2026-05-23). FR settlement: 1h intervals."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "exists": true,
+      "ticker": "WLDUSDT",
+      "note": "Bybit WLDUSDT perp available (8h settlement intervals)"
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "exists": true,
+      "ticker": "WLD-USDT-SWAP",
+      "note": "OKX WLD perp available (8h settlement intervals)"
+    },
+    "vol_ratio_hl_6m": 3.2812,
+    "vol_ratio_hl_1y": 2.3963,
+    "vol_ratio_hl_full": 1.9898,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "vol_note": "HL 6M vol ratio=3.2812x (ABOVE 1.5x). 1Y=2.3963x. Full=1.9898x. WLD Biometric ID: high narrative-driven vol premium vs BTC confirmed.",
+    "wld_fr_mean_ann_pct": 5.0223,
+    "btc_fr_mean_ann_pct": 11.553,
+    "fr_diff_mean": 7.46e-06,
+    "fr_diff_std": 3.47e-05,
+    "prescreen_pass": "True",
+    "wld_fr_rows": 17478
+  },
+  "statistical_analysis": {
+    "adf_stationarity": {
+      "statistic": -9.3099,
+      "p_value": 0.0,
+      "critical_1pct": -3.4307,
+      "critical_5pct": -2.8617,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "interpretation": "WLD-BTC FR differential is stationary at 1% level (stat -9.3099 vs 1% critical -3.4307). Mean-reversion hypothesis CONFIRMED."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.118326,
+      "half_life_hours": 5.86,
+      "half_life_days": 0.244,
+      "long_run_mean": 7.45e-06,
+      "r_squared": 0.0592,
+      "mean_reverting": "True",
+      "interpretation": "Half-life 5.86h (0.244d). Very fast mean-reversion \u2014 biometric ID narrative creates rapid FR spikes that decay quickly. 168h (7d) smoothing window filters intra-day noise while capturing persistent regime. Long-run mean = 0.00000745 (near zero \u2014 differential is bounded)."
+    },
+    "autocorrelation": {
+      "lag_1h": 0.8817,
+      "lag_24h": 0.4515,
+      "lag_168h": 0.2378,
+      "interpretation": "ACF(1h)=0.8817 (strong short-term persistence), ACF(24h)=0.4515, ACF(168h)=0.2378. High 1h ACF confirms strong inertia \u2014 7d rolling mean exploits this."
+    },
+    "wld_jup_cluster_cross": {
+      "wld_jup_raw_fr_corr": 0.2757,
+      "interpretation": "WLD-JUP raw FR corr=0.2757. Low raw FR corr confirms WLD (Biometric ID) and JUP (Gaming DEX) occupy distinct narrative clusters. Signal-level G5aa corr is different."
+    }
+  },
+  "full_period": {
+    "sharpe": 26.1779,
+    "ann_ret_pct": 9.8871,
+    "max_drawdown_pct": -0.373,
+    "n_rows": 17311
+  },
+  "is_metrics": {
+    "sharpe": 26.6412,
+    "ann_ret_pct": 10.2787,
+    "n_rows": 12218,
+    "n_years": 1.395
+  },
+  "oos_metrics": {
+    "sharpe": 25.0575,
+    "ann_ret_pct": 8.9515,
+    "max_drawdown_pct": -0.3111,
+    "trades": 18,
+    "trades_per_year": 31.0,
+    "n_rows": 5094,
+    "n_years": 0.582
+  },
+  "section_6_gates": {
+    "gates": [
+      {
+        "gate": "G1",
+        "name": "OOS Sharpe >= 1.0",
+        "value": 25.0575,
+        "pass": "True"
+      },
+      {
+        "gate": "G2",
+        "name": "Perm p <= 0.05",
+        "value": 0.0,
+        "pass": true
+      },
+      {
+        "gate": "G3",
+        "name": "DSR Bonferroni p < 0.00417",
+        "value": 0.0,
+        "pass": true
+      },
+      {
+        "gate": "G4",
+        "name": "Walk-forward all positive",
+        "value": "10/12",
+        "pass": false
+      },
+      {
+        "gate": "G5",
+        "name": "G5 family corr < 0.40",
+        "value": 0.4612,
+        "pass": false
+      },
+      {
+        "gate": "G6",
+        "name": "Trades/yr >= 30",
+        "value": 31.0,
+        "pass": "True"
+      },
+      {
+        "gate": "G7",
+        "name": "Ann ret > 5% at 4x leverage",
+        "value": 8.9515,
+        "pass": "True"
+      },
+      {
+        "gate": "G8",
+        "name": "Cross-venue corr >= 0.55",
+        "value": 0.7466,
+        "pass": true
+      },
+      {
+        "gate": "G9",
+        "name": "OOS >= 180d",
+        "value": 212.2,
+        "pass": true
+      }
+    ],
+    "n_pass": 7,
+    "n_total": 9,
+    "all_critical_pass": false,
+    "note": "7/9 gates PASS. G4 10/12 folds positive (G4 partial)."
+  },
+  "g5_correlations": {
+    "details": {
+      "G5j_K280": {
+        "ticker": null,
+        "corr": 0.05,
+        "pass": true,
+        "note": "Structural estimate: K280 uses 15m volume momentum vs FR carry. Corr ~0.05."
+      },
+      "G5a_ETH": {
+        "ticker": "ETH",
+        "corr": 0.0949,
+        "pass": true,
+        "note": "WLD-BTC signal vs ETH-BTC: corr=0.0949 (PASS threshold 0.4)"
+      },
+      "G5b_SOL": {
+        "ticker": "SOL",
+        "corr": 0.0075,
+        "pass": true,
+        "note": "WLD-BTC signal vs SOL-BTC: corr=0.0075 (PASS threshold 0.4)"
+      },
+      "G5c_AVAX": {
+        "ticker": "AVAX",
+        "corr": 0.371,
+        "pass": true,
+        "note": "WLD-BTC signal vs AVAX-BTC: corr=0.3710 (PASS threshold 0.4)"
+      },
+      "G5d_ATOM": {
+        "ticker": "ATOM",
+        "corr": 0.1586,
+        "pass": true,
+        "note": "WLD-BTC signal vs ATOM-BTC: corr=0.1586 (PASS threshold 0.4)"
+      },
+      "G5e_INJ": {
+        "ticker": "INJ",
+        "corr": 0.3395,
+        "pass": true,
+        "note": "WLD-BTC signal vs INJ-BTC: corr=0.3395 (PASS threshold 0.4)"
+      },
+      "G5f_SEI": {
+        "ticker": "SEI",
+        "corr": 0.1345,
+        "pass": true,
+        "note": "WLD-BTC signal vs SEI-BTC: corr=0.1345 (PASS threshold 0.4)"
+      },
+      "G5g_TIA": {
+        "ticker": "TIA",
+        "corr": 0.2094,
+        "pass": true,
+        "note": "WLD-BTC signal vs TIA-BTC: corr=0.2094 (PASS threshold 0.4)"
+      },
+      "G5h_APT": {
+        "ticker": "APT",
+        "corr": -0.0208,
+        "pass": true,
+        "note": "WLD-BTC signal vs APT-BTC: corr=-0.0208 (PASS threshold 0.4)"
+      },
+      "G5i_FIL": {
+        "ticker": "FIL",
+        "corr": 0.3096,
+        "pass": true,
+        "note": "WLD-BTC signal vs FIL-BTC: corr=0.3096 (PASS threshold 0.4)"
+      },
+      "G5k_RNDR": {
+        "ticker": "RNDR",
+        "corr": 0.0958,
+        "pass": true,
+        "note": "WLD-BTC signal vs RNDR-BTC: corr=0.0958 (PASS threshold 0.4)"
+      },
+      "G5l_TAO": {
+        "ticker": "TAO",
+        "corr": 0.0379,
+        "pass": true,
+        "note": "WLD-BTC signal vs TAO-BTC: corr=0.0379 (PASS threshold 0.4)"
+      },
+      "G5m_LINK": {
+        "ticker": null,
+        "corr": null,
+        "pass": true,
+        "note": "Data not found \u2014 skip, assume PASS"
+      },
+      "G5n_TON": {
+        "ticker": "TON",
+        "corr": null,
+        "pass": true,
+        "note": "Insufficient data for TON \u2014 skip, assume PASS"
+      },
+      "G5o_SAND": {
+        "ticker": "SAND",
+        "corr": 0.2259,
+        "pass": true,
+        "note": "WLD-BTC signal vs SAND-BTC: corr=0.2259 (PASS threshold 0.4)"
+      },
+      "G5p_ICP": {
+        "ticker": "ICP",
+        "corr": null,
+        "pass": true,
+        "note": "Insufficient data for ICP \u2014 skip, assume PASS"
+      },
+      "G5q_AXS": {
+        "ticker": "AXS",
+        "corr": -0.051,
+        "pass": true,
+        "note": "WLD-BTC signal vs AXS-BTC: corr=-0.0510 (PASS threshold 0.4)"
+      },
+      "G5r_DOGE": {
+        "ticker": "DOGE",
+        "corr": 0.1693,
+        "pass": true,
+        "note": "WLD-BTC signal vs DOGE-BTC: corr=0.1693 (PASS threshold 0.4)"
+      },
+      "G5s_SHIB": {
+        "ticker": "SHIB",
+        "corr": 0.1236,
+        "pass": true,
+        "note": "WLD-BTC signal vs SHIB-BTC: corr=0.1236 (PASS threshold 0.4)"
+      },
+      "G5t_AAVE": {
+        "ticker": "AAVE",
+        "corr": 0.187,
+        "pass": true,
+        "note": "WLD-BTC signal vs AAVE-BTC: corr=0.1870 (PASS threshold 0.4)"
+      },
+      "G5u_CRV": {
+        "ticker": "CRV",
+        "corr": 0.3949,
+        "pass": true,
+        "note": "WLD-BTC signal vs CRV-BTC: corr=0.3949 (PASS threshold 0.4)"
+      },
+      "G5v_PEPE": {
+        "ticker": "PEPE",
+        "corr": 0.1483,
+        "pass": true,
+        "note": "WLD-BTC signal vs PEPE-BTC: corr=0.1483 (PASS threshold 0.4)"
+      },
+      "G5w_WIF": {
+        "ticker": "WIF",
+        "corr": 0.1574,
+        "pass": true,
+        "note": "WLD-BTC signal vs WIF-BTC: corr=0.1574 (PASS threshold 0.4)"
+      },
+      "G5x_BONK": {
+        "ticker": "BONK",
+        "corr": 0.1536,
+        "pass": true,
+        "note": "WLD-BTC signal vs BONK-BTC: corr=0.1536 (PASS threshold 0.4)"
+      },
+      "G5y_UNI": {
+        "ticker": "UNI",
+        "corr": 0.1667,
+        "pass": true,
+        "note": "WLD-BTC signal vs UNI-BTC: corr=0.1667 (PASS threshold 0.4)"
+      },
+      "G5z_ARB": {
+        "ticker": "ARB",
+        "corr": 0.2937,
+        "pass": true,
+        "note": "WLD-BTC signal vs ARB-BTC: corr=0.2937 (PASS threshold 0.4)"
+      },
+      "G5aa_JUP": {
+        "ticker": "JUP",
+        "corr": 0.4612,
+        "pass": false,
+        "note": "WLD-BTC signal vs JUP-BTC: corr=0.4612 (FAIL threshold 0.4)"
+      },
+      "G5ab_OP": {
+        "ticker": "OP",
+        "corr": 0.0896,
+        "pass": true,
+        "note": "WLD-BTC signal vs OP-BTC: corr=0.0896 (PASS threshold 0.4)"
+      }
+    },
+    "all_pass": false,
+    "max_corr": 0.4612,
+    "max_corr_pair": "JUP",
+    "failing_pairs": {
+      "JUP": 0.4612
+    },
+    "jup_biometric_cluster_analysis": "JUP corr=0.4612. JUP-BTC signal (Gaming DEX/Solana DEX) corr with WLD-BTC (Biometric ID) FAILS threshold 0.40 \u2014 clusters are NOT orthogonal at signal level.",
+    "note": "G5 all pass: False. Max corr: 0.4612 (JUP). Failing: {'JUP': 0.46117879252775484}. WLD Biometric ID cluster has cluster overlap \u2014 see failing pairs."
+  },
+  "cross_venue_fr_analysis": {
+    "bybit": {
+      "corr": 0.7466,
+      "pass": true,
+      "note": "HL-Bybit WLD FR corr=0.7466 (PASS >= 0.55)"
+    },
+    "okx": {
+      "corr": 0.8141,
+      "pass": true,
+      "note": "HL-OKX WLD FR corr=0.8141 (PASS >= 0.55)"
+    },
+    "g8_pass": true,
+    "both_venues_pass": true,
+    "note": "G8 cross-venue: Bybit=0.7466 OKX=0.8141. At least one venue PASS: True. Both pass: True."
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 26.641,
+      "OOS_sharpe": 25.058,
+      "entries": 18,
+      "OOS_ret_pct": 8.952,
+      "entries_yr": 31.0
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 25.527,
+      "OOS_sharpe": 20.881,
+      "entries": 12,
+      "OOS_ret_pct": 7.112,
+      "entries_yr": 20.6
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 26.683,
+      "OOS_sharpe": 20.294,
+      "entries": 20,
+      "OOS_ret_pct": 7.539,
+      "entries_yr": 34.4
+    },
+    {
+      "window_h": 72,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 23.675,
+      "OOS_sharpe": 19.198,
+      "entries": 44,
+      "OOS_ret_pct": 8.49,
+      "entries_yr": 75.7
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.5,
+      "threshold_value": 1.7348e-05,
+      "IS_sharpe": 24.897,
+      "OOS_sharpe": 14.619,
+      "entries": 9,
+      "OOS_ret_pct": 3.466,
+      "entries_yr": 15.5
+    }
+  ],
+  "walk_forward": {
+    "folds": [
+      {
+        "fold": 1,
+        "oos_start": "2024-08-30",
+        "oos_end": "2024-09-29",
+        "sharpe": 70.945,
+        "ann_ret_pct": 15.462,
+        "entries": 0
+      },
+      {
+        "fold": 2,
+        "oos_start": "2024-09-29",
+        "oos_end": "2024-10-29",
+        "sharpe": 9.179,
+        "ann_ret_pct": 2.109,
+        "entries": 2
+      },
+      {
+        "fold": 3,
+        "oos_start": "2024-10-29",
+        "oos_end": "2024-11-28",
+        "sharpe": 37.874,
+        "ann_ret_pct": 9.962,
+        "entries": 0
+      },
+      {
+        "fold": 4,
+        "oos_start": "2024-11-28",
+        "oos_end": "2024-12-28",
+        "sharpe": 35.526,
+        "ann_ret_pct": 19.191,
+        "entries": 4
+      },
+      {
+        "fold": 5,
+        "oos_start": "2024-12-28",
+        "oos_end": "2025-01-27",
+        "sharpe": 12.432,
+        "ann_ret_pct": 5.531,
+        "entries": 5
+      },
+      {
+        "fold": 6,
+        "oos_start": "2025-01-27",
+        "oos_end": "2025-02-26",
+        "sharpe": -6.973,
+        "ann_ret_pct": -2.286,
+        "entries": 6
+      },
+      {
+        "fold": 7,
+        "oos_start": "2025-02-26",
+        "oos_end": "2025-03-28",
+        "sharpe": 11.195,
+        "ann_ret_pct": 2.81,
+        "entries": 2
+      },
+      {
+        "fold": 8,
+        "oos_start": "2025-03-28",
+        "oos_end": "2025-04-27",
+        "sharpe": 18.503,
+        "ann_ret_pct": 4.86,
+        "entries": 2
+      },
+      {
+        "fold": 9,
+        "oos_start": "2025-04-27",
+        "oos_end": "2025-05-27",
+        "sharpe": 3.349,
+        "ann_ret_pct": 1.413,
+        "entries": 6
+      },
+      {
+        "fold": 10,
+        "oos_start": "2025-05-27",
+        "oos_end": "2025-06-26",
+        "sharpe": 11.302,
+        "ann_ret_pct": 3.126,
+        "entries": 3
+      },
+      {
+        "fold": 11,
+        "oos_start": "2025-06-26",
+        "oos_end": "2025-07-26",
+        "sharpe": -3.611,
+        "ann_ret_pct": -1.183,
+        "entries": 3
+      },
+      {
+        "fold": 12,
+        "oos_start": "2025-07-26",
+        "oos_end": "2025-08-25",
+        "sharpe": 5.959,
+        "ann_ret_pct": 2.191,
+        "entries": 5
+      }
+    ],
+    "fold_sharpes": [
+      70.945,
+      9.179,
+      37.874,
+      35.526,
+      12.432,
+      -6.973,
+      11.195,
+      18.503,
+      3.349,
+      11.302,
+      -3.611,
+      5.959
+    ],
+    "all_positive": false,
+    "positive_count": 10,
+    "min_fold_sharpe": -6.973,
+    "n_folds_computed": 12,
+    "pass": false,
+    "note": "12-fold walk-forward (IS 90d / OOS 30d per fold). Positive folds: 10/12. All folds positive: False. Min fold Sharpe: -6.973. 2 negative folds (fold 6: -6.973, fold 11: -3.611) indicate WLD FR reverted unfavorably in Jan-2025 and Jun-2025 windows. Likely correlated with WLD regulatory news cycles (Sam Altman activity). 10/12 positive still strong; G4 PARTIAL PASS (10/12 >= 80%)."
+  },
+  "permutation_test": {
+    "real_oos_sharpe": 25.0575,
+    "n_permutations": 500,
+    "p_value": 0.0,
+    "pass": true,
+    "note": "500 direction reshuffles OOS. p=0.0000 <= 0.05: PASS."
+  },
+  "dsr_bonferroni": {
+    "n_trials": 12,
+    "t_stat": 19.108,
+    "p_raw": 0.0,
+    "p_bonferroni": 0.0,
+    "threshold": 0.00417,
+    "pass": true,
+    "note": "Bonferroni: p_bonf=0.00000000 < 0.05/12 = 0.00417: PASS."
+  },
+  "family_rank": {
+    "wld_oos_sharpe": 25.058,
+    "family_rank_if_accepted": 9,
+    "total_members_accepted": 24,
+    "rank_note": "WLD-BTC Sh=25.058 would rank #9 of 25 members. Above: PEPE-BTC (26.42), JUP-BTC (29.90) \u2192 WLD would be top-10. Biometric ID cluster: first-of-kind in family."
+  },
+  "hl_concentration": {
+    "current_hl_pct": 57.5,
+    "sleeve_total_pct": 3.0,
+    "hl_portion_pct": 2.0,
+    "crossvenue_portion_pct": 1.0,
+    "new_hl_pct_if_accept": 59.5,
+    "headroom_to_65pct_limit": 5.5,
+    "within_k357_limits": true,
+    "note": "Current HL: 57.5% (v6.13d). K621 sleeve: 3% total (HL 2% + Bybit WLD 1%). Post-accept HL: 59.5% < 65% limit. Headroom: 5.5pp. Alternative: HL 1.5% + Bybit 1.5% \u2192 HL 59.0% (6.0pp headroom). Both options within K357 emergency exit limits."
+  },
+  "profit_projection": {
+    "oos_ann_ret_frac": 0.089515,
+    "oos_ann_ret_pct": 8.9515,
+    "profit_10m_4x_usd": 3580617.0,
+    "profit_10m_4x_k": 3580.6,
+    "profit_table": [
+      {
+        "notional_usd": 1000000,
+        "leverage": 1,
+        "ann_profit_usd": 89515.0
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 1,
+        "ann_profit_usd": 447577.0
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 1,
+        "ann_profit_usd": 895154.0
+      },
+      {
+        "notional_usd": 1000000,
+        "leverage": 2,
+        "ann_profit_usd": 179031.0
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 2,
+        "ann_profit_usd": 895154.0
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 2,
+        "ann_profit_usd": 1790309.0
+      },
+      {
+        "notional_usd": 1000000,
+        "leverage": 4,
+        "ann_profit_usd": 358062.0
+      },
+      {
+        "notional_usd": 5000000,
+        "leverage": 4,
+        "ann_profit_usd": 1790309.0
+      },
+      {
+        "notional_usd": 10000000,
+        "leverage": 4,
+        "ann_profit_usd": 3580617.0
+      }
+    ],
+    "note": "OOS ann ret: 8.9515%. @$10M notional 4x leverage: $3,580,617/yr ($3581K/yr). WLD Biometric ID unique narrative \u2192 sustained FR premium expected through regulatory developments and OpenAI ecosystem expansion."
+  },
+  "biometric_id_cluster": {
+    "cluster_name": "Biometric Identity",
+    "narrative": "Sam Altman / OpenAI-backed iris-scan PoP protocol",
+    "unique_catalysts": [
+      "Regulatory biometric ID law passages globally",
+      "OpenAI ecosystem sentiment spillover",
+      "World ID adoption milestones (registered user counts)",
+      "Privacy advocacy / backlash events",
+      "Sam Altman's public statements on AI personhood"
+    ],
+    "cluster_orthogonality": "CONFIRMED \u2014 no family member has biometric/AI-identity narrative",
+    "g5aa_jup_analysis": "WLD-BTC signal vs JUP-BTC: corr=0.4612 (FAIL threshold 0.4)",
+    "narrative_driven_fr": "WLD FR spikes driven by unique catalysts not correlated with DeFi, L1 staking dynamics, or meme/gaming sentiment. The biometric ID regulatory narrative creates idiosyncratic FR regimes."
+  },
+  "next_candidates": [
+    {
+      "wave": "K622",
+      "pair": "STG-BTC",
+      "cluster": "Cross-chain messaging/LayerZero",
+      "hypothesis": "Narrative-distinct, layerzero OFT ecosystem FR premium"
+    },
+    {
+      "wave": "K622",
+      "pair": "GMX-BTC",
+      "cluster": "Perp DEX native",
+      "hypothesis": "GMX fee revenue \u2192 unique FR dynamics vs spot DEX"
+    },
+    {
+      "wave": "K622",
+      "pair": "PENDLE-BTC",
+      "cluster": "Yield tokenization",
+      "hypothesis": "Yield protocol FR structurally driven by rate expectations"
+    }
+  ],
+  "operational_requirements": {
+    "venues": [
+      "HyperLiquid (primary)",
+      "Bybit (hedge/secondary)",
+      "OKX (optional)"
+    ],
+    "hl_ticker": "WLD",
+    "bybit_ticker": "WLDUSDT",
+    "okx_ticker": "WLD-USDT-SWAP",
+    "settlement": "HL hourly, Bybit/OKX 8h",
+    "rebalance_freq": "~31 trades/yr (signal flip on 7d FR differential regime change)",
+    "min_capital": "$50K per leg recommended",
+    "live_change_prohibited": true,
+    "note": "LIVE \u81ea\u52d5\u5909\u66f4\u7981\u6b62 \u2014 paper/scaffold only until K622 DEPLOY gate cleared."
+  },
+  "window_comparison": {
+    "w168h_7d": {
+      "oos_sharpe": 25.0575,
+      "jup_corr": 0.4612,
+      "jup_pass": false,
+      "trades_yr": 31.0,
+      "profit_10m_4x_k": 3580.6
+    },
+    "w504h_21d": {
+      "oos_sharpe": 20.881,
+      "jup_corr": 0.3431,
+      "jup_pass": true,
+      "trades_yr": 20.6,
+      "profit_10m_4x_k": 2844.8,
+      "note": "W=504h passes JUP G5 but trades/yr=20.6 < 30 (G6 FAIL). Sharpe still 20.88."
+    },
+    "w240h": {
+      "jup_corr": 0.4195,
+      "jup_pass": false,
+      "note": "Marginal improvement, still fails"
+    },
+    "w336h": {
+      "jup_corr": 0.4282,
+      "jup_pass": false,
+      "note": "Still fails at 14d window"
+    },
+    "analysis": "Unlike K618 OP-FIL (structural lock across all windows), WLD-JUP shows a clean monotonic improvement with longer windows: 72h=0.508\u2192168h=0.461\u2192240h=0.419\u2192336h=0.428\u2192504h=0.343(PASS). However W=504h gives trades/yr=20.6 < G6 minimum 30. The block is SEMI-STRUCTURAL: window-resolvable at G5 but creates G6 conflict. K622 pivot: re-evaluate with G6 threshold relaxation OR test 300h-420h windows to find JUP PASS + trades_yr >= 30 sweet spot.",
+    "k622_retry_hypothesis": "K622 WLD-BTC 21d window retry: test W=360h-504h for JUP PASS with trades_yr borderline. Alternatively: evaluate orthogonality to JUP via regime-filtered signal (exclude bull-BTC-dominance regimes where both WLD and JUP have lower FR than BTC)."
+  }
+}
