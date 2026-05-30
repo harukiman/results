@@ -14261,6 +14261,43 @@ The key test: <strong style="color:var(--accent-cyan);">Strip leverage to 1x. If
 </body>
 </html>
 
+<!-- K662 INJ-ETH FR Differential — REJECT BLOCKED G5b (ETH-base mechanism test on K500) -->
+<div id="k662-badge" style="background:#1a0a0a;border:2px solid #e74c3c;border-radius:12px;padding:16px 20px;margin:12px 0;font-family:monospace;">
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <span style="color:#e74c3c;font-size:1.2em;font-weight:bold;">K662 INJ-ETH FR Differential</span>
+    <span style="background:#e74c3c;color:#fff;font-weight:bold;padding:3px 10px;border-radius:6px;font-size:0.9em;">REJECT — BLOCKED G5b</span>
+    <span style="color:#f9a8a8;font-size:0.85em;">INJ-ETH &#8776; INJ-BTC (PnL corr=0.9386) | ETH-base redundant for high-vol alts | KEEP K500</span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-top:12px;color:#ccc;font-size:0.88em;">
+    <div>OOS Sharpe: <strong style="color:#f1c40f;">13.17</strong> vs K500 INJ-BTC: <strong style="color:#2ecc71;">11.23</strong></div>
+    <div>IS Sharpe: <strong style="color:#f1c40f;">9.98</strong></div>
+    <div>OOS Ann Ret: <strong style="color:#f1c40f;">15.09%</strong> vs K500: 12.94%</div>
+    <div>Sharpe delta: <strong style="color:#f1c40f;">+1.94</strong> (but blocked)</div>
+    <div>Walk-fwd: <strong style="color:#2ecc71;">4/4 positive</strong></div>
+    <div><strong style="color:#e74c3c;">G5b PnL corr INJ-ETH vs INJ-BTC: 0.9386 BLOCKED</strong></div>
+    <div>Vol ratio INJ/ETH: <strong style="color:#f0a500;">3.55x</strong> (swamps base-leg distinction)</div>
+    <div>INJ-ETH raw FR corr: <strong style="color:#f1c40f;">0.1595</strong> (low, but PnL-level corr=0.94)</div>
+    <div>Profit @$10M 4x: <strong style="color:#ccc;">$144,882/yr net</strong> (illustrative, rejected)</div>
+    <div>Gates passed: <strong style="color:#f0a500;">6/7</strong> (G5 FAIL only)</div>
+  </div>
+  <div style="margin-top:10px;font-size:0.85em;border-top:1px solid #4a1a1a;padding-top:8px;">
+    <div style="color:#f9a8a8;font-weight:bold;margin-bottom:4px;">ETH-base Vol-Dominance Boundary (NEW RULE from K662)</div>
+    <div style="color:#ccc;">
+      G5b BLOCKED: INJ-ETH PnL corr vs INJ-BTC K500 = <strong style="color:#e74c3c;">0.9386 &ge; 0.40</strong> (BLOCKED)<br>
+      Root cause: INJ vol ratio 3.55x ETH swamps base-leg signal distinction<br>
+      INJ FR dominates both INJ-ETH and INJ-BTC &rarr; same regime triggers &rarr; redundant alpha<br>
+      <strong style="color:#f0a500;">New design rule: skip ETH-base test if alt vol ratio &gt; 3x ETH (INJ=3.55x exceeds boundary)</strong><br>
+      ETH-base mechanism history: WLD UNLOCKED | HYPE DEGRADED | SOL WINS (+13.4 Sh) | INJ BLOCKED<br>
+      KEEP K500 INJ-BTC (Sh=11.23, $124K/yr net @$10M, 10/13 gates)
+    </div>
+  </div>
+  <div style="margin-top:8px;font-size:0.82em;color:#888;">
+    ADF: -18.71 (stationary p~0) | OU half-life: 6.7h (same as K500 6.72h — INJ dominates) |
+    Grid best: 336h Sh=13.37 (168h selected for consistency) | G6 PASS: 33.8 trades/yr |
+    Wave K662 | 2026-05-30 13:01 JST
+  </div>
+</div>
+
 <!-- K632 HYPE-ETH FR Differential — ACCEPT CONDITIONAL (ETH-base mechanism test) -->
 <div id="k632-badge" style="background:#1a1200;border:2px solid #f0a500;border-radius:12px;padding:16px 20px;margin:12px 0;font-family:monospace;">
   <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
