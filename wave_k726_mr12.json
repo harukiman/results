@@ -1,0 +1,39 @@
+{
+  "wave": "K726",
+  "task": "MR12 K376 Trigger Methodology Formalization",
+  "timestamp": "unknown",
+  "mr12_rule": {
+    "description": "K376 BULL_CONFIRMED requires slope >= 0.0 for 7 consecutive days",
+    "authority": "K497 daemon (scripts/k376_regime_trigger_monitor.py, 31st daemon)",
+    "formula": "(SMA_20d_today - SMA_20d_20d_ago) / 20",
+    "threshold_usd_per_day": 0.0,
+    "consecutive_days_required": 7,
+    "status_indeterminate_allowed": true,
+    "other_methodologies_invalid": true
+  },
+  "current_state": {
+    "regime": "TRANSITION",
+    "slope": -34.41,
+    "days_positive": 0,
+    "btc_price": 73710.6,
+    "sma_20d_today": 77648.61
+  },
+  "validation": {
+    "mr12_rule": "K376 Trigger = (SMA_20d_today - SMA_20d_20d_ago)/20 >= 0.0 for 7d",
+    "k497_authoritative": true,
+    "slope": -34.41,
+    "days_positive": 0,
+    "current_regime": "TRANSITION",
+    "bull_confirmed": false,
+    "eta_status": "INDETERMINATE",
+    "interpretation": "Slope -34.41<0, INDETERMINATE (no ETA projection)"
+  },
+  "memory_rule": "feedback_k376_trigger_methodology.md",
+  "deliverables": [
+    "wave_k726_mr12.py",
+    "wave_k726_mr12.json",
+    "wave_k726_mr12.md",
+    "feedback_k376_trigger_methodology.md (MEMORY.md entry)",
+    "report.html (MR12 widget update)"
+  ]
+}
