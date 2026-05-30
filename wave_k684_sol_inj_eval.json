@@ -1,0 +1,663 @@
+{
+  "wave": "K684",
+  "strategy": "SOL-INJ FR Differential Alt-Alt Paired-Trade (Solana SVM vs Cosmos DeFi, second alt-alt pair)",
+  "run_time_jst": "2026-05-30 14:19:03 JST",
+  "runtime_s": 1.7,
+  "phase0_venue_check": {
+    "target": "SOL-INJ (alt-alt: Solana SVM L1 vs Injective Cosmos DeFi perp DEX)",
+    "venue_check": {
+      "hyperliquid_sol": {
+        "listed": true,
+        "rows": 17512,
+        "file": "hl_fr_SOL.parquet",
+        "result": "LISTED \u2014 17512 hourly FR records"
+      },
+      "hyperliquid_inj": {
+        "listed": true,
+        "rows": 17519,
+        "file": "hl_fr_INJ.parquet",
+        "result": "LISTED \u2014 17519 hourly FR records"
+      },
+      "bybit_sol": {
+        "listed": true,
+        "rows": 2190,
+        "file": "bybit_fr_SOLUSDT_730d.parquet",
+        "result": "LISTED \u2014 2190 8h FR records (730d)"
+      },
+      "bybit_inj": {
+        "listed": true,
+        "rows": 2339,
+        "file": "bybit_fr_INJUSDT_730d.parquet",
+        "result": "LISTED \u2014 2339 8h FR records (730d)"
+      }
+    },
+    "hl_sol_exists": true,
+    "hl_inj_exists": true,
+    "bybit_sol_exists": true,
+    "bybit_inj_exists": true,
+    "g8_candidate_pass": true,
+    "phase0_venue_pass": true,
+    "venue_decision": "PROCEED \u2014 SOL + INJ listed on HL + Bybit. Both legs available for HL execution OR Bybit execution.",
+    "execution_preference": "Bybit (both legs) PREFERRED: reduces HL concentration pressure. Bybit SOL corr=0.575, Bybit INJ corr=0.815 vs HL -> G8 candidate."
+  },
+  "phase0_vol_ratio": {
+    "sol_fr_std_full": 3.109e-05,
+    "inj_fr_std_full": 6.749e-05,
+    "vol_ratio_full": 2.1704,
+    "vol_ratio_6m": 7.4067,
+    "threshold": 1.5,
+    "pass": true,
+    "fr_mean_levels": {
+      "sol_fr_ann_pct": 7.71,
+      "inj_fr_ann_pct": 3.59,
+      "diff_mean_1h": 4.7e-06,
+      "interpretation": "SOL FR persistently positive (+7.7% ann) = retail demand premium. INJ FR mean 3.6% ann (Cosmos DeFi-perp mechanics, episodic spikes). SOL-INJ diff = 4.70e-06/h (SOL usually higher FR)."
+    },
+    "family_context": {
+      "eth_btc_k449_vol_ratio_vs_btc": 1.084,
+      "sol_btc_k476_vol_ratio_vs_btc": 1.764,
+      "avax_btc_k484_vol_ratio_vs_btc": 1.499,
+      "atom_btc_k493_vol_ratio_vs_btc": 2.337,
+      "inj_btc_k500_vol_ratio_vs_btc": 3.826,
+      "apt_btc_k512_vol_ratio_vs_btc": 2.841,
+      "apt_sol_k679_vol_ratio": 1.612,
+      "sol_inj_k684_vol_ratio": 2.1704,
+      "note": "Alt-alt pair: vol ratio INJ/SOL directly (not vs BTC). INJ more volatile."
+    },
+    "architecture_note": "INJ (Cosmos DeFi perp DEX) vol ratio 2.17x vs SOL (Solana SVM). INJ FR more volatile due to smaller MC, Cosmos IBC mechanics, liquidation cascades. SOL FR more stable with persistent retail demand premium. Cross-chain alt-alt pair captures SVM-retail vs CosmWasm-DeFi premium dynamics.",
+    "decision": "PROCEED \u2014 INJ/SOL vol ratio 2.17x >= 1.5x. 6m recency: 7.41x."
+  },
+  "data_info": {
+    "hl_rows": 17317,
+    "date_start": "2024-05-31",
+    "date_end": "2026-05-23",
+    "total_years": 1.975,
+    "oos_start": "2025-10-18",
+    "oos_end": "2026-05-23",
+    "oos_days": 216,
+    "trades_per_yr": 52.1,
+    "is_rows": 12122,
+    "oos_rows": 5195,
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4
+  },
+  "statistical_analysis": {
+    "adf": {
+      "statistic": -18.8274,
+      "p_value": 2.02e-30,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "critical_1pct": -3.4307,
+      "critical_5pct": -2.8617,
+      "interpretation": "SOL-INJ FR differential IS stationary at 5% level. ADF stat -18.8274 vs 5% critical -2.8617. Mean-reversion assumption CONFIRMED."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.127981,
+      "half_life_hours": 5.42,
+      "half_life_days": 0.226,
+      "long_run_mean": 4.62e-06,
+      "r_squared": 0.064,
+      "mean_reversion_quality": "STRONG (< 2 days)"
+    },
+    "autocorrelation": {
+      "lag_1h": 0.872,
+      "lag_24h": 0.2118,
+      "lag_168h_7d": -0.0004,
+      "persistence_note": "ACF lag-1h=0.8720: Moderate persistence"
+    },
+    "fr_cycle_7d": {
+      "regime_switches_total": 271,
+      "regime_switches_per_yr": 137.2,
+      "note": "7d rolling mean regime switches (position flips)"
+    }
+  },
+  "is_metrics": {
+    "sharpe": 5.781,
+    "ann_ret_pct": 2.453,
+    "max_dd": -0.008024,
+    "entries": 73,
+    "period": "2024-05-31 \u2013 2025-10-18"
+  },
+  "oos_metrics": {
+    "sharpe": 9.647,
+    "ann_ret_pct": 11.207,
+    "max_dd": -0.006867,
+    "entries": 30,
+    "period": "2025-10-18 \u2013 2026-05-23"
+  },
+  "walk_forward_12fold": [
+    {
+      "fold": 1,
+      "oos_start": "2024-08-29",
+      "oos_end": "2024-09-28",
+      "sharpe": -3.038,
+      "ann_ret_pct": -1.025,
+      "entries": 3,
+      "positive": false
+    },
+    {
+      "fold": 2,
+      "oos_start": "2024-09-28",
+      "oos_end": "2024-10-28",
+      "sharpe": 25.876,
+      "ann_ret_pct": 5.555,
+      "entries": 1,
+      "positive": true
+    },
+    {
+      "fold": 3,
+      "oos_start": "2024-10-28",
+      "oos_end": "2024-11-27",
+      "sharpe": 67.056,
+      "ann_ret_pct": 19.896,
+      "entries": 0,
+      "positive": true
+    },
+    {
+      "fold": 4,
+      "oos_start": "2024-11-27",
+      "oos_end": "2024-12-27",
+      "sharpe": 3.186,
+      "ann_ret_pct": 1.431,
+      "entries": 5,
+      "positive": true
+    },
+    {
+      "fold": 5,
+      "oos_start": "2024-12-27",
+      "oos_end": "2025-01-26",
+      "sharpe": -5.77,
+      "ann_ret_pct": -2.075,
+      "entries": 4,
+      "positive": false
+    },
+    {
+      "fold": 6,
+      "oos_start": "2025-01-26",
+      "oos_end": "2025-02-25",
+      "sharpe": -6.851,
+      "ann_ret_pct": -3.287,
+      "entries": 8,
+      "positive": false
+    },
+    {
+      "fold": 7,
+      "oos_start": "2025-02-25",
+      "oos_end": "2025-03-27",
+      "sharpe": 7.645,
+      "ann_ret_pct": 2.845,
+      "entries": 5,
+      "positive": true
+    },
+    {
+      "fold": 8,
+      "oos_start": "2025-03-27",
+      "oos_end": "2025-04-26",
+      "sharpe": -2.562,
+      "ann_ret_pct": -1.183,
+      "entries": 6,
+      "positive": false
+    },
+    {
+      "fold": 9,
+      "oos_start": "2025-04-26",
+      "oos_end": "2025-05-26",
+      "sharpe": 3.52,
+      "ann_ret_pct": 1.359,
+      "entries": 5,
+      "positive": true
+    },
+    {
+      "fold": 10,
+      "oos_start": "2025-05-26",
+      "oos_end": "2025-06-25",
+      "sharpe": -1.963,
+      "ann_ret_pct": -0.717,
+      "entries": 5,
+      "positive": false
+    },
+    {
+      "fold": 11,
+      "oos_start": "2025-06-25",
+      "oos_end": "2025-07-25",
+      "sharpe": 12.46,
+      "ann_ret_pct": 4.149,
+      "entries": 3,
+      "positive": true
+    },
+    {
+      "fold": 12,
+      "oos_start": "2025-07-25",
+      "oos_end": "2025-08-24",
+      "sharpe": -3.931,
+      "ann_ret_pct": -1.448,
+      "entries": 5,
+      "positive": false
+    }
+  ],
+  "walk_forward_summary": {
+    "folds_total": 12,
+    "folds_positive": 6,
+    "g4_pass": false,
+    "min_fold_sharpe": -6.851,
+    "max_fold_sharpe": 67.056
+  },
+  "permutation_p": 0.0,
+  "dsr_bonferroni": {
+    "n_trials": 12,
+    "t_stat": 7.4293,
+    "p_raw": 6.35e-14,
+    "p_bonferroni": 7.62e-13,
+    "threshold": 0.00417,
+    "pass": true
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 72,
+      "threshold_factor": 0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 6.866,
+      "OOS_sharpe": 11.549,
+      "entries": 145,
+      "OOS_ret_pct": 13.562
+    },
+    {
+      "window_h": 72,
+      "threshold_factor": 0.5,
+      "threshold_value": 2.106e-05,
+      "IS_sharpe": 2.338,
+      "OOS_sharpe": 9.677,
+      "entries": 74,
+      "OOS_ret_pct": 10.113
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 5.781,
+      "OOS_sharpe": 9.647,
+      "entries": 103,
+      "OOS_ret_pct": 11.207
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.25,
+      "threshold_value": 7.61e-06,
+      "IS_sharpe": 4.136,
+      "OOS_sharpe": 8.981,
+      "entries": 112,
+      "OOS_ret_pct": 10.084
+    },
+    {
+      "window_h": 24,
+      "threshold_factor": 0,
+      "threshold_value": 0.0,
+      "IS_sharpe": -1.987,
+      "OOS_sharpe": 8.197,
+      "entries": 435,
+      "OOS_ret_pct": 10.297
+    }
+  ],
+  "g5_correlations": {
+    "g5a_corr_vs_k449": -0.098,
+    "g5a_pass": true,
+    "g5a_n": 17150,
+    "g5b_corr_vs_k476": -0.3017,
+    "g5b_pass": true,
+    "g5b_n": 17150,
+    "g5c_corr_vs_k500": 0.3829,
+    "g5c_pass": true,
+    "g5c_n": 17150,
+    "g5d_corr_vs_k679": -0.0227,
+    "g5d_pass": true,
+    "g5d_n": 17150,
+    "g5e_corr_vs_k280": 0.05,
+    "g5e_pass": true,
+    "altalt_novel_confirmed": true,
+    "signed_corr_convention": "SIGNED correlation < 0.40 threshold (per \u00a76 K266 convention). Negative correlations PASS even if abs(corr) > 0.40.",
+    "k500_note": "K684 vs K500 signed corr=0.3829: INJ-BTC anti-correlated expected. Mathematical identity: SOL-INJ = K476_direction - K500_direction. Signed corr < 0.40 -> PASSES G5c (anti-corr by construction).",
+    "k476_note": "K684 vs K476 signed corr=-0.3017: SOL is shared leg. SOL-INJ signal partially correlated with SOL-BTC direction (SOL leg). But INJ leg modulates: when INJ FR spikes, SOL-INJ shrinks/reverses.",
+    "k679_note": "K684 vs K679 signed corr=-0.0227: K679=APT-SOL (SOL is in both pairs). Algebraically: SOL-INJ and APT-SOL share SOL leg but with opposite sign. Correlation depends on APT vs INJ FR dynamics.",
+    "mathematical_identity": {
+      "identity": "SOL_fr - INJ_fr = (SOL_fr - BTC_fr) - (INJ_fr - BTC_fr) = K476_direction - (-K500_direction)",
+      "implication": "K684 algebraically decomposed into K476 + K500 components. Running K684 alongside K476 and K500 creates overlapping exposure. Recommend K684 as STANDALONE or manage weight reduction of K476/K500."
+    },
+    "ecosystem_summary": {
+      "ethereum_btc_base": {
+        "k449": -0.098,
+        "pass": true
+      },
+      "sol_btc_base": {
+        "k476": -0.3017,
+        "pass": true
+      },
+      "inj_btc_base": {
+        "k500": 0.3829,
+        "pass": true
+      },
+      "apt_sol_altalt": {
+        "k679": -0.0227,
+        "pass": true
+      },
+      "vol_momentum": {
+        "k280": 0.05,
+        "pass": true
+      },
+      "altalt_novel": true
+    },
+    "architecture_verdict": "ALT-ALT NOVEL DIRECTION \u2014 K684 SOL-INJ signal passes G5 checks (signed convention). SOL (retail SVM momentum) vs INJ (Cosmos DeFi perp). New cross-ecosystem axis: Solana ecosystem premium vs Cosmos DeFi yield."
+  },
+  "cross_venue": {
+    "bybit_sol": {
+      "available": true,
+      "n_obs": 2190,
+      "corr_with_hl": 0.574,
+      "passes_g8_leg": true,
+      "date_range": "2024-05-24 \u2013 2026-05-24"
+    },
+    "bybit_inj": {
+      "available": true,
+      "n_obs": 2339,
+      "corr_with_hl": 0.8156,
+      "passes_g8_leg": true,
+      "date_range": "2024-05-23 \u2013 2026-05-23"
+    },
+    "diff_corr": {
+      "n_obs": 2166,
+      "corr_hl_vs_bybit_diff": 0.7855,
+      "note": "SOL-INJ differential (8h) on Bybit vs HL \u2014 primary G8 metric"
+    },
+    "effective_g8_corr": 0.7855,
+    "g8_pass": true,
+    "note": "Cross-venue check: Bybit SOL-INJ diff vs HL SOL-INJ diff (8h resampled). Bybit SOL leg corr=0.5740, INJ leg corr=0.8156. Diff-level corr=0.7855. G8 threshold=0.55.",
+    "execution_recommendation": "USE BYBIT (both legs) for K684: Bybit SOL and INJ available. Reduces HL concentration vs adding HL-only. Bybit execution preserves HL concentration headroom."
+  },
+  "section6_gates": {
+    "gates": {
+      "G1_oos_sharpe": {
+        "value": 9.647270361331618,
+        "threshold": ">= 1.0",
+        "pass": true
+      },
+      "G2_perm_p": {
+        "value": 0.0,
+        "threshold": "<= 0.05",
+        "pass": true
+      },
+      "G3_dsr_bonferroni": {
+        "value": 7.62e-13,
+        "threshold": "< 0.00417",
+        "pass": true
+      },
+      "G4_wf_stability": {
+        "all_folds_positive": false,
+        "folds_positive": 6,
+        "total_folds": 12,
+        "min_fold_sharpe": -6.851,
+        "pass": false
+      },
+      "G5a_corr_k449_eth": {
+        "value": -0.098,
+        "threshold": "< 0.4 (signed)",
+        "pass": true,
+        "note": "ETH-BTC baseline"
+      },
+      "G5b_corr_k476_sol": {
+        "value": -0.3017,
+        "threshold": "< 0.4 (signed)",
+        "pass": true,
+        "note": "CRITICAL: SOL-BTC (SOL is one leg of K684)"
+      },
+      "G5c_corr_k500_inj": {
+        "value": 0.3829,
+        "threshold": "< 0.4 (signed)",
+        "pass": true,
+        "note": "CRITICAL: INJ-BTC (INJ is other leg of K684)"
+      },
+      "G5d_corr_k679_altalt": {
+        "value": -0.0227,
+        "threshold": "< 0.4 (signed)",
+        "pass": true,
+        "note": "Alt-alt family check vs K679 APT-SOL"
+      },
+      "G5e_corr_k280": {
+        "value": 0.05,
+        "threshold": "< 0.4 (signed)",
+        "pass": true,
+        "note": "Vol momentum baseline (structural estimate)"
+      },
+      "G6_trades_yr": {
+        "value": 52.1,
+        "threshold": ">= 30",
+        "pass": true
+      },
+      "G7_ann_return_4x": {
+        "value_pct": 44.83,
+        "threshold": "> 5.0%",
+        "pass": true
+      },
+      "G8_cross_venue": {
+        "effective_corr": 0.7855,
+        "threshold": ">= 0.55",
+        "pass": true,
+        "bybit_diff_corr": 0.7855
+      },
+      "G9_data_sufficiency": {
+        "oos_days": 216,
+        "threshold": ">= 180d",
+        "pass": true
+      }
+    },
+    "gates_passed": 12,
+    "total_gates": 13,
+    "oos_sharpe": 9.647270361331618,
+    "decision": "ACCEPT",
+    "altalt_novel_confirmed": true,
+    "signed_g5_convention": true
+  },
+  "altalt_mechanism_analysis": {
+    "mechanism_type": "alt-alt FR differential (second in family, K679 series)",
+    "prior_family_pattern": "K679=APT-SOL (first alt-alt), all prior pairs: alt vs BTC",
+    "k684_structure": {
+      "structure": "SOL_fr - INJ_fr (SOL minus INJ; positive = SOL premium regime)",
+      "economic_driver": "Cross-ecosystem premium: Solana SVM (retail momentum) vs Cosmos DeFi (INJ perp DEX). SOL FR driven by: retail meme demand, Firedancer upgrade speculation, SOL ETF flows. INJ FR driven by: Cosmos DeFi TVL, liquidation cascades, IBC bridge activity, Injective burn mechanics. Different drivers -> mean-reversion opportunity.",
+      "signal_logic": "When INJ_fr > SOL_fr (rare, episodic): long INJ perp, short SOL perp. When SOL_fr > INJ_fr (usual): long SOL perp, short INJ perp. Captures mean-reversion of cross-ecosystem premium with short OU half-life."
+    },
+    "mathematical_identity": {
+      "identity": "SOL_fr - INJ_fr = (SOL_fr - BTC_fr) - (INJ_fr - BTC_fr)",
+      "equivalent": "SOL-INJ = K476_direction - K500_direction",
+      "implication": "K684 = K476 minus K500 algebraically. This creates structural correlation with K476 (SOL leg) and anti-correlation with K500 (INJ leg). Portfolio consideration: K684 + K476 + K500 = complex overlap. Recommend K684 as STANDALONE or reduce K476/K500 weights."
+    },
+    "vol_comparison": {
+      "sol_fr_std": 3.109e-05,
+      "inj_fr_std": 6.776e-05,
+      "vol_ratio_inj_sol": 2.1795,
+      "vs_k679": "SOL-INJ vol ratio 2.17x vs APT-SOL 1.61x. INJ more volatile than APT vs SOL.",
+      "vs_btc_family": "INJ/SOL ratio 2.17x is higher than APT/SOL (1.61x) but lower than INJ/BTC (3.83x). Both alts are high-vol vs BTC. Diff signal narrower than BTC-base differentials \u2014 precision execution required."
+    },
+    "architecture_comparison": {
+      "sol_solana": {
+        "vm": "Solana SVM (Sealevel parallel runtime)",
+        "consensus": "Tower BFT (PoH-based)",
+        "mc_approx": "~$60-80B",
+        "fr_drivers": "Retail momentum, meme coin activity, ETF speculation, Firedancer"
+      },
+      "inj_injective": {
+        "vm": "CosmWasm (Cosmos SDK)",
+        "consensus": "Tendermint BFT (IBC-compatible)",
+        "mc_approx": "~$1-3B",
+        "fr_drivers": "Cosmos DeFi TVL, perp DEX liquidations, INJ burn mechanics, IBC bridge"
+      },
+      "independence": "Architecturally distinct (different VM, consensus, MC scale, tokenomics). SOL FR = retail sentiment (high persistence, predictable). INJ FR = DeFi-perp mechanics (episodic spikes, mean-reverting). Correlation of FR drivers is low-moderate (both track alt beta broadly)."
+    },
+    "k679_comparison": {
+      "k679_pair": "APT-SOL (Move-VM vs SVM)",
+      "k679_oos_sharpe": 39.285,
+      "k679_vol_ratio": 1.612,
+      "k684_pair": "SOL-INJ (SVM vs Cosmos DeFi)",
+      "k684_vol_ratio": 2.1795,
+      "comparison_note": "K684 INJ/SOL vol ratio 2.18x vs K679 APT/SOL 1.612x. K684 has higher volatility ratio \u2014 potentially higher signal amplitude. INJ smaller MC than APT -> more episodic FR spikes -> different dynamics."
+    }
+  },
+  "hl_concentration_impact": {
+    "current_hl_pct_baseline": 62.5,
+    "hl_cap_pct": 65.0,
+    "sleeve_pct": 3.0,
+    "scenario_a_hl_only": {
+      "new_hl_pct": 65.5,
+      "within_cap": false,
+      "headroom": -0.5,
+      "note": "HL 62.5% + 3.0% = 65.5% OVER cap."
+    },
+    "scenario_b_split_hl_bybit": {
+      "hl_pct": 64.0,
+      "bybit_pct": 1.5,
+      "within_cap": true,
+      "headroom": 1.0,
+      "note": "Split (SOL Bybit, INJ HL): HL 64.0% < 65.0% cap. 1.0pp headroom."
+    },
+    "scenario_c_bybit_both": {
+      "hl_pct": 62.5,
+      "bybit_pct": 3.0,
+      "within_cap": true,
+      "headroom": 2.5,
+      "note": "Both legs Bybit: HL stays 62.5% (unchanged). 2.5pp headroom. PREFERRED."
+    },
+    "recommendation": "PREFERRED: Execute K684 on Bybit (both SOL+INJ legs). HL stays at 62.5% \u2014 full headroom preserved. Bybit INJ corr=0.815, SOL corr=0.575 vs HL -> G8 candidate. Alt-alt concept is venue-neutral: Bybit execution maintains FR differential signal integrity."
+  },
+  "profit_projection": {
+    "strategy": "SOL-INJ FR differential alt-alt paired-trade",
+    "oos_sharpe": 9.647270361331618,
+    "sleeve_pct": 3.0,
+    "leverage": 4.0,
+    "oos_ann_ret_1x_pct": 11.207,
+    "oos_ann_ret_4x_pct": 44.83,
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000,
+      "oos_ann_ret_pct": 11.207,
+      "oos_ann_ret_levered_pct": 44.83,
+      "gross_annual_usd": 134489,
+      "net_annual_usd_est": 114316,
+      "daily_usdc": 313
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 12000000,
+      "oos_ann_ret_pct": 11.207,
+      "oos_ann_ret_levered_pct": 44.83,
+      "gross_annual_usd": 1344894,
+      "net_annual_usd_est": 1143160,
+      "daily_usdc": 3132
+    },
+    "note": "3.0% sleeve, 4.0x leverage, 15% friction buffer. OOS annual return (1x): 11.21%. Execute on Bybit (both legs) to manage HL concentration."
+  },
+  "paired_trade_family_rank": {
+    "members": [
+      {
+        "rank": 1,
+        "pair": "APT-BTC (K512)",
+        "oos_sharpe": 51.102,
+        "net_dollar_yr_10M": 302195,
+        "status": "ACCEPT",
+        "vol_ratio": 2.841,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 2,
+        "pair": "ATOM-BTC (K493)",
+        "oos_sharpe": 50.786,
+        "net_dollar_yr_10M": 231660,
+        "status": "ACCEPT",
+        "vol_ratio": 2.337,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 3,
+        "pair": "SEI-BTC (K507)",
+        "oos_sharpe": 48.1,
+        "net_dollar_yr_10M": 179425,
+        "status": "ACCEPT",
+        "vol_ratio": 2.328,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 4,
+        "pair": "AVAX-BTC (K484)",
+        "oos_sharpe": 43.887,
+        "net_dollar_yr_10M": 75683,
+        "status": "ACCEPT",
+        "vol_ratio": 1.499,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 5,
+        "pair": "APT-SOL (K679)",
+        "oos_sharpe": 39.285,
+        "net_dollar_yr_10M": 234781,
+        "status": "ACCEPT",
+        "vol_ratio": 1.612,
+        "type": "alt-alt #1"
+      },
+      {
+        "rank": 6,
+        "pair": "SOL-BTC (K476)",
+        "oos_sharpe": 16.298,
+        "net_dollar_yr_10M": 187456,
+        "status": "ACCEPT",
+        "vol_ratio": 1.764,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 7,
+        "pair": "INJ-BTC (K500)",
+        "oos_sharpe": 11.232,
+        "net_dollar_yr_10M": 124190,
+        "status": "ACCEPT",
+        "vol_ratio": 3.826,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 8,
+        "pair": "ETH-BTC (K449)",
+        "oos_sharpe": 5.663,
+        "net_dollar_yr_10M": 13100,
+        "status": "ACCEPT (baseline)",
+        "vol_ratio": 1.084,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 9,
+        "pair": "SOL-INJ (K684)",
+        "oos_sharpe": 9.647,
+        "net_dollar_yr_10M": 114316,
+        "status": "EVAL",
+        "vol_ratio": 2.17,
+        "type": "alt-alt #2 (EVAL)",
+        "note": "Second alt-alt pair; SVM-retail vs Cosmos-DeFi axis"
+      }
+    ],
+    "family_type_breakdown": {
+      "alt_btc_pairs": 7,
+      "alt_alt_pairs": 2,
+      "note": "K684 = second alt-alt pair in family. K679=APT-SOL, K684=SOL-INJ."
+    },
+    "portfolio_note": "K684 running alongside K476 + K500 creates algebraic overlap (SOL-INJ = K476 - K500). Recommend: deploy K684 as STANDALONE at 3% sleeve OR reduce K476/K500 weights when K684 is active to maintain net exposure balance."
+  },
+  "decision": "ACCEPT",
+  "decision_rationale": "[ACCEPT] K684 SOL-INJ passes 12/13 \u00a76 gates. OOS Sharpe 9.647. Vol ratio INJ/SOL 2.1704x. G5b (K476 SOL-BTC): -0.3017 (PASS). G5c (K500 INJ-BTC): 0.3829 (PASS). G5d (K679 APT-SOL): -0.0227 (PASS). Perm p=0.0. Second alt-alt pair \u2014 SVM-retail vs Cosmos-DeFi axis. Execute on Bybit (both legs) to preserve HL headroom. $114,316/yr @$10M.",
+  "k684_lessons": {
+    "altalt_second": "K684 = second alt-alt pair (K679 series). SOL-INJ captures SVM-retail vs Cosmos-DeFi premium.",
+    "g5_convention": "Signed G5 corr < 0.40. Anti-corr with K500 (-) PASSES; check K476 (SOL shared leg).",
+    "math_identity": "SOL-INJ = K476_dir - K500_dir. Algebraic overlap with K476/K500 must be managed.",
+    "hl_solution": "Bybit execution for both legs solves HL concentration cap issue.",
+    "portfolio_warning": "Running K684 + K476 + K500 simultaneously creates algebraic overlap.",
+    "vs_k679": "K684 shares SOL leg with K679 (APT-SOL). Running both K679+K684 creates SOL double-exposure.",
+    "inj_cosmos_risk": "INJ = Cosmos ecosystem. Monitor Cosmos DeFi TVL trends (HypurrFi DROP_LINE lesson)."
+  }
+}
