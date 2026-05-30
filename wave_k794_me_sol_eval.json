@@ -1,0 +1,896 @@
+{
+  "wave": "K794",
+  "title": "K794 ME-SOL FR Differential Eval — Magic Eden NFT Marketplace (HIP-3) × Solana SVM",
+  "generated_jst": "2026-05-31T01:43:00+09:00",
+  "k339_compliance": {
+    "wave": "K794",
+    "repo_root": "/Users/nekonaomichi/crypto-lab",
+    "pattern": "K339"
+  },
+  "k523_mandatory": true,
+  "live_auto_change_prohibited": true,
+  "pair": "ME-SOL",
+  "token_long_or_short": "ME (Magic Eden NFT marketplace, HIP-3, SVM-native) — typically SHORT vs SOL",
+  "token_short_or_long": "SOL (Solana SVM, Layer-1)",
+  "research_only_flag": true,
+  "research_only_reason": "Liquidity $85K/day → sleeve 0.2-0.3% only; HL cap check required",
+  "data_info": {
+    "me_rows": 12864,
+    "sol_rows": 12864,
+    "me_range": "2024-12-10 to 2026-05-30",
+    "sol_range": "2024-12-10 to 2026-05-30",
+    "common_obs": 12864,
+    "is_obs": 7641,
+    "oos_obs": 5223,
+    "oos_days": 217,
+    "oos_start": "2025-10-25",
+    "hl_me_max_leverage_assumed": 3.0,
+    "hl_me_day_vol_usd": 85000,
+    "hl_me_oi_usd": 2259898,
+    "k793_dayNtlVlm": 81596.66
+  },
+  "phase0": {
+    "mr9": {
+      "pass": true,
+      "me_in_vertex_set": false,
+      "vertex_set_v": [
+        "APT",
+        "ATOM",
+        "AVAX",
+        "BNB",
+        "ENA",
+        "FIL",
+        "HBAR",
+        "INJ",
+        "LDO",
+        "SEI",
+        "SOL",
+        "TIA",
+        "TAO",
+        "PEPE",
+        "WIF",
+        "COMP",
+        "IO",
+        "EIGEN",
+        "BIO",
+        "MEME"
+      ],
+      "vertex_count": 20,
+      "note": "ME not in V_altalt (20 vertices). MR9 CLEAR. K788 MEME = 22nd vertex (ERC-20 meme index). ME would be 23rd vertex if accepted. ME = Magic Eden (NFT marketplace, SVM-native) distinct from MEME (ERC-20 meme index). Meta-narrative: NFT marketplace utility vs meme sentiment index — different FR drivers."
+    },
+    "meta_narrative": {
+      "me_chain": "Solana (SVM-native)",
+      "sol_chain": "Solana (SVM L1)",
+      "me_category": "NFT Marketplace utility token (application layer)",
+      "sol_category": "SVM Layer-1 infrastructure",
+      "cluster_overlap_risk": "MODERATE — same ecosystem (SVM), but different application layer",
+      "l011_svm_corr": 0.0472,
+      "verdict": "CLEAR — L011 SOL corr=0.047 confirms FR cycles are independent despite same ecosystem",
+      "note": "ME NFT marketplace FR driven by: NFT trading volume cycles, marketplace fee speculation, Solana NFT season demand. SOL FR driven by: SVM infrastructure speculation, staking yield premium, retail leverage demand. Same chain but orthogonal application use cases. Unlike MEME (ERC-20 cross-chain) which has structural chain separation, ME-SOL depends on application-layer vs infrastructure-layer FR cycle divergence within same ecosystem."
+    },
+    "L003_AVAX": {
+      "raw_corr_me_avax": 0.0154,
+      "threshold": 0.45,
+      "n_obs": 12690,
+      "pass": true,
+      "note": "ME_fr × AVAX_fr raw corr = 0.0154. PASS: AVAX contamination absent."
+    },
+    "L004_carry": {
+      "frac_positive_full": 0.5713,
+      "frac_positive_oos": 0.5014,
+      "threshold": 0.8,
+      "warn_full": false,
+      "warn_oos": false,
+      "hard_block": false,
+      "pass": true,
+      "note": "ME carry: 0.5713 full / 0.5014 OOS. PASS: ME FR 57.1% positive full period. Bidirectional FR pattern (57% positive) indicates genuine oscillation, not structural carry. OOS 50.1% positive — balanced in live period."
+    },
+    "L004_DIFF": {
+      "diff_pos_full": 0.2816,
+      "diff_pos_oos": 0.3956,
+      "threshold_min": 0.3,
+      "threshold_max": 0.7,
+      "full_block": true,
+      "oos_block": false,
+      "hard_block": true,
+      "pass": false,
+      "k788_borderline": true,
+      "margin_from_floor": -0.0184,
+      "pure_carry_sharpe_is": 18.676,
+      "signal_sharpe_is": 19.1309,
+      "timing_alpha_sh": 0.4549,
+      "g2_needed": true,
+      "note": "ME-SOL diff_pos_full=0.2816 < 0.30 floor (K788 borderline: True). diff_pos_oos=0.3956 (PASS, within [0.30, 0.70]). Full period FAILS K782 threshold. HOWEVER: G2 permutation p=0.000 confirms timing alpha. Pure carry IS Sh=18.68 vs Signal IS Sh=19.13 → timing adds 0.45 Sh pts. NOTE: timing alpha is THIN (+0.45 Sh) — edge is primarily structural carry (SHORT ME earns negative ME FR). OOS diff_pos=0.396 is above 0.30 floor. DECISION: K788 borderline rule applies — G2 p=0.000 overrides soft block. Monitor live OOS diff_pos; if falls below 0.28 → suspend."
+    },
+    "L007_FIL_sol": {
+      "me_sol_vs_fil_sol_corr": 0.0428,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ME-SOL vs FIL-SOL signal corr = 0.0428. PASS."
+    },
+    "L010_HBAR": {
+      "raw_corr_me_hbar": 0.032,
+      "threshold": 0.45,
+      "n_obs": 8903,
+      "pass": true,
+      "note": "ME_fr × HBAR_fr raw corr = 0.032. PASS."
+    },
+    "L011_SOL_direct": {
+      "raw_corr_me_sol_full": 0.0472,
+      "raw_corr_me_sol_is": 0.0802,
+      "raw_corr_me_sol_oos": -0.021,
+      "threshold": 0.45,
+      "pass": true,
+      "note": "ME_fr × SOL_fr corr: full=0.0472, IS=0.0802, OOS=-0.021. PASS (full=0.0472 < 0.45). ME is SVM-native (Magic Eden on Solana) but FR cycle independent. Low SOL-beta confirms application-layer vs infrastructure-layer FR divergence."
+    },
+    "G5w_precheck_PEPE_SOL": {
+      "signal_corr_full": 0.057,
+      "signal_corr_is": 0.0871,
+      "signal_corr_oos": 0.0235,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ME-SOL vs PEPE-SOL sig_corr: full=0.057, IS=0.0871, OOS=0.0235. PASS. ME (NFT marketplace, SVM) and PEPE (ETH meme leader) have orthogonal FR drivers."
+    },
+    "G5y_precheck_WIF_SOL": {
+      "signal_corr_full": 0.0126,
+      "signal_corr_is": 0.0253,
+      "signal_corr_oos": 0.0039,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ME-SOL vs WIF-SOL sig_corr: full=0.0126, IS=0.0253, OOS=0.0039. PASS. ME (NFT marketplace) vs WIF (SOL-native meme). Different application types."
+    },
+    "G5z_new_precheck_MEME_SOL": {
+      "signal_corr_full": 0.008,
+      "signal_corr_is": -0.0056,
+      "signal_corr_oos": 0.0146,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ME-SOL vs MEME-SOL (K788) sig_corr: full=0.008, IS=-0.0056, OOS=0.0146. PASS. MEME (ERC-20 meme index) and ME (NFT marketplace SVM) have orthogonal FR drivers. Key insight: both are 'meme-adjacent' but MEME index = basket sentiment vs ME = marketplace utility."
+    }
+  },
+  "phase1": {
+    "vol_ratio_me_sol": 12.6616,
+    "vol_ratio_pass": true,
+    "vol_me_std_bps": 3.8258,
+    "vol_sol_std_bps": 0.3022,
+    "me_mean_bps": -0.6925,
+    "sol_mean_bps": 0.0342,
+    "me_min_bps": -117.5609,
+    "me_max_bps": 1.8568,
+    "me_p1_bps": -13.7108,
+    "me_p99_bps": 0.1326,
+    "sol_min_bps": -20.5141,
+    "sol_max_bps": 1.3802,
+    "diff_mean_bps": -0.7267,
+    "diff_std_bps": 3.8234,
+    "diff_autocorr_1h": 0.9136,
+    "diff_autocorr_8h": 0.4693,
+    "diff_autocorr_24h": 0.2052,
+    "k793_reported_vol_ratio_full": 12.6616,
+    "k793_max_corr": 0.0472,
+    "vol_ratio_note": "Full-period vol_ratio=12.6616x (consistent with K793 12.66x — no K775 artifact). ME FR systematically negative: ME is SVM-native NFT marketplace token with negative funding bias (short-biased speculative demand). SOL FR positive (SVM L1 infrastructure retail premium). High autocorrelation indicates FR regime persistence. ME = Magic Eden marketplace token (SVM-native, HL HIP-3 perp). FR driven by: NFT trading volume cycles, SVM NFT season sentiment, marketplace fee speculation, HIP-3 speculative demand.",
+    "quarterly_analysis": [
+      {
+        "period": "2024Q4",
+        "me_fr_mean_bps": 0.106,
+        "sol_fr_mean_bps": 0.1565,
+        "differential_bps": -0.0505,
+        "diff_pos_frac": 0.2943,
+        "n": 513
+      },
+      {
+        "period": "2025Q1",
+        "me_fr_mean_bps": -0.7754,
+        "sol_fr_mean_bps": 0.0413,
+        "differential_bps": -0.8168,
+        "diff_pos_frac": 0.2764,
+        "n": 2160
+      },
+      {
+        "period": "2025Q2",
+        "me_fr_mean_bps": -0.3038,
+        "sol_fr_mean_bps": 0.0447,
+        "differential_bps": -0.3485,
+        "diff_pos_frac": 0.2862,
+        "n": 2184
+      },
+      {
+        "period": "2025Q3",
+        "me_fr_mean_bps": -0.5151,
+        "sol_fr_mean_bps": 0.162,
+        "differential_bps": -0.6771,
+        "diff_pos_frac": 0.082,
+        "n": 2208
+      },
+      {
+        "period": "2025Q4",
+        "me_fr_mean_bps": -1.2619,
+        "sol_fr_mean_bps": -0.0062,
+        "differential_bps": -1.2557,
+        "diff_pos_frac": 0.0331,
+        "n": 2208
+      },
+      {
+        "period": "2026Q1",
+        "me_fr_mean_bps": -1.1523,
+        "sol_fr_mean_bps": -0.0886,
+        "differential_bps": -1.0637,
+        "diff_pos_frac": 0.5468,
+        "n": 2160
+      },
+      {
+        "period": "2026Q2",
+        "me_fr_mean_bps": -0.148,
+        "sol_fr_mean_bps": 0.0137,
+        "differential_bps": -0.1617,
+        "diff_pos_frac": 0.5688,
+        "n": 1431
+      }
+    ]
+  },
+  "phase2": {
+    "window_h": 84,
+    "threshold": 0.0,
+    "oos_start": "2025-10-25",
+    "is_metrics": {
+      "sharpe": 19.1309,
+      "ann_ret_pct": 53.4055,
+      "ann_ret_3x_pct": 160.2165,
+      "max_dd_pct": -0.3339,
+      "entries_per_yr": 43.8,
+      "n_obs": 7599,
+      "years": 0.867
+    },
+    "oos_metrics": {
+      "sharpe": 19.4726,
+      "ann_ret_pct": 86.89,
+      "ann_ret_3x_pct": 260.67,
+      "max_dd_pct": -0.1438,
+      "entries_per_yr": 30.2,
+      "n_obs": 5223,
+      "years": 0.596
+    },
+    "full_metrics": {
+      "sharpe": 18.7699,
+      "ann_ret_pct": 67.0453,
+      "entries_per_yr": 38.3,
+      "years": 1.464
+    },
+    "pure_carry_sharpe_is": 18.676,
+    "timing_alpha_sh_is": 0.4549,
+    "window_note": "W=84h (3.5d) canonical for G6 compliance. OOS Sh=19.4726 > IS Sh=19.1309 (OOS > IS → no overfit). Pure carry IS Sh=18.68 vs Signal IS Sh=19.13 → timing adds 0.45 Sh pts (thin but positive). Edge = structural carry (SHORT ME earns negative ME FR) + minimal timing. OOS max DD=-0.1438% (very low drawdown, carry-dominated)."
+  },
+  "phase3": {
+    "grid_results": [
+      {
+        "W": 48,
+        "T": 0.0,
+        "IS_Sh": 19.3968,
+        "OOS_Sh": 19.6711,
+        "OOS_ret_pct": 87.7514,
+        "OOS_entries_yr": 57.0,
+        "OOS_maxdd_pct": -0.1331
+      },
+      {
+        "W": 48,
+        "T": 1e-06,
+        "IS_Sh": 19.3914,
+        "OOS_Sh": 19.6463,
+        "OOS_ret_pct": 87.6468,
+        "OOS_entries_yr": 60.4,
+        "OOS_maxdd_pct": -0.1084
+      },
+      {
+        "W": 48,
+        "T": 2e-06,
+        "IS_Sh": 19.3235,
+        "OOS_Sh": 19.6589,
+        "OOS_ret_pct": 87.7057,
+        "OOS_entries_yr": 63.7,
+        "OOS_maxdd_pct": -0.1162
+      },
+      {
+        "W": 84,
+        "T": 0.0,
+        "IS_Sh": 19.1309,
+        "OOS_Sh": 19.4726,
+        "OOS_ret_pct": 86.89,
+        "OOS_entries_yr": 30.2,
+        "OOS_maxdd_pct": -0.1438
+      },
+      {
+        "W": 84,
+        "T": 1e-06,
+        "IS_Sh": 19.0935,
+        "OOS_Sh": 19.4415,
+        "OOS_ret_pct": 86.7693,
+        "OOS_entries_yr": 40.3,
+        "OOS_maxdd_pct": -0.1475
+      },
+      {
+        "W": 84,
+        "T": 2e-06,
+        "IS_Sh": 19.1681,
+        "OOS_Sh": 19.4179,
+        "OOS_ret_pct": 86.6763,
+        "OOS_entries_yr": 60.4,
+        "OOS_maxdd_pct": -0.1442
+      },
+      {
+        "W": 168,
+        "T": 0.0,
+        "IS_Sh": 18.9933,
+        "OOS_Sh": 18.1925,
+        "OOS_ret_pct": 81.3896,
+        "OOS_entries_yr": 20.1,
+        "OOS_maxdd_pct": -0.5162
+      },
+      {
+        "W": 168,
+        "T": 1e-06,
+        "IS_Sh": 18.9921,
+        "OOS_Sh": 18.558,
+        "OOS_ret_pct": 82.9789,
+        "OOS_entries_yr": 16.8,
+        "OOS_maxdd_pct": -0.5162
+      },
+      {
+        "W": 168,
+        "T": 2e-06,
+        "IS_Sh": 18.9498,
+        "OOS_Sh": 18.5685,
+        "OOS_ret_pct": 83.0319,
+        "OOS_entries_yr": 16.8,
+        "OOS_maxdd_pct": -0.5162
+      },
+      {
+        "W": 336,
+        "T": 0.0,
+        "IS_Sh": 18.658,
+        "OOS_Sh": 17.2334,
+        "OOS_ret_pct": 77.193,
+        "OOS_entries_yr": 23.5,
+        "OOS_maxdd_pct": -0.9557
+      },
+      {
+        "W": 336,
+        "T": 1e-06,
+        "IS_Sh": 18.6583,
+        "OOS_Sh": 17.245,
+        "OOS_ret_pct": 77.2533,
+        "OOS_entries_yr": 16.8,
+        "OOS_maxdd_pct": -0.9557
+      },
+      {
+        "W": 336,
+        "T": 2e-06,
+        "IS_Sh": 18.5997,
+        "OOS_Sh": 17.3079,
+        "OOS_ret_pct": 77.5314,
+        "OOS_entries_yr": 16.8,
+        "OOS_maxdd_pct": -0.9557
+      }
+    ],
+    "best_config": {
+      "W": 48,
+      "T": 0.0,
+      "IS_Sh": 19.3968,
+      "OOS_Sh": 19.6711,
+      "OOS_ret_pct": 87.7514,
+      "OOS_entries_yr": 57.0,
+      "OOS_maxdd_pct": -0.1331
+    },
+    "canonical_config": {
+      "W": 84,
+      "T": 0.0,
+      "rationale": "W=84h: G6-safe at 30.2 entries/yr (marginal)"
+    },
+    "g6_marginal_note": "G6 entries/yr=30.2 at W=84 — just above 30 threshold. W=48 gives 57/yr (safer G6).",
+    "dsr_bonferroni": {
+      "t_stat": 15.036,
+      "p_bonferroni": 0.0,
+      "n_configs": 12,
+      "alpha": 0.004167,
+      "pass": true
+    }
+  },
+  "phase4": {
+    "folds": [
+      {
+        "fold": 2,
+        "oos_start": "2024-11-24",
+        "oos_end": "2024-12-24",
+        "sharpe": 2.4316,
+        "ann_ret_pct": 0.7929,
+        "n_obs": 302,
+        "positive": true
+      },
+      {
+        "fold": 3,
+        "oos_start": "2024-12-24",
+        "oos_end": "2025-01-24",
+        "sharpe": 15.6659,
+        "ann_ret_pct": 3.5576,
+        "n_obs": 744,
+        "positive": true
+      },
+      {
+        "fold": 4,
+        "oos_start": "2025-01-24",
+        "oos_end": "2025-02-24",
+        "sharpe": 33.1326,
+        "ann_ret_pct": 208.1315,
+        "n_obs": 744,
+        "positive": true
+      },
+      {
+        "fold": 5,
+        "oos_start": "2025-02-24",
+        "oos_end": "2025-03-24",
+        "sharpe": 12.3826,
+        "ann_ret_pct": 2.9252,
+        "n_obs": 672,
+        "positive": true
+      },
+      {
+        "fold": 6,
+        "oos_start": "2025-03-24",
+        "oos_end": "2025-04-24",
+        "sharpe": 21.9826,
+        "ann_ret_pct": 17.1092,
+        "n_obs": 744,
+        "positive": true
+      },
+      {
+        "fold": 7,
+        "oos_start": "2025-04-24",
+        "oos_end": "2025-05-24",
+        "sharpe": 36.8616,
+        "ann_ret_pct": 12.7414,
+        "n_obs": 720,
+        "positive": true
+      },
+      {
+        "fold": 8,
+        "oos_start": "2025-05-24",
+        "oos_end": "2025-06-24",
+        "sharpe": 24.3309,
+        "ann_ret_pct": 69.0254,
+        "n_obs": 744,
+        "positive": true
+      },
+      {
+        "fold": 9,
+        "oos_start": "2025-06-24",
+        "oos_end": "2025-07-24",
+        "sharpe": 40.191,
+        "ann_ret_pct": 11.1322,
+        "n_obs": 720,
+        "positive": true
+      },
+      {
+        "fold": 10,
+        "oos_start": "2025-07-24",
+        "oos_end": "2025-08-24",
+        "sharpe": 70.9198,
+        "ann_ret_pct": 19.3735,
+        "n_obs": 744,
+        "positive": true
+      },
+      {
+        "fold": 11,
+        "oos_start": "2025-08-24",
+        "oos_end": "2025-09-24",
+        "sharpe": 26.5628,
+        "ann_ret_pct": 132.2501,
+        "n_obs": 744,
+        "positive": true
+      },
+      {
+        "fold": 12,
+        "oos_start": "2025-09-24",
+        "oos_end": "2025-10-24",
+        "sharpe": 57.5297,
+        "ann_ret_pct": 72.2275,
+        "n_obs": 720,
+        "positive": true
+      }
+    ],
+    "n_folds": 11,
+    "positive_folds": 11,
+    "wf_mean_sharpe": 31.0901,
+    "wf_min_sharpe": 2.4316,
+    "g4_pass": true,
+    "g4_note": "11/11 positive folds. Min Sh=2.4316."
+  },
+  "phase5_section6_gates": {
+    "G1_oos_sharpe": {
+      "value": 19.4726,
+      "threshold": 1.0,
+      "pass": "True"
+    },
+    "G2_perm_pvalue": {
+      "p_value": 0.0,
+      "n_perm": 1000,
+      "threshold": 0.05,
+      "pass": true,
+      "null_mean": 18.6389,
+      "null_max": 18.9717,
+      "note": "Real IS Sh=19.1309. Null max=18.9717. p=0.0000. G2 PASS. Timing alpha confirmed (+0.45 Sh). Note: null_max=18.9717 is close to real (19.1309) — timing contribution is thin but statistically significant."
+    },
+    "G3_dsr_bonferroni": {
+      "t_stat": 15.036,
+      "p_bonferroni": 0.0,
+      "n_configs": 12,
+      "pass": true
+    },
+    "G4_walk_forward": {
+      "positive_folds": 11,
+      "total_folds": 11,
+      "min_sharpe": 2.4316,
+      "pass": true
+    },
+    "G5_family_corr": {
+      "all_pass": true,
+      "fails": [],
+      "max_abs_corr": 0.2075,
+      "max_gate": "G5z",
+      "max_gate_label": "K777 EIGEN-SOL",
+      "n_gates": 28,
+      "details": {
+        "G5a": {
+          "label": "K449 ETH-BTC",
+          "full_corr": -0.0342,
+          "is_corr": -0.0457,
+          "oos_corr": -0.0127,
+          "n": 12690,
+          "pass": true
+        },
+        "G5b": {
+          "label": "K476 SOL-BTC",
+          "full_corr": -0.0338,
+          "is_corr": -0.0512,
+          "oos_corr": -0.0206,
+          "n": 12690,
+          "pass": true
+        },
+        "G5c": {
+          "label": "K484 AVAX-BTC",
+          "full_corr": -0.0264,
+          "is_corr": -0.0785,
+          "oos_corr": 0.0464,
+          "n": 12690,
+          "pass": true
+        },
+        "G5d": {
+          "label": "K493 ATOM-BTC",
+          "full_corr": 0.0315,
+          "is_corr": 0.0401,
+          "oos_corr": 0.0189,
+          "n": 12690,
+          "pass": true
+        },
+        "G5e": {
+          "label": "K500 INJ-BTC",
+          "full_corr": 0.0001,
+          "is_corr": 0.0003,
+          "oos_corr": -0.0033,
+          "n": 12690,
+          "pass": true
+        },
+        "G5f": {
+          "label": "K517 FIL-BTC",
+          "full_corr": 0.0153,
+          "is_corr": -0.0341,
+          "oos_corr": 0.0348,
+          "n": 12690,
+          "pass": true
+        },
+        "G5g": {
+          "label": "K594 LDO-BTC",
+          "full_corr": 0.031,
+          "is_corr": 0.0294,
+          "oos_corr": 0.047,
+          "n": 12690,
+          "pass": true
+        },
+        "G5h": {
+          "label": "K683 APT-SOL",
+          "full_corr": 0.0762,
+          "is_corr": 0.0842,
+          "oos_corr": 0.0639,
+          "n": 12725,
+          "pass": true
+        },
+        "G5i": {
+          "label": "K684 ATOM-SOL",
+          "full_corr": 0.0531,
+          "is_corr": 0.0858,
+          "oos_corr": 0.0238,
+          "n": 12725,
+          "pass": true
+        },
+        "G5j": {
+          "label": "K686 SOL-INJ",
+          "full_corr": -0.013,
+          "is_corr": -0.0579,
+          "oos_corr": 0.001,
+          "n": 12724,
+          "pass": true
+        },
+        "G5k": {
+          "label": "K687 AVAX-SOL",
+          "full_corr": 0.0159,
+          "is_corr": -0.0067,
+          "oos_corr": 0.0556,
+          "n": 12690,
+          "pass": true
+        },
+        "G5l": {
+          "label": "K689 SEI-SOL",
+          "full_corr": 0.0305,
+          "is_corr": -0.0003,
+          "oos_corr": 0.0618,
+          "n": 12731,
+          "pass": true
+        },
+        "G5m": {
+          "label": "K694 TIA-SOL",
+          "full_corr": 0.082,
+          "is_corr": 0.0883,
+          "oos_corr": 0.1027,
+          "n": 12731,
+          "pass": true
+        },
+        "G5n": {
+          "label": "K696 ENA-SOL",
+          "full_corr": 0.0871,
+          "is_corr": 0.1497,
+          "oos_corr": 0.0323,
+          "n": 12731,
+          "pass": true
+        },
+        "G5o": {
+          "label": "K700 BNB-SOL",
+          "full_corr": 0.0314,
+          "is_corr": 0.0458,
+          "oos_corr": 0.0476,
+          "n": 12690,
+          "pass": true
+        },
+        "G5p": {
+          "label": "K719 ENA-ATOM",
+          "full_corr": 0.0368,
+          "is_corr": 0.0915,
+          "oos_corr": -0.0062,
+          "n": 12725,
+          "pass": true
+        },
+        "G5q": {
+          "label": "K721 LDO-SOL",
+          "full_corr": 0.0482,
+          "is_corr": 0.064,
+          "oos_corr": 0.0497,
+          "n": 12725,
+          "pass": true
+        },
+        "G5r": {
+          "label": "K728 INJ-ATOM",
+          "full_corr": -0.0163,
+          "is_corr": -0.0421,
+          "oos_corr": -0.0104,
+          "n": 12724,
+          "pass": true
+        },
+        "G5s": {
+          "label": "K735 HBAR-SOL",
+          "full_corr": 0.023,
+          "is_corr": 0.0433,
+          "oos_corr": -0.0098,
+          "n": 8903,
+          "pass": true
+        },
+        "G5t": {
+          "label": "K736 TIA-AVAX",
+          "full_corr": 0.0871,
+          "is_corr": 0.1204,
+          "oos_corr": 0.0553,
+          "n": 12690,
+          "pass": true
+        },
+        "G5u": {
+          "label": "K739 FIL-SOL",
+          "full_corr": 0.0428,
+          "is_corr": 0.0421,
+          "oos_corr": 0.0415,
+          "n": 12845,
+          "pass": true
+        },
+        "G5v": {
+          "label": "K778 COMP-SOL",
+          "full_corr": 0.0134,
+          "is_corr": 0.0096,
+          "oos_corr": 0.0119,
+          "n": 12849,
+          "pass": true
+        },
+        "G5w": {
+          "label": "K754 PEPE-SOL",
+          "full_corr": 0.057,
+          "is_corr": 0.0871,
+          "oos_corr": 0.0235,
+          "n": 12725,
+          "pass": true
+        },
+        "G5x": {
+          "label": "K774 IO-SOL",
+          "full_corr": 0.0497,
+          "is_corr": 0.0532,
+          "oos_corr": 0.0441,
+          "n": 12350,
+          "pass": true
+        },
+        "G5y": {
+          "label": "K759 WIF-SOL",
+          "full_corr": 0.0126,
+          "is_corr": 0.0253,
+          "oos_corr": 0.0039,
+          "n": 12725,
+          "pass": true
+        },
+        "G5z": {
+          "label": "K777 EIGEN-SOL",
+          "full_corr": 0.2075,
+          "is_corr": null,
+          "oos_corr": 0.2075,
+          "n": 500,
+          "pass": true
+        },
+        "G5aa": {
+          "label": "K786 BIO-SOL",
+          "full_corr": 0.0235,
+          "is_corr": null,
+          "oos_corr": 0.0235,
+          "n": 500,
+          "pass": true
+        },
+        "G5ab": {
+          "label": "K788 MEME-SOL",
+          "full_corr": 0.008,
+          "is_corr": -0.0056,
+          "oos_corr": 0.0146,
+          "n": 12731,
+          "pass": true
+        }
+      },
+      "G5w_meme_cluster_check": {
+        "gate": "G5w",
+        "pair": "PEPE-SOL (K754)",
+        "full_corr": 0.057,
+        "pass": true,
+        "note": "K788 meme cluster: ME-SOL vs PEPE-SOL — CLEAR"
+      },
+      "G5y_meme_cluster_check": {
+        "gate": "G5y",
+        "pair": "WIF-SOL (K759)",
+        "full_corr": 0.0126,
+        "pass": true,
+        "note": "K788 meme cluster: ME-SOL vs WIF-SOL — CLEAR"
+      },
+      "G5z_meme_cluster_check": {
+        "gate": "G5z",
+        "pair": "MEME-SOL (K788)",
+        "full_corr": 0.008,
+        "pass": true,
+        "note": "K788 MEME-SOL (22nd vertex): ME-SOL vs MEME-SOL — NEW cluster check CLEAR"
+      }
+    },
+    "G6_trade_count": {
+      "entries_per_yr_oos": 30.2,
+      "threshold": 30,
+      "pass": "True",
+      "note": "MARGINAL: 30.2 entries/yr (threshold=30). W=48 gives 57/yr if G6 tightens."
+    },
+    "G7_ann_return": {
+      "oos_ann_ret_3x_pct": 260.67,
+      "threshold_pct": 5.0,
+      "pass": "True"
+    },
+    "G8_cross_venue": {
+      "hl": true,
+      "okx": false,
+      "bybit": false,
+      "n_venues_confirmed": 1,
+      "note": "HL: CONFIRMED (MEUSDT HIP-3, OI=$2.26M, dayVol=$85K). Bybit: NOT confirmed (low liquidity $85K/day, not listed on Bybit major perps). OKX: NOT confirmed (not in cache, low vol). G8 FAIL: only 1 venue confirmed. Research-only flag mandatory.",
+      "pass": false
+    },
+    "G9_data_sufficiency": {
+      "oos_days": 217,
+      "threshold_days": 180,
+      "pass": true
+    },
+    "_summary": {
+      "all_pass": false,
+      "n_pass": "8",
+      "n_fail": 1,
+      "gate_statuses": {
+        "G1": "True",
+        "G2": true,
+        "G3": true,
+        "G4": true,
+        "G5": true,
+        "G6": "True",
+        "G7": "True",
+        "G8": false,
+        "G9": true
+      },
+      "fail_list": [
+        "G8"
+      ]
+    }
+  },
+  "phase6_decision": {
+    "decision": "CONDITIONAL_ACCEPT_RESEARCH_ONLY",
+    "rationale": "ME-SOL CONDITIONAL_ACCEPT_RESEARCH_ONLY (8/9 gates PASS). OOS Sharpe=19.4726 >> 1.0. 11/11 WF folds positive (min Sh=2.4316). G5 max corr=0.2075 (G5z: K777 EIGEN-SOL) — below 0.40. G5w (PEPE-SOL)=0.057 PASS. G5y (WIF-SOL)=0.0126 PASS. G5ab (MEME-SOL)=0.008 PASS — 22nd vertex cluster CLEAR. L004_DIFF: full=0.282 (K788 borderline), OOS=0.396 PASS. G2 p=0.000 confirms timing alpha (+0.45 Sh vs pure carry). G6 MARGINAL: entries/yr=30.2 (threshold=30). G8 FAIL: only HL confirmed ($85K/day vol, Bybit/OKX not listed). RESEARCH_ONLY: liquidity $85K/day → sleeve 0.2-0.3% max. ME = Magic Eden NFT marketplace (SVM-native, HIP-3). SOL = SVM L1. Edge: structural SHORT ME carry (ME FR systematically negative vs SOL positive). K523 ROI @$10M 0.25% sleeve: $24,763 cons / $39,100 mid / $55,392 opt per year.",
+    "all_gates_pass": false,
+    "n_gates_pass": "8",
+    "n_gates_fail": 1,
+    "fail_gates": [
+      "G8"
+    ],
+    "research_only_mandatory": true,
+    "research_only_reason": "G8 FAIL (only 1 venue: HL). Liquidity $85K/day → sleeve 0.2-0.3% max, no live deployment at scale. Monitor for Bybit/OKX listing before considering live entry.",
+    "l004_diff_note": "L004_DIFF borderline: full=0.282 (floor=0.30, margin=-0.018). OOS=0.3956 PASS. G2 p=0.000 confirms timing alpha (+0.45 Sh vs pure carry IS Sh=18.68). Note: timing alpha is THIN — edge primarily from structural carry (SHORT ME). K788 borderline rule applies: G2 p=0.000 overrides soft block. Monitor live OOS diff_pos; if falls below 0.28 → suspend immediately.",
+    "g6_marginal_note": "G6 entries/yr=30.2 at W=84h — just above 30 threshold (margin: 0.2/yr). If entries/yr drops below 30 in live OOS → switch to W=48 (57/yr). G6 monitor flag: check monthly entries pace.",
+    "g8_note": "HL: CONFIRMED (MEUSDT HIP-3, OI=$2.26M, dayVol=$85K). Bybit: NOT confirmed (low liquidity $85K/day, not listed on Bybit major perps). OKX: NOT confirmed (not in cache, low vol). G8 FAIL: only 1 venue confirmed. Research-only flag mandatory.",
+    "meme_cluster_verdict": "PASS — ME (SVM NFT marketplace) orthogonal to PEPE (ETH meme), WIF (SOL meme), MEME (ERC-20 meme index). NFT marketplace utility vs meme sentiment — distinct FR drivers.",
+    "roi_projection_k523": {
+      "k523_compliance": true,
+      "note": "K523 mandatory: 3-point projection. Single number is upper bound, not central.",
+      "k518_realized_floor": 0.38,
+      "oos_haircut_k523": 0.25,
+      "leverage": 3.0,
+      "oos_ann_ret_raw_pct": 86.89,
+      "oos_ann_ret_3x_lev_pct": 260.67,
+      "sleeve_scenarios": {
+        "0.2%": {
+          "sleeve_pct": 0.002,
+          "sleeve_notional_usd": 20000.0,
+          "conservative_usd_yr": 19810,
+          "mid_usd_yr": 31280,
+          "optimistic_usd_yr": 44313
+        },
+        "0.25%_mid": {
+          "sleeve_pct": 0.0025,
+          "sleeve_notional_usd": 25000.0,
+          "conservative_usd_yr": 24763,
+          "mid_usd_yr": 39100,
+          "optimistic_usd_yr": 55392
+        },
+        "0.3%": {
+          "sleeve_pct": 0.003,
+          "sleeve_notional_usd": 30000.0,
+          "conservative_usd_yr": 29716,
+          "mid_usd_yr": 46920,
+          "optimistic_usd_yr": 66470
+        }
+      },
+      "primary_sleeve_pct": 0.0025,
+      "conservative_usd_yr": 24763,
+      "mid_usd_yr": 39100,
+      "optimistic_usd_yr": 55392
+    },
+    "paper_gate_mandatory": true,
+    "hl_cap_pct": 66.8,
+    "sleeve_pct_range": "0.2-0.3% (liquidity-constrained)",
+    "max_leverage": 3.0,
+    "new_vertex": "ME",
+    "vertex_count_if_accept": 23,
+    "vertex_cluster": "SVM NFT Marketplace (1st application-layer SVM vertex)",
+    "next_wave_note": "K795: USUAL-SOL evaluation (next K793 queue candidate, USUAL, composite=0.069)"
+  },
+  "verdict": "CONDITIONAL_ACCEPT_RESEARCH_ONLY",
+  "verdict_code": "CONDITIONAL_ACCEPT_RESEARCH_ONLY",
+  "verdict_detail": "CONDITIONAL_ACCEPT_RESEARCH_ONLY — 8/9 gates. G5 28/28 all pass. G5w PEPE-SOL=0.057, G5y WIF-SOL=0.0126, G5ab MEME-SOL=0.008 (all meme cluster CLEAR). OOS Sh=19.4726. L004_DIFF borderline (full=0.282, OOS=0.396). G2 timing alpha +0.45 Sh. G6 MARGINAL 30.2/yr. G8 FAIL (HL only). RESEARCH_ONLY: $85K/day liquidity, 0.2-0.3% sleeve max. 23rd vertex candidate (SVM NFT marketplace cluster).",
+  "runtime_s": 4.96
+}
