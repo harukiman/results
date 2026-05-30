@@ -4261,6 +4261,43 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K756: K754 PEPE-SOL alt-alt emergency exit flag
+    # K754 = HL primary PEPE+SOL paired (2 legs) on HL (PEPE-PERP + SOL-PERP).
+    # Close protocol: IOC reduce-only on HL (short leg first, then long leg).
+    # Signal: W=84h rolling mean of (PEPE_FR - SOL_FR), zero threshold. G6-safe (64/yr).
+    # HL concentration: 66.8% AT CAP (K751 audit, paper-gate strict — PAPER_TRADE=True until K498/v6.52).
+    # G4 WF 12/12 ALL POSITIVE (min_sh=5.56). 22/22 G5 PASS (max_corr=0.247).
+    # PEPE = 14th vertex. MR9 L002: all future PEPE-X pairs blocked.
+    # L003/L010 proximity warning: monthly AVAX/HBAR recheck required.
+    # Use --include-k754 to print K754-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k754",
+        dest="include_k754",
+        action="store_true",
+        default=False,
+        help=(
+            "K756: Include K754 PEPE-SOL close summary during emergency exit. "
+            "K754 positions (PEPE+SOL paired, HL primary) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = PEPE_FR - SOL_FR (direct differential, W=84h rolling mean, zero threshold). "
+            "HL primary: PEPE-PERP + SOL-PERP both on HL. Bybit fallback (1000PEPE denomination). "
+            "HL concentration 66.8% AT CAP (K751 audit — paper-gate strict — PAPER_TRADE=True default). "
+            "G4 WF 12/12 ALL POSITIVE (min_sh=5.56). 22/22 G5 PASS (max_corr=0.247 G5l SEI-SOL). "
+            "G6: 64.2 entries/yr OOS PASS (W=84h G6-safe vs W=168h 29.5/yr FAIL). "
+            "OOS Sharpe 44.43 (W=84h). MaxDD OOS=-0.107% (very contained). "
+            "L003 AVAX: raw_corr=0.4125 PASS — proximity warning, monthly recheck. "
+            "L010 HBAR: raw_corr=0.4272 PASS — proximity warning, monthly recheck. "
+            "PEPE = 14th vertex. MR9 L002: all future PEPE-X auto-blocked. "
+            "K523 central $62,000/yr net @$10M @4x (2.5% sleeve). "
+            "60d gate: Realized Sh>=6 + fill>=60% + maxDD<15%. "
+            "Live trigger: K498/v6.52 OKX activation (HL% < 65%) + 60d gate. "
+            "Cluster: Ethereum ERC-20 meme leader × Solana SVM (16th alt-alt, 71st daemon). "
+            "Requires: K754 daemon running (com.cryptolab.k754-pepe-sol, 71st daemon). "
+            "See: docs/k302a_runbook.md §71"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -5280,6 +5317,46 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "G4 WF 12/12 ALL POSITIVE — UNPRECEDENTED. TAO = 13th vertex. "
                 "Use --include-k747 for structured HL close summary (§63). "
                 "G8 FAIL: Bybit TAO floor-capped. K735 precedent applies."
+            )
+
+        # K756: K754 PEPE-SOL alt-alt close summary (HL primary — positions ARE in HL exit above)
+        # K754 positions (PEPE+SOL, HL primary) are included in the main HL exit plan above.
+        # HL 66.8% AT CAP (paper-gate: PAPER_TRADE=True default — no live capital yet).
+        # Live only after K498/v6.52 OKX activation + 60d gate passage.
+        if args.include_k754:
+            logger.info("=== K754 PEPE-SOL CLOSE SUMMARY (K756 §71) ===")
+            logger.info("  K754 PEPE-SOL: HL primary (PEPE-PERP + SOL-PERP both legs on HL)")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_PEPE (Eth meme season): short SOL first → sell long PEPE second")
+            logger.info("  BEAR_PEPE (SVM season dominant): short PEPE first → sell long SOL second")
+            logger.info("  HL concentration: 66.8% AT CAP (K751 audit — paper-gate strict)")
+            logger.info("  PAPER_TRADE=True default — no live capital until K498/v6.52 OKX reduces HL%")
+            logger.info("  G4 WF: 12/12 ALL POSITIVE (min_sh=5.56) — strong WF validation")
+            logger.info("  G5: 22/22 PASS (max_corr=0.247 G5l SEI-SOL — well below 0.40)")
+            logger.info("  G6: 64.2 entries/yr OOS PASS (W=84h G6-safe vs W=168h 29.5/yr FAIL)")
+            logger.info("  G8: HL+Bybit+OKX confirmed (Bybit=1000PEPE denomination, 3-venue presence)")
+            logger.info("  L003 AVAX corr=0.4125 PASS (proximity warning — monthly recheck)")
+            logger.info("  L010 HBAR corr=0.4272 PASS (proximity warning — monthly recheck)")
+            logger.info("  L004 OOS carry=73.7% PASS (meme carry artifact, not full-period 84.7%)")
+            logger.info("  L007 FIL-SOL pre-screen=0.2517 PASS (SOL-beta cluster absent)")
+            logger.info("  PEPE = 14th vertex (Eth ERC-20 meme cluster). MR9 L002: all future PEPE-X blocked.")
+            logger.info("  V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE}")
+            logger.info("  PEPE FR: ERC-20 meme bull rotations, social virality, CEX catalysts. P99=1.66bps Max=6.66bps.")
+            logger.info("  SOL FR: DePIN/Retail BONK/WIF Firedancer ETF +7.706%/ann. Min=-20.51bps cascade.")
+            logger.info("  MaxDD OOS=-0.107% (very contained — differential mean-reversion well-behaved)")
+            logger.info("  OOS Sh=44.43 (W=84h), K523 central $62,000/yr net @$10M @4x (2.5% sleeve)")
+            logger.info("  K523 3-point: conservative=$34,758 central=$62,000 optimistic=$85,678/yr")
+            logger.info("  60d gate: Realized Sh>=6 + fill>=60% + maxDD<15%")
+            logger.info("  Live trigger: K498/v6.52 OKX activation (HL% < 65%) + 60d gate passage")
+            logger.info("  16th alt-alt scaffold, 71st daemon. HL primary (positions in main HL exit)")
+            logger.info("  See: docs/k302a_runbook.md §71 (K754 PEPE-SOL playbook)")
+        else:
+            logger.info(
+                "K754 PEPE-SOL: HL primary (positions ARE in HL exit above — PEPE-PERP + SOL-PERP on HL). "
+                "HL 66.8% AT CAP (K751 audit — paper-gate strict; no live capital until K498/v6.52 OKX). "
+                "G4 WF 12/12 ALL POSITIVE (min_sh=5.56). PEPE = 14th vertex. "
+                "L003/L010 proximity warning: monthly AVAX/HBAR recheck. "
+                "Use --include-k754 for structured HL close summary (§71)."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)

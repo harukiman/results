@@ -497,6 +497,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k545_tax_harvester",
         expected_html_status="SCAFFOLD-READY",  # K753: plist in scripts/ (gitignored); 1-step activation: sed CRYPTO_LAB_PATH + cp plist + launchctl load; LIVE requires CPA review + explicit --live flag
     ),
+    DaemonSpec(
+        label="com.cryptolab.k754-pepe-sol",
+        purpose="K754 PEPE-SOL FR Differential (SIXTEENTH ALT-ALT pair 14th-vertex PEPE Ethereum ERC-20 meme leader × Solana SVM, HL primary PEPE-PERP+SOL-PERP Bybit fallback 1000PEPE OKX confirmed, 4x leverage, 8h cycle, OOS Sh 44.43 W=84h G6-safe direct alt-alt diff, central $62,000/yr net @$10M @4x @2.5% sleeve K523 3-point $34.8K-$85.7K/yr, HL 66.8% AT CAP paper-gate-strict K751-audit K498/v6.52-activation-required, G4 WF 12/12-positive min_sh=5.56 strong-WF-validation, G5 22/22 PASS max_corr=0.247-G5l-SEI-SOL well-below-0.40, G6 64.2/yr PASS W=84h-chosen-over-168h-for-G6 168h-would-give-29.5/yr-FAIL, G8 HL+Bybit+OKX-all-venues-confirmed Bybit=1000PEPE-denomination, L003 AVAX-corr=0.4125-PASS proximity-warning-monthly-recheck, L010 HBAR-corr=0.4272-PASS proximity-warning-monthly-recheck, L004 OOS-carry=73.7%-PASS, L007 FIL-SOL-pre=0.2517-PASS, PEPE-vertex 14th V={APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE} MR9-L002-all-future-PEPE-X-blocked, PEPE FR=ERC-20-meme-bull-rotations social-virality CEX-listing-catalysts frog-narrative P99=1.66bps Max=6.66bps Q4-2024-peak+0.54bps, SOL FR=DePIN/Retail BONK/WIF Firedancer ETF +7.706%/ann Min=-20.51bps cascade, MaxDD-OOS=-0.107% very-contained diff-mean-reversion, 60d paper-trade gate Realized Sh>=6 fill>=60% maxDD<15% + K498/v6.52-OKX-activation-required, live-trigger=K498/v6.52-reduces-HL%<65%+60d-gate, 71st daemon 16th alt-alt CONDITIONAL HL-cap-66.8%, K756 scaffold)",
+        scripts=["scripts/k754_pepe_sol_run.py"],
+        log_basename="k754_pepe_sol",
+        expected_html_status="SCAFFOLD-READY",  # K756: plist in scripts/ (gitignored); activate after 60d gate (Sh>=6 + fill>=60% + maxDD<15%) AND K498/v6.52 OKX reduces HL% below 65%
+    ),
 ]
 
 

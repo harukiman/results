@@ -13637,3 +13637,194 @@ python3 scripts/k481_builder_rebate.py --check-api 0x<YOUR_WALLET>
 | K439 | K439 POST_ONLY order manager (fill rate gate G8) |
 | K523 | 3-point projection mandate (conservative/central/optimistic) |
 | K266 | Gate framework (cost optimization = ACCEPT-FREE) |
+
+## §71 K754 PEPE-SOL FR Differential (71st Daemon, SIXTEENTH ALT-ALT, Eth Meme × SVM, 14th Vertex)
+
+*K756 §71 -- K754 PEPE-SOL FR Differential production scaffold (71st daemon, SIXTEENTH ALT-ALT 14th-vertex PEPE Ethereum ERC-20 meme leader × Solana SVM, OOS Sh 44.43 W=84h G6-safe direct alt-alt diff, central $62,000/yr net @$10M @4x 2.5% sleeve K523 3-point $34.8K-$85.7K, HL primary HL 66.8% AT CAP paper-gate-strict K751-audit K498/v6.52-activation-required, G4 WF 12/12 all positive min_sh=5.56 strong-WF-validation, G5 22/22 PASS max_corr=0.247-G5l-SEI-SOL, G6 64.2/yr PASS W=84h-chosen-over-168h-for-G6-compliance, G8 HL+Bybit+OKX confirmed Bybit=1000PEPE-denomination, L003 AVAX=0.4125-PASS L010 HBAR=0.4272-PASS both-proximity-warning monthly-recheck, PEPE-vertex-14th MR9-L002-all-future-PEPE-X-blocked, 60d gate: Sh>=6 fill>=60% maxDD<15% + K498/v6.52-OKX-activation, live-trigger=K498/v6.52-reduces-HL%<65%) -- 2026-05-30*
+
+### §71.1 Strategy Overview
+
+**K754 PEPE-SOL FR Differential** — SIXTEENTH alt-alt pair (Eth meme leader × SVM cross-cluster). Signal: `diff = PEPE_FR - SOL_FR`, W=84h rolling mean, zero threshold.
+
+| Parameter | Value |
+|-----------|-------|
+| Pair | PEPE-SOL (Ethereum ERC-20 meme leader × Solana SVM) |
+| Wave | K756 scaffold (K754 ACCEPT CONDITIONAL) |
+| Daemon | 71st daemon (sixteenth alt-alt pair) |
+| Signal | W=84h rolling mean of (PEPE_FR − SOL_FR) |
+| W=84h rationale | G6 compliance: 64.2/yr OOS vs 29.5/yr at W=168h (< 30/yr G6 FAIL) |
+| Leverage | 4x |
+| Sleeve | 2.5% of AUM |
+| Venue | HL primary (PEPE-PERP + SOL-PERP), Bybit fallback (1000PEPE denomination) |
+| OOS Sharpe | 44.43 (~210d OOS) |
+| §6 gates | 22/22 G5 PASS + G1-G4 + G6-G9 PASS |
+| Decision | ACCEPT CONDITIONAL (HL 66.8% AT CAP → paper-gate) |
+| PEPE vertex | 14th vertex (Ethereum ERC-20 meme cluster leader) |
+| MR9 L002 | All future PEPE-X pairs auto-blocked |
+
+### §71.2 PEPE vs SOL FR Economics
+
+**PEPE FR dynamics (Eth ERC-20 meme leader):**
+- Meme bull market rotations: Q2 2023, Q1 2024, Q4 2024 (peak +0.54bps mean)
+- Ethereum gas price cycles: high gas → meme speculation premium
+- CEX listing catalysts: Binance/Coinbase meme cycle FR spikes
+- Social media virality: Pepe the Frog narrative, Twitter/X trending
+- Extreme spikes: P99=1.66bps, Max=6.66bps/hr (during meme mania episodes)
+- OOS carry: 73.7% positive (meme bias, below 80% L004 threshold in OOS)
+
+**SOL FR dynamics (Solana SVM L1):**
+- Retail meme-coin seasons: BONK, WIF, POPCAT cycles
+- Firedancer upgrade cycles, Solana ETF narrative
+- SVM DeFi TVL: Jupiter, Drift Protocol, Jito restaking
+- Mean +7.706%/ann — persistently positive structural retail demand
+- SOL extreme negative: Min=-20.51bps (liquidation cascade Feb 2025)
+
+**Alt-alt mechanism:**
+- PEPE (Eth meme virality, ERC-20 chain, social sentiment cycles)
+- SOL (Solana SVM execution, DeFi composability, infrastructure)
+- Structurally independent: Eth meme seasons vs SVM ecosystem adoption
+- OOS Sh=44.43. MaxDD OOS=-0.107% (very contained differential)
+- Q4 2024 cross-cluster differential: PEPE +0.54bps vs SOL +0.34bps mean
+
+### §71.3 §6 Gate Results (K754)
+
+| Gate | Result | Detail |
+|------|--------|--------|
+| G1 OOS Sharpe | **PASS** | 44.43 >> 1.0 (W=84h, ~210d OOS) |
+| G2 Permutation | **PASS** | p=0.000 |
+| G3 DSR Bonferroni | **PASS** | t=32.37, p_bonf≈0 |
+| G4 Walk-forward | **PASS** | 12/12 all positive (min_sh=5.56) |
+| G5 Family corr | **22/22 PASS** | max_corr=0.247 (G5l SEI-SOL) — below 0.40 |
+| G6 Trade count | **PASS** | 64.2/yr OOS (W=84h: G6-safe vs W=168h 29.5/yr FAIL) |
+| G7 Ann return | **PASS** | 38.07% @4x OOS |
+| G8 Cross-venue | **PASS** | HL+Bybit+OKX confirmed (Bybit=1000PEPE denomination) |
+| G9 Data sufficiency | **PASS** | ~210d OOS (≥180d) |
+| L003 AVAX pre-screen | **PASS** | raw_corr(PEPE_fr, AVAX_fr)=0.4125 PASS (<0.45) — **proximity warning** |
+| L004 carry stability | **PASS** | OOS=73.7% PASS (full=84.7% WARN, meme artifact) |
+| L007 SOL-beta | **PASS** | FIL-SOL pre-screen=0.2517 PASS |
+| L010 HBAR pre-screen | **PASS** | raw_corr(PEPE_fr, HBAR_fr)=0.4272 PASS (<0.45) — **proximity warning** |
+
+**L003/L010 proximity warning**: Both AVAX (0.4125) and HBAR (0.4272) are within 3% of the 0.45 threshold. Monthly recheck required. If either crosses 0.45 threshold, immediate review.
+
+### §71.4 K523 3-Point Profit Projection (@$10M @4x @2.5%)
+
+| Scenario | Annual USD |
+|----------|-----------|
+| Conservative (R2S×0.38) | $34,758/yr |
+| Central (base case) | **$62,000/yr** |
+| Optimistic (×0.90) | $85,678/yr |
+| Upper bound (OOS raw) | ~$95K/yr (NOT central — K523 mandatory) |
+
+Capital at risk: $250K margin (2.5% of $10M), $1M total notional @4x leverage.
+
+### §71.5 HL Concentration Status
+
+| Metric | Value |
+|--------|-------|
+| HL concentration (K751 audit) | **66.8%** |
+| Cap | 65.0% |
+| Status | AT CAP + OVER CAP — paper-gate strict |
+| Paper-gate trigger | K498/v6.52 OKX activation reduces HL% below 65% |
+| 60d gate | Realized Sh>=6 + fill>=60% + maxDD<15% |
+
+**PAPER_TRADE=True is mandatory** until K498/v6.52 OKX activation. HL at 66.8% — adding 2.5% live would push to ~69.3%, far over the 65% cap.
+
+### §71.6 PEPE Vertex Rule (MR9 L002)
+
+PEPE is the **14th vertex** added to the alt-alt graph V.
+```
+V = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI, SOL, TIA, TAO, PEPE}
+```
+- MR9 L002: all future PEPE-X pairs are auto-blocked (PEPE exhausted as new vertex)
+- PEPE-SOL is the only permissible PEPE-X pair given V composition at K754
+- Algebraic check: MR9 CLEAR — PEPE-SOL signal ≠ X-SOL for all X ∈ V (max_err > 1e-8)
+
+### §71.7 60d Paper-Trade Gate
+
+Activate LIVE only when ALL conditions met:
+
+| Condition | Target |
+|-----------|--------|
+| Realized Sharpe (60d rolling) | ≥ 6.0 |
+| Fill rate | ≥ 60% |
+| Maximum drawdown | < 15% |
+| HL concentration | < 65% (requires K498/v6.52 OKX activation) |
+| L003/L010 monthly recheck | AVAX < 0.45 AND HBAR < 0.45 |
+
+Paper-trade monitoring:
+```bash
+python3 scripts/k754_pepe_sol_run.py --status
+```
+
+### §71.8 Daemon Activation
+
+**Paper-trade (default — safe):**
+```bash
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k754-pepe-sol.plist
+cp scripts/com.cryptolab.k754-pepe-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k754-pepe-sol.plist
+launchctl list | grep k754
+```
+
+**Status check:**
+```bash
+python3 scripts/k754_pepe_sol_run.py --status
+python3 scripts/k754_pepe_sol_run.py --dry-run
+```
+
+**Manual close (paper-trade):**
+```bash
+python3 scripts/k754_pepe_sol_run.py --close "scheduled exit"
+```
+
+**Live activation (only after all gates passed):**
+```bash
+# 1. Verify K498/v6.52 OKX active and HL% < 65%
+# 2. Verify 60d gate: Sh>=6 + fill>=60% + maxDD<15%
+# 3. Verify L003/L010 monthly recheck: AVAX < 0.45 AND HBAR < 0.45
+# 4. Edit plist: change PAPER_TRADE to False
+# 5. Reload daemon
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k754-pepe-sol.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k754-pepe-sol.plist
+```
+
+### §71.9 Emergency Exit Protocol
+
+K754 PEPE-SOL positions (HL primary) are included in the main HL emergency exit:
+```bash
+python3 scripts/emergency_hl_exit.py --dry-run --include-k754
+python3 scripts/emergency_hl_exit.py --include-k754
+```
+
+Close protocol: IOC reduce-only, SHORT leg first, then LONG leg.
+- BULL_PEPE (Eth meme season): short SOL first → sell long PEPE second
+- BEAR_PEPE (SVM season): short PEPE first → sell long SOL second
+
+### §71.10 Deliverable Files
+
+| File | Description |
+|------|-------------|
+| `scripts/k754_pepe_sol_run.py` | Phase 1: K754 strategy script (K339 pattern, W=84h, HL primary, Eth meme × SVM) |
+| `scripts/com.cryptolab.k754-pepe-sol.plist` | Phase 2: 71st daemon (8h interval, PAPER_TRADE=True default) |
+| `data/leverage_config.json` | Phase 3: K754_PEPE_SOL: 4.0 + k754_notes |
+| `scripts/verify_deployment_status.py` | Phase 4: Registry +1 (com.cryptolab.k754-pepe-sol) |
+| `scripts/emergency_hl_exit.py` | Phase 5: Emergency exit (--include-k754 flag, §71) |
+| `docs/k302a_runbook.md` | Phase 6: This section (§71) |
+| `data/k754_dashboard.json` | Phase 7: Initial scaffold state |
+| `wave_k756_k754_scaffold.json` | Phase 8: Wave output JSON |
+| `wave_k756_k754_scaffold.md` | Phase 9: Wave summary |
+| `report.html` | Phase 10: K756 scaffold badge |
+
+### §71.11 References
+
+| Wave | Description |
+|------|-------------|
+| K756 | This section — K754 PEPE-SOL scaffold (71st daemon, 16th alt-alt, K523 central $62K/yr) |
+| K754 | K754 evaluation wave (PEPE-SOL FR Differential ACCEPT CONDITIONAL, W=84h, OOS Sh=44.43) |
+| K751 | K751 Kelly sizing audit (HL concentration 66.8% confirmed, v6.52 optimization) |
+| K750 | K750 K747 TAO-SOL scaffold (69th daemon, 15th alt-alt, 13th vertex TAO) |
+| K744 | K744 saturation map (PEPE ranked new vertex candidate: vol_ratio=1.239x, score=1.350) |
+| K747 | K747 TAO-SOL ACCEPT CONDITIONAL (13th vertex, preceding scaffold pattern) |
+| K498 | K498 OKX integration scaffold (HL cap relief required before live activation) |
+| K523 | K523 3-point projection mandate (conservative/central/optimistic) |
+| K439 | K439 POST_ONLY paired execution (fill rate gate G8) |
