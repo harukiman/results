@@ -3714,6 +3714,64 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K669: K658 SOL-ETH FR Differential emergency exit flag
+    # K658 = HL-primary SOL+ETH paired (2 legs) when sign(rolling_mean_168h(SOL_FR - ETH_FR)) != 0.
+    # Close protocol: IOC reduce-only on HL (BOTH legs on HL — HL concentration affected).
+    # Signal: diff = SOL_FR - ETH_FR (direct, W=168h rolling mean, zero threshold).
+    # ETH-base wins: SOL-BTC K476 PnL corr=0.2131 PASS; dual sleeve K476 1.5% + K658 1.5%.
+    # 52nd daemon — K669 scaffold.
+    # Use --include-k658 to print K658-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k658",
+        dest="include_k658",
+        action="store_true",
+        default=False,
+        help=(
+            "K669: Include K658 SOL-ETH close summary during emergency exit. "
+            "K658 positions (SOL+ETH paired, HL-primary) ARE included in HL emergency exit. "
+            "This flag adds a structured K658-specific close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = SOL_FR - ETH_FR (direct differential, W=168h rolling mean, sign threshold). "
+            "HL concentration: neutral (K476 reduced 4%->1.5%, K658 adds 1.5% = net unchanged). "
+            "OOS Sharpe 29.66 (ETH-base wins vs K476 Sh=16.30 +13.36). $42,332/yr @$10M @4x (1.5% sleeve). "
+            "Dual-sleeve: K476 SOL-BTC 1.5% + K658 SOL-ETH 1.5% = ~$85K/yr est @$10M. "
+            "K476 PnL corr=0.2131 PASS (diversified dual sleeve). K449 ETH-BTC critical corr=0.0488. "
+            "60d paper-trade gate: Realized Sh>=15 + fill>=60% + maxDD<15%. "
+            "Cluster: SOL L1 Monolithic SVM / DePIN-Retail (ETH-base wins, 52nd daemon). "
+            "Requires: K658 daemon running (com.cryptolab.k658-sol-eth, 52nd daemon). "
+            "See: docs/k302a_runbook.md §53"
+        ),
+    )
+
+    # K668: K663 TIA-ETH FR Differential emergency exit flag
+    # K663 = HL-primary TIA+ETH paired (2 legs) when sign(rolling_mean_168h(TIA_FR - ETH_FR)) != 0.
+    # Close protocol: IOC reduce-only on HL (BOTH legs on HL — HL concentration affected).
+    # Signal: diff = TIA_FR - ETH_FR (direct, W=168h rolling mean, zero threshold).
+    # ETH-base K660 SURPRISE: G5b TIA-BTC K507 corr=0.2309 PASS (K660 predicted BLOCKED-APT-style).
+    # Dual-sleeve: K507 TIA-BTC 1.5% + K663 TIA-ETH 1.5% = 3.0% total sleeve.
+    # Use --include-k663 to print K663-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k663",
+        dest="include_k663",
+        action="store_true",
+        default=False,
+        help=(
+            "K668: Include K663 TIA-ETH close summary during emergency exit. "
+            "K663 positions (TIA+ETH paired, HL-primary) ARE included in HL emergency exit. "
+            "This flag adds a structured K663-specific close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = TIA_FR - ETH_FR (direct differential, W=168h rolling mean, zero threshold). "
+            "HL concentration: ~61.0% post-K663 (within 65% limit, +1.5pp from ~59.5%). "
+            "OOS Sharpe 17.13 (9/9 §6 PASS, IS=31.31, ratio=0.548). $63,060/yr net @$10M @4x (1.5% sleeve). "
+            "Dual-sleeve: K507 TIA-BTC 1.5% + K663 TIA-ETH 1.5% = ~$114,598/yr net @$10M. "
+            "G5b corr=0.2309 PASS (K660 predicted BLOCKED-APT-style; TIA vol_ratio=2.12x DA spikes). "
+            "60d paper-trade gate: Realized Sh>=8 + fill>=60% + maxDD<15%. "
+            "Cluster: Modular DA / Celestia (ETH-base K660 SURPRISE, 51st daemon). "
+            "Requires: K663 daemon running (com.cryptolab.k663-tia-eth, 51st daemon). "
+            "See: docs/k302a_runbook.md §52"
+        ),
+    )
+
     # K659: K656 GALA-BTC dual-factor orthog emergency exit flag
     # K656 = Bybit-only GALA+BTC paired (2 legs) when residual rolling_mean_504h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL cap 66.5% > 65%, Bybit-only mandatory).
@@ -4273,6 +4331,52 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "K647 DOT-BTC orthog: Bybit-only (NOT HL). "
                 "Use --include-k647 for Bybit close summary (§49). "
                 "HL concentration 64% (1pp headroom — K647 3% split HL 1.5%+Bybit 1.5%)."
+            )
+
+        # K669: K658 SOL-ETH close summary (HL-primary — positions ARE in HL exit above)
+        # K658 positions (SOL+ETH, HL-primary) ARE closed by the HL emergency exit above.
+        # This block adds structured K658-specific close summary when --include-k658 is used.
+        if args.include_k658:
+            logger.info("=== K658 SOL-ETH FR DIFFERENTIAL CLOSE SUMMARY (K669 §53) ===")
+            logger.info("  K658 SOL-ETH: HL-primary (SOL-PERP + ETH-PERP both legs on HL)")
+            logger.info("  Signal: diff = SOL_FR - ETH_FR (direct, W=168h rolling mean, sign threshold)")
+            logger.info("  ETH-base wins: SOL-BTC K476 PnL corr=0.2131 PASS (diversified dual sleeve)")
+            logger.info("  Close: IOC reduce-only HL — short leg first, then long leg")
+            logger.info("  HL concentration: neutral (K476 reduced 4%->1.5%, K658 adds 1.5% = net unchanged)")
+            logger.info("  OOS Sharpe 29.66 (ETH-base wins vs K476 Sh=16.30 +13.36) | $42,332/yr @$10M @4x (1.5%)")
+            logger.info("  Dual-sleeve: K476 SOL-BTC 1.5% + K658 SOL-ETH 1.5% = ~$85K/yr est @$10M")
+            logger.info("  Cluster: SOL L1 Monolithic SVM / DePIN-Retail (ETH-base, 52nd daemon)")
+            logger.info("  60d gate: Realized Sh>=15 + fill>=60% + maxDD<15%")
+            logger.info("  See: docs/k302a_runbook.md §53 (K658 SOL-ETH playbook)")
+        else:
+            logger.info(
+                "K658 SOL-ETH: HL-primary (SOL-PERP + ETH-PERP on HL). "
+                "K658 positions ARE included in the HL emergency exit above. "
+                "Use --include-k658 for structured K658 close summary (§53). "
+                "HL concentration neutral (K476 reduced 4%->1.5%, K658 adds 1.5% = net unchanged)."
+            )
+
+        # K668: K663 TIA-ETH close summary (HL-primary — positions ARE in HL exit above)
+        # K663 positions (TIA+ETH, HL-primary) ARE closed by the HL emergency exit above.
+        # This block adds structured K663-specific close summary when --include-k663 is used.
+        if args.include_k663:
+            logger.info("=== K663 TIA-ETH FR DIFFERENTIAL CLOSE SUMMARY (K668 §52) ===")
+            logger.info("  K663 TIA-ETH: HL-primary (TIA-PERP + ETH-PERP both legs on HL)")
+            logger.info("  Signal: diff = TIA_FR - ETH_FR (direct, W=168h rolling mean, zero threshold)")
+            logger.info("  ETH-base K660 SURPRISE: G5b TIA-BTC K507 corr=0.2309 PASS (K660 predicted BLOCKED-APT-style)")
+            logger.info("  Close: IOC reduce-only HL — short leg first, then long leg")
+            logger.info("  HL concentration: ~61.0% post-K663 (within 65% limit, +1.5pp from ~59.5%)")
+            logger.info("  OOS Sharpe 17.13 (9/9 §6 PASS) | $63,060/yr net @$10M @4x (1.5% sleeve)")
+            logger.info("  Dual-sleeve: K507 TIA-BTC 1.5% + K663 TIA-ETH 1.5% = ~$114,598/yr net @$10M")
+            logger.info("  Cluster: Modular DA / Celestia (ETH-base, K660 SURPRISE, 51st daemon)")
+            logger.info("  60d gate: Realized Sh>=8 + fill>=60% + maxDD<15%")
+            logger.info("  See: docs/k302a_runbook.md §52 (K663 TIA-ETH playbook)")
+        else:
+            logger.info(
+                "K663 TIA-ETH: HL-primary (TIA-PERP + ETH-PERP on HL). "
+                "K663 positions ARE included in the HL emergency exit above. "
+                "Use --include-k663 for structured K663 close summary (§52). "
+                "HL concentration ~61.0% (within 65% limit)."
             )
 
         # K654: K629 WLD-ETH close summary (HL-primary — positions ARE in HL exit above)

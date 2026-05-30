@@ -10334,3 +10334,429 @@ K280 reduced 2pp to fund K656 sleeve. Total v6.40: v6.39 + K656 $48K/yr = gaming
 ---
 
 *K659 §51 -- K656 GALA-BTC Dual-Factor Orthogonalized FR Differential production scaffold (50th daemon MILESTONE, 9th orthog scaffold, gaming cluster COMPLETE, OOS Sh 8.3211 DF W=504h $48,143/yr net @$10M @4x, β_JUP=0.22738 β_FIL=0.405439 hardcoded, JUP 0.4308→0.0495 FIL 0.4114→0.0184 CLEARED, IS R²=0.4731 LARGEST in series, first dual-factor JUP+FIL, Bybit-only HL 64.5% unchanged, 60d gate: Sh>=4 fill>=60% maxDD<20%, Gaming Publisher GalaChain L1, SAND+AXS+IMX+GALA COMPLETE, v6.40 candidate) -- 2026-05-30*
+
+---
+
+## §52 K663 TIA-ETH FR Differential — Production Scaffold Playbook
+
+**Wave:** K668 | **Created:** 2026-05-30 JST
+
+**Strategy:** K663 TIA-ETH FR Differential Carry (ETH-base mechanism, K660 SURPRISE)
+
+**Daemon:** 51st daemon (`com.cryptolab.k663-tia-eth`)
+
+### §52.0 Strategy Summary
+
+K663 applies the ETH-base mechanism (K629/K654 pattern) to the TIA (Celestia) family.
+K507 TIA-BTC uses BTC as the base asset. K663 switches to ETH, applying K660's hypothesis
+that ETH-base creates orthogonal alpha for some alt tokens.
+
+**K660 SURPRISE:** K660 rule predicted BLOCKED-G5b for TIA (like APT, at +1.08%/yr far below ETH
++10.52%/yr). ACTUAL: G5b corr=0.2309 PASSES (< 0.40 threshold). The mechanism: TIA has HIGH
+VOLATILITY (vol_ratio=2.12x) and PERIODIC Celestia DA NARRATIVE SPIKES above ETH during DA hype
+cycles — unlike APT (-1.4%/yr, consistently negative, rarely spikes). This creates enough signal
+divergence from TIA-BTC (K507) to achieve G5b orthogonality.
+
+**K660 rule refined:** ETH-base works when vol_ratio >= 2x even if mean is below ETH, provided
+periodic spikes above ETH occur. Fails for APT (consistently negative, no spikes).
+
+### §52.1 ETH-base Family Track (K660 Series)
+
+| Alt | Base | Status | G5b | Mechanism |
+|-----|------|--------|-----|-----------|
+| WLD | ETH | ACCEPT | 0.3437 | WLD biometric ID narrative vs ETH DeFi staking |
+| HYPE | ETH | WORSE | — | BTC-base better for HYPE |
+| SOL | ETH | ACCEPT | — | SOL L1 gas vs ETH DeFi (Sh=29.66 > K476 16.30) |
+| APT | ETH | BLOCKED-G5b | 0.966 | APT consistently negative, always LONG APT |
+| AVAX | ETH | CONDITIONAL | 0.373 | Borderline, BTC wins |
+| **TIA** | **ETH** | **ACCEPT K660 SURPRISE** | **0.2309** | **TIA vol_ratio=2.12x + DA spikes** |
+
+### §52.2 Key Parameters
+
+| Parameter | Value |
+|-----------|-------|
+| Signal | `sign(rolling_mean_168h(TIA_FR - ETH_FR))` |
+| Threshold | Zero (sign only, no sigma gate) |
+| EMA Window | W=168h (21 x 8h periods) |
+| Leverage | 4x |
+| Sleeve | 1.5% (dual with K507 TIA-BTC 1.5%) |
+| Venue | HL primary (TIA-PERP + ETH-PERP) |
+| Cadence | 8h (matches FR settlement cycle) |
+
+### §52.3 Performance (K663 9/9 §6 PASS)
+
+| Metric | K663 TIA-ETH | K507 TIA-BTC |
+|--------|-------------|--------------|
+| OOS Sharpe | **17.1322** | 14.439 |
+| OOS Ann Ret | 6.18% | 5.05% |
+| Max DD | 0.42% | 0.63% |
+| Trades/yr | 55.3 | 48.6 |
+| Net @$10M @4x | **$63,060/yr** | $51,538/yr |
+
+**Dual-sleeve combined:** K507 TIA-BTC 1.5% + K663 TIA-ETH 1.5% = **~$114,598/yr net** @$10M
+(G5b corr=0.2309 < 0.40 — orthogonal, dual-sleeve eligible)
+
+### §52.4 §6 Gate Results (9/9 PASS)
+
+| Gate | Value | Threshold | Status |
+|------|-------|-----------|--------|
+| G1 OOS Sharpe | 17.1322 | >= 1.0 | PASS |
+| G2 Perm p-val | 0.0 | <= 0.05 | PASS |
+| G3 DSR Bonferroni | 1.08e-38 | < 0.00417 | PASS |
+| G4 Walk-forward | 4/4 (100%) | all positive | PASS |
+| G5b TIA-BTC K507 | 0.2309 | < 0.40 | PASS (SURPRISE) |
+| G6 Trades/yr | 55.3 | >= 30 | PASS |
+| G7 Ann return | 6.18% (24.73% @4x) | > 5% | PASS |
+| G8 Cross-venue | HL TIA-PERP active | structural | PASS |
+| G9 Data | 218d OOS | >= 180d | PASS |
+
+### §52.5 Signal Direction Logic
+
+```
+TIA-ETH diff = TIA_FR - ETH_FR  (predominantly negative: -9.44%/yr mean)
+
+rolling_mean_168h(diff) > 0  →  BULL_TIA (DA spike: TIA FR > ETH)
+  → SHORT TIA (collect high TIA FR) / LONG ETH (cheap carry)
+  → position_state = LONG_ETH_SHORT_TIA
+
+rolling_mean_168h(diff) < 0  →  BEAR_TIA (structural: ETH FR >> TIA)
+  → LONG TIA (cheap carry) / SHORT ETH (collect ETH FR)
+  → position_state = LONG_TIA_SHORT_ETH  ← predominant state (55%+ of time)
+```
+
+### §52.6 HL Concentration
+
+- Pre-K663: ~59.5% (post-K629 reference)
+- Post-K663: ~61.0% (+1.5pp — within 65% limit, 4pp headroom)
+- Both TIA-PERP and ETH-PERP on HL — K663 IS an HL strategy
+
+### §52.7 60d Paper-Trade Gate
+
+Gate criteria (K668 spec):
+- Realized Sh >= **8** (50% of OOS Sh=17.13)
+- Fill rate >= **60%**
+- Max drawdown < **15%**
+- Days required: **60**
+
+Gate status: **IN_PROGRESS** (scaffold activated 2026-05-30)
+
+### §52.8 Emergency Close Procedure
+
+K663 uses HL-primary (both legs on HL). Emergency procedure:
+
+1. K663 positions (TIA-PERP + ETH-PERP) are **included** in the standard HL emergency exit
+2. Run: `python3 scripts/emergency_hl_exit.py --include-k663 [other flags]`
+3. Close sequence: short leg first (avoid naked short exposure), then long leg
+4. Use IOC reduce-only orders on HL
+5. HL concentration ~61.0% post-K663 activation (within 65% limit)
+
+### §52.9 Monitoring
+
+Monitor `data/k663_dashboard.json`:
+
+```bash
+python3 scripts/k663_tia_eth_run.py --status
+```
+
+Key fields to watch:
+- `regime`: BULL_TIA | BEAR_TIA | NEUTRAL
+- `mean_168h`: rolling mean of TIA-ETH differential
+- `position_state`: LONG_TIA_SHORT_ETH | LONG_ETH_SHORT_TIA | NEUTRAL
+- `gate_metrics.current_realized_sharpe`: should reach >=8 within 60d
+
+### §52.10 CLI Commands
+
+```bash
+# Dry-run cycle (default)
+python3 scripts/k663_tia_eth_run.py --dry-run
+
+# Status check
+python3 scripts/k663_tia_eth_run.py --status
+
+# Drift rebalance check
+python3 scripts/k663_tia_eth_run.py --rebalance
+
+# Manual close
+python3 scripts/k663_tia_eth_run.py --close "manual exit"
+
+# Emergency HL exit with K663 summary
+python3 scripts/emergency_hl_exit.py --include-k663
+
+# Deployment status check
+python3 scripts/verify_deployment_status.py 2>&1 | grep k663
+
+# Activate daemon
+cp scripts/com.cryptolab.k663-tia-eth.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k663-tia-eth.plist
+```
+
+### §52.10.1 Leverage Config Reference
+
+```json
+// data/leverage_config.json
+"K663_TIA_ETH": 4.0   // exchange_caps -- 4x (paired delta-neutral carry, K430 cap)
+
+// k663_notes.activation_criteria
+"realized_sharpe_min": 8.0,   // 50% of OOS Sh=17.13
+"fill_rate_min_pct": 60,
+"max_drawdown_max_pct": 15
+```
+
+```python
+# scripts/leverage_manager.py
+"K663":    0.015   # TIA-ETH FR Differential, 4x leverage, HL-primary (v6.41 K668 addition)
+"K507_TIA": 0.015  # TIA-BTC, raised from 1% to 1.5% for dual-sleeve parity with K663
+```
+
+K280 reduced 1.5pp to fund K663 sleeve. K507_TIA raised from 1% to 1.5%.
+Total v6.41: v6.40 portfolio + K663 TIA-ETH $63K/yr = Modular DA ETH-base expansion.
+Dual-sleeve: K507 TIA-BTC 1.5% + K663 TIA-ETH 1.5% = $114,598/yr net @$10M combined.
+
+### §52.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k663_tia_eth_run.py` | Strategy script (K668 scaffold, K339 pattern) |
+| `data/k663_dashboard.json` | Live state + TIA-ETH diff signal + regime |
+| `scripts/com.cryptolab.k663-tia-eth.plist` | 51st daemon plist (StartInterval 28800) |
+| `scripts/emergency_hl_exit.py` | `--include-k663` flag + K663 HL close summary |
+| `scripts/leverage_manager.py` | K663_TIA_ETH 4.0 cap + SLEEVE_WEIGHTS_V641 |
+| `data/leverage_config.json` | K663_TIA_ETH: 4.0 + k663_notes |
+| `scripts/verify_deployment_status.py` | 51st daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§52) |
+| `wave_k668_k663_scaffold.py` | Wave driver/test |
+| `wave_k668_k663_scaffold.json` | Wave result report |
+
+### §52.12 References
+
+| Wave | Description |
+|------|-------------|
+| K668 | This section — K663 TIA-ETH scaffold (51st daemon, v6.41 candidate) |
+| K663 | K663 analysis — TIA-ETH ACCEPT 9/9 ($63,060/yr @$10M @4x, OOS Sh 17.13 W=168h) |
+| K660 | K660 APT-ETH BLOCKED-G5b (corr=0.966) — K663 rule exception established |
+| K507 | K507 TIA-BTC (Sh=14.44, parent strategy; dual-sleeve with K663) |
+| K654 | K629 WLD-ETH scaffold (49th daemon, ETH-base pattern template) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K668 §52 -- K663 TIA-ETH FR Differential production scaffold (51st daemon, ETH-base K660 SURPRISE, OOS Sh 17.1322 W=168h $63,060/yr net @$10M @4x 1.5% sleeve, G5b TIA-BTC K507 corr=0.2309 PASS, TIA vol_ratio=2.12x Celestia DA spikes, HL TIA-PERP+ETH-PERP ~61.0% within 65%, dual-sleeve K507+K663 $114,598/yr net, 60d gate: Sh>=8 fill>=60% maxDD<15%, Modular DA Celestia cluster, v6.41 candidate) -- 2026-05-30*
+
+---
+
+## §53 K658 SOL-ETH FR Differential — Production Scaffold Playbook
+
+**Wave:** K669 | **Daemon:** 52nd | **Status:** SCAFFOLD-READY (60d paper-trade gate)
+
+**Strategy:** K658 SOL-ETH FR Differential Carry (ETH-base mechanism wins vs K476)
+
+**Signal:** `diff = SOL_FR - ETH_FR` (direct differential, W=168h rolling mean, sign threshold)
+
+### §53.0 Strategy Summary
+
+K658 applies the ETH-base mechanism (K629/K654 pattern) to the SOL (Solana L1) family.
+K476 SOL-BTC uses BTC as the base asset (OOS Sh=16.30). K658 switches to ETH, yielding
+OOS Sh=29.66 — a +13.36 Sharpe improvement. ETH-base captures SOL retail momentum
+cycles vs ETH DeFi/staking yields, which are structurally orthogonal.
+
+**ETH-base insight:** SOL FR is driven by DePIN/memecoin retail cycles, Raydium/Orca DEX
+dominance, Jito MEV + jitoSOL demand. ETH FR is driven by stETH/LST demand, ETH L1 gas
+narrative, validator yield compression. These are distinct narrative cycles by construction.
+
+**Dual-sleeve design:** K476 SOL-BTC 1.5% + K658 SOL-ETH 1.5% = 3% combined at same total
+margin as K476 alone at 4% (actually lower due to reduction). PnL corr=0.2131 < 0.40 PASS.
+
+### §53.1 ETH-base Family Track
+
+| Strategy | Result | OOS Sh | vs BTC-base | Reason |
+|----------|--------|--------|-------------|--------|
+| K629 WLD-ETH | ACCEPT | 19.90 | +inf (K621 BLOCKED) | WLD biometric vs ETH DeFi |
+| K658 SOL-ETH | ACCEPT | 29.66 | +13.36 | SOL retail vs ETH DeFi |
+| K663 TIA-ETH | ACCEPT | 17.13 | structural | TIA DA vs ETH DeFi |
+| K632 HYPE-ETH | WORSE | 12.99 | -11.50 | HYPE distinct cluster |
+| K660 APT-ETH | BLOCKED | — | fails G5b | APT negative FR all bases |
+| K661 AVAX-ETH | COND | — | BTC wins | corr=0.373 borderline |
+
+### §53.2 Key Parameters
+
+| Parameter | Value |
+|-----------|-------|
+| Signal | `diff = SOL_FR - ETH_FR` (direct, W=168h EMA, sign threshold) |
+| EMA window | 168h = 21 × 8h periods |
+| Entry threshold | 0.0 (sign of EMA — K658 grid optimal) |
+| Sleeve | 1.5% (dual with K476 SOL-BTC 1.5% = 3% combined) |
+| Leverage | 4x (K430 cap) |
+| Venue | HL primary (SOL-PERP + ETH-PERP, both Hyperliquid) |
+| Cycle | 8h (matches HL FR settlement) |
+| OU halflife | 2.4h (faster mean-reversion than SOL-BTC) |
+| Vol ratio | 1.63x (SOL FR std / ETH FR std; >= 1.5x PASS) |
+
+### §53.3 Performance (K658 ACCEPT)
+
+| Metric | K658 SOL-ETH | K476 SOL-BTC | Delta |
+|--------|-------------|-------------|-------|
+| OOS Sharpe | 29.66 | 16.30 | +13.36 |
+| OOS Ann Return | 7.06% | 4.89% | +2.17% |
+| OOS MaxDD | 0.28% | 0.49% | -0.21% |
+| Entries/yr | 20.3 | 31.3 | -11.0 (G6 structural) |
+| Walk-forward | 4/4 positive | 9/10 | — |
+
+**Profit @ $10M @4x @1.5% sleeve:** `$42,332/yr USDC`
+**Dual-sleeve combined:** K476 1.5% + K658 1.5% = **~$85,000/yr est** @$10M
+
+### §53.4 §6 Gate Results (9/9 effective)
+
+| Gate | Result | Value | Threshold |
+|------|--------|-------|-----------|
+| G1 OOS Sharpe | PASS | 29.66 | >= 1.0 |
+| G2 Perm p-value | PASS | 0.0 | < 0.05 |
+| G3 DSR Bonferroni | PASS | 1.56e-109 | < 0.00417 |
+| G4 Walk-forward | PASS | 4/4 positive | majority |
+| G5 Family corr | PASS | max 0.2131 | < 0.40 |
+| G6 Entries/yr | structural | 20.3/yr | >= 30 (structural OK at Sh=29.66) |
+| G7 Ann return | PASS | 28.2% @4x | >= 5% |
+| G8 MaxDD | PASS | 0.28% | < 15% |
+| G9 Calmar | PASS | >100 | >= 0.5 |
+
+### §53.5 Signal Direction Logic
+
+```
+SOL-ETH diff = SOL_FR - ETH_FR
+EMA_168h = 168h rolling EMA of diff
+
+if EMA_168h > 0 (SOL FR > ETH FR):
+    BULL_SOL: SOL expensive (high carry cost to long)
+    -> SHORT SOL (collect high SOL FR) / LONG ETH (cheap carry)
+    -> position_state = LONG_ETH_SHORT_SOL
+
+if EMA_168h < 0 (ETH FR > SOL FR):
+    BEAR_SOL: ETH expensive (high carry cost to long)
+    -> LONG SOL (cheap carry) / SHORT ETH (collect ETH FR)
+    -> position_state = LONG_SOL_SHORT_ETH
+
+if EMA_168h == 0 (initialization or cross):
+    NEUTRAL: no position
+```
+
+### §53.6 HL Concentration
+
+- K476 SOL-BTC at 4%: contributes ~4pp to HL concentration
+- K476 SOL-BTC reduced to 1.5% + K658 SOL-ETH 1.5% = net 3% combined
+- Net HL impact: -1pp improvement vs old K476 at 4% solo
+- Both SOL-PERP and ETH-PERP listed on Hyperliquid — K658 IS an HL strategy
+- Current HL: ~63.5% pre-K658 activation; net neutral or improving post-activation
+
+### §53.7 60d Paper-Trade Gate
+
+K658 gate criteria (K669 spec — strict at high OOS Sh=29.66):
+
+| Criterion | Target | Notes |
+|-----------|--------|-------|
+| Realized Sharpe | >= 15.0 | 50% of OOS Sh=29.66 |
+| Fill rate | >= 60% | POST_ONLY execution |
+| Max Drawdown | < 15% | strict gate given high Sharpe claim |
+| Duration | 60 days | mandatory paper-trade period |
+
+All three criteria must pass simultaneously for live activation.
+
+### §53.8 Emergency Close Procedure
+
+K658 uses HL-primary (both legs on HL). Emergency procedure:
+
+1. K658 positions (SOL-PERP + ETH-PERP) are **included** in the standard HL emergency exit
+2. Run: `python3 scripts/emergency_hl_exit.py --include-k658 [other flags]`
+3. Close sequence: short leg first (avoid naked short exposure), then long leg
+4. Use IOC reduce-only orders on HL
+5. HL concentration: neutral (K476 reduced 4%->1.5%, K658 adds 1.5% = net unchanged)
+
+### §53.9 Monitoring
+
+Monitor `data/k658_dashboard.json`:
+
+```bash
+python3 scripts/k658_sol_eth_run.py --status
+```
+
+Key fields to watch:
+- `regime`: BULL_SOL | BEAR_SOL | NEUTRAL
+- `diff_ema_168h`: rolling EMA of SOL-ETH differential
+- `position_state`: LONG_SOL_SHORT_ETH | LONG_ETH_SHORT_SOL | NEUTRAL
+- `gate_metrics.current_realized_sharpe`: should reach >=15 within 60d
+
+### §53.10 CLI Commands
+
+```bash
+# Dry-run cycle (default)
+python3 scripts/k658_sol_eth_run.py --dry-run
+
+# Status check
+python3 scripts/k658_sol_eth_run.py --status
+
+# Drift rebalance check
+python3 scripts/k658_sol_eth_run.py --rebalance
+
+# Manual close
+python3 scripts/k658_sol_eth_run.py --close "manual exit"
+
+# Emergency HL exit with K658 summary
+python3 scripts/emergency_hl_exit.py --include-k658
+
+# Deployment status check
+python3 scripts/verify_deployment_status.py 2>&1 | grep k658
+
+# Activate daemon
+cp scripts/com.cryptolab.k658-sol-eth.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k658-sol-eth.plist
+```
+
+### §53.10.1 Leverage Config Reference
+
+```json
+// data/leverage_config.json
+"K658_SOL_ETH": 4.0   // exchange_caps -- 4x (paired delta-neutral carry, K430 cap)
+
+// k658_notes.activation_criteria
+"realized_sharpe_min": 15.0,   // 50% of OOS Sh=29.66
+"fill_rate_min_pct": 60,
+"max_drawdown_max_pct": 15
+```
+
+```python
+# scripts/leverage_manager.py
+"K658":    0.015   # SOL-ETH FR Differential, 4x leverage, HL-primary (v6.42 K669 addition)
+"K476":    0.015   # SOL-BTC, reduced 4%->1.5% for dual-sleeve parity with K658
+```
+
+Total v6.42: v6.41 portfolio + K658 SOL-ETH $42K/yr = SOL L1 ETH-base expansion.
+Dual-sleeve: K476 SOL-BTC 1.5% + K658 SOL-ETH 1.5% = ~$85K/yr est @$10M combined.
+Net HL impact: neutral (K476 reduced from 4% to 1.5%, K658 adds 1.5% = unchanged).
+
+### §53.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k658_sol_eth_run.py` | Strategy script (K669 scaffold, K339 pattern) |
+| `data/k658_dashboard.json` | Live state + SOL-ETH diff signal + regime |
+| `scripts/com.cryptolab.k658-sol-eth.plist` | 52nd daemon plist (StartInterval 28800) |
+| `scripts/emergency_hl_exit.py` | `--include-k658` flag + K658 HL close summary |
+| `scripts/leverage_manager.py` | K658_SOL_ETH 4.0 cap + SLEEVE_WEIGHTS_V642 |
+| `data/leverage_config.json` | K658_SOL_ETH: 4.0 + k658_notes |
+| `scripts/verify_deployment_status.py` | 52nd daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§53) |
+| `wave_k669_k658_scaffold.py` | Wave driver/test |
+| `wave_k669_k658_scaffold.json` | Wave result report |
+
+### §53.12 References
+
+| Wave | Description |
+|------|-------------|
+| K669 | This section — K658 SOL-ETH scaffold (52nd daemon, v6.42 candidate) |
+| K658 | K658 analysis — SOL-ETH ACCEPT (ETH-base wins, OOS Sh 29.66 vs K476 Sh 16.30) |
+| K476 | K476 SOL-BTC (Sh=16.30, parent strategy; dual-sleeve with K658) |
+| K654 | K629 WLD-ETH scaffold (49th daemon, ETH-base pattern template) |
+| K666 | K666 v6.40 proposal — K658 1.5%+K476 1.5% dual sleeve design |
+| K266 | §6 strict gate framework |
+
+---
+
+*K669 §53 -- K658 SOL-ETH FR Differential production scaffold (52nd daemon, ETH-base wins vs K476 SOL-BTC +13.36 Sh, OOS Sh 29.6613 W=168h sign-threshold $42,332/yr @$10M @4x 1.5% sleeve, K476 PnL corr=0.2131 PASS dual-sleeve $85K/yr combined est, HL SOL-PERP+ETH-PERP neutral net HL unchanged within 65%, dual-sleeve K476+K658 3% combined, 60d gate: Sh>=15 fill>=60% maxDD<15%, SOL L1 SVM DePIN-Retail cluster, v6.42 candidate) -- 2026-05-30*

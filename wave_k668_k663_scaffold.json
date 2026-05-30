@@ -1,0 +1,176 @@
+{
+  "wave": "K668",
+  "strategy": "K663 TIA-ETH FR Differential (ETH-base, Modular DA Celestia, K660 SURPRISE)",
+  "run_time_jst": "2026-05-30 13:27 JST",
+  "overall_status": "PASS",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k663_tia_eth_run.py",
+        "description": "Phase 1: K663 strategy script (K339 pattern, W=168h, ETH-base direct diff)",
+        "exists": true,
+        "size_bytes": 48092,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k663-tia-eth.plist",
+        "description": "Phase 2: 51st daemon plist (StartInterval 28800)",
+        "exists": true,
+        "size_bytes": 2780,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k663_dashboard.json",
+        "description": "Phase 3: Dashboard (diff signal, regime, eth_base_mechanism)",
+        "exists": true,
+        "size_bytes": 3562,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k663 flag, \u00a752)",
+        "exists": true,
+        "size_bytes": 229756,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K663_TIA_ETH + SLEEVE_WEIGHTS_V641)",
+        "exists": true,
+        "size_bytes": 72892,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K663_TIA_ETH: 4.0 + k663_notes)",
+        "exists": true,
+        "size_bytes": 54779,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (51st daemon registry)",
+        "exists": true,
+        "size_bytes": 35007,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a752 (K663 TIA-ETH playbook)",
+        "exists": true,
+        "size_bytes": 416329,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K663 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1611119,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k668_k663_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 14924,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_integrity": {
+    "checks": {
+      "k339_repo_root": true,
+      "paper_trade_default": true,
+      "sleeve_1_5pct": true,
+      "leverage_4x": true,
+      "rolling_168h": true,
+      "zero_threshold": true,
+      "hl_primary": true,
+      "post_only": true,
+      "k660_surprise": true,
+      "direct_diff_no_ols": true,
+      "symbols_tia_eth_only": true,
+      "dashboard_path": true,
+      "g5b_corr_0_2309": true,
+      "dual_sleeve_note": true,
+      "dashboard_regime": true,
+      "dashboard_oos_perf": true,
+      "dashboard_eth_mech": true,
+      "dashboard_hl_610": true,
+      "dashboard_gate_sh8": true,
+      "dashboard_sleeve_015": true,
+      "cfg_k663_cap": true,
+      "cfg_k663_notes": true,
+      "cfg_sleeve_015": true,
+      "cfg_g5b_corr": true,
+      "emer_include_k663": true,
+      "emer_k663_hl_note": true,
+      "lev_k663_cap": true,
+      "lev_v641_weights": true,
+      "lev_k663_015pct": true,
+      "vds_k663_label": true,
+      "vds_51st_daemon": true,
+      "runbook_section52": true,
+      "runbook_k660_surp": true,
+      "runbook_dual_sleeve": true,
+      "html_k663_scaffold": true,
+      "html_51st_daemon": true
+    },
+    "pass": 36,
+    "fail": 0
+  },
+  "dry_run": {
+    "status": "PASS",
+    "returncode": 0,
+    "stdout_lines": [
+      "=== K663 Dashboard (\u2014) ===",
+      "{",
+      "  \"last_poll_jst\": \"\\u2014\",",
+      "  \"fr_tia_current\": 0.0,",
+      "  \"fr_eth_current\": 0.0,"
+    ],
+    "stderr_lines": []
+  },
+  "scaffold_summary": {
+    "daemon_number": "51st",
+    "strategy": "K663 TIA-ETH FR Differential",
+    "signal": "sign(rolling_mean_168h(TIA_FR - ETH_FR))",
+    "threshold": "zero (sign only)",
+    "ema_window_h": 168,
+    "leverage": 4.0,
+    "sleeve_pct": 0.015,
+    "venue": "HL primary (TIA-PERP + ETH-PERP, both HL perps)",
+    "oos_sharpe": 17.1322,
+    "oos_ann_ret_pct": 6.1824,
+    "profit_net_yr_10m": 63060,
+    "dual_sleeve_net_yr": 114598,
+    "g5b_corr": 0.2309,
+    "g5b_verdict": "PASS \u2014 K660 SURPRISE (predicted BLOCKED-APT-style)",
+    "hl_concentration_pct": 61.0,
+    "k660_rule_exception": "TIA vol_ratio=2.12x + periodic DA spikes -> G5b PASS despite TIA far below ETH",
+    "paper_gate": "60d: Sh>=8 + fill>=60% + maxDD<15%",
+    "activation_status": "SCAFFOLD-READY",
+    "plist": "scripts/com.cryptolab.k663-tia-eth.plist",
+    "log_files": [
+      "logs/k663_tia_eth.log",
+      "logs/k663_tia_eth.err"
+    ]
+  },
+  "deliverable_files": [
+    "scripts/k663_tia_eth_run.py",
+    "scripts/com.cryptolab.k663-tia-eth.plist",
+    "data/k663_dashboard.json",
+    "scripts/emergency_hl_exit.py  (--include-k663 added)",
+    "scripts/leverage_manager.py   (K663_TIA_ETH cap + SLEEVE_WEIGHTS_V641)",
+    "data/leverage_config.json     (K663_TIA_ETH: 4.0 + k663_notes)",
+    "scripts/verify_deployment_status.py  (51st daemon)",
+    "docs/k302a_runbook.md         (\u00a752 added)",
+    "report.html                   (K663 row added)",
+    "wave_k668_k663_scaffold.py    (this file)",
+    "wave_k668_k663_scaffold.json  (this report)"
+  ]
+}

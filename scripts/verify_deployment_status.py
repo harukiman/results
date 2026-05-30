@@ -399,6 +399,20 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k656_gala_orthog",
         expected_html_status="SCAFFOLD-READY",  # K659: plist in scripts/ (gitignored); activate after 60d gate (Realized Sh>=4 + fill_rate>=60% + maxDD<20%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k663-tia-eth",
+        purpose="K663 TIA-ETH FR Differential (Modular DA Celestia, ETH-base K660 SURPRISE, HL-primary TIA+ETH both legs, 4x leverage, 8h cycle, OOS Sh 17.13 W=168h direct diff 9/9 gates PASS, $63,060/yr net @$10M @4x (1.5% sleeve), G5b TIA-BTC K507 corr=0.2309 PASS (K660 predicted BLOCKED-APT-style; TIA vol_ratio=2.12x DA spikes), HL ~61.0% +1.5pp within 65% limit, dual with K507 TIA-BTC 1.5% = $114,598/yr net, 60d paper-trade gate, v6.41 candidate, 51st daemon, K668 scaffold)",
+        scripts=["scripts/k663_tia_eth_run.py"],
+        log_basename="k663_tia_eth",
+        expected_html_status="SCAFFOLD-READY",  # K668: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=8 + fill_rate>=60% + maxDD<15%)
+    ),
+    DaemonSpec(
+        label="com.cryptolab.k658-sol-eth",
+        purpose="K658 SOL-ETH FR Differential (SOL L1 Monolithic SVM DePIN-Retail, ETH-base wins vs K476 SOL-BTC, HL-primary SOL+ETH both legs, 4x leverage, 8h cycle, OOS Sh 29.66 W=168h direct diff ETH-base +13.36 vs K476 Sh=16.30, $42,332/yr @$10M @4x @1.5% sleeve, K476 PnL corr=0.2131 PASS dual-sleeve, K449 ETH-BTC critical corr=0.0488, OU halflife=2.4h vol_ratio=1.63x, HL neutral: K476 reduced 4%->1.5% net unchanged within 65% limit, dual K476 1.5%+K658 1.5%=$85K/yr est, 60d paper-trade gate, v6.42 candidate 1.5% sleeve, 52nd daemon, K669 scaffold)",
+        scripts=["scripts/k658_sol_eth_run.py"],
+        log_basename="k658_sol_eth",
+        expected_html_status="SCAFFOLD-READY",  # K669: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=15 + fill_rate>=60% + maxDD<15%)
+    ),
 ]
 
 
