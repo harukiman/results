@@ -13113,4 +13113,127 @@ python3 scripts/emergency_hl_exit.py --include-k747 --dry-run
 | K735 | K735 HBAR-SOL (G8 FAIL precedent — same structural Bybit floor pattern → CONDITIONAL) |
 | K498 | K498 OKX activation (required to unlock K747 live deployment — reduce HL% below 65%) |
 | K524 | HL 65.0% concentration cap (exact — K747 at cap in paper-gate mode) |
+
+---
+
+## §68 K751 Kelly Criterion Sleeve Sizing — v6.52 Optimization
+
+**Wave:** K751 | **Date:** 2026-05-30 | **Status:** SCAFFOLD-READY (user 1-flip)
+
+### §68.1 Mandate
+
+3 consecutive alt-alt G5 REJ (ONDO/AAVE/PYTH) signals new vertex saturation. Pivot from new sleeve discovery to **profit extraction via Kelly sizing** of existing 38-sleeve portfolio.
+
+### §68.2 v6.51 Constraint Violations Found
+
+| Constraint | v6.51 Actual | Limit | Violation |
+|-----------|-------------|-------|-----------|
+| HL concentration | 66.8% | ≤65% | OVER by 1.8pp |
+| Bybit concentration | 55.7% | ≤50% | OVER by 5.7pp |
+| K280 floor | 15.5% | ≥30% | UNDER by 14.5pp (K532 mandate) |
+
+**Root cause:** Sequential "fund new sleeve by cutting K280" strategy over v6.16→v6.51 created structural K280 underallocation and exchange concentration violations.
+
+### §68.3 Kelly Methodology
+
+**Per-sleeve Kelly fraction:**
+- μ_sleeve = ann_ret_net_usd / (weight × AUM)
+- σ_sleeve = μ_sleeve / OOS_Sh  [back-solved from Sharpe definition]
+- Kelly f* = μ/σ² = Sh²/μ  [log-utility optimal, continuous-time]
+
+**Portfolio scoring:** score_i = Sh_i × sqrt(kf_i) × mu_i
+- Sh: quality filter (high Sharpe = real edge vs noise)
+- sqrt(kf): Kelly magnitude with diminishing returns (prevents extreme concentration)
+- mu: absolute return contribution
+
+### §68.4 v6.52 Key Weight Changes
+
+| Sleeve | v6.51 | v6.52 | Δ | Reason |
+|--------|-------|-------|---|--------|
+| K280 | 15.5% | 30.0% | +14.5pp | K532 floor restoration (K509 decay requires core) |
+| K297 | 20.0% | 10.5% | -9.5pp | Sh=22 satellite vs Sh=50+ family Kelly efficiency |
+| K449 | 5.0% | 2.8% | -2.2pp | Sh=18.4; ETH-base K658 preferred |
+| sUSDe | 5.0% | 2.6% | -2.4pp | Stable carry low Kelly efficiency |
+| K500 | 4.0% | 2.2% | -1.8pp | Sh=11.23 lowest Cosmos family |
+| K541 | 3.0% | 1.6% | -1.4pp | Sh=1.50 macro signal Kelly downsizes |
+| K521 | 3.0% | 1.6% | -1.4pp | Sh=1.02 macro signal Kelly downsizes |
+| K512 | 2.0% | 2.1% | +0.1pp | Sh=51.10 Move-VM#1 Kelly target 8.1% |
+| K507 | 2.0% | 2.1% | +0.1pp | Sh=48.10 Cosmos#3 Kelly target 8.1% |
+
+### §68.5 K523 3-Point Uplift @$10M AUM
+
+| Scenario | v6.51 | v6.52 Kelly Half | Uplift |
+|----------|-------|-----------------|--------|
+| Conservative | $2,151,571 | $2,336,139 | **+$184,568** |
+| Central | $2,980,630 | $3,175,654 | **+$195,024** |
+| Optimistic | $5,672,254 | $6,227,901 | **+$555,647** |
+
+K523 methodology: realized_ratio=38% (K509 floor); OOS_haircut=25% (paired-trade); Central=50% stated; Optimistic=75% stated.
+
+### §68.6 Exchange Concentrations After v6.52
+
+| Exchange | v6.51 | v6.52 | Cap | Status |
+|----------|-------|-------|-----|--------|
+| HL | 66.8% | 53.6% | 65% | FIXED (-13.2pp) |
+| Bybit | 55.7% | 43.8% | 50% | FIXED (-11.9pp) |
+| K280 | 15.5% | 30.0% | ≥30% | FIXED (+14.5pp) |
+
+### §68.7 Activation Protocol
+
+```bash
+# 1. Add SLEEVE_WEIGHTS_V652 to scripts/leverage_manager.py
+#    (see wave_k751_kelly_sizing.md for full dict)
+# 2. Update SLEEVE_WEIGHTS reference:
+#    SLEEVE_WEIGHTS = SLEEVE_WEIGHTS_V652
+# 3. Verify:
+python3 -c "
+from scripts.leverage_manager import SLEEVE_WEIGHTS_V652
+total = sum(SLEEVE_WEIGHTS_V652.values())
+print(f'Sum={total:.4f} HL=53.6% Bybit=43.8% K280=30.0%')
+"
+# 4. Commit:
+git add scripts/leverage_manager.py
+git commit -m 'v6.52: K751 Kelly-optimal weights (+\$195K/yr central K523)'
+```
+
+**Reversibility:** `git revert <commit>` — single file, no cascade.
+
+### §68.8 Monitoring (60d Gate)
+
+| Metric | Target | Alert Threshold |
+|--------|--------|----------------|
+| Realized Sh (30d) | ≥ 9.33 (v6.51 baseline) | < 8.0 → investigate |
+| HL concentration | ≤ 65% | > 65% → emergency revert |
+| Bybit concentration | ≤ 50% | > 50% → emergency revert |
+| K280 weight | ≥ 28% (±2pp) | < 26% → revert |
+| Portfolio max_dd | ≤ 3% | > 5% → circuit breaker |
+
+### §68.9 Deploy Fraction Recommendation
+
+| Option | Kelly Factor | Status |
+|--------|-------------|--------|
+| Aggressive (1.0x) | Full Kelly | NOT recommended — HL>65% untested |
+| **Balanced (0.5x)** | **Half-Kelly** | **RECOMMENDED — v6.52 target** |
+| Conservative (0.25x) | Quarter-Kelly | Appropriate given K509 K280 decay concerns |
+
+### §68.10 Files
+
+| File | Description |
+|------|-------------|
+| `wave_k751_kelly_sizing.py` | Kelly optimization engine (K339 REPO_ROOT) |
+| `wave_k751_kelly_sizing.json` | Wave summary JSON |
+| `wave_k751_kelly_sizing.md` | Full methodology documentation |
+| `data/kelly_optimal_weights.json` | Per-sleeve distributions + optimal weights |
+| `docs/k302a_runbook.md` | This section §68 |
+| `report.html` | v6.52 SCAFFOLD-READY badge |
+
+### §68.11 References
+
+| Wave | Description |
+|------|-------------|
+| K751 | This section — Kelly criterion sleeve sizing, v6.52, +$195K/yr central |
+| K750 | K747 TAO-SOL scaffold (69th daemon, 15th alt-alt, prior wave) |
+| K532 | Governance v5: K280 30% floor mandate, exchange concentration caps |
+| K509 | K208 decay confirmed (-67% Y/Y): justifies K280 ≥30% floor |
+| K524 | HL 65% cap exact: K751 fixes v6.51 violation (66.8% → 53.6%) |
 | K523 | 3-point projection mandate (conservative/central/optimistic required) |

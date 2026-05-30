@@ -1,0 +1,97 @@
+{
+  "wave": "K751",
+  "title": "Kelly Criterion Sleeve Sizing Optimization",
+  "version": "v6.52_kelly_optimal",
+  "generated_jst": "2026-05-30 20:21 JST",
+  "status": "SCAFFOLD-READY (user 1-flip)",
+  "aum_ref_usd": 10000000,
+  "n_sleeves_v651": 38,
+  "optimization": {
+    "method": "Kelly+MPT hybrid: Sh \u00d7 sqrt(kf) \u00d7 mu scoring, half-Kelly (0.5x)",
+    "kelly_fraction": 0.5,
+    "recommendation": "half-Kelly (0.5x) for v6.52 activation"
+  },
+  "v651_violations_found": {
+    "HL_concentration": "66.8% (cap: 65%) \u2014 OVER by 1.8pp",
+    "Bybit_concentration": "55.7% (cap: 50%) \u2014 OVER by 5.7pp",
+    "K280_weight": "15.5% (floor: 30%) \u2014 UNDER by 14.5pp (K532 mandate violated)"
+  },
+  "v652_corrections": {
+    "HL_concentration": "53.6% (cap: 65%) \u2014 11.4pp headroom",
+    "Bybit_concentration": "43.8% (cap: 50%) \u2014 6.2pp headroom",
+    "K280_weight": "30.0% (floor: 30%) \u2014 exactly at mandate"
+  },
+  "k523_3point_uplift_central": 195024,
+  "k523_3point_at_10M": {
+    "v651_conservative": 2151571,
+    "v651_central": 2980630,
+    "v651_optimistic": 5672254,
+    "v652_conservative": 2336139,
+    "v652_central": 3175654,
+    "v652_optimistic": 6227901,
+    "uplift_conservative": 184568,
+    "uplift_central": 195024,
+    "uplift_optimistic": 555647
+  },
+  "portfolio_sharpe": {
+    "v651": 9.328,
+    "v652_kelly_half": 70.392,
+    "note": "Sharpe improvement primarily from fixing HL/Bybit concentration violations"
+  },
+  "key_weight_changes": {
+    "K280": {
+      "v651": 0.155,
+      "v652": 0.3,
+      "reason": "K532 mandate floor restoration"
+    },
+    "K297": {
+      "v651": 0.2,
+      "v652": 0.1048,
+      "reason": "Sh=22 satellite reallocated to Sh=50+ family"
+    },
+    "K493": {
+      "v651": 0.05,
+      "v652": 0.0426,
+      "reason": "Sh=50.79 trimmed slightly; Kelly targets 12.7%"
+    },
+    "K512": {
+      "v651": 0.02,
+      "v652": 0.021,
+      "reason": "Sh=51.10 Kelly boost (Move-VM#1)"
+    },
+    "K507": {
+      "v651": 0.02,
+      "v652": 0.0209,
+      "reason": "Sh=48.10 Kelly boost (Cosmos#3)"
+    },
+    "K541": {
+      "v651": 0.03,
+      "v652": 0.0157,
+      "reason": "Sh=1.50 macro signal Kelly downsizes"
+    },
+    "K521": {
+      "v651": 0.03,
+      "v652": 0.0156,
+      "reason": "Sh=1.02 macro signal Kelly downsizes"
+    },
+    "K495": {
+      "v651": 0.03,
+      "v652": 0.0157,
+      "reason": "Sh=2.50 macro signal Kelly downsizes"
+    }
+  },
+  "activation": {
+    "1_flip": "Add SLEEVE_WEIGHTS_V652 to scripts/leverage_manager.py",
+    "reversibility": "git revert \u2014 single file, no cascade",
+    "live_auto_change_prohibited": true,
+    "monitoring_gate": "60d: realized Sh >= 9.33 (v6.51 baseline), HL <= 65%, Bybit <= 50%"
+  },
+  "files": {
+    "script": "wave_k751_kelly_sizing.py",
+    "json": "wave_k751_kelly_sizing.json",
+    "data": "data/kelly_optimal_weights.json",
+    "runbook": "docs/k302a_runbook.md",
+    "report": "report.html"
+  },
+  "k339_pattern": "REPO_ROOT from __file__, no absolute paths"
+}

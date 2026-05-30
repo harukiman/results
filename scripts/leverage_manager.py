@@ -844,6 +844,70 @@ SLEEVE_WEIGHTS_V646: Dict[str, float] = {
     "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
 }
 
+# v6.52 Kelly-optimal weights (K751 — user 1-flip activation, SCAFFOLD-READY)
+# K751 Kelly criterion sleeve sizing optimization (2026-05-30)
+# Half-Kelly (0.5x) recommended deployment — Sh×sqrt(kf)×mu portfolio scoring
+#
+# v6.51 VIOLATIONS FIXED by v6.52:
+#   HL: 66.8% → 53.6% (cap=65%, now 11.4pp headroom)
+#   Bybit: 55.7% → 43.8% (cap=50%, now 6.2pp headroom)
+#   K280: 15.5% → 30.0% (K532 mandate floor RESTORED)
+#
+# K523 3-point uplift @$10M vs v6.51:
+#   Conservative: +$184,568/yr | Central: +$195,024/yr | Optimistic: +$555,647/yr
+#
+# Key rationale:
+#   K280 +14.5pp: K532 governance mandate; K509 decay needs core stability floor
+#   K297 -9.5pp: Sh=22 satellite reallocated to Sh=50+ paired-trade family
+#   K541/K521/K495 -1.4pp each: Sh=1.0-2.5 macro signals low Kelly efficiency
+#   K512/K507 +0.1pp each: Sh=51/48 highest-quality sleeves underweighted vs carry
+#
+# Activation: add to leverage_manager.py → update SLEEVE_WEIGHTS = SLEEVE_WEIGHTS_V652
+# Reversibility: git revert (single file, no cascade)
+# Monitoring gate: 60d realized Sh ≥ 9.33 (v6.51 baseline), HL ≤ 65%, Bybit ≤ 50%
+SLEEVE_WEIGHTS_V652: Dict[str, float] = {
+    "K280":     0.3000,  # RESTORED to 30% floor (K532 mandate) — K509 decay: $620K/yr central @K280
+    "K297":     0.1048,  # REDUCED: 20%→10.5% — Sh=22 satellite; capital → Sh=50+ family
+    "K493":     0.0426,  # TRIMMED: 5.0%→4.3% — ATOM-BTC Cosmos#1, HL-only, OOS Sh=50.79 (Kelly: 12.7% target)
+    "K449":     0.0282,  # TRIMMED: 5.0%→2.8% — ETH-BTC BTC-base, HL-only, OOS Sh=18.4
+    "sUSDe":    0.0263,  # TRIMMED: 5.0%→2.6% — stable carry, OC yield, Ethena
+    "K500":     0.0216,  # TRIMMED: 4.0%→2.2% — INJ-BTC Cosmos#2, HL-only, OOS Sh=11.23
+    "K719":     0.0211,  # ~unchanged 2.1% — ENA-ATOM ALT-ALT#9 LARGEST $634K, Bybit-only, Sh=29.67
+    "K512":     0.0210,  # BOOSTED: 2.0%→2.1% — APT-BTC Move-VM#1, HL+Bybit split, Sh=51.10 (Kelly: 8.1%)
+    "K686":     0.0210,  # ~unchanged 2.1% — AVAX-SOL ALT-ALT#4 HIGHEST Sh=50.27, Bybit-only
+    "K507":     0.0209,  # BOOSTED: 2.0%→2.1% — SEI-BTC Cosmos#3, HL+Bybit split, Sh=48.10 (Kelly: 8.1%)
+    "K679":     0.0205,  # ~unchanged 2.1% — APT-SOL ALT-ALT#1, Bybit-only, Sh=39.29
+    "K696":     0.0198,  # ~unchanged 2.0% — ENA-SOL ALT-ALT#7 CROSS-CLUSTER, Bybit-only, Sh=26.93
+    "K690":     0.0195,  # ~unchanged 2.0% — SEI-SOL ALT-ALT#5 WF12/12, Bybit-only, Sh=25.11
+    "K647":     0.0189,  # TRIMMED: 3.0%→1.9% — DOT-BTC orthog, Bybit-only, Sh=23.25 (R²=-4.11 caution)
+    "K629":     0.0179,  # TRIMMED: 3.0%→1.8% — WLD-ETH ETH-base, HL-primary, Sh=19.90
+    "K694":     0.0173,  # TRIMMED: 3.0%→1.7% — TIA-SOL ALT-ALT#6, Bybit-only, Sh=19.09
+    "K684":     0.0162,  # TRIMMED: 3.0%→1.6% — SOL-INJ ALT-ALT#3, Bybit-only, Sh=9.65
+    "K645":     0.0157,  # TRIMMED: 3.0%→1.6% — BNB-BTC orthog, Bybit-only, Sh=7.07
+    "K541":     0.0157,  # TRIMMED: 3.0%→1.6% — Stablecoin macro, HL-only, OOS Sh=1.50 (low Kelly eff)
+    "K495":     0.0157,  # TRIMMED: 3.0%→1.6% — DEX-CEX flow divergence bear-cond, HL-only, Sh=2.50
+    "K521":     0.0156,  # TRIMMED: 3.0%→1.6% — Options 25d skew macro, HL-only, Sh=1.02 (low Kelly eff)
+    "K682":     0.0152,  # TRIMMED: 2.0%→1.5% — ATOM-SOL ALT-ALT#2, Bybit-only, Sh=43.43
+    "K635":     0.0148,  # TRIMMED: 2.0%→1.5% — IMX-BTC orthog, Bybit-only, Sh=24.81
+    "K648":     0.0141,  # TRIMMED: 2.0%→1.4% — POL-BTC orthog, Bybit-only, Sh=23.41
+    "K698":     0.0135,  # TRIMMED: 2.5%→1.4% — LINK-ETH ETH-base, Bybit-only, Sh=12.07
+    "K484":     0.0132,  # ~unchanged 1.3% — AVAX-BTC dual K661, HL-only, Sh=28.26
+    "K661":     0.0132,  # ~unchanged 1.3% — AVAX-ETH ETH-base CONDITIONAL, HL-primary, Sh=28.26
+    "K476":     0.0124,  # ~unchanged 1.2% — SOL-BTC dual K658, HL-only, Sh=29.66
+    "K658":     0.0124,  # ~unchanged 1.2% — SOL-ETH ETH-base, HL-primary, Sh=29.66
+    "K628":     0.0123,  # TRIMMED: 2.0%→1.2% — JTO-BTC orthog, Bybit-only, Sh=18.30 residual
+    "K631":     0.0122,  # TRIMMED: 2.0%→1.2% — WLD-BTC orthog, Bybit-only, Sh=18.04
+    "K633":     0.0112,  # TRIMMED: 2.0%→1.1% — OP-BTC orthog, Bybit-only, Sh=12.68
+    "K656":     0.0108,  # TRIMMED: 2.0%→1.1% — GALA-BTC dual-factor orthog, Bybit-only, Sh=8.32
+    "K646":     0.0106,  # TRIMMED: 2.0%→1.1% — ALGO-BTC orthog, Bybit-only, Sh=8.11
+    "K663":     0.0098,  # ~unchanged 1.0% — TIA-ETH ETH-base, HL-primary, Sh=17.13
+    "K507_TIA": 0.0091,  # TRIMMED: 1.5%→0.9% — TIA-BTC BTC-base dual K663, HL-only, Sh=14.44
+    "K638":     0.0089,  # TRIMMED: 1.5%→0.9% — STX-BTC orthog, Bybit-only, Sh=12.38
+    "K587":     0.0060,  # TRIMMED: 1.0%→0.6% — ICP-BTC HL+Bybit split, Sh=12.53 (ICP vol 8.40x)
+    # Sum ≈ 1.000 | HL: 53.6% | Bybit: 43.8% | K280: 30.0%
+    # K523 central: +$195,024/yr vs v6.51 @$10M AUM (conservative: +$184,568, optimistic: +$555,647)
+}
+
 # v6.16 candidate weights (proposed in K450 — not yet active)
 SLEEVE_WEIGHTS_V616: Dict[str, float] = {
     "K280":  0.72,   # reduced 3pp to fund K449 sleeve
