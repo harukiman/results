@@ -1,0 +1,168 @@
+{
+  "wave": "K659",
+  "strategy": "K656 GALA-BTC Dual-Factor Orthogonalized FR Differential",
+  "timestamp_jst": "2026-05-30 12:51 JST",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k656_gala_orthog_run.py",
+        "description": "Phase 1: K656 strategy script (K339 pattern, W=504h, \u03b2_JUP=0.22738 \u03b2_FIL=0.405439)",
+        "exists": true,
+        "size_bytes": 50340,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k656-gala-orthog.plist",
+        "description": "Phase 2: 50th daemon plist (StartInterval 28800, MILESTONE)",
+        "exists": true,
+        "size_bytes": 3002,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k656_dashboard.json",
+        "description": "Phase 3: Dashboard (residual signal, betas_used, regime)",
+        "exists": true,
+        "size_bytes": 3618,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k656 flag, \u00a751)",
+        "exists": true,
+        "size_bytes": 222510,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K656_GALA_ORTHOG + SLEEVE_WEIGHTS_V640)",
+        "exists": true,
+        "size_bytes": 64916,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K656_GALA_ORTHOG: 4.0 + k656_notes)",
+        "exists": true,
+        "size_bytes": 46770,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (50th daemon registry)",
+        "exists": true,
+        "size_bytes": 33314,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a751 (K656 GALA orthog playbook)",
+        "exists": true,
+        "size_bytes": 399596,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K656 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1578446,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k659_k656_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 17279,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_checks": {
+    "beta_jup_hardcoded": true,
+    "beta_fil_hardcoded": true,
+    "k339_repo_root": true,
+    "paper_trade_default": true,
+    "bybit_primary": true,
+    "post_only": true,
+    "signal_1_5sigma": true,
+    "sleeve_2pct": true,
+    "rolling_504h": true,
+    "gaming_cluster_note": true,
+    "dual_factor_note": true,
+    "50th_daemon_note": true,
+    "dashboard_beta_jup": true,
+    "dashboard_beta_fil": true,
+    "dashboard_regime": true,
+    "dashboard_oos_perf": true,
+    "dashboard_orthog_mech": true,
+    "dashboard_oos_sh": true,
+    "dashboard_50th": true,
+    "dashboard_gaming_cluster": true,
+    "cfg_k656_cap": true,
+    "cfg_k656_notes": true,
+    "cfg_beta_jup": true,
+    "cfg_beta_fil": true,
+    "cfg_sleeve_2pct": true,
+    "cfg_50th_milestone": true,
+    "emer_include_k656": true,
+    "emer_k656_summary": true,
+    "lev_k656_cap": true,
+    "lev_v640_weights": true,
+    "vds_50th_daemon": true,
+    "vds_50th_label": true,
+    "runbook_section51": true,
+    "runbook_beta_table": true,
+    "runbook_60d_gate": true,
+    "runbook_gaming_cluster": true,
+    "runbook_50th_milestone": true,
+    "html_k659_entry": true,
+    "html_k656_scaffold": true,
+    "html_50_daemons": true
+  },
+  "daemon_count": 50,
+  "daemon_ok": true,
+  "dry_run": {
+    "returncode": 0,
+    "success": true,
+    "stdout_len": 3743,
+    "stderr_len": 0,
+    "status": "PASS"
+  },
+  "k656_summary": {
+    "oos_sharpe_residual_df_504h": 8.3211,
+    "oos_sharpe_raw_k620": 12.0901,
+    "k620_status": "BLOCKED-G5 (JUP=0.4308 + FIL=0.4114 dual blockers)",
+    "is_r2": 0.4731,
+    "is_r2_note": "LARGEST in K6xx orthog series (dual-factor first)",
+    "oos_r2": -0.666,
+    "beta_jup": 0.22738,
+    "beta_fil": 0.405439,
+    "beta_note": "HARDCODED \u2014 no re-OLS in production for stability.",
+    "jup_corr_raw": 0.4308,
+    "jup_corr_post_orth": 0.0495,
+    "fil_corr_raw": 0.4114,
+    "fil_corr_post_orth": 0.0184,
+    "max_post_orth_corr": 0.2993,
+    "max_post_orth_pair": "UNI",
+    "g5_pass": true,
+    "gaming_distinct": "SAND=-0.058 < 0.40 (gaming cluster distinction RETAINED)",
+    "rolling_window": "W=504h (63 x 8h periods)",
+    "signal_threshold": "1.5\u03c3 of 504h rolling window",
+    "profit_2pct_net_usd_yr": 48143,
+    "profit_2pct_gross_usd_yr": 60179,
+    "sleeve_activation": "2% Bybit (GALA+BTC both legs, delta-neutral)",
+    "hl_concentration": "64.5% UNCHANGED (Bybit-only, HL cap 66.5% > 65%)",
+    "cluster": "Gaming Publisher / Gala Games P2E / GalaChain L1 (9th orthog scaffold)",
+    "gaming_cluster_complete": "SAND(K583)+AXS(K591)+IMX(K635)+GALA(K656) ALL ACCEPT CONDITIONAL",
+    "gate_60d": "Realized Sh>=4 + fill>=60% + maxDD<20% (50% of OOS Sh=8.32)",
+    "v640_candidate": "K656 2% Bybit + v6.39 portfolio",
+    "daemon_number": "50th",
+    "milestone": "K659 MILESTONE \u2014 50th daemon, 9th orthog scaffold, gaming cluster complete",
+    "orthog_series": "K628/K631/K633/K635/K638/K645/K646/K647/K656 (9 orthog scaffolds)",
+    "first_dual_factor": "YES \u2014 first JUP+FIL dual-factor orthog in K6xx series"
+  },
+  "overall_status": "PASS"
+}

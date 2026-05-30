@@ -3714,6 +3714,38 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K659: K656 GALA-BTC dual-factor orthog emergency exit flag
+    # K656 = Bybit-only GALA+BTC paired (2 legs) when residual rolling_mean_504h > 1.5sigma.
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL cap 66.5% > 65%, Bybit-only mandatory).
+    # Orthog: residual = GALA_diff - 0.22738*JUP_diff - 0.405439*FIL_diff (K656 OLS DF, betas hardcoded).
+    # Rolling window: W=504h = 63 x 8h periods (optimal per K656 analysis, DF dual-factor).
+    # 50th daemon MILESTONE — 9th orthog scaffold — gaming cluster COMPLETE.
+    # Use --include-k656 to print K656-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k656",
+        dest="include_k656",
+        action="store_true",
+        default=False,
+        help=(
+            "K659: Include K656 GALA-BTC dual-factor orthog close summary during emergency exit. "
+            "K656 positions (GALA+BTC paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Orthog: residual = GALA_diff - 0.22738*JUP_diff - 0.405439*FIL_diff (K656 OLS DF betas hardcoded). "
+            "Rolling window: W=504h = 63 x 8h periods (optimal per K656 dual-factor analysis). "
+            "HL concentration: UNCHANGED at 64.5% (Bybit-only; HL cap breach 66.5% > 65%). "
+            "OOS Sharpe 8.3211 (residual DF W=504h). $48,143/yr net @$10M @4x (2% sleeve). "
+            "60d paper-trade gate: Realized Sh>=4 + fill>=60% + maxDD<20%. "
+            "K620 dual blockers cleared: JUP 0.4308->0.0495, FIL 0.4114->0.0184. "
+            "IS R²=0.4731 LARGEST in K6xx series (FIRST dual-factor JUP+FIL orthog). "
+            "Gaming cluster COMPLETE: SAND(K583)+AXS(K591)+IMX(K635)+GALA(K656) all ACCEPT COND. "
+            "Cluster: Gaming Publisher / Gala Games P2E / GalaChain L1 (9th orthog, 50th daemon MILESTONE). "
+            "Requires: K656 daemon running (com.cryptolab.k656-gala-orthog, 50th daemon). "
+            "K656 on Bybit: GALA_diff - 0.22738*JUP_diff - 0.405439*FIL_diff (K659 scaffold). "
+            "See: docs/k302a_runbook.md §51"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -4264,6 +4296,32 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "K629 positions ARE included in the HL emergency exit above. "
                 "Use --include-k629 for structured K629 close summary (§50). "
                 "HL concentration ~59.5% (within 65% limit)."
+            )
+
+        # K659: K656 GALA-BTC dual-factor orthog close summary (Bybit-only — HL NOT affected)
+        # K656 positions (GALA+BTC, Bybit-only) are NOT in the HL exit above.
+        # K656 is Bybit-only: HL concentration UNCHANGED. Use --include-k656 for Bybit summary.
+        # 50th daemon MILESTONE — gaming cluster COMPLETE (SAND+AXS+IMX+GALA).
+        if args.include_k656:
+            logger.info("=== K656 GALA-BTC DUAL-FACTOR ORTHOG CLOSE SUMMARY (K659 §51) ===")
+            logger.info("  K656 GALA-BTC orthog: Bybit-only (GALA+BTC both legs on Bybit)")
+            logger.info("  Orthog: residual = GALA_diff - 0.22738*JUP_diff - 0.405439*FIL_diff (K656 OLS DF dual-factor, betas hardcoded)")
+            logger.info("  Rolling window: W=504h = 63 x 8h periods (optimal per K656 dual-factor analysis)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: UNCHANGED at 64.5% (K656 is Bybit-only; HL cap 66.5% > 65%)")
+            logger.info("  OOS Sharpe 8.3211 (residual DF W=504h) | $48,143/yr net @$10M @4x (2% sleeve)")
+            logger.info("  K620 dual blockers cleared: JUP 0.4308->0.0495 (-87%), FIL 0.4114->0.0184 (-96%)")
+            logger.info("  IS R²=0.4731 LARGEST in K6xx orthog series (FIRST dual-factor JUP+FIL)")
+            logger.info("  Gaming cluster COMPLETE: SAND(K583)+AXS(K591)+IMX(K635)+GALA(K656) all ACCEPT COND")
+            logger.info("  Cluster: Gaming Publisher / Gala Games P2E / GalaChain L1 (9th orthog, 50th daemon MILESTONE)")
+            logger.info("  60d gate: Realized Sh>=4 + fill>=60% + maxDD<20% (50% of OOS Sh=8.32)")
+            logger.info("  See: docs/k302a_runbook.md §51 (K656 GALA orthog playbook)")
+        else:
+            logger.info(
+                "K656 GALA-BTC orthog: Bybit-only (NOT HL). "
+                "Use --include-k656 for Bybit close summary (§51). "
+                "HL concentration UNCHANGED at 64.5% (HL cap breach 66.5% > 65%, Bybit-only). "
+                "50th daemon MILESTONE — gaming cluster COMPLETE (SAND+AXS+IMX+GALA)."
             )
 
         # K652: K648 POL-BTC orthog close summary (Bybit-only — HL NOT affected)

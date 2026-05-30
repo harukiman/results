@@ -392,6 +392,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k629_wld_eth",
         expected_html_status="SCAFFOLD-READY",  # K654: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=10 + fill_rate>=60% + maxDD<15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k656-gala-orthog",
+        purpose="K656 GALA-BTC Dual-Factor Orthogonalized FR Differential (Gaming Publisher Gala Games P2E GalaChain L1, Bybit-only GALA+BTC paired, 4x leverage, 8h cycle, OOS Sh 8.3211 residual DF W=504h, $48,143/yr net @$10M @4x, beta_JUP=0.22738 beta_FIL=0.405439 hardcoded, JUP 0.4308->0.0495 FIL 0.4114->0.0184 CLEARED, IS R2=0.4731 LARGEST in series (dual-factor first), HL concentration UNCHANGED 64.5% (Bybit-only; HL cap 66.5%>65%), 60d paper-trade gate, v6.40 candidate 2% sleeve, 50th daemon MILESTONE, K659 scaffold, gaming cluster COMPLETE: SAND+AXS+IMX+GALA)",
+        scripts=["scripts/k656_gala_orthog_run.py"],
+        log_basename="k656_gala_orthog",
+        expected_html_status="SCAFFOLD-READY",  # K659: plist in scripts/ (gitignored); activate after 60d gate (Realized Sh>=4 + fill_rate>=60% + maxDD<20%)
+    ),
 ]
 
 

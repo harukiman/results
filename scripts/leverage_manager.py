@@ -77,6 +77,7 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K648_POL_ORTHOG": 4.0,       # K652: POL-BTC orthogonalized (v6.37 candidate, Bybit-only, 2% sleeve, 4x leverage, OOS Sh 23.41 residual MF W=168h, $4,293,200/yr @$10M @4x, Polygon L2/PoS/zkEVM cluster unlock, beta_OP=0.337443 beta_SEI=0.075509 beta_APT=-0.016480 beta_TIA=0.059789 beta_FIL=0.042751 beta_SAND=0.200488, 6-factor unlock 7th orthog confirmed, 47th daemon)
     "K647_DOT_ORTHOG":  4.0,      # K653: DOT-BTC orthogonalized (v6.38 candidate, Bybit-only, 3% sleeve, 4x leverage, OOS Sh 23.25 residual SF W=168h, ~$103,586/yr net @$10M @4x, Governance/Staking Polkadot relay chain cluster, beta_INJ=0.642, INJ-cluster unlock 8th orthog, 48th daemon, OOS R²=-4.11 STRUCTURAL BREAK caution, IS beta re-OLS every 30d mandatory)
     "K629_WLD_ETH":   4.0,       # K654: WLD-ETH FR Differential (v6.38 candidate, HL-primary, 3% sleeve, 4x leverage, OOS Sh 19.90 W=168h direct diff, $94,210/yr @$10M @4x, Biometric ID cluster Cluster 24, ETH-base fix JUP-BTC corr=0.3437 PASS, 9/9 §6 gates, 49th daemon)
+    "K656_GALA_ORTHOG": 4.0,    # K659: GALA-BTC dual-factor orthogonalized (v6.40 candidate, Bybit-only, 2% sleeve, 4x leverage, OOS Sh 8.3211 residual DF W=504h, $48,143/yr net @$10M @4x, Gaming Publisher Gala Games P2E GalaChain L1, beta_JUP=0.22738 beta_FIL=0.405439, JUP+FIL dual-factor unlock 9th orthog MILESTONE, 50th daemon MILESTONE, gaming cluster COMPLETE)
     "K457_basket":    4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
@@ -540,6 +541,44 @@ SLEEVE_WEIGHTS_V639: Dict[str, float] = {
     "K648":    0.02,    # POL-BTC orthogonalized, 4x leverage, Bybit-only (v6.37 K652 addition, $4,293,200/yr, Polygon L2/zkEVM cluster)
     "K647":    0.03,    # DOT-BTC orthogonalized, 4x leverage, Bybit-only (v6.38 K653 addition, ~$103,586/yr net, Governance/Staking Polkadot relay chain, OOS R²=-4.11 caution)
     "K629":    0.03,    # WLD-ETH FR Differential, 4x leverage, HL-primary (v6.39 K654 addition, $94,210/yr, Biometric ID Cluster 24, ETH-base fix)
+    "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
+}
+
+# K656 GALA-BTC Dual-Factor Orthogonalized FR Differential 2% Bybit sleeve added to v6.39
+# OOS Sh 8.3211 (DF W=504h dual-factor, ACCEPT CONDITIONAL), $48,143/yr net @$10M @4x (2% sleeve)
+# Bybit-only: GALAUSDT perp + BTC-USDT-SWAP — HL cap breached (66.5% > 65%); HL concentration unchanged
+# Signal: residual = GALA_diff - 0.22738*JUP_diff - 0.405439*FIL_diff; rolling_mean_504h > 1.5sigma
+# K620 dual blockers cleared: JUP 0.4308->0.0495 (-87%), FIL 0.4114->0.0184 (-96%)
+# IS R²=0.4731: LARGEST in K6xx orthog series (FIRST dual-factor JUP+FIL)
+# Gaming cluster COMPLETE: SAND(K583)+AXS(K591)+IMX(K635)+GALA(K656) all ACCEPT CONDITIONAL
+# 60d paper-trade gate: Realized Sh>=4 + fill>=60% + maxDD<20% (50% of OOS Sh=8.32)
+# 50th daemon MILESTONE — 9th orthog scaffold — gaming cluster completion
+# Total combined v6.40: v6.39 portfolio + K656 $48K/yr = gaming cluster complete
+SLEEVE_WEIGHTS_V640: Dict[str, float] = {
+    "K280":    0.225,   # reduced 2pp vs v6.39 to fund K656 GALA orthog sleeve
+    "K297":    0.20,
+    "sUSDe":   0.05,
+    "K449":    0.05,    # ETH-BTC delta-neutral, 4x leverage, HL-only (v6.16 base, 5%)
+    "K476":    0.04,    # SOL-BTC delta-neutral, 4x leverage, HL-only (v6.21 addition, 4%)
+    "K484":    0.05,    # AVAX-BTC delta-neutral, 4x leverage, HL-only (v6.23 addition, 5%)
+    "K493":    0.05,    # ATOM-BTC delta-neutral, 4x leverage, HL-only (v6.24 addition, 5%)
+    "K500":    0.04,    # INJ-BTC delta-neutral, 4x leverage, HL-only (v6.25 addition, 4%)
+    "K507":    0.02,    # SEI-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.27 addition, 2%)
+    "K507_TIA": 0.01,  # TIA-BTC delta-neutral, 4x leverage, HL-only 1% (v6.28 K524 addition, $51K/yr)
+    "K512":    0.02,    # APT-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.28 addition, $302K/yr)
+    "K541":    0.03,    # Stablecoin supply growth, 2x leverage, HL-only (v6.29 K550 addition, $294K/yr)
+    "K521":    0.03,    # Options 25d skew DVOL+skew V4, 2x leverage, HL-only (v6.30 K565 addition, $494K/yr)
+    "K628":    0.02,    # JTO-BTC orthogonalized, 4x leverage, Bybit-only (v6.31 K637 addition, $7.14M/yr)
+    "K631":    0.02,    # WLD-BTC orthogonalized, 4x leverage, Bybit-only (v6.32 K639 addition, $2.9M/yr)
+    "K633":    0.02,    # OP-BTC orthogonalized, 4x leverage, Bybit-only (v6.33 K640 addition, $2.32M/yr)
+    "K635":    0.02,    # IMX-BTC orthogonalized, 4x leverage, Bybit-only (v6.34 K641 addition, $4.78M/yr, Gaming L2 Infra)
+    "K638":    0.015,   # STX-BTC orthogonalized, 4x leverage, Bybit-only (v6.35 K642 addition, $65K/yr net, BTC-L2 cluster)
+    "K645":    0.03,    # BNB-BTC orthogonalized, 4x leverage, Bybit-only (v6.36 K650 addition, $17,694/yr net, Binance-ecosystem)
+    "K646":    0.02,    # ALGO-BTC orthogonalized, 4x leverage, Bybit-only (v6.37 K651 addition, ~$20,325/yr net, Enterprise/Utility L1)
+    "K648":    0.02,    # POL-BTC orthogonalized, 4x leverage, Bybit-only (v6.37 K652 addition, $4,293,200/yr, Polygon L2/zkEVM cluster)
+    "K647":    0.03,    # DOT-BTC orthogonalized, 4x leverage, Bybit-only (v6.38 K653 addition, ~$103,586/yr net, Governance/Staking Polkadot relay chain, OOS R²=-4.11 caution)
+    "K629":    0.03,    # WLD-ETH FR Differential, 4x leverage, HL-primary (v6.39 K654 addition, $94,210/yr, Biometric ID Cluster 24, ETH-base fix)
+    "K656":    0.02,    # GALA-BTC dual-factor orthogonalized, 4x leverage, Bybit-only (v6.40 K659 MILESTONE, $48,143/yr net, Gaming Publisher GalaChain, JUP+FIL dual-factor, 50th daemon)
     "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
 }
 
