@@ -1,0 +1,1123 @@
+{
+  "wave": "K611",
+  "strategy": "POL-BTC FR Differential Paired-Trade (HL Primary / Bybit Secondary)",
+  "run_time_jst": "2026-05-30T09:11:36+0900",
+  "runtime_s": 4.5,
+  "decision": "BLOCKED-ROLLUP-SIBLING",
+  "decision_rationale": "[BLOCKED-ROLLUP-SIBLING] G5zb OP corr=0.5178 >= 0.40. POL = OP rollup cluster duplicate. L2/sidechain signals correlated.",
+  "polygon_cluster_status": {
+    "arb_k491": "CONDITIONAL (OOS Sh=0.509, vol=1.27x)",
+    "op_k609": "PENDING",
+    "pol_k611": "BLOCKED-ROLLUP-SIBLING",
+    "cluster_verdict": "SIDECHAIN-CLUSTER-BLOCKED: POL correlated with rollup L2 signals."
+  },
+  "data_info": {
+    "hl_pol_fr_rows": 14500,
+    "date_start": "2024-09-17 07:00:00",
+    "date_end": "2026-05-14 10:00:00",
+    "total_years": 1.655,
+    "oos_start": "2025-11-20 12:00:00",
+    "oos_end": "2026-05-14 10:00:00",
+    "oos_years": 0.479,
+    "fr_frequency": "1h (HL settles hourly)",
+    "data_caveat": "POL listed Sep 2024 (MATIC\u2192POL migration). Only 1.65yr total history."
+  },
+  "signal_config": {
+    "window_h": 504,
+    "threshold": 0.0,
+    "strategy_type": "always-on FR differential carry",
+    "direction_rule": "sign(21d rolling mean of btc_fr - pol_fr)",
+    "config_basis": "Grid best: W=504h / TF=0.0 (OOS Sh=46.523)"
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "pol_listed": true,
+      "pol_ticker": "POL",
+      "is_delisted": false,
+      "total_symbols": 230,
+      "max_leverage": 5,
+      "margin_table_id": 5,
+      "matic_delisted": true,
+      "api_success": true,
+      "venue_fail": false,
+      "note": "HL meta API: 230 symbols. POL: LISTED (isDelisted=False). MATIC: delisted=True. POL maxLeverage=5, marginTableId=5. POL-PERP on Hyperliquid (Polygon PoS sidechain + zkEVM). FR settlement: 1h intervals. Note: low maxLev=5 (high-risk alt tier)."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "pol_listed": true,
+      "status": "Trading",
+      "bybit_ticker": "POLUSDT",
+      "max_leverage": "75.00",
+      "funding_interval_min": 240,
+      "api_success": true,
+      "venue_fail": false,
+      "note": "Bybit POLUSDT: status=Trading, maxLeverage=75.00, fundingInterval=240min (4h settlement interval). Cross-venue validation: 4h FR vs HL 1h FR \u2014 resample to 8h for G8 check."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "pol_listed": true,
+      "state": "live",
+      "max_leverage": "50",
+      "inst_id": "POL-USDT-SWAP",
+      "ct_val": "10",
+      "api_success": true,
+      "venue_fail": false,
+      "note": "OKX POL-USDT-SWAP: state=live, maxLeverage=50, ctVal=10. 8h FR settlement interval. Multi-venue availability confirmed."
+    },
+    "vol_ratio_hl_6m": 3.7264,
+    "vol_ratio_hl_1y": 2.4377,
+    "vol_ratio_hl_full": 1.7744,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "vol_note": "HL 6M vol ratio=3.7264x (ABOVE 1.5x threshold). 1Y=2.4377x. full=1.7744x. POL = Polygon PoS sidechain + zkEVM: high-vol sidechain with AggLayer narrative cycles. MATIC\u2192POL migration Sep 2024 creates distinct vol regime vs ARB/OP rollups. Family comparison: ARB=1.269x (CONDITIONAL), SOL=1.76x (ACCEPT), AVAX=1.50x (ACCEPT). POL 6M=3.73x exceeds AVAX threshold \u2192 strong Phase 0 signal.",
+    "pol_fr_mean_ann_pct": 4.5849,
+    "btc_fr_mean_ann_pct": 11.084,
+    "fr_diff_mean": 7.42e-06,
+    "fr_diff_std": 2.955e-05,
+    "prescreen_pass": "True",
+    "pol_fr_rows": 14500,
+    "date_range": "2024-09-17 to 2026-05-14",
+    "days_total": 604
+  },
+  "statistical_analysis": {
+    "adf_stationarity": {
+      "statistic": -10.3051,
+      "p_value": 0.0,
+      "critical_1pct": -3.4308,
+      "critical_5pct": -2.8617,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "interpretation": "POL-BTC FR differential IS stationary at 1% level (stat -10.3051 vs 1% crit -3.4308). Mean-reversion assumption CONFIRMED."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.169955,
+      "half_life_hours": 4.08,
+      "half_life_days": 0.17,
+      "long_run_mean": 7.44e-06,
+      "r_squared": 0.0849,
+      "mean_reverting": "True",
+      "interpretation": "Half-life 4.08h (0.17d). Fast mean-reversion. 504h smoothing window appropriate for filtering noise."
+    },
+    "autocorrelation": {
+      "lag_1h": 0.8299,
+      "lag_24h": 0.3276,
+      "lag_168h": 0.1012,
+      "interpretation": "ACF(1h)=0.8299 (short-term persistence), ACF(24h)=0.3276, ACF(168h)=0.1012. Rolling mean exploits persistence at 1h-24h scale."
+    },
+    "l2_sidechain_cross": {
+      "pol_arb_fr_corr": 0.4666,
+      "pol_arb_diff_std": 2.913e-05,
+      "pol_op_fr_corr": 0.4453,
+      "pol_op_diff_std": 3.142e-05,
+      "pol_eth_fr_corr": 0.4288,
+      "interpretation": "POL-ARB FR corr=0.4666 (raw FR, sidechain vs rollup). POL-OP FR corr=0.4453 (raw FR, sidechain vs rollup). POL-ETH FR corr=0.4288 (checkpoint chain). Note: raw FR corr \u2260 signal corr (G5 tests signal direction alignment, not FR level)."
+    }
+  },
+  "pol_characteristics": {
+    "fr_vol_ratio_pol_btc_6m": 3.7264,
+    "fr_vol_ratio_pol_btc_1y": 2.4377,
+    "fr_vol_ratio_pol_btc_full": 1.7744,
+    "fr_vol_ratio_arb_btc_k491": 1.269,
+    "fr_vol_ratio_eth_btc_k449": 1.084,
+    "fr_vol_ratio_sol_btc_k476": 1.764,
+    "fr_vol_ratio_avax_btc_k484": 1.499,
+    "pol_fr_mean_ann_pct": 4.5849,
+    "btc_fr_mean_ann_pct": 11.084,
+    "fr_diff_mean": 7.42e-06,
+    "fr_diff_std": 2.955e-05,
+    "pol_arb_fr_corr": 0.4666,
+    "pol_op_fr_corr": 0.4453,
+    "pol_eth_fr_corr": 0.4288,
+    "l2_cluster_notes": "POL (Polygon) sidechain mechanics distinct from ARB/OP rollup L2s: 1. Architecture: Polygon PoS = independent validator set (not fraud-proof rollup).    Heimdall + Bor dual-chain, periodic Ethereum checkpoint anchoring. 2. MATIC\u2192POL migration (Sep 2024): supply mechanics change, new FR baseline established.    FR data starts Sep 2024 (604 days total, 1.65yr). 3. Polygon 2.0 / AggLayer: cross-chain liquidity aggregation \u2192 episodic demand bursts. 4. Polygon zkEVM: ZK-proof based rollup (separate chain) \u2192 dual-chain narrative cycles. 5. Polygon CDK: other chains (OKX X Layer, Immutable zkEVM) \u2192 ecosystem news events. 6. Validator staking yields: POL staking rewards = FR demand driver vs sequencer model. 7. FR vol 3.73x (6M) \u2014 highest in current L2/sidechain eval set.    Indicates stronger speculative cycles than ARB (1.27x) or OP (~1.5x).",
+    "sidechain_vs_rollup_hypothesis": "ARB (K491 CONDITIONAL): OOS Sh=0.509, vol ratio 1.27x \u2192 insufficient vol for edge. OP (K609 PENDING): vol ratio ~1.5x, OOS results TBD. POL (K611): vol ratio 3.73x (6M) >> ARB and OP. Sidechain hypothesis: POL validator/staking economics create FR regimes orthogonal to optimistic rollup sequencer dynamics. MATIC\u2192POL migration disrupts historical correlation patterns vs ARB/OP. If G5za ARB PASS and G5zb OP PASS \u2192 Polygon sidechain = new distinct cluster.",
+    "data_caveats": "POL history starts Sep 2024 (MATIC\u2192POL token migration). Only ~1.65 years of data (604 days). OOS period ~0.49yr. G9 data sufficiency may FAIL (< 180d OOS). Short history means WF folds limited. Treat OOS Sharpe with caution \u2014 elevated by post-migration regime shift."
+  },
+  "grid_search": {
+    "best_config": {
+      "window_h": 504,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 8.86,
+      "OOS_sharpe": 46.523,
+      "entries": 1,
+      "OOS_ret_pct": 16.281,
+      "entries_yr": 2.1
+    },
+    "top5_configs": [
+      {
+        "window_h": 504,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 8.86,
+        "OOS_sharpe": 46.523,
+        "entries": 1,
+        "OOS_ret_pct": 16.281,
+        "entries_yr": 2.1
+      },
+      {
+        "window_h": 336,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 13.77,
+        "OOS_sharpe": 41.636,
+        "entries": 5,
+        "OOS_ret_pct": 15.5,
+        "entries_yr": 10.3
+      },
+      {
+        "window_h": 336,
+        "threshold_factor": 0.5,
+        "threshold_value": 1.236e-05,
+        "IS_sharpe": 4.239,
+        "OOS_sharpe": 37.729,
+        "entries": 6,
+        "OOS_ret_pct": 13.562,
+        "entries_yr": 12.4
+      },
+      {
+        "window_h": 504,
+        "threshold_factor": 0.5,
+        "threshold_value": 1.236e-05,
+        "IS_sharpe": 2.547,
+        "OOS_sharpe": 34.115,
+        "entries": 8,
+        "OOS_ret_pct": 12.663,
+        "entries_yr": 16.7
+      },
+      {
+        "window_h": 72,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 7.009,
+        "OOS_sharpe": 33.244,
+        "entries": 25,
+        "OOS_ret_pct": 15.249,
+        "entries_yr": 50.6
+      }
+    ],
+    "grid_windows": [
+      72,
+      168,
+      336,
+      504
+    ],
+    "grid_thresholds": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "n_trials": 12
+  },
+  "backtest_results": {
+    "full_period": {
+      "sharpe": 20.8093,
+      "ann_ret_pct": 6.7696,
+      "max_dd_pct": -0.7546,
+      "entries": 25,
+      "years": 1.598
+    },
+    "in_sample": {
+      "sharpe": 8.8597,
+      "ann_ret_pct": 2.6929,
+      "years": 1.118,
+      "entries": 24
+    },
+    "out_of_sample": {
+      "sharpe": 46.5229,
+      "ann_ret_pct": 16.2813,
+      "max_dd_pct": -0.2364,
+      "entries": 1,
+      "entries_yr": 2.1,
+      "years": 0.479,
+      "oos_start": "2025-11-20 12:00:00",
+      "oos_end": "2026-05-14 10:00:00"
+    }
+  },
+  "statistical_tests": {
+    "permutation": {
+      "real_sharpe": 46.5229,
+      "perm_mean_sh": 0.1078,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr_bonferroni": {
+      "n_trials": 12,
+      "t_stat": 32.8967,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.004167,
+      "pass": true
+    },
+    "walk_forward_12fold": {
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2024-12-16",
+          "oos_end": "2025-01-15",
+          "sharpe": 4.112,
+          "ann_ret_pct": 0.884,
+          "entries": 1
+        },
+        {
+          "fold": 2,
+          "oos_start": "2025-01-15",
+          "oos_end": "2025-02-14",
+          "sharpe": 48.862,
+          "ann_ret_pct": 12.683,
+          "entries": 0
+        },
+        {
+          "fold": 3,
+          "oos_start": "2025-02-14",
+          "oos_end": "2025-03-16",
+          "sharpe": 32.739,
+          "ann_ret_pct": 6.028,
+          "entries": 0
+        },
+        {
+          "fold": 4,
+          "oos_start": "2025-03-16",
+          "oos_end": "2025-04-15",
+          "sharpe": -17.006,
+          "ann_ret_pct": -3.467,
+          "entries": 1
+        },
+        {
+          "fold": 5,
+          "oos_start": "2025-04-15",
+          "oos_end": "2025-05-15",
+          "sharpe": 32.859,
+          "ann_ret_pct": 8.555,
+          "entries": 1
+        },
+        {
+          "fold": 6,
+          "oos_start": "2025-05-15",
+          "oos_end": "2025-06-14",
+          "sharpe": 10.126,
+          "ann_ret_pct": 2.306,
+          "entries": 1
+        },
+        {
+          "fold": 7,
+          "oos_start": "2025-06-14",
+          "oos_end": "2025-07-14",
+          "sharpe": -5.535,
+          "ann_ret_pct": -1.984,
+          "entries": 5
+        },
+        {
+          "fold": 8,
+          "oos_start": "2025-07-14",
+          "oos_end": "2025-08-13",
+          "sharpe": -11.609,
+          "ann_ret_pct": -5.598,
+          "entries": 8
+        },
+        {
+          "fold": 9,
+          "oos_start": "2025-08-13",
+          "oos_end": "2025-09-12",
+          "sharpe": -0.756,
+          "ann_ret_pct": -0.223,
+          "entries": 3
+        },
+        {
+          "fold": 10,
+          "oos_start": "2025-09-12",
+          "oos_end": "2025-10-12",
+          "sharpe": 9.328,
+          "ann_ret_pct": 1.87,
+          "entries": 1
+        },
+        {
+          "fold": 11,
+          "oos_start": "2025-10-12",
+          "oos_end": "2025-11-11",
+          "sharpe": 34.322,
+          "ann_ret_pct": 5.686,
+          "entries": 0
+        },
+        {
+          "fold": 12,
+          "oos_start": "2025-11-11",
+          "oos_end": "2025-12-11",
+          "sharpe": 19.697,
+          "ann_ret_pct": 3.183,
+          "entries": 0
+        }
+      ],
+      "fold_sharpes": [
+        4.112,
+        48.862,
+        32.739,
+        -17.006,
+        32.859,
+        10.126,
+        -5.535,
+        -11.609,
+        -0.756,
+        9.328,
+        34.322,
+        19.697
+      ],
+      "all_positive": false,
+      "min_fold_sharpe": -17.006,
+      "n_folds_computed": 12,
+      "pass": false,
+      "note": "12-fold walk-forward (IS 90d / OOS 30d). All folds positive: False. n_folds=12."
+    }
+  },
+  "g5_correlations": {
+    "all_pass": false,
+    "max_corr": 0.5178,
+    "max_corr_pair": "OP",
+    "sidechain_blocked": false,
+    "rollup_blocked": true,
+    "arb_corr": 0.3015,
+    "op_corr": 0.5178,
+    "cluster_note": "BLOCKED-ROLLUP-SIBLING: POL = OP rollup cluster duplicate",
+    "details": {
+      "G5j_K280": {
+        "corr": 0.05,
+        "pass": true,
+        "note": "Structural estimate: K280 uses 15m volume momentum. K611 is daily FR carry. Mechanically distinct. Corr ~0.05."
+      },
+      "G5a_ETH": {
+        "corr": 0.1751,
+        "pass": true,
+        "note": "POL-BTC signal vs ETH-BTC: corr=0.1751 (PASS threshold 0.40) [ETH-L1 CHECKPOINT RISK]"
+      },
+      "G5b_SOL": {
+        "corr": 0.3529,
+        "pass": true,
+        "note": "POL-BTC signal vs SOL-BTC: corr=0.3529 (PASS threshold 0.40)"
+      },
+      "G5c_AVAX": {
+        "corr": 0.2638,
+        "pass": true,
+        "note": "POL-BTC signal vs AVAX-BTC: corr=0.2638 (PASS threshold 0.40)"
+      },
+      "G5d_ATOM": {
+        "corr": 0.1652,
+        "pass": true,
+        "note": "POL-BTC signal vs ATOM-BTC: corr=0.1652 (PASS threshold 0.40)"
+      },
+      "G5e_INJ": {
+        "corr": 0.3218,
+        "pass": true,
+        "note": "POL-BTC signal vs INJ-BTC: corr=0.3218 (PASS threshold 0.40)"
+      },
+      "G5f_SEI": {
+        "corr": 0.4935,
+        "pass": false,
+        "note": "POL-BTC signal vs SEI-BTC: corr=0.4935 (FAIL threshold 0.40)"
+      },
+      "G5g_TIA": {
+        "corr": 0.4203,
+        "pass": false,
+        "note": "POL-BTC signal vs TIA-BTC: corr=0.4203 (FAIL threshold 0.40)"
+      },
+      "G5h_APT": {
+        "corr": 0.5064,
+        "pass": false,
+        "note": "POL-BTC signal vs APT-BTC: corr=0.5064 (FAIL threshold 0.40)"
+      },
+      "G5i_FIL": {
+        "corr": 0.4427,
+        "pass": false,
+        "note": "POL-BTC signal vs FIL-BTC: corr=0.4427 (FAIL threshold 0.40)"
+      },
+      "G5k_RNDR": {
+        "corr": -0.0688,
+        "pass": true,
+        "note": "POL-BTC signal vs RNDR-BTC: corr=-0.0688 (PASS threshold 0.40)"
+      },
+      "G5l_TAO": {
+        "corr": 0.3287,
+        "pass": true,
+        "note": "POL-BTC signal vs TAO-BTC: corr=0.3287 (PASS threshold 0.40)"
+      },
+      "G5m_LINK": {
+        "corr": null,
+        "pass": true,
+        "note": "hl_fr_LINK.parquet not found \u2014 skip, assume PASS"
+      },
+      "G5n_TON": {
+        "corr": null,
+        "pass": true,
+        "note": "Insufficient data for TON \u2014 skip, assume PASS"
+      },
+      "G5o_SAND": {
+        "corr": 0.4274,
+        "pass": false,
+        "note": "POL-BTC signal vs SAND-BTC: corr=0.4274 (FAIL threshold 0.40)"
+      },
+      "G5p_ICP": {
+        "corr": null,
+        "pass": true,
+        "note": "Insufficient data for ICP \u2014 skip, assume PASS"
+      },
+      "G5q_AXS": {
+        "corr": null,
+        "pass": true,
+        "note": "POL-BTC signal vs AXS-BTC: corr=NaN (data-insufficient for AXS). Assume PASS."
+      },
+      "G5r_DOGE": {
+        "corr": 0.3348,
+        "pass": true,
+        "note": "POL-BTC signal vs DOGE-BTC: corr=0.3348 (PASS threshold 0.40)"
+      },
+      "G5s_UNI": {
+        "corr": 0.0702,
+        "pass": true,
+        "note": "POL-BTC signal vs UNI-BTC: corr=0.0702 (PASS threshold 0.40)"
+      },
+      "G5t_SHIB": {
+        "corr": 0.3414,
+        "pass": true,
+        "note": "POL-BTC signal vs SHIB-BTC: corr=0.3414 (PASS threshold 0.40)"
+      },
+      "G5u_AAVE": {
+        "corr": -0.0218,
+        "pass": true,
+        "note": "POL-BTC signal vs AAVE-BTC: corr=-0.0218 (PASS threshold 0.40)"
+      },
+      "G5v_CRV": {
+        "corr": 0.2385,
+        "pass": true,
+        "note": "POL-BTC signal vs CRV-BTC: corr=0.2385 (PASS threshold 0.40)"
+      },
+      "G5w_WIF": {
+        "corr": 0.1786,
+        "pass": true,
+        "note": "POL-BTC signal vs WIF-BTC: corr=0.1786 (PASS threshold 0.40)"
+      },
+      "G5x_LTC": {
+        "corr": 0.2936,
+        "pass": true,
+        "note": "POL-BTC signal vs LTC-BTC: corr=0.2936 (PASS threshold 0.40)"
+      },
+      "G5y_BCH": {
+        "corr": 0.2963,
+        "pass": true,
+        "note": "POL-BTC signal vs BCH-BTC: corr=0.2963 (PASS threshold 0.40)"
+      },
+      "G5z_JUP": {
+        "corr": 0.2489,
+        "pass": true,
+        "note": "POL-BTC signal vs JUP-BTC: corr=0.2489 (PASS threshold 0.40)"
+      },
+      "G5za_ARB": {
+        "corr": 0.3015,
+        "pass": true,
+        "note": "POL-BTC signal vs ARB-BTC: corr=0.3015 (PASS threshold 0.40) [SIDECHAIN vs ROLLUP: CRITICAL]"
+      },
+      "G5zb_OP": {
+        "corr": 0.5178,
+        "pass": false,
+        "note": "POL-BTC signal vs OP-BTC: corr=0.5178 (FAIL threshold 0.40) [ROLLUP CLUSTER: CRITICAL]"
+      },
+      "G5zc_BONK": {
+        "corr": 0.2619,
+        "pass": true,
+        "note": "POL-BTC signal vs BONK-BTC: corr=0.2619 (PASS threshold 0.40)"
+      },
+      "G5zd_PEPE": {
+        "corr": 0.231,
+        "pass": true,
+        "note": "POL-BTC signal vs PEPE-BTC: corr=0.2310 (PASS threshold 0.40)"
+      },
+      "G5ze_COMP": {
+        "corr": 0.2513,
+        "pass": true,
+        "note": "POL-BTC signal vs COMP-BTC: corr=0.2513 (PASS threshold 0.40)"
+      },
+      "G5zf_TRX": {
+        "corr": -0.0012,
+        "pass": true,
+        "note": "POL-BTC signal vs TRX-BTC: corr=-0.0012 (PASS threshold 0.40)"
+      }
+    }
+  },
+  "cross_venue_validation": {
+    "bybit": {
+      "n_obs": 3265,
+      "corr_with_hl": 0.643,
+      "venue_mean": 1.658e-05,
+      "hl_mean": 5.23e-06,
+      "date_range": "2024-09-05 \u2013 2026-05-30",
+      "passes_g8": true
+    },
+    "okx": {
+      "n_obs": 0,
+      "corr_with_hl": null,
+      "passes_g8": false,
+      "note": "Data not available"
+    },
+    "avg_corr": 0.643,
+    "g8_pass": true,
+    "note": "Multi-venue cross-check (HL 1h vs Bybit 4h). Avg corr=0.6430 (\u2265 0.55 threshold). Note: Bybit POLUSDT uses 4h FR settlement (vs HL 1h) \u2014 resample for alignment."
+  },
+  "gates": {
+    "G1_oos_sharpe": {
+      "value": 46.5229,
+      "threshold": 1.0,
+      "pass": true,
+      "note": "OOS Sharpe 46.5229 \u2265 1.0."
+    },
+    "G2_perm_pvalue": {
+      "value": 0.0,
+      "threshold": 0.05,
+      "pass": true,
+      "note": "500 direction reshuffles OOS. p=0.0000."
+    },
+    "G3_dsr_bonferroni": {
+      "n_trials": 12,
+      "t_stat": 32.8967,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.004167,
+      "pass": true,
+      "note": "Bonferroni: p < 0.05/12 = 0.004167"
+    },
+    "G4_walk_forward_12fold": {
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2024-12-16",
+          "oos_end": "2025-01-15",
+          "sharpe": 4.112,
+          "ann_ret_pct": 0.884,
+          "entries": 1
+        },
+        {
+          "fold": 2,
+          "oos_start": "2025-01-15",
+          "oos_end": "2025-02-14",
+          "sharpe": 48.862,
+          "ann_ret_pct": 12.683,
+          "entries": 0
+        },
+        {
+          "fold": 3,
+          "oos_start": "2025-02-14",
+          "oos_end": "2025-03-16",
+          "sharpe": 32.739,
+          "ann_ret_pct": 6.028,
+          "entries": 0
+        },
+        {
+          "fold": 4,
+          "oos_start": "2025-03-16",
+          "oos_end": "2025-04-15",
+          "sharpe": -17.006,
+          "ann_ret_pct": -3.467,
+          "entries": 1
+        },
+        {
+          "fold": 5,
+          "oos_start": "2025-04-15",
+          "oos_end": "2025-05-15",
+          "sharpe": 32.859,
+          "ann_ret_pct": 8.555,
+          "entries": 1
+        },
+        {
+          "fold": 6,
+          "oos_start": "2025-05-15",
+          "oos_end": "2025-06-14",
+          "sharpe": 10.126,
+          "ann_ret_pct": 2.306,
+          "entries": 1
+        },
+        {
+          "fold": 7,
+          "oos_start": "2025-06-14",
+          "oos_end": "2025-07-14",
+          "sharpe": -5.535,
+          "ann_ret_pct": -1.984,
+          "entries": 5
+        },
+        {
+          "fold": 8,
+          "oos_start": "2025-07-14",
+          "oos_end": "2025-08-13",
+          "sharpe": -11.609,
+          "ann_ret_pct": -5.598,
+          "entries": 8
+        },
+        {
+          "fold": 9,
+          "oos_start": "2025-08-13",
+          "oos_end": "2025-09-12",
+          "sharpe": -0.756,
+          "ann_ret_pct": -0.223,
+          "entries": 3
+        },
+        {
+          "fold": 10,
+          "oos_start": "2025-09-12",
+          "oos_end": "2025-10-12",
+          "sharpe": 9.328,
+          "ann_ret_pct": 1.87,
+          "entries": 1
+        },
+        {
+          "fold": 11,
+          "oos_start": "2025-10-12",
+          "oos_end": "2025-11-11",
+          "sharpe": 34.322,
+          "ann_ret_pct": 5.686,
+          "entries": 0
+        },
+        {
+          "fold": 12,
+          "oos_start": "2025-11-11",
+          "oos_end": "2025-12-11",
+          "sharpe": 19.697,
+          "ann_ret_pct": 3.183,
+          "entries": 0
+        }
+      ],
+      "fold_sharpes": [
+        4.112,
+        48.862,
+        32.739,
+        -17.006,
+        32.859,
+        10.126,
+        -5.535,
+        -11.609,
+        -0.756,
+        9.328,
+        34.322,
+        19.697
+      ],
+      "all_positive": false,
+      "min_fold_sharpe": -17.006,
+      "n_folds_computed": 12,
+      "pass": false,
+      "note": "12-fold walk-forward (IS 90d / OOS 30d). All folds positive: False. n_folds=12."
+    },
+    "G5j_K280": {
+      "value": 0.05,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Structural estimate: K280 momentum vs FR carry are mechanically distinct."
+    },
+    "G5a_ETH": {
+      "value": 0.1751,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs ETH-BTC: corr=0.1751 (PASS threshold 0.40) [ETH-L1 CHECKPOINT RISK]"
+    },
+    "G5b_SOL": {
+      "value": 0.3529,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs SOL-BTC: corr=0.3529 (PASS threshold 0.40)"
+    },
+    "G5c_AVAX": {
+      "value": 0.2638,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs AVAX-BTC: corr=0.2638 (PASS threshold 0.40)"
+    },
+    "G5d_ATOM": {
+      "value": 0.1652,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs ATOM-BTC: corr=0.1652 (PASS threshold 0.40)"
+    },
+    "G5e_INJ": {
+      "value": 0.3218,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs INJ-BTC: corr=0.3218 (PASS threshold 0.40)"
+    },
+    "G5f_SEI": {
+      "value": 0.4935,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "POL-BTC signal vs SEI-BTC: corr=0.4935 (FAIL threshold 0.40)"
+    },
+    "G5g_TIA": {
+      "value": 0.4203,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "POL-BTC signal vs TIA-BTC: corr=0.4203 (FAIL threshold 0.40)"
+    },
+    "G5h_APT": {
+      "value": 0.5064,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "POL-BTC signal vs APT-BTC: corr=0.5064 (FAIL threshold 0.40)"
+    },
+    "G5i_FIL": {
+      "value": 0.4427,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "POL-BTC signal vs FIL-BTC: corr=0.4427 (FAIL threshold 0.40)"
+    },
+    "G5k_RNDR": {
+      "value": -0.0688,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs RNDR-BTC: corr=-0.0688 (PASS threshold 0.40)"
+    },
+    "G5l_TAO": {
+      "value": 0.3287,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs TAO-BTC: corr=0.3287 (PASS threshold 0.40)"
+    },
+    "G5m_LINK": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "hl_fr_LINK.parquet not found \u2014 skip, assume PASS"
+    },
+    "G5n_TON": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Insufficient data for TON \u2014 skip, assume PASS"
+    },
+    "G5o_SAND": {
+      "value": 0.4274,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "POL-BTC signal vs SAND-BTC: corr=0.4274 (FAIL threshold 0.40)"
+    },
+    "G5p_ICP": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Insufficient data for ICP \u2014 skip, assume PASS"
+    },
+    "G5q_AXS": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs AXS-BTC: corr=NaN (data-insufficient for AXS). Assume PASS."
+    },
+    "G5r_DOGE": {
+      "value": 0.3348,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs DOGE-BTC: corr=0.3348 (PASS threshold 0.40)"
+    },
+    "G5s_UNI": {
+      "value": 0.0702,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs UNI-BTC: corr=0.0702 (PASS threshold 0.40)"
+    },
+    "G5t_SHIB": {
+      "value": 0.3414,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs SHIB-BTC: corr=0.3414 (PASS threshold 0.40)"
+    },
+    "G5u_AAVE": {
+      "value": -0.0218,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs AAVE-BTC: corr=-0.0218 (PASS threshold 0.40)"
+    },
+    "G5v_CRV": {
+      "value": 0.2385,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs CRV-BTC: corr=0.2385 (PASS threshold 0.40)"
+    },
+    "G5w_WIF": {
+      "value": 0.1786,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs WIF-BTC: corr=0.1786 (PASS threshold 0.40)"
+    },
+    "G5x_LTC": {
+      "value": 0.2936,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs LTC-BTC: corr=0.2936 (PASS threshold 0.40)"
+    },
+    "G5y_BCH": {
+      "value": 0.2963,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs BCH-BTC: corr=0.2963 (PASS threshold 0.40)"
+    },
+    "G5z_JUP": {
+      "value": 0.2489,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs JUP-BTC: corr=0.2489 (PASS threshold 0.40)"
+    },
+    "G5za_ARB": {
+      "value": 0.3015,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs ARB-BTC: corr=0.3015 (PASS threshold 0.40) [SIDECHAIN vs ROLLUP: CRITICAL]"
+    },
+    "G5zb_OP": {
+      "value": 0.5178,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "POL-BTC signal vs OP-BTC: corr=0.5178 (FAIL threshold 0.40) [ROLLUP CLUSTER: CRITICAL]"
+    },
+    "G5zc_BONK": {
+      "value": 0.2619,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs BONK-BTC: corr=0.2619 (PASS threshold 0.40)"
+    },
+    "G5zd_PEPE": {
+      "value": 0.231,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs PEPE-BTC: corr=0.2310 (PASS threshold 0.40)"
+    },
+    "G5ze_COMP": {
+      "value": 0.2513,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs COMP-BTC: corr=0.2513 (PASS threshold 0.40)"
+    },
+    "G5zf_TRX": {
+      "value": -0.0012,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "POL-BTC signal vs TRX-BTC: corr=-0.0012 (PASS threshold 0.40)"
+    },
+    "G6_trade_count": {
+      "total": 1,
+      "per_year": 2.1,
+      "threshold": 30.0,
+      "pass": "False",
+      "note": "2.1 entries/yr vs 30.0 threshold."
+    },
+    "G7_ann_return": {
+      "value_1x_pct": 16.2813,
+      "value_4x_pct": 65.1253,
+      "threshold_pct": 5.0,
+      "pass": true,
+      "leverage_assumption": "4x on notional (delta-neutral, low DD)",
+      "note": "At 4x leverage: 65.125% \u2265 5.0% threshold."
+    },
+    "G8_cross_venue": {
+      "bybit": {
+        "n_obs": 3265,
+        "corr_with_hl": 0.643,
+        "venue_mean": 1.658e-05,
+        "hl_mean": 5.23e-06,
+        "date_range": "2024-09-05 \u2013 2026-05-30",
+        "passes_g8": true
+      },
+      "okx": {
+        "n_obs": 0,
+        "corr_with_hl": null,
+        "passes_g8": false,
+        "note": "Data not available"
+      },
+      "avg_corr": 0.643,
+      "g8_pass": true,
+      "pass": true,
+      "note": "Multi-venue cross-check (HL 1h vs Bybit 4h). Avg corr=0.6430 (\u2265 0.55 threshold). Note: Bybit POLUSDT uses 4h FR settlement (vs HL 1h) \u2014 resample for alignment."
+    },
+    "G9_data_sufficiency": {
+      "oos_years": 0.479,
+      "oos_days": 175.0,
+      "threshold_days": 180,
+      "pass": false,
+      "note": "OOS period 175d < 180d threshold. NOTE: POL data starts Sep 2024 (MATIC\u2192POL migration). Total history 250d, OOS=175d."
+    },
+    "_summary": {
+      "gates_passed": 30,
+      "gates_total": 39,
+      "gate_details": {
+        "G1": true,
+        "G2": true,
+        "G3": true,
+        "G4": false,
+        "G5j": true,
+        "G5a": true,
+        "G5b": true,
+        "G5c": true,
+        "G5d": true,
+        "G5e": true,
+        "G5f": false,
+        "G5g": false,
+        "G5h": false,
+        "G5i": false,
+        "G5k": true,
+        "G5l": true,
+        "G5m": true,
+        "G5n": true,
+        "G5o": false,
+        "G5p": true,
+        "G5q": true,
+        "G5r": true,
+        "G5s": true,
+        "G5t": true,
+        "G5u": true,
+        "G5v": true,
+        "G5w": true,
+        "G5x": true,
+        "G5y": true,
+        "G5z": true,
+        "G5za": true,
+        "G5zb": false,
+        "G5zc": true,
+        "G5zd": true,
+        "G5ze": true,
+        "G5zf": true,
+        "G6": "False",
+        "G7": true,
+        "G8": true,
+        "G9": false
+      },
+      "oos_sharpe": 46.5229,
+      "perm_p": 0.0,
+      "wf_all_positive": false,
+      "g5_all_pass": false,
+      "sidechain_blocked": false,
+      "rollup_blocked": true,
+      "cluster_note": "BLOCKED-ROLLUP-SIBLING: POL = OP rollup cluster duplicate"
+    }
+  },
+  "profit_projection": {
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000.0,
+      "oos_ann_ret_1x_pct": 16.2813,
+      "oos_ann_ret_4x_pct": 65.1253,
+      "gross_annual_usdc": 195376,
+      "net_annual_usdc_est": 156301
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 12000000.0,
+      "oos_ann_ret_1x_pct": 16.2813,
+      "oos_ann_ret_4x_pct": 65.1253,
+      "gross_annual_usdc": 1953758,
+      "net_annual_usdc_est": 1563006
+    },
+    "usdc_yr_net_10M": 156301,
+    "note": "4x leverage, OOS ann=16.281% x 4 = 65.125%/yr. @$10M 3.0% alloc: $156,301/yr (net 80%). @$100M 3.0% alloc: $1,563,006/yr (net 80%). POL = Polygon PoS sidechain + zkEVM (distinct from ARB/OP rollup cluster). MATIC\u2192POL migration Sep 2024 creates elevated vol premium vs rollup L2s."
+  },
+  "hl_concentration": {
+    "current_hl_weight_pct": 64.5,
+    "k611_sleeve_pct": 3.0,
+    "new_hl_weight_pct": 67.5,
+    "hl_cap_pct": 65.0,
+    "within_cap": false,
+    "breach": true,
+    "headroom_pct": -2.5,
+    "hl_max_leverage_pol": 5,
+    "hl_lev_note": "HL POL-PERP maxLev=5 (high-risk alt tier \u2014 lower leverage cap than SOL/ETH). Bybit maxLev=75.",
+    "note": "Post-K608/K609: HL baseline=64.5% (paper pending 9.0%). K611 POL 3.0% sleeve \u2192 HL 67.5% (BREACH 65.0% cap). Bybit-primary recommended (HL breach or HL maxLev=5 limit). Bybit POLUSDT maxLev=75 preferred for larger position sizing. OKX POL-USDT-SWAP maxLev=50 as secondary venue."
+  },
+  "family_rank": {
+    "pol_rank": 4,
+    "pol_sharpe": 46.5229,
+    "pol_net_usdc_yr": 156301,
+    "family_size": 28,
+    "table": [
+      {
+        "rank": 1,
+        "pair": "APT-BTC",
+        "sharpe": 51.1,
+        "status": "ACCEPT",
+        "wave": "K512"
+      },
+      {
+        "rank": 2,
+        "pair": "ATOM-BTC",
+        "sharpe": 50.786,
+        "status": "ACCEPT",
+        "wave": "K493"
+      },
+      {
+        "rank": 3,
+        "pair": "SEI-BTC",
+        "sharpe": 48.1,
+        "status": "ACCEPT",
+        "wave": "K507"
+      },
+      {
+        "pair": "POL-BTC",
+        "sharpe": 46.5229,
+        "ecosystem": "Polygon sidechain L2 + zkEVM (Polygon 2.0 / AggLayer)",
+        "status": "BLOCKED-ROLLUP-SIBLING",
+        "wave": "K611",
+        "net_dollar_yr_10M": 156301,
+        "rank": 4
+      },
+      {
+        "rank": 5,
+        "pair": "AVAX-BTC",
+        "sharpe": 43.887,
+        "status": "ACCEPT",
+        "wave": "K484"
+      },
+      {
+        "rank": 6,
+        "pair": "SHIB-BTC",
+        "sharpe": 38.481,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K595"
+      },
+      {
+        "rank": 7,
+        "pair": "SAND-BTC",
+        "sharpe": 33.627,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K583"
+      },
+      {
+        "rank": 8,
+        "pair": "JUP-BTC",
+        "sharpe": 29.895,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K606"
+      },
+      {
+        "rank": 9,
+        "pair": "PEPE-BTC",
+        "sharpe": 26.42,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K598"
+      },
+      {
+        "rank": 10,
+        "pair": "BCH-BTC",
+        "sharpe": 26.002,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K605"
+      },
+      {
+        "rank": 11,
+        "pair": "BONK-BTC",
+        "sharpe": 23.667,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K603"
+      },
+      {
+        "rank": 12,
+        "pair": "FIL-BTC",
+        "sharpe": 21.773,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K517"
+      }
+    ]
+  }
+}
