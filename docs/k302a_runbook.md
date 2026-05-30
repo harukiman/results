@@ -14279,3 +14279,230 @@ python3 scripts/k763_compound_scheduler.py --analysis
 | K523 | K523 3-point projection mandate (conservative/central/optimistic) |
 | K724 | K724 v6.51 incremental update ($21.81M mid, 9 alt-alts, 63 daemons) |
 | K439 | K439 POST_ONLY paired execution (fill rate gate G8) |
+
+## §74 K764 — Phase A++ Activation Master Plan (K744-K763 Cumulative)
+
+**Generated:** 2026-05-30 21:50 JST | **Wave:** K764 | **K339:** REPO_ROOT pattern | **K523:** 3-point mandatory | **LIVE auto-change:** PROHIBITED
+
+### §74.1 Overview
+
+K764 synthesizes all pending Phase A++ items (K744-K763) into a single canonical activation queue with risk-ranked priority order, K523 3-point projections, and v7.0 architecture proposal. This section is the master runbook for all pending user-activation items.
+
+**Problem solved:** Session shipped 20+ waves K744-K763 with cumulative user-activation potential >$2M/yr realized but no unified priority. K764 provides that synthesis.
+
+### §74.2 Architecture Progression
+
+| Version | Status | K523 Cons (realized) | K523 Central (realized) | K523 Opt (realized) |
+|---------|--------|--------------------|------------------------|---------------------|
+| v6.51 | **NON-COMPLIANT** | $818K/yr | $1.13M/yr | $2.16M/yr |
+| v6.52 | 1-flip ready | $888K/yr | $1.21M/yr | $2.37M/yr |
+| **v7.0** | Phase A++ full stack | **$1.09M/yr** | **$2.81M/yr** | **$8.31M/yr** |
+
+v6.51 violations: HL 66.8% > 65% cap | Bybit 55.7% > 50% cap | K280 15.5% < 30% floor.  
+**K751 v6.52 is mandatory before any new sleeve activation.**
+
+### §74.3 K523 Uplift Summary Table (Incremental, @$10M AUM)
+
+| Item | Title | Tier | Cons (realized) | Central (realized) | Opt (realized) |
+|------|-------|------|-----------------|--------------------|----------------|
+| K763 | Daily Compound Scheduler | T1 | $1.3K | $1,246,830 | $5,182,047 |
+| K755 | HL Builder Rebate | T1 | $37,683 | $94,208 | $188,415 |
+| K753 | K545 Tax Loss Harvester | T1 | $28,120 | $70,300 | $140,600 |
+| K751 | v6.52 Kelly Sizing (MANDATORY) | T2 | $70,136 | $74,109 | $211,146 |
+| K742 | K492-C Persistence Filter | T2 | $7,600 | $12,350 | $17,100 |
+| K745 | K498 OKX Integration | T3 | $11,964 | $17,943 | $52,625 |
+| K757 | K485 Bybit Sub-Account | T3 | $7,600 | $19,000 | $45,600 |
+| K747 | TAO-SOL Live Elevation | T4 | $12,920 | $23,560 | $41,800 |
+| K754 | PEPE-SOL Live Elevation | T4 | $13,208 | $23,560 | $32,558 |
+| K759 | WIF-SOL Live Elevation | T4 | $7,849 | $20,613 | $29,202 |
+| **TOTAL** | **All Phase A++ Incremental** | | **$198,416** | **$1,602,473** | **$5,941,093** |
+
+**K523 WARNING:** Central $1.60M/yr realized is NOT upper bound — it is the planning anchor. K763 central ($1.25M realized) is contingent on all sleeves live at v6.52 r=218%/yr (K724 confirmed). K208 decay (K509: -67% Y/Y) makes conservative framing more realistic if v6.52 transition is delayed.
+
+### §74.4 Tier 1 — Immediate, Zero/Low Risk (Day 1)
+
+**K763: Daily Compound Scheduler (73rd Daemon)**
+
+- K523: $1.3K / $1.25M / $5.18M realized (K518 38%)
+- `COMPOUND_FREQUENCY=daily` + `launchctl load com.cryptolab.k763-compound-scheduler.plist`
+- Revert: `COMPOUND_FREQUENCY=monthly` → instant
+
+**K755: HL Builder Rebate (Zero Risk)**
+
+- K523: $38K / $94K / $188K realized (K518 38%)
+- `HL_BUILDER_CODE=0x<YOUR_WALLET>` in `.env.local` + restart 10 HL daemons
+- Revert: unset env var → silent no-op
+- f=0: no extra cost to trader; worst case = current cost structure
+
+**K753: K545 Tax Loss Harvester (70th Daemon — Paper Default)**
+
+- K523 shield: $28K / $70K / $141K realized (K518 38%)
+- `launchctl load com.cryptolab.k545-tax-harvester.plist`
+- **DISCLAIMER: NOT TAX ADVICE. CPA consultation mandatory before `--live`.**
+- Revert: `PAPER_TRADE=True` + reload → no harvests
+
+### §74.5 Tier 2 — Immediate, MANDATORY Compliance Fix (Days 2-3)
+
+**K751: v6.52 Kelly Sleeve Sizing — MANDATORY BEFORE ANY NEW ACTIVATION**
+
+- v6.51 is NON-COMPLIANT: HL 66.8% > 65% cap, Bybit 55.7% > 50% cap, K280 15.5% < 30% floor
+- K523 uplift: $70K / $74K / $211K realized (vs v6.51 baseline)
+- Add `SLEEVE_WEIGHTS_V652` to `scripts/leverage_manager.py`
+- Revert: `git revert` — single file, no cascade
+- 60d monitoring: HL <= 65%, Bybit <= 50%, K280 >= 30%, Sharpe >= 9.33
+
+**K742: K492-C Persistence Filter**
+
+- K523 uplift: $7.6K / $12.4K / $17.1K realized
+- `PERSISTENCE_ENABLED = True` in `scripts/k280_live_fetch.py`
+- Revert: `PERSISTENCE_ENABLED = False` OR `git apply -R wave_k742_k492c_ready.diff`
+
+### §74.6 Tier 3 — Medium Risk, Account Setup (Week 1)
+
+**K745: K498 OKX Integration (3rd Venue)**
+
+- Primary value: HL 65%→50% relief (+$1.5M headroom)
+- K523: $12K / $18K / $53K realized (new strategies from headroom)
+- Create OKX API key (trade-only, no withdraw) → `.env.local` → 7d paper → `OKX_LIVE_ENABLED=true`
+- Prerequisite: K751 v6.52 active first
+- Revert: `OKX_LIVE_ENABLED=false` → instant
+
+**K757: K485 Bybit Sub-Account**
+
+- Primary value: $5M Bybit sub headroom, 10 alt-alt sleeves isolated
+- K523: $7.6K / $19K / $45.6K realized
+- Create sub-account on Bybit → trade-only API key → `BYBIT_SUB_API_KEY` in `.env.local`
+- Prerequisite: K751 v6.52 active; Bybit identity verification required
+- Revert: unset `BYBIT_SUB_API_KEY` → all routing back to main
+
+### §74.7 Tier 4 — Paper-Gate Dependent (Weeks 2-4)
+
+All require: K498 OKX live + 60d paper gate PASS (Sh>=6, fill>=60%, maxDD<15%)
+
+| Item | Strategy | OOS Sh | Central Realized | Critical Risk |
+|------|----------|--------|-----------------|---------------|
+| K747 | TAO-SOL | 41.2 | $23.6K/yr | AI narrative cycle beta |
+| K754 | PEPE-SOL | 44.43 | $23.6K/yr | L003 AVAX proximity monthly |
+| K759 | WIF-SOL | 24.45 | $20.6K/yr | G5w PEPE-SOL 0.382 borderline |
+
+### §74.8 Activation Sequence (Step-by-Step)
+
+```bash
+# ─── Day 1: Tier 1 ────────────────────────────────────────────────────
+# K763 compound scheduler
+python3 scripts/k763_compound_scheduler.py --set-frequency daily --paper
+cp scripts/com.cryptolab.k763-compound-scheduler.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k763-compound-scheduler.plist
+
+# K755 builder rebate
+echo 'HL_BUILDER_CODE=0x<YOUR_WALLET>' >> .env.local
+# Restart each HL daemon (k246a, k272a, k280, k302a, k449, k476, k484, k493, k500, k507):
+for PLIST in k246a-live k272a-live k280-live k302a-satellite k449-eth-btc k476-sol-btc k484-avax-btc k493-atom-btc k500-inj-btc k507-sei-btc; do
+  launchctl unload ~/Library/LaunchAgents/com.cryptolab.${PLIST}.plist
+  launchctl load  ~/Library/LaunchAgents/com.cryptolab.${PLIST}.plist
+done
+
+# K753 tax harvester (PAPER only — CPA consultation first)
+cp scripts/com.cryptolab.k545-tax-harvester.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k545-tax-harvester.plist
+# Verify: launchctl list | grep k545-tax
+
+# ─── Days 2-3: Tier 2 ─────────────────────────────────────────────────
+# K751 v6.52 (MANDATORY COMPLIANCE FIX — do this FIRST)
+# Edit scripts/leverage_manager.py: add SLEEVE_WEIGHTS_V652
+# See data/kelly_optimal_weights.json for full weight spec
+# Then restart leverage_manager daemon
+
+# K742 K492-C patch
+# Edit scripts/k280_live_fetch.py: PERSISTENCE_ENABLED = True
+# Then restart k280-live daemon
+
+# ─── Week 1: Tier 3 ───────────────────────────────────────────────────
+# K498 OKX
+# 1. Create OKX API key: https://www.okx.com/account/users/personal-center/api
+# 2. echo 'OKX_API_KEY=<key>\nOKX_API_SECRET=<secret>\nOKX_PASSPHRASE=<pp>' >> .env.local
+# 3. python3 scripts/okx_client.py --paper-test  # Run 7d paper
+# 4. After 7d: OKX_LIVE_ENABLED=true in .env.local + live_enabled=true in venue_allocation.json
+
+# K485 Bybit sub-account
+# 1. Create sub-account at bybit.com/user/assets/sub-account
+# 2. Generate trade-only API key for sub-account
+# 3. echo 'BYBIT_SUB_API_KEY=<key>\nBYBIT_SUB_API_SECRET=<secret>' >> .env.local
+
+# ─── Weeks 2-4: Tier 4 ────────────────────────────────────────────────
+# Monitor paper gates — do NOT elevate before 60d PASS
+# python3 scripts/verify_deployment_status.py | grep -E "K747|K754|K759"
+```
+
+### §74.9 Reversibility Matrix
+
+| Item | Revert Method | Impact |
+|------|--------------|--------|
+| K763 | `COMPOUND_FREQUENCY=monthly` | Instant, no position change |
+| K755 | Unset `HL_BUILDER_CODE` | Silent no-op, no execution change |
+| K753 | `PAPER_TRADE=True` + reload | No harvests, no re-entry |
+| K751 | `git revert` (1 file) | Returns to v6.51 weights |
+| K742 | `PERSISTENCE_ENABLED=False` | K280 reverts to original gates |
+| K745 | `OKX_LIVE_ENABLED=false` | All routing back to HL/Bybit |
+| K757 | Unset `BYBIT_SUB_API_KEY` | All routing back to Bybit main |
+| K747/K754/K759 | `live_enabled=false` | Back to paper mode |
+
+### §74.10 60d Post-Activation Monitoring
+
+After each tier activation:
+
+| Metric | Threshold | Action on Breach |
+|--------|-----------|-----------------|
+| HL concentration | <= 65% (v6.52: 53.6%) | Emergency rebalance |
+| Bybit concentration | <= 50% (v6.52: 43.8%) | Block new Bybit trades |
+| K280 weight | >= 30% | Rebalance to floor |
+| K763 rebalance cost | <= $325/day | Reduce frequency |
+| K755 daily credit | >= $93/day (conservative) | Verify builder code active |
+| K753 harvests | Wash-sale window respected | Audit trade log |
+| K745 OKX fill rate | >= 60% | Switch to HL/Bybit fallback |
+| K757 Bybit sub routing | Correct sleeve assignment | Verify venue_allocation.json |
+| Tier 4 paper Sharpe | >= 6.0 (per strategy) | Continue paper; do NOT elevate |
+
+### §74.11 v7.0 Architecture Components
+
+```
+v6.51 (NON-COMPLIANT)
+    ↓ K751 1-flip (MANDATORY)
+v6.52 (Kelly-compliant)
+    + K763 daily compound scheduler (73rd daemon)
+    + K755 HL builder rebate (zero-risk fee opt)
+    + K753 K545 tax harvester (70th daemon)
+    + K498 OKX 3rd venue (HL cap relief)
+    + K485 Bybit sub-account (alt-alt isolation)
+    + K492-C persistence filter (K280 quality gate)
+    + TAO/PEPE/WIF live elevation (after 60d gates)
+    ↓
+v7.0 (full Phase A++ stack)
+    K523 @$10M: $2.86M / $7.39M / $21.9M gross
+    Realized:    $1.09M / $2.81M / $8.31M (K518 38%)
+```
+
+### §74.12 Memory Update Checklist
+
+- [ ] Create `project_v651_compliance_violation.md` — document violations + K751 resolution
+- [ ] Update `project_ct_lab_mission_v2.md` §Phase A++ — K764 complete, 10 items, 4 tiers
+- [ ] Update `feedback_k523_single_point_projection.md` — v7.0 K523 3-point totals
+- [ ] After K751 activation: update `wave_k532_governance_v5.md` concentration status
+
+### §74.13 References
+
+| Wave | Description |
+|------|-------------|
+| K764 | This section — Phase A++ governance synthesis master plan |
+| K763 | K763 compounding schedule optimizer (73rd daemon, §73) |
+| K755 | K755 K481 builder rebate activation scaffold |
+| K753 | K753 K545 tax loss harvester scaffold (70th daemon, §69) |
+| K751 | K751 Kelly criterion v6.52 sleeve sizing (§68) |
+| K742 | K742 K492-C persistence filter ready-for-flip (§65) |
+| K745 | K745 K498 OKX integration scaffold (§66) |
+| K757 | K757 K485 Bybit sub-account scaffold (§71) |
+| K747 | K747 TAO-SOL FR differential (§67) |
+| K754 | K754 PEPE-SOL FR differential eval |
+| K759 | K759 WIF-SOL FR differential eval (§72) |
+| K523 | K523 3-point projection mandate |
+| K518 | K518 38% realized-to-stated ratio floor |

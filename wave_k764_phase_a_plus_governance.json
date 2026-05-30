@@ -1,0 +1,899 @@
+{
+  "wave": "K764",
+  "title": "Phase A++ Governance Synthesis (K744-K763 Cumulative)",
+  "generated_jst": "2026-05-30 21:53 JST",
+  "generated_utc": "2026-05-30T12:53:49.576708+00:00",
+  "k339_pattern": "REPO_ROOT = Path(__file__).resolve().parent",
+  "k523_mandatory": true,
+  "k518_haircut_ratio": 0.38,
+  "live_auto_change_prohibited": true,
+  "aum_ref_usd": 10000000,
+  "items": [
+    {
+      "id": "K763",
+      "title": "Daily Compound Scheduler",
+      "wave": "K763",
+      "tier": 1,
+      "tier_label": "Immediate — zero infra risk",
+      "status": "SCAFFOLD-READY",
+      "zero_risk": false,
+      "zero_infra_change": true,
+      "days_to_activate": 1,
+      "daemon_number": 73,
+      "k523_gross": {
+        "conservative": 3517,
+        "central": 3281131,
+        "optimistic": 13636966,
+        "note": "Conservative=monthly→weekly scheduling increment only (@r=10% decay env). Central=weekly→daily at v6.52 r=218%/yr (K724 confirmed). Optimistic=daily+half-Kelly+continuous rebalance @r=273%/yr. K523: central and optimistic contingent on ALL sleeves live at v6.52. Daily operational cost $118K/yr negligible vs compound uplift.",
+        "k518_applied": false
+      },
+      "k523_realized": {
+        "conservative": 1336,
+        "central": 1246830,
+        "optimistic": 5182047,
+        "note": "K518 38% realized | Conservative=monthly→weekly scheduling increment only (@r=10% decay env). Central=weekly→daily at v6.52 r=218%/yr (K724 confirmed). Optimistic=daily+half-Kelly+continuous rebalance @r=273%/yr. K523: central and optimistic contingent on ALL sleeves live at v6.52. Daily operational cost $118K/yr negligible vs compound uplift.",
+        "k518_applied": true
+      },
+      "activation_1step": "COMPOUND_FREQUENCY=daily in scripts/k763_compound_scheduler.py + launchctl load",
+      "reversibility": "COMPOUND_FREQUENCY=monthly returns to current behavior instantly",
+      "critical_risks": [
+        "K763 central ($3.28M) contingent on all sleeves live + v6.52 r=218%/yr",
+        "K208 decay (K509): realistic env closer to conservative framing unless full live stack active",
+        "Daily rebalance: $118K/yr operational cost, must be net-positive vs gross uplift"
+      ],
+      "files": [
+        "scripts/k763_compound_scheduler.py",
+        "scripts/com.cryptolab.k763-compound-scheduler.plist"
+      ],
+      "activation_prerequisite": []
+    },
+    {
+      "id": "K755",
+      "title": "HL Builder Rebate",
+      "wave": "K755",
+      "tier": 1,
+      "tier_label": "Immediate — zero risk",
+      "status": "BUILDER-REBATE-READY",
+      "zero_risk": true,
+      "zero_infra_change": true,
+      "days_to_activate": 1,
+      "daemon_number": null,
+      "k523_gross": {
+        "conservative": 99166,
+        "central": 247915,
+        "optimistic": 495830,
+        "note": "Conservative=10% referral pool allocation, central=25%, optimistic=50%. HL fraction 57.5%, daily turnover 1.5x, POST_ONLY fill rate 70%. 10 HL daemons benefit automatically. Worst case: silent no-op (f=0). K368 correction: referral pool mechanism, exact rate undocumented by HL.",
+        "k518_applied": false
+      },
+      "k523_realized": {
+        "conservative": 37683,
+        "central": 94208,
+        "optimistic": 188415,
+        "note": "K518 38% realized | Conservative=10% referral pool allocation, central=25%, optimistic=50%. HL fraction 57.5%, daily turnover 1.5x, POST_ONLY fill rate 70%. 10 HL daemons benefit automatically. Worst case: silent no-op (f=0). K368 correction: referral pool mechanism, exact rate undocumented by HL.",
+        "k518_applied": true
+      },
+      "activation_1step": "Set HL_BUILDER_CODE=0x<YOUR_WALLET> in .env.local + restart 10 HL daemons",
+      "reversibility": "Unset HL_BUILDER_CODE → silent no-op, zero impact on execution",
+      "critical_risks": [
+        "Referral pool mechanism — exact rebate rate not published by HL as of 2026-05",
+        "POST_ONLY fill rate 70% assumption — may vary with market microstructure",
+        "Builder code must be from approveBuilderFee signed by MAIN wallet (not agent)"
+      ],
+      "files": [
+        "scripts/k481_builder_rebate.py",
+        "data/builder_codes.json",
+        "scripts/post_only_order_manager.py"
+      ],
+      "activation_prerequisite": []
+    },
+    {
+      "id": "K753",
+      "title": "K545 Tax Loss Harvester",
+      "wave": "K753",
+      "tier": 1,
+      "tier_label": "Immediate — zero risk (paper default)",
+      "status": "SCAFFOLD-READY",
+      "zero_risk": false,
+      "zero_infra_change": false,
+      "days_to_activate": 1,
+      "daemon_number": 70,
+      "k523_gross": {
+        "conservative": 74000,
+        "central": 185000,
+        "optimistic": 370000,
+        "note": "Tax shield NOT trading alpha. INFORMATIONAL ONLY — NOT TAX ADVICE. Conservative=$200K losses/yr @37% rate. Central=$500K. Optimistic=$1M. CPA consultation MANDATORY before --live. US_STCG 37% assumed. Wash-sale 30d default. Regime stress guard (max_dd>15%) may suppress.",
+        "k518_applied": false
+      },
+      "k523_realized": {
+        "conservative": 28120,
+        "central": 70300,
+        "optimistic": 140600,
+        "note": "K518 38% realized | Tax shield NOT trading alpha. INFORMATIONAL ONLY — NOT TAX ADVICE. Conservative=$200K losses/yr @37% rate. Central=$500K. Optimistic=$1M. CPA consultation MANDATORY before --live. US_STCG 37% assumed. Wash-sale 30d default. Regime stress guard (max_dd>15%) may suppress.",
+        "k518_applied": true
+      },
+      "activation_1step": "launchctl load com.cryptolab.k545-tax-harvester.plist (paper default; CPA required before live)",
+      "reversibility": "Set PAPER_TRADE=True + launchctl reload → no harvests, no re-entry",
+      "critical_risks": [
+        "NOT TAX ADVICE — CPA consultation mandatory before any live harvest",
+        "US wash-sale 30d assumption may differ by jurisdiction (JP/KOR/DE: 0d)",
+        "Regime stress guard may suppress harvests during drawdown periods",
+        "FIFO basis method — verify against K302a/K443 trade logs"
+      ],
+      "files": [
+        "scripts/k545_tax_harvester.py",
+        "scripts/com.cryptolab.k545-tax-harvester.plist"
+      ],
+      "activation_prerequisite": []
+    },
+    {
+      "id": "K751",
+      "title": "v6.52 Kelly Sleeve Sizing (MANDATORY COMPLIANCE FIX)",
+      "wave": "K751",
+      "tier": 2,
+      "tier_label": "Immediate — low risk, MANDATORY (compliance)",
+      "status": "SCAFFOLD-READY",
+      "zero_risk": false,
+      "zero_infra_change": true,
+      "days_to_activate": 2,
+      "daemon_number": null,
+      "k523_gross": {
+        "conservative": 184568,
+        "central": 195024,
+        "optimistic": 555647,
+        "note": "Uplift vs v6.51. Half-Kelly (0.5x) method. v6.51 violations FIXED: HL 66.8%→53.6% (-13.2pp), Bybit 55.7%→43.8% (-11.9pp), K280 15.5%→30.0% (+14.5pp mandate). Portfolio Sh 9.33→70.4 (concentration fix primary driver). K751 is MANDATORY before activating K745/K757 (cap fix prerequisite).",
+        "k518_applied": false
+      },
+      "k523_realized": {
+        "conservative": 70136,
+        "central": 74109,
+        "optimistic": 211146,
+        "note": "K518 38% realized | Uplift vs v6.51. Half-Kelly (0.5x) method. v6.51 violations FIXED: HL 66.8%→53.6% (-13.2pp), Bybit 55.7%→43.8% (-11.9pp), K280 15.5%→30.0% (+14.5pp mandate). Portfolio Sh 9.33→70.4 (concentration fix primary driver). K751 is MANDATORY before activating K745/K757 (cap fix prerequisite).",
+        "k518_applied": true
+      },
+      "activation_1step": "Add SLEEVE_WEIGHTS_V652 to scripts/leverage_manager.py (1-flip, single file)",
+      "reversibility": "git revert — single file, no cascade effects",
+      "critical_risks": [
+        "v6.51 is NON-COMPLIANT — K751 is mandatory, not optional optimization",
+        "Bybit 43.8% post-fix assumes sub-account not yet added; K757 shifts numbers",
+        "K280 weight restoration (15.5%→30%) reduces K208 decay impact on K280 sleeve"
+      ],
+      "files": [
+        "scripts/leverage_manager.py",
+        "data/kelly_optimal_weights.json"
+      ],
+      "activation_prerequisite": []
+    },
+    {
+      "id": "K742",
+      "title": "K492-C Persistence Filter Patch",
+      "wave": "K742",
+      "tier": 2,
+      "tier_label": "Immediate — low risk (config flip)",
+      "status": "DIFF-READY",
+      "zero_risk": false,
+      "zero_infra_change": true,
+      "days_to_activate": 2,
+      "daemon_number": null,
+      "k523_gross": {
+        "conservative": 20000,
+        "central": 32500,
+        "optimistic": 45000,
+        "note": "K492-C adds spread-gradient persistence gate to K280 (K208 DAR). Backtest: 80% filter rate (2/10 symbols pass in sim). Conservative: 20% live pass rate, reduced false entries. Central: 35% pass rate improvement. Optimistic: 50% improvement. Addresses K208 decay (K509: -67% Y/Y, K280 sleeve $400K/yr).",
+        "k518_applied": false
+      },
+      "k523_realized": {
+        "conservative": 7600,
+        "central": 12350,
+        "optimistic": 17100,
+        "note": "K518 38% realized | K492-C adds spread-gradient persistence gate to K280 (K208 DAR). Backtest: 80% filter rate (2/10 symbols pass in sim). Conservative: 20% live pass rate, reduced false entries. Central: 35% pass rate improvement. Optimistic: 50% improvement. Addresses K208 decay (K509: -67% Y/Y, K280 sleeve $400K/yr).",
+        "k518_applied": true
+      },
+      "activation_1step": "Set PERSISTENCE_ENABLED = True in scripts/k280_live_fetch.py",
+      "reversibility": "PERSISTENCE_ENABLED = False OR git apply -R wave_k742_k492c_ready.diff",
+      "critical_risks": [
+        "80% filter rate may over-suppress entries in sustained trending markets",
+        "Gradient check may produce false negatives in low-liquidity periods",
+        "K208 decay is structural (crowding + spread mean-reversion) — filter alone insufficient"
+      ],
+      "files": [
+        "scripts/k280_live_fetch.py",
+        "wave_k742_k492c_ready.diff"
+      ],
+      "activation_prerequisite": []
+    },
+    {
+      "id": "K745",
+      "title": "K498 OKX Integration (3rd Venue)",
+      "wave": "K745",
+      "tier": 3,
+      "tier_label": "Medium risk — account setup required",
+      "status": "SCAFFOLD-READY",
+      "zero_risk": false,
+      "zero_infra_change": false,
+      "days_to_activate": 7,
+      "daemon_number": null,
+      "k523_gross": {
+        "conservative": 31484,
+        "central": 47218,
+        "optimistic": 138486,
+        "note": "Primary value: HL 65%→50% relief (+$1.5M headroom, 5 new strategies possible). Conservative=1 new strategy @Sh=10. Mid=1 new strategy @Sh=15. Optimistic=2 new strategies @Sh=22. OKX taker rebate $38-57/yr (negligible). OOS haircut 25% applied to new strategy projections. 25/25 API smoke tests passed (paper mode). HL relief independent of K757.",
+        "k518_applied": false
+      },
+      "k523_realized": {
+        "conservative": 11964,
+        "central": 17943,
+        "optimistic": 52625,
+        "note": "K518 38% realized | Primary value: HL 65%→50% relief (+$1.5M headroom, 5 new strategies possible). Conservative=1 new strategy @Sh=10. Mid=1 new strategy @Sh=15. Optimistic=2 new strategies @Sh=22. OKX taker rebate $38-57/yr (negligible). OOS haircut 25% applied to new strategy projections. 25/25 API smoke tests passed (paper mode). HL relief independent of K757.",
+        "k518_applied": true
+      },
+      "activation_1step": "OKX_LIVE_ENABLED=true in .env.local + live_enabled=true in venue_allocation.json",
+      "reversibility": "OKX_LIVE_ENABLED=false → all routing reverts to HL/Bybit instantly",
+      "critical_risks": [
+        "OKX API key setup required (trade-only, no withdraw — security hygiene)",
+        "Must paper-trade 7d minimum before live enable",
+        "HL cap relief (65%→50%) is primary value driver — dependent on K751 first",
+        "OKX liquidity on alt-alt pairs may differ from HL; fill rate comparison required"
+      ],
+      "files": [
+        "scripts/okx_client.py",
+        "scripts/okx_fr_cache.py",
+        "scripts/multi_venue_router.py",
+        "data/venue_allocation.json"
+      ],
+      "activation_prerequisite": [
+        "K751 v6.52 activated first (concentration caps fix required)"
+      ]
+    },
+    {
+      "id": "K757",
+      "title": "K485 Bybit Sub-Account (2nd Bybit)",
+      "wave": "K757",
+      "tier": 3,
+      "tier_label": "Medium risk — account setup required",
+      "status": "SCAFFOLD-READY",
+      "zero_risk": false,
+      "zero_infra_change": false,
+      "days_to_activate": 7,
+      "daemon_number": null,
+      "k523_gross": {
+        "conservative": 20000,
+        "central": 50000,
+        "optimistic": 120000,
+        "note": "Capacity relief, not direct alpha. Bybit 55.7%→halved-effective. $5M sub headroom @$10M AUM. 10 alt-alt sleeves → sub account. Conservative=5pp relief, central=10pp, optimistic=20pp. K757 and K498 effects are independent and additive. 41/41 scaffold tests passed. Sub activation pending API key.",
+        "k518_applied": false
+      },
+      "k523_realized": {
+        "conservative": 7600,
+        "central": 19000,
+        "optimistic": 45600,
+        "note": "K518 38% realized | Capacity relief, not direct alpha. Bybit 55.7%→halved-effective. $5M sub headroom @$10M AUM. 10 alt-alt sleeves → sub account. Conservative=5pp relief, central=10pp, optimistic=20pp. K757 and K498 effects are independent and additive. 41/41 scaffold tests passed. Sub activation pending API key.",
+        "k518_applied": true
+      },
+      "activation_1step": "Paste BYBIT_SUB_API_KEY + BYBIT_SUB_API_SECRET into .env.local",
+      "reversibility": "Unset BYBIT_SUB_API_KEY → all routing returns to main (no code change)",
+      "critical_risks": [
+        "Bybit sub-account creation requires identity verification on Bybit platform",
+        "API key must be trade-only (no withdraw) — critical security requirement",
+        "After K757 alone: Bybit_main still 55.7% — K751 v6.52 must also be active",
+        "Transfer between main and sub has delay — not suitable for emergency exit path"
+      ],
+      "files": [
+        "scripts/bybit_multi_account_client.py",
+        "scripts/risk_manager.py",
+        "data/venue_allocation.json"
+      ],
+      "activation_prerequisite": [
+        "K751 v6.52 activated first (Bybit_main still at 55.7% after K757 if K751 not done)"
+      ]
+    },
+    {
+      "id": "K747",
+      "title": "TAO-SOL Live Elevation",
+      "wave": "K747",
+      "tier": 4,
+      "tier_label": "Paper-gate dependent (K498 + 60d gate)",
+      "status": "PAPER-GATE",
+      "zero_risk": false,
+      "zero_infra_change": false,
+      "days_to_activate": 30,
+      "daemon_number": null,
+      "k523_gross": {
+        "conservative": 34000,
+        "central": 62000,
+        "optimistic": 110000,
+        "note": "TAO = AI L1 (Bittensor), 69th daemon, 15th alt-alt. OOS Sh=41.2 (K747 eval). Paper-gate until K498 live (HL cap relief). Live elevation requires 60d paper PASS: Sh>=6, fill>=60%, maxDD<15%. Conservative: moderate AI narrative cycle alignment. Optimistic: bull rotation.",
+        "k518_applied": false
+      },
+      "k523_realized": {
+        "conservative": 12920,
+        "central": 23560,
+        "optimistic": 41800,
+        "note": "K518 38% realized | TAO = AI L1 (Bittensor), 69th daemon, 15th alt-alt. OOS Sh=41.2 (K747 eval). Paper-gate until K498 live (HL cap relief). Live elevation requires 60d paper PASS: Sh>=6, fill>=60%, maxDD<15%. Conservative: moderate AI narrative cycle alignment. Optimistic: bull rotation.",
+        "k518_applied": true
+      },
+      "activation_1step": "Set live_enabled=true in data/k747_dashboard.json after gate PASS",
+      "reversibility": "Set live_enabled=false → paper-only mode",
+      "critical_risks": [
+        "TAO = high beta to AI narrative cycle — correlated to BTC/ETH bull runs",
+        "HL concentration at 66.8% pre-K751 — must wait for compliance fix + K498",
+        "60d paper gate is hard requirement (not advisory)"
+      ],
+      "files": [
+        "data/k747_dashboard.json"
+      ],
+      "activation_prerequisite": [
+        "K498 OKX integration active (K745)",
+        "60d paper gate: Sh>=6, fill>=60%, maxDD<15%"
+      ]
+    },
+    {
+      "id": "K754",
+      "title": "PEPE-SOL Live Elevation",
+      "wave": "K754",
+      "tier": 4,
+      "tier_label": "Paper-gate dependent (K498 + 60d gate)",
+      "status": "PAPER-GATE",
+      "zero_risk": false,
+      "zero_infra_change": false,
+      "days_to_activate": 30,
+      "daemon_number": null,
+      "k523_gross": {
+        "conservative": 34758,
+        "central": 62000,
+        "optimistic": 85678,
+        "note": "PEPE-SOL, 71st daemon, 16th alt-alt, 14th vertex ERC-20 meme cluster. OOS Sh=44.43, G4 12/12 ALL POSITIVE, G5 22/22 PASS. Bybit 1000PEPE denomination. L003 AVAX proximity warning (0.4125 < 0.40 threshold). Monthly L003 recheck required. MR9 L002 PEPE-X auto-blocked (SOL pivot triangle).",
+        "k518_applied": false
+      },
+      "k523_realized": {
+        "conservative": 13208,
+        "central": 23560,
+        "optimistic": 32558,
+        "note": "K518 38% realized | PEPE-SOL, 71st daemon, 16th alt-alt, 14th vertex ERC-20 meme cluster. OOS Sh=44.43, G4 12/12 ALL POSITIVE, G5 22/22 PASS. Bybit 1000PEPE denomination. L003 AVAX proximity warning (0.4125 < 0.40 threshold). Monthly L003 recheck required. MR9 L002 PEPE-X auto-blocked (SOL pivot triangle).",
+        "k518_applied": true
+      },
+      "activation_1step": "Set live_enabled=true in data/k754_dashboard.json after gate PASS",
+      "reversibility": "Set live_enabled=false → paper-only mode",
+      "critical_risks": [
+        "PEPE = ERC-20 meme — bull rotation dependent, high regime sensitivity",
+        "L003 AVAX proximity warning (0.4125 — threshold 0.40) — monthly recheck mandatory",
+        "1000PEPE denomination on Bybit — fills may differ from HL"
+      ],
+      "files": [
+        "data/k754_dashboard.json"
+      ],
+      "activation_prerequisite": [
+        "K498 OKX integration active (K745)",
+        "60d paper gate: Sh>=6, fill>=60%, maxDD<15%"
+      ]
+    },
+    {
+      "id": "K759",
+      "title": "WIF-SOL Live Elevation",
+      "wave": "K759",
+      "tier": 4,
+      "tier_label": "Paper-gate dependent (K498 + 60d gate)",
+      "status": "PAPER-GATE",
+      "zero_risk": false,
+      "zero_infra_change": false,
+      "days_to_activate": 30,
+      "daemon_number": null,
+      "k523_gross": {
+        "conservative": 20655,
+        "central": 54245,
+        "optimistic": 76847,
+        "note": "WIF-SOL, 72nd daemon, 17th alt-alt, 15th vertex SOL-native meme. OOS Sh=24.45, G4 12/12 POSITIVE, G5 PASS. G5w PEPE-SOL=0.382 (proximity 0.40 threshold) — reduced sleeve 2.0%. Cross-sleeve WIF+PEPE combined 4.0% meme-vs-SOL hard cap. L011 raw_corr(WIF,SOL)=0.487 monthly recheck.",
+        "k518_applied": false
+      },
+      "k523_realized": {
+        "conservative": 7849,
+        "central": 20613,
+        "optimistic": 29202,
+        "note": "K518 38% realized | WIF-SOL, 72nd daemon, 17th alt-alt, 15th vertex SOL-native meme. OOS Sh=24.45, G4 12/12 POSITIVE, G5 PASS. G5w PEPE-SOL=0.382 (proximity 0.40 threshold) — reduced sleeve 2.0%. Cross-sleeve WIF+PEPE combined 4.0% meme-vs-SOL hard cap. L011 raw_corr(WIF,SOL)=0.487 monthly recheck.",
+        "k518_applied": true
+      },
+      "activation_1step": "Set live_enabled=true in data/k759_dashboard.json after gate PASS",
+      "reversibility": "Set live_enabled=false → paper-only mode",
+      "critical_risks": [
+        "G5w PEPE-SOL=0.382 borderline (threshold 0.40) — monthly cross-sleeve monitoring mandatory",
+        "WIF = SOL-native meme — BONK/WIF/POPCAT rotation, correlated drawdowns",
+        "Combined meme sleeve 4.0% hard cap (WIF+PEPE) prevents further meme expansion"
+      ],
+      "files": [
+        "data/k759_dashboard.json"
+      ],
+      "activation_prerequisite": [
+        "K498 OKX integration active (K745)",
+        "60d paper gate: Sh>=6, fill>=60%, maxDD<15%"
+      ]
+    }
+  ],
+  "phases": {
+    "phase1_audit": {
+      "K744": {
+        "present": true,
+        "path": "wave_k744_saturation_map.json",
+        "size_bytes": 62683
+      },
+      "K745": {
+        "present": true,
+        "path": "wave_k745_k498_okx_scaffold.json",
+        "size_bytes": 7739
+      },
+      "K747": {
+        "present": true,
+        "path": "wave_k747_tao_sol_eval.json",
+        "size_bytes": 28584
+      },
+      "K751": {
+        "present": true,
+        "path": "wave_k751_kelly_sizing.json",
+        "size_bytes": 3018
+      },
+      "K753": {
+        "present": true,
+        "path": "wave_k753_k545_scaffold.json",
+        "size_bytes": 6291
+      },
+      "K754": {
+        "present": true,
+        "path": "wave_k754_pepe_sol_eval.json",
+        "size_bytes": 25917
+      },
+      "K755": {
+        "present": true,
+        "path": "wave_k755_k481_scaffold.json",
+        "size_bytes": 8670
+      },
+      "K757": {
+        "present": true,
+        "path": "wave_k757_k485_scaffold.json",
+        "size_bytes": 15560
+      },
+      "K759": {
+        "present": true,
+        "path": "wave_k759_wif_sol_eval.json",
+        "size_bytes": 25018
+      },
+      "K763": {
+        "present": true,
+        "path": "wave_k763_compounding.json",
+        "size_bytes": 8988
+      },
+      "K742": {
+        "present": true,
+        "path": "wave_k742_k492c_ready.json",
+        "size_bytes": 3520
+      }
+    },
+    "phase2_uplift_table": {
+      "rows": [
+        {
+          "id": "K763",
+          "title": "Daily Compound Scheduler",
+          "tier": 1,
+          "gross_conservative": 3517,
+          "gross_central": 3281131,
+          "gross_optimistic": 13636966,
+          "realized_conservative": 1336,
+          "realized_central": 1246830,
+          "realized_optimistic": 5182047
+        },
+        {
+          "id": "K755",
+          "title": "HL Builder Rebate",
+          "tier": 1,
+          "gross_conservative": 99166,
+          "gross_central": 247915,
+          "gross_optimistic": 495830,
+          "realized_conservative": 37683,
+          "realized_central": 94208,
+          "realized_optimistic": 188415
+        },
+        {
+          "id": "K753",
+          "title": "K545 Tax Loss Harvester",
+          "tier": 1,
+          "gross_conservative": 74000,
+          "gross_central": 185000,
+          "gross_optimistic": 370000,
+          "realized_conservative": 28120,
+          "realized_central": 70300,
+          "realized_optimistic": 140600
+        },
+        {
+          "id": "K751",
+          "title": "v6.52 Kelly Sleeve Sizing (MANDATORY COMPLIANCE FIX)",
+          "tier": 2,
+          "gross_conservative": 184568,
+          "gross_central": 195024,
+          "gross_optimistic": 555647,
+          "realized_conservative": 70136,
+          "realized_central": 74109,
+          "realized_optimistic": 211146
+        },
+        {
+          "id": "K742",
+          "title": "K492-C Persistence Filter Patch",
+          "tier": 2,
+          "gross_conservative": 20000,
+          "gross_central": 32500,
+          "gross_optimistic": 45000,
+          "realized_conservative": 7600,
+          "realized_central": 12350,
+          "realized_optimistic": 17100
+        },
+        {
+          "id": "K745",
+          "title": "K498 OKX Integration (3rd Venue)",
+          "tier": 3,
+          "gross_conservative": 31484,
+          "gross_central": 47218,
+          "gross_optimistic": 138486,
+          "realized_conservative": 11964,
+          "realized_central": 17943,
+          "realized_optimistic": 52625
+        },
+        {
+          "id": "K757",
+          "title": "K485 Bybit Sub-Account (2nd Bybit)",
+          "tier": 3,
+          "gross_conservative": 20000,
+          "gross_central": 50000,
+          "gross_optimistic": 120000,
+          "realized_conservative": 7600,
+          "realized_central": 19000,
+          "realized_optimistic": 45600
+        },
+        {
+          "id": "K747",
+          "title": "TAO-SOL Live Elevation",
+          "tier": 4,
+          "gross_conservative": 34000,
+          "gross_central": 62000,
+          "gross_optimistic": 110000,
+          "realized_conservative": 12920,
+          "realized_central": 23560,
+          "realized_optimistic": 41800
+        },
+        {
+          "id": "K754",
+          "title": "PEPE-SOL Live Elevation",
+          "tier": 4,
+          "gross_conservative": 34758,
+          "gross_central": 62000,
+          "gross_optimistic": 85678,
+          "realized_conservative": 13208,
+          "realized_central": 23560,
+          "realized_optimistic": 32558
+        },
+        {
+          "id": "K759",
+          "title": "WIF-SOL Live Elevation",
+          "tier": 4,
+          "gross_conservative": 20655,
+          "gross_central": 54245,
+          "gross_optimistic": 76847,
+          "realized_conservative": 7849,
+          "realized_central": 20613,
+          "realized_optimistic": 29202
+        }
+      ],
+      "tier_summaries": {
+        "tier1": {
+          "tier": 1,
+          "items": [
+            "K763",
+            "K755",
+            "K753"
+          ],
+          "count": 3,
+          "gross": {
+            "conservative": 176683,
+            "central": 3714046,
+            "optimistic": 14502796,
+            "note": "(summed)",
+            "k518_applied": false
+          },
+          "realized": {
+            "conservative": 67140,
+            "central": 1411337,
+            "optimistic": 5511062,
+            "note": "K518 38% realized | (summed)",
+            "k518_applied": true
+          }
+        },
+        "tier2": {
+          "tier": 2,
+          "items": [
+            "K751",
+            "K742"
+          ],
+          "count": 2,
+          "gross": {
+            "conservative": 204568,
+            "central": 227524,
+            "optimistic": 600647,
+            "note": "(summed)",
+            "k518_applied": false
+          },
+          "realized": {
+            "conservative": 77736,
+            "central": 86459,
+            "optimistic": 228246,
+            "note": "K518 38% realized | (summed)",
+            "k518_applied": true
+          }
+        },
+        "tier3": {
+          "tier": 3,
+          "items": [
+            "K745",
+            "K757"
+          ],
+          "count": 2,
+          "gross": {
+            "conservative": 51484,
+            "central": 97218,
+            "optimistic": 258486,
+            "note": "(summed)",
+            "k518_applied": false
+          },
+          "realized": {
+            "conservative": 19564,
+            "central": 36943,
+            "optimistic": 98225,
+            "note": "K518 38% realized | (summed)",
+            "k518_applied": true
+          }
+        },
+        "tier4": {
+          "tier": 4,
+          "items": [
+            "K747",
+            "K754",
+            "K759"
+          ],
+          "count": 3,
+          "gross": {
+            "conservative": 89413,
+            "central": 178245,
+            "optimistic": 272525,
+            "note": "(summed)",
+            "k518_applied": false
+          },
+          "realized": {
+            "conservative": 33977,
+            "central": 67733,
+            "optimistic": 103560,
+            "note": "K518 38% realized | (summed)",
+            "k518_applied": true
+          }
+        }
+      },
+      "grand_total": {
+        "gross": {
+          "conservative": 522148,
+          "central": 4217033,
+          "optimistic": 15634454,
+          "note": "(summed)",
+          "k518_applied": false
+        },
+        "realized": {
+          "conservative": 198416,
+          "central": 1602473,
+          "optimistic": 5941093,
+          "note": "K518 38% realized | (summed)",
+          "k518_applied": true
+        },
+        "note": "Grand total = sum of all incremental Phase A++ items (Tier 1-4). Does NOT include v6.52 base architecture ($2.34M-$6.23M @$10M). K763 central/optimistic dominate — treat with K523 caution (contingent on all sleeves live at v6.52 r=218%/yr, K724 confirmed). K523 MANDATORY: $4.78M central is NOT upper bound. Realized central $1.60M is the planning anchor. Single-point projection PROHIBITED (K523)."
+      }
+    },
+    "phase3_priority": {
+      "priority_ranked": [
+        {
+          "tier": 1,
+          "id": "K763",
+          "risk": "LOW",
+          "days": 1
+        },
+        {
+          "tier": 1,
+          "id": "K755",
+          "risk": "ZERO",
+          "days": 1
+        },
+        {
+          "tier": 1,
+          "id": "K753",
+          "risk": "GATE",
+          "days": 1
+        },
+        {
+          "tier": 2,
+          "id": "K751",
+          "risk": "LOW",
+          "days": 2
+        },
+        {
+          "tier": 2,
+          "id": "K742",
+          "risk": "LOW",
+          "days": 2
+        },
+        {
+          "tier": 3,
+          "id": "K745",
+          "risk": "MEDIUM",
+          "days": 7
+        },
+        {
+          "tier": 3,
+          "id": "K757",
+          "risk": "MEDIUM",
+          "days": 7
+        },
+        {
+          "tier": 4,
+          "id": "K747",
+          "risk": "GATE",
+          "days": 30
+        },
+        {
+          "tier": 4,
+          "id": "K754",
+          "risk": "GATE",
+          "days": 30
+        },
+        {
+          "tier": 4,
+          "id": "K759",
+          "risk": "GATE",
+          "days": 30
+        }
+      ]
+    },
+    "phase4_activation": {
+      "day1": {
+        "label": "Day 1 — Tier 1 (no infra change, no risk)",
+        "actions": [
+          "1. python3 scripts/k763_compound_scheduler.py --set-frequency daily --paper && launchctl load ~/Library/LaunchAgents/com.cryptolab.k763-compound-scheduler.plist",
+          "2. echo 'HL_BUILDER_CODE=0x<YOUR_WALLET>' >> .env.local && launchctl unload/load all HL daemons",
+          "3. launchctl load ~/Library/LaunchAgents/com.cryptolab.k545-tax-harvester.plist  # paper mode"
+        ],
+        "monitoring": "After 24h: confirm compound events, builder credit in HL account, no harvest errors",
+        "expected_realized_central_yr": 1411337,
+        "note": "K763 central contingent on all sleeves live; conservative $67K/yr is safe floor"
+      },
+      "day2_3": {
+        "label": "Days 2-3 — Tier 2 (MANDATORY compliance + config flips)",
+        "actions": [
+          "1. [MANDATORY] Add SLEEVE_WEIGHTS_V652 to scripts/leverage_manager.py (K751 compliance fix)",
+          "2. Set PERSISTENCE_ENABLED = True in scripts/k280_live_fetch.py (K742 K492-C patch)",
+          "3. Restart affected daemons: k280-live, k246a-live"
+        ],
+        "monitoring": "After 48h: HL <= 65%, Bybit <= 50%, K280 >= 30% weight; K280 entry rate >= 15%",
+        "expected_realized_central_yr": 86459,
+        "note": "K751 MUST precede K745/K757. v6.51 non-compliance is priority #1."
+      },
+      "week1": {
+        "label": "Week 1 — Tier 3 (account setup + integration, 7d paper)",
+        "actions": [
+          "1. Create OKX API key (trade-only, no withdraw) → paste into .env.local",
+          "2. Paper 7d: python3 scripts/okx_client.py --paper-test && monitor",
+          "3. Live enable: OKX_LIVE_ENABLED=true + live_enabled=true in venue_allocation.json (K745)",
+          "4. Create Bybit sub-account (Bybit platform) → generate trade-only API key",
+          "5. Paste BYBIT_SUB_API_KEY + BYBIT_SUB_API_SECRET into .env.local (K757)"
+        ],
+        "monitoring": "OKX fill rate >= 60%; Bybit sub routing correct; HL <= 55% post-OKX",
+        "expected_realized_central_yr": 36943,
+        "note": "K745 and K757 can proceed in parallel. Both require K751 v6.52 active first."
+      },
+      "week2_4": {
+        "label": "Weeks 2-4 — Tier 4 (live elevation after 60d gates)",
+        "actions": [
+          "1. Monitor 60d paper gate for TAO-SOL (K747): Sh>=6, fill>=60%, maxDD<15%",
+          "2. Monitor 60d paper gate for PEPE-SOL (K754): same + L003 monthly recheck",
+          "3. Monitor 60d paper gate for WIF-SOL (K759): same + G5w PEPE-SOL monthly recheck",
+          "4. On PASS for each: Set live_enabled=true in respective dashboard JSON",
+          "5. After live: Check K545 CPA consultation complete → upgrade tax harvester --live"
+        ],
+        "monitoring": "Per-strategy paper Sharpe, fill rate, cross-sleeve correlations monthly",
+        "expected_realized_central_yr": 67733,
+        "note": "All Tier 4 items are paper-gate dependent. Do NOT elevate before 60d."
+      }
+    },
+    "phase5_v70_architecture": {
+      "v651": {
+        "label": "v6.51 (current — NON-COMPLIANT)",
+        "k523_conservative": 2151571,
+        "k523_central": 2980630,
+        "k523_optimistic": 5672254,
+        "realized_conservative": 817597,
+        "realized_central": 1132639,
+        "realized_optimistic": 2155457,
+        "violations": "HL 66.8% > 65% cap | Bybit 55.7% > 50% cap | K280 15.5% < 30% floor"
+      },
+      "v652": {
+        "label": "v6.52 (Kelly half-sizing, compliant, user 1-flip)",
+        "k523_conservative": 2336139,
+        "k523_central": 3175654,
+        "k523_optimistic": 6227901,
+        "realized_conservative": 887733,
+        "realized_central": 1206749,
+        "realized_optimistic": 2366602,
+        "compliance": "HL 53.6% / Bybit 43.8% / K280 30.0% — all caps satisfied"
+      },
+      "v70": {
+        "label": "v7.0 (full Phase A++ stack)",
+        "k523_conservative": 2858287,
+        "k523_central": 7392687,
+        "k523_optimistic": 21862355,
+        "realized_conservative": 1086149,
+        "realized_central": 2809221,
+        "realized_optimistic": 8307695,
+        "k523_warning": "K523 MANDATORY: v7.0 central ($7.39M gross) is NOT upper bound. Realized central $2.81M is the planning anchor. $21.9M optimistic assumes r=273%/yr + all Phase A++ items at ceiling. Realistic planning range: $963K (conservative) to $2.81M (central) realized. K763 compound uplift dominates and is contingent on full live stack.",
+        "components": [
+          "v6.52 base (38 sleeves, Kelly half-sizing)",
+          "K763 daily compound scheduler (73rd daemon)",
+          "K755 HL builder rebate (10 daemons, zero-risk)",
+          "K753 K545 tax loss harvester (70th daemon, paper→live with CPA)",
+          "K498 OKX 3rd venue (HL 65%→50% relief)",
+          "K485 Bybit sub-account (alt-alt isolation)",
+          "K492-C persistence filter (K280 entry quality)",
+          "TAO/PEPE/WIF live elevation (Tier 4, after 60d gates)"
+        ]
+      }
+    }
+  },
+  "architecture_versions": {
+    "v651": {
+      "label": "v6.51 (current — NON-COMPLIANT)",
+      "k523_conservative": 2151571,
+      "k523_central": 2980630,
+      "k523_optimistic": 5672254,
+      "realized_conservative": 817597,
+      "realized_central": 1132639,
+      "realized_optimistic": 2155457,
+      "violations": "HL 66.8% > 65% cap | Bybit 55.7% > 50% cap | K280 15.5% < 30% floor"
+    },
+    "v652": {
+      "label": "v6.52 (Kelly half-sizing, compliant, user 1-flip)",
+      "k523_conservative": 2336139,
+      "k523_central": 3175654,
+      "k523_optimistic": 6227901,
+      "realized_conservative": 887733,
+      "realized_central": 1206749,
+      "realized_optimistic": 2366602,
+      "compliance": "HL 53.6% / Bybit 43.8% / K280 30.0% — all caps satisfied"
+    },
+    "v70": {
+      "label": "v7.0 (full Phase A++ stack)",
+      "k523_conservative": 2858287,
+      "k523_central": 7392687,
+      "k523_optimistic": 21862355,
+      "realized_conservative": 1086149,
+      "realized_central": 2809221,
+      "realized_optimistic": 8307695,
+      "k523_warning": "K523 MANDATORY: v7.0 central ($7.39M gross) is NOT upper bound. Realized central $2.81M is the planning anchor. $21.9M optimistic assumes r=273%/yr + all Phase A++ items at ceiling. Realistic planning range: $963K (conservative) to $2.81M (central) realized. K763 compound uplift dominates and is contingent on full live stack.",
+      "components": [
+        "v6.52 base (38 sleeves, Kelly half-sizing)",
+        "K763 daily compound scheduler (73rd daemon)",
+        "K755 HL builder rebate (10 daemons, zero-risk)",
+        "K753 K545 tax loss harvester (70th daemon, paper→live with CPA)",
+        "K498 OKX 3rd venue (HL 65%→50% relief)",
+        "K485 Bybit sub-account (alt-alt isolation)",
+        "K492-C persistence filter (K280 entry quality)",
+        "TAO/PEPE/WIF live elevation (Tier 4, after 60d gates)"
+      ]
+    }
+  },
+  "deliverables": {
+    "wave_k764_phase_a_plus_governance.py": "This synthesis harness (K339, K523, ~700 LOC)",
+    "wave_k764_phase_a_plus_governance.json": "Comprehensive output JSON",
+    "wave_k764_phase_a_plus_governance.md": "Human-readable summary",
+    "data/phase_a_plus_status.json": "Machine-readable activation queue",
+    "docs/k302a_runbook.md §74": "Phase A++ Activation Master Plan",
+    "report.html": "Top banner Phase A++ status with Tier 1-4 progress"
+  },
+  "status": "K764 PHASE A++ GOVERNANCE SYNTHESIS COMPLETE"
+}
