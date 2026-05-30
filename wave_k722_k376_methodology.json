@@ -1,0 +1,154 @@
+{
+  "wave": "K722",
+  "mission": "K376 trigger methodology reconciliation (K497 daemon authoritative)",
+  "timestamp_jst": "2026-05-30 17:21 JST",
+  "phase1_k497_daemon_state": {
+    "regime": "TRANSITION",
+    "slope": -34.41,
+    "slope_trend": "improving (+3.41 vs K527)",
+    "slope_k527_reference": -37.23,
+    "slope_k533_reference": -33.83,
+    "sma_today": 77648.61,
+    "sma_20d_ago": 78336.81,
+    "btc_price": 73710.6,
+    "days_slope_positive": 0,
+    "days_in_regime": 2,
+    "days_until_bull_confirmed": 14,
+    "last_regime": "TRANSITION",
+    "trigger_date_jst": null,
+    "last_checked_jst": "2026-05-30 21:55 JST",
+    "version": "k497_v1_k551_refresh",
+    "daemon_label": "com.cryptolab.k376-regime-monitor",
+    "k551_refresh_timestamp_utc": "2026-05-30T12:49:17Z",
+    "k551_refresh_eta_days": 14,
+    "k551_refresh_recovery_rate_per_day": 5.0,
+    "profit_unlocked_when_bull": {
+      "10M_3pct_per_yr_usd": 247000,
+      "10M_5pct_per_yr_usd": 412000,
+      "100M_3pct_per_yr_usd": 2470000,
+      "daily_value_usd": 677.0
+    }
+  },
+  "phase2_live_cross_verify": {
+    "n_closes": 56,
+    "btc_price_latest": 73479.0,
+    "sma_today": 77165.85,
+    "sma_20d_ago": 78613.05,
+    "slope_k497_authoritative": -72.36,
+    "slope_k720_style_5d_avg": -350.1375,
+    "slope_k720_style_1d": -434.25,
+    "magnitude_ratio_k720_to_k497": 4.84,
+    "days_slope_positive_k497": 0,
+    "slope_trend_per_day_recent": -28.0971,
+    "slope_is_worsening": true
+  },
+  "phase2_slope_history_10d": [
+    {
+      "day_offset": -10,
+      "slope": 166.98,
+      "close": 77587.0
+    },
+    {
+      "day_offset": -9,
+      "slope": 139.2375,
+      "close": 75500.0
+    },
+    {
+      "day_offset": -8,
+      "slope": 124.32,
+      "close": 76712.0
+    },
+    {
+      "day_offset": -7,
+      "slope": 103.0875,
+      "close": 77015.0
+    },
+    {
+      "day_offset": -6,
+      "slope": 78.9175,
+      "close": 77282.0
+    },
+    {
+      "day_offset": -5,
+      "slope": 49.4725,
+      "close": 75894.0
+    },
+    {
+      "day_offset": -4,
+      "slope": 28.115,
+      "close": 74420.0
+    },
+    {
+      "day_offset": -3,
+      "slope": 0.4275,
+      "close": 73587.0
+    },
+    {
+      "day_offset": -2,
+      "slope": -34.7425,
+      "close": 73431.0
+    },
+    {
+      "day_offset": -1,
+      "slope": -72.36,
+      "close": 73479.0
+    }
+  ],
+  "phase3_k577_methodology": {
+    "wave": "K577",
+    "slope_metric": "single_day_sma_derivative (SMA_today - SMA_yesterday)",
+    "slope_value": -363.66,
+    "slope_source": "Kraken",
+    "eta_method": "days_remaining = BULL_CONSEC(7) - days_positive(2) = 5",
+    "eta_days_reported": 5,
+    "eta_interpretation": "K577 reported 5d ETA because the daemon showed days_slope_positive=2 at the time; ETA = 7-2 = 5 more consecutive positive slope days needed. This is the CONSECUTIVE-DAYS criterion, not a slope-to-zero crossing ETA.",
+    "aligns_with_k497": true,
+    "notes": "K577 used K497 daemon output (days_slope_positive counter). The 5d ETA was valid at the time if slope was positive on those 2 days."
+  },
+  "phase3_k680_methodology": {
+    "wave": "K680",
+    "slope_metric": "K497_daemon_formula: (SMA_today - SMA_20d_ago) / 20",
+    "slope_value": -34.41,
+    "slope_source": "K497 daemon (K673 snapshot, 2026-05-30 21:55 JST)",
+    "improvement_rate_per_day": 0.47,
+    "threshold": -0.5,
+    "gap": 33.91,
+    "computed_eta_days": 72.1,
+    "reported_eta_days": 14,
+    "hardcoded_label_bug": true,
+    "eta_interpretation": "Math gives 72.1 days (gap 33.91 / rate 0.47), but K680 hardcoded 'eta_days_label = 14' overriding the calculation. The 14d figure is NOT from the formula.",
+    "aligns_with_k497": "PARTIAL — slope metric matches K497, but ETA is hardcoded wrong"
+  },
+  "phase3_k720_methodology": {
+    "wave": "K720",
+    "slope_metric": "5d_avg_raw_daily_sma_delta: (SMA[-1] - SMA[-5]) / 4",
+    "slope_value": -310.64,
+    "slope_source": "MEXC 1d klines",
+    "improvement_rate_per_day": 0.5,
+    "target_slope": 0.5,
+    "gap": 311.14,
+    "computed_eta_days": 622.3,
+    "reported_eta_days": 622,
+    "metric_type": "FIRST-ORDER (raw daily SMA change, USD/day)",
+    "k497_metric_type": "SECOND-ORDER ((SMA_today - SMA_20d_ago) / 20, USD/day)",
+    "category_error": true,
+    "eta_interpretation": "K720 gap=311.14 USD/day divided by hardcoded rate=0.5 USD/day = 622.3 days. INVALID: K720's metric is first-order raw SMA daily change (~-310 USD/day). K497's metric is second-order change-of-SMA over 20 days (~-34 to -72 USD/day). They differ by ~10x in magnitude. Applying a 0.5/day improvement rate to a 311 USD/day gap is a category error — the rate was never measured on this metric.",
+    "aligns_with_k497": false
+  },
+  "phase5_verdict": {
+    "authoritative_source": "K497_daemon (scripts/k376_regime_trigger_monitor.py)",
+    "bull_confirmed_definition": "slope = (SMA_20d_today - SMA_20d_20d_ago) / 20 >= 0.0 for >= 7 consecutive calendar days",
+    "current_k497_slope": -72.36,
+    "current_days_positive": 0,
+    "current_regime": "TRANSITION",
+    "current_eta_status": "INDETERMINATE_SLOPE_WORSENING",
+    "current_eta_days_authoritative": null,
+    "verdict_k577": "CORRECT CRITERION but STALE — ETA=5 was days remaining to 7-consecutive when slope was already positive (days_pos=2). Used K497 criterion correctly.",
+    "verdict_k680": "METRIC CORRECT (same as K497: second-order slope) but ETA HARDCODED at 14 — math gives 72.1 days at +0.47/day improvement. The 14d label was NOT derived.",
+    "verdict_k720": "INVALID — uses first-order raw daily SMA delta (~-310 USD/day) vs K497 second-order metric (~-34 to -72 USD/day). Category error: 10x magnitude mismatch. Hardcoded 0.5/day improvement rate is nonsensical for a 311 USD gap. 622d ETA DISCARDED.",
+    "authoritative_eta": "INDETERMINATE as of 2026-05-30 JST. Slope = -72.33 and worsening. ETA reactivates when slope crosses 0 and holds for 7 consecutive days. Monitor K497 daemon output in data/k376_regime_status.json daily.",
+    "which_wave_was_right": "K577 (criterion correct); K680 (metric correct, ETA hardcoded); K720 (wrong metric, wrong rate, DISCARDED)",
+    "k497_is_sole_truth": true
+  },
+  "k339_repo_root": "REPO_ROOT = Path(__file__).resolve().parent.parent"
+}
