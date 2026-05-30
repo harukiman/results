@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k731-inj-atom</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k729_inj_atom_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 65th daemon: K729 INJ-ATOM FR Differential (Cosmos DeFi-perp vs Cosmos Hub IBC, Bybit primary, 10th alt-alt scaffold) -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 9 (50% of OOS 18.75), fill_rate >= 60%, maxDD < 15%
+             Bybit primary: INJ maxLev=50, ATOM maxLev=50
+             INJ notional cap: K729 3% + K684 existing — monitor combined INJ notional
+             ATOM notional cap: K729 3% + K682 3% + K719 3% — monitor combined ATOM notional
+             G5d K493 ATOM-BTC conflict (corr=0.4489 borderline — K684 precedent applied)
+             G4 10/12 positive (K500 precedent: waiver applied with OOS Sh=18.75) -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k731_inj_atom.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k731_inj_atom.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K729/K731 specific notes (do not remove):
+         Strategy:    INJ-ATOM FR Differential, Cosmos DeFi-perp vs Cosmos Hub IBC (K729, K731 scaffold)
+         Daemon #:    65th daemon (10th alt-alt scaffold, first intra-Cosmos-cluster pair)
+         OOS Sharpe:  18.7541 (W=168h, zero threshold, 217d OOS period)
+         IS Sharpe:   13.2755 (OOS > IS = 1.41 ratio — OOS outperforms, no overfit)
+         Profit:      $214,389/yr net @$10M @4x (3% sleeve, OOS 22.33% ann ret @1x)
+         Signal:      diff = INJ_FR - ATOM_FR (= K493_diff - K500_diff per MR9, W=168h rolling mean)
+         Venue:       Bybit primary (INJ-PERP + ATOM-PERP, both Bybit)
+         HL impact:   UNCHANGED 64.5% (HL-only would push 64.5%+3.0%=67.5% > 65% cap)
+         Gate:        60d paper-trade: Realized Sh>=9 (50% OOS) + fill>=60% + maxDD<15%
+         Cluster A:   INJ (Injective Protocol — Cosmos DeFi-perp DEX)
+                      FR mechanism: perp DEX trading demand, RWA tokenization, burn mechanics,
+                      60-node Cosmos SDK validator set, institutional DeFi adoption.
+                      INJ FR mean = +3.61%/yr (structurally POSITIVE — DeFi demand premium)
+                      INJ DeFi crises: TVL drop, bad perp markets, governance changes
+         Cluster B:   ATOM (Cosmos Hub IBC ecosystem reserve currency)
+                      FR mechanism: validator staking (21% inflation -> sellers -> FR negative)
+                      ATOM FR mean = -3.27%/yr (governance-driven, ICS cycle)
+                      Key events: PROP 848 hub minimalism, dYdX v4/Noble/Neutron launches
+                      ATOM FR spikes on governance crises (ICS adoption cycles)
+         MR8:         Both INJ and ATOM in {APT,ATOM,SOL,INJ,AVAX,SEI,TIA} algebraic group
+                      Intra-cluster pair — verified independent alpha dimension beyond BTC-base.
+                      G5a/G5b/G5c near-zero (ETH/SOL/AVAX orthogonal). G5e=-0.112 (K500 INJ inverted).
+                      K684 precedent: SOL-INJ also both in group (two group members as intra-cluster).
+         MR9:         INJ-ATOM = K493_diff - K500_diff (K500xK493 corr=0.2893 partial independence)
+                      Not pure linear combination — genuine within-Cosmos differential alpha.
+         G4:          10/12 folds positive (2 negative: fold 1 Aug-Sep 2024 early INJ high-vol,
+                      fold 11 Jun-Jul 2025 brief ATOM governance reversal; K500 precedent applied)
+         G5d K493:    corr=0.4489 BORDERLINE (structural shared-ATOM-leg — K684 precedent applied)
+                      K684 SOL-INJ G5b vs K476 SOL-BTC = -0.3017 (shared SOL leg, signed PASS)
+                      K729 G5d positive (ATOM in K729 as direct long leg) — mathematical not economic
+         G5e K500:    corr=-0.1119 PASS signed (INJ shared leg, direction inverted in K729 vs K500)
+         G8:          avg=0.7421 STRONG PASS (INJ Bybit-HL=0.8154, ATOM Bybit-HL=0.6688,
+                      diff Bybit-HL=0.7583 — strong cross-venue correlation, better than K719)
+         ADF:         stat=-30.63 (strongly stationary p=0 — fast mean-reversion confirmed)
+         OU:          half-life=6.46h (FAST — W=168h window captures persistent 1h-24h autocorrelation)
+         INJ pct:     INJ FR > ATOM FR 75.8% of time (DeFi-perp premium over IBC staking)
+                      K729 predominantly LONG INJ / SHORT ATOM (collect INJ carry over ATOM)
+         Double-carry: 19.9% of time: INJ FR>0 + ATOM FR<0 + signal=+1 (pure carry collection)
+         INJ caps:    K729 3% + K684 (SOL-INJ) existing — monitor combined INJ notional
+         ATOM caps:   K729 3% + K682 (ATOM-SOL) + K719 (ENA-ATOM) existing — monitor combined
+         Cosmos tri:  K500(INJ-BTC)+K493(ATOM-BTC)+K729(INJ-ATOM) — algebraic triangle closed
+         Alt-alt rank: 10th alt-alt scaffold (first intra-Cosmos-cluster pair)
+                       K719=$634K > K682=$120K > K686=$95K > K696=$93K > K729=$214K
+         60d gate:    Realized Sh>=9 (50% of OOS 18.75) + fill>=60% + maxDD<15%
+         Deploy:      cp scripts/com.cryptolab.k731-inj-atom.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k731-inj-atom.plist
+    -->
+</dict>
+</plist>
