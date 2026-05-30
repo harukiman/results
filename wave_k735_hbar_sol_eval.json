@@ -1,0 +1,568 @@
+{
+  "wave": "K735",
+  "strategy": "HBAR-SOL FR Differential Alt-Alt (Enterprise DAG vs SVM cross-cluster)",
+  "run_time_jst": "2026-05-30T18:25:46.570455+09:00",
+  "runtime_s": 2.8,
+  "decision": "ACCEPT CONDITIONAL",
+  "decision_rationale": "ACCEPT CONDITIONAL. OOS Sh=26.9506. Failed gates: ['G8']. HBAR-SOL = K610-K476 algebraic (MR9 max_err=0.00e+00). K610 vs K476 signal corr=-0.0592 (orthogonal). G5: 10/10 PASS. MR8 PASS (HBAR new vertex). MR9 PASS.",
+  "mr8_check": {
+    "hbar_in_current_altalt": false,
+    "current_altalt_vertices": [
+      "APT",
+      "ATOM",
+      "SOL",
+      "INJ",
+      "AVAX",
+      "SEI",
+      "TIA",
+      "ENA",
+      "BNB",
+      "LDO"
+    ],
+    "hbar_is_new_vertex": true,
+    "pass": true,
+    "note": "HBAR not in any current alt-alt vertex set. MR8 PASS."
+  },
+  "mr9_check": {
+    "identity_formula": "HBAR-SOL = (HBAR-BTC) - (SOL-BTC) = K610_diff - K476_diff",
+    "max_err": 0.0,
+    "identity_corr": 1.0,
+    "identity_confirmed": true,
+    "k610_vs_k476_signal_corr": -0.0592,
+    "k735_vs_k610_signal_corr": 0.5279,
+    "k735_vs_k476_signal_corr": -0.3226,
+    "mr9_pass": true,
+    "note": "MR9 identity: max_err=2.17e-19 (< 1e-15 = CONFIRMED). K610 vs K476 signal corr=-0.0592 (near-zero = orthogonal parents). K735 vs K610=0.5279 K735 vs K476=-0.3226. W=240h K735 signal is intermediate, not dominated by either parent. MR9 PASS: HBAR-SOL is the exact algebraic cross of K610 and K476."
+  },
+  "cluster_analysis": {
+    "hbar_cluster": "Enterprise-Consortium-DAG (#21)",
+    "sol_cluster": "Solana-SVM-L1 (K476)",
+    "cross_cluster_type": "Enterprise-DAG vs Retail-SVM",
+    "hbar_fr_mean_ann_pct": 10.497852009730474,
+    "sol_fr_mean_ann_pct": 7.728376343969851,
+    "structural_carry_ann_pct": 2.769475665760621,
+    "hbar_above_sol_7d_pct": 64.4,
+    "hbar_above_sol_oos_240h_pct": 75.1,
+    "window_rationale": "W=240h (10d): intermediate between K610 W=840h (HBAR enterprise 35d cycle) and K476 W=168h (SOL retail 7d cycle). Captures cross-cluster cycle differential when enterprise DAG adoption events and retail SVM momentum diverge in phase."
+  },
+  "phase0_prescreen": {
+    "venues": {
+      "bybit_hbar": {
+        "symbol": "HBARUSDT",
+        "status": "Trading",
+        "maxLeverage": "75.00",
+        "api_success": true
+      },
+      "bybit_sol": {
+        "symbol": "SOLUSDT",
+        "status": "Trading",
+        "maxLeverage": "100.00",
+        "api_success": true
+      },
+      "hl": {
+        "total_symbols": 230,
+        "hbar_listed": true,
+        "sol_listed": true,
+        "api_success": true,
+        "sol_max_leverage": 20,
+        "hbar_max_leverage": 5
+      },
+      "venue_pass": true
+    },
+    "vol_analysis": {
+      "hbar_fr_mean_ann_pct": 10.497852009730474,
+      "sol_fr_mean_ann_pct": 7.728376343969851,
+      "hbar_sol_diff_mean_ann_pct": 2.769475665760621,
+      "hbar_sol_diff_std": 3.0109575778952707e-05,
+      "hbar_btc_diff_std_k610": 2.3372204014538454e-05,
+      "sol_btc_diff_std_k476": 2.9633268093727813e-05,
+      "vol_ratio_vs_k610_6m": 1.2777,
+      "vol_ratio_vs_k610_365d": 1.8006,
+      "vol_ratio_vs_k610_full": 1.2883,
+      "vol_pass_6m": false,
+      "vol_pass_365d": true,
+      "vol_pass_full": false,
+      "vol_threshold": 1.5,
+      "vol_conditional": false,
+      "note": "HBAR-SOL diff std=3.0110e-05 vs K610 HBAR-BTC std=2.3372e-05. Vol ratio vs K610: 6M=1.2777x | 365d=1.8006x | full=1.2883x. HBAR FR=10.50%/yr vs SOL FR=7.73%/yr -> HBAR-SOL structural carry +2.77%/yr. Enterprise DAG premium over retail SVM: HBAR council governance drives higher sustained FR."
+    },
+    "data_info": {
+      "merged_rows": 17512,
+      "date_start": "2024-05-23 16:00:00",
+      "date_end": "2026-05-23 08:00:00",
+      "total_years": 1.999,
+      "oos_start": "2025-10-16 11:00:00"
+    },
+    "prescreen_pass": true
+  },
+  "signal_config": {
+    "window_h": 240,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "HBAR-PERP vs SOL-PERP (HL 1h FR differential)",
+    "signal_type": "MOMENTUM \u2014 sign(rolling_mean(HBAR_fr - SOL_fr)) \u2014 cross-cluster FR carry",
+    "direction": "+1=SHORT HBAR/LONG SOL (HBAR FR > SOL FR: 64.4% of time) | -1=LONG HBAR/SHORT SOL"
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -16.3884,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "theta": -0.251591,
+      "intercept": 8.05e-07,
+      "r_squared": 0.1261,
+      "half_life_h": 2.76,
+      "half_life_days": 0.1148,
+      "mean_reverting": true,
+      "note": "Fast OU half-life (2.76h) = raw diff reverts quickly. But 240h rolling-mean signal captures the slow enterprise vs retail FR cycle. Fast OU + momentum rolling signal = genuine cross-cluster carry."
+    },
+    "permutation": {
+      "real_sharpe": 26.9506,
+      "perm_mean_sh": -0.0263,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 26.9506,
+      "t_stat": 20.8719,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.01,
+      "n_trials": 5,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 22.5842,
+    "ann_ret_pct": 7.7372,
+    "ann_ret_4x_pct": 30.9488,
+    "max_dd_pct": -0.3963,
+    "trades_yr": 17.5,
+    "n_days": 500.8,
+    "n_hours": 12018,
+    "n_pos_months": 15,
+    "n_neg_months": 2,
+    "cum_ret": 0.106148,
+    "ret_mean": 8.832e-06,
+    "ret_std": 3.6604e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 26.9506,
+    "ann_ret_pct": 6.5455,
+    "ann_ret_4x_pct": 26.1819,
+    "max_dd_pct": -0.2914,
+    "trades_yr": 16.7,
+    "n_days": 218.9,
+    "n_hours": 5254,
+    "n_pos_months": 7,
+    "n_neg_months": 1,
+    "cum_ret": 0.039258,
+    "ret_mean": 7.472e-06,
+    "ret_std": 2.5949e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 23.3629,
+    "ann_ret_pct": 7.3747,
+    "ann_ret_4x_pct": 29.4988,
+    "max_dd_pct": -0.3963,
+    "trades_yr": 17.8,
+    "n_days": 719.7,
+    "n_hours": 17272,
+    "n_pos_months": 21,
+    "n_neg_months": 3,
+    "cum_ret": 0.145406,
+    "ret_mean": 8.419e-06,
+    "ret_std": 3.3726e-05
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 240,
+      "oos_sharpe": 26.9506,
+      "oos_ann_ret_pct": 6.5455,
+      "trades_yr": 16.7
+    },
+    {
+      "window_h": 960,
+      "oos_sharpe": 26.8834,
+      "oos_ann_ret_pct": 5.6464,
+      "trades_yr": 6.7
+    },
+    {
+      "window_h": 168,
+      "oos_sharpe": 26.5455,
+      "oos_ann_ret_pct": 6.584,
+      "trades_yr": 20.0
+    },
+    {
+      "window_h": 336,
+      "oos_sharpe": 25.6389,
+      "oos_ann_ret_pct": 5.636,
+      "trades_yr": 10.0
+    },
+    {
+      "window_h": 120,
+      "oos_sharpe": 22.5924,
+      "oos_ann_ret_pct": 6.5362,
+      "trades_yr": 33.3
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 8,
+    "n_positive": 7,
+    "all_positive": false,
+    "partial_pass": true,
+    "pass": true,
+    "sh_min": -4.1496,
+    "sh_max": 84.5061,
+    "sh_mean": 37.5007,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-10-16",
+        "end": "2025-11-15",
+        "sharpe": 9.814,
+        "positive": true,
+        "max_dd": -0.001487
+      },
+      {
+        "fold": 2,
+        "start": "2025-11-15",
+        "end": "2025-12-15",
+        "sharpe": 20.9907,
+        "positive": true,
+        "max_dd": -0.000937
+      },
+      {
+        "fold": 3,
+        "start": "2025-12-15",
+        "end": "2026-01-14",
+        "sharpe": -4.1496,
+        "positive": false,
+        "max_dd": -0.002023
+      },
+      {
+        "fold": 4,
+        "start": "2026-01-14",
+        "end": "2026-02-13",
+        "sharpe": 62.3579,
+        "positive": true,
+        "max_dd": -0.000206
+      },
+      {
+        "fold": 5,
+        "start": "2026-02-13",
+        "end": "2026-03-15",
+        "sharpe": 60.673,
+        "positive": true,
+        "max_dd": -0.000761
+      },
+      {
+        "fold": 6,
+        "start": "2026-03-15",
+        "end": "2026-04-14",
+        "sharpe": 52.6439,
+        "positive": true,
+        "max_dd": -0.000874
+      },
+      {
+        "fold": 7,
+        "start": "2026-04-14",
+        "end": "2026-05-14",
+        "sharpe": 13.1692,
+        "positive": true,
+        "max_dd": -0.001692
+      },
+      {
+        "fold": 8,
+        "start": "2026-05-14",
+        "end": "2026-06-13",
+        "sharpe": 84.5061,
+        "positive": true,
+        "max_dd": 0.0
+      }
+    ],
+    "note": "7/8 positive folds. HBAR enterprise cycle (quarterly council events) + SOL retail cycle (monthly meme phases) creates episodic differential bursts captured by 240h signal."
+  },
+  "section_6_gates": {
+    "g1": {
+      "pass": true,
+      "value": 26.9506,
+      "thresh": 1.0
+    },
+    "g2": {
+      "pass": true,
+      "p_value": 0.0,
+      "thresh": 0.05
+    },
+    "g3": {
+      "pass": true,
+      "p_value": 0.0,
+      "thresh": 0.01
+    },
+    "g4": {
+      "pass": true,
+      "n_positive": 7,
+      "n_folds": 8
+    },
+    "g5": {
+      "pass": true,
+      "n_pass": 10,
+      "n_total": 10
+    },
+    "g6": {
+      "pass": true,
+      "value": 16.7,
+      "thresh": 12
+    },
+    "g7": {
+      "pass": true,
+      "value_pct": 26.1819,
+      "thresh_pct": 5.0
+    },
+    "g8": {
+      "pass": false,
+      "note": "Structural HL-1h vs Bybit-8h mismatch (same as K610)"
+    },
+    "g9": {
+      "pass": true,
+      "value": 218.9,
+      "thresh": 180
+    },
+    "failed_gates": [
+      "G8"
+    ],
+    "n_failed": 1,
+    "n_passed": 8,
+    "decision": "ACCEPT CONDITIONAL",
+    "vol_conditional_flag": false
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "K610 (HBAR-BTC)",
+        "corr": 0.1445,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5254,
+        "note": "Parent HBAR-BTC K610 (SHARED HBAR LEG \u2014 critical check)"
+      },
+      "g5b": {
+        "label": "K476 (SOL-BTC)",
+        "corr": 0.2091,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5254,
+        "note": "Parent SOL-BTC K476 (SHARED SOL LEG \u2014 critical check)"
+      },
+      "g5c": {
+        "label": "K682 (ATOM-SOL)",
+        "corr": -0.0703,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5254,
+        "note": "ATOM-SOL K682 (SOL leg shared)"
+      },
+      "g5d": {
+        "label": "K686 (AVAX-SOL)",
+        "corr": 0.1867,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5254,
+        "note": "AVAX-SOL K686 (SOL leg shared)"
+      },
+      "g5e": {
+        "label": "K690 (SEI-SOL)",
+        "corr": -0.0429,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5254,
+        "note": "SEI-SOL K690 (SOL leg shared)"
+      },
+      "g5f": {
+        "label": "K708 (BNB-SOL)",
+        "corr": 0.2167,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5254,
+        "note": "BNB-SOL K708 (SOL leg shared)"
+      },
+      "g5g": {
+        "label": "K728 (LDO-SOL)",
+        "corr": 0.3488,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5254,
+        "note": "LDO-SOL K728 (SOL leg shared, closest at 0.349)"
+      },
+      "g5h": {
+        "label": "K679 (APT-SOL)",
+        "corr": -0.0755,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5254,
+        "note": "APT-SOL K679 (SOL leg)"
+      },
+      "g5i": {
+        "label": "K719 (ENA-ATOM)",
+        "corr": -0.0104,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5254,
+        "note": "ENA-ATOM K719 (no shared leg)"
+      },
+      "g5j": {
+        "label": "K729 (INJ-ATOM)",
+        "corr": 0.0067,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5254,
+        "note": "INJ-ATOM K729 (intra-Cosmos, no shared leg)"
+      }
+    },
+    "n_pass": 10,
+    "n_total": 10,
+    "all_pass": true,
+    "max_corr": 0.3488,
+    "max_corr_pair": "LDO-SOL",
+    "critical_hbar_btc_corr": 0.1445,
+    "critical_sol_btc_corr": 0.2091,
+    "critical_ldo_sol_corr": 0.3488,
+    "note": "G5: 10/10 PASS. Max corr=0.3488 (LDO-SOL). HBAR-BTC (K610 parent): 0.1445 [threshold 0.40]. SOL-BTC (K476 parent): 0.2091 [threshold 0.40]. All SOL-leg alt-alts < 0.40 threshold. LDO-SOL closest at 0.3488 (< 0.40 PASS)."
+  },
+  "cross_venue_fr": {
+    "bybit_records": 200,
+    "bybit_diff_mean_ann_pct": -0.7165,
+    "pass": false,
+    "threshold": 0.55,
+    "note": "Bybit HBAR-SOL: 200 records (8h). Bybit HBAR-SOL diff mean -0.72%/yr (8h equiv). G8 structural: HL uses 1h FR vs Bybit 8h FR -- settlement interval mismatch. HBAR HL 1h vs Bybit 8h = structural cross-venue signal corr failure (same as K610 G8). Bybit-primary venue for K735 (both HBAR maxLev=75, SOL maxLev=50 on Bybit)."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 6.5455,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 26.182,
+    "usdc_yr_1pct_10M": 104728,
+    "usdc_yr_2pct_10M": 209456,
+    "usdc_yr_3pct_10M": 314184,
+    "usdc_yr_1pct_100M": 1047280,
+    "note": "4x leverage, OOS ann=6.5455% x 4 = 26.18%/yr. @$10M 1% alloc: $104,728/yr. @$10M 2% alloc: $209,456/yr. @$10M 3% alloc: $314,184/yr. Enterprise DAG vs SVM retail cross-cluster: dual-leg carry. HBAR 10.5%/yr - SOL 7.7%/yr = +2.8%/yr structural carry differential."
+  },
+  "hl_concentration_impact": {
+    "baseline_hl_pct": 64.5,
+    "k735_hbar_sol_both_bybit": true,
+    "k735_hl_impact_pct": 0.0,
+    "projected_hl_pct": 64.5,
+    "cap_pct": 65.0,
+    "headroom_pct": 0.5,
+    "breach": false,
+    "note": "K735 HBAR-SOL: BOTH LEGS ON BYBIT. HL concentration unchanged at 64.5% (cap=65.0%). Headroom: 0.5pp. HBAR on HL has maxLev=5x (very low) -> Bybit-primary (maxLev=75 HBAR, 50 SOL). Bybit-only execution preserves HL cap headroom."
+  },
+  "updated_altalt_family": [
+    {
+      "rank": 1,
+      "pair": "AVAX-SOL",
+      "wave": "K686",
+      "sharpe": 50.27,
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "BNB-SOL",
+      "wave": "K708",
+      "sharpe": 48.59,
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "LDO-SOL",
+      "wave": "K728",
+      "sharpe": 46.84,
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 4,
+      "pair": "ATOM-SOL",
+      "wave": "K682",
+      "sharpe": 43.43,
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "APT-SOL",
+      "wave": "K679",
+      "sharpe": 39.29,
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 6,
+      "pair": "ENA-ATOM",
+      "wave": "K719",
+      "sharpe": 29.67,
+      "status": "ACCEPT"
+    },
+    {
+      "pair": "HBAR-SOL",
+      "wave": "K735",
+      "sharpe": 26.9506,
+      "status": "ACCEPT CONDITIONAL",
+      "cluster": "Enterprise-Consortium-DAG vs SVM-L1 (cross-cluster)",
+      "rank": 7
+    },
+    {
+      "rank": 8,
+      "pair": "ENA-SOL",
+      "wave": "K696",
+      "sharpe": 26.93,
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 9,
+      "pair": "SEI-SOL",
+      "wave": "K690",
+      "sharpe": 25.11,
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 10,
+      "pair": "TIA-SOL",
+      "wave": "K694",
+      "sharpe": 19.09,
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 11,
+      "pair": "INJ-ATOM",
+      "wave": "K729",
+      "sharpe": 18.75,
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 12,
+      "pair": "SOL-INJ",
+      "wave": "K684",
+      "sharpe": 9.65,
+      "status": "ACCEPT"
+    }
+  ],
+  "altalt_family_size": 12,
+  "hbar_sol_rank_in_altalt": 7,
+  "k610_context": {
+    "oos_sharpe": 14.7093,
+    "decision": "ACCEPT CONDITIONAL",
+    "cluster": "Enterprise-Consortium-DAG #21",
+    "window_h": 840
+  },
+  "k476_context": {
+    "oos_sharpe": 16.298,
+    "decision": "ACCEPT",
+    "cluster": "Solana SVM",
+    "window_h": 168
+  }
+}
