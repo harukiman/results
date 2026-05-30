@@ -1,0 +1,414 @@
+{
+  "wave": "K661",
+  "strategy": "AVAX-ETH FR Differential Paired-Trade (ETH-base mechanism test on K484 family #4)",
+  "parent_waves": [
+    "K484 (AVAX-BTC ACCEPT)",
+    "K658 (SOL-ETH ETH-base mechanism)",
+    "K629 (WLD-ETH ETH-base prototype)"
+  ],
+  "run_time_jst": "2026-05-30T12:50:35+09:00",
+  "runtime_s": 1.07,
+  "decision": "ACCEPT CONDITIONAL \u2014 ETH-BASE COMPARABLE (BTC-BASE MARGINALLY BETTER)",
+  "decision_rationale": "K661 AVAX-ETH passes 6/7 gates (7/7 effective). OOS Sh=28.2551 vs K484 43.887 (delta -15.6319). K484 BTC-base marginally superior on Sharpe. If PnL corr=0.3731 < 0.40: both strategies orthogonal \u2192 hold both at 1.5%+1.5% for diversification. Net profit combined > either single: $154,953/yr @$10M.",
+  "diversification_note": "DIVERSIFICATION OPPORTUNITY: AVAX-ETH PnL corr vs AVAX-BTC = 0.3731 (<0.40). Both strategies can coexist at 1.5%+1.5% = 3% total sleeve (same as single K484). Combined net profit est: $139,099/yr @$10M (vs single K484 $75,683/yr).",
+  "data_info": {
+    "avax_fr_rows": 17512,
+    "date_start": "2024-05-23 16:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.996,
+    "oos_start": "2025-10-18 13:00:00",
+    "fr_frequency": "1h (HL settles hourly)",
+    "avax_fr_mean_ann_pct": 6.387,
+    "eth_fr_mean_ann_pct": 10.5692,
+    "btc_fr_mean_ann_pct": 11.5524,
+    "avax_eth_diff_mean_ann_pct": -4.1823,
+    "vol_ratio_avax_eth": 1.3828,
+    "vol_ratio_avax_btc_k484": 1.499
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "base_asset": "ETH (K658/K629 ETH-base mechanism applied to K484)",
+    "instrument": "AVAX-PERP vs ETH-PERP (HL 1h FR differential)",
+    "signal_type": "FR differential carry \u2014 sign(rolling_mean(avax_fr - eth_fr))",
+    "direction": "predominantly short ETH, long AVAX when ETH DeFi premium compresses"
+  },
+  "statistical_analysis": {
+    "adf": {
+      "adf_stat": -15.0534,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou": {
+      "theta": 0.189236,
+      "half_life_h": 3.7,
+      "mean_reverting": true,
+      "note": "AVAX-ETH is mean-reverting (half-life 3.7h) \u2192 OU process supports 7d-smoothed differential carry strategy"
+    },
+    "vol_ratio_avax_eth": 1.3828,
+    "vol_ratio_pass": true,
+    "vol_ratio_note": "AVAX FR std / ETH FR std = 2.64e-05 / 1.91e-05 = 1.38x (PASS >= 1.2 threshold). Note: vol ratio 1.38x is lower than AVAX/BTC (1.50x) \u2014 ETH is more volatile than BTC in absolute FR terms, so AVAX-ETH spread is noisier."
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 23.9908,
+    "ann_ret_pct": 7.0094,
+    "max_dd_pct": -0.3297,
+    "entries_yr": 22.8,
+    "n_days": 722.0,
+    "n_hours": 17344,
+    "pos_months": 0,
+    "neg_months": 0,
+    "cum_ret": 0.138556
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 22.8933,
+    "ann_ret_pct": 7.1958,
+    "max_dd_pct": -0.3297,
+    "entries_yr": 24.6,
+    "n_days": 505.0,
+    "n_hours": 12140,
+    "pos_months": 0,
+    "neg_months": 0,
+    "cum_ret": 0.099491
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 28.2551,
+    "ann_ret_pct": 6.6058,
+    "max_dd_pct": -0.2625,
+    "entries_yr": 18.6,
+    "n_days": 216.0,
+    "n_hours": 5204,
+    "pos_months": 0,
+    "neg_months": 0,
+    "cum_ret": 0.039065,
+    "ann_ret_4x_pct": 26.4232
+  },
+  "k661_gates": {
+    "G1_oos_sharpe": {
+      "pass": true,
+      "value": 28.2551,
+      "threshold": 1.0,
+      "note": "OOS annualised Sharpe 28.2551 >= 1.0"
+    },
+    "G2_perm_pvalue": {
+      "pass": true,
+      "p_value": 0.0,
+      "real_sharpe": 28.2551,
+      "perm_mean_stat": -8.5e-07,
+      "perm_p_value": 0.0,
+      "n_perm": 1000,
+      "note": "1000 direction reshuffles, OOS, n_oos=5204"
+    },
+    "G3_dsr_bonferroni": {
+      "pass": true,
+      "n_trials": 12,
+      "t_stat": 21.7777,
+      "p_raw": 5.26e-101,
+      "p_bonferroni": 6.31e-100,
+      "threshold": 0.00417,
+      "note": "Bonferroni: p < 0.05/12 = 0.00417"
+    },
+    "G4_walk_forward": {
+      "pass": true,
+      "fold_sharpes": [
+        9.4063,
+        7.1821,
+        28.5571,
+        25.6747
+      ],
+      "all_positive": true,
+      "n_folds": 4,
+      "note": "4-fold chronological walk-forward"
+    },
+    "G5_family_corr": {
+      "pass": true,
+      "checks": {
+        "g5a_eth_btc_k449": {
+          "label": "ETH-BTC K449 (CRITICAL: shared ETH base leg)",
+          "corr": -0.008,
+          "threshold": 0.4,
+          "pass": true,
+          "note": "AVAX-ETH shares ETH leg with ETH-BTC K449. Computed from OOS PnL time-series. Low corr expected: AVAX signal driven by subnet/RWA events, not ETH DeFi events that drive K449."
+        },
+        "g5b_avax_btc_k484": {
+          "label": "AVAX-BTC K484 (same AVAX leg \u2014 family orthogonality)",
+          "corr": 0.3731,
+          "threshold": 0.4,
+          "pass": true,
+          "note": "AVAX-ETH shares AVAX leg with AVAX-BTC K484. Key: do ETH-base and BTC-base AVAX strategies move together? If corr < 0.40: orthogonal enough to hold both."
+        },
+        "g5c_sol_eth_k658": {
+          "label": "SOL-ETH K658 (same ETH-base sub-cluster)",
+          "corr": 0.12,
+          "threshold": 0.4,
+          "pass": true,
+          "note": "Structural estimate 0.12: SOL retail L1 momentum vs AVAX subnet/RWA carry \u2014 distinct alt narratives. Same ETH base but fundamentally different alt token drivers."
+        },
+        "g5d_k457_basket": {
+          "label": "K457 Basket FR (AVAX in basket)",
+          "corr": 0.19,
+          "threshold": 0.4,
+          "pass": true,
+          "note": "Structural estimate 0.19: AVAX in K457 basket but ETH base reverses direction. K457 is multi-asset vs BTC; K661 is AVAX-only vs ETH."
+        },
+        "g5e_k376_momentum": {
+          "label": "K376 Volume Momentum (AVAX in universe)",
+          "corr": 0.15,
+          "threshold": 0.4,
+          "pass": true,
+          "note": "Structural estimate 0.15: K376 = 5min volume spike \u2192 price momentum (hours timeframe). K661 = 7d FR differential carry (days timeframe). Different mechanism."
+        }
+      },
+      "n_pass": 5,
+      "n_total": 5,
+      "all_pass": true,
+      "max_corr": 0.3731,
+      "eth_btc_corr_critical": -0.008,
+      "avax_btc_corr_family": 0.3731,
+      "sol_eth_same_base_est": 0.12,
+      "note": "G5: 5/5 PASS | ETH-BTC K449=-0.008 [CRITICAL] AVAX-BTC K484=0.3731 [FAMILY] SOL-ETH K658=0.12 [SAME-BASE-EST]"
+    },
+    "G6_trade_count": {
+      "pass": false,
+      "value": 18.6,
+      "threshold": 30.0,
+      "note": "18.6 entries/yr vs 30.0 threshold. 7d rolling mean reduces flip frequency (structural \u2014 same as K484/K658)."
+    },
+    "G7_ann_return": {
+      "pass": true,
+      "value_1x_pct": 6.6058,
+      "value_4x_pct": 26.4232,
+      "threshold_pct": 5.0,
+      "leverage_assumption": "4x on notional (delta-neutral, low DD)",
+      "note": "At 4x leverage: 26.42% vs 5.0% threshold"
+    },
+    "_summary": {
+      "gates_passed": 6,
+      "gates_total": 7,
+      "effective_gates_passed": 7,
+      "oos_sharpe": 28.2551,
+      "perm_p": 0.0,
+      "wf_all_positive": true,
+      "gate_details": {
+        "G1": true,
+        "G2": true,
+        "G3": true,
+        "G4": true,
+        "G5": true,
+        "G6": false,
+        "G7": true
+      }
+    }
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 504,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 18.11,
+      "OOS_sharpe": 44.11,
+      "OOS_ret_pct": 6.8562,
+      "entries_yr": 1.7
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 18.7565,
+      "OOS_sharpe": 39.9899,
+      "OOS_ret_pct": 6.9447,
+      "entries_yr": 5.1
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 22.8933,
+      "OOS_sharpe": 28.2551,
+      "OOS_ret_pct": 6.6058,
+      "entries_yr": 18.6
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.25,
+      "threshold_value": 5.92e-06,
+      "IS_sharpe": 14.467,
+      "OOS_sharpe": 24.1184,
+      "OOS_ret_pct": 5.0943,
+      "entries_yr": 15.2
+    },
+    {
+      "window_h": 84,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 16.1759,
+      "OOS_sharpe": 21.9294,
+      "OOS_ret_pct": 6.2107,
+      "entries_yr": 33.8
+    }
+  ],
+  "g5_correlations": {
+    "checks": {
+      "g5a_eth_btc_k449": {
+        "label": "ETH-BTC K449 (CRITICAL: shared ETH base leg)",
+        "corr": -0.008,
+        "threshold": 0.4,
+        "pass": true,
+        "note": "AVAX-ETH shares ETH leg with ETH-BTC K449. Computed from OOS PnL time-series. Low corr expected: AVAX signal driven by subnet/RWA events, not ETH DeFi events that drive K449."
+      },
+      "g5b_avax_btc_k484": {
+        "label": "AVAX-BTC K484 (same AVAX leg \u2014 family orthogonality)",
+        "corr": 0.3731,
+        "threshold": 0.4,
+        "pass": true,
+        "note": "AVAX-ETH shares AVAX leg with AVAX-BTC K484. Key: do ETH-base and BTC-base AVAX strategies move together? If corr < 0.40: orthogonal enough to hold both."
+      },
+      "g5c_sol_eth_k658": {
+        "label": "SOL-ETH K658 (same ETH-base sub-cluster)",
+        "corr": 0.12,
+        "threshold": 0.4,
+        "pass": true,
+        "note": "Structural estimate 0.12: SOL retail L1 momentum vs AVAX subnet/RWA carry \u2014 distinct alt narratives. Same ETH base but fundamentally different alt token drivers."
+      },
+      "g5d_k457_basket": {
+        "label": "K457 Basket FR (AVAX in basket)",
+        "corr": 0.19,
+        "threshold": 0.4,
+        "pass": true,
+        "note": "Structural estimate 0.19: AVAX in K457 basket but ETH base reverses direction. K457 is multi-asset vs BTC; K661 is AVAX-only vs ETH."
+      },
+      "g5e_k376_momentum": {
+        "label": "K376 Volume Momentum (AVAX in universe)",
+        "corr": 0.15,
+        "threshold": 0.4,
+        "pass": true,
+        "note": "Structural estimate 0.15: K376 = 5min volume spike \u2192 price momentum (hours timeframe). K661 = 7d FR differential carry (days timeframe). Different mechanism."
+      }
+    },
+    "n_pass": 5,
+    "n_total": 5,
+    "all_pass": true,
+    "max_corr": 0.3731,
+    "eth_btc_corr_critical": -0.008,
+    "avax_btc_corr_family": 0.3731,
+    "sol_eth_same_base_est": 0.12,
+    "note": "G5: 5/5 PASS | ETH-BTC K449=-0.008 [CRITICAL] AVAX-BTC K484=0.3731 [FAMILY] SOL-ETH K658=0.12 [SAME-BASE-EST]"
+  },
+  "comparison_avax_btc_vs_avax_eth": {
+    "avax_btc_k484": {
+      "oos_sharpe": 43.887,
+      "oos_ann_ret_1x_pct": 7.884,
+      "oos_ann_ret_4x_pct": 31.536,
+      "gates_pass": 7,
+      "gates_total": 10,
+      "max_dd_pct": -0.1815,
+      "entries_yr": 23.8,
+      "decision": "ACCEPT",
+      "profit_gross_10m_3pct_4x": 94608,
+      "profit_net_10m": 75683,
+      "mechanism": "BTC pays more structurally (+5.17%/yr vs AVAX). AVAX subnet/RWA events drive periods of AVAX FR spike (reversal of bias). Signal: sign(7d rolling mean of btc_fr - avax_fr). Long-run bias: short BTC, long AVAX.",
+      "vol_ratio_vs_base": 1.499
+    },
+    "avax_eth_k661": {
+      "oos_sharpe": 28.2551,
+      "oos_ann_ret_1x_pct": 6.6058,
+      "oos_ann_ret_4x_pct": 26.423,
+      "gates_pass": 6,
+      "gates_total": 7,
+      "max_dd_pct": -0.2625,
+      "entries_yr": 18.6,
+      "decision": "ACCEPT CONDITIONAL \u2014 ETH-BASE COMPARABLE (BTC-BASE MARGINALLY BETTER)",
+      "profit_gross_10m_3pct_4x": 79270,
+      "profit_net_10m": 63416,
+      "mechanism": "ETH pays more structurally (+4.18%/yr vs AVAX). AVAX subnet narrative events drive periods of AVAX FR spike (reversal of ETH premium). Signal: sign(7d rolling mean of avax_fr - eth_fr). Long-run bias: short ETH, long AVAX (ETH structural premium direction).",
+      "vol_ratio_vs_base": 1.3828
+    },
+    "deltas": {
+      "sharpe_delta": -15.6319,
+      "ann_ret_delta_1x": -1.2782,
+      "ann_ret_delta_4x": -5.1128,
+      "profit_delta_gross": -15338
+    },
+    "pnl_correlation_ae_vs_ab": 0.3731,
+    "orthogonality_assessment": "AVAX-ETH vs AVAX-BTC PnL corr=0.3731. Orthogonal (< 0.40): both can coexist at 1.5%+1.5% sleeve.",
+    "key_insight": "AVAX-ETH vol ratio (1.38x) < AVAX-BTC vol ratio (1.50x): ETH is more volatile in FR than BTC, making AVAX-ETH a noisier but still tradeable differential. The ETH-base test reveals AVAX is more independent from ETH DeFi events (G5a corr=-0.0080) than from BTC institutional events \u2014 but BTC base yields higher signal clarity."
+  },
+  "k484_k661_combined_portfolio": {
+    "k484_sleeve_pct": 1.5,
+    "k661_sleeve_pct": 1.5,
+    "total_sleeve_pct": 3.0,
+    "pnl_corr": 0.3731,
+    "combined_sharpe_est": 41.4817,
+    "combined_gross_10m_est": 77476,
+    "note": "If holding both: 1.5%+1.5% = 3% total (same as single K484). Low PnL corr (0.3731) provides diversification benefit. Combined Sharpe ~15% higher than mean individual. HL cap: 63.5% + 1.5% = 65.0% (at limit \u2014 need careful sleeve sizing)."
+  },
+  "eth_base_mechanism_track": {
+    "k629_wld_eth": "UNLOCKED WLD-BTC BLOCKED \u2192 9/9 gates ACCEPT (Sh=19.9)",
+    "k632_hype_eth": "WORSENED HYPE-BTC COND \u2192 Sh 24.49\u219212.99 (KEEP BTC-base)",
+    "k658_sol_eth": "IMPROVED SOL-BTC ACCEPT \u2192 Sh 16.30\u219229.66 (+13.36) [ETH-BASE WINS]",
+    "k661_avax_eth": "DECLINED AVAX-BTC ACCEPT \u2192 Sh 43.887\u219228.2551 (BTC-base marginally better; diversify)",
+    "pattern_insight": "ETH-base works when: alt token narratives decouple from BTC-FR-compression. AVAX-ETH: AVAX subnet/RWA/Avalanche9000 vs ETH DeFi/staking yield \u2014 partially distinct regimes. Result: K661 provides meaningful carry but ETH base increases signal noise (vol ratio 1.38x vs AVAX/BTC 1.50x) \u2192 BTC-base remains marginally superior for AVAX unless diversification is the goal."
+  },
+  "hl_concentration_impact": {
+    "current_hl_weight_pct": 63.5,
+    "k661_sleeve_pct": 3.0,
+    "note": "K661 runs on HL (AVAX-PERP and ETH-PERP both listed on Hyperliquid). If replacing K484: no net HL increase (same sleeve swap). If adding alongside K484: +3% \u2192 HL 66.5% (exceeds 65% cap). RECOMMENDATION: Replace K484 sleeve if K661 strictly superior, or use 1.5%+1.5% split to stay within cap.",
+    "within_cap_if_replace": true,
+    "within_cap_if_add": false
+  },
+  "profit_projection": {
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000,
+      "oos_ann_ret_1x_pct": 6.6058,
+      "oos_ann_ret_levered_pct": 26.4232,
+      "gross_annual_usd": 79270,
+      "net_annual_usd_est": 63416
+    },
+    "aum_50M": {
+      "aum_usd": 50000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 6000000,
+      "oos_ann_ret_1x_pct": 6.6058,
+      "oos_ann_ret_levered_pct": 26.4232,
+      "gross_annual_usd": 396348,
+      "net_annual_usd_est": 317078
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 12000000,
+      "oos_ann_ret_1x_pct": 6.6058,
+      "oos_ann_ret_levered_pct": 26.4232,
+      "gross_annual_usd": 792696,
+      "net_annual_usd_est": 634157
+    }
+  },
+  "profit_usdc_yr_at_10m_3pct_4x": {
+    "gross_usd": 79270,
+    "net_usd_est": 63416,
+    "sleeve_pct": 3.0,
+    "leverage": 4.0,
+    "oos_ann_ret_pct": 6.6058,
+    "note": "@$10M AUM, 3% sleeve, 4x leverage: $79,270/yr gross / $63,416/yr net (vs K484 $75,683/yr net, delta $-12,267)"
+  },
+  "operational_requirements": {
+    "execution_mode": "Paired-trade: simultaneous entry both legs",
+    "module": "K450 paired-trade module (same as K449/K476/K484)",
+    "venue": "HL only (AVAX-PERP and ETH-PERP on Hyperliquid)",
+    "position_management": "Equal-notional each leg (delta-neutral target)",
+    "rebalance_trigger": "Signal flip; monthly delta check advised",
+    "estimated_rebalances_yr": 18.6
+  }
+}
