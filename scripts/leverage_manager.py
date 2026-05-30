@@ -82,6 +82,7 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K658_SOL_ETH":  4.0,     # K669: SOL-ETH FR Differential (v6.40 candidate, HL-primary, 1.5% sleeve, 4x leverage, OOS Sh 29.66 W=168h direct diff, $42,332/yr @$10M @4x (1.5% sleeve), SOL L1 Monolithic SVM DePIN-Retail cluster, ETH-base wins Sh 16.30->29.66 +13.36 vs K476, SOL-BTC corr=0.2131 PASS dual sleeve, 9/9 §6 gates, 52nd daemon)
     "K661_AVAX_ETH": 4.0,   # K677: AVAX-ETH FR Differential (v6.43 candidate, HL-primary, 1.5% sleeve, 4x leverage, OOS Sh 28.26 W=168h direct diff, $63,416/yr net @$10M @4x (1.5% sleeve), AVAX Subnet/RWA Avalanche9000 cluster, ETH-base ACCEPT CONDITIONAL PnL corr=0.3731 PASS dual-sleeve K484, G5a K449 corr=-0.008 CRITICAL PASS, 6/7 §6 gates G6 structural 18.6/yr, 53rd daemon 6th ETH-base scaffold)
     "K587_ICP_BTC":  4.0,   # K678: ICP-BTC FR Differential (BTC-base Compute/Cloud cluster, HL 0.5%+Bybit 0.5% split, 4x leverage, OOS Sh 12.53 W=168h, $21K/yr net @$10M @4x (1% sleeve), ICP vol 8.40x highest in BTC-base family, HL maxLev=5x limit uses 4x margin of safety, 60d paper-trade gate, v6.43 candidate, 54th daemon)
+    "K679_APT_SOL":  4.0,   # K683: APT-SOL FR Differential (FIRST ALT-ALT pair, Bybit-only, 3% standalone sleeve, 4x leverage, OOS Sh 39.29 W=168h direct alt-alt diff, $234,700/yr net @$10M @4x, Move-VM vs SVM DePIN-Retail cluster, HL 65.5% OVER cap Bybit-only mandatory, K512+K476 algebraic overlap — standalone, 60d gate Sh>=20, 55th daemon)
     "K457_basket":    4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
@@ -745,6 +746,47 @@ SLEEVE_WEIGHTS_V644: Dict[str, float] = {
     "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
 }
 
+# K679 APT-SOL FR Differential 3% Bybit sleeve added to v6.44
+# FIRST ALT-ALT pair: APT-SOL (no BTC/ETH base) — Move-VM vs SVM DePIN-Retail
+# HL concentration 65.5% OVER cap — Bybit-only mandatory (APT-PERP + SOL-PERP on Bybit)
+# $234,700/yr net @$10M @4x (3% standalone sleeve, OOS Sh=39.29 FIRST ALT-ALT record)
+# K512+K476 algebraic overlap: K679 standalone (no netting with K512 APT-BTC + K476 SOL-BTC)
+# If rebalancing: reduce K512 to 1% + K476 to 1% + K679 2% for BTC-neutral exposure
+# K280 reduced 3pp vs v6.44 to fund K679 APT-SOL 3% Bybit standalone sleeve
+# 55th daemon — K683 scaffold
+SLEEVE_WEIGHTS_V645: Dict[str, float] = {
+    "K280":    0.18,    # reduced 3pp vs v6.44 to fund K679 APT-SOL Bybit-only sleeve
+    "K297":    0.20,
+    "sUSDe":   0.05,
+    "K449":    0.05,    # ETH-BTC delta-neutral, 4x leverage, HL-only (v6.16 base, 5%)
+    "K476":    0.015,   # SOL-BTC delta-neutral, 4x leverage, HL-only (dual K658 1.5%)
+    "K484":    0.015,   # AVAX-BTC delta-neutral, 4x leverage, HL-only (dual K661 1.5%)
+    "K493":    0.05,    # ATOM-BTC delta-neutral, 4x leverage, HL-only (v6.24 addition, 5%)
+    "K500":    0.04,    # INJ-BTC delta-neutral, 4x leverage, HL-only (v6.25 addition, 4%)
+    "K507":    0.02,    # SEI-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.27 addition, 2%)
+    "K507_TIA": 0.015, # TIA-BTC delta-neutral, 4x leverage, HL-only 1.5% (dual with K663 TIA-ETH)
+    "K512":    0.02,    # APT-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.28 addition, $302K/yr)
+    "K541":    0.03,    # Stablecoin supply growth, 2x leverage, HL-only (v6.29 K550 addition, $294K/yr)
+    "K521":    0.03,    # Options 25d skew DVOL+skew V4, 2x leverage, HL-only (v6.30 K565 addition, $494K/yr)
+    "K628":    0.02,    # JTO-BTC orthogonalized, 4x leverage, Bybit-only (v6.31 K637 addition, $7.14M/yr)
+    "K631":    0.02,    # WLD-BTC orthogonalized, 4x leverage, Bybit-only (v6.32 K639 addition, $2.9M/yr)
+    "K633":    0.02,    # OP-BTC orthogonalized, 4x leverage, Bybit-only (v6.33 K640 addition, $2.32M/yr)
+    "K635":    0.02,    # IMX-BTC orthogonalized, 4x leverage, Bybit-only (v6.34 K641 addition, $4.78M/yr, Gaming L2 Infra)
+    "K638":    0.015,   # STX-BTC orthogonalized, 4x leverage, Bybit-only (v6.35 K642 addition, $65K/yr net, BTC-L2 cluster)
+    "K645":    0.03,    # BNB-BTC orthogonalized, 4x leverage, Bybit-only (v6.36 K650 addition, $17,694/yr net, Binance-ecosystem)
+    "K646":    0.02,    # ALGO-BTC orthogonalized, 4x leverage, Bybit-only (v6.37 K651 addition, ~$20,325/yr net, Enterprise/Utility L1)
+    "K648":    0.02,    # POL-BTC orthogonalized, 4x leverage, Bybit-only (v6.37 K652 addition, $4,293,200/yr, Polygon L2/zkEVM cluster)
+    "K647":    0.03,    # DOT-BTC orthogonalized, 4x leverage, Bybit-only (v6.38 K653 addition, ~$103,586/yr net, Polkadot relay chain, OOS R²=-4.11 caution)
+    "K629":    0.03,    # WLD-ETH FR Differential, 4x leverage, HL-primary (v6.39 K654 addition, $94,210/yr, Biometric ID Cluster 24, ETH-base fix)
+    "K656":    0.02,    # GALA-BTC dual-factor orthogonalized, 4x leverage, Bybit-only (v6.40 K659 MILESTONE, $48,143/yr net, Gaming Publisher GalaChain)
+    "K663":    0.015,   # TIA-ETH FR Differential, 4x leverage, HL-primary (v6.41 K668 addition, $63,060/yr net, Modular DA Celestia, dual with K507_TIA, 51st daemon)
+    "K658":    0.015,   # SOL-ETH FR Differential, 4x leverage, HL-primary (v6.42 K669 addition, $42,332/yr @1.5%, SOL L1 SVM DePIN-Retail, dual K476 1.5%, 52nd daemon)
+    "K661":    0.015,   # AVAX-ETH FR Differential, 4x leverage, HL-primary (v6.43 K677 addition, $63,416/yr net @1.5%, AVAX Subnet/RWA, ETH-base ACCEPT CONDITIONAL dual K484 1.5%, 53rd daemon)
+    "K587":    0.01,    # ICP-BTC FR Differential, 4x leverage, HL 0.5%+Bybit 0.5% split (v6.43 K678 addition, $21K/yr net @1%, Compute/Cloud cluster, ICP vol 8.40x highest in family, HL maxLev=5x uses 4x, 54th daemon)
+    "K679":    0.03,    # APT-SOL FR Differential, 4x leverage, Bybit-only (v6.44 K683 addition, $234,700/yr net @3%, FIRST ALT-ALT pair Move-VM vs SVM, HL 65.5% OVER cap Bybit-only, K512+K476 overlap standalone, 55th daemon)
+    "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
+}
+
 # v6.16 candidate weights (proposed in K450 — not yet active)
 SLEEVE_WEIGHTS_V616: Dict[str, float] = {
     "K280":  0.72,   # reduced 3pp to fund K449 sleeve
@@ -861,6 +903,7 @@ def compute_position_size(
         "K507_TIA": "K507_TIA_BTC",  # K524: 4x cap for TIA-BTC paired-trade sleeve (HL-only 1%, Celestia DA #6)
         "K512":     "K512_APT_BTC",  # K520: 4x cap for APT-BTC paired-trade sleeve (HL+Bybit split, Move-VM #1)
         "K587":     "K587_ICP_BTC",  # K678: 4x cap for ICP-BTC paired-trade sleeve (HL+Bybit split, Compute/Cloud, ICP HL maxLev=5x)
+        "K679":     "K679_APT_SOL",  # K683: 4x cap for APT-SOL paired-trade sleeve (Bybit-only, FIRST ALT-ALT, 3% standalone)
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)
@@ -918,6 +961,7 @@ def compute_margin_required(
         "K507_TIA": "K507_TIA_BTC",  # K524: 4x cap TIA-BTC paired-trade (HL-only 1%, Celestia DA #6)
         "K512":     "K512_APT_BTC",  # K520: 4x cap APT-BTC paired-trade (HL+Bybit split, Move-VM #1)
         "K587":     "K587_ICP_BTC",  # K678: 4x cap ICP-BTC paired-trade (HL+Bybit split, Compute/Cloud, ICP HL maxLev=5x)
+        "K679":     "K679_APT_SOL",  # K683: 4x cap APT-SOL paired-trade (Bybit-only, FIRST ALT-ALT, 3% standalone)
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)

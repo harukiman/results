@@ -1,0 +1,178 @@
+{
+  "wave": "K683",
+  "strategy": "K679 APT-SOL FR Differential (FIRST ALT-ALT pair, Bybit-only, Move-VM vs SVM)",
+  "run_time_jst": "2026-05-30 14:24 JST",
+  "overall_status": "PASS",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k679_apt_sol_run.py",
+        "description": "Phase 1: K679 strategy script (K339 pattern, W=168h, alt-alt direct diff, Bybit-only)",
+        "exists": true,
+        "size_bytes": 47823,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k679-apt-sol.plist",
+        "description": "Phase 2: 55th daemon plist (StartInterval 28800, Bybit-only)",
+        "exists": true,
+        "size_bytes": 2668,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k679_dashboard.json",
+        "description": "Phase 3: Dashboard (alt-alt diff signal, regime, alt_alt_mechanism)",
+        "exists": true,
+        "size_bytes": 3721,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k679 flag, \u00a756)",
+        "exists": true,
+        "size_bytes": 243197,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K679_APT_SOL cap + SLEEVE_WEIGHTS_V645)",
+        "exists": true,
+        "size_bytes": 87232,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K679_APT_SOL: 4.0 + k679_notes)",
+        "exists": true,
+        "size_bytes": 65052,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (55th daemon registry)",
+        "exists": true,
+        "size_bytes": 37768,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a756 (K679 APT-SOL playbook)",
+        "exists": true,
+        "size_bytes": 439031,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K679 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1689537,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k683_k679_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 14984,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_integrity": {
+    "checks": {
+      "k339_repo_root": true,
+      "paper_trade_default": true,
+      "sleeve_3pct": true,
+      "leverage_4x": true,
+      "rolling_168h": true,
+      "zero_threshold": true,
+      "bybit_only": true,
+      "post_only": true,
+      "first_alt_alt": true,
+      "apt_sol_diff": true,
+      "symbols_apt_sol_only": true,
+      "dashboard_path": true,
+      "oos_sh_39_29": true,
+      "k512_k476_warning": true,
+      "hl_65_5_over_cap": true,
+      "profit_234k": true,
+      "55th_daemon": true,
+      "dashboard_regime": true,
+      "dashboard_oos_perf": true,
+      "dashboard_alt_mech": true,
+      "dashboard_hl_655": true,
+      "dashboard_gate_sh20": true,
+      "dashboard_sleeve_030": true,
+      "cfg_k679_cap": true,
+      "cfg_k679_notes": true,
+      "cfg_sleeve_030": true,
+      "cfg_bybit_only": true,
+      "emer_include_k679": true,
+      "emer_k679_bybit_note": true,
+      "lev_k679_cap": true,
+      "lev_v645_weights": true,
+      "lev_k679_030pct": true,
+      "vds_k679_label": true,
+      "vds_55th_daemon": true,
+      "runbook_section56": true,
+      "runbook_first_altalt": true,
+      "runbook_k512_overlap": true,
+      "runbook_profit_234k": true,
+      "html_k683_scaffold": true,
+      "html_55th_daemon": true
+    },
+    "pass": 40,
+    "fail": 0
+  },
+  "dry_run": {
+    "status": "PASS",
+    "returncode": 0,
+    "stdout_lines": [
+      "=== K679 Dashboard (2026-05-30 14:22 JST) ===",
+      "{",
+      "  \"last_poll_jst\": \"2026-05-30 14:22 JST\",",
+      "  \"mean_168h\": 0.0,",
+      "  \"diff_sigma\": 1e-08,"
+    ],
+    "stderr_lines": []
+  },
+  "scaffold_summary": {
+    "daemon_number": "55th",
+    "strategy": "K679 APT-SOL FR Differential (FIRST ALT-ALT pair)",
+    "signal": "sign(rolling_mean_168h(APT_FR - SOL_FR))",
+    "threshold": "zero (sign only)",
+    "ema_window_h": 168,
+    "leverage": 4.0,
+    "sleeve_pct": 0.03,
+    "venue": "Bybit-only (APT-PERP + SOL-PERP, both Bybit)",
+    "hl_concentration_pct": 65.5,
+    "hl_cap_note": "65.5% OVER 65% cap \u2014 Bybit-only mandatory",
+    "oos_sharpe": 39.29,
+    "profit_net_yr_10m": 234700,
+    "first_alt_alt": true,
+    "k512_k476_overlap": "Standalone (no netting with K512 APT-BTC / K476 SOL-BTC)",
+    "paper_gate": "60d: Sh>=20 + fill>=60% + maxDD<15%",
+    "activation_status": "SCAFFOLD-READY",
+    "plist": "scripts/com.cryptolab.k679-apt-sol.plist",
+    "log_files": [
+      "logs/k679_apt_sol.log",
+      "logs/k679_apt_sol.err"
+    ]
+  },
+  "deliverable_files": [
+    "scripts/k679_apt_sol_run.py",
+    "scripts/com.cryptolab.k679-apt-sol.plist",
+    "data/k679_dashboard.json",
+    "scripts/emergency_hl_exit.py  (--include-k679 added)",
+    "scripts/leverage_manager.py   (K679_APT_SOL cap + SLEEVE_WEIGHTS_V645)",
+    "data/leverage_config.json     (K679_APT_SOL: 4.0 + k679_notes)",
+    "scripts/verify_deployment_status.py  (55th daemon)",
+    "docs/k302a_runbook.md         (\u00a756 added)",
+    "report.html                   (K679 row added)",
+    "wave_k683_k679_scaffold.py    (this file)",
+    "wave_k683_k679_scaffold.json  (this report)"
+  ]
+}

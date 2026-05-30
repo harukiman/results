@@ -427,6 +427,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k587_icp_btc",
         expected_html_status="SCAFFOLD-READY",  # K678: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=6 + fill>=60% + maxDD<20%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k679-apt-sol",
+        purpose="K679 APT-SOL FR Differential (FIRST ALT-ALT pair Move-VM vs SVM DePIN-Retail, Bybit-only APT-PERP+SOL-PERP both legs, 4x leverage, 8h cycle, OOS Sh 39.29 W=168h direct alt-alt diff, $234,700/yr net @$10M @4x @3% standalone sleeve, HL 65.5% OVER cap Bybit-only mandatory, K512+K476 algebraic overlap — standalone, APT FR=Move-VM Block-STM adoption Aptos Foundation grants, SOL FR=DePIN/Retail meme-coin BONK/WIF Firedancer validator economics, 60d paper-trade gate Realized Sh>=20 fill>=60% maxDD<15%, v6.44 candidate 3% sleeve, 55th daemon, K683 scaffold)",
+        scripts=["scripts/k679_apt_sol_run.py"],
+        log_basename="k679_apt_sol",
+        expected_html_status="SCAFFOLD-READY",  # K683: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=20 + fill>=60% + maxDD<15%)
+    ),
 ]
 
 

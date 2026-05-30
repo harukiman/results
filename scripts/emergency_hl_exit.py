@@ -3961,6 +3961,36 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K683: K679 APT-SOL FR Differential emergency exit flag
+    # K679 = Bybit-only APT+SOL paired (2 legs, FIRST ALT-ALT pair).
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL at 65.5% OVER cap, Bybit-only).
+    # Signal: diff = APT_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold).
+    # K512+K476 overlap warning: K679 STANDALONE — close K679 independently of K512/K476.
+    # Bybit-only: APT-PERP + SOL-PERP both on Bybit. HL UNCHANGED at 65.5%.
+    # Use --include-k679 to print K679-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k679",
+        dest="include_k679",
+        action="store_true",
+        default=False,
+        help=(
+            "K683: Include K679 APT-SOL close summary during emergency exit. "
+            "K679 positions (APT+SOL paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Signal: diff = APT_FR - SOL_FR (direct alt-alt differential, W=168h rolling mean, zero threshold). "
+            "HL concentration UNCHANGED at 65.5% (Bybit-only — HL OVER cap, no HL positions). "
+            "OOS Sharpe 39.29 (FIRST ALT-ALT pair record). $234,700/yr net @$10M @4x (3% standalone sleeve). "
+            "K512+K476 overlap: close K679 STANDALONE (do not assume K512 APT-BTC / K476 SOL-BTC netting). "
+            "60d paper-trade gate: Realized Sh>=20 + fill>=60% + maxDD<15%. "
+            "APT FR: Move-VM Block-STM adoption cycles (Aptos Foundation, Move ecosystem events). "
+            "SOL FR: DePIN/Retail/meme-coin premium (BONK/WIF, Firedancer, validator economics). "
+            "Cluster: APT-SOL Alt-Alt (Move-VM vs SVM, FIRST ALT-ALT, 55th daemon). "
+            "Requires: K679 daemon running (com.cryptolab.k679-apt-sol, 55th daemon). "
+            "See: docs/k302a_runbook.md §55"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -4696,6 +4726,33 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "K633 OP-BTC orthog: Bybit-only (NOT HL). "
                 "Use --include-k633 for Bybit close summary (§44). "
                 "HL concentration UNCHANGED at 65%."
+            )
+
+        # K683: K679 APT-SOL close summary (Bybit-only — HL NOT affected)
+        # K679 positions (APT+SOL, Bybit-only) are NOT in the HL exit above.
+        # K679 is Bybit-only (HL at 65.5% OVER cap — mandatory). HL UNCHANGED at 65.5%.
+        # Close K679 independently of K512 APT-BTC and K476 SOL-BTC (standalone).
+        if args.include_k679:
+            logger.info("=== K679 APT-SOL CLOSE SUMMARY (K683 §55) ===")
+            logger.info("  K679 APT-SOL: Bybit-only (APT-PERP + SOL-PERP both legs on Bybit)")
+            logger.info("  FIRST ALT-ALT pair: APT vs SOL (no BTC/ETH base)")
+            logger.info("  Signal: diff = APT_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: UNCHANGED at 65.5% (K679 is Bybit-only, HL OVER cap)")
+            logger.info("  K512+K476 overlap: close K679 STANDALONE (do not net with K512 APT-BTC / K476 SOL-BTC)")
+            logger.info("  OOS Sharpe 39.29 (FIRST ALT-ALT record) | $234,700/yr net @$10M @4x (3% sleeve)")
+            logger.info("  APT FR: Move-VM Block-STM adoption (Aptos Foundation, Move ecosystem events)")
+            logger.info("  SOL FR: DePIN/Retail/meme-coin premium (BONK/WIF, Firedancer, validator economics)")
+            logger.info("  Cluster: APT-SOL Alt-Alt (Move-VM vs SVM DePIN-Retail, 55th daemon)")
+            logger.info("  60d gate: Realized Sh>=20 + fill>=60% + maxDD<15%")
+            logger.info("  See: docs/k302a_runbook.md §55 (K679 APT-SOL playbook)")
+        else:
+            logger.info(
+                "K679 APT-SOL: Bybit-only (NOT HL — HL at 65.5% OVER cap). "
+                "K679 positions ARE NOT in the HL exit above (Bybit-only mandatory). "
+                "Close K679 on Bybit independently of K512/K476. "
+                "Use --include-k679 for Bybit close summary (§55). "
+                "HL concentration UNCHANGED at 65.5%."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)

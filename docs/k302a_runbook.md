@@ -11155,3 +11155,158 @@ Notional at $10M / 1% / 4x:
 ---
 
 *K678 §55 -- K587 ICP-BTC FR Differential production scaffold (54th daemon, Compute/Cloud cluster Internet Computer Protocol Dfinity, OOS Sh 12.53 W=168h EMA $21K/yr net @$10M @4x 1% sleeve, ICP vol 8.40x highest in BTC-base family, HL maxLev=5x uses 4x margin of safety, HL+Bybit split 0.5%+0.5% HL ~64.5% within 65%, 60d gate: Sh>=6 fill>=60% maxDD<20%, v6.43 candidate) -- 2026-05-30*
+
+---
+
+## §56 K679 APT-SOL FR Differential — Production Scaffold Playbook
+
+> Wave: K683 | Daemon: 55th | Strategy: K679 APT-SOL FR Differential (FIRST ALT-ALT pair)
+> Venue: Bybit-only | Sleeve: 3% standalone | Leverage: 4x | OOS Sharpe: 39.29
+
+### §56.0 Strategy Summary
+
+K679 APT-SOL is the **FIRST ALT-ALT pair** in the portfolio — no BTC or ETH base asset.
+The signal is the direct differential of APT and SOL funding rates: `diff = APT_FR - SOL_FR`.
+A 168h rolling mean of this differential determines position direction (zero threshold).
+
+**Why alt-alt?** APT (Aptos Move-VM) and SOL (Solana SVM) have orthogonal FR drivers:
+- APT FR: Move-VM Block-STM adoption cycles, Aptos Foundation grants, Move ecosystem
+- SOL FR: DePIN/Retail meme-coin premium (BONK/WIF), Firedancer upgrade hype, validator economics
+
+HL at 65.5% exceeds the 65% cap, making Bybit-only mandatory for K679.
+
+### §56.1 Key Parameters
+
+| Parameter | Value |
+|-----------|-------|
+| Signal | `sign(rolling_mean_168h(APT_FR - SOL_FR))` |
+| Window | W=168h (21 × 8h periods) |
+| Threshold | Zero (sign only) |
+| Leverage | 4x |
+| Sleeve | 3% standalone (Bybit-only) |
+| Venue | Bybit (APT-PERP + SOL-PERP, both Bybit) |
+| HL impact | NONE (HL at 65.5% OVER cap — Bybit-only mandatory) |
+| Cadence | 8h (matches FR settlement cycle) |
+
+### §56.2 Performance (K679 ACCEPT)
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe | 39.29 (FIRST ALT-ALT record) |
+| OOS Ann Return | ~5.86% (unlevered notional) |
+| Net profit @$10M @4x @3% | $234,700/yr |
+| Wave | K683 scaffold |
+| Daemon | 55th |
+
+### §56.3 Signal Direction Logic
+
+| Regime | Condition | Action |
+|--------|-----------|--------|
+| BULL_APT | mean_168h(APT_FR − SOL_FR) > 0 | SHORT APT / LONG SOL (APT expensive — collect) |
+| BEAR_APT | mean_168h(APT_FR − SOL_FR) < 0 | LONG APT / SHORT SOL (SOL expensive — collect) |
+| NEUTRAL | mean_168h == 0 exactly | No trade |
+
+SOL FR > APT FR is the predominant state (SOL DePIN/meme-coin premium > APT narrative).
+BULL_APT periods occur during major Move-VM ecosystem events (Aptos mainnet upgrades, grants).
+
+### §56.4 K512+K476 Overlap Warning
+
+| Strategy | Leg 1 | Leg 2 | Note |
+|----------|-------|-------|------|
+| K512 APT-BTC | LONG APT | SHORT BTC | HL+Bybit split, 2% sleeve |
+| K476 SOL-BTC | LONG SOL | SHORT BTC | HL-only, 1.5% sleeve |
+| K679 APT-SOL | LONG APT OR SOL | SHORT SOL OR APT | Bybit-only, 3% standalone |
+
+**Algebraic overlap**: K679 LONG APT SHORT SOL ≈ net of K512 LONG APT + K476 SHORT SOL.
+**Default (K683)**: K679 STANDALONE — run with its own 3% sleeve; K512 and K476 unchanged.
+**Rebalance option**: reduce K512 to 1% + K476 to 1% + K679 2% for BTC-neutral net exposure.
+
+### §56.5 Venue & HL Concentration
+
+```
+HL concentration: 65.5% (OVER 65% cap — Bybit-only MANDATORY)
+K679 impact: NONE (both APT-PERP + SOL-PERP on Bybit)
+Bybit: APT-PERP and SOL-PERP both listed on Bybit perps
+Post-K679 HL: still 65.5% (unchanged)
+```
+
+### §56.6 60d Paper-Trade Gate (K683 specification)
+
+| Gate | Threshold | Rationale |
+|------|-----------|-----------|
+| Realized Sharpe | ≥ 20 | 50% of OOS Sh=39.29 |
+| Fill rate | ≥ 60% | Minimum execution quality |
+| Max drawdown | < 15% | Capital protection |
+| Days | 60 | Minimum observation period |
+
+### §56.7 Emergency Close Procedure
+
+**K679 is Bybit-only — NOT in HL emergency exit.**
+
+```bash
+# Check K679 position
+python3 scripts/k679_apt_sol_run.py --status
+
+# Dry-run close
+python3 scripts/k679_apt_sol_run.py --close "emergency" --dry-run
+
+# Emergency exit summary (Bybit)
+python3 scripts/emergency_hl_exit.py --include-k679 --dry-run
+
+# Close sequence: short leg first (avoid naked short), then long leg
+# Step 1: IOC reduce-only SHORT leg on Bybit
+# Step 2: IOC reduce-only LONG leg on Bybit
+# K512+K476: close K679 STANDALONE — do NOT assume K512/K476 as hedges
+```
+
+### §56.8 Daemon Deployment
+
+```bash
+# Plist location (K683 scaffold)
+scripts/com.cryptolab.k679-apt-sol.plist
+
+# Deploy (after 60d gate passage)
+cp scripts/com.cryptolab.k679-apt-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k679-apt-sol.plist
+
+# Verify
+launchctl list | grep k679
+
+# Log files
+logs/k679_apt_sol.log
+logs/k679_apt_sol.err
+
+# Dashboard
+data/k679_dashboard.json
+```
+
+### §56.9 Deliverable Files
+
+| File | Description |
+|------|-------------|
+| `scripts/k679_apt_sol_run.py` | Phase 1: K679 strategy script (K339 pattern, W=168h, alt-alt direct diff) |
+| `scripts/com.cryptolab.k679-apt-sol.plist` | Phase 2: 55th daemon plist (StartInterval 28800) |
+| `data/k679_dashboard.json` | Phase 3: Dashboard (diff signal, regime, alt_alt_mechanism) |
+| `scripts/emergency_hl_exit.py` | Phase 4: Emergency exit (--include-k679 flag, §56) |
+| `scripts/leverage_manager.py` | Phase 5: Leverage manager (K679_APT_SOL cap + SLEEVE_WEIGHTS_V645) |
+| `data/leverage_config.json` | Phase 6: Leverage config (K679_APT_SOL: 4.0 + k679_notes) |
+| `scripts/verify_deployment_status.py` | Phase 7: Deployment verifier (55th daemon registry) |
+| `docs/k302a_runbook.md` | Phase 8: This section (§56) |
+| `report.html` | Phase 9: HTML report (K679 SCAFFOLD-READY) |
+| `wave_k683_k679_scaffold.py` | Phase 11: Wave driver |
+| `wave_k683_k679_scaffold.json` | Phase 12: Wave result report |
+
+### §56.10 References
+
+| Wave | Description |
+|------|-------------|
+| K683 | This section — K679 APT-SOL scaffold (55th daemon, v6.44 candidate) |
+| K679 | K679 analysis — APT-SOL ACCEPT (FIRST ALT-ALT, OOS Sh 39.29) |
+| K669 | K658 SOL-ETH scaffold (52nd daemon, SOL ETH-base family) |
+| K520 | K512 APT-BTC scaffold (36th daemon, APT HL+Bybit split) |
+| K478 | K476 SOL-BTC scaffold (K512+K476 overlap reference) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K683 §56 -- K679 APT-SOL FR Differential production scaffold (55th daemon, FIRST ALT-ALT pair Move-VM vs SVM, OOS Sh 39.29 W=168h direct alt-alt diff $234.7K/yr net @$10M @4x 3% sleeve, Bybit-only HL 65.5% OVER cap, K512+K476 algebraic overlap standalone, 60d gate: Sh>=20 fill>=60% maxDD<15%, v6.44 candidate) -- 2026-05-30*

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k679-apt-sol</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k679_apt_sol_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 55th daemon: K679 APT-SOL FR Differential (FIRST ALT-ALT pair, Bybit-only) -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 20, fill_rate >= 60%, maxDD < 15% -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k679_apt_sol.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k679_apt_sol.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K679 specific notes (do not remove):
+         Strategy:    APT-SOL FR Differential, FIRST ALT-ALT pair (K679, K683 scaffold)
+         Daemon #:    55th daemon
+         OOS Sharpe:  39.29 (FIRST ALT-ALT record, W=168h, zero threshold)
+         Profit:      $234,700/yr net @$10M @4x (3% standalone sleeve)
+         Signal:      diff = APT_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold)
+         Venue:       Bybit-only (APT-PERP + SOL-PERP, both Bybit)
+         HL impact:   UNCHANGED 65.5% (Bybit-only — HL OVER cap, no HL positions)
+         Gate:        60d paper-trade: Realized Sh>=20 + fill>=60% + maxDD<15%
+         Cluster:     APT-SOL Alt-Alt (Move-VM vs SVM DePIN-Retail, FIRST ALT-ALT)
+         APT drivers: Move-VM Block-STM adoption, Aptos Foundation grants, Move ecosystem events
+         SOL drivers: DePIN/Retail meme-coin season (BONK/WIF), Firedancer hype, validator economics
+         K512+K476:   Algebraic overlap warning — run K679 STANDALONE 3% or rebalance
+         Standalone:  K679 3% Bybit sleeve independent of K512 APT-BTC + K476 SOL-BTC
+         Trades/yr:   ~50-60 expected (W=168h, zero threshold, similar to K663/K658 family)
+         Deploy:      cp scripts/com.cryptolab.k679-apt-sol.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k679-apt-sol.plist
+    -->
+</dict>
+</plist>
