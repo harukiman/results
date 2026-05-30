@@ -15349,6 +15349,174 @@ python3 scripts/k774_io_sol_run.py --dry-run
 
 ---
 
+## §80 K778 COMP-SOL FR Differential (79th Daemon, TWENTY-SECOND ALT-ALT, DeFi-Gov × SVM, 20th Vertex)
+
+*K780 §80 -- K778 COMP-SOL FR Differential production scaffold (79th daemon, TWENTY-SECOND ALT-ALT scaffold 20th-vertex COMP DeFi-governance-token Compound-Finance × Solana SVM, OOS Sh 25.05 IS Sh 14.91 OOS>IS CLEAN-ACCEPT W=48h G6-87.5/yr-OOS, central $207,345/yr net @$10M @4x 2.5% sleeve K523 3-point $79K-$276K, HL primary COMP-PERP+SOL-PERP Bybit fallback COMPUSDT OKX secondary COMP-confirmed G8-PASS, CLEAN ACCEPT 30/30 NO-conditional-caveats, G4 WF 12/12 ALL-POSITIVE min_fold_sh=14.79 perfect-WF-validation, G5 22/22 ALL-PASS max_corr=0.3906-G5j-SOL-INJ-negative all-below-0.40, G6 87.5/yr PASS, G9 OOS-216d-PASS>=180d-NO-marginal-caveat, L004-PASS COMP-bidirectional-pos_frac_full=68.1%-pos_frac_oos=50.1%, COMP-vertex-20th 1st-DeFi-governance-cluster MR9-L002-all-future-COMP-X-blocked, 60d gate: Sh>=12 fill>=60% maxDD<15% + K498/v6.52-OKX-activation) -- 2026-05-30*
+
+### §80.1 Strategy Overview
+
+| Field | Value |
+|-------|-------|
+| Strategy | K778 COMP-SOL FR Differential (TWENTY-SECOND ALT-ALT scaffold) |
+| Decision | **CLEAN ACCEPT 30/30** (no conditional caveats) |
+| OOS Sharpe | 25.05 (W=48h, zero threshold, 216d OOS) |
+| IS Sharpe | 14.91 (OOS > IS — clean, no overfit) |
+| G4 Walk-Forward | 12/12 ALL POSITIVE (min_fold_sh=14.79 — perfect) |
+| G5 family | 22/22 ALL PASS (max_corr=0.3906 G5j SOL-INJ, negative) |
+| G6 trade count | 87.5 entries/yr OOS (W=48h — highest in alt-alt family) |
+| G7 ann return | OOS 4x=130.1% PASS |
+| G8 cross-venue | OKX COMP FR vs HL COMP FR corr=0.8548 PASS (proxy, n=284) |
+| G9 data | OOS 216d PASS (>= 180d minimum — NO marginal caveat) |
+| L004 carry | PASS: COMP bidirectional (pos_frac_full=68.1%, pos_frac_oos=50.1%) |
+| Sleeve | 2.5% (@$10M = $250K margin, $1M total notional at 4x) |
+| Leverage | 4x |
+| Venue | HL primary (COMP-PERP + SOL-PERP) + Bybit fallback (COMPUSDT) + OKX secondary |
+| Daemon | 79th daemon (com.cryptolab.k778-comp-sol) |
+| Script | scripts/k778_comp_sol_run.py |
+| Wave | K780 scaffold |
+
+### §80.2 COMP vs SOL FR Economics
+
+**COMP (Compound Finance governance token) — Bidirectional FR:**
+- Governance reward distribution events (emissions schedule changes, reward rate cuts)
+- Protocol competition (Aave vs Compound market share, TVL migration events)
+- Governance votes affecting interest rate models and collateral factors
+- COMP liquidation cascades during DeFi market stress
+- Protocol revenue events (Compound fee switch, treasury allocation)
+- DeFi capital rotation (Compound vs Aave vs MorphoBlue)
+- **L004 PASS**: pos_frac_full=68.1%, pos_frac_oos=50.1% (both below 80% — bidirectional confirmed)
+- Unlike AAVE (K748 BLOCKED ~86% positive) or PENDLE (K758 BLOCKED ~90% positive)
+- Quarterly inversions: 2025Q1=-10.32%, Q2=-13.87%, Q4=-24.32%, 2026Q1=-17.48%, Q2=-33.26%
+- vol_ratio vs SOL: 3.62x (full) / 6.0x (30d K766 context)
+- OU half-life: 1.94h (fast mean-reversion — 48h smoothing captures governance cycle transitions)
+
+**SOL (Solana SVM L1) — Persistent positive:**
+- Solana SVM DePIN/Retail momentum. Phantom adoption. Firedancer upgrade.
+- SOL ETF narrative. SVM DeFi TVL (Jupiter/Drift/Jito).
+- SOL extreme negative FR: Min=-20.51bps (liquidation cascade Feb 2025).
+
+**MaxDD OOS: -0.0834% (W=48h) — extremely contained** (better than K777 -0.5541%).
+
+### §80.3 §6 Gate Results (K778)
+
+| Gate | Result | Value |
+|------|--------|-------|
+| G1 OOS Sharpe | PASS | 25.05 >= 1.0 |
+| G2 Permutation | PASS | p=0.0000 (1000 reshuffles) |
+| G3 DSR Bonferroni | PASS | p=0.0e+00 (n_trials=12) |
+| G4 Walk-Forward | PASS | 12/12 ALL POSITIVE (min_sh=14.79) |
+| G5a ETH-BTC | PASS | 0.0542 < 0.40 |
+| G5b SOL-BTC | PASS | -0.2865 (negative, abs < 0.40) |
+| G5c AVAX-BTC | PASS | 0.1025 < 0.40 |
+| G5d ATOM-BTC | PASS | 0.0747 < 0.40 |
+| G5e INJ-BTC | PASS | 0.1419 < 0.40 |
+| G5f FIL-BTC | PASS | 0.0570 < 0.40 |
+| G5g LDO-BTC | PASS | 0.1666 < 0.40 |
+| G5h APT-SOL | PASS | 0.1327 < 0.40 |
+| G5i ATOM-SOL | PASS | 0.3263 < 0.40 (OOS=0.1776) |
+| G5j SOL-INJ | PASS | -0.3906 (negative, abs < 0.40) — max_corr |
+| G5k AVAX-SOL | PASS | 0.2729 < 0.40 |
+| G5l SEI-SOL | PASS | 0.2160 < 0.40 |
+| G5m TIA-SOL | PASS | 0.2863 < 0.40 |
+| G5n ENA-SOL | PASS | 0.2830 < 0.40 |
+| G5o BNB-SOL | PASS | 0.2964 < 0.40 |
+| G5p ENA-ATOM | PASS | 0.1221 < 0.40 |
+| G5q LDO-SOL | PASS | 0.2926 < 0.40 (DeFi protocol overlap clear) |
+| G5r INJ-ATOM | PASS | 0.0016 < 0.40 |
+| G5s HBAR-SOL | PASS | 0.2865 < 0.40 |
+| G5t TIA-AVAX | PASS | 0.0360 < 0.40 |
+| G5u FIL-SOL | PASS | 0.3359 < 0.40 |
+| G5v AAVE-SOL | PASS | 0.2359 < 0.40 (DeFi lending cluster clear) |
+| G6 Trade count | PASS | 87.5/yr OOS >= 30/yr |
+| G7 Ann return | PASS | 4x OOS=130.1% >= 5% |
+| G8 Cross-venue | PASS | OKX COMP FR vs HL corr=0.8548 (proxy, n=284) |
+| G9 Data | PASS | OOS 216d >= 180d minimum |
+| **TOTAL** | **30/30** | **CLEAN ACCEPT** |
+
+### §80.4 K523 3-Point Profit Projection (@$10M @4x @2.5%)
+
+| Scenario | Annual ($) | Methodology |
+|----------|-----------|-------------|
+| Conservative | $78,791/yr | R2S=38% floor × OOS-haircut-25% (K518 floor) |
+| **Central** | **$207,345/yr** | K523 mandate: 60% realized-to-stated |
+| Optimistic | $276,460/yr | Near-full OOS realization |
+| Upper bound | $325,248/yr | OOS raw return (NOT central — K523 mandatory) |
+
+### §80.5 HL Concentration Status
+
+| Metric | Value |
+|--------|-------|
+| HL pre-K778 | 66.8% |
+| HL post-K778 | 66.8% (UNCHANGED — paper-only) |
+| HL cap | 65.0% |
+| Status | PAPER-GATE STRICT — any live COMP-SOL capital breaches cap |
+| Trigger | K498/v6.52 OKX activation (reduces HL% below 65%) |
+
+### §80.6 COMP Vertex Rule (MR9 L002)
+
+```
+V (before K778) = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI, SOL, TIA, TAO,
+                    PEPE, WIF, BLUR, AXS, IO, EIGEN}
+V (after K778)  = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI, SOL, TIA, TAO,
+                    PEPE, WIF, BLUR, AXS, IO, EIGEN, COMP}
+```
+
+COMP = **20th vertex** (1st DeFi governance token cluster). MR9 L002: all future COMP-X pairs auto-blocked.
+COMP-SOL is the only permissible COMP-X pair given V composition at K778.
+
+**DeFi governance cluster distinction:**
+- AAVE (K748 BLOCKED-L004): lending protocol carry (borrow utilisation premium, unidirectional positive)
+- PENDLE (K758 BLOCKED-L004): yield-trading protocol carry (persistent positive)
+- COMP (K778 ACCEPT): governance token speculation (bidirectional — genuine inversions confirmed)
+
+### §80.7 60d Paper-Trade Gate
+
+| Metric | Threshold | Note |
+|--------|-----------|------|
+| Realized Sharpe | >= 12 | Lower than K777 (Sh>=15): 87.5 entries/yr gives robust signal in 60d |
+| Fill rate | >= 60% | POST_ONLY fill quality |
+| Max drawdown | < 15% | Position-level drawdown |
+| Additional | K498/v6.52 OKX activation | HL% must drop below 65% |
+
+### §80.8 Daemon Activation
+
+```bash
+# Activate 79th daemon (K778 COMP-SOL):
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k778-comp-sol.plist
+cp scripts/com.cryptolab.k778-comp-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k778-comp-sol.plist
+
+# Verify:
+launchctl list | grep k778
+python3 scripts/k778_comp_sol_run.py --status
+
+# Manual dry-run test:
+python3 scripts/k778_comp_sol_run.py --dry-run
+
+# Live gate (AFTER 60d paper-trade + K498/v6.52):
+# Set PAPER_TRADE=False in plist EnvironmentVariables
+# Reload: launchctl unload ... && launchctl load ...
+```
+
+**WARNING**: Only set PAPER_TRADE=False AFTER:
+1. K498/v6.52 OKX activation reduces HL% below 65%
+2. 60d gate: Realized Sh>=12 + fill>=60% + maxDD<15%
+
+### §80.9 References
+
+| Wave | Description |
+|------|-------------|
+| K778 | K778 COMP-SOL evaluation (CLEAN ACCEPT 30/30 — 22nd alt-alt scaffold) |
+| K780 | This section — K778 COMP-SOL production scaffold (79th daemon) |
+| K498 | OKX activation prerequisite (reduces HL% below 65%) |
+| K523 | 3-point projection mandate |
+| K518 | 38% realized-to-stated ratio floor |
+| K532 | Governance v5 (HL 65.0% cap rule) |
+| K748 | AAVE-SOL BLOCKED-L004 (lending carry precedent) |
+| K758 | PENDLE-SOL BLOCKED-L004 (yield-protocol carry precedent) |
+
+---
+
 ## §79 K777 EIGEN-SOL FR Differential (K779 scaffold — 78th daemon, 20th alt-alt, 19th vertex EIGEN)
 
 ### §79.1 Strategy Overview

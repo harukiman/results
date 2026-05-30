@@ -4496,6 +4496,55 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K780: K778 COMP-SOL alt-alt emergency exit flag
+    # K778 = HL primary COMP-PERP+SOL-PERP paired when COMP_FR-SOL_FR rolling mean 48h changes sign.
+    # Close protocol: IOC reduce-only on HL (short leg first, then long leg). Bybit fallback available.
+    # COMP = 20th vertex (1st DeFi governance token cluster). HL concentration: 66.8% AT CAP (paper-gate strict).
+    # CLEAN ACCEPT 30/30 gates. G4 12/12 ALL POSITIVE. G5 22/22 ALL PASS. G9 OOS 216d PASS.
+    # L004 PASS: COMP bidirectional (pos_frac_full=68.1% pos_frac_oos=50.1%).
+    # Use --include-k778 to print K778-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k778",
+        dest="include_k778",
+        action="store_true",
+        default=False,
+        help=(
+            "K780: Include K778 COMP-SOL close summary during emergency exit. "
+            "K778 positions (COMP+SOL paired, HL primary) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = COMP_FR - SOL_FR (direct differential, W=48h rolling mean, zero threshold). "
+            "HL primary: COMP-PERP + SOL-PERP on HL. Bybit fallback: COMPUSDT + SOLUSDT. "
+            "OKX secondary: COMP confirmed (G8 proxy corr=0.8548, n=284, PASS). "
+            "HL concentration 66.8% AT CAP — paper-gate strict (PAPER_TRADE=True default). "
+            "CLEAN ACCEPT 30/30 gates (no conditional caveats). "
+            "G4 WF 12/12 ALL POSITIVE (min_fold_sh=14.79 — perfect WF validation). "
+            "G5 22/22 ALL PASS: max_corr=0.3906 (G5j SOL-INJ, negative — all below 0.40). "
+            "G5q LDO-SOL=0.2926 PASS (DeFi protocol overlap clear). "
+            "G5v AAVE-SOL=0.2359 PASS (DeFi lending cluster clear). "
+            "G6: 87.5 entries/yr OOS PASS (W=48h vs 30/yr threshold). "
+            "G7: OOS ann ret 4x=130.1% PASS. "
+            "G8: OKX COMP FR vs HL COMP FR corr=0.8548 PASS (proxy, n=284). "
+            "G9: OOS 216d PASS (>= 180d minimum — NO marginal caveat). "
+            "L004 PASS: COMP bidirectional (pos_frac_full=68.1% pos_frac_oos=50.1%). "
+            "Unlike AAVE (K748 BLOCKED ~86%) or PENDLE (K758 BLOCKED ~90%). "
+            "OOS Sharpe 25.05 (W=48h, 216d OOS). IS Sharpe 14.91 (OOS > IS — clean). "
+            "MaxDD OOS=-0.0834% (W=48h) — extremely contained. "
+            "COMP FR: governance reward distribution, protocol competition (Aave vs Compound), "
+            "governance votes, COMP liquidation cascades, fee switch/treasury events, "
+            "TVL migration (Compound vs Aave vs MorphoBlue). Bidirectional FR confirmed. "
+            "vol_ratio=3.62x (full) / 6.0x (30d). raw_corr=0.0765. "
+            "SOL FR: DePIN/Retail Phantom Firedancer ETF persistent positive. Min=-20.51bps cascade. "
+            "COMP = 20th vertex (1st DeFi governance token cluster). MR9 L002: all future COMP-X blocked. "
+            "V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO,EIGEN,COMP} "
+            "K523 3-point: conservative=$78,791 central=$207,345 optimistic=$276,460/yr @$10M @4x @2.5%. "
+            "60d live gate: Sh>=12 + fill>=60% + maxDD<15% + K498/v6.52 OKX activation. "
+            "Cluster: DeFi governance token (Compound Finance) × Solana SVM (22nd alt-alt scaffold, 79th daemon). "
+            "Requires: K778 daemon running (com.cryptolab.k778-comp-sol, 79th daemon). "
+            "See: docs/k302a_runbook.md §80"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -5777,6 +5826,53 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "G4 WF 4/4 positive (fold Sh: 64.1/32.3/36.7/35.4). EIGEN = 19th vertex (ETH-restaking). "
                 "G5 24/25 PASS (G5z BLUR-SOL OOS=0.441 borderline W=84; W=48=0.345 PASS). G9 marginal: 118.6d. "
                 "Use --include-k777 for structured HL close summary (§79)."
+            )
+
+        # ── K778 COMP-SOL close summary (K780 §80) ───────────────────────────
+        # HL concentration: 66.8% AT CAP (paper-gate: PAPER_TRADE=True default — no live capital yet).
+        # Live only after K498/v6.52 OKX activation + 60d gate (Sh>=12 + fill>=60% + maxDD<15%).
+        # CLEAN ACCEPT 30/30 gates (no conditional caveats).
+        if args.include_k778:
+            logger.info("=== K778 COMP-SOL CLOSE SUMMARY (K780 §80) ===")
+            logger.info("  K778 COMP-SOL: HL primary (COMP-PERP + SOL-PERP both legs on HL)")
+            logger.info("  Bybit fallback: COMPUSDT + SOLUSDT. OKX secondary: COMP confirmed (corr=0.8548).")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_COMP (governance spike): short SOL first -> sell long COMP second")
+            logger.info("  BEAR_COMP (governance depression, frequent): short COMP first -> sell long SOL second")
+            logger.info("  HL concentration: 66.8% AT CAP — paper-gate strict")
+            logger.info("  PAPER_TRADE=True default — no live capital until 60d gate + K498/v6.52")
+            logger.info("  CLEAN ACCEPT 30/30 gates (no conditional caveats)")
+            logger.info("  G4 WF: 12/12 ALL POSITIVE (min_fold_sh=14.79 — perfect WF validation)")
+            logger.info("  G5: 22/22 ALL PASS: max_corr=0.3906 (G5j SOL-INJ, negative — all below 0.40)")
+            logger.info("  G5q: LDO-SOL=0.2926 PASS (DeFi protocol overlap clear)")
+            logger.info("  G5v: AAVE-SOL=0.2359 PASS (DeFi lending cluster clear)")
+            logger.info("  G6: 87.5 entries/yr OOS PASS (W=48h vs 30/yr threshold — highest in alt-alt family)")
+            logger.info("  G7: OOS ann ret 4x=130.1% PASS")
+            logger.info("  G8: OKX COMP FR vs HL COMP FR corr=0.8548 PASS (proxy, n=284)")
+            logger.info("  G9: OOS 216d PASS (>= 180d minimum — NO marginal caveat)")
+            logger.info("  L004 PASS: COMP bidirectional (pos_frac_full=68.1% pos_frac_oos=50.1%)")
+            logger.info("  Unlike AAVE (K748 BLOCKED ~86%) or PENDLE (K758 BLOCKED ~90%)")
+            logger.info("  COMP FR: governance reward distribution, protocol competition (Aave vs Compound),")
+            logger.info("         governance votes (rate models, collateral), COMP liquidation cascades,")
+            logger.info("         fee switch/treasury events, TVL migration (Compound vs Aave vs MorphoBlue).")
+            logger.info("  COMP FR: bidirectional. OOS pos_fraction=50.1% confirms genuine inversions.")
+            logger.info("  Quarterly inversions: 2025Q1=-10.32%, Q2=-13.87%, Q4=-24.32%, 2026Q1=-17.48%, Q2=-33.26%")
+            logger.info("  COMP = 20th vertex (1st DeFi governance token cluster). MR9 L002: all future COMP-X blocked.")
+            logger.info("  V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO,EIGEN,COMP}")
+            logger.info("  SOL FR: DePIN/Retail Phantom Firedancer ETF persistent positive. Min=-20.51bps cascade.")
+            logger.info("  MaxDD OOS=-0.0834% (W=48h) | OOS Sh=25.05 (W=48h, 216d OOS) | IS Sh=14.91 (OOS > IS)")
+            logger.info("  K523 3-point: conservative=$78,791 central=$207,345 optimistic=$276,460/yr")
+            logger.info("  Sleeve 2.5% (@$10M = $250K margin, $1M total notional, $500K per leg). 4x leverage.")
+            logger.info("  60d gate: Sh>=12 + fill>=60% + maxDD<15% + K498/v6.52 OKX activation")
+            logger.info("  22nd alt-alt scaffold, 79th daemon. HL primary (positions in main HL exit)")
+            logger.info("  See: docs/k302a_runbook.md §80 (K778 COMP-SOL playbook)")
+        else:
+            logger.info(
+                "K778 COMP-SOL: HL primary (positions ARE in HL exit above — COMP-PERP + SOL-PERP on HL). "
+                "HL 66.8% AT CAP — paper-gate strict; no live capital until K498/v6.52 + 60d gate. "
+                "CLEAN ACCEPT 30/30. G4 12/12 ALL POSITIVE (min_sh=14.79). COMP = 20th vertex (DeFi-gov). "
+                "G5 22/22 ALL PASS (max_corr=0.3906). G9 OOS 216d PASS. L004 PASS (bidirectional). "
+                "Use --include-k778 for structured HL close summary (§80)."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)
