@@ -1,0 +1,117 @@
+{
+  "wave": "K743",
+  "strategy": "LDO-ATOM FR Differential Alt-Alt Eval (MR9 STRICT → ALGEBRAIC IDENTITY → REJECT)",
+  "run_time_jst": "2026-05-30 19:14:22 JST",
+  "runtime_s": 0.25,
+  "decision": "REJECT",
+  "reject_code": "MR9_STRICT_ALGEBRAIC_IDENTITY",
+  "line_status": "CLOSED",
+  "proceed_to_ph1": false,
+  "decision_summary": "K743 LDO-ATOM is ALGEBRAICALLY IDENTICAL to K721 (LDO-SOL) minus K684 (ATOM-SOL). max_err = 2.17e-19 << 1e-15 threshold. Signal corr = 1.000000 (perfect). Deploying K743 alongside K721+K684 yields ZERO marginal alpha. Line CLOSED per MR9 STRICT enforcement. No backtest required — save tokens.",
+  "phase0_mr9": {
+    "target": "LDO-ATOM (alt-alt: Ethereum LSD × Cosmos Hub IBC-staking, cross-cluster)",
+    "data_rows": 17484,
+    "date_start": "2024-05-24",
+    "date_end": "2026-05-23",
+    "total_years": 1.99,
+    "ldo_fr_std": 2.451e-05,
+    "atom_fr_std": 4.122e-05,
+    "diff_std": 4.205e-05,
+    "vol_ratio_ldo_atom": 0.5946,
+    "ldo_fr_mean_ann_pct": 15.959,
+    "atom_fr_mean_ann_pct": -3.268,
+    "diff_mean_ann_pct": 19.227,
+    "mr9": {
+      "algebraic_identity": "LDO_fr - ATOM_fr = (LDO_fr - SOL_fr) - (ATOM_fr - SOL_fr) = K721_raw - K684_raw",
+      "proof": "Let L=LDO_fr, A=ATOM_fr, S=SOL_fr. K743=L-A; K721=L-S; K684=A-S. K721-K684=(L-S)-(A-S)=L-A=K743. QED.",
+      "max_err_raw": 2.168404344971009e-19,
+      "max_err_smoothed": 5.421010862427522e-20,
+      "signal_identity_err": 0.0,
+      "signal_corr": 1.0,
+      "epsilon_threshold": 1e-15,
+      "genuine_threshold": 1e-10,
+      "identity_confirmed": true,
+      "verdict": "REJECT"
+    },
+    "parent_k721": {
+      "wave": "K728",
+      "pair": "LDO-SOL",
+      "decision": "ACCEPT CONDITIONAL",
+      "oos_sharpe": 46.84,
+      "net_profit_usdc_yr_10m": 105032
+    },
+    "parent_k684": {
+      "wave": "K682",
+      "pair": "ATOM-SOL",
+      "decision": "ACCEPT",
+      "oos_sharpe": 43.43
+    },
+    "k721_x_k684_signal_corr": 0.133,
+    "saturation_note": "K721 (LDO-SOL) × K684 (ATOM-SOL) signal corr = 0.133 (low, genuine independent). But K743 = K721_raw - K684_raw EXACTLY: same series, same signal, same trades. Adding K743 to portfolio containing both K721 and K684 = ZERO marginal alpha. MR9 STRICT = algebraic identity, NOT signal correlation. Identity wins."
+  },
+  "mr9_lesson": {
+    "lesson_id": "MR9_L002_LDO_ATOM",
+    "wave": "K743",
+    "pattern": "LDO-ATOM = K721 - K684 (3-token triangle collapse)",
+    "generalisation": "In any alt-alt family built on a common BTC-base, for tokens A, B, C: (A-C) = (A-B) - (C-B). When both (A-B) and (C-B) are already in the family, (A-C) is ALWAYS redundant. Check: are both legs (A vs pivot) and (C vs pivot) already in the family? If YES → reject without data loading.",
+    "family_pivot_is_SOL": "The 14-member alt-alt family uses SOL as the dominant pivot token. Any pair (X-Y) where both (X-SOL) and (Y-SOL) are in the family is algebraically derivable and MUST be rejected at MR9 pre-check. LDO-SOL (K721) + ATOM-SOL (K684) → LDO-ATOM (K743) REDUNDANT. Similarly: LDO-INJ, LDO-TIA, LDO-ENA, LDO-BNB, LDO-APT, LDO-SEI are ALL BLOCKED by the same triangle rule (once K721 LDO-SOL is in the family).",
+    "token_pairs_blocked_by_triangle": [
+      "LDO-ATOM (K743): K721 - K684 → CLOSED",
+      "LDO-INJ: K721 - K684_INJ_SOL → CLOSED (if K684=SOL-INJ)",
+      "LDO-TIA: K721 - K694 → CLOSED",
+      "LDO-ENA: K721 - K696 → CLOSED",
+      "LDO-BNB: K721 - K708 → CLOSED",
+      "LDO-APT: K721 - K683 → CLOSED",
+      "LDO-SEI: K721 - K690 → CLOSED",
+      "LDO-AVAX: K721 - K687 → CLOSED",
+      "LDO-HBAR: K721 - K735 → CLOSED (once K735 ACCEPT)",
+      "LDO-FIL: K721 - K739 → CLOSED"
+    ],
+    "k740_parallel": "K740 INJ-AVAX was also MR9-confirmed identity: K740 = -K500_raw + K484_raw. K743 LDO-ATOM follows same pattern but via SOL pivot not BTC pivot. Both reinforce MR9 STRICT: check triangle before any backtest.",
+    "tokens_exempt_from_triangle": [
+      "Pairs where one token has NO SOL-pivot leg in the family (e.g., HBAR-ATOM once K735 is ATOM-base)",
+      "Pairs using NON-SOL common pivot (e.g., INJ-ATOM uses ATOM-pivot only if no INJ-ATOM SOL path)",
+      "Cross-cluster pairs where neither token has a SOL-alt-alt leg yet"
+    ],
+    "recommended_next_candidates": [
+      "HBAR-ATOM: if K735 HBAR-SOL ACCEPTs, check HBAR-ATOM vs ATOM-SOL → if K684 in family → REJECT",
+      "HBAR-TIA: same SOL-pivot check → likely BLOCKED if both in family",
+      "FIL-ATOM: K739 FIL-SOL (ACCEPT) + K682 ATOM-SOL (ACCEPT) → FIL-ATOM BLOCKED",
+      "FIL-TIA: K739 (FIL-SOL) + K694 (TIA-SOL) → FIL-TIA BLOCKED",
+      "NEW TOKEN outside SOL-family: e.g., PENDLE, JUP, PYTH if not yet in family"
+    ]
+  },
+  "backtest_skipped": true,
+  "profit_usdc_yr_10m": null,
+  "k523_ranges": {
+    "note": "N/A — rejected at Phase 0 (MR9 algebraic identity). No profit projection warranted.",
+    "conservative": null,
+    "central": null,
+    "optimistic": null
+  },
+  "token_profile": {
+    "ldo": {
+      "name": "Lido DAO (LDO)",
+      "category": "Ethereum Liquid Staking Derivative (LSD) governance",
+      "parent_strategy": "K594 LDO-BTC REJECT (vol 0.80x, ETH cluster 0.43)",
+      "alt_alt_entry": "K721/K728 LDO-SOL ACCEPT CONDITIONAL",
+      "fr_mean_ann_pct": 15.95,
+      "fr_std": 2.449e-05
+    },
+    "atom": {
+      "name": "Cosmos Hub (ATOM)",
+      "category": "Cosmos IBC Hub — proof-of-stake staking governance",
+      "parent_strategy": "K493 ATOM-BTC ACCEPT (OOS Sh=50.79, vol_ratio=2.34x)",
+      "alt_alt_entry": "K682/K684 ATOM-SOL ACCEPT, K719 ENA-ATOM, K729 INJ-ATOM",
+      "fr_mean_ann_pct": -3.27,
+      "fr_std": 4.119e-05
+    }
+  },
+  "k339_compliance": {
+    "repo_root": "/Users/nekonaomichi/crypto-lab",
+    "out_json": "/Users/nekonaomichi/crypto-lab/wave_k743_ldo_atom_eval.json",
+    "out_md": "/Users/nekonaomichi/crypto-lab/wave_k743_ldo_atom_eval.md",
+    "live_changes": "NONE — read-only evaluation",
+    "pattern": "K339 REPO_ROOT"
+  }
+}
