@@ -1,6 +1,31 @@
 # K302a Master Deployment Playbook — Single Source of Truth
-**Version:** 6.50 MEGA | **Updated:** 2026-05-30 17:03 JST | **Wave:** K718 (supersedes K717/K712/K709/K700/K692/K674/K666/K657/K643)
+**Version:** 6.50 MEGA | **Updated:** 2026-05-30 17:26 JST | **Wave:** K723 (supersedes K718/K717/K712/K709/K700/K692/K674/K666/K657/K643)
 **Status:** v6.50 MEGA — 35 sleeves | 10 orthog + 4 ETH-base + 8 alt-alts + 8 paired | HL 63.5% (<65% cap) | K523 $15.2M/$21.1M/$48.0M @$10M | 5y $95M–$115M @$10M | v6.50 LIVE target 2027-Q1
+
+## ⚠ K723 DEFENSIVE UPDATE — K376 INDETERMINATE (2026-05-30 17:26 JST)
+
+> **K723 SCOPE:** K376 BULL ETA confirmed INDETERMINATE (K722 reconciliation). Defensive priority shift.
+> **FILES:** `wave_k723_k376_defensive.{py,json,md}` | **Quick start:** `python3 wave_k723_k376_defensive.py`
+
+### K723 Defensive Status
+
+| Metric | K718 | K723 | Note |
+|--------|------|------|------|
+| K376 ETA | "14d" (K680 hardcoded, INVALID) | **INDETERMINATE** | K722 reconciled |
+| K376 slope | -34.41 (daemon snapshot) | **-72.36 worsening -28/day** | Live recompute |
+| K376 Phase B | D7-D14 watch | **INDEFINITELY DEFERRED** | Until BTC >$78K |
+| K376 $247K/yr | Conditional, ~2w | **Delayed indefinitely** | -$200K vs prior plan |
+| K552 + K492-C | Secondary | **PRIMARY (K208 defense)** | Priority upgraded |
+| K498 Phase 1A | Step 5 | **Higher relative value** | Without K376 momentum |
+| K449 LIVE | Week 1 | **Prioritized** | Front-load non-BTC alpha |
+| Phase A ($566K) | Unchanged | **Unchanged** | 6 actions identical |
+| D60 cascade ($1.643M) | Unaffected | **Unaffected** | BTC-regime independent |
+| Activation without K376 | $4.5M @$10M | **$4.3M @$10M** | -$200K |
+
+**K376 delay cost: $677/day** — K497 daemon auto-monitors `data/k376_regime_status.json`.
+**Reactivation:** BTC price recovery above $78K range → 20d SMA slope crosses 0 → holds 7 consecutive days.
+
+---
 
 ## ★★★★ K718 CAPSTONE UPDATE — K674 incremental (2026-05-30 17:03 JST)
 
@@ -187,14 +212,21 @@ OKX block (when API ready, deferrable D1-D2):
 **Pre-flight:** `python3 wave_k709_day0_sheet.py --preflight`  
 **Rollback:** `python3 wave_k709_day0_sheet.py --rollback A3`
 
-### Phase B: D7-D14 K376 BULL Watch
+### Phase B: K376 BULL Watch — ⚠ INDEFINITELY DEFERRED (K723)
+
+> **K723 UPDATE (2026-05-30):** K376 BULL ETA is INDETERMINATE. Slope = -72.36 USD/day (worsening).
+> Phase B is suspended until K497 daemon confirms BULL_CONFIRMED (slope >= 0 × 7 consecutive days).
+> **No action required.** K497 monitors automatically. Re-evaluate if BTC recovers above ~$78K.
 
 ```bash
-python3 scripts/k376_regime_trigger_monitor.py --status
-# If BULL_CONFIRMED:
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k376-momentum.plist
+# Monitor K376 status (K497 daemon, authoritative)
+cat data/k376_regime_status.json | python3 -m json.tool | grep -E "slope|regime|days_slope_positive"
+
+# Only if K497 shows BULL_CONFIRMED:
+# launchctl load ~/Library/LaunchAgents/com.cryptolab.k376-momentum.plist
 ```
 Profit: +$247K/yr max | $126K/yr regime-weighted. K497 daemon auto-monitors.
+**K723 delay cost: $677/day during INDETERMINATE period.**
 
 ### Phase C: D60 Cascade (2026-07-29)
 
