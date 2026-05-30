@@ -581,6 +581,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k767_rwa_diversified",
         expected_html_status="SCAFFOLD-READY",  # K767: plist in scripts/ (gitignored); activate: cp plist to LaunchAgents + launchctl load; fund providers first; USDY non-US only
     ),
+    DaemonSpec(
+        label="com.cryptolab.k795-basket-rotation",
+        purpose="K795 Multi-Asset Basket Rotation Strategy (83rd daemon, regime-aware rotation across 36 accepted alt-alt+base strategies, daily 09:00 JST rotation check, Variant B regime-conditional BTC+SOL 30d trend filter PASS, Variant A top-5 rolling Sh PASS_WITH_OVERFIT_CAVEAT, PAPER_TRADE=True default LIVE 自動変更禁止, K523 3-point: conservative $21K | mid $112K | optimistic $285K @$10M, data/k795_rotation_dashboard.json allocation source-of-truth, regime: BULL_ALT alt-alt-cross 1.8x / BEAR_ALT BTC-base 1.5x / MIXED equal-weight, 36-strategy universe total static central $3.93M/yr, turnover cost 5bps pessimistic $46K/yr, net uplift Variant B $112K/yr central, 83rd daemon K795 scaffold)",
+        scripts=["scripts/k795_basket_rotation.py"],
+        log_basename="k795_basket_rotation",
+        expected_html_status="SCAFFOLD-READY",  # K795: plist in scripts/ (gitignored); activate after 60d paper observation + regime accuracy >= 70% + K498/v6.52 OKX activation
+    ),
 ]
 
 

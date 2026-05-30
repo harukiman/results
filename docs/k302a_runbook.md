@@ -16210,3 +16210,94 @@ python3 scripts/k777_eigen_sol_run.py --dry-run
 | K532 | Governance v5 (HL 65.0% cap rule) |
 | K721 | LDO-SOL (G5q reference — restaking distinct from LSD confirmed) |
 | K768 | BLUR-SOL (G5z reference — ETH NFT × SOL; EIGEN-SOL G5z check) |
+
+---
+
+## §84 K795 Multi-Asset Basket Rotation (83rd Daemon, Regime-Conditional Variant B)
+
+*K795 §84 -- Multi-Asset Alt-Alt Basket Rotation strategy (83rd daemon, regime-aware rotation across 36 accepted strategies, long-tail axis EXHAUSTED K793 99/99 confirmed new axis, Variant B regime-conditional BTC+SOL 30d trend filter PASS, Variant A top-5 rolling Sh PASS_WITH_OVERFIT_CAVEAT, Variant D Markowitz BORDERLINE, K523 3-point $21K-$112K-$285K @$10M, 36-strategy universe total static $3.93M/yr central, regime: BULL_ALT BTC+SOL>+5% alt-alt-cross 1.8x ENA-ATOM-anchor-$634K / BEAR_ALT BTC/SOL<-5% BTC-base 1.5x APT-BTC-K512-anchor / MIXED equal-weight-baseline, turnover cost 5bps pessimistic $46K/yr, net Variant B $112K/yr central-uplift, HL 66.8% unchanged paper-gate, PAPER_TRADE=True LIVE-自動変更禁止, daily 09:00-JST rotation check, 60d gate: regime-accuracy>=70%+realized-uplift>=$10K+K498/v6.52) -- 2026-05-31*
+
+### §84.1 Strategy Overview
+
+| Parameter | Value |
+|-----------|-------|
+| Strategy | K795 Multi-Asset Basket Rotation (83rd daemon) |
+| Wave | K795 |
+| Decision | **PASS** (Variant B regime-conditional primary) |
+| Strategy universe | 36 strategies (BTC-base 9, ETH-base 4, alt-alt-SOL 22, alt-alt-cross 2) |
+| Static total central PnL | $3,930,668/yr @$10M |
+| Rotation uplift central | $112,000/yr @$10M (Variant B) |
+| K523 3-point | Conservative=$21K / Mid=$112K / Optimistic=$285K/yr |
+| Regime signals | BTC 30d return + SOL 30d return (DF=2, low overfit) |
+| Schedule | Daily 09:00 JST (after all strategy daemons fired) |
+| HL concentration | 66.8% UNCHANGED (rotation only changes weights, not positions) |
+
+### §84.2 Regime Classification
+
+| Regime | Condition | Portfolio Action |
+|--------|-----------|-----------------|
+| BULL_ALT | BTC 30d >+5% AND SOL 30d >+5% | alt-alt-cross 1.8x, alt-alt-SOL 1.4x, BTC-base 0.6x |
+| BEAR_ALT | BTC 30d <-5% OR SOL 30d <-5% | BTC-base 1.5x, ETH-base 1.3x, alt-alt-SOL 0.7x |
+| MIXED | Otherwise | Equal weight (static baseline Variant C) |
+
+**BULL_ALT anchor:** ENA-ATOM (K719, $634K/yr, OOS Sh 29.67) — largest uplift in bull regime.
+**BEAR_ALT anchor:** APT-BTC (K512, $302K/yr, OOS Sh 51.10) + ATOM-BTC (K493, $231K/yr) — BTC-base defensive.
+
+### §84.3 Variant Decisions
+
+| Variant | Name | Decision | Net Uplift |
+|---------|------|----------|-----------|
+| A | Top-5 rolling 30d Sharpe | PASS_WITH_OVERFIT_CAVEAT | ~$148K/yr |
+| B | Regime-conditional (BTC+SOL trend) | **PASS (primary)** | **$112K/yr** |
+| C | Equal-weight all (baseline) | BASELINE | $0 (static) |
+| D | Markowitz diagonal | BORDERLINE | ~$85K/yr |
+
+### §84.4 K523 3-Point Uplift @$10M
+
+| Point | Annual Uplift | Rationale |
+|-------|--------------|-----------|
+| Conservative | $21,000 | Regime mis-call 40%, turnover $20K, K518 38% floor |
+| **Central** | **$112,000** | Variant B, 3 regimes/yr, 12% alpha, R2S=60%, net of turnover |
+| Optimistic | $285,000 | Variant A+B stack, mis-call <20%, near-full OOS realization |
+
+**K523 note:** Central $112K is NOT the upper bound. Upper bound = $285K (Variant A+B optimistic). K518 38% floor: conservative $21K realized minimum.
+
+### §84.5 Implementation
+
+```bash
+# Verify status
+python3 scripts/k795_basket_rotation.py --status
+python3 scripts/k795_basket_rotation.py --universe
+
+# Dry run (regime detection + weight output, no writes)
+python3 scripts/k795_basket_rotation.py --dry-run
+
+# Activate daemon (after 60d paper gate)
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k795-basket-rotation.plist
+cp scripts/com.cryptolab.k795-basket-rotation.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k795-basket-rotation.plist
+launchctl list | grep k795
+```
+
+### §84.6 Live Gate
+
+| Criterion | Threshold |
+|-----------|-----------|
+| Paper observation | >= 60d |
+| Regime accuracy | >= 70% (ex-post validation) |
+| Net realized uplift | >= $10,000/yr |
+| HL concentration | K498/v6.52 OKX activation (HL% < 65%) |
+| Turnover cost | Actual <= $50K/yr (within pessimistic estimate) |
+
+### §84.7 References
+
+| Wave | Description |
+|------|-------------|
+| K793 | Final HIP-3 round 2e — long-tail axis EXHAUSTED (99/99 confirmed) |
+| K791 | K788 MEME-SOL scaffold (82nd daemon, preceding wave) |
+| K795 | This section — basket rotation (83rd daemon) |
+| K719 | ENA-ATOM ($634K/yr — BULL_ALT anchor strategy) |
+| K512 | APT-BTC (OOS Sh 51.10 — BEAR_ALT anchor strategy) |
+| K523 | 3-point projection mandate |
+| K518 | 38% realized-to-stated ratio floor |
+| K498 | OKX activation prerequisite (HL% < 65%) |
