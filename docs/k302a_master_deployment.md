@@ -52,28 +52,63 @@
 | K698 | LINK-ETH oracle cross-cluster | 12.07 | $24,650 | PAPER-60d (conditional) |
 | **+$176K** | **v6.50 incremental** | | | vs v6.40 $20.9M baseline |
 
-### D60 Cascade — 2026-07-29 (Execute in Sharpe Order)
+### D60 Cascade — 2026-07-29 (Execute in Sharpe Order) — K705 PLAYBOOK
 
+> **K705 Playbook:** `wave_k705_d60_cascade.{py,json,md}` — full per-scaffold checklist, HL trajectory, 5-day sequential timing, rollback commands  
+> **Cumulative unlock:** +$1,642,745/yr @$10M AUM | **Daily rate post-cascade:** $4,501/day  
+> **CONSTRAINT:** LIVE 自動変更禁止 — manual execution only, 3 max/day, 24h monitoring between batches
+
+#### D+0 (2026-07-29) — Highest Sharpe, all Bybit, zero HL impact
 ```bash
-# ALT-ALT — Bybit-only (Sharpe order)
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k686-avax-sol.plist    # Sh=50.27 $102K FIRST
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k682-atom-sol.plist    # Sh=43.43 $215K
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k679-apt-sol.plist     # Sh=39.29 $235K
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k690-sei-sol.plist     # Sh=25.11 $105K
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k696-ena-sol.plist     # Sh=26.93 $93K (NEW v6.50)
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k694-tia-sol.plist     # Sh=19.09 $58K (NEW v6.50)
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k684-sol-inj.plist     # Sh=9.65  $114K LAST
-
-# ORTHOG — Bybit-primary (Sharpe order)
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k628-jto-orthog.plist  # Sh=44.63 $357K HIGHEST ALPHA
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k648-pol-orthog.plist  # Sh=23.41
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k647-dot-orthog.plist  # Sh=23.25
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k635-imx-orthog.plist  # Sh=11.94
-
-# ETH-BASE — HL (K552 PREREQ)
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k658-sol-eth.plist     # Sh=29.66
-launchctl load ~/Library/LaunchAgents/com.cryptolab.k629-wld-eth.plist     # Sh=19.90
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k686-avax-sol.plist    # Sh=50.27 AVAX-SOL $102K FIRST
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k682-atom-sol.plist    # Sh=43.43 ATOM-SOL $215K
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k628-jto-orthog.plist  # Sh=44.63 JTO orthog $357K
+# Unlock D+0: $673,817/yr | HL: 63.5% (unchanged)
 ```
+
+#### D+1 (2026-07-30) — HL check required before K658
+```bash
+# VERIFY: HL% <= 63.5% before K658
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k679-apt-sol.plist     # Sh=39.29 APT-SOL $235K
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k658-sol-eth.plist     # Sh=29.66 SOL-ETH +1.5pp HL
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k696-ena-sol.plist     # Sh=26.93 ENA-SOL $93K
+# Cumulative D+1: $1,044,117/yr | HL: 65.0% AT CAP
+```
+
+#### D+2 (2026-07-31) — Bybit-only batch
+```bash
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k690-sei-sol.plist     # Sh=25.11 SEI-SOL $105K
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k648-pol-orthog.plist  # Sh=23.41 POL orthog $86K
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k647-dot-orthog.plist  # Sh=23.25 DOT orthog $80K
+# Cumulative D+2: $1,315,215/yr | HL: 65.0%
+```
+
+#### D+3 (2026-08-01) — K629 CONDITIONAL on K552
+```bash
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k663-tia-eth.plist     # Sh=22.0 TIA-ETH (Bybit)
+# K629 HARD STOP: DO NOT load if HL >= 63.0%
+# launchctl load ~/Library/LaunchAgents/com.cryptolab.k629-wld-eth.plist   # +2.0pp HL — K552 PREREQ
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k694-tia-sol.plist     # Sh=19.09 TIA-SOL (Bybit)
+# Cumulative D+3: $1,503,779/yr (or $1,409,569 if K629 deferred) | HL: 65.0%
+```
+
+#### D+4 (2026-08-02) — Final batch
+```bash
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k698-link-eth.plist    # Sh=12.07 LINK-ETH (Bybit)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k684-sol-inj.plist     # Sh=9.65 SOL-INJ (Bybit) LAST
+# CASCADE COMPLETE: $1,642,745/yr | Daily rate: $4,501/day
+```
+
+#### HL Trajectory Summary
+
+| Step | Strategies | HL% | Headroom | Status |
+|------|-----------|-----|----------|--------|
+| Baseline | K700 v6.50 | 63.5% | 1.5pp | OK |
+| D+0 | K686/K682/K628 (Bybit) | 63.5% | 1.5pp | OK |
+| D+1 | K679/K658/K696 | 65.0% | 0.0pp | AT CAP |
+| D+2–D+4 | remaining (Bybit) | 65.0% | 0.0pp | OK |
+| K629 (COND) | WLD-ETH +2.0pp | 67.0% | -2.0pp | FAIL without K552 |
+| **After K552** | K280 75%→60% -2pp | **63.5%** | **1.5pp** | **SAFE** |
 
 ### §6 Gates — v6.50 MEGA
 
