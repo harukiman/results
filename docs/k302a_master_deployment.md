@@ -1,6 +1,55 @@
 # K302a Master Deployment Playbook — Single Source of Truth
-**Version:** 6.30-candidate | **Updated:** 2026-05-30 07:00 JST | **Wave:** K579 Profit Lift Dashboard v2 (supersedes K539)
-**Status:** ACTIVE USER ACTIVATION GUIDE — 5-Phase D0-D180 sequenced playbook
+**Version:** 6.32-candidate | **Updated:** 2026-05-30 11:34 JST | **Wave:** K643 v6.31/v6.32 Proposal (supersedes K579)
+**Status:** ACTIVE USER ACTIVATION GUIDE — 5 orthog sleeves paper-gated, v6.31/v6.32 architecture staged
+
+---
+
+## ★★★ K643 v6.31/v6.32 Architecture — Executive Summary (2026-05-30)
+
+**K643 is the authoritative proposal for v6.31 and v6.32, incorporating 5 orthogonalized FR-differential sleeves (all Bybit-primary). HL cap maintained at 62.5% throughout.**
+
+### K523 Transparent Range — v6.31/v6.32 @$10M
+
+| Version | Conservative | Mid | Optimistic | 5y Mid |
+|---------|-------------|-----|------------|--------|
+| v6.30 (K572 baseline) | $2.01M/yr | $2.80M/yr | $3.22M/yr | $33.6M |
+| **v6.31** (+ K628 JTO 2% Bybit) | $7.01M/yr | **$9.93M/yr** | $21.07M/yr | ~$50M |
+| **v6.32** (+ full orthog stack) | $14.5M/yr | **$19.93M/yr** | $46M/yr | **~$100M** |
+
+> **v6.32 HTML banner:** ★★★ K643 v6.32 ACCEPT range $14.5-46M/yr (mid $19.93M, +$17M vs v6.30, 5y $100M central)
+> **HL: 62.5% (unchanged) | All 5 orthog sleeves: Bybit-primary, 0pp HL contribution**
+
+### 5 Orthog Sleeves — v6.32 Stack
+
+| Sleeve | Alloc% | OOS Sharpe | Ann Mid @$10M | G5 Status | Paper Gate |
+|--------|--------|-----------|---------------|-----------|-----------|
+| K628 JTO (SEI+DOGE factor) | 2.0% | 18.30 | $7.14M | PASS | 60d |
+| K631 WLD (JUP factor) | 2.0% | 18.04 | $2.90M | PASS | 60d |
+| K633 OP (FIL factor) | 2.0% | 12.68 | $2.32M | PASS | 60d |
+| K635 IMX (SHIB+TIA+SEI MF) | 2.0% | 24.81 | $4.78M | PASS | 60d |
+| K638 STX (APT+SEI+DOGE MF) | 1.5% | 12.38 | $0.07M | PASS | 60d |
+| **Orthog stack total** | **9.5%** | — | **$17.13M** | **ALL PASS** | — |
+
+### v6.31 → v6.32 Activation Timeline
+
+| Phase | Trigger | ETA | Value Unlock |
+|-------|---------|-----|-------------|
+| v6.31 | K628 JTO 60d paper pass → Bybit LIVE | 2026-07-29 | +$7.14M/yr mid |
+| v6.32 | All 5 orthog LIVE + K521 90d gate | 2026-12 – 2027-03 | +$17.13M/yr mid |
+
+### User Actions (Post 60d Paper Gate)
+
+| Action | Daemon | Effort | Value |
+|--------|--------|--------|-------|
+| X1 | K628 JTO → Bybit LIVE | 5 min | $5M–$17.85M/yr |
+| X2 | K631 WLD → Bybit LIVE | 5 min | $1M–$5.8M/yr |
+| X3 | K633 OP → Bybit LIVE | 5 min | $0.8M–$4.6M/yr |
+| X4 | K635 IMX → Bybit LIVE | 5 min | $1.7M–$9.55M/yr |
+| X5 | K638 STX → Bybit LIVE | 5 min | $23K–$130K/yr |
+
+> Full detail: `wave_k643_v632_proposal.{py,json,md}`
+
+---
 
 ---
 
