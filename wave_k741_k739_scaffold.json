@@ -1,0 +1,140 @@
+{
+  "wave": "K741",
+  "title": "K739 FIL-SOL Alt-Alt Scaffold (68th daemon, 14th alt-alt, Storage L1 × SVM cross-cluster)",
+  "created_jst": "2026-05-30 19:03 JST",
+  "strategy_wave": "K739",
+  "daemon_number": 68,
+  "alt_alt_number": 14,
+  "cluster": "FIL-SOL Alt-Alt FR Differential (Filecoin Storage L1 × Solana SVM, cross-cluster)",
+  "scaffold_status": "PAPER_TRADE",
+  "oos_sharpe": 23.378,
+  "gates_passed": 17,
+  "gates_total": 18,
+  "gate_fail": "G6 only (26.9/yr vs 30 threshold)",
+  "accept_rationale": "ACCEPT: 17/18 §6 gates PASS. OOS Sh=23.378. Perm p=0.0000. ADF=-47.4568. G4 11/12. G5b=-0.3682 G5f=0.3901 all PASS. G6 below threshold (26.9/yr vs 30) — only fail. Cross-cluster Storage L1 × SVM confirmed orthogonal.",
+  "signal": {
+    "formula": "diff = FIL_FR - SOL_FR",
+    "window_h": 168,
+    "threshold": 0.0,
+    "type": "sign(rolling_mean_168h(FIL_FR - SOL_FR))"
+  },
+  "execution": {
+    "venue_primary": "HL (FIL-PERP + SOL-PERP)",
+    "venue_fallback": "Bybit (FILUSDT-PERP + SOLUSDT-PERP)",
+    "mode": "POST_ONLY parallel (K439 pattern)",
+    "cadence_h": 8,
+    "startinterval_s": 28800
+  },
+  "sizing": {
+    "sleeve_pct": 1.5,
+    "leverage": 4.0,
+    "aum_ref_usd": 10000000,
+    "notional_per_leg_usd": 300000,
+    "total_notional_usd": 600000,
+    "margin_usd": 150000,
+    "hl_concentration_pre_pct": 64.0,
+    "hl_concentration_post_pct": 65.0,
+    "hl_cap_pct": 65.0,
+    "cap_note": "64.0% + 1.5% = 65.0% (at ceiling). Cap-aware deploy.",
+    "expand_note": "Expand to 2.5% ($81,719/yr eval basis) after K517 cap resolution."
+  },
+  "profit_projection": {
+    "sleeve_1_5pct": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 1.5,
+      "leverage": 4.0,
+      "net_annual_usd": 122000,
+      "daily_usd": 334,
+      "note": "HL-cap-aware deploy basis (task spec)"
+    },
+    "sleeve_2_5pct_eval": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 2.5,
+      "leverage": 4.0,
+      "net_annual_usd": 81719,
+      "daily_usd": 224,
+      "note": "K739 eval JSON basis (post-K517 expand target)"
+    }
+  },
+  "gate_60d": {
+    "realized_sharpe_min": 10.0,
+    "fill_rate_min_pct": 60.0,
+    "max_drawdown_max_pct": 15.0,
+    "gate_status": "IN_PROGRESS"
+  },
+  "statistics": {
+    "adf_stat": -47.4568,
+    "adf_p": 0.0,
+    "ou_half_life_h": 2.2,
+    "ou_half_life_d": 0.09,
+    "raw_corr_fil_sol": 0.3754,
+    "vol_ratio_fil_sol_6m": 1.2875,
+    "fil_dominant_pct": 53.0,
+    "sol_dominant_pct": 47.0
+  },
+  "g5_correlations": {
+    "g5a_eth_btc": -0.0919,
+    "g5b_sol_btc": -0.3682,
+    "g5c_avax_btc": 0.2291,
+    "g5d_atom_btc": 0.1184,
+    "g5e_inj_btc": 0.0453,
+    "g5f_fil_btc": 0.3901,
+    "g5g_sei_btc": -0.1155,
+    "g5h_tia_btc": -0.0534,
+    "g5i_apt_btc": -0.1565,
+    "g5j_k280": 0.05
+  },
+  "g4_walk_forward": {
+    "n_folds": 12,
+    "positive_folds": 11,
+    "negative_folds": 1,
+    "min_fold_sharpe": -6.805,
+    "negative_fold": "fold 5 (2024-12-26 to 2025-01-25, Sh=-6.805)"
+  },
+  "cross_cluster_analysis": {
+    "k517_fil_btc_oos_sharpe": 21.773,
+    "k476_sol_btc_oos_sharpe": 16.298,
+    "k739_fil_sol_oos_sharpe": 23.378,
+    "k739_vs_k517": 1.605,
+    "k739_vs_k476": 7.08,
+    "alt_alt_advantage": "FIL-SOL removes BTC common factor: pure FIL/SOL divergence signal. K739 OOS Sh=23.378 > K517 21.773 and > K476 16.298. Higher differential vol (3.43e-5 vs ~3.1e-5 BTC-paired). Anti-corr with K476: G5b=-0.3682."
+  },
+  "files_created": {
+    "run_script": "scripts/k739_fil_sol_run.py",
+    "plist": "scripts/com.cryptolab.k739-fil-sol.plist",
+    "scaffold_json": "wave_k741_k739_scaffold.json",
+    "scaffold_py": "wave_k741_k739_scaffold.py",
+    "dashboard": "data/k739_dashboard.json"
+  },
+  "deploy_instructions": {
+    "step1": "cp scripts/com.cryptolab.k739-fil-sol.plist ~/Library/LaunchAgents/",
+    "step2": "sed -i '' 's|REPO_ROOT_PLACEHOLDER|$(pwd)|' ~/Library/LaunchAgents/com.cryptolab.k739-fil-sol.plist",
+    "step3": "launchctl load ~/Library/LaunchAgents/com.cryptolab.k739-fil-sol.plist",
+    "verify": "launchctl list | grep k739",
+    "dry_run_test": "python3 scripts/k739_fil_sol_run.py --dry-run",
+    "status_check": "python3 scripts/k739_fil_sol_run.py --status"
+  },
+  "hl_cap_mitigation": {
+    "current_hl_pct": 64.0,
+    "cap_pct": 65.0,
+    "k739_sleeve": 1.5,
+    "result_hl_pct": 65.0,
+    "within_cap": true,
+    "note": "1.5% sleeve exactly reaches 65% cap. Cap-safe deploy.",
+    "expansion_path": "K498 OKX + K485 Bybit sub-account reduce HL% -> expand K739 to 2.5%"
+  },
+  "family_context": {
+    "alt_alt_family": [
+      "K679 APT-SOL (ACCEPT, Sh=39.29)",
+      "K682 ATOM-SOL (ACCEPT, Sh=43.43)",
+      "K684 SOL-INJ (ACCEPT, Sh=9.65)",
+      "K686 AVAX-SOL (ACCEPT, Sh=50.27)",
+      "K690 SEI-SOL (ACCEPT WF 12/12, Sh=25.11)",
+      "K694 TIA-SOL (CONDITIONAL G4 11/12, Sh=19.09, 59th daemon)",
+      "K739 FIL-SOL (ACCEPT 17/18, Sh=23.38, 68th daemon)"
+    ],
+    "storage_vs_svm_pair": "FIL-SOL: first Storage L1 × SVM cross-cluster in family",
+    "sol_saturation_check": "SOL in K476+K679+K682+K684+K686+K690+K694 (7 strategies). K739 G5b=-0.3682 PASS (anti-corr).",
+    "fil_vertex": "FIL new vertex in alt-alt family (Storage L1 ecosystem — K517 parent accepted)."
+  }
+}

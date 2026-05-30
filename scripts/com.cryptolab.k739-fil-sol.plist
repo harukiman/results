@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k739-fil-sol</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k739_fil_sol_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 68th daemon: K739 FIL-SOL FR Differential (FOURTEENTH ALT-ALT pair, HL primary, ACCEPT 17/18) -->
+    <!-- StartInterval: 28800 = 8 hours (matches 8h cadence; HL settles hourly — accrue each poll) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 10, fill_rate >= 60%, maxDD < 15%
+             ACCEPT 17/18: G6 below threshold (26.9/yr vs 30) — all others PASS.
+             HL cap: 64% + 1.5% = 65.0% (at ceiling). Expand to 2.5% post-K517. -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k739_fil_sol.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k739_fil_sol.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K739 specific notes (do not remove):
+         Strategy:    FIL-SOL FR Differential, FOURTEENTH ALT-ALT pair (K739, K741 scaffold)
+         Daemon #:    68th daemon (fourteenth alt-alt pair, ACCEPT 17/18)
+         OOS Sharpe:  23.378 (W=168h, zero threshold, ~218d OOS period)
+         Profit:      ~$122K/yr net @$10M @4x (1.5% HL-cap-aware sleeve)
+                      $81,719/yr @$10M @4x @2.5% sleeve (eval basis, post-K517 expand)
+         Signal:      diff = FIL_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold)
+         Venue:       HL primary (FIL-PERP + SOL-PERP on HL), Bybit fallback
+         HL impact:   64.0% + 1.5% = 65.0% (at 65% cap ceiling — cap-aware deploy)
+         Gate:        60d paper-trade: Realized Sh>=10 + fill>=60% + maxDD<15%
+         Cluster:     FIL-SOL Alt-Alt (Filecoin Storage L1 × Solana SVM, FOURTEENTH ALT-ALT)
+         ACCEPT:      17/18 §6 gates PASS. G6=26.9/yr vs 30 (only fail). G1-G5+G7-G9 PASS.
+         ADF:         stat -47.4568 (strongly stationary p=0.0), OU half-life=2.2h (FAST, 0.09d)
+         G5b:         corr(K739, K476)=-0.3682 (SOL saturation PASS — anti-correlated)
+         G5f:         corr(K739, K517)=0.3901 (FIL vertex PASS — below 0.40 threshold)
+         G8:          HL FIL vs Bybit FIL: 0.4952 | HL SOL vs Bybit SOL: 0.5745. Diff: 0.2912. PASS.
+         G4:          11/12 folds positive (fold 5 Sh=-6.805, 2024-12 to 2025-01)
+         FIL drivers: Sector pledge collateral release (6-18m expiry), Fil+ DataCap distributions,
+                      FVM DeFi activity, miner liquidation events, baseline minting, retrieval spikes.
+                      +7.66%/ann mean FR.
+         SOL drivers: Retail meme-coin (BONK/WIF/POPCAT), Jupiter/Drift/Jito DeFi launches,
+                      Firedancer upgrade hype, SOL ETF speculation, validator APY dynamics.
+                      +7.728%/ann mean FR.
+         Cross-cluster: Storage economy (enterprise data deals, miner economics) vs
+                        SVM execution (retail sentiment, DeFi composability). Raw corr=0.3754.
+         Parents:     K517 FIL-BTC (OOS Sh=21.773 ACCEPT CONDITIONAL) +
+                      K476 SOL-BTC (OOS Sh=16.298 ACTIVE). Alt-alt > both parents.
+         FIL>SOL:     53.0% of time (post-correction recovery — speculative SOL funding cools,
+                      FIL storage sector resilience, FVM DeFi growth, sector pledge releases).
+         SOL>FIL:     47.0% of time (SVM bull phases — meme seasons, DeFi TVL expansion,
+                      retail leverage demand on SOL perps).
+         Trades/yr:   ~26.9 expected (OOS period), 32.3 over full history
+         HL cap note: 1.5% sleeve (cap-safe). Expand to 2.5% after K517 cap resolution.
+                      K498 OKX or K485 Bybit sub-account required for headroom creation.
+         Deploy:      cp scripts/com.cryptolab.k739-fil-sol.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k739-fil-sol.plist
+    -->
+</dict>
+</plist>
