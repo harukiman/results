@@ -4695,6 +4695,60 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K797: K794 ME-SOL HL-only emergency exit flag (RESEARCH_ONLY)
+    # K794 = HL-only ME+SOL paired (2 legs) when ME_FR-SOL_FR rolling mean 84h changes sign.
+    # Close protocol: IOC reduce-only on HL (short leg first, then long leg) — paper/research only.
+    # ME is HIP-3 on HL (OI=$2.26M, $85K/day). G8 FAIL: no Bybit/OKX. RESEARCH_ONLY HARDCODED.
+    # HL concentration: 66.8% AT CAP (research-only + paper-gate strict). 3x leverage.
+    # CONDITIONAL_ACCEPT_RESEARCH_ONLY 8/9 gates (G8 FAIL). G9 PASS: OOS=217d >= 180d.
+    # L004 PASS: ME bidirectional (carry_full=0.5713 carry_oos=0.5014).
+    # L004_DIFF BORDERLINE: full=0.282 (<0.30 floor), OOS=0.396 PASS. G2 p=0.000 timing thin.
+    # Use --include-k794 to print K794-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k794",
+        dest="include_k794",
+        action="store_true",
+        default=False,
+        help=(
+            "K797: Include K794 ME-SOL close summary during emergency exit. "
+            "K794 is RESEARCH_ONLY (hardcoded in k794_me_sol_run.py) — paper positions only. "
+            "K794 positions (ME+SOL paired, HL-only) are detected automatically; "
+            "this flag adds a structured close summary for research monitoring. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "RESEARCH_ONLY: all positions are paper/simulation — no live capital at risk. "
+            "Signal: diff = ME_FR - SOL_FR (direct differential, W=84h rolling mean, zero threshold). "
+            "HL ONLY: ME-PERP + SOL-PERP on HL. G8 FAIL: ME not on Bybit or OKX ($85K/day vol). "
+            "HL concentration 66.8% AT CAP — research-only + paper-gate strict. "
+            "CONDITIONAL_ACCEPT_RESEARCH_ONLY 8/9 gates (G8 FAIL HL-only HIP-3 $85K/day). "
+            "G2 p=0.000 — timing alpha confirmed (THIN: +0.45 Sh above pure carry IS Sh=18.68). "
+            "G3 DSR: t-stat=15.04, p=0.000 — PASS. "
+            "G4 WF 11/11 ALL POSITIVE (min_fold_sh=2.43 Fold 2). "
+            "G5 28/28 ALL PASS: max_corr=0.2075 (G5z EIGEN-SOL, below 0.40). "
+            "G5w PEPE-SOL=0.057 PASS | G5y WIF-SOL=0.013 PASS | G5ab MEME-SOL=0.008 PASS. "
+            "G6: 30.2 entries/yr OOS PASS MARGINAL (0.2/yr above 30/yr threshold). "
+            "G7: OOS ann ret 3x=260.7% PASS. "
+            "G8: FAIL -- ME HL-only HIP-3 (OI=$2.26M, $85K/day -- no Bybit/OKX). "
+            "G9: PASS -- OOS=217 days (above 180d threshold). "
+            "L004 PASS: ME bidirectional (carry_full=0.5713 carry_oos=0.5014). "
+            "L004_DIFF BORDERLINE: full=0.282 (<0.30 floor), OOS=0.396 PASS. G2 overrides. "
+            "ME FR mean=-0.693 bps/hr (structurally negative -- SHORT ME earns carry). "
+            "OOS Sharpe 19.47 (W=84h, 217d OOS). IS Sharpe 19.13 (OOS > IS -- no overfit). "
+            "ME FR: NFT trading volume cycles, SVM NFT bull/bear, multi-chain expansion, "
+            "ME DAO governance, HL HIP-3 speculative demand, SVM DeFi integration. "
+            "vol_ratio=12.66x (full). raw_corr=0.0472. Timing alpha THIN (+0.45 Sh). "
+            "Leverage: 3x (HL max for ME -- 0.25% sleeve, $85K/day vol constraint). "
+            "SOL FR: DePIN/Retail Phantom Firedancer ETF persistent positive. Min=-20.51bps cascade. "
+            "ME = 23rd vertex candidate (1st SVM NFT marketplace cluster). MR9 L002: all future ME-X blocked. "
+            "V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO,EIGEN,COMP,BIO,MEME,ME} "
+            "K523 3-point: conservative=$24,763 central=$39,100 optimistic=$55,392/yr @$10M @3x @0.25%. "
+            "Live gate: NOT ELIGIBLE (RESEARCH_ONLY hardcoded). "
+            "Re-eval trigger: ME vol > $500K/day + Bybit listing + G2 > +1 Sh. "
+            "Cluster: SVM NFT Marketplace (Magic Eden) × Solana SVM (26th alt-alt scaffold, 84th daemon). "
+            "Requires: K794 daemon running (com.cryptolab.k794-me-sol, 84th daemon). "
+            "See: docs/k302a_runbook.md §85"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -6181,6 +6235,64 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "G5 27/27 ALL PASS (max_corr=0.1973). G9 OOS 212d PASS. L004 PASS (bidirectional). "
                 "L004_DIFF BORDERLINE (full=0.289 <0.30, OOS=0.440 PASS). MEME = 22nd vertex (ERC-20 meme index). "
                 "Use --include-k788 for structured HL close summary (§83)."
+            )
+
+        # ── K794 ME-SOL close summary (K797 §85) ─────────────────────────────
+        # RESEARCH_ONLY: K794 is paper-only. HL concentration 66.8% AT CAP.
+        # CONDITIONAL_ACCEPT_RESEARCH_ONLY 8/9 (G8 FAIL HL-only $85K/day).
+        # G9 PASS: OOS=217 days. RESEARCH_ONLY hardcoded — never eligible for live.
+        if args.include_k794:
+            logger.info("=== K794 ME-SOL CLOSE SUMMARY (K797 §85) ===")
+            logger.info("  K794 ME-SOL: HL ONLY (ME-PERP + SOL-PERP both legs on HL)")
+            logger.info("  RESEARCH_ONLY=True HARDCODED in k794_me_sol_run.py — all positions are paper/simulation")
+            logger.info("  G8 FAIL: ME HL-only HIP-3 (OI=$2.26M, $85K/day — not on Bybit or OKX).")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_ME (NFT vol spike, rare): short SOL first -> sell long ME second")
+            logger.info("  BEAR_ME (SVM season + structural ME negative carry, dominant): short ME first -> sell long SOL second")
+            logger.info("  HL concentration: 66.8% AT CAP — research-only + paper-gate strict")
+            logger.info("  RESEARCH_ONLY: no live capital at risk. Paper simulation only.")
+            logger.info("  CONDITIONAL_ACCEPT_RESEARCH_ONLY 8/9 gates (G8 FAIL HL-only HIP-3 $85K/day)")
+            logger.info("  G2 p=0.000 — timing alpha confirmed (THIN: +0.45 Sh above pure carry IS Sh=18.68)")
+            logger.info("  G3 DSR: t-stat=15.04, p=0.000 — PASS")
+            logger.info("  G4 WF: 11/11 ALL POSITIVE (min_fold_sh=2.43 Fold 2)")
+            logger.info("  G5: 28/28 ALL PASS: max_corr=0.2075 (G5z EIGEN-SOL, below 0.40)")
+            logger.info("  G5w: PEPE-SOL=0.057 PASS (ETH meme cluster CLEAR)")
+            logger.info("  G5y: WIF-SOL=0.013 PASS (SOL-native meme cluster CLEAR)")
+            logger.info("  G5ab: MEME-SOL=0.008 PASS (22nd vertex ERC-20 meme cluster CLEAR)")
+            logger.info("  G6: 30.2 entries/yr OOS PASS MARGINAL (0.2/yr above 30/yr threshold)")
+            logger.info("  G7: OOS ann ret 3x=260.7% PASS")
+            logger.info("  G8: FAIL -- ME HL-only HIP-3 ($85K/day -- no Bybit/OKX perp confirmed)")
+            logger.info("  G9: PASS -- OOS=217 days (above 180d threshold)")
+            logger.info("  L004 PASS: ME bidirectional (carry_full=0.5713 carry_oos=0.5014)")
+            logger.info("  L004_DIFF BORDERLINE: full=0.282 (<0.30 floor), OOS=0.396 PASS. G2 p=0.000 overrides.")
+            logger.info("  ME FR: structurally negative (mean -0.693 bps/hr vs SOL +0.088 bps/hr).")
+            logger.info("  ME FR: NFT trading volume cycles, SVM NFT bull/bear, multi-chain expansion,")
+            logger.info("         ME DAO governance, HL HIP-3 speculative demand, SVM DeFi integration.")
+            logger.info("  ME FR: bidirectional. carry_oos=0.5014 confirms genuine bidirectionality (< 80%).")
+            logger.info("  ME = 23rd vertex candidate (1st SVM NFT marketplace cluster). MR9 L002: all future ME-X blocked.")
+            logger.info("  V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO,EIGEN,COMP,BIO,MEME,ME}")
+            logger.info("  SOL FR: DePIN/Retail Phantom Firedancer ETF persistent positive. Min=-20.51bps cascade.")
+            logger.info("  OOS Sh=19.47 (W=84h, 217d OOS) | IS Sh=19.13 (OOS > IS -- no directional overfit)")
+            logger.info("  vol_ratio=12.66x (full) | raw_corr=0.0472 | timing alpha THIN +0.45 Sh")
+            logger.info("  K523 3-point: conservative=$24,763 central=$39,100 optimistic=$55,392/yr")
+            logger.info("  Sleeve 0.25% (@$10M = $25K margin, $75K total notional, $37.5K per leg). 3x leverage.")
+            logger.info("  Leverage: 3x (HL max for ME HIP-3 -- 0.25% sleeve at $85K/day vol constraint)")
+            logger.info("  L004_DIFF monitor: monthly recheck. Reduce sleeve to 0.1% if OOS diff_pos < 0.28.")
+            logger.info("  If two consecutive months OOS diff_pos < 0.25: suspend strategy.")
+            logger.info("  G6 monitor: if live entries < 30/yr, switch to W=48h (OOS Sh=19.67, 57/yr).")
+            logger.info("  Live gate: NOT ELIGIBLE (RESEARCH_ONLY hardcoded). Re-eval: ME vol > $500K/day + Bybit + G2 > +1 Sh")
+            logger.info("  26th alt-alt scaffold, 84th daemon. HL ONLY (positions in main HL exit above)")
+            logger.info("  See: docs/k302a_runbook.md §85 (K794 ME-SOL playbook)")
+        else:
+            logger.info(
+                "K794 ME-SOL: HL ONLY (positions ARE in HL exit above — ME-PERP + SOL-PERP on HL). "
+                "RESEARCH_ONLY=True HARDCODED — paper simulation only, no live capital at risk. "
+                "HL 66.8% AT CAP — research-only + paper-gate strict. "
+                "CONDITIONAL_ACCEPT_RESEARCH_ONLY 8/9 (G8 FAIL HL-only HIP-3 $85K/day). "
+                "G9 PASS OOS=217d. G4 11/11 ALL POSITIVE (min_sh=2.43). G5 28/28 ALL PASS (max_corr=0.2075). "
+                "L004 PASS (bidirectional). L004_DIFF BORDERLINE (full=0.282 <0.30, OOS=0.396 PASS). "
+                "ME = 23rd vertex candidate (SVM NFT marketplace). Live gate: NOT ELIGIBLE. "
+                "Use --include-k794 for structured HL close summary (§85)."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)
