@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k647-dot-orthog</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k647_dot_orthog_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 48th daemon: K647 DOT Orthogonalized FR Differential -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage (STRICTER — OOS R²=-4.11):
+             Realized Sh >= 12, fill_rate >= 60%, maxDD < 15%
+             IS beta re-OLS every 30d mandatory (drift check) -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k647_dot_orthog.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k647_dot_orthog.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K647 specific notes (do not remove):
+         Strategy:    DOT-BTC FR Differential, orthogonalized vs INJ (K647 OLS SF)
+         Daemon #:    48th daemon (K653 scaffold)
+         OOS Sharpe:  23.25 (residual SF W=168h) vs 43.56 raw K513 (INJ corr 0.4229 -> 0.037 post-orth)
+         OOS R²:      -4.11 STRUCTURAL BREAK WARNING (IS DOT-INJ corr=0.616 -> OOS=0.045)
+                      IS beta re-OLS every 30d mandatory — tight monitoring
+         Profit:      ~$103,586/yr net @$10M @4x (3% sleeve)
+         beta coefs:  beta_INJ=0.642  (HARDCODED, no re-OLS)
+         Venue:       Bybit primary (DOT+BTC both legs; Bybit DOTUSDT perp + BTC-USDT-SWAP)
+         HL impact:   1pp headroom: HL 65%->64% (3% split HL 1.5%+Bybit 1.5%)
+         Gate:        60d paper-trade STRICT: Realized Sh>=12 + fill>=60% + maxDD<15%
+         Cluster:     Governance/Staking / Polkadot relay chain (INJ-cluster unlock, 8th orthog)
+         v6.38:       K647 adds 3% Bybit sleeve to v6.37 portfolio
+         INJ unlock:  K513 BLOCKED-G5e (INJ corr=0.4229 >= 0.40) -> K647 (post-orth=0.037 PASS)
+         Deploy:      cp scripts/com.cryptolab.k647-dot-orthog.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k647-dot-orthog.plist
+    -->
+</dict>
+</plist>

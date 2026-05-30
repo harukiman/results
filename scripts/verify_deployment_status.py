@@ -385,6 +385,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k647_dot_orthog",
         expected_html_status="SCAFFOLD-READY",  # K653: plist in scripts/ (gitignored); activate after 60d gate STRICT (Realized Sh>=12 + fill_rate>=60% + maxDD<15%, OOS R²=-4.11 caution)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k629-wld-eth",
+        purpose="K629 WLD-ETH FR Differential (Biometric ID / World ID Cluster 24, ETH-base mechanism fix, HL-primary WLD+ETH both legs, 4x leverage, 8h cycle, OOS Sh 19.90 W=168h direct diff 9/9 gates PASS, $94,210/yr @$10M @4x, JUP-BTC cross-base corr=0.3437 PASS (K621 WLD-BTC 0.4612 BLOCKED), ETH-BTC same-base corr=-0.2052 anti-corr K449, HL ~59.5% +2pp within 65% limit, 60d paper-trade gate, v6.39 candidate 3% sleeve, 49th daemon, K654 scaffold)",
+        scripts=["scripts/k629_wld_eth_run.py"],
+        log_basename="k629_wld_eth",
+        expected_html_status="SCAFFOLD-READY",  # K654: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=10 + fill_rate>=60% + maxDD<15%)
+    ),
 ]
 
 

@@ -1,0 +1,150 @@
+{
+  "wave": "K653",
+  "strategy": "K647 DOT-BTC Orthogonalized FR Differential",
+  "timestamp_jst": "2026-05-30 12:23 JST",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k647_dot_orthog_run.py",
+        "description": "Phase 1: K647 strategy script (K339 pattern, W=168h, beta_INJ=0.642)",
+        "exists": true,
+        "size_bytes": 48882,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k647-dot-orthog.plist",
+        "description": "Phase 2: 48th daemon plist (StartInterval 28800)",
+        "exists": true,
+        "size_bytes": 2655,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k647_dashboard.json",
+        "description": "Phase 3: Dashboard (residual signal, beta_inj_used, regime)",
+        "exists": true,
+        "size_bytes": 3565,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k647 flag, \u00a749)",
+        "exists": true,
+        "size_bytes": 218163,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K647_DOT_ORTHOG + SLEEVE_WEIGHTS_V638)",
+        "exists": true,
+        "size_bytes": 60921,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K647_DOT_ORTHOG: 4.0 + k647_notes)",
+        "exists": true,
+        "size_bytes": 39864,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (48th daemon registry)",
+        "exists": true,
+        "size_bytes": 31636,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a749 (K647 DOT orthog playbook)",
+        "exists": true,
+        "size_bytes": 382459,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K647 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1564905,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k653_k647_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 14798,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_checks": {
+    "beta_inj_hardcoded": true,
+    "k339_repo_root": true,
+    "paper_trade_default": true,
+    "bybit_primary": true,
+    "post_only": true,
+    "signal_1_5sigma": true,
+    "sleeve_3pct": true,
+    "ema_168h": true,
+    "oos_r2_warning": true,
+    "dashboard_beta_inj": true,
+    "dashboard_regime": true,
+    "dashboard_oos_perf": true,
+    "dashboard_orthog_mech": true,
+    "dashboard_inj_corr_raw": true,
+    "dashboard_inj_corr_post": true,
+    "dashboard_oos_r2": true,
+    "cfg_k647_cap": true,
+    "cfg_k647_notes": true,
+    "cfg_beta_inj": true,
+    "cfg_sleeve_3pct": true,
+    "emer_include_k647": true,
+    "emer_k647_summary": true,
+    "lev_k647_cap": true,
+    "lev_v638_weights": true,
+    "vds_48th_daemon": true,
+    "vds_48th_label": true,
+    "runbook_section49": true,
+    "runbook_beta_table": true,
+    "runbook_60d_gate": true,
+    "runbook_oos_r2": true,
+    "html_k653_entry": true,
+    "html_k647_scaffold": true,
+    "html_48_daemons": true
+  },
+  "daemon_count": 48,
+  "daemon_ok": true,
+  "dry_run": {
+    "returncode": 0,
+    "success": true,
+    "stdout_len": 3648,
+    "stderr_len": 0,
+    "status": "PASS"
+  },
+  "k647_summary": {
+    "oos_sharpe_residual": 23.25,
+    "oos_r2": -4.1139,
+    "oos_r2_warning": "STRUCTURAL BREAK: IS DOT-INJ corr=0.616 -> OOS=0.045. IS beta re-OLS every 30d mandatory.",
+    "is_r2": 0.3798,
+    "beta_inj": 0.642,
+    "beta_inj_note": "HARDCODED \u2014 no re-OLS in production for stability. IS beta re-OLS every 30d for drift monitoring.",
+    "inj_corr_raw": 0.4229,
+    "inj_corr_post_orth": 0.037,
+    "inj_cluster_unlock": "K513 BLOCKED (INJ corr=0.4229 >= 0.40) \u2192 K647 PASS (0.037 < 0.40)",
+    "ema_window": "W=168h (21 x 8h periods, single-factor SF INJ)",
+    "signal_threshold": "1.5\u03c3 of residual EMA_168h",
+    "profit_3pct_net_usd_yr": 103586,
+    "profit_3pct_gross_usd_yr": 129483,
+    "sleeve_activation": "3% Bybit (DOT+BTC both legs, delta-neutral)",
+    "hl_concentration": "64% (1pp headroom from 65% \u2014 3% split HL 1.5%+Bybit 1.5%)",
+    "cluster": "Governance/Staking / Polkadot relay chain (8th orthog scaffold)",
+    "gate_60d": "Realized Sh>=12 + fill>=60% + maxDD<15% (STRICT \u2014 OOS R\u00b2=-4.11)",
+    "v638_candidate": "K647 3% Bybit + v6.37 portfolio",
+    "daemon_number": "48th",
+    "milestone": "K653 MILESTONE \u2014 8th orthog scaffold complete"
+  },
+  "overall_status": "PASS"
+}

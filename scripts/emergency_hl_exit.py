@@ -3654,6 +3654,35 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K654: K629 WLD-ETH FR Differential emergency exit flag
+    # K629 = HL-primary WLD+ETH paired (2 legs) when diff EMA_168h > 1.5sigma.
+    # Close protocol: IOC reduce-only on HL (BOTH legs on HL — HL concentration affected).
+    # Signal: diff = WLD_FR - ETH_FR (direct, W=168h, no orthogonalization).
+    # ETH-base fix: JUP-BTC cross-base corr=0.3437 PASS (K621 WLD-BTC was 0.4612 BLOCKED).
+    # Use --include-k629 to print K629-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k629",
+        dest="include_k629",
+        action="store_true",
+        default=False,
+        help=(
+            "K654: Include K629 WLD-ETH close summary during emergency exit. "
+            "K629 positions (WLD+ETH paired, HL-primary) ARE included in HL emergency exit. "
+            "This flag adds a structured K629-specific close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = WLD_FR - ETH_FR (direct differential, W=168h EMA, 1.5sigma threshold). "
+            "HL concentration: ~59.5% post-K629 (within 65% limit). "
+            "OOS Sharpe 19.90 (9/9 §6 PASS, IS=29.94, ratio=0.665). $94,210/yr @$10M @4x (3% sleeve). "
+            "60d paper-trade gate: Realized Sh>=10 + fill>=60% + maxDD<15%. "
+            "ETH-base fix: JUP-BTC cross-base corr=0.3437 PASS (K621 WLD-BTC blocked at 0.4612). "
+            "Anti-corr with K449 ETH-BTC (corr=-0.2052): diversification benefit. "
+            "Cluster: Biometric ID / World ID (Cluster 24, ETH-base unlock, 49th daemon). "
+            "Escalation: K621 BLOCKED -> K624 BLOCKED -> K627 STILL-BLOCKED -> K629 PASS. "
+            "Requires: K629 daemon running (com.cryptolab.k629-wld-eth, 49th daemon). "
+            "See: docs/k302a_runbook.md §50"
+        ),
+    )
+
     # K653: K647 DOT-BTC orthog emergency exit flag
     # K647 = Bybit-only DOT+BTC paired (2 legs) when residual EMA_168h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration 64% after add, 1pp headroom).
@@ -4188,6 +4217,53 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "K645 BNB-BTC orthog: Bybit-only (NOT HL). "
                 "Use --include-k645 for Bybit close summary (§47). "
                 "HL concentration UNCHANGED at 65%."
+            )
+
+        # K653: K647 DOT-BTC orthog close summary (Bybit-only — HL 64% after 1pp headroom)
+        # K647 positions (DOT+BTC, Bybit-only) are NOT in the HL exit above.
+        # K647 HL impact: 1pp headroom (65%->64%); 3% split HL 1.5%+Bybit 1.5%.
+        # Use --include-k647 for Bybit summary. OOS R²=-4.11 structural break — monitor tightly.
+        if args.include_k647:
+            logger.info("=== K647 DOT-BTC ORTHOG CLOSE SUMMARY (K653 §49) ===")
+            logger.info("  K647 DOT-BTC orthog: Bybit-only (DOT+BTC both legs on Bybit)")
+            logger.info("  Orthog: residual = DOT_diff - 0.642*INJ_diff (K647 OLS SF, beta hardcoded)")
+            logger.info("  EMA window: W=168h = 21 x 8h periods (optimal per K647 analysis)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: 64% (1pp headroom from 65%; 3% split HL 1.5%+Bybit 1.5%)")
+            logger.info("  OOS Sharpe 23.25 (residual SF W=168h) | ~$103,586/yr net @$10M @4x (3% sleeve)")
+            logger.info("  OOS R²=-4.11 STRUCTURAL BREAK WARNING: IS beta re-OLS every 30d mandatory")
+            logger.info("  INJ unlock: K513 BLOCKED (corr=0.4229) -> K647 post-orth=0.037 PASS")
+            logger.info("  Cluster: Governance/Staking / Polkadot relay chain (8th orthog, 48th daemon)")
+            logger.info("  60d gate STRICT: Realized Sh>=12 + fill>=60% + maxDD<15% (OOS R² caution)")
+            logger.info("  See: docs/k302a_runbook.md §49 (K647 DOT orthog playbook)")
+        else:
+            logger.info(
+                "K647 DOT-BTC orthog: Bybit-only (NOT HL). "
+                "Use --include-k647 for Bybit close summary (§49). "
+                "HL concentration 64% (1pp headroom — K647 3% split HL 1.5%+Bybit 1.5%)."
+            )
+
+        # K654: K629 WLD-ETH close summary (HL-primary — positions ARE in HL exit above)
+        # K629 positions (WLD+ETH, HL-primary) ARE closed by the HL emergency exit above.
+        # This block adds structured K629-specific close summary when --include-k629 is used.
+        if args.include_k629:
+            logger.info("=== K629 WLD-ETH FR DIFFERENTIAL CLOSE SUMMARY (K654 §50) ===")
+            logger.info("  K629 WLD-ETH: HL-primary (WLD-PERP + ETH-PERP both legs on HL)")
+            logger.info("  Signal: diff = WLD_FR - ETH_FR (direct, W=168h EMA, 1.5sigma threshold)")
+            logger.info("  ETH-base fix: JUP-BTC cross-base corr=0.3437 PASS (K621 WLD-BTC=0.4612 BLOCKED)")
+            logger.info("  Close: IOC reduce-only HL — short leg first, then long leg")
+            logger.info("  HL concentration: ~59.5% post-K629 (within 65% limit)")
+            logger.info("  OOS Sharpe 19.90 (9/9 §6 PASS) | $94,210/yr @$10M @4x (3% sleeve)")
+            logger.info("  Anti-corr with K449 ETH-BTC (corr=-0.2052): diversification benefit")
+            logger.info("  Cluster: Biometric ID / World ID (Cluster 24, ETH-base unlock, 49th daemon)")
+            logger.info("  60d gate: Realized Sh>=10 + fill>=60% + maxDD<15%")
+            logger.info("  See: docs/k302a_runbook.md §50 (K629 WLD-ETH playbook)")
+        else:
+            logger.info(
+                "K629 WLD-ETH: HL-primary (WLD-PERP + ETH-PERP on HL). "
+                "K629 positions ARE included in the HL emergency exit above. "
+                "Use --include-k629 for structured K629 close summary (§50). "
+                "HL concentration ~59.5% (within 65% limit)."
             )
 
         # K652: K648 POL-BTC orthog close summary (Bybit-only — HL NOT affected)

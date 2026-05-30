@@ -9315,6 +9315,178 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k646-algo-orthog.plist
 
 ---
 
+## §49 K647 DOT-BTC Orthogonalized FR Differential — Production Scaffold Playbook
+
+### §49.1 Strategy Overview
+
+K647 implements a delta-neutral paired trade on **DOT-BTC funding rate differential**, orthogonalized against the INJ factor via single-factor OLS regression. DOT (Polkadot) is the relay-chain governance / parachain auction token — FR dynamics are driven by 28d staking unbonding cycles, OpenGov referendum timing, parachain slot auction events, relay chain upgrade cycles, and XCM cross-chain adoption waves, not shared INJ Cosmos DEX/DeFi orderbook dynamics.
+
+| Metric | Value |
+|--------|-------|
+| Wave | K647 (orthogonalize) → K653 (scaffold) |
+| Decision | ACCEPT (60d paper-trade, OOS R² caution) |
+| OOS Sharpe (residual) | 23.25 (SF W=168h) |
+| OOS Sharpe (raw K513) | 43.562 (BLOCKED-G5e INJ corr=0.4229) |
+| OOS R² | **-4.11 STRUCTURAL BREAK WARNING** |
+| IS R² | 0.3798 |
+| β_INJ | 0.642 (HARDCODED — no re-OLS in production) |
+| INJ corr (raw) | 0.4229 (BLOCKED-G5e in K513) |
+| INJ corr (post-orth) | 0.037 (PASS K647 — G5e UNLOCKED) |
+| Ann Return @4x | 10.06% OOS |
+| Profit @$10M @4x 3% sleeve | ~$103,586/yr net (80% of gross) |
+| Sleeve | 3% Bybit (DOT+BTC both legs) |
+| Cluster | Governance/Staking / Polkadot relay chain |
+| Daemon # | 48th daemon |
+| v6.38 candidate | K647 3% sleeve + v6.37 portfolio |
+
+**INJ-cluster unlock**: K513 was BLOCKED-G5e (INJ corr=0.4229 ≥ 0.40); K647 orthog reduces to 0.037 (PASS), unlocking the Polkadot relay-chain governance/staking sub-cluster as the 8th confirmed orthog.
+
+**OOS R² = -4.11 STRUCTURAL BREAK WARNING**: IS DOT-INJ corr=0.616 decouples to OOS corr=0.045. The IS β over-fits the OOS residual; the OOS signal is driven by DOT-only relay-chain alpha, not INJ removal. Despite this, OOS Sh=23.25 survives. IS β re-OLS every 30d is **mandatory** to detect regime drift.
+
+### §49.2 Orthogonalization Mechanism (K647 OLS Single-Factor)
+
+```
+DOT_diff = DOT_FR  - BTC_FR    (raw DOT-BTC differential)
+INJ_diff = INJ_FR  - BTC_FR    (Cosmos DEX/DeFi factor proxy)
+residual = DOT_diff - β_INJ × INJ_diff
+         = DOT_diff - 0.642 × INJ_diff
+```
+
+**β coefficient** (K647 single-factor OLS, IS period):
+
+| Coefficient | Value | Source |
+|-------------|-------|--------|
+| β_INJ | **0.642** | K647 OLS SF regression |
+| IS R² | 0.3798 | IS DOT-INJ variance explained (37.98%) |
+| OOS R² | **-4.11** | STRUCTURAL BREAK (IS corr=0.616 → OOS=0.045) |
+
+**Production**: β_INJ = 0.642 HARDCODED. No re-OLS in runtime (stability). IS β drift check every 30d via manual re-OLS (separate audit script).
+
+### §49.3 Signal Gate
+
+| Parameter | Value |
+|-----------|-------|
+| EMA window | W=168h = 21 × 8h periods |
+| Entry threshold | \|residual_EMA_168h\| > 1.5σ |
+| Direction BULL_DOT | Short DOT / Long BTC (DOT residual FR > BTC) |
+| Direction BEAR_DOT | Long DOT / Short BTC (DOT residual FR < BTC) |
+
+### §49.4 Execution (Bybit Primary)
+
+- **Venue**: Bybit primary — DOTUSDT perp + BTC-USDT-SWAP (both Bybit)
+- **Execution**: POST_ONLY parallel (K439 paired pattern)
+- **IOC fallback**: 5 min timeout per leg
+- **Cadence**: Every 8h (matches FR settlement)
+- **HL impact**: 1pp headroom — HL 65% → 64% (3% split: HL 1.5% + Bybit 1.5%)
+
+### §49.5 Performance Summary
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe (residual SF W=168h) | **23.25** |
+| OOS Sharpe (raw K513) | 43.562 |
+| Orthog degradation | 20.31 Sh units |
+| OOS R² | **-4.11 STRUCTURAL BREAK** |
+| IS R² | 0.3798 |
+| OOS Ann Return | 10.06% (4x) |
+| Profit @$10M @4x 3% sleeve (net) | **~$103,586/yr** |
+| INJ corr raw→post-orth | 0.4229 → 0.037 |
+
+### §49.6 60-Day Paper-Trade Activation Gate (STRICT — OOS R² Caution)
+
+**STRICTER GATE due to OOS R²=-4.11 structural break warning**:
+
+| Gate | Criterion | Rationale |
+|------|-----------|-----------|
+| Realized Sharpe | **≥ 12** (strict, not 4) | OOS R² = -4.11: higher bar required |
+| Fill rate | ≥ 60% | Standard |
+| Max Drawdown | **< 15%** (strict, not 20%) | Structural break tail risk |
+| Days | 60d continuous paper-trade | Standard |
+
+**IS β drift check**: Re-run K647 OLS every 30d to verify β_INJ ≈ 0.642. If IS β drifts >20% from 0.642, review activation criteria before going live.
+
+### §49.7 Emergency Exit Protocol
+
+K647 is Bybit-only (DOT+BTC, both legs on Bybit). Emergency procedure:
+
+1. Stop daemon: `launchctl unload ~/Library/LaunchAgents/com.cryptolab.k647-dot-orthog.plist`
+2. Run emergency exit with K647 flag: `python3 scripts/emergency_hl_exit.py --include-k647`
+3. Manual close on Bybit: Step 1 = cover BTC short (or DOT short), Step 2 = sell DOT long (or BTC long)
+4. Verify closure: `python3 scripts/k647_dot_orthog_run.py --status`
+5. **HL concentration**: HL 64% → 65% (recovers 1pp headroom after K647 closure)
+
+### §49.8 Regime Monitoring
+
+| Alert | Trigger | Action |
+|-------|---------|--------|
+| OOS R² structural break | IS β_INJ drifts >20% from 0.642 | Pause paper-trade, re-evaluate |
+| Residual sigma collapse | σ < 1e-7 (degenerate) | Fall back to NEUTRAL, halt entries |
+| 60d realized Sh < 6 | Below gate threshold | Do NOT activate live |
+| Fill rate < 40% | Low Bybit liquidity | Reduce to 1.5% sleeve |
+| Max DD > 12% in paper | Near strict DD limit | Tighten position |
+
+### §49.9 Operational Commands
+
+```bash
+# Status check
+python3 scripts/k647_dot_orthog_run.py --status
+
+# Paper-trade cycle (dry-run)
+python3 scripts/k647_dot_orthog_run.py --dry-run
+
+# Rebalance check
+python3 scripts/k647_dot_orthog_run.py --rebalance
+
+# Close positions
+python3 scripts/k647_dot_orthog_run.py --close "manual_exit"
+
+# Deploy plist (after 60d STRICT gate: Sh>=12 + fill>=60% + maxDD<15%)
+cp scripts/com.cryptolab.k647-dot-orthog.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k647-dot-orthog.plist
+```
+
+### §49.10 Leverage Configuration
+
+```python
+# leverage_manager.py
+"K647_DOT_ORTHOG": 4.0   # K653 cap
+
+# SLEEVE_WEIGHTS_V638 (v6.38 candidate)
+"K647": 0.03   # 3% DOT-BTC orthog (Bybit, OOS R²=-4.11 caution)
+```
+
+### §49.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k647_dot_orthog_run.py` | Strategy script (K653 scaffold, K339 pattern) |
+| `data/k647_dashboard.json` | Live state + residual signal + beta_inj_used + regime |
+| `scripts/com.cryptolab.k647-dot-orthog.plist` | 48th daemon plist (StartInterval 28800, gitignored) |
+| `scripts/emergency_hl_exit.py` | `--include-k647` flag + K647 Bybit close summary |
+| `scripts/leverage_manager.py` | K647_DOT_ORTHOG 4.0 cap + SLEEVE_WEIGHTS_V638 |
+| `data/leverage_config.json` | K647_DOT_ORTHOG: 4.0 + k647_notes |
+| `scripts/verify_deployment_status.py` | 48th daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§49) |
+| `wave_k653_k647_scaffold.py` | Wave driver/test |
+| `wave_k653_k647_scaffold.json` | Wave result report |
+
+### §49.12 References
+
+| Wave | Description |
+|------|-------------|
+| K653 | This section — K647 DOT orthog production scaffold (48th daemon, v6.38 candidate) |
+| K647 | K647 analysis — DOT ACCEPT (OOS Sh 23.25 residual SF INJ W=168h, OOS R²=-4.11 caution) |
+| K513 | K513 DOT-BTC raw (BLOCKED-G5e, INJ corr=0.4229) |
+| K651 | K646 ALGO orthog scaffold (46th daemon, direct scaffold template) |
+| K650 | K645 BNB orthog scaffold (45th daemon, milestone wave) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K653 §49 -- K647 DOT-BTC Orthogonalized FR Differential production scaffold (48th daemon, OOS Sh 23.25 residual SF INJ W=168h ~$103,586/yr net @$10M @4x, beta_INJ=0.642 hardcoded, Bybit-only HL 65%->64% 1pp headroom, 60d gate STRICT: Realized Sh>=12 fill>=60% maxDD<15%, OOS R²=-4.11 STRUCTURAL BREAK IS beta re-OLS every 30d, Governance/Staking Polkadot relay chain INJ-cluster unlock 8th orthog, v6.38 candidate) -- 2026-05-30*
+
+---
+
 ## §47 K645 BNB-BTC Orthogonalized FR Differential — Production Scaffold Playbook
 
 ### §47.1 Strategy Overview
@@ -9742,3 +9914,224 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k648-pol-orthog.plist
 ---
 
 *K652 §49 -- K648 POL-BTC 6-Factor Orthogonalized FR Differential production scaffold (47th daemon, OOS Sh 23.41 residual MF W=168h $4,293,200/yr @$10M @4x, beta_OP=0.337443 beta_SEI=0.075509 beta_APT=-0.016480 beta_TIA=0.059789 beta_FIL=0.042751 beta_SAND=0.200488 hardcoded, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=12 fill>=60% maxDD<20%, Polygon L2/PoS/zkEVM cluster unlock 6-factor orthog, v6.37 candidate) -- 2026-05-30*
+
+---
+
+## §50 K629 WLD-ETH FR Differential — Production Scaffold Playbook
+
+### §50.1 Strategy Overview
+
+**Strategy:** K629 WLD-ETH FR Differential Carry (ETH-base mechanism fix)
+**Wave:** K654 (production scaffold)
+**Cluster:** Biometric ID / World ID (Cluster 24, ETH-base unlock)
+**Daemon:** 49th daemon (`com.cryptolab.k629-wld-eth`)
+**Status:** SCAFFOLD-READY — 60d paper-trade gate required
+
+K629 resolves the structural WLD-BTC block from K621/K624/K627. By switching the base asset from BTC to ETH, the BTC-FR-compression co-movement mechanism is eliminated. ETH FR is driven by DeFi-native staking yields (stETH/LST demand, ETH L1 gas cycles) — orthogonal to WLD's biometric ID narrative dynamics.
+
+**Key numbers:**
+- OOS Sharpe: **19.90** (IS=29.94, ratio=0.665 — good generalization)
+- OOS Ann Return: **7.85%** unlevered on notional
+- Profit @$10M @4x @3% sleeve: **$94,210/yr USDC**
+- JUP-BTC cross-base corr: **0.3437** (< 0.40 threshold, G5aa PASS)
+- ETH-BTC same-base corr: **-0.2052** (anti-correlated with K449 ETH-BTC — diversification benefit)
+- 9/9 §6 gates PASS (full gate score)
+- Walk-forward: 11/12 folds positive (91.7%)
+- ADF p=0.0 (stationary), OU halflife=5.70h
+- Trades/yr: 48.2 (W=168h, G6 PASS)
+
+### §50.2 ETH-Base Mechanism Fix
+
+#### Escalation Chain
+
+| Wave | Base | Decision | JUP corr | Mechanism |
+|------|------|----------|----------|-----------|
+| K621 | BTC | BLOCKED-G5 | 0.4612 | WLD-BTC co-moves with JUP-BTC (BTC-FR-compression) |
+| K624 | BTC | BLOCKED-G5G6 | 0.3930+ | No sweet-spot: JUP<0.40 AND trades>=30 cannot coexist |
+| K627 | BTC (bear) | STILL BLOCKED | 0.5726 (WORSE) | Bear amplifies BTC-FR-compression co-movement |
+| **K629** | **ETH** | **ACCEPT 9/9** | **0.3437** | **ETH-FR = DeFi/staking, independent from BTC-FR-compression** |
+
+#### Why ETH Base Works
+
+ETH FR is driven by:
+- ETH DeFi staking yields (stETH/rETH/LST demand, ETH 2.0 validator competition)
+- ETH L1 gas narrative cycles (EIP-4844 blobs, Dencun, L2 adoption)
+- Liquid staking protocol activity (NOT by BTC spot price compression)
+
+WLD FR is driven by:
+- OpenAI/Sam Altman biometric ID narrative cycles
+- World ID adoption spikes (new regions, AI-bot resistance demand)
+- Privacy-tech regulatory catalysts (EU Digital ID, global Digital ID push)
+- WLD token supply unlock cycles
+
+These two FR dynamics are **orthogonal by construction** — they use different asset legs (WLD vs ETH), different narrative drivers, and different market mechanisms.
+
+**WLD-JUP-ETH triangle constraint:** JUP-ETH would be BLOCKED (corr=0.4638 with WLD-ETH signal). K629 WLD-ETH takes priority; JUP-ETH must NOT be deployed alongside K629.
+
+### §50.3 Signal Gate
+
+```
+diff     = WLD_FR - ETH_FR         (direct, 8h settlement rate)
+EMA      = 168h EMA of diff         (W=168h = 21 × 8h periods)
+sigma    = rolling std of last 168h diffs
+threshold = 1.5 × sigma
+Enter when |EMA| > threshold
+```
+
+- **BULL_WLD** (EMA > threshold): WLD FR > ETH FR → WLD expensive to long → SHORT WLD / LONG ETH
+- **BEAR_WLD** (EMA < −threshold): ETH FR > WLD FR → ETH expensive → LONG WLD / SHORT ETH
+- **NEUTRAL**: |EMA| ≤ threshold → no trade
+
+Note: W=504h gives best OOS Sh=26.88 but G6 fails (10.3 trades/yr < 30). W=168h is the deployable config.
+
+### §50.4 Execution (HL Primary)
+
+| Parameter | Value |
+|-----------|-------|
+| Venue | HL primary — WLD-PERP + ETH-PERP (both HL) |
+| Sleeve | 3% of AUM |
+| Leverage | 4x |
+| Notional/leg | $600K @$10M @4x (= $10M × 3% × 4x / 2) |
+| Total notional | $1.2M (both legs) |
+| Margin used | $300K (3% of AUM) |
+| Cycle | 8h (StartInterval=28800) |
+| Order type | POST_ONLY (both legs in parallel, K439 pattern) |
+| IOC fallback | 5-min timeout per leg |
+| Rebalance | 5% drift threshold |
+
+**HL concentration impact:**
+- Pre-K629: ~57.5% (v6.13d reference)
+- Post-K629: ~59.5% (+2pp — within 65% limit, 5.5pp headroom)
+- Both WLD-PERP and ETH-PERP on HL — K629 IS an HL strategy (unlike Bybit-only strategies)
+- Note: anti-correlated with K449 ETH-BTC (corr=-0.2052) — reduces portfolio tail risk
+
+### §50.5 Performance Summary
+
+| Metric | IS | OOS |
+|--------|-----|-----|
+| Sharpe | 29.94 | **19.90** |
+| Ann Return (unlevered) | — | 7.85% |
+| Max Drawdown | — | -0.71% |
+| Calmar | — | 28.0 |
+| Trades/yr | — | 48.2 |
+
+#### Full Profit Table
+
+| AUM | Sleeve | Leverage | Profit/yr |
+|-----|--------|----------|-----------|
+| $1M | 3% | 4x | $9,421 |
+| $5M | 3% | 4x | $47,105 |
+| **$10M** | **3%** | **4x** | **$94,210** |
+| $50M | 3% | 4x | $470,524 |
+| $100M | 3% | 4x | $941,048 |
+
+### §50.6 60-Day Paper-Trade Activation Gate
+
+| Metric | Gate |
+|--------|------|
+| Realized Sharpe | ≥ 10 (50% of OOS 19.90) |
+| Fill rate | ≥ 60% |
+| Max Drawdown | < 15% (tighter than prior waves — ETH-base carry risk) |
+| Days | ≥ 60 |
+
+All three criteria must pass simultaneously. Set `PAPER_TRADE=False` in the plist only after gate passage.
+
+### §50.7 Emergency Exit Protocol
+
+K629 uses HL-primary (both legs on HL). Emergency procedure:
+
+1. K629 positions (WLD-PERP + ETH-PERP) are **included** in the standard HL emergency exit
+2. Run: `python3 scripts/emergency_hl_exit.py --include-k629 [other flags]`
+3. Close sequence: short leg first (IOC reduce-only), then long leg (IOC reduce-only)
+4. Both legs on HL: coordinate close with any other HL positions (K449, K476, etc.)
+5. HL concentration ~59.5% post-K629 activation (within 65% limit)
+
+**Note on K449 anti-correlation:** K629 WLD-ETH and K449 ETH-BTC are anti-correlated (corr=-0.2052). In an emergency, K629 and K449 closures may partially offset each other's ETH leg PnL — close K629 before K449 to avoid unintended hedging interactions.
+
+### §50.8 Regime Monitoring
+
+Monitor `data/k629_dashboard.json`:
+
+```bash
+python3 scripts/k629_wld_eth_run.py --status
+```
+
+Key fields:
+- `regime`: BULL_WLD | BEAR_WLD | NEUTRAL
+- `diff_ema_168h`: current 168h EMA of WLD-ETH differential
+- `diff_sigma`: rolling sigma for threshold calculation
+- `threshold_1_5sigma`: 1.5σ entry gate
+- `position_state`: LONG_WLD_SHORT_ETH | LONG_ETH_SHORT_WLD | NEUTRAL
+- `hl_concentration_pct`: should remain ~59.5%
+
+### §50.9 Operational Commands
+
+```bash
+# Paper-trade cycle (default)
+python3 scripts/k629_wld_eth_run.py --dry-run
+
+# Status check
+python3 scripts/k629_wld_eth_run.py --status
+
+# Rebalance check
+python3 scripts/k629_wld_eth_run.py --rebalance
+
+# Forced close
+python3 scripts/k629_wld_eth_run.py --close "manual exit"
+
+# Emergency HL exit with K629 summary
+python3 scripts/emergency_hl_exit.py --include-k629
+
+# Verify 49th daemon status
+python3 scripts/verify_deployment_status.py 2>&1 | grep k629
+
+# Daemon activation (after 60d gate passage)
+cp scripts/com.cryptolab.k629-wld-eth.plist ~/Library/LaunchAgents/
+# Edit plist: replace REPO_ROOT_PLACEHOLDER with actual repo path
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k629-wld-eth.plist
+# Set PAPER_TRADE=False in plist ONLY after 60d gate passage (Sh>=10 + fill>=60% + maxDD<15%)
+```
+
+### §50.10 Leverage Configuration
+
+```json
+"K629_WLD_ETH": 4.0   // exchange_caps -- 4x (paired delta-neutral carry, K430 cap)
+```
+
+```python
+# SLEEVE_WEIGHTS_V639 (v6.39 candidate)
+"K629": 0.03   # WLD-ETH FR Differential, 4x leverage, HL-primary
+```
+
+K280 reduced 3pp to fund K629 sleeve. Total v6.39: v6.38 + K629 $94K/yr = Cluster 24 ETH-base expansion.
+
+### §50.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k629_wld_eth_run.py` | Strategy script (K654 scaffold, K339 pattern) |
+| `data/k629_dashboard.json` | Live state + WLD-ETH diff signal + regime |
+| `scripts/com.cryptolab.k629-wld-eth.plist` | 49th daemon plist (StartInterval 28800) |
+| `scripts/emergency_hl_exit.py` | `--include-k629` flag + K629 HL close summary |
+| `scripts/leverage_manager.py` | K629_WLD_ETH 4.0 cap + SLEEVE_WEIGHTS_V639 |
+| `data/leverage_config.json` | K629_WLD_ETH: 4.0 + k629_notes |
+| `scripts/verify_deployment_status.py` | 49th daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§50) |
+| `wave_k654_k629_scaffold.py` | Wave driver/test |
+| `wave_k654_k629_scaffold.json` | Wave result report |
+
+### §50.12 References
+
+| Wave | Description |
+|------|-------------|
+| K654 | This section — K629 WLD-ETH production scaffold (49th daemon, v6.39 candidate) |
+| K629 | K629 analysis — WLD-ETH ACCEPT 9/9 ($94,210/yr @$10M @4x, OOS Sh 19.90 W=168h) |
+| K627 | K627 WLD-BTC bear-regime (STILL BLOCKED, JUP bear=0.5726 WORSE) |
+| K624 | K624 WLD-BTC window sweep (BLOCKED-G5G6) |
+| K621 | K621 WLD-BTC raw analysis (BLOCKED-G5, JUP=0.4612) |
+| K653 | K647 DOT-BTC orthog scaffold (48th daemon, direct scaffold template) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K654 §50 -- K629 WLD-ETH FR Differential production scaffold (49th daemon, OOS Sh 19.90 W=168h $94,210/yr @$10M @4x, direct diff no orthog, ETH-base fix JUP-BTC corr=0.3437 PASS (K621 0.4612 BLOCKED), HL-primary WLD+ETH both on HL ~59.5% within 65%, anti-corr K449 corr=-0.2052, 60d gate: Realized Sh>=10 fill>=60% maxDD<15%, Biometric ID Cluster 24 ETH-base unlock, v6.39 candidate) -- 2026-05-30*
