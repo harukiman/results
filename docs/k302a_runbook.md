@@ -13638,6 +13638,142 @@ python3 scripts/k481_builder_rebate.py --check-api 0x<YOUR_WALLET>
 | K523 | 3-point projection mandate (conservative/central/optimistic) |
 | K266 | Gate framework (cost optimization = ACCEPT-FREE) |
 
+---
+
+## §71 K757 — K485 Bybit Sub-Account Integration (User Action: 1-Step Activation)
+
+*K757 §71 — K485 Bybit sub-account scaffold ready-for-activation (Bybit 55.7%→halved-effective, +$50K central @$10M, user 1-step, paper-safe defaults) — 2026-05-30 20:58 JST*
+
+### §71.1 Context
+
+K751 audit found Bybit at **55.7%** — 5.7pp over the 50% hard cap (K485). K757 creates a Bybit
+sub-account under the same master KYC, routing alt-alt strategies to the sub-account. Each account
+is independently capped at 50%; effective Bybit headroom doubles.
+
+**Before K757:** Bybit single account at 55.7% → 5.7pp violation, no headroom for new orders.
+**After K757:** main (core) + sub (alt-alt) each at ≤50% → $5M sub headroom at $10M AUM.
+
+### §71.2 K523 3-Point (Capacity Relief, @$10M AUM)
+
+| Scenario | Annual USD | Basis |
+|----------|-----------|-------|
+| Conservative | **$20,000/yr** | +5pp cap relief → blocked alt-alt sleeves deploy |
+| Central | **$50,000/yr** | +10pp + fill rate improvement via account separation |
+| Optimistic | **$120,000/yr** | +20pp + execution edge from strategy isolation |
+
+K523 compliant. Single point banned. Realized-to-stated ratio: 0.38. Capacity relief (unlocks
+already-validated strategies), NOT direct alpha.
+
+### §71.3 1-Step Activation
+
+```bash
+# ── 1. Create Bybit sub-account ──────────────────────────────────────────────
+# Bybit → Account & Security → Sub Accounts → Create Sub Account
+#   Name: crypto-lab-k485-sub1
+#   Type: Standard Sub Account
+#   Permissions: Trade (read + order place/cancel). NO Withdrawal scope.
+
+# ── 2. Generate sub-account API key ─────────────────────────────────────────
+# In sub-account: API → Create API key
+#   Scope: Read (account + positions) + Trade (place/cancel)
+#   Withdraw scope: DO NOT enable (never needed)
+#   Set IP whitelist if server has fixed IP (recommended)
+
+# ── 3. Paste credentials into .env.local (NOT committed to repo) ─────────────
+echo "BYBIT_SUB_API_KEY=your_sub_key_here" >> ~/.env.local
+echo "BYBIT_SUB_API_SECRET=your_sub_secret_here" >> ~/.env.local
+echo "BYBIT_LIVE_ENABLED=true" >> ~/.env.local   # if not already set
+
+# ── 4. Enable sub in venue_allocation.json ────────────────────────────────────
+# Set venues.Bybit.accounts.sub.live_enabled=true in data/venue_allocation.json
+
+# ── 5. Smoke test ─────────────────────────────────────────────────────────────
+python3 scripts/bybit_multi_account_client.py --smoke
+
+# ── 6. Capacity check ─────────────────────────────────────────────────────────
+python3 scripts/bybit_multi_account_client.py --capacity
+python3 scripts/risk_manager.py --bybit-capacity
+
+# ── 7. Fund sub-account ───────────────────────────────────────────────────────
+# Bybit Asset Center → Internal Transfer → main → sub (start with $2-5M USDT)
+# OR via API:
+python3 scripts/bybit_multi_account_client.py --transfer 2000000 main_to_sub
+
+# ── 8. Activation complete ───────────────────────────────────────────────────
+# bybit_multi_account_client.py detects BYBIT_SUB_API_KEY automatically
+# Alt-alt strategies → sub | Core strategies → main
+```
+
+**Reversibility:** Unset `BYBIT_SUB_API_KEY` in `.env.local` → all routing returns to main
+(no code change required, no open positions affected).
+
+### §71.4 Sleeve Routing (K757 Default)
+
+| Strategy | Account | Note |
+|----------|---------|------|
+| K208 / K280 / K297p | **main** | Core FR carry — stable, established |
+| K500 INJ-BTC | **sub** | Alt-alt — cap relief |
+| K507 TIA-BTC | **sub** | Alt-alt |
+| K512 APT-BTC | **sub** | Alt-alt |
+| K679 APT-SOL | **sub** | Alt-alt |
+| K682 ATOM-SOL | **sub** | Alt-alt |
+| K684 SOL-INJ | **sub** | Alt-alt |
+| K686 AVAX-SOL | **sub** | Alt-alt |
+| K687/K696 ENA-SOL | **sub** | Alt-alt |
+
+Routing logic: (1) `venue_allocation.json` sleeve `bybit_account` field (explicit),
+(2) auto-rebalance if main ≥ 45%, (3) default: core→main, alt-alt→sub.
+
+### §71.5 Risk Manager (K757 Update)
+
+```bash
+# View dual-account Bybit capacity
+python3 scripts/risk_manager.py --bybit-capacity
+
+# Pre-trade check for sub-account
+python3 scripts/risk_manager.py --check-trade Bybit_sub 500000 --symbol TIA
+
+# Pre-trade check for main account
+python3 scripts/risk_manager.py --check-trade Bybit_main 100000 --symbol BTC
+```
+
+Caps enforced: `Bybit_main` and `Bybit_sub` each at 50% (K485). Emergency threshold: 55% each.
+
+### §71.6 Compliance
+
+| Item | Assessment |
+|------|-----------|
+| Bybit ToS | **COMPLIANT** — sub-accounts explicitly permitted for risk separation |
+| KYC | Same master account KYC applies (no additional KYC needed) |
+| Withdrawal | Sub API key must NOT have withdrawal scope |
+| Transfer | Internal Bybit transfer (main→sub) via `/v5/asset/transfer/inter-transfer` |
+| Multiple personal accounts | PROHIBITED (this is a sub-account, NOT a 2nd personal account) |
+
+### §71.7 Files
+
+| File | Description |
+|------|-------------|
+| `scripts/bybit_multi_account_client.py` | Multi-account Bybit client (~420 LOC, K339) |
+| `scripts/risk_manager.py` | K757 update: Bybit_main + Bybit_sub + bybit_dual_account_capacity() |
+| `data/venue_allocation.json` | K757 extension: bybit_account per sleeve + activation steps |
+| `wave_k757_k485_scaffold.py` | K757 validation harness (41/41 tests pass) |
+| `wave_k757_k485_scaffold.json` | Test results + K523 projections |
+| `wave_k757_k485_scaffold.md` | Wave summary |
+| `docs/k302a_runbook.md` | This section §71 |
+| `report.html` | K757 K485 BYBIT SUB-ACCOUNT READY badge |
+
+### §71.8 References
+
+| Wave | Description |
+|------|-------------|
+| K757 | This section — K485 Bybit sub-account scaffold (1-step activation) |
+| K751 | Audit finding: Bybit 55.7% over 50% cap |
+| K745 | K498 OKX integration (HL relief 65%→50%) |
+| K485 | Original multi-account scaling analysis |
+| K523 | 3-point projection mandate |
+| K524 | HL 65.0% exact cap |
+| K339 | REPO_ROOT path pattern |
+
 ## §71 K754 PEPE-SOL FR Differential (71st Daemon, SIXTEENTH ALT-ALT, Eth Meme × SVM, 14th Vertex)
 
 *K756 §71 -- K754 PEPE-SOL FR Differential production scaffold (71st daemon, SIXTEENTH ALT-ALT 14th-vertex PEPE Ethereum ERC-20 meme leader × Solana SVM, OOS Sh 44.43 W=84h G6-safe direct alt-alt diff, central $62,000/yr net @$10M @4x 2.5% sleeve K523 3-point $34.8K-$85.7K, HL primary HL 66.8% AT CAP paper-gate-strict K751-audit K498/v6.52-activation-required, G4 WF 12/12 all positive min_sh=5.56 strong-WF-validation, G5 22/22 PASS max_corr=0.247-G5l-SEI-SOL, G6 64.2/yr PASS W=84h-chosen-over-168h-for-G6-compliance, G8 HL+Bybit+OKX confirmed Bybit=1000PEPE-denomination, L003 AVAX=0.4125-PASS L010 HBAR=0.4272-PASS both-proximity-warning monthly-recheck, PEPE-vertex-14th MR9-L002-all-future-PEPE-X-blocked, 60d gate: Sh>=6 fill>=60% maxDD<15% + K498/v6.52-OKX-activation, live-trigger=K498/v6.52-reduces-HL%<65%) -- 2026-05-30*

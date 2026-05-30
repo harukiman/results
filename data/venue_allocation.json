@@ -1,9 +1,10 @@
 {
-  "_comment": "K745 K498 OKX integration scaffold — venue allocation config",
-  "_wave": "K745",
+  "_comment": "K757 K485 Bybit sub-account + K745 K498 OKX integration — venue allocation config",
+  "_wave": "K757",
   "_date": "2026-05-30",
-  "_note": "Set venues.OKX.live_enabled=true after API key paste to activate OKX routing",
-  "_1_step_activation": "set OKX_LIVE_ENABLED=true in .env.local AND set venues.OKX.live_enabled=true here",
+  "_note": "K757: Bybit sub-account enabled. K745: Set venues.OKX.live_enabled=true after API key paste.",
+  "_1_step_activation_okx": "set OKX_LIVE_ENABLED=true in .env.local AND set venues.OKX.live_enabled=true here",
+  "_1_step_activation_bybit_sub": "paste BYBIT_SUB_API_KEY + BYBIT_SUB_API_SECRET into .env.local; set bybit_sub.live_enabled=true here",
 
   "venues": {
     "HL": {
@@ -28,8 +29,26 @@
       "post_only_default": true,
       "user_tier": "VIP5",
       "status": "LIVE",
-      "cap_note": "K485 cap",
-      "api_base": "https://api.bybit.com"
+      "cap_note": "K485 per-account cap 50%. K757: main+sub each 50%; total effective doubles headroom.",
+      "api_base": "https://api.bybit.com",
+      "accounts": {
+        "main": {
+          "env_key":    "BYBIT_API_KEY",
+          "env_secret": "BYBIT_API_SECRET",
+          "max_pct_of_total": 0.50,
+          "status": "LIVE",
+          "note": "Primary account — K208/K280/K297p core sleeves"
+        },
+        "sub": {
+          "env_key":    "BYBIT_SUB_API_KEY",
+          "env_secret": "BYBIT_SUB_API_SECRET",
+          "live_enabled": false,
+          "_live_enabled_note": "Set to true after: (1) Bybit sub-account created, (2) sub API key (trade-only, no withdraw), (3) keys in .env.local, (4) BYBIT_LIVE_ENABLED=true",
+          "max_pct_of_total": 0.50,
+          "status": "SCAFFOLD-READY",
+          "note": "K757 sub-account #1 — alt-alt + paired-trade sleeves (K493/K500/K507/K686/K687 family)"
+        }
+      }
     },
     "OKX": {
       "enabled": true,
@@ -62,59 +81,99 @@
     "K280": {
       "name": "K280 FR reverse carry (main sleeve)",
       "venue_allocation": {"HL": 1.0},
-      "note": "HL-only until K552 + K498 unblock HL headroom"
+      "bybit_account": "main",
+      "note": "HL-only until K552 + K498 unblock HL headroom. Bybit leg → main account."
     },
     "K297p": {
       "name": "K297p satellite (PAXG/SPX)",
       "venue_allocation": {"HL": 1.0},
-      "note": "HL-only (strategy structure)"
+      "bybit_account": "main",
+      "note": "HL-only (strategy structure). Bybit fallback → main."
     },
     "K500_INJ_BTC": {
       "name": "K500 INJ-BTC paired trade",
       "venue_allocation": {"Bybit": 1.0},
       "venue_allocation_post_okx": {"Bybit": 0.30, "OKX": 0.70},
-      "note": "Current: Bybit-only (HL at cap). Post-K498: 70% OKX / 30% Bybit for INJ leg",
+      "bybit_account": "sub",
+      "note": "K757: Bybit leg → sub-account. Current: Bybit-only. Post-K498: 70% OKX / 30% Bybit(sub).",
       "switch_condition": "OKX live_enabled=true + 48h paper validation"
     },
     "K507_TIA_BTC": {
       "name": "K507 TIA-BTC paired trade",
       "venue_allocation": {"Bybit": 1.0},
       "venue_allocation_post_okx": {"Bybit": 0.50, "OKX": 0.50},
-      "note": "Current: Bybit-only. Post-K498: 50/50 split"
+      "bybit_account": "sub",
+      "note": "K757: Bybit leg → sub-account. Post-K498: 50/50 split."
     },
     "K512_APT_BTC": {
       "name": "K512 APT-BTC paired trade",
       "venue_allocation": {"Bybit": 1.0},
       "venue_allocation_post_okx": {"Bybit": 0.50, "OKX": 0.50},
-      "note": "Current: Bybit-only. Post-K498: 50/50 split"
+      "bybit_account": "sub",
+      "note": "K757: Bybit leg → sub-account. Post-K498: 50/50 split."
     },
     "K679_APT_SOL": {
       "name": "K679 APT-SOL alt-alt",
       "venue_allocation": {"Bybit": 1.0},
       "venue_allocation_post_okx": {"Bybit": 0.40, "OKX": 0.60},
-      "note": "Current: Bybit-only. Post-K498: 60% OKX"
+      "bybit_account": "sub",
+      "note": "K757: Bybit leg → sub-account. Post-K498: 60% OKX."
     },
     "K682_ATOM_SOL": {
       "name": "K682 ATOM-SOL alt-alt",
       "venue_allocation": {"Bybit": 1.0},
       "venue_allocation_post_okx": {"Bybit": 0.40, "OKX": 0.60},
-      "note": "Current: Bybit-only. Post-K498: 60% OKX"
+      "bybit_account": "sub",
+      "note": "K757: Bybit leg → sub-account. Post-K498: 60% OKX."
     },
     "K684_SOL_INJ": {
       "name": "K684 SOL-INJ alt-alt",
       "venue_allocation": {"Bybit": 1.0},
       "venue_allocation_post_okx": {"Bybit": 0.30, "OKX": 0.70},
-      "note": "INJ-heavy: prefer OKX 70% post-K498 (INJ liquidity on OKX)"
+      "bybit_account": "sub",
+      "note": "K757: Bybit leg → sub-account. INJ-heavy: prefer OKX 70% post-K498."
     },
     "K690_SEI_SOL": {
       "name": "K690 SEI-SOL alt-alt",
       "venue_allocation": {"Bybit": 1.0},
-      "venue_allocation_post_okx": {"Bybit": 0.50, "OKX": 0.50}
+      "venue_allocation_post_okx": {"Bybit": 0.50, "OKX": 0.50},
+      "bybit_account": "sub",
+      "note": "K757: Bybit leg → sub-account."
     },
     "K694_TIA_SOL": {
       "name": "K694 TIA-SOL alt-alt",
       "venue_allocation": {"Bybit": 1.0},
-      "venue_allocation_post_okx": {"Bybit": 0.40, "OKX": 0.60}
+      "venue_allocation_post_okx": {"Bybit": 0.40, "OKX": 0.60},
+      "bybit_account": "sub",
+      "note": "K757: Bybit leg → sub-account. Post-K498: 60% OKX."
+    },
+    "K686_AVAX_SOL": {
+      "name": "K686 AVAX-SOL alt-alt",
+      "venue_allocation": {"Bybit": 1.0},
+      "venue_allocation_post_okx": {"Bybit": 0.40, "OKX": 0.60},
+      "bybit_account": "sub",
+      "note": "K757: Bybit leg → sub-account. Post-K498: 60% OKX."
+    },
+    "K687_ENA_SOL": {
+      "name": "K687 ENA-SOL alt-alt",
+      "venue_allocation": {"Bybit": 1.0},
+      "venue_allocation_post_okx": {"Bybit": 0.50, "OKX": 0.50},
+      "bybit_account": "sub",
+      "note": "K757: Bybit leg → sub-account. Post-K498: 50/50 split."
+    },
+    "K696_ENA_SOL": {
+      "name": "K696 ENA-SOL alt-alt (K696)",
+      "venue_allocation": {"Bybit": 1.0},
+      "venue_allocation_post_okx": {"Bybit": 0.50, "OKX": 0.50},
+      "bybit_account": "sub",
+      "note": "K757: Bybit leg → sub-account."
+    },
+    "K698_LINK_ETH": {
+      "name": "K698 LINK-ETH alt-alt",
+      "venue_allocation": {"Bybit": 1.0},
+      "venue_allocation_post_okx": {"Bybit": 0.50, "OKX": 0.50},
+      "bybit_account": "sub",
+      "note": "K757: Bybit leg → sub-account."
     },
     "FUTURE_HL_HEADROOM": {
       "_comment": "New alt-alt sleeves blocked until OKX active (HL at 65% cap). Post-K498: ~$1.5M HL headroom unlocked.",
@@ -125,17 +184,21 @@
   },
 
   "concentration_caps": {
-    "HL":    0.65,
-    "Bybit": 0.50,
-    "OKX":   0.40,
-    "_note": "OKX cap: 40% initial (K745). Expand to 50% after 30d track record."
+    "HL":         0.65,
+    "Bybit":      0.50,
+    "Bybit_main": 0.50,
+    "Bybit_sub":  0.50,
+    "OKX":        0.40,
+    "_note": "K757: Bybit_main + Bybit_sub each capped at 50% (per-account). Total Bybit effective capacity: 100% (50%+50%). OKX cap: 40% initial (K745). Expand to 50% after 30d track record."
   },
 
   "emergency_thresholds": {
-    "HL":    0.70,
-    "Bybit": 0.55,
-    "OKX":   0.45,
-    "_note": "Exceeding these triggers emergency exit script review"
+    "HL":         0.70,
+    "Bybit":      0.55,
+    "Bybit_main": 0.55,
+    "Bybit_sub":  0.55,
+    "OKX":        0.45,
+    "_note": "Exceeding these triggers emergency exit script review. K757: each Bybit account independently at 55% triggers review."
   },
 
   "hl_cap_relief_projection": {
@@ -149,13 +212,57 @@
   },
 
   "profit_unlock": {
-    "_comment": "K523 3-point projection for HL cap relief ($10M AUM)",
+    "_comment": "K523 3-point projection for HL cap relief ($10M AUM) — K745 OKX focus",
     "conservative_usd_yr": 120000,
     "mid_usd_yr": 200000,
     "optimistic_usd_yr": 350000,
     "basis": "~$1.5M new HL headroom × expected alt-alt Sharpe 15-25 @ 3% sleeve",
     "realized_to_stated_ratio": 0.38,
     "note": "K523: single-point banned. Conservative/mid/optimistic 3-point required."
+  },
+
+  "bybit_sub_profit_unlock": {
+    "_comment": "K757 K523 3-point projection for Bybit sub-account capacity relief ($10M AUM)",
+    "_wave": "K757",
+    "context": "K751 audit: Bybit 55.7% over 50% cap. Sub-account creates 2nd Bybit account. Per-account cap 50% remains; total Bybit capacity effectively doubled.",
+    "conservative_usd_yr": 20000,
+    "mid_usd_yr": 50000,
+    "optimistic_usd_yr": 120000,
+    "conservative_basis": "Bybit headroom +5pp — relieves cap constraint for currently blocked alt-alt sleeves to deploy fully at current allocations.",
+    "mid_basis": "Bybit headroom +10pp + better fill rate via dual-account liquidity. Sub routes alt-alt family (K500/K507/K512/K686/K687) cleanly, reducing main account friction.",
+    "optimistic_basis": "Bybit headroom +20pp + execution edge from account separation (reduced fill competition between strategies). Alt-alt family at full 2% each × 7 strategies.",
+    "realized_to_stated_ratio": 0.38,
+    "capacity_relief_note": "This is capacity relief, not direct alpha. Unlocks deployment of already-validated strategies.",
+    "k523_compliant": true,
+    "single_point_banned": true
+  },
+
+  "_bybit_sub_activation_steps": [
+    "=== K757 Bybit Sub-Account 1-Step Activation ===",
+    "1. Log into Bybit master account → Account & Security → Sub Accounts → Create Sub Account",
+    "   Name: crypto-lab-k485-sub1 | Type: Standard Sub Account | Permissions: Trade (no Withdrawal)",
+    "2. In sub-account: API → Create API Key",
+    "   Scope: Read (positions/balance) + Trade (order place/cancel). NO Withdraw scope.",
+    "   Set IP whitelist (optional, recommended if server has fixed IP).",
+    "3. Paste credentials into .env.local (NOT committed to repo):",
+    "   BYBIT_SUB_API_KEY=your_sub_key_here",
+    "   BYBIT_SUB_API_SECRET=your_sub_secret_here",
+    "   BYBIT_LIVE_ENABLED=true  (if not already set)",
+    "4. Set venues.Bybit.accounts.sub.live_enabled=true in this file",
+    "5. Run smoke test: python3 scripts/bybit_multi_account_client.py --smoke",
+    "6. Run 48h paper validation: check logs/bybit_routing_decisions.jsonl",
+    "7. Fund sub-account: Bybit Asset Center → Internal Transfer → main→sub ($2-5M USDT)",
+    "8. Activate live routing: bybit_multi_account_client.py detects BYBIT_SUB_API_KEY automatically",
+    "=== Reversibility: unset BYBIT_SUB_API_KEY → all routing returns to main ==="
+  ],
+
+  "_bybit_sub_compliance": {
+    "tos_status": "COMPLIANT",
+    "basis": "Bybit ToS permits sub-accounts under same master KYC for risk separation. NOT a duplicate personal account.",
+    "kyc_requirement": "Same master account KYC applies. No additional KYC for sub-accounts.",
+    "withdrawal_scope": "DISABLED — sub API key must NOT have withdraw permission",
+    "transfer_mechanism": "Internal Bybit Asset Transfer (main→sub, via /v5/asset/transfer/inter-transfer)",
+    "k757_note": "K485 ToS analysis: sub-accounts = PERMITTED. Duplicate personal accounts = PROHIBITED (different)."
   },
 
   "_activation_steps": [

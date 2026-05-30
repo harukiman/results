@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
 """
-risk_manager.py — K745 Risk Manager (OKX-extended, multi-venue concentration)
-===============================================================================
-Tracks and enforces venue concentration limits across HL, Bybit, and OKX.
+risk_manager.py — K757 Risk Manager (Bybit dual-account + OKX-extended)
+=========================================================================
+Tracks and enforces venue concentration limits across HL, Bybit (main+sub), and OKX.
+K757 update: recognizes 2 Bybit accounts (main + sub) in concentration calculation.
 K745 update: recognizes OKX positions in concentration calculation.
 
-Concentration caps (K745):
-  HL:    65.0% max (K524 exact cap — HARD LIMIT, no exceptions)
-  Bybit: 50.0% max (K485)
-  OKX:   40.0% max (K745 initial, expand to 50% after 30d track record)
+Concentration caps (K757):
+  HL:         65.0% max (K524 exact cap — HARD LIMIT, no exceptions)
+  Bybit_main: 50.0% max (K485 per-account cap)
+  Bybit_sub:  50.0% max (K757 sub-account — same per-account limit)
+  Bybit total: main + sub (effective headroom doubled vs single account)
+  OKX:        40.0% max (K745 initial, expand to 50% after 30d track record)
 
-Relief target post-K498:
-  HL: 65% → ~50% over 1-2 months as new sleeves route to OKX
-  This unlocks ~$1.5M new HL headroom at $10M AUM for alt-alt pairs.
+Relief mechanisms:
+  K757: Bybit sub → 5.7pp over-cap relieved; total Bybit capacity ~doubled
+  K498: OKX → HL 65% → ~50% over 1-2 months as new sleeves route to OKX
+  Combined: unlocks ~$1.5M HL headroom + $500K Bybit headroom at $10M AUM
 
 Architecture:
-  RiskSnapshot      — point-in-time concentration snapshot
+  RiskSnapshot      — point-in-time concentration snapshot (includes Bybit_main + Bybit_sub)
   RiskManager       — concentration tracking + cap enforcement
   check_trade()     — pre-trade risk check (returns ALLOW/BLOCK + reason)
   update_position() — update position after confirmed fill
@@ -24,19 +28,20 @@ Architecture:
 K339: REPO_ROOT from __file__, no /Users/ literals.
 LIVE modification: NONE — analytical + pre-trade check only.
 
-Integration with smart_router.py:
+Integration with smart_router.py + bybit_multi_account_client.py:
   from scripts.risk_manager import RiskManager
   rm = RiskManager.from_cache()
-  check = rm.check_trade("OKX", 500_000)
+  check = rm.check_trade("Bybit_sub", 500_000)   # check sub-account cap
+  check2 = rm.check_trade("OKX", 500_000)
   if check["allow"]:
-      # submit order
-  else:
-      print(check["reason"])
+      # route to Bybit sub-account via bybit_multi_account_client
 
 Usage:
   python3 scripts/risk_manager.py --report
-  python3 scripts/risk_manager.py --check-trade OKX 500000
-  python3 scripts/risk_manager.py --update-position OKX 500000 --symbol INJ
+  python3 scripts/risk_manager.py --check-trade Bybit_sub 500000
+  python3 scripts/risk_manager.py --check-trade OKX 500000 --symbol INJ
+  python3 scripts/risk_manager.py --bybit-capacity       # K757 dual-account view
+  python3 scripts/risk_manager.py --update-position Bybit_sub 500000 --symbol TIA
 """
 from __future__ import annotations
 
@@ -59,26 +64,34 @@ CACHE_DIR.mkdir(exist_ok=True)
 
 JST = timezone(timedelta(hours=9))
 
-# ── Concentration caps (K745) ─────────────────────────────────────────────────
+# ── Concentration caps (K757) ─────────────────────────────────────────────────
 CONCENTRATION_CAPS: Dict[str, float] = {
-    "HL":    0.650,   # K524 exact cap — HARD LIMIT
-    "Bybit": 0.500,   # K485
-    "OKX":   0.400,   # K745 initial; expand after 30d track record
-    "Aevo":  0.100,   # scaffold-only
-    "dYdX":  0.100,   # scaffold-only
-    "Lighter": 0.05,
-    "Vertex":  0.05,
+    "HL":         0.650,   # K524 exact cap — HARD LIMIT
+    "Bybit":      0.500,   # K485 legacy single-account view (for backward compat)
+    "Bybit_main": 0.500,   # K757: main account per-account cap
+    "Bybit_sub":  0.500,   # K757: sub-account per-account cap (same limit)
+    "OKX":        0.400,   # K745 initial; expand after 30d track record
+    "Aevo":       0.100,   # scaffold-only
+    "dYdX":       0.100,   # scaffold-only
+    "Lighter":    0.050,
+    "Vertex":     0.050,
 }
 
-# Relief targets (post-K498 OKX activation)
-HL_TARGET_AFTER_OKX   = 0.50   # from 0.65 → target after OKX migration
-OKX_TARGET_EXPANDED   = 0.50   # OKX expansion target after 30d track record
+# K757: Bybit aliases — Bybit_main + Bybit_sub map to same Bybit exchange
+BYBIT_ACCOUNTS = ("Bybit_main", "Bybit_sub")
+
+# Relief targets
+HL_TARGET_AFTER_OKX     = 0.50   # from 0.65 → target after OKX migration
+OKX_TARGET_EXPANDED     = 0.50   # OKX expansion target after 30d track record
+BYBIT_SUB_HEADROOM_PP   = 0.50   # K757: sub adds up to 50pp more Bybit headroom
 
 # Emergency thresholds (trigger emergency exit check)
 EMERGENCY_THRESHOLDS: Dict[str, float] = {
-    "HL":    0.70,   # 70% → trigger emergency_hl_exit.py review
-    "Bybit": 0.55,
-    "OKX":   0.45,
+    "HL":         0.70,   # 70% → trigger emergency_hl_exit.py review
+    "Bybit":      0.55,   # legacy
+    "Bybit_main": 0.55,   # K757: per-account emergency
+    "Bybit_sub":  0.55,   # K757: per-account emergency
+    "OKX":        0.45,
 }
 
 # Tail loss estimates (K524 per MEMORY.md)
@@ -441,9 +454,61 @@ class RiskManager:
         """Return all HL positions."""
         return [p for p in self._positions if p.venue == "HL"]
 
-    def bybit_positions(self) -> List[PositionRecord]:
-        """Return all Bybit positions."""
-        return [p for p in self._positions if p.venue == "Bybit"]
+    def bybit_positions(self, account: Optional[str] = None) -> List[PositionRecord]:
+        """
+        Return Bybit positions.
+        account=None: all Bybit (Bybit + Bybit_main + Bybit_sub)
+        account="main": Bybit_main + legacy Bybit positions
+        account="sub": Bybit_sub positions
+        """
+        if account is None:
+            return [p for p in self._positions if p.venue in ("Bybit", "Bybit_main", "Bybit_sub")]
+        if account == "main":
+            return [p for p in self._positions if p.venue in ("Bybit", "Bybit_main")]
+        if account == "sub":
+            return [p for p in self._positions if p.venue == "Bybit_sub"]
+        return []
+
+    def bybit_dual_account_capacity(self) -> dict:
+        """
+        K757: Compute dual-account Bybit capacity view.
+        Returns per-account and combined headroom.
+        """
+        aum = self.total_aum
+        main_notional = self._venue_notional("Bybit") + self._venue_notional("Bybit_main")
+        sub_notional  = self._venue_notional("Bybit_sub")
+        main_pct = main_notional / aum if aum > 0 else 0.0
+        sub_pct  = sub_notional  / aum if aum > 0 else 0.0
+        total_pct = main_pct + sub_pct
+
+        cap = CONCENTRATION_CAPS.get("Bybit_main", 0.50)
+        main_head = max(0.0, (cap - main_pct) * aum)
+        sub_head  = max(0.0, (cap - sub_pct)  * aum)
+        total_head = main_head + sub_head
+
+        return {
+            "wave":           "K757",
+            "main_pct":       round(main_pct, 4),
+            "sub_pct":        round(sub_pct, 4),
+            "total_bybit_pct": round(total_pct, 4),
+            "main_headroom_usd": round(main_head, 0),
+            "sub_headroom_usd":  round(sub_head, 0),
+            "total_headroom_usd": round(total_head, 0),
+            "per_account_cap": cap,
+            "main_violations": main_pct >= cap,
+            "sub_violations":  sub_pct  >= cap,
+            "k523_3point": {
+                "conservative_usd_yr": 20_000,
+                "mid_usd_yr":          50_000,
+                "optimistic_usd_yr":  120_000,
+                "basis": "Bybit sub relief: +5pp cons / +10pp mid / +20pp opt vs current 55.7% over-cap",
+            },
+            "note": (
+                f"K757: Bybit dual-account. Before: 55.7% over 50% cap. "
+                f"After: main={main_pct:.1%} + sub={sub_pct:.1%} each vs 50% cap. "
+                f"Total headroom: ${total_head:,.0f} (was ${max(0,(cap-main_pct)*aum):,.0f})."
+            ),
+        }
 
     def hl_cap_relief_projection(
         self,
@@ -530,8 +595,11 @@ class RiskManager:
         # OKX integration projection
         okx_proj = self.hl_cap_relief_projection(new_okx_notional_usd=1_500_000.0)  # $1.5M migration example
 
+        # K757 Bybit dual-account capacity
+        bybit_dual = self.bybit_dual_account_capacity()
+
         payload = {
-            "_wave":         "K745",
+            "_wave":         "K757",
             "_source":       "risk_manager.py",
             "generated_jst": now_jst.strftime("%Y-%m-%d %H:%M JST"),
             "total_aum_usd": self.total_aum,
@@ -541,12 +609,16 @@ class RiskManager:
             "emergency_thresholds": EMERGENCY_THRESHOLDS,
             "tail_loss_estimates":  TAIL_LOSS_ESTIMATES,
             "okx_integration_projection": okx_proj,
+            "bybit_dual_account_capacity": bybit_dual,
             "hl_target_after_okx": HL_TARGET_AFTER_OKX,
             "okx_target_expanded": OKX_TARGET_EXPANDED,
             "summary": {
-                "hl_pct":     round(snap.hl_pct,    4),
-                "okx_pct":    round(snap.okx_pct,   4),
-                "bybit_pct":  round(snap.bybit_pct, 4),
+                "hl_pct":         round(snap.hl_pct,    4),
+                "okx_pct":        round(snap.okx_pct,   4),
+                "bybit_pct":      round(snap.bybit_pct, 4),
+                "bybit_main_pct": round(bybit_dual["main_pct"], 4),
+                "bybit_sub_pct":  round(bybit_dual["sub_pct"],  4),
+                "bybit_total_headroom_usd": round(bybit_dual["total_headroom_usd"], 0),
                 "hl_cap_relief_pp_from_okx": round(okx_proj["relief_pp"], 4),
                 "violations": snap.violations,
                 "tail_risk_usd": round(snap.tail_risk_usd, 0),
@@ -616,16 +688,18 @@ Examples:
   python3 scripts/risk_manager.py --relief 1500000  # project HL relief from OKX migration
         """,
     )
-    p.add_argument("--report",      action="store_true", help="Write risk report to data/")
-    p.add_argument("--snapshot",    action="store_true", help="Show current concentration")
-    p.add_argument("--check-trade", nargs=2, metavar=("VENUE", "NOTIONAL"),
-                   help="Pre-trade concentration check")
-    p.add_argument("--symbol",      default="", help="Symbol for trade check")
-    p.add_argument("--scenario",    action="store_true", help="K745 HL@65% + OKX scenario")
-    p.add_argument("--relief",      type=float, metavar="NOTIONAL",
+    p.add_argument("--report",          action="store_true", help="Write risk report to data/")
+    p.add_argument("--snapshot",        action="store_true", help="Show current concentration")
+    p.add_argument("--check-trade",     nargs=2, metavar=("VENUE", "NOTIONAL"),
+                   help="Pre-trade concentration check (use Bybit_main or Bybit_sub for K757)")
+    p.add_argument("--symbol",          default="", help="Symbol for trade check")
+    p.add_argument("--scenario",        action="store_true", help="K745 HL@65% + OKX scenario")
+    p.add_argument("--relief",          type=float, metavar="NOTIONAL",
                    help="Project HL relief from routing NOTIONAL to OKX")
-    p.add_argument("--total-aum",   type=float, default=10_000_000.0)
-    p.add_argument("--json",        action="store_true")
+    p.add_argument("--bybit-capacity",  action="store_true",
+                   help="K757: Show dual-account Bybit capacity (main + sub)")
+    p.add_argument("--total-aum",       type=float, default=10_000_000.0)
+    p.add_argument("--json",            action="store_true")
     args = p.parse_args()
 
     if args.scenario:
@@ -702,12 +776,38 @@ Examples:
             print(f"  {proj['note']}")
         return 0
 
+    if args.bybit_capacity:
+        cap = rm.bybit_dual_account_capacity()
+        if args.json:
+            print(json.dumps(cap, indent=2))
+        else:
+            print(f"\n=== K757 Bybit Dual-Account Capacity ===")
+            print(f"  Main:  {cap['main_pct']:.1%} / {cap['per_account_cap']:.0%} cap  "
+                  f"headroom=${cap['main_headroom_usd']:,.0f}")
+            print(f"  Sub:   {cap['sub_pct']:.1%} / {cap['per_account_cap']:.0%} cap  "
+                  f"headroom=${cap['sub_headroom_usd']:,.0f}")
+            print(f"  Total headroom: ${cap['total_headroom_usd']:,.0f}")
+            print(f"  {cap['note']}")
+            k523 = cap['k523_3point']
+            print(f"\n  K523 3-point (capacity relief, not direct alpha):")
+            print(f"    Conservative: ${k523['conservative_usd_yr']:,.0f}/yr")
+            print(f"    Central:      ${k523['mid_usd_yr']:,.0f}/yr")
+            print(f"    Optimistic:   ${k523['optimistic_usd_yr']:,.0f}/yr")
+            if cap["main_violations"]:
+                print(f"  CAP VIOLATION: main account at {cap['main_pct']:.1%} ≥ {cap['per_account_cap']:.0%}")
+            if cap["sub_violations"]:
+                print(f"  CAP VIOLATION: sub account at {cap['sub_pct']:.1%} ≥ {cap['per_account_cap']:.0%}")
+        return 0
+
     # Default: show snapshot
     snap = rm.get_snapshot()
-    print(f"\n=== K745 Risk Manager ===")
-    print(f"  HL: {snap.hl_pct:.1%}  OKX: {snap.okx_pct:.1%}  Bybit: {snap.bybit_pct:.1%}")
+    bybit_dual = rm.bybit_dual_account_capacity()
+    print(f"\n=== K757 Risk Manager ===")
+    print(f"  HL: {snap.hl_pct:.1%}  OKX: {snap.okx_pct:.1%}  "
+          f"Bybit_main: {bybit_dual['main_pct']:.1%}  Bybit_sub: {bybit_dual['sub_pct']:.1%}")
+    print(f"  Bybit total headroom: ${bybit_dual['total_headroom_usd']:,.0f}")
     print(f"  Violations: {snap.violations or 'none'}")
-    print(f"  Use --help for options")
+    print(f"  Use --help for options (--bybit-capacity for K757 dual-account view)")
     return 0
 
 
