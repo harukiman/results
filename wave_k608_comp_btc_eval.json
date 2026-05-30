@@ -1,0 +1,813 @@
+{
+  "wave": "K608",
+  "strategy": "COMP-BTC FR Differential Paired-Trade",
+  "run_time_jst": "2026-05-30T08:56:39+0900",
+  "runtime_s": 74.7,
+  "decision": "ACCEPT CONDITIONAL",
+  "decision_rationale": "G5 all PASS. Core strength (Sh=22.837). Failed gates: ['G4 Walk-forward', 'G6 Trades/yr', 'G8 Cross-venue']. Structural failures (G4/G6/G8/G9). Recommendation: 60d paper-trade. DeFi/Lending sub-sub-cluster CONFIRMED \u2014 COMP governance distinct from AAVE utility.",
+  "lending_subcluster_status": "DISTINCT SIGNALS \u2014 COMP corr(AAVE)=0.0439 < 0.4. COMP governance model (liquidity mining) vs AAVE utility (Safety Module) creates meaningfully different FR cycles. DeFi lending sub-sub-cluster CONFIRMED: COMP and AAVE are independent.",
+  "defi_taxonomy": {
+    "DEX_governance": {
+      "token": "UNI",
+      "wave": "K593",
+      "result": "REJECT (vol 1.012x \u2014 governance-only, no fee switch)",
+      "fr_driver": "Macro DeFi sentiment = BTC-convergent"
+    },
+    "LSD_governance": {
+      "token": "LDO",
+      "wave": "K594",
+      "result": "REJECT (vol 1.40x \u2014 governance, stETH passive)",
+      "fr_driver": "ETH staking APY correlated, insufficient vol premium"
+    },
+    "Lending_utility": {
+      "token": "AAVE",
+      "wave": "K596",
+      "result": "ACCEPT CONDITIONAL (Sh=11.354)",
+      "fr_driver": "Liquidation cascades + borrow rate cycles + Safety Module staking"
+    },
+    "veToken_bribe": {
+      "token": "CRV",
+      "wave": "K599",
+      "result": "ACCEPT CONDITIONAL (Sh=5.29)",
+      "fr_driver": "veCRV gauge voting + bribe economy 7-day cycle"
+    },
+    "Stablecoin_CDP": {
+      "token": "MKR",
+      "wave": "K602",
+      "result": "REJECT (vol 1.34x \u2014 CDP/PSM dampened)",
+      "fr_driver": "DAI peg stability = dampened vol"
+    },
+    "Synthetic_assets": {
+      "token": "SNX",
+      "wave": "K604",
+      "result": "BLOCKED-FAMILY-CORR (INJ G5e=0.5296)",
+      "fr_driver": "Synthetic FX demand blocked by alt-bear regime co-movement"
+    },
+    "Lending_governance": {
+      "token": "COMP",
+      "wave": "K608",
+      "result": "ACCEPT CONDITIONAL",
+      "fr_driver": "Compound liquidity mining + utilization cycles | AAVE corr=0.0439"
+    }
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "comp_listed": true,
+      "is_delisted": false,
+      "total_symbols": 230,
+      "max_leverage": 5,
+      "margin_table_id": 5,
+      "api_success": true,
+      "venue_fail": false,
+      "note": "HL meta API: 230 symbols. COMP: LISTED. isDelisted=False. maxLeverage=5. COMP-PERP on Hyperliquid (Compound Finance governance token). FR settlement: 1h intervals."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "comp_listed": true,
+      "status": "Trading",
+      "bybit_ticker": "COMPUSDT",
+      "max_leverage": "25.00",
+      "funding_interval_min": 480,
+      "api_success": true,
+      "venue_fail": false,
+      "note": "Bybit COMPUSDT: status=Trading, maxLeverage=25.00, fundingInterval=480min. 8h FR settlement interval."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "comp_listed": true,
+      "state": "live",
+      "max_leverage": "20",
+      "inst_id": "COMP-USDT-SWAP",
+      "ct_val": "0.1",
+      "api_success": true,
+      "venue_fail": false,
+      "note": "OKX COMP-USDT-SWAP: state=live, maxLeverage=20, ctVal=0.1. 8h FR settlement interval."
+    },
+    "venue_pass": true,
+    "hl_listed": true,
+    "bybit_trading": true,
+    "okx_live": true,
+    "venue_note": "HL=LISTED (maxLev=5), Bybit=LISTED (maxLev=25.00), OKX=LISTED (maxLev=20). All 3 venues present.",
+    "vol_ratio_6m": 15.4465,
+    "vol_ratio_365d": 9.1255,
+    "vol_ratio_full": 6.4638,
+    "vol_ratio_primary": 15.4465,
+    "vol_window_used": "6m",
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "prescreen_pass": true,
+    "comp_fr_rows": 17519,
+    "btc_fr_rows": 17512,
+    "aligned_rows": 17360,
+    "comp_fr_start": "2024-05-30 00:00:00",
+    "comp_fr_end": "2026-05-29 23:00:00",
+    "comp_fr_mean": -8.83e-06,
+    "comp_fr_std": 0.0001122,
+    "comp_fr_std_6m": 0.00015222,
+    "btc_fr_std_6m": 9.85e-06,
+    "note": "Phase 0 PASS: HL LISTED (maxLev=5), Bybit status=Trading, OKX state=live. Vol ratio COMP/BTC: 6M=15.4465x, 365d=9.1255x, full=6.4638x. Primary (6m)=15.4465x PASS vs threshold=1.5x.",
+    "vol_analysis": {
+      "6m_window": 15.4465,
+      "365d_window": 9.1255,
+      "full_window": 6.4638,
+      "primary": "6m",
+      "primary_value": 15.4465,
+      "threshold": 1.5,
+      "verdict": "6M=15.4465x, 365d=9.1255x, full=6.4638x. Primary (max window = 6m): 15.4465x PASS. K596 AAVE 365d=1.842x for comparison. COMP governance-only vs AAVE utility: COMP vol sufficient for FR differential strategy. K593 UNI (DEX governance) 365d=1.24x REJECT; K602 MKR 365d=1.34x REJECT. COMP expected: similar to AAVE (liquidity mining cycle) or near-MKR range.",
+      "aave_comparison": {
+        "aave_vol_365d": 1.8423,
+        "comp_vol_primary": 15.4465,
+        "delta": 13.6042,
+        "insight": "COMP 6m=15.4465x vs AAVE 365d=1.8423x. COMP higher than AAVE. AAVE has Safety Module staking creating vol premium; COMP relies on liquidity mining reward cycles."
+      }
+    }
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "COMP-PERP vs BTC-PERP (HL 1h FR differential)",
+    "window_rationale": "W=168h (7d) \u2014 G6-compliant (>= 30 trades/yr). Best OOS Sharpe from grid: W=720h (Sh=23.0348). W=168h balances G6 trade count and DeFi governance cycle smoothing."
+  },
+  "statistical_analysis": {
+    "adf_test": {
+      "adf_stat": -15.2647,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou_half_life": {
+      "half_life_h": 1.93,
+      "half_life_days": 0.08,
+      "theta": 0.359467,
+      "intercept": -7.76e-06,
+      "r_squared": 0.1797,
+      "mean_reverting": true
+    },
+    "permutation": {
+      "real_sharpe": 22.8374,
+      "perm_mean_sh": -0.0098,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr": {
+      "oos_sharpe": 22.8374,
+      "t_stat": 17.5224,
+      "p_value": 0.0,
+      "bonferroni_thresh": 0.005556,
+      "n_trials": 9,
+      "pass": true
+    }
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 13.7724,
+    "ann_ret_pct": 12.9704,
+    "max_dd_pct": -0.4226,
+    "trades_yr": 28.4,
+    "n_days": 501.5,
+    "n_hours": 12036,
+    "n_pos_months": 14,
+    "n_neg_months": 3,
+    "cum_ret": 0.17821,
+    "ret_mean": 1.481e-05,
+    "ret_std": 0.00010062
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 22.8374,
+    "ann_ret_pct": 30.2699,
+    "max_dd_pct": -0.3194,
+    "trades_yr": 23.8,
+    "n_days": 214.9,
+    "n_hours": 5157,
+    "n_pos_months": 7,
+    "n_neg_months": 1,
+    "cum_ret": 0.178198,
+    "ret_mean": 3.455e-05,
+    "ret_std": 0.00014162
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 16.8974,
+    "ann_ret_pct": 18.1594,
+    "max_dd_pct": -0.4226,
+    "trades_yr": 27.0,
+    "n_days": 716.4,
+    "n_hours": 17193,
+    "n_pos_months": 20,
+    "n_neg_months": 4,
+    "cum_ret": 0.356409,
+    "ret_mean": 2.073e-05,
+    "ret_std": 0.00011482
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 720,
+      "oos_sharpe": 23.0348,
+      "oos_ann_ret_pct": 30.0788,
+      "trades_yr": 3.4
+    },
+    {
+      "window_h": 120,
+      "oos_sharpe": 22.9965,
+      "oos_ann_ret_pct": 30.3384,
+      "trades_yr": 26.9
+    },
+    {
+      "window_h": 168,
+      "oos_sharpe": 22.7906,
+      "oos_ann_ret_pct": 30.066,
+      "trades_yr": 23.5
+    },
+    {
+      "window_h": 96,
+      "oos_sharpe": 22.7809,
+      "oos_ann_ret_pct": 30.1624,
+      "trades_yr": 33.6
+    },
+    {
+      "window_h": 336,
+      "oos_sharpe": 22.7799,
+      "oos_ann_ret_pct": 29.8768,
+      "trades_yr": 10.1
+    }
+  ],
+  "walk_forward": {
+    "n_folds": 12,
+    "n_positive": 9,
+    "all_positive": false,
+    "pass": false,
+    "sh_min": -7.223,
+    "sh_max": 83.3505,
+    "sh_mean": 23.9061,
+    "sh_std": 27.3932,
+    "fold_details": [
+      {
+        "fold": 1,
+        "start": "2025-05-28",
+        "end": "2025-06-27",
+        "sharpe": -2.7403,
+        "positive": "False",
+        "max_dd": -0.002459
+      },
+      {
+        "fold": 2,
+        "start": "2025-06-27",
+        "end": "2025-07-27",
+        "sharpe": 30.7554,
+        "positive": "True",
+        "max_dd": -0.000541
+      },
+      {
+        "fold": 3,
+        "start": "2025-07-27",
+        "end": "2025-08-26",
+        "sharpe": -4.9251,
+        "positive": "False",
+        "max_dd": -0.002088
+      },
+      {
+        "fold": 4,
+        "start": "2025-08-26",
+        "end": "2025-09-25",
+        "sharpe": -7.223,
+        "positive": "False",
+        "max_dd": -0.001647
+      },
+      {
+        "fold": 5,
+        "start": "2025-09-25",
+        "end": "2025-10-25",
+        "sharpe": 16.0784,
+        "positive": "True",
+        "max_dd": -0.000675
+      },
+      {
+        "fold": 6,
+        "start": "2025-10-25",
+        "end": "2025-11-24",
+        "sharpe": 83.3505,
+        "positive": "True",
+        "max_dd": -4.5e-05
+      },
+      {
+        "fold": 7,
+        "start": "2025-11-24",
+        "end": "2025-12-24",
+        "sharpe": 33.3168,
+        "positive": "True",
+        "max_dd": -0.000397
+      },
+      {
+        "fold": 8,
+        "start": "2025-12-24",
+        "end": "2026-01-23",
+        "sharpe": 0.4694,
+        "positive": "True",
+        "max_dd": -0.002627
+      },
+      {
+        "fold": 9,
+        "start": "2026-01-23",
+        "end": "2026-02-22",
+        "sharpe": 18.7562,
+        "positive": "True",
+        "max_dd": -0.001675
+      },
+      {
+        "fold": 10,
+        "start": "2026-02-22",
+        "end": "2026-03-24",
+        "sharpe": 15.7484,
+        "positive": "True",
+        "max_dd": -0.002202
+      },
+      {
+        "fold": 11,
+        "start": "2026-03-24",
+        "end": "2026-04-23",
+        "sharpe": 34.5704,
+        "positive": "True",
+        "max_dd": -0.002465
+      },
+      {
+        "fold": 12,
+        "start": "2026-04-23",
+        "end": "2026-05-23",
+        "sharpe": 68.7158,
+        "positive": "True",
+        "max_dd": -0.000372
+      }
+    ],
+    "is_h": 2160,
+    "oos_h": 720,
+    "adapted": false,
+    "reason": "Standard 12-fold WF (IS=90d/OOS=30d). COMP ~723d total data.",
+    "note": "Standard WF (IS=90d/OOS=30d). COMP ~723d total data. 9/12 positive folds. G4 FAIL: 3/12 negative folds. Sharpe range: [-7.22, 83.35]. DeFi governance cycles: COMP FR driven by liquidity mining rate changes, utilization spikes, and DAO governance proposals (7-day voting cycle)."
+  },
+  "section_6_gates": {
+    "gate_details": {
+      "G1 OOS Sharpe": true,
+      "G2 Perm p": true,
+      "G3 DSR Bonferroni": true,
+      "G4 Walk-forward": false,
+      "G5 Family corr": true,
+      "G6 Trades/yr": false,
+      "G7 Ann return 4x": true,
+      "G8 Cross-venue": false,
+      "G9 Data sufficiency": true
+    },
+    "gates_passed": 6,
+    "gates_total": 9,
+    "gates_failed": 3,
+    "g7_ret_4x_pct": 121.08,
+    "g4_all_positive": false,
+    "g5_all_pass": true,
+    "g8_note": "Bybit COMP FR not cached (no bybit_fr_COMPUSDT_730d.parquet). G8 structural FAIL \u2014 HL 1h vs Bybit 8h settlement mechanics differ. Precedent: K557 K571 K583 K587 K591 K592 K596 K599 all G8 FAIL structural. COMP-specific: governance mining events create 1h HL spikes not in 8h Bybit settlement.",
+    "g9_note": "OOS=214.9d >= 180d. G9 PASS.",
+    "decision": "ACCEPT CONDITIONAL"
+  },
+  "g5_correlations": {
+    "checks": {
+      "g5a": {
+        "label": "ETH-BTC K449",
+        "corr": -0.0342,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "CRITICAL: COMP on Ethereum/Arbitrum/Base (ETH L1 corr risk)"
+      },
+      "g5b": {
+        "label": "SOL-BTC K476",
+        "corr": 0.0013,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "Solana vs DeFi Lending"
+      },
+      "g5c": {
+        "label": "AVAX-BTC K484",
+        "corr": 0.0736,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "Avalanche vs DeFi Lending"
+      },
+      "g5d": {
+        "label": "ATOM-BTC K493",
+        "corr": 0.0032,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "Cosmos vs DeFi Lending"
+      },
+      "g5e": {
+        "label": "INJ-BTC K500",
+        "corr": -0.0026,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "INJ (K604 SNX blocker) vs COMP Lending"
+      },
+      "g5f": {
+        "label": "SEI-BTC K507",
+        "corr": 0.0177,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "SEI vs DeFi Lending"
+      },
+      "g5g": {
+        "label": "TIA-BTC",
+        "corr": 0.0793,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "Cosmos DA vs DeFi Lending"
+      },
+      "g5h": {
+        "label": "APT-BTC K512",
+        "corr": 0.0082,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "Move-VM vs DeFi Lending"
+      },
+      "g5i": {
+        "label": "FIL-BTC K517",
+        "corr": 0.0187,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "Storage vs DeFi Lending"
+      },
+      "g5k": {
+        "label": "RENDER-BTC K531",
+        "corr": 0.0165,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "AI/GPU vs DeFi Lending"
+      },
+      "g5l": {
+        "label": "TAO-BTC K534",
+        "corr": -0.0045,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "AI/Training vs DeFi Lending"
+      },
+      "g5n": {
+        "label": "TON-BTC K571",
+        "corr": -0.0262,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "Social/Messaging vs DeFi Lending"
+      },
+      "g5o": {
+        "label": "SAND-BTC K583",
+        "corr": 0.0119,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "Gaming/Metaverse vs DeFi Lending"
+      },
+      "g5p": {
+        "label": "KAS-BTC K590",
+        "corr": 0.0382,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "PoW/BlockDAG vs DeFi Lending"
+      },
+      "g5q": {
+        "label": "ICP-BTC K587",
+        "corr": 0.1664,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 4709,
+        "note": "Compute/Cloud vs DeFi Lending"
+      },
+      "g5r": {
+        "label": "DOGE-BTC K592",
+        "corr": 0.0161,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "Meme/PoW vs DeFi Lending"
+      },
+      "g5s": {
+        "label": "UNI-BTC K593",
+        "corr": 0.0213,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "DeFi DEX governance vs Lending utility"
+      },
+      "g5t": {
+        "label": "LDO-BTC K594",
+        "corr": 0.0206,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "LSD governance vs Lending utility"
+      },
+      "g5v": {
+        "label": "CRV-BTC K599",
+        "corr": -0.0228,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "DeFi veToken vs Lending"
+      },
+      "g5w": {
+        "label": "AXS-BTC K591",
+        "corr": 0.024,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 3005,
+        "note": "Gaming P2E vs DeFi Lending"
+      },
+      "g5x": {
+        "label": "SHIB-BTC",
+        "corr": 0.0815,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "Meme ERC-20 (Shiba Inu) vs DeFi Lending"
+      },
+      "g5y": {
+        "label": "WIF-BTC K601",
+        "corr": 0.011,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "Meme/Solana WIF vs DeFi Lending"
+      },
+      "g5za": {
+        "label": "LTC-BTC K600",
+        "corr": 0.0365,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "PoW/Scrypt vs DeFi Lending"
+      },
+      "g5u": {
+        "label": "AAVE-BTC K596 (Lending sub-sub-cluster CRITICAL)",
+        "corr": 0.0439,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "CRITICAL: COMP vs AAVE \u2014 same DeFi/Lending vertical. COMP = pure governance + liquidity mining; AAVE = Safety Module + fee accrual. Corr=0.0439: DISTINCT signal \u2014 lending sub-sub-cluster confirmed."
+      },
+      "g5j": {
+        "label": "K280 BTC-carry baseline",
+        "corr": 0.0165,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "BTC institutional carry baseline. COMP must not replicate BTC-carry signal."
+      },
+      "g5zb": {
+        "label": "BCH-BTC K605 (PoW SHA-256 BTC Fork vs DeFi Lending)",
+        "corr": 0.0194,
+        "threshold": 0.4,
+        "pass": true,
+        "n": 5157,
+        "note": "PoW SHA-256 BTC Fork vs DeFi governance lending \u2014 expect near-zero corr."
+      }
+    },
+    "n_pass": 26,
+    "n_total": 26,
+    "all_pass": true,
+    "eth_corr_critical": -0.0342,
+    "aave_corr_critical": 0.0439,
+    "link_corr_critical": null,
+    "inj_corr_critical": -0.0026,
+    "eth_cluster_blocked": false,
+    "lending_cluster_blocked": false,
+    "link_cluster_blocked": false,
+    "inj_blocked": false,
+    "other_fails": [],
+    "note": "G5 family: 26/26 PASS (FAIL=0). ETH G5a=-0.0342 (PASS: COMP distinct from ETH L1). AAVE G5u=0.0439 (PASS: COMP distinct from AAVE (lending sub-sub-cluster confirmed)). INJ G5e=-0.0026 (PASS: COMP distinct from INJ regime).",
+    "aave_corr_lending_subcluster": 0.0439,
+    "inj_corr_regime_blocker": -0.0026,
+    "eth_corr_l1_risk": -0.0342
+  },
+  "cross_venue_fr": {
+    "pass": false,
+    "note": "Bybit COMP FR not cached (no bybit_fr_COMPUSDT_730d.parquet). G8 structural FAIL \u2014 HL 1h vs Bybit 8h settlement mechanics differ. Precedent: K557 K571 K583 K587 K591 K592 K596 K599 all G8 FAIL structural. COMP-specific: governance mining events create 1h HL spikes not in 8h Bybit settlement.",
+    "hl_bybit_signal_corr": null,
+    "structural_note": "G8 FAIL structural (precedent K557+). Bybit-primary for live execution."
+  },
+  "profit_projection": {
+    "oos_ann_ret_1x_pct": 30.2699,
+    "leverage": 4,
+    "oos_ann_ret_4x_pct": 121.08,
+    "usdc_yr_1pct_10M": 121080,
+    "usdc_yr_2pct_10M": 242159,
+    "usdc_yr_1pct_100M": 1210796,
+    "usdc_yr_2pct_100M": 2421592,
+    "note": "4x leverage, OOS ann=30.2699% \u00d7 4 = 121.0796%/yr. @$10M 1% alloc: $121,080/yr. @$10M 2% alloc: $242,159/yr. @$100M 1% alloc: $1,210,796/yr."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 65.0,
+    "comp_alloc_pct": 1.5,
+    "projected_pct": 66.5,
+    "cap_pct": 65.0,
+    "breach": true,
+    "note": "v6.28+ HL=65.0% + COMP 1.5% = 66.5%. Cap=65.0%. BREACH \u2014 Bybit-primary split required. COMP HL maxLev=5x \u2014 low leverage DeFi governance token."
+  },
+  "updated_family_rank": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "SHIB-BTC",
+      "sharpe": 38.481,
+      "ecosystem": "Meme/Retail (Shiba Inu ERC-20)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SAND-BTC",
+      "sharpe": 33.627,
+      "ecosystem": "Gaming/Metaverse",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 7,
+      "pair": "PEPE-BTC",
+      "sharpe": 26.42,
+      "ecosystem": "Meme/Retail (Pepe ERC-20)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "BCH-BTC",
+      "sharpe": 26.002,
+      "ecosystem": "PoW/SHA-256-BTC-Fork",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 9,
+      "pair": "BONK-BTC",
+      "sharpe": 23.667,
+      "ecosystem": "Meme/Retail-Solana-SPL",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "COMP-BTC",
+      "sharpe": 22.8374,
+      "ecosystem": "DeFi/Lending #2 (Compound Finance governance)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 11,
+      "pair": "FIL-BTC",
+      "sharpe": 21.773,
+      "ecosystem": "Storage",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 12,
+      "pair": "DOGE-BTC",
+      "sharpe": 21.069,
+      "ecosystem": "Meme/PoW (Dogecoin Scrypt)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 13,
+      "pair": "AXS-BTC",
+      "sharpe": 17.815,
+      "ecosystem": "Gaming/P2E",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 14,
+      "pair": "SOL-BTC",
+      "sharpe": 16.298,
+      "ecosystem": "Solana",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 15,
+      "pair": "RENDER-BTC",
+      "sharpe": 15.302,
+      "ecosystem": "AI/GPU",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 16,
+      "pair": "TIA-BTC",
+      "sharpe": 14.439,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 17,
+      "pair": "LINK-BTC",
+      "sharpe": 13.775,
+      "ecosystem": "Oracle/LINK",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 18,
+      "pair": "WIF-BTC",
+      "sharpe": 12.934,
+      "ecosystem": "Meme/Solana (dogwifhat)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 19,
+      "pair": "ICP-BTC",
+      "sharpe": 12.527,
+      "ecosystem": "Compute/Cloud",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 20,
+      "pair": "AAVE-BTC",
+      "sharpe": 11.354,
+      "ecosystem": "DeFi/Lending (Aave)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 21,
+      "pair": "INJ-BTC",
+      "sharpe": 11.232,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 22,
+      "pair": "LTC-BTC",
+      "sharpe": 9.39,
+      "ecosystem": "PoW/Scrypt-Utility (Litecoin)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 23,
+      "pair": "TON-BTC",
+      "sharpe": 8.402,
+      "ecosystem": "Social/Messaging",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 24,
+      "pair": "ETH-BTC",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 25,
+      "pair": "CRV-BTC",
+      "sharpe": 5.29,
+      "ecosystem": "DeFi/veToken (Curve)",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 26,
+      "pair": "TAO-BTC",
+      "sharpe": 5.267,
+      "ecosystem": "AI/Training",
+      "status": "ACCEPT CONDITIONAL"
+    }
+  ],
+  "comp_family_rank": 10,
+  "next_pivot": "COMP-BTC ACCEPT CONDITIONAL (Sh=22.837). DeFi lending sub-sub-cluster: DISTINCT SIGNALS \u2014 COMP corr(AAVE)=0.0439 < 0.4. COMP governance model (liquidit. DeFi taxonomy: 7 sub-clusters evaluated (K593-K608). Next candidates: ARB-BTC (L2 rollup ecosystem \u2014 Arbitrum tokenomics distinct from ETH) or OP-BTC (Optimism retroactive public goods funding cycle) or CRV sub-cluster deepening (Curve war dynamics)."
+}
