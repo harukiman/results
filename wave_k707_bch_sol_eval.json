@@ -1,0 +1,586 @@
+{
+  "wave": "K707",
+  "strategy": "BCH-SOL FR Differential Alt-Alt (PoW SHA-256 \u00d7 SVM L1 cross-cluster)",
+  "run_time_jst": "2026-05-30T16:15:12+0900",
+  "runtime_s": 3.34,
+  "decision": "BLOCKED-G5a",
+  "decision_rationale": "[BLOCKED-G5a] BCH-SOL signal corr vs K605(BCH-BTC)=0.517 >= 0.4. BCH shared leg co-movement: BCH-SOL and BCH-BTC signals co-move systematically. MR9 identity confirms: K707 = K605 - K476; BCH dominates signal \u2192 inherits K605 co-movement. Structural: BCH leg is common \u2192 BLOCKED per shared-leg G5 rule. Same mechanism as K703 WLD-SOL (BLOCKED-G5a via WLD shared leg). LESSON: PoW/SHA-256 BTC fork assets cannot safely serve as non-BTC alt-alt leg when the same asset has an existing BTC-paired strategy in the family.",
+  "pow_svm_cross_cluster_summary": {
+    "bch_cluster": "PoW/SHA-256 BTC fork (K605 ACCEPT CONDITIONAL, BCH-BTC Sh=26.0)",
+    "sol_cluster": "SVM L1 (K476 ACCEPT, SOL-BTC Sh=16.3)",
+    "cross_cluster_axis": "PoW/SHA-256 mining economics vs SVM DPoS retail carry \u2014 new axis",
+    "algebraic_decomp": "BCH-SOL = K605(BCH-BTC) - K476(SOL-BTC) [MR9 verified, corr=1.0]",
+    "key_finding": "BCH-SOL OOS Sharpe=18.50 (strong). BUT BCH shared leg creates G5a BLOCK: K707 signal corr vs K605(BCH-BTC)=0.517 > 0.40 threshold. BCH cannot safely anchor a new alt-alt pair while K605(BCH-BTC) exists in family. Same structural mechanism as K703 WLD-SOL BLOCKED-G5a (WLD shared leg).",
+    "lesson": "Alt-alt pairing with existing BTC-paired strategy assets creates FORCED co-movement. BCH-SOL = BCH-BTC - SOL-BTC algebraically. BCH FR anomalies propagate to BOTH. Resolution: BCH-SOL can only proceed if K605(BCH-BTC) is removed or BCH FR dynamics decorrelate from BTC-carry (structural change, not data)."
+  },
+  "phase0_prescreen": {
+    "hl_bch_venue": {
+      "venue": "HL",
+      "bch_listed": true,
+      "hl_ticker": "BCH",
+      "bch_fr_rows": 17512,
+      "fr_start": "2024-05-23 16:00:00",
+      "fr_end": "2026-05-23 08:00:00",
+      "max_leverage_hl": 10,
+      "note": "HL BCH-PERP: SHA-256 PoW BTC fork (Aug 2017). FR settlement: 1h intervals. maxLev=10. K605 ACCEPT CONDITIONAL."
+    },
+    "hl_sol_venue": {
+      "venue": "HL",
+      "sol_listed": true,
+      "hl_ticker": "SOL",
+      "sol_fr_rows": 17512,
+      "note": "HL SOL-PERP: SVM L1 / DePIN/Retail/Firedancer. FR settlement: 1h intervals. K476 ACCEPT."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "bch_exists": true,
+      "bch_ticker": "BCHUSDT",
+      "bch_maxlev": "50",
+      "sol_exists": true,
+      "sol_ticker": "SOLUSDT",
+      "sol_maxlev": "20",
+      "note": "Bybit dual-leg available (BCHUSDT + SOLUSDT, 8h settlement). HL cap mitigation."
+    },
+    "vol_ratio_bch_sol_6m": 1.1219,
+    "vol_ratio_bch_sol_1y": 1.9638,
+    "vol_ratio_bch_sol_full": 1.2376,
+    "vol_threshold": 1.5,
+    "vol_pass": "False",
+    "vol_note": "BCH/SOL 6M vol max/min ratio=1.1219x (BELOW 1.5x). 1Y=1.9638x. Full=1.2376x. SOL FR is more volatile 1Y (retail driven); BCH vol higher in 2Y full period (hash wars). Vol ratio uses max/min to accommodate either direction of volatility asymmetry.",
+    "bch_fr_mean_ann_pct": 1.4877,
+    "sol_fr_mean_ann_pct": 7.7284,
+    "btc_fr_mean_ann_pct": 11.5524,
+    "fr_diff_mean_sol_minus_bch": 7.12e-06,
+    "fr_diff_std": 3.487e-05,
+    "fr_diff_mean_ann_pct": 6.2407,
+    "bch_sol_raw_fr_corr": 0.245,
+    "mr8_check": {
+      "bch_in_prohibited_set": false,
+      "prohibited_set": [
+        "APT",
+        "ATOM",
+        "INJ",
+        "AVAX",
+        "ENA",
+        "SEI",
+        "TIA",
+        "WLD"
+      ],
+      "mr8_pass": true,
+      "note": "BCH \u2209 {APT,ATOM,INJ,AVAX,ENA,SEI,TIA,WLD} \u2014 PoW/SHA-256 BTC fork vertex. BCH is first BTC-fork asset as alt-alt SOL leg. MR8: PASS. WARNING: BCH already in K605 (BCH-BTC) \u2014 shared leg risk is CRITICAL for G5a."
+    },
+    "mr9_algebraic_identity": {
+      "identity": "BCH-SOL = K605(BCH-BTC) - K476(SOL-BTC) = (btc_fr - bch_fr) - (btc_fr - sol_fr) = sol_fr - bch_fr",
+      "fr_level_max_error": 0.0,
+      "algebraic_corr": 1.0,
+      "mr9_pass": true,
+      "note": "MR9: BCH-SOL = K605_raw - K476_raw. FR identity max_err=4.07e-20. corr=1.00000000. Algebraic construction CONFIRMED. CRITICAL: shared BCH leg means K707 signal inherits K605 co-movement. G5a corr(K707, K605) expected HIGH. This is the primary structural risk of BCH-SOL pairing."
+    },
+    "prescreen_pass": "False",
+    "overlap_rows": 17512
+  },
+  "phase1_cycle_analysis": {
+    "adf_stationarity": {
+      "statistic": -10.4175,
+      "p_value": 0.0,
+      "critical_1pct": -3.4307,
+      "critical_5pct": -2.8617,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "interpretation": "BCH-SOL FR differential ADF stat=-10.4175 (1% critical=-3.4307). p=1.74e-18. Stationary at 1%: True. Mean-reversion CONFIRMED: PoW SHA-256 vs SVM L1 FR spread is stationary."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.201248,
+      "half_life_hours": 3.44,
+      "half_life_days": 0.144,
+      "long_run_mean": 7.08e-06,
+      "r_squared": 0.1008,
+      "mean_reverting": "True",
+      "interpretation": "BCH-SOL OU half-life: 3.44h (0.144d). Very fast mean-reversion: BCH-SOL FR differential reverts quickly. 168h (7d) rolling window captures persistent regime shifts. Long-run mean=7.083228e-06 (positive \u2192 SOL structurally higher FR)."
+    },
+    "autocorrelation": {
+      "lag_1h": 0.7991,
+      "lag_24h": 0.3324,
+      "lag_168h": 0.1902,
+      "interpretation": "ACF(1h)=0.7991 (high persistence at 1h \u2014 FR settles every 1h on HL). ACF(24h)=0.3324. ACF(168h)=0.1902. 168h (7d) rolling mean exploits medium-term inertia in BCH/SOL FR regime."
+    },
+    "pow_vs_svm_context": {
+      "bch_consensus": "PoW SHA-256d (BTC fork, same algo, same 4yr halving cadence)",
+      "sol_consensus": "SVM (Solana Virtual Machine): DPoS-derived, no mining, no halving",
+      "bch_last_halving": "April 2024 (block 840,000 equivalent) \u2014 block reward 3.125 BCH",
+      "sol_inflation": "Declining emission ~5% -> 1.5% over 10yr schedule",
+      "fr_driver_bch": "SHA-256 hash profitability \u2192 BTC/BCH mining ratio \u2192 FR carry overlap with BTC",
+      "fr_driver_sol": "DePIN/retail sentiment, meme-coin cycles (BONK/WIF), staking APY convergence",
+      "cross_cluster_edge": "BCH PoW halving cycle \u2194 SOL retail cycle are INDEPENDENT timing mechanisms. BCH hash war narrative (Roger Ver regulatory events, ETF filing asymmetry) is decoupled from SOL DePIN/meme-coin retail cycles. PoW SHA-256 mining economics \u2260 SVM stake-weighted DPoS. Edge hypothesis: BCH FR low-mean + low-vol vs SOL FR high-mean + high-vol \u2192 persistent carry gradient exploitable via 7d rolling signal.",
+      "structural_concern": "CRITICAL: BCH-SOL = K605(BCH-BTC) - K476(SOL-BTC) algebraically. BCH shared leg (appears in both K605 and K707) creates systematic co-movement. When BCH FR is anomalously high/low, BOTH K605 and K707 signals flip simultaneously. This is the same mechanism that caused WLD-SOL K703 to BLOCK on G5a."
+    },
+    "recent_regime": {
+      "bch_6m_roll_fr_ann_pct": 1.1184,
+      "sol_6m_roll_fr_ann_pct": -2.702,
+      "diff_6m_roll_ann_pct": -3.8203,
+      "note": "6M rolling annualized FR: SOL persistently higher. Recent diff = structural carry opportunity."
+    }
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "instrument": "BCH-PERP vs SOL-PERP (HL 1h FR differential)",
+    "direction_rule": "sign(168h rolling mean of sol_fr - bch_fr)",
+    "window_rationale": "W=168h (7d standard): OOS Sh=18.50 (top of grid). BCH PoW SHA-256 halving cycle (4yr) vs SOL retail meme cycle (weeks). 7d smoothing captures medium-term regime persistence."
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 16.1071,
+    "ann_ret_pct": 9.4172,
+    "max_dd_pct": -1.6564,
+    "trades_yr": 36.0,
+    "n_days": 517.4,
+    "n_hours": 12418,
+    "n_pos_months": 12,
+    "n_neg_months": 6,
+    "cum_ret": 0.133496,
+    "ret_mean": 1.075e-05,
+    "ret_std": 6.247e-05
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 18.5011,
+    "ann_ret_pct": 7.4433,
+    "max_dd_pct": -0.3678,
+    "trades_yr": 20.6,
+    "n_days": 212.2,
+    "n_hours": 5094,
+    "n_pos_months": 8,
+    "n_neg_months": 0,
+    "cum_ret": 0.043284,
+    "ret_mean": 8.5e-06,
+    "ret_std": 4.299e-05
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 16.4335,
+    "ann_ret_pct": 8.843,
+    "max_dd_pct": -1.6564,
+    "trades_yr": 31.5,
+    "n_days": 729.7,
+    "n_hours": 17512,
+    "n_pos_months": 19,
+    "n_neg_months": 6,
+    "cum_ret": 0.176779,
+    "ret_mean": 1.01e-05,
+    "ret_std": 5.75e-05
+  },
+  "grid_search_top6": [
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 13.314,
+      "OOS_sharpe": 19.025,
+      "entries": 9,
+      "OOS_ret_pct": 7.012,
+      "entries_yr": 15.5
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 16.107,
+      "OOS_sharpe": 18.501,
+      "entries": 12,
+      "OOS_ret_pct": 7.443,
+      "entries_yr": 20.6
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.5,
+      "threshold_value": 1.74334e-05,
+      "IS_sharpe": 24.852,
+      "OOS_sharpe": 18.318,
+      "entries": 4,
+      "OOS_ret_pct": 2.717,
+      "entries_yr": 6.9
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 16.17,
+      "OOS_sharpe": 15.829,
+      "entries": 5,
+      "OOS_ret_pct": 4.917,
+      "entries_yr": 8.6
+    },
+    {
+      "window_h": 72,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 12.587,
+      "OOS_sharpe": 13.197,
+      "entries": 22,
+      "OOS_ret_pct": 6.922,
+      "entries_yr": 37.8
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.5,
+      "threshold_value": 1.74334e-05,
+      "IS_sharpe": 30.265,
+      "OOS_sharpe": 9.402,
+      "entries": 6,
+      "OOS_ret_pct": 1.406,
+      "entries_yr": 10.3
+    }
+  ],
+  "walk_forward": {
+    "folds": [
+      {
+        "fold": 1,
+        "oos_start": "2025-10-16",
+        "oos_end": "2025-11-15",
+        "sharpe": 44.864,
+        "ann_ret_pct": 10.183,
+        "entries": 1
+      },
+      {
+        "fold": 2,
+        "oos_start": "2025-11-15",
+        "oos_end": "2025-12-15",
+        "sharpe": -0.166,
+        "ann_ret_pct": -0.096,
+        "entries": 5
+      },
+      {
+        "fold": 3,
+        "oos_start": "2025-12-15",
+        "oos_end": "2026-01-14",
+        "sharpe": 5.64,
+        "ann_ret_pct": 2.436,
+        "entries": 3
+      },
+      {
+        "fold": 4,
+        "oos_start": "2026-01-14",
+        "oos_end": "2026-02-13",
+        "sharpe": 34.833,
+        "ann_ret_pct": 14.385,
+        "entries": 2
+      },
+      {
+        "fold": 5,
+        "oos_start": "2026-02-13",
+        "oos_end": "2026-03-15",
+        "sharpe": 34.812,
+        "ann_ret_pct": 7.576,
+        "entries": 1
+      },
+      {
+        "fold": 6,
+        "oos_start": "2026-03-15",
+        "oos_end": "2026-04-14",
+        "sharpe": 31.174,
+        "ann_ret_pct": 6.441,
+        "entries": 1
+      },
+      {
+        "fold": 7,
+        "oos_start": "2026-04-14",
+        "oos_end": "2026-05-14",
+        "sharpe": 9.843,
+        "ann_ret_pct": 3.159,
+        "entries": 2
+      }
+    ],
+    "fold_sharpes": [
+      44.864,
+      -0.166,
+      5.64,
+      34.833,
+      34.812,
+      31.174,
+      9.843
+    ],
+    "n_folds_computed": 7,
+    "positive_count": 6,
+    "all_positive": false,
+    "min_fold_sharpe": -0.166,
+    "max_fold_sharpe": 44.864,
+    "mean_fold_sharpe": 23.0,
+    "pass": true,
+    "note": "7-fold walk-forward (IS 90d / OOS 30d per fold). Positive: 6/7 (\u226580% required). Min/Max Sharpe: -0.166/44.864 (if computed)."
+  },
+  "permutation": {
+    "real_oos_sharpe": 18.5011,
+    "perm_mean_sh": -3.915,
+    "n_permutations": 500,
+    "p_value": 0.0,
+    "pass": true,
+    "note": "500 direction reshuffles OOS. p=0.0000 <= 0.05: PASS."
+  },
+  "dsr": {
+    "n_trials": 12,
+    "t_stat": 14.1083,
+    "p_raw": 0.0,
+    "p_bonferroni": 0.0,
+    "threshold": 0.00417,
+    "pass": true,
+    "note": "Bonferroni: p_bonf=2.75e-43 < 0.05/12=0.00417: PASS."
+  },
+  "g5_correlations": {
+    "checks": {
+      "G5a_K605_BCH_BTC": {
+        "label": "K605 BCH-BTC",
+        "corr": 0.517,
+        "pass": false,
+        "n": 17429,
+        "note": "K707 BCH-SOL signal vs K605 BCH-BTC: corr=0.5170. FAIL threshold 0.4. [CRITICAL: BCH shared leg \u2014 BCH appears in both K605(BCH-BTC) and K707(BCH-SOL). When BCH FR anomalous, both signals flip simultaneously \u2192 systematic co-movement. MR9: K707 = K605 - K476, so K707 signal inherits BCH behavior from K605. Expected BLOCKED per shared-leg rule (same as WLD-SOL K703 \u2192 BLOCKED-G5a).]"
+      },
+      "G5b_K476_SOL_BTC": {
+        "label": "K476 SOL-BTC",
+        "corr": -0.2383,
+        "pass": true,
+        "n": 17429,
+        "note": "K707 BCH-SOL signal vs K476 SOL-BTC: corr=-0.2383. PASS threshold 0.4. [SOL shared leg \u2014 SOL appears in K476(SOL-BTC) and K707(BCH-SOL). Expected lower co-movement vs G5a (SOL BTC-leg is opposite sign in K707 algebraic decomp).]"
+      },
+      "G5c_K449_ETH_BTC": {
+        "label": "K449 ETH-BTC",
+        "ticker_a": "BTC",
+        "ticker_b": "ETH",
+        "corr": -0.0094,
+        "pass": true,
+        "n": 17429,
+        "note": "K449 ETH-BTC corr=-0.0094 (PASS < 0.4) [ETH-BTC baseline \u2014 different consensus]"
+      },
+      "G5d_K484_AVAX_BTC": {
+        "label": "K484 AVAX-BTC",
+        "ticker_a": "BTC",
+        "ticker_b": "AVAX",
+        "corr": 0.4257,
+        "pass": false,
+        "n": 17429,
+        "note": "K484 AVAX-BTC corr=0.4257 (FAIL < 0.4) [AVAX Snowman PoS vs PoW SHA-256 cross]"
+      },
+      "G5e_AVAX_SOL": {
+        "label": "AVAX-SOL alt-alt",
+        "ticker_a": "AVAX",
+        "ticker_b": "SOL",
+        "corr": -0.658,
+        "pass": false,
+        "n": 17429,
+        "note": "AVAX-SOL alt-alt corr=-0.6580 (FAIL < 0.4) [SOL shared leg alt-alt sibling \u2014 K686]"
+      },
+      "G5f_INJ_SOL": {
+        "label": "INJ-SOL alt-alt",
+        "ticker_a": "INJ",
+        "ticker_b": "SOL",
+        "corr": -0.4216,
+        "pass": false,
+        "n": 17402,
+        "note": "INJ-SOL alt-alt corr=-0.4216 (FAIL < 0.4) [SOL shared leg alt-alt sibling \u2014 K684]"
+      },
+      "G5g_ENA_SOL": {
+        "label": "ENA-SOL alt-alt",
+        "ticker_a": "ENA",
+        "ticker_b": "SOL",
+        "corr": -0.4388,
+        "pass": false,
+        "n": 17395,
+        "note": "ENA-SOL alt-alt corr=-0.4388 (FAIL < 0.4) [SOL shared leg alt-alt sibling \u2014 K696]"
+      },
+      "G5h_APT_SOL": {
+        "label": "APT-SOL alt-alt",
+        "ticker_a": "APT",
+        "ticker_b": "SOL",
+        "corr": 0.07,
+        "pass": true,
+        "n": 17401,
+        "note": "APT-SOL alt-alt corr=0.0700 (PASS < 0.4) [SOL shared leg alt-alt sibling \u2014 K679]"
+      },
+      "G5i_LTC_BTC": {
+        "label": "LTC-BTC (PoW/Scrypt vs SHA-256)",
+        "ticker_a": "BTC",
+        "ticker_b": "LTC",
+        "corr": 0.1916,
+        "pass": true,
+        "n": 17429,
+        "note": "LTC-BTC (PoW/Scrypt vs SHA-256) corr=0.1916 (PASS < 0.4) [PoW Scrypt-Utility vs BCH PoW SHA-256 \u2014 PoW cluster boundary check]"
+      }
+    },
+    "n_pass": 4,
+    "n_total": 9,
+    "g5a_critical_corr": 0.517,
+    "g5b_sol_corr": -0.2383,
+    "note": "G5: 4/9 PASS. G5a K605(BCH-BTC)=0.517 [CRITICAL FAIL]. G5b K476(SOL-BTC)=-0.2383 [PASS]."
+  },
+  "section_6_gates": {
+    "gates": {
+      "G1_oos_sharpe": {
+        "pass": true,
+        "value": 18.5011,
+        "thresh": 1.0
+      },
+      "G2_perm": {
+        "pass": true,
+        "p_value": 0.0,
+        "thresh": 0.05
+      },
+      "G3_dsr": {
+        "pass": true,
+        "p_bonferroni": 0.0,
+        "thresh": 0.00417
+      },
+      "G4_walkforward": {
+        "pass": true,
+        "n_positive": 6,
+        "n_folds": 7
+      },
+      "G5_family_corr": {
+        "pass": false,
+        "n_pass": 4,
+        "n_total": 9,
+        "g5a_critical": false,
+        "g5b_sol": true
+      },
+      "G6_trades_yr": {
+        "pass": "False",
+        "value": 20.6,
+        "thresh": 30.0
+      },
+      "G7_ann_ret_4x": {
+        "pass": true,
+        "value_pct": 29.7732,
+        "thresh_pct": 5.0
+      },
+      "G8_cross_venue": {
+        "pass": false,
+        "note": "Bybit BCHUSDT FR cache not available \u2014 G8 FAIL (structural, not data)"
+      },
+      "G9_oos_days": {
+        "pass": true,
+        "value": 212.2,
+        "thresh": 180
+      }
+    },
+    "failed_gates": [
+      "G5_family_corr",
+      "G6_trades_yr",
+      "G8_cross_venue"
+    ],
+    "n_failed": 3,
+    "decision": "BLOCKED-G5a",
+    "decision_rationale": "[BLOCKED-G5a] BCH-SOL signal corr vs K605(BCH-BTC)=0.517 >= 0.4. BCH shared leg co-movement: BCH-SOL and BCH-BTC signals co-move systematically. MR9 identity confirms: K707 = K605 - K476; BCH dominates signal \u2192 inherits K605 co-movement. Structural: BCH leg is common \u2192 BLOCKED per shared-leg G5 rule. Same mechanism as K703 WLD-SOL (BLOCKED-G5a via WLD shared leg). LESSON: PoW/SHA-256 BTC fork assets cannot safely serve as non-BTC alt-alt leg when the same asset has an existing BTC-paired strategy in the family."
+  },
+  "profit_projection_hypothetical": {
+    "oos_ann_ret_1x_pct": 7.4433,
+    "leverage": 4.0,
+    "oos_ann_ret_4x_pct": 29.7732,
+    "sleeve_pct": 3.0,
+    "notional_10m_usd": 1200000.0,
+    "gross_yr_usdc_10m": 89320.0,
+    "hypothetical": true,
+    "note": "BLOCKED strategy: profit projection is HYPOTHETICAL. 4.0x leverage, OOS ann=7.4433% \u00d7 4.0 = 29.77%/yr. @$10M, 3.0% sleeve: notional=$1,200,000. Gross $89,320/yr USDC (if G5a resolved). BCH-SOL G5a BLOCK means this cannot be deployed without architectural changes (e.g., removing K605 from family or restructuring BCH exposure)."
+  },
+  "hl_concentration_impact": {
+    "baseline_pct": 57.5,
+    "k707_alloc_pct": 0.0,
+    "projected_pct": 57.5,
+    "cap_pct": 65.0,
+    "breach": false,
+    "note": "K707 BLOCKED \u2014 no HL allocation change. BCH maxLev=10 on HL; Bybit/OKX maxLev=50 would be primary venue if deployed."
+  },
+  "family_rank_update": [
+    {
+      "rank": 1,
+      "pair": "APT-BTC",
+      "sharpe": 51.1,
+      "ecosystem": "Move-VM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 2,
+      "pair": "ATOM-BTC",
+      "sharpe": 50.786,
+      "ecosystem": "Cosmos",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 3,
+      "pair": "SEI-BTC",
+      "sharpe": 48.1,
+      "ecosystem": "Cosmos/SVM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 4,
+      "pair": "AVAX-BTC",
+      "sharpe": 43.887,
+      "ecosystem": "Avalanche",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 5,
+      "pair": "SHIB-BTC",
+      "sharpe": 38.481,
+      "ecosystem": "Meme/ERC-20",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 6,
+      "pair": "SAND-BTC",
+      "sharpe": 33.627,
+      "ecosystem": "Gaming/Metaverse",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 7,
+      "pair": "PEPE-BTC",
+      "sharpe": 26.42,
+      "ecosystem": "Meme/ERC-20",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 8,
+      "pair": "BCH-BTC (K605)",
+      "sharpe": 26.0016,
+      "ecosystem": "PoW/SHA-256 BTC fork",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 9,
+      "pair": "BONK-BTC",
+      "sharpe": 23.667,
+      "ecosystem": "Meme/SOL-SPL",
+      "status": "ACCEPT CONDITIONAL"
+    },
+    {
+      "rank": 10,
+      "pair": "SOL-BTC (K476)",
+      "sharpe": 16.298,
+      "ecosystem": "Solana SVM",
+      "status": "ACCEPT"
+    },
+    {
+      "rank": 11,
+      "pair": "BCH-SOL (K707)",
+      "sharpe": 18.501,
+      "ecosystem": "PoW/SHA-256 \u00d7 SVM L1 cross-cluster",
+      "status": "BLOCKED-G5a"
+    },
+    {
+      "rank": 12,
+      "pair": "ETH-BTC (K449)",
+      "sharpe": 5.663,
+      "ecosystem": "Ethereum",
+      "status": "ACCEPT"
+    }
+  ],
+  "alt_alt_g5a_block_pattern": {
+    "k703_wld_sol": "BLOCKED-G5a WLD shared leg (WLD-BTC corr=0.634)",
+    "k707_bch_sol": "BLOCKED-G5a BCH shared leg (BCH-BTC corr=0.517)",
+    "pattern": "Assets with existing BTC-paired strategies CANNOT safely anchor new alt-alt pairs without inheriting co-movement.",
+    "safe_alt_alt_vertices": "APT, ATOM, AVAX, SEI, INJ, ENA, TIA, WLD (no existing BTC-pair strategy) \u2014 these are eligible alt-alt anchors.",
+    "blocked_vertices": "BCH (K605 exists), WLD (K621/K629 exist), SOL (K476 exists as BTC-pair \u2014 SOL is OK as BASE not new anchor)"
+  }
+}
