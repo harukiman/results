@@ -511,6 +511,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k759_wif_sol",
         expected_html_status="SCAFFOLD-READY",  # K761: plist in scripts/ (gitignored); activate after 60d gate (Sh>=6 + fill>=60% + maxDD<15%) AND K498/v6.52 OKX reduces HL% below 65%
     ),
+    DaemonSpec(
+        label="com.cryptolab.k763-compound-scheduler",
+        purpose="K763 Compounding Schedule Optimizer (profit-max axis #3 compounding, daily 03:00 UTC Kelly-optimal rebalance recommendation, PAPER_TRADE=True default LIVE 自動変更禁止, half-Kelly 0.5x cash-buffer 8%, COMPOUND_FREQUENCY=daily|weekly|monthly env-configurable, K523 3-point uplift: conservative $3.5K/weekly-vs-monthly @r=10% | central $3.28M/daily-vs-weekly @r=218% v6.52-mid | optimistic $13.6M/Kelly+continuous @r=273%, K518 38% haircut applied realized: $1.3K/$1.25M/$5.2M, net-benefit daily $13.68M vs monthly baseline (cost $118K/yr), Kelly f*=10.77x full / 5.39x half / 0.92 capped, v6.52 K724 $21.81M mid confirmed, reversibility=COMPOUND_FREQUENCY=monthly, 73rd daemon K763 scaffold)",
+        scripts=["scripts/k763_compound_scheduler.py"],
+        log_basename="k763_compound_scheduler",
+        expected_html_status="SCAFFOLD-READY",  # K763: plist in scripts/ (gitignored); activate: sed REPO_ROOT_PLACEHOLDER + cp + launchctl load; COMPOUND_FREQUENCY=monthly to revert
+    ),
 ]
 
 

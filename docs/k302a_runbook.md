@@ -14145,4 +14145,137 @@ Close protocol: IOC reduce-only, SHORT leg first, then LONG leg.
 | K751 | K751 Kelly sizing audit (HL concentration 66.8% confirmed, v6.52 optimization) |
 | K498 | K498 OKX integration scaffold (HL cap relief required before live activation) |
 | K523 | K523 3-point projection mandate (conservative/central/optimistic) |
+
+---
+
+## §73 K763 — Compounding Schedule Optimizer (73rd Daemon)
+
+*K763 §73 — K763 Compounding Schedule Optimizer (profit-max axis #3, 73rd daemon, daily Kelly-optimal rebalance recommendation, PAPER_TRADE=True, K523 3-point: conservative $3.5K/weekly | central $3.28M/daily | optimistic $13.6M/Kelly, daily 03:00 UTC) — 2026-05-30 21:38 JST*
+
+### §73.1 Overview
+
+**Axis:** Profit-max mandate axis #3 = compounding (axes #1=strategy alpha, #2=Kelly sizing K751)
+
+**Function:** Daily daemon that:
+1. Reads current AUM from `data/portfolio_aum_state.json`
+2. Computes Kelly-optimal deployment fraction from recent 7d return history
+3. Compares current deployment ratio vs Kelly-optimal
+4. Logs recommendation if drift > 2pp threshold
+5. In PAPER_TRADE mode: recommendation only, NO live position changes (LIVE 自動変更禁止)
+
+**LIVE 自動変更禁止:** K763 never automatically changes live positions. All rebalancing is manual.
+
+### §73.2 Compounding Theory (v6.52 mid r=218%/yr)
+
+| Schedule | 1yr Terminal @$10M | vs Monthly Baseline | vs Monthly (K518 38%) |
+|----------|--------------------|---------------------|-----------------------|
+| Continuous | $88.6M | +$14.4M | +$5.5M |
+| Daily    | $88.0M | +$13.8M | +$5.2M |
+| Weekly   | $84.7M | +$10.5M | +$4.0M |
+| Monthly  | $74.2M | baseline | baseline |
+| Quarterly | $57.0M | -$17.2M | -$6.5M |
+
+**Key insight:** At high return rates (218%/yr), compounding frequency dominates. Daily vs monthly gap = $13.8M gross / $5.2M realized (38% K518 haircut). Operational cost for daily rebalance = only $118K/yr — negligible vs uplift.
+
+### §73.3 K523 3-Point Uplift @$10M AUM
+
+| Scenario | Environment | Schedule Change | Gross/yr | Realized/yr (38%) |
+|----------|-------------|-----------------|----------|---------------------|
+| **Conservative** | r=10% (K208 decay) | monthly → weekly | $3,517 | $1,337 |
+| **Central** | r=218% (v6.52 mid) | weekly → daily | $3,281,131 | $1,246,830 |
+| **Optimistic** | r=273% (+25% above mid) | daily + Kelly | $13,636,966 | $5,182,047 |
+
+**K523 MANDATORY:** Central $3.28M gross is NOT the upper bound. Upper bound = optimistic $13.6M gross. The task-spec framing ($5K/$50K/$200K) is the isolated per-rebalance incremental gain — both framings are valid. K518 38% realized-to-stated ratio applied.
+
+### §73.4 Kelly Criterion Summary
+
+```
+v6.52 daily mean:  0.598%/day (218%/yr / 365)
+v6.52 daily vol:   2.355%/day (45%/yr / sqrt(365))
+Full Kelly f*:     10.77x AUM  ← unachievable
+Half-Kelly f*:      5.39x AUM  ← still above max leverage
+Recommended:        0.92       ← capped at (1 - 8% cash buffer)
+```
+
+At v6.52 return profile, Kelly says deploy MORE than currently possible. The scheduling benefit is from **daily compound interest** on the already-maximally-deployed capital, not from changing the deployment ratio.
+
+**Half-Kelly for risk control** (K751 precedent): half-Kelly used as conservative bound for log-utility optimization.
+
+### §73.5 Operational Costs
+
+| Frequency | Events/yr | Annual Cost | Net vs Monthly |
+|-----------|-----------|-------------|----------------|
+| Daily | 365 | $118,625 | +$13,676,580 net |
+| Weekly | 52 | $16,900 | +$10,497,174 net |
+| Monthly | 12 | $3,900 | -$3,900 (baseline) |
+
+Assumptions: 5bps round-trip fee (2.5bps each side, taker) + 1.5bps slippage, 5% AUM per rebalance event.
+
+### §73.6 Tax Efficiency
+
+Perpetuals FR carry positions have no spot tax event — daily rebalance does NOT trigger capital gains for the HL/Bybit FR differential sleeves. Daily cadence is safe for this portfolio's primary income mechanism.
+
+For any spot-converted P&L: weekly cadence preferred for tax-aware accounts (reduces taxable event frequency 7x vs daily).
+
+### §73.7 Risk Warnings
+
+- **Model error during high-vol windows:** K763 checks 7d rolling return history. If history is anomalous (spike regime), the Kelly recommendation may be off. Drift threshold 2pp prevents over-trading.
+- **Slippage on large rebalances:** Rebalance size capped at 5% AUM per event. For >$500K single-leg moves, split into 2-3 child orders.
+- **HL 65% cap:** K763 does not track HL concentration. Check `data/leverage_config.json` before any manual rebalance action.
+- **COMPOUND_FREQUENCY=monthly:** Reversibility — set this env var to return to current behavior.
+
+### §73.8 1-Step Activation
+
+**Paper-mode (default — safe):**
+```bash
+cd /path/to/crypto-lab
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k763-compound-scheduler.plist
+cp scripts/com.cryptolab.k763-compound-scheduler.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k763-compound-scheduler.plist
+launchctl list | grep k763
+```
+
+**Status check:**
+```bash
+python3 scripts/k763_compound_scheduler.py --status
+python3 scripts/k763_compound_scheduler.py --dry-run
+python3 scripts/k763_compound_scheduler.py --analysis
+```
+
+**Revert to monthly (current behavior):**
+```bash
+# Edit plist: change COMPOUND_FREQUENCY to monthly
+# Or set env: COMPOUND_FREQUENCY=monthly python3 scripts/k763_compound_scheduler.py
+```
+
+**Live activation (future — requires explicit user decision):**
+```bash
+# K763 NEVER changes live positions automatically (LIVE 自動変更禁止)
+# Rebalance recommendations are manual action items only
+# To disable: launchctl unload ~/Library/LaunchAgents/com.cryptolab.k763-compound-scheduler.plist
+```
+
+### §73.9 Deliverable Files
+
+| File | Description |
+|------|-------------|
+| `scripts/k763_compound_scheduler.py` | 73rd daemon — daily Kelly-optimal rebalance scheduler (K339 pattern) |
+| `scripts/com.cryptolab.k763-compound-scheduler.plist` | LaunchAgent plist (daily 03:00 UTC, PAPER_TRADE=True) |
+| `wave_k763_compounding.py` | Wave analysis generator |
+| `wave_k763_compounding.json` | Wave output: full schedule comparison + K523 3-point |
+| `wave_k763_compounding.md` | Wave summary |
+| `scripts/verify_deployment_status.py` | 73rd daemon registry entry added |
+| `docs/k302a_runbook.md` | This section §73 |
+| `report.html` | K763 badge (compounding axis #3) |
+
+### §73.10 References
+
+| Wave | Description |
+|------|-------------|
+| K763 | This section — K763 compounding schedule optimizer (73rd daemon, profit-max axis #3) |
+| K751 | K751 Kelly sizing audit (v6.52, HL 53.6%/65%, Bybit 43.8%/50%, K280 30%) |
+| K428 | K428 compounding simulator (analysis-only, 6 strategies, no daemon) |
+| K429 | K429 portfolio AUM manager (daily tracking, K763 reads state from here) |
+| K523 | K523 3-point projection mandate (conservative/central/optimistic) |
+| K724 | K724 v6.51 incremental update ($21.81M mid, 9 alt-alts, 63 daemons) |
 | K439 | K439 POST_ONLY paired execution (fill rate gate G8) |

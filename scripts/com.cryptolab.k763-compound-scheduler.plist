@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k763-compound-scheduler</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>REPO_ROOT_PLACEHOLDER/scripts/k763_compound_scheduler.py</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <!-- K763: PAPER_TRADE=True default. Set to False only after manual activation -->
+        <!-- LIVE 自動変更禁止: never set False without user explicit action -->
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+
+        <!-- Compounding frequency: daily | weekly | monthly -->
+        <!-- Set COMPOUND_FREQUENCY=monthly to return to current behavior -->
+        <key>COMPOUND_FREQUENCY</key>
+        <string>daily</string>
+
+        <!-- Kelly fraction: 0.5 = half-Kelly (K751 precedent, risk control) -->
+        <key>HALF_KELLY_FRACTION</key>
+        <string>0.5</string>
+
+        <!-- Cash buffer: 8% reserved for HL margin + K357 emergency -->
+        <key>CASH_BUFFER_PCT</key>
+        <string>8.0</string>
+
+        <!-- K339 security: REPO_ROOT injected at activation time -->
+        <key>PYTHONPATH</key>
+        <string>REPO_ROOT_PLACEHOLDER</string>
+    </dict>
+
+    <!-- Daily at 03:00 UTC (post-settlement, pre-Asia open) -->
+    <!-- StartCalendarInterval: Hour=3 UTC = 12:00 JST -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>3</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>REPO_ROOT_PLACEHOLDER/logs/k763_compound_scheduler.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>REPO_ROOT_PLACEHOLDER/logs/k763_compound_scheduler.err</string>
+
+    <!-- Restart after crash (5 second delay) -->
+    <key>KeepAlive</key>
+    <false/>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <!-- Throttle: don't run more than once per 3600 seconds -->
+    <key>ThrottleInterval</key>
+    <integer>3600</integer>
+</dict>
+</plist>
