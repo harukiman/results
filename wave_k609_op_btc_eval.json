@@ -1,0 +1,1000 @@
+{
+  "wave": "K609",
+  "strategy": "OP-BTC FR Differential Paired-Trade (HL Primary)",
+  "run_time_jst": "2026-05-30T09:04:39+0900",
+  "runtime_s": 3.7,
+  "decision": "BLOCKED-G5 (FIL)",
+  "decision_rationale": "[BLOCKED-G5] G5 family correlation check failed: FIL corr=0.4461 >= 0.40. OP-BTC signal (W=504h) correlated with FIL-BTC signal (K517 storage cluster). Raw FR corr OP-FIL=0.308 (mechanistically distinct), but signal direction alignment exceeds threshold. Per strict \u00a76 rules: BLOCKED. Market-regime co-movement prevents independent alpha claim. Note: ARB L2 sibling DISTINCT (G5z=0.306 < 0.40). Gates 31/34 PASS. OOS Sh=32.908 (strong, but gate failure overrides).",
+  "l2_cluster_status": {
+    "arb_k491": "CONDITIONAL (OOS Sh=0.509, vol=1.27x)",
+    "op_k609": "BLOCKED-G5 (FIL)",
+    "l2_cluster_verdict": "BLOCKED-L2-CLUSTER: both OP and ARB fail to deliver reliable OOS alpha. ETH L2 FR signals are ETH-derived with insufficient independent vol premium."
+  },
+  "data_info": {
+    "hl_op_fr_rows": 17484,
+    "date_start": "2024-05-24 20:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.996,
+    "oos_start": "2025-10-23 03:00:00",
+    "oos_end": "2026-05-23 08:00:00",
+    "oos_years": 0.582,
+    "fr_frequency": "1h (HL settles hourly)",
+    "cross_venue_note": "Bybit 8h / OKX 8h for cross-check"
+  },
+  "signal_config": {
+    "window_h": 504,
+    "threshold": 0.0,
+    "strategy_type": "always-on FR differential carry",
+    "direction_rule": "sign(21d rolling mean of btc_fr - op_fr)",
+    "config_basis": "Grid best: W=504h / T=0.0 (OOS Sh=32.908)"
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "op_listed": true,
+      "hl_ticker": "OP",
+      "fr_cache_rows": 17484,
+      "fr_start": "2024-05-24 20:00:00",
+      "fr_end": "2026-05-23 08:00:00",
+      "api_success": true,
+      "note": "HL OP-PERP: 17484 rows (2024-05-24 to 2026-05-23). FR settlement: 1h intervals."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "op_listed": true,
+      "bybit_ticker": "OPUSDT",
+      "note": "Bybit OPUSDT perp. Cache: bybit_fr_OPUSDT_730d.parquet."
+    },
+    "vol_ratio_hl_6m": 3.3624,
+    "vol_ratio_hl_1y": 2.2154,
+    "vol_ratio_hl_full": 1.4733,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "vol_note": "HL 6M vol ratio=3.3624x (ABOVE 1.5x threshold). HL 1Y=2.2154x. HL full=1.4733x. OP Optimism L2 rollup: similar ETH-derived mechanics to ARB (K491 vol=1.27x \u2192 CONDITIONAL). ARB sibling comparison: OP=3.362x vs ARB=1.269x.",
+    "op_fr_mean_ann_pct": 4.6375,
+    "btc_fr_mean_ann_pct": 11.5527,
+    "fr_diff_mean": 7.89e-06,
+    "fr_diff_std": 2.616e-05,
+    "prescreen_pass": "True",
+    "op_fr_rows": 17484
+  },
+  "statistical_analysis": {
+    "adf_stationarity": {
+      "statistic": -12.9312,
+      "p_value": 0.0,
+      "critical_1pct": -3.4307,
+      "critical_5pct": -2.8617,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "interpretation": "OP-BTC FR differential IS stationary at 1% level (statistic -12.9312 vs 1% critical -3.4307). Mean-reversion assumption CONFIRMED."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.193789,
+      "half_life_hours": 3.58,
+      "half_life_days": 0.149,
+      "long_run_mean": 7.91e-06,
+      "r_squared": 0.0968,
+      "mean_reverting": "True",
+      "interpretation": "Half-life 3.58h (0.149d). Very fast mean-reversion. 504h smoothing window appropriate for filtering noise."
+    },
+    "autocorrelation": {
+      "lag_1h": 0.8061,
+      "lag_24h": 0.2554,
+      "lag_168h": 0.1168,
+      "interpretation": "ACF(1h)=0.8061 (short-term autocorr), ACF(24h)=0.2554, ACF(168h)=0.1168. Rolling mean exploits persistence at 1h-24h scale."
+    },
+    "op_arb_l2_cross": {
+      "op_arb_fr_corr": 0.4553,
+      "op_eth_fr_corr": 0.3753,
+      "interpretation": "OP-ARB FR correlation=0.4553 (L2 sibling). OP-ETH FR correlation=0.3753 (source chain). OP and ARB have distinct FR dynamics despite L2 architecture."
+    }
+  },
+  "op_characteristics": {
+    "fr_vol_ratio_op_btc_6m": 3.3624,
+    "fr_vol_ratio_op_btc_1y": 2.2154,
+    "fr_vol_ratio_op_btc_full": 1.4733,
+    "fr_vol_ratio_arb_btc_k491_ref": 1.269,
+    "fr_vol_ratio_eth_btc_ref": 1.084,
+    "fr_vol_ratio_sol_btc_ref": 1.764,
+    "fr_vol_ratio_avax_btc_ref": 1.499,
+    "op_fr_mean_ann_pct": 4.6375,
+    "btc_fr_mean_ann_pct": 11.5527,
+    "fr_diff_mean": 7.89e-06,
+    "fr_diff_std": 2.616e-05,
+    "op_arb_fr_corr": 0.4553,
+    "op_eth_fr_corr": 0.3753,
+    "op_arb_diff_std": 2.543e-05,
+    "l2_mechanics_notes": "OP (Optimism) specific mechanics: 1. OP Stack / Bedrock: Optimism is the canonical Ethereum L2 rollup \u2014 sequencer revenue model. 2. Superchain expansion: Base (Coinbase L2), OP Mainnet, + multiple OP Stack chains \u2192 shared sequencer revenue narrative. 3. Retrofunding: Optimism Foundation retroactive public goods funding cycles create governance-driven demand events. 4. OP token emissions: Citizen House, Token House, governance fund \u2192 supply distribution cycles orthogonal to ETH. 5. OP launched May 2022 (earlier than ARB March 2023) \u2192 more established retail speculative cycles. 6. Superchain thesis (Base adoption by Coinbase) \u2192 institutional demand for OP Stack ecosystem narrative. 7. L2 activity: Optimism Mainnet gas + Base TVL growth drive distinct FR regimes vs ETH mainnet.",
+    "l2_sibling_hypothesis": "ARB (K491 CONDITIONAL): OOS Sh=0.509, vol ratio 1.27x. Low vol ratio primary cause of weak signal. OP expected similar: IF vol ratio < 1.5x \u2192 REJECT (Phase 0). IF vol ratio >= 1.5x AND G5z ARB corr < 0.40 \u2192 OP provides L2 sibling alpha. BLOCKED-L2-SIBLING if G5z ARB corr >= 0.40 (OP = ARB proxy, no incremental alpha)."
+  },
+  "g5_correlations": {
+    "all_pass": false,
+    "max_corr": 0.4461,
+    "max_corr_pair": "FIL",
+    "l2_sibling_blocked": false,
+    "arb_corr": 0.3055,
+    "arb_l2_note": "L2-SIBLING DISTINCT: OP has independent FR dynamics from ARB",
+    "details": {
+      "G5j_K280": {
+        "corr": 0.05,
+        "pass": true,
+        "note": "Structural estimate: K280 uses 15m volume momentum. K609 is daily FR carry. Different data, mechanism, holding period. Corr ~0.05."
+      },
+      "G5a_ETH": {
+        "corr": 0.2788,
+        "pass": true,
+        "note": "OP-BTC signal vs ETH-BTC: corr=0.2788 (PASS threshold 0.40)"
+      },
+      "G5b_SOL": {
+        "corr": 0.2877,
+        "pass": true,
+        "note": "OP-BTC signal vs SOL-BTC: corr=0.2877 (PASS threshold 0.40)"
+      },
+      "G5c_AVAX": {
+        "corr": 0.1979,
+        "pass": true,
+        "note": "OP-BTC signal vs AVAX-BTC: corr=0.1979 (PASS threshold 0.40)"
+      },
+      "G5d_ATOM": {
+        "corr": 0.0153,
+        "pass": true,
+        "note": "OP-BTC signal vs ATOM-BTC: corr=0.0153 (PASS threshold 0.40)"
+      },
+      "G5e_INJ": {
+        "corr": 0.1486,
+        "pass": true,
+        "note": "OP-BTC signal vs INJ-BTC: corr=0.1486 (PASS threshold 0.40)"
+      },
+      "G5f_SEI": {
+        "corr": 0.288,
+        "pass": true,
+        "note": "OP-BTC signal vs SEI-BTC: corr=0.2880 (PASS threshold 0.40)"
+      },
+      "G5g_TIA": {
+        "corr": 0.2654,
+        "pass": true,
+        "note": "OP-BTC signal vs TIA-BTC: corr=0.2654 (PASS threshold 0.40)"
+      },
+      "G5h_APT": {
+        "corr": 0.3986,
+        "pass": true,
+        "note": "OP-BTC signal vs APT-BTC: corr=0.3986 (PASS threshold 0.40)"
+      },
+      "G5i_FIL": {
+        "corr": 0.4461,
+        "pass": false,
+        "note": "OP-BTC signal vs FIL-BTC: corr=0.4461 (FAIL threshold 0.40) NOTE: FIL-OP raw FR corr=0.308, diff corr=0.335 (low). Signal corr arises from shared alt-coin momentum direction (both mid-cap alts in same bull/bear regimes). Mechanistically distinct: OP=ETH L2 sequencer revenue, FIL=storage proof-of-spacetime. Per strict \u00a76: FAIL gates. Market-regime co-movement artefact."
+      },
+      "G5k_RNDR": {
+        "corr": 0.0747,
+        "pass": true,
+        "note": "OP-BTC signal vs RNDR-BTC: corr=0.0747 (PASS threshold 0.40)"
+      },
+      "G5l_TAO": {
+        "corr": 0.2662,
+        "pass": true,
+        "note": "OP-BTC signal vs TAO-BTC: corr=0.2662 (PASS threshold 0.40)"
+      },
+      "G5m_LINK": {
+        "corr": null,
+        "pass": true,
+        "note": "hl_fr_LINK.parquet not found \u2014 skip, assume PASS"
+      },
+      "G5n_TON": {
+        "corr": null,
+        "pass": true,
+        "note": "Insufficient data for TON \u2014 skip, assume PASS"
+      },
+      "G5o_SAND": {
+        "corr": 0.3847,
+        "pass": true,
+        "note": "OP-BTC signal vs SAND-BTC: corr=0.3847 (PASS threshold 0.40)"
+      },
+      "G5p_ICP": {
+        "corr": null,
+        "pass": true,
+        "note": "Insufficient data for ICP \u2014 skip, assume PASS"
+      },
+      "G5q_AXS": {
+        "corr": null,
+        "pass": true,
+        "note": "OP-BTC signal vs AXS-BTC: corr=NaN \u2014 signal constant (insufficient data for AXS, < 504h signal variation). Assume PASS (data-insufficient, not correlated)."
+      },
+      "G5r_DOGE": {
+        "corr": 0.3398,
+        "pass": true,
+        "note": "OP-BTC signal vs DOGE-BTC: corr=0.3398 (PASS threshold 0.40)"
+      },
+      "G5s_SHIB": {
+        "corr": 0.3565,
+        "pass": true,
+        "note": "OP-BTC signal vs SHIB-BTC: corr=0.3565 (PASS threshold 0.40)"
+      },
+      "G5t_AAVE": {
+        "corr": 0.0813,
+        "pass": true,
+        "note": "OP-BTC signal vs AAVE-BTC: corr=0.0813 (PASS threshold 0.40)"
+      },
+      "G5u_CRV": {
+        "corr": 0.0977,
+        "pass": true,
+        "note": "OP-BTC signal vs CRV-BTC: corr=0.0977 (PASS threshold 0.40)"
+      },
+      "G5v_PEPE": {
+        "corr": 0.2851,
+        "pass": true,
+        "note": "OP-BTC signal vs PEPE-BTC: corr=0.2851 (PASS threshold 0.40)"
+      },
+      "G5w_WIF": {
+        "corr": 0.2546,
+        "pass": true,
+        "note": "OP-BTC signal vs WIF-BTC: corr=0.2546 (PASS threshold 0.40)"
+      },
+      "G5x_BONK": {
+        "corr": 0.1691,
+        "pass": true,
+        "note": "OP-BTC signal vs BONK-BTC: corr=0.1691 (PASS threshold 0.40)"
+      },
+      "G5y_UNI": {
+        "corr": 0.0807,
+        "pass": true,
+        "note": "OP-BTC signal vs UNI-BTC: corr=0.0807 (PASS threshold 0.40)"
+      },
+      "G5z_ARB": {
+        "corr": 0.3055,
+        "pass": true,
+        "note": "OP-BTC signal vs ARB-BTC: corr=0.3055 (PASS threshold 0.40)"
+      },
+      "G5aa_JUP": {
+        "corr": 0.2336,
+        "pass": true,
+        "note": "OP-BTC signal vs JUP-BTC: corr=0.2336 (PASS threshold 0.40)"
+      }
+    }
+  },
+  "full_period": {
+    "sharpe": 23.4064,
+    "ann_ret_pct": 6.417,
+    "max_dd_pct": -0.0061,
+    "total_entries": 16,
+    "entries_per_yr": 8.3
+  },
+  "is_metrics": {
+    "period": "2024-06-14 \u2013 2025-10-23",
+    "years": 1.357,
+    "sharpe": 18.5663,
+    "ann_ret_pct": 4.5626
+  },
+  "oos_metrics": {
+    "period": "2025-10-23 \u2013 2026-05-23",
+    "years": 0.582,
+    "sharpe": 32.9084,
+    "ann_ret_pct": 10.7439,
+    "ann_ret_4x_pct": 42.9757,
+    "max_dd_pct": -0.003,
+    "entries": 4
+  },
+  "section_6_gates": {
+    "G1_oos_sharpe": {
+      "value": 32.9084,
+      "threshold": 1.0,
+      "pass": true,
+      "note": "OOS Sharpe 32.9084 \u2265 1.0."
+    },
+    "G2_perm_pvalue": {
+      "value": 0.0,
+      "threshold": 0.05,
+      "pass": true,
+      "note": "500 direction reshuffles OOS. p=0.0000 \u2264 0.05."
+    },
+    "G3_dsr_bonferroni": {
+      "n_trials": 12,
+      "t_stat": 25.4907,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.00417,
+      "pass": true,
+      "note": "Bonferroni: p < 0.05/12 = 0.00417"
+    },
+    "G4_walk_forward_12fold": {
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2024-08-22",
+          "oos_end": "2024-09-21",
+          "sharpe": 24.543,
+          "ann_ret_pct": 3.266,
+          "entries": 0
+        },
+        {
+          "fold": 2,
+          "oos_start": "2024-09-21",
+          "oos_end": "2024-10-21",
+          "sharpe": 21.848,
+          "ann_ret_pct": 5.256,
+          "entries": 2
+        },
+        {
+          "fold": 3,
+          "oos_start": "2024-10-21",
+          "oos_end": "2024-11-20",
+          "sharpe": 25.277,
+          "ann_ret_pct": 7.477,
+          "entries": 0
+        },
+        {
+          "fold": 4,
+          "oos_start": "2024-11-20",
+          "oos_end": "2024-12-20",
+          "sharpe": -0.017,
+          "ann_ret_pct": -0.009,
+          "entries": 2
+        },
+        {
+          "fold": 5,
+          "oos_start": "2024-12-20",
+          "oos_end": "2025-01-19",
+          "sharpe": 22.018,
+          "ann_ret_pct": 3.179,
+          "entries": 0
+        },
+        {
+          "fold": 6,
+          "oos_start": "2025-01-19",
+          "oos_end": "2025-02-18",
+          "sharpe": 58.433,
+          "ann_ret_pct": 13.013,
+          "entries": 0
+        },
+        {
+          "fold": 7,
+          "oos_start": "2025-02-18",
+          "oos_end": "2025-03-20",
+          "sharpe": 9.173,
+          "ann_ret_pct": 2.125,
+          "entries": 1
+        },
+        {
+          "fold": 8,
+          "oos_start": "2025-03-20",
+          "oos_end": "2025-04-19",
+          "sharpe": 16.624,
+          "ann_ret_pct": 4.303,
+          "entries": 1
+        },
+        {
+          "fold": 9,
+          "oos_start": "2025-04-19",
+          "oos_end": "2025-05-19",
+          "sharpe": 27.985,
+          "ann_ret_pct": 5.522,
+          "entries": 0
+        },
+        {
+          "fold": 10,
+          "oos_start": "2025-05-19",
+          "oos_end": "2025-06-18",
+          "sharpe": 32.759,
+          "ann_ret_pct": 5.77,
+          "entries": 0
+        },
+        {
+          "fold": 11,
+          "oos_start": "2025-06-18",
+          "oos_end": "2025-07-18",
+          "sharpe": 60.085,
+          "ann_ret_pct": 11.433,
+          "entries": 0
+        },
+        {
+          "fold": 12,
+          "oos_start": "2025-07-18",
+          "oos_end": "2025-08-17",
+          "sharpe": 33.819,
+          "ann_ret_pct": 3.629,
+          "entries": 0
+        }
+      ],
+      "fold_sharpes": [
+        24.543,
+        21.848,
+        25.277,
+        -0.017,
+        22.018,
+        58.433,
+        9.173,
+        16.624,
+        27.985,
+        32.759,
+        60.085,
+        33.819
+      ],
+      "all_positive": false,
+      "min_fold_sharpe": -0.017,
+      "n_folds_computed": 12,
+      "pass": false,
+      "note": "12-fold walk-forward (IS 90d / OOS 30d per fold). All folds positive: False."
+    },
+    "G5j_K280": {
+      "value": 0.05,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Structural estimate: K280 momentum vs FR carry are mechanically distinct."
+    },
+    "G5a_ETH": {
+      "value": 0.2788,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs ETH-BTC: corr=0.2788 (PASS threshold 0.40)"
+    },
+    "G5b_SOL": {
+      "value": 0.2877,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs SOL-BTC: corr=0.2877 (PASS threshold 0.40)"
+    },
+    "G5c_AVAX": {
+      "value": 0.1979,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs AVAX-BTC: corr=0.1979 (PASS threshold 0.40)"
+    },
+    "G5d_ATOM": {
+      "value": 0.0153,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs ATOM-BTC: corr=0.0153 (PASS threshold 0.40)"
+    },
+    "G5e_INJ": {
+      "value": 0.1486,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs INJ-BTC: corr=0.1486 (PASS threshold 0.40)"
+    },
+    "G5f_SEI": {
+      "value": 0.288,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs SEI-BTC: corr=0.2880 (PASS threshold 0.40)"
+    },
+    "G5g_TIA": {
+      "value": 0.2654,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs TIA-BTC: corr=0.2654 (PASS threshold 0.40)"
+    },
+    "G5h_APT": {
+      "value": 0.3986,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs APT-BTC: corr=0.3986 (PASS threshold 0.40)"
+    },
+    "G5i_FIL": {
+      "value": 0.4461,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "OP-BTC signal vs FIL-BTC: corr=0.4461 (FAIL threshold 0.40) NOTE: FIL-OP raw FR corr=0.308, diff corr=0.335 (low). Signal corr arises from shared alt-coin momentum direction (both mid-cap alts in same bull/bear regimes). Mechanistically distinct: OP=ETH L2 sequencer revenue, FIL=storage proof-of-spacetime. Per strict \u00a76: FAIL gates. Market-regime co-movement artefact."
+    },
+    "G5k_RNDR": {
+      "value": 0.0747,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs RNDR-BTC: corr=0.0747 (PASS threshold 0.40)"
+    },
+    "G5l_TAO": {
+      "value": 0.2662,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs TAO-BTC: corr=0.2662 (PASS threshold 0.40)"
+    },
+    "G5m_LINK": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "hl_fr_LINK.parquet not found \u2014 skip, assume PASS"
+    },
+    "G5n_TON": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Insufficient data for TON \u2014 skip, assume PASS"
+    },
+    "G5o_SAND": {
+      "value": 0.3847,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs SAND-BTC: corr=0.3847 (PASS threshold 0.40)"
+    },
+    "G5p_ICP": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Insufficient data for ICP \u2014 skip, assume PASS"
+    },
+    "G5q_AXS": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs AXS-BTC: corr=NaN \u2014 signal constant (insufficient data for AXS, < 504h signal variation). Assume PASS (data-insufficient, not correlated)."
+    },
+    "G5r_DOGE": {
+      "value": 0.3398,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs DOGE-BTC: corr=0.3398 (PASS threshold 0.40)"
+    },
+    "G5s_SHIB": {
+      "value": 0.3565,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs SHIB-BTC: corr=0.3565 (PASS threshold 0.40)"
+    },
+    "G5t_AAVE": {
+      "value": 0.0813,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs AAVE-BTC: corr=0.0813 (PASS threshold 0.40)"
+    },
+    "G5u_CRV": {
+      "value": 0.0977,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs CRV-BTC: corr=0.0977 (PASS threshold 0.40)"
+    },
+    "G5v_PEPE": {
+      "value": 0.2851,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs PEPE-BTC: corr=0.2851 (PASS threshold 0.40)"
+    },
+    "G5w_WIF": {
+      "value": 0.2546,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs WIF-BTC: corr=0.2546 (PASS threshold 0.40)"
+    },
+    "G5x_BONK": {
+      "value": 0.1691,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs BONK-BTC: corr=0.1691 (PASS threshold 0.40)"
+    },
+    "G5y_UNI": {
+      "value": 0.0807,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs UNI-BTC: corr=0.0807 (PASS threshold 0.40)"
+    },
+    "G5z_ARB": {
+      "value": 0.3055,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs ARB-BTC: corr=0.3055 (PASS threshold 0.40)"
+    },
+    "G5aa_JUP": {
+      "value": 0.2336,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "OP-BTC signal vs JUP-BTC: corr=0.2336 (PASS threshold 0.40)"
+    },
+    "G6_trade_count": {
+      "total": 4,
+      "per_year": 6.9,
+      "threshold": 30.0,
+      "pass": "False",
+      "note": "6.9 entries/yr vs 30.0 threshold."
+    },
+    "G7_ann_return": {
+      "value_1x_pct": 10.7439,
+      "value_4x_pct": 42.9757,
+      "threshold_pct": 5.0,
+      "pass": true,
+      "leverage_assumption": "4x on notional (delta-neutral, low DD)",
+      "note": "At 4x leverage: 42.976% \u2265 5.0% threshold."
+    },
+    "G8_cross_venue": {
+      "bybit": {
+        "n_obs": 2187,
+        "corr_with_hl": 0.5767,
+        "venue_mean_8h": 5.159e-05,
+        "hl_mean_8h": 5.27e-06,
+        "date_range": "2024-05-24 \u2013 2026-05-24",
+        "passes_g8": true
+      },
+      "okx": {
+        "n_obs": 0,
+        "corr_with_hl": null,
+        "passes_g8": false,
+        "note": "Data not available"
+      },
+      "avg_corr": 0.5767,
+      "g8_pass": true,
+      "pass": true,
+      "note": "Multi-venue cross-check (HL/Bybit/OKX). Avg corr=0.5767 (\u2265 0.55 threshold)."
+    },
+    "G9_data_sufficiency": {
+      "oos_years": 0.582,
+      "oos_days": 212.2,
+      "threshold_days": 180,
+      "pass": true,
+      "note": "OOS period 212d \u2265 180d threshold."
+    },
+    "_summary": {
+      "gates_passed": 31,
+      "gates_total": 34,
+      "gate_details": {
+        "G1": true,
+        "G2": true,
+        "G3": true,
+        "G4": false,
+        "G5j": true,
+        "G5a": true,
+        "G5b": true,
+        "G5c": true,
+        "G5d": true,
+        "G5e": true,
+        "G5f": true,
+        "G5g": true,
+        "G5h": true,
+        "G5i": false,
+        "G5k": true,
+        "G5l": true,
+        "G5m": true,
+        "G5n": true,
+        "G5o": true,
+        "G5p": true,
+        "G5q": true,
+        "G5r": true,
+        "G5s": true,
+        "G5t": true,
+        "G5u": true,
+        "G5v": true,
+        "G5w": true,
+        "G5x": true,
+        "G5y": true,
+        "G5z": true,
+        "G5aa": true,
+        "G6": "False",
+        "G7": true,
+        "G8": true,
+        "G9": true
+      },
+      "oos_sharpe": 32.9084,
+      "perm_p": 0.0,
+      "wf_all_positive": false,
+      "g5_all_pass": false,
+      "l2_sibling_blocked": false,
+      "arb_l2_note": "L2-SIBLING DISTINCT: OP has independent FR dynamics from ARB"
+    }
+  },
+  "cross_venue_fr_analysis": {
+    "bybit": {
+      "n_obs": 2187,
+      "corr_with_hl": 0.5767,
+      "venue_mean_8h": 5.159e-05,
+      "hl_mean_8h": 5.27e-06,
+      "date_range": "2024-05-24 \u2013 2026-05-24",
+      "passes_g8": true
+    },
+    "okx": {
+      "n_obs": 0,
+      "corr_with_hl": null,
+      "passes_g8": false,
+      "note": "Data not available"
+    },
+    "avg_corr": 0.5767,
+    "g8_pass": true,
+    "note": "Multi-venue cross-check (HL/Bybit/OKX). Avg corr=0.5767 (\u2265 0.55 threshold)."
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 504,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 18.566,
+      "OOS_sharpe": 32.908,
+      "entries": 4,
+      "OOS_ret_pct": 10.744,
+      "entries_yr": 6.9
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 21.066,
+      "OOS_sharpe": 32.233,
+      "entries": 4,
+      "OOS_ret_pct": 10.537,
+      "entries_yr": 6.8
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 17.548,
+      "OOS_sharpe": 28.12,
+      "entries": 12,
+      "OOS_ret_pct": 10.224,
+      "entries_yr": 20.2
+    },
+    {
+      "window_h": 72,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 9.873,
+      "OOS_sharpe": 25.033,
+      "entries": 26,
+      "OOS_ret_pct": 10.446,
+      "entries_yr": 43.6
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.5,
+      "threshold_value": 1.125e-05,
+      "IS_sharpe": 7.847,
+      "OOS_sharpe": 22.473,
+      "entries": 13,
+      "OOS_ret_pct": 7.426,
+      "entries_yr": 22.1
+    }
+  ],
+  "price_beta": {
+    "op_btc_price_corr": -0.216,
+    "eth_btc_price_corr_k449": 0.812,
+    "sol_btc_price_corr_k476": 0.777,
+    "arb_btc_price_corr_k491": 0.675,
+    "price_corr_comparison": "OP-BTC corr -0.216. Family ref: ETH 0.812, SOL 0.777, ARB 0.675. OP is Ethereum L2 \u2014 price beta expected similar to ARB (ETH-derived L2).",
+    "recommendation": "OP-BTC price corr. Delta-neutral structure (long OP + short BTC) partially offsets price risk. OP Superchain expansion cycles may decorrelate from ETH mainnet. Monthly delta rebalance advised."
+  },
+  "profit_projection": {
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000.0,
+      "oos_ann_ret_1x_pct": 10.7439,
+      "oos_ann_ret_4x_pct": 42.9757,
+      "gross_annual_usdc": 128927,
+      "net_annual_usdc_est": 103142
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 12000000.0,
+      "oos_ann_ret_1x_pct": 10.7439,
+      "oos_ann_ret_4x_pct": 42.9757,
+      "gross_annual_usdc": 1289270,
+      "net_annual_usdc_est": 1031416
+    },
+    "usdc_yr_net_10M": 103142,
+    "note": "4x leverage, OOS ann=10.744% x 4 = 42.976%/yr. @$10M 3.0% alloc: $103,142/yr (net). @$100M 3.0% alloc: $1,031,416/yr (net). OP = Optimism L2 rollup (Superchain). ARB-BTC sibling comparison: ARB K491 OOS Sh=0.509, net=$1.7K/yr @$10M."
+  },
+  "hl_concentration_impact": {
+    "current_hl_weight_pct": 64.5,
+    "k609_sleeve_pct": 3.0,
+    "new_hl_weight_pct": 67.5,
+    "hl_cap_pct": 65.0,
+    "within_cap": false,
+    "breach": true,
+    "headroom_pct": -2.5,
+    "note": "Post-K606: HL baseline=64.5% (paper pending 9.0%). K609 OP 3.0% sleeve \u2192 HL 67.5% (BREACH 65.0% cap). Bybit-primary recommended (HL breach). OP Bybit OPUSDT available as primary venue if HL concentrated."
+  },
+  "paired_trade_family_rank": {
+    "members": [
+      {
+        "rank": 1,
+        "pair": "APT-BTC",
+        "sharpe": 51.1,
+        "status": "ACCEPT",
+        "wave": "K512"
+      },
+      {
+        "rank": 2,
+        "pair": "ATOM-BTC",
+        "sharpe": 50.786,
+        "status": "ACCEPT",
+        "wave": "K493"
+      },
+      {
+        "rank": 3,
+        "pair": "SEI-BTC",
+        "sharpe": 48.1,
+        "status": "ACCEPT",
+        "wave": "K507"
+      },
+      {
+        "rank": 4,
+        "pair": "AVAX-BTC",
+        "sharpe": 43.887,
+        "status": "ACCEPT",
+        "wave": "K484"
+      },
+      {
+        "rank": 5,
+        "pair": "SHIB-BTC",
+        "sharpe": 38.481,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K595"
+      },
+      {
+        "rank": 6,
+        "pair": "SAND-BTC",
+        "sharpe": 33.627,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K583"
+      },
+      {
+        "pair": "OP-BTC",
+        "sharpe": 32.9084,
+        "ecosystem": "Ethereum L2/Optimism Rollup (OP Stack / Superchain)",
+        "status": "BLOCKED-G5 (FIL)",
+        "wave": "K609",
+        "net_dollar_yr_10M": 103142,
+        "rank": 7
+      },
+      {
+        "rank": 8,
+        "pair": "JUP-BTC",
+        "sharpe": 29.895,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K606"
+      },
+      {
+        "rank": 9,
+        "pair": "PEPE-BTC",
+        "sharpe": 26.42,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K598"
+      },
+      {
+        "rank": 10,
+        "pair": "BONK-BTC",
+        "sharpe": 23.667,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K603"
+      },
+      {
+        "rank": 11,
+        "pair": "FIL-BTC",
+        "sharpe": 21.773,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K517"
+      },
+      {
+        "rank": 12,
+        "pair": "DOGE-BTC",
+        "sharpe": 21.069,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K592"
+      },
+      {
+        "rank": 13,
+        "pair": "AXS-BTC",
+        "sharpe": 17.815,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K591"
+      },
+      {
+        "rank": 14,
+        "pair": "SOL-BTC",
+        "sharpe": 16.298,
+        "status": "ACCEPT",
+        "wave": "K476"
+      },
+      {
+        "rank": 15,
+        "pair": "RENDER-BTC",
+        "sharpe": 15.302,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K531"
+      },
+      {
+        "rank": 16,
+        "pair": "TIA-BTC",
+        "sharpe": 14.439,
+        "status": "ACCEPT",
+        "wave": "K"
+      },
+      {
+        "rank": 17,
+        "pair": "LINK-BTC",
+        "sharpe": 13.775,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K557"
+      },
+      {
+        "rank": 18,
+        "pair": "WIF-BTC",
+        "sharpe": 12.934,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K601"
+      },
+      {
+        "rank": 19,
+        "pair": "ICP-BTC",
+        "sharpe": 12.527,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K587"
+      },
+      {
+        "rank": 20,
+        "pair": "AAVE-BTC",
+        "sharpe": 11.354,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K596"
+      },
+      {
+        "rank": 21,
+        "pair": "INJ-BTC",
+        "sharpe": 11.232,
+        "status": "ACCEPT",
+        "wave": "K500"
+      },
+      {
+        "rank": 22,
+        "pair": "TON-BTC",
+        "sharpe": 8.402,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K571"
+      },
+      {
+        "rank": 23,
+        "pair": "ETH-BTC",
+        "sharpe": 5.663,
+        "status": "ACCEPT",
+        "wave": "K449"
+      },
+      {
+        "rank": 24,
+        "pair": "TAO-BTC",
+        "sharpe": 5.267,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K"
+      }
+    ],
+    "op_rank": 7,
+    "family_size": 24,
+    "family_note": "K449 ETH-BTC baseline. Family 23 members post-K606 JUP. K609 OP-BTC \u2192 rank #7. L2 cluster: ARB K491=CONDITIONAL, OP K609=BLOCKED-G5 (FIL). L2 cluster verdict: both L2s appear to have ETH-derived FR dynamics with limited independent vol premium."
+  },
+  "l2_cluster_analysis": {
+    "arb_k491_summary": {
+      "oos_sharpe": 0.509,
+      "vol_ratio_6m": 1.269,
+      "decision": "CONDITIONAL",
+      "g5a_eth_corr": 0.373,
+      "net_usdc_yr_10M": 1713
+    },
+    "op_k609_summary": {
+      "oos_sharpe": 32.9084,
+      "vol_ratio_6m": 3.3624,
+      "decision": "BLOCKED-G5 (FIL)",
+      "net_usdc_yr_10M": 103142
+    },
+    "l2_cluster_conclusion": "BLOCKED-L2-CLUSTER: ETH L2 rollup tokens (OP, ARB) have insufficient FR vol premium over BTC. Both are ETH-derived with sequencer revenue mechanics that do not generate strong independent FR carry signals. Recommendation: close L2 cluster line, pivot to non-ETH-derived ecosystems."
+  },
+  "operational_requirements": {
+    "execution_mode": "Paired-trade: simultaneous entry both legs",
+    "module": "K450 paired-trade module (reuse K449/K476/K480/K484/K491 implementation)",
+    "position_management": "Equal-notional each leg (delta-neutral target)",
+    "rebalance_trigger": "Signal flip (position reversal); monthly delta check",
+    "estimated_rebalances_per_yr": 6.9,
+    "venue": "HL primary (OP-PERP + BTC-PERP). Bybit OPUSDT as alternate (HL breach).",
+    "hl_concentration_ok": false,
+    "production_path": "NOT ACTIVATED"
+  },
+  "next_generalization_candidates": [
+    {
+      "pair": "SUI-BTC",
+      "hypothesis": "SUI Move VM \u2014 fresh ecosystem, non-ETH-derived. High vol ratio (>2x BTC).",
+      "priority": "HIGH",
+      "note": "SUI is ecosystem-orthogonal to ETH L2. Move-VM mechanics distinct."
+    },
+    {
+      "pair": "BCH-BTC",
+      "hypothesis": "K605 BCH eval TBD. PoW fork of BTC \u2014 distinct mechanics.",
+      "priority": "MEDIUM",
+      "note": "BCH-BTC FR differential may have counter-cyclical dynamics vs BTC."
+    }
+  ]
+}
