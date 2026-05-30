@@ -1,6 +1,6 @@
 # K302a Master Deployment Playbook — Single Source of Truth
-**Version:** 6.32 ACCEPT | **Updated:** 2026-05-30 12:35 JST | **Wave:** K657 Governance v6 (supersedes K643/K579)
-**Status:** ACTIVE USER ACTIVATION GUIDE — 9 orthog daemons paper-gated (ETA 2026-07-29), v6.32 architecture ACCEPT
+**Version:** 6.40 CANDIDATE | **Updated:** 2026-05-30 13:05 JST | **Wave:** K666 v6.40 proposal (supersedes K657/K643)
+**Status:** ACTIVE USER ACTIVATION GUIDE — v6.40 CANDIDATE: 10 orthog + WLD-ETH + SOL-ETH | HL 63.5% (<65%) | mid $20.9M @$10M
 
 ---
 
@@ -62,6 +62,62 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k648-pol-orthog.plist
 > Full audit: `wave_k657_governance_v6.{py,json,md}` | Previous: `wave_k532_governance_v5.md`
 
 ---
+
+---
+
+## ★★★★ K666 v6.40 Architecture — Executive Summary (2026-05-30 13:05 JST)
+
+**K666 is the authoritative proposal for v6.40, extending v6.32 with 7 new sleeves: K629 WLD-ETH (HL), K658 SOL-ETH (HL), and 5 additional Bybit orthog sleeves (K645/K646/K647/K648/K656). HL cap maintained at 63.5% (< 65% cap, 1.5pp headroom).**
+
+### K523 Transparent Range — v6.40 @$10M
+
+| Version | Conservative | Mid | Optimistic | 5y Mid |
+|---------|-------------|-----|------------|--------|
+| v6.32 (K643 baseline) | $14.5M/yr | $19.93M/yr | $46M/yr | $100M |
+| **v6.40 (K666 candidate)** | **$15.0M/yr** | **$20.9M/yr** | **$48M/yr** | **$112M** |
+
+### v6.40 Key Metrics
+
+| Metric | Value |
+|--------|-------|
+| HL concentration | **63.5%** (< 65% cap; 1.5pp headroom) |
+| Total sleeves | 29 (+7 new vs v6.32) |
+| Orthog sleeves | 10 (K628/K631/K633/K635/K638/K645/K646/K647/K648/K656) |
+| 9-orthog Sharpe (K655) | **32.45** (Sharpe-weighted) |
+| 9-orthog profit @$10M | **$812,523/yr** |
+| K629 WLD-ETH @$10M | **$94,210/yr** (OOS Sh=19.90, 9/9 gates) |
+| K658 SOL-ETH @$10M | **$42,332/yr** (OOS Sh=29.66, ETH-base wins) |
+| Ann mid @$10M | **$20.9M/yr USDC** |
+| Ann range @$10M | $15M–$48M/yr (K523 mandatory) |
+| 5y central @$10M | **$112M** (range $105–115M) |
+| Ann mid @$100M | **$209M/yr** |
+
+### v6.40 New Sleeves Action Queue
+
+| Priority | Action | Effort | Value @$10M | HL Impact |
+|----------|--------|--------|-------------|-----------|
+| Y1 | K629 WLD-ETH: scaffold paper daemon (K654 ready) | 10 min | $94K/yr | +2pp HL |
+| Y2 | K658 SOL-ETH paper + K476 reduce 4%→1.5% | 15 min | $106K/yr SOL family | net -1pp |
+| Y3 | K645 BNB + K646 ALGO paper daemons | 10 min ea | $35K/yr | 0pp |
+| Y4 | K647 DOT + K648 POL: verify paper daemons | 5 min | $166K/yr | 0pp |
+| Y5 | K656 GALA: scaffold paper daemon (K659 ready) | 5 min | $14K/yr | 0pp |
+| Y6 | HL verify at full live (launchctl spot-check) | 5 min | risk control | — |
+
+### HL Concentration Calculation
+
+```
+v6.32 baseline:         62.5%
++ K629 WLD-ETH:         +2.0pp
+- K476 reduce 4%→1.5%: -2.5pp
++ K658 SOL-ETH:         +1.5pp
++ 5 Bybit orthog:        0.0pp
+                        ─────
+v6.40 HL:               63.5%   [PASS < 65% cap]
+Headroom:                1.5pp
+```
+
+> **HTML banner:** ★★★ K666 v6.40 mid $20.9M/yr @$10M | HL 63.5% (<65%) | 5y $112M | 10 orthog Bybit + WLD-ETH + SOL-ETH
+> **Full proposal:** `wave_k666_v640_proposal.{py,json,md}`
 
 ---
 
