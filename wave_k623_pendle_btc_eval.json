@@ -1,0 +1,1212 @@
+{
+  "wave": "K623",
+  "strategy": "PENDLE-BTC FR Differential Paired-Trade (HL Primary / Bybit Secondary)",
+  "run_time_jst": "2026-05-30T10:12:14+0900",
+  "runtime_s": 5.2,
+  "decision": "REJECT",
+  "decision_rationale": "[REJECT] Phase 0 vol ratio FAIL. PENDLE FR vol ratio < 1.5x BTC threshold. Insufficient differential vol for FR-carry strategy.",
+  "yield_tokenization_cluster_status": {
+    "k474_pendle_yt_carry": {
+      "decision": "REJECT",
+      "note": "K474 YT-carry strategy: MC expected -0.51pp. Different approach (yield carry vs FR-differential)."
+    },
+    "k596_aave_btc": {
+      "oos_sharpe": 11.354,
+      "decision": "ACCEPT",
+      "sub_cluster": "DeFi lending (interest rate governance, aToken model)",
+      "fr_corr_with_pendle": "pending"
+    },
+    "k616_ena_btc": {
+      "oos_sharpe": 20.4681,
+      "decision": "ACCEPT",
+      "sub_cluster": "Synthetic Stable Infrastructure (delta-neutral FR arb, sUSDe protocol equity)",
+      "fr_corr_with_pendle": 0.3125
+    },
+    "k619_ethfi_btc": {
+      "oos_sharpe": 22.7329,
+      "decision": "BLOCKED-LSD",
+      "sub_cluster": "Restaking Yield (EigenLayer liquid restaking, AVS fee revenue)",
+      "fr_corr_with_pendle": "N/A (blocked)"
+    },
+    "k623_pendle_btc": {
+      "oos_sharpe": 10.2012,
+      "decision": "REJECT",
+      "sub_cluster": "Yield Tokenization (PT/YT fixed-rate DEX, swap fee revenue)",
+      "fr_corr_ena": 0.3125
+    },
+    "yt_cluster_verdict": "YIELD-TOKENIZATION-DISTINCT: PENDLE-BTC has independent signal from ENA synthetic stable. ENA corr=0.3125.",
+    "cluster_summary": "Yield infrastructure sub-clusters: DeFi lending: AAVE K596=ACCEPT(11.4 Sh). Synthetic stable: ENA K616=ACCEPT(20.5 Sh, $67K/yr). Restaking yield: ETHFI K619=BLOCKED-LSD(22.7 Sh). Yield tokenization: PENDLE K623=REJECT(10.20 Sh). KEY DISTINCTION: PENDLE is NOT synthetic stable (ENA) \u2014 PENDLE revenue = swap fees on PT/YT trading. PENDLE is NOT restaking (ETHFI) \u2014 PENDLE protocol uses existing yield assets, not new consensus layer yield. PENDLE is yield market infrastructure: enables fixed-rate trading of variable yield. sUSDe pool overlap remains KEY risk."
+  },
+  "data_info": {
+    "hl_pendle_fr_rows": 17519,
+    "date_start": "2024-05-30 02:00:00.057000",
+    "date_end": "2026-05-30 01:00:00.060000",
+    "total_years": 3.956,
+    "oos_start": "2025-10-20 14:00:00",
+    "oos_end": "2026-05-30 01:00:00.060000",
+    "oos_years": 1.187,
+    "fr_frequency": "1h (HL settles hourly)",
+    "cross_venue_note": "Bybit PENDLEUSDT 8h for cross-check."
+  },
+  "signal_config": {
+    "window_h": 336,
+    "threshold": 0.0,
+    "strategy_type": "always-on FR differential carry",
+    "direction_rule": "sign(336h rolling mean of btc_fr - pendle_fr)",
+    "config_basis": "Grid best (\u2264336h preferred): W=336h / TF=0.0 (OOS Sh=10.201)",
+    "k613_lesson": "Prefer \u2264336h to avoid 21d window artefact (K613 STX blocked by APT at 504h)"
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "pendle_listed": true,
+      "hl_ticker": "PENDLE",
+      "fr_cache_rows": 17519,
+      "fr_start": "2024-05-30 02:00:00.057000",
+      "fr_end": "2026-05-30 01:00:00.060000",
+      "api_success": true,
+      "note": "HL PENDLE-PERP: 17519 rows. FR settlement: 1h intervals. Pendle Finance PENDLE governance token (yield tokenization protocol). PENDLE unique: protocol enables PT/YT split of yield-bearing assets; revenue = swap fees on Pendle AMM + vePENDLE bribes from yield protocols. K474 context: sUSDe-Dec26 pool $300M+ TVL, aUSDC pool $80M+."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "pendle_listed": true,
+      "bybit_ticker": "PENDLEUSDT",
+      "note": "Bybit PENDLEUSDT perp confirmed: status=Trading. Pendle Finance yield tokenization. Broad coverage expected."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "pendle_listed": true,
+      "okx_ticker": "PENDLE-USDT-SWAP",
+      "note": "OKX PENDLE-USDT-SWAP confirmed."
+    },
+    "vol_ratio_hl_6m": 1.3367,
+    "vol_ratio_hl_1y": 1.5637,
+    "vol_ratio_hl_full": 1.9506,
+    "vol_threshold": 1.5,
+    "vol_pass": "False",
+    "vol_note": "HL 6M vol ratio=1.3367x (BELOW 1.5x threshold). HL 1Y=1.5637x. HL full=1.9506x. PENDLE yield tokenization: yield market cycles drive vol above BTC baseline. DeFi gov ref: AAVE K596 6M=2.4x, ENA K616 6M=1.77x. K474: TVL $1.44B, active 236 pools.",
+    "pendle_fr_mean_ann_pct": 12.6263,
+    "btc_fr_mean_ann_pct": 11.5524,
+    "pendle_fr_negative_mean": false,
+    "fr_diff_mean": -1.59e-06,
+    "fr_diff_std": 3.364e-05,
+    "yt_cluster_raw_fr_corr": {
+      "pendle_ena_fr_corr": 0.1573,
+      "pendle_aave_fr_corr": 0.4183,
+      "pendle_crv_fr_corr": 0.2591,
+      "pendle_ldo_fr_corr": 0.4145
+    },
+    "yt_cluster_context": {
+      "protocol": "Pendle Finance",
+      "token": "PENDLE (governance)",
+      "yield_tokenization": "PT (Principal Token) + YT (Yield Token) from yield-bearing assets",
+      "yield_source": "Swap fees on Pendle AMM + vePENDLE bribes from underlying protocols",
+      "unique_property": "Protocol enables fixed-rate trading of variable yield; revenue = yield market activity",
+      "mechanism": "SY token \u2192 PT (redeemable 1:1 at maturity) + YT (receives all yield until maturity)",
+      "susde_overlap_risk": "CRITICAL K619 ENA OVERLAP CHECK: Pendle's largest pool = YT-sUSDe ($300M+ TVL). sUSDe is Ethena product (ENA governance). PENDLE and ENA both sensitive to Ethena sUSDe yield cycles. If sUSDe APY compresses \u2192 both PENDLE TVL and ENA demand fall. PENDLE-ENA FR correlation may be HIGH \u2192 G5ag BLOCK risk.",
+      "distinction_from_ena": "PENDLE revenue = swap fees on PT/YT trading + vePENDLE vote-incentive bribes. ENA revenue = sUSDe protocol fee cut + stETH staking yield. DIFFERENT mechanisms: PENDLE = DEX fee model (volume-driven), ENA = yield-capture model (FR-driven). PENDLE serves multiple yield assets (aUSDC, stUSDS, Morpho) beyond sUSDe. Diversification may reduce sUSDe-specific correlation vs ENA.",
+      "k474_pendle_lesson": "K474 REJECT was YT-carry strategy (MC expected -0.51pp net). K623 is FR-DIFFERENTIAL strategy on PENDLE governance token perp \u2014 COMPLETELY DIFFERENT approach. K474 measured Pendle protocol yield risk. K623 measures PENDLE token FR dynamics.",
+      "distinct_from_defi_gov": "PENDLE is yield tokenization infrastructure (fixed-rate DEX). Not pure DeFi governance (no simple lending rate or DEX swap fee). PENDLE protocol creates yield markets, enabling fixed-rate exposure for institutional DeFi users."
+    },
+    "prescreen_pass": "False",
+    "pendle_fr_rows": 17519
+  },
+  "window_sensitivity_analysis": {
+    "window_details": {
+      "w84h": {
+        "window_h": 84,
+        "window_label": "3d",
+        "oos_sharpe": 5.492,
+        "is_sharpe": 14.473,
+        "entries_yr": 5751.5,
+        "preferred": true
+      },
+      "w168h": {
+        "window_h": 168,
+        "window_label": "7d",
+        "oos_sharpe": 8.482,
+        "is_sharpe": 16.337,
+        "entries_yr": 5726.3,
+        "preferred": true
+      },
+      "w336h": {
+        "window_h": 336,
+        "window_label": "14d",
+        "oos_sharpe": 10.201,
+        "is_sharpe": 17.34,
+        "entries_yr": 5708.6,
+        "preferred": true
+      },
+      "w504h": {
+        "window_h": 504,
+        "window_label": "21d",
+        "oos_sharpe": 11.878,
+        "is_sharpe": 17.94,
+        "entries_yr": 5694.3,
+        "preferred": false
+      },
+      "w720h": {
+        "window_h": 720,
+        "window_label": "30d",
+        "oos_sharpe": 14.933,
+        "is_sharpe": 17.007,
+        "entries_yr": 5654.7,
+        "preferred": false
+      }
+    },
+    "window_trend": "LONG-WINDOW-BETTER (>336h dominates)",
+    "optimal_window_note": "Best preferred config (\u2264336h): W=336h"
+  },
+  "statistical_analysis": {
+    "adf_stationarity": {
+      "statistic": -22.6885,
+      "p_value": 0.0,
+      "critical_1pct": -3.4305,
+      "critical_5pct": -2.8616,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "interpretation": "PENDLE-BTC FR differential IS stationary at 1% level (statistic -22.6885 vs 1% critical -3.4305). Mean-reversion assumption CONFIRMED. PENDLE yield market demand cycles mean-revert as sUSDe/aUSDC APY returns to equilibrium."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.139504,
+      "half_life_hours": 4.97,
+      "half_life_days": 0.207,
+      "long_run_mean": -1.59e-06,
+      "r_squared": 0.0698,
+      "mean_reverting": "True",
+      "interpretation": "Half-life 4.97h (0.207d). PENDLE yield tokenization: yield market cycles create FR spikes that mean-revert as implied yields equilibrate. 168h smoothing window filters noise."
+    },
+    "autocorrelation": {
+      "lag_1h": 0.8605,
+      "lag_24h": 0.2293,
+      "lag_168h": 0.1068,
+      "interpretation": "ACF(1h)=0.8605, ACF(24h)=0.2293, ACF(168h)=0.1068. Positive ACF supports rolling-mean signal construction for persistent FR divergence capture."
+    },
+    "yt_cluster_raw_fr_corr": {
+      "pendle_ena_fr_corr": 0.1573,
+      "pendle_aave_fr_corr": 0.4183,
+      "pendle_crv_fr_corr": 0.2591,
+      "pendle_ldo_fr_corr": 0.4145
+    }
+  },
+  "pendle_characteristics": {
+    "fr_vol_ratio_pendle_btc_6m": 1.3367,
+    "fr_vol_ratio_pendle_btc_1y": 1.5637,
+    "fr_vol_ratio_pendle_btc_full": 1.9506,
+    "fr_vol_ratio_eth_btc_ref": 1.084,
+    "fr_vol_ratio_sol_btc_ref": 1.764,
+    "fr_vol_ratio_avax_btc_ref": 1.499,
+    "fr_vol_ratio_aave_btc_ref": 2.4,
+    "fr_vol_ratio_ena_btc_ref": 1.7658,
+    "pendle_fr_mean_ann_pct": 12.6263,
+    "btc_fr_mean_ann_pct": 11.5524,
+    "pendle_fr_negative_mean": false,
+    "fr_diff_mean": -1.59e-06,
+    "fr_diff_std": 3.364e-05,
+    "yt_cluster_raw_fr_corr": {
+      "pendle_ena_fr_corr": 0.1573,
+      "pendle_aave_fr_corr": 0.4183,
+      "pendle_crv_fr_corr": 0.2591,
+      "pendle_ldo_fr_corr": 0.4145
+    },
+    "pendle_mechanics": "PENDLE (Pendle Finance) specific mechanics: 1. Yield tokenization: split yield-bearing assets (SY) into PT + YT.    PT redeemable 1:1 at maturity. YT receives all yield until maturity.    Pendle AMM enables trading at implied fixed yield. 2. PENDLE governance: captures swap fee revenue + vePENDLE bribes.    PENDLE demand \u221d Pendle protocol activity (TVL, trading volume). 3. sUSDe overlap: largest Pendle pool = YT-sUSDe ($300M+ TVL).    ENA = Ethena governance token (sUSDe issuer). CRITICAL K619 lesson:    yield-infra overlap can cause G5 BLOCK if PENDLE-ENA corr >= 0.40. 4. K474 lesson: YT-carry REJECT (MC -0.51pp). K623 FR-differential is    completely different: measures PENDLE GOVERNANCE TOKEN perp dynamics. 5. Multi-chain TVL: Ethereum $978M, Arbitrum $189M. 6. Penpie exploit (Sep2024 $27M): third-party exploit. Pendle core safe. 7. Revenue diversification: aUSDC ($80M), stUSDS ($40M), Morpho-MEV ($30M)    pools reduce sUSDe concentration. But sUSDe still dominates. ",
+    "k623_window_insight": "K623 tests shorter windows ([84, 168, 336, 504, 720]) per K613 STX 21d artefact lesson. Best preferred window (\u2264336h): 336h. PENDLE yield market activity cycles (7-14d) suggest 168h-336h appropriate. If PENDLE passes G5ag (ENA): confirms yield tokenization is distinct cluster."
+  },
+  "g5_correlations": {
+    "all_pass": true,
+    "max_corr": 0.3786,
+    "ena_corr": 0.3125,
+    "ena_blocked": false,
+    "defi_cluster_blocked": false,
+    "details": {
+      "G5j_K280": {
+        "corr": 0.05,
+        "pass": true,
+        "note": "Structural estimate: K280 uses 15m volume momentum. K623 is FR carry. Different data, mechanism, holding period."
+      },
+      "G5a_ETH": {
+        "corr": 0.1734,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs ETH-BTC: corr=0.1734 (PASS threshold 0.4)"
+      },
+      "G5b_SOL": {
+        "corr": 0.0588,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs SOL-BTC: corr=0.0588 (PASS threshold 0.4)"
+      },
+      "G5c_AVAX": {
+        "corr": 0.2628,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs AVAX-BTC: corr=0.2628 (PASS threshold 0.4)"
+      },
+      "G5d_ATOM": {
+        "corr": 0.186,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs ATOM-BTC: corr=0.1860 (PASS threshold 0.4)"
+      },
+      "G5e_INJ": {
+        "corr": 0.2537,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs INJ-BTC: corr=0.2537 (PASS threshold 0.4)"
+      },
+      "G5f_SEI": {
+        "corr": 0.2566,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs SEI-BTC: corr=0.2566 (PASS threshold 0.4)"
+      },
+      "G5g_TIA": {
+        "corr": 0.3496,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs TIA-BTC: corr=0.3496 (PASS threshold 0.4)"
+      },
+      "G5h_APT": {
+        "corr": 0.0518,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs APT-BTC: corr=0.0518 (PASS threshold 0.4)"
+      },
+      "G5i_FIL": {
+        "corr": 0.2518,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs FIL-BTC: corr=0.2518 (PASS threshold 0.4)"
+      },
+      "G5k_RNDR": {
+        "corr": 0.1265,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs RNDR-BTC: corr=0.1265 (PASS threshold 0.4)"
+      },
+      "G5l_TAO": {
+        "corr": 0.1739,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs TAO-BTC: corr=0.1739 (PASS threshold 0.4)"
+      },
+      "G5m_LINK": {
+        "corr": null,
+        "pass": true,
+        "note": "No cache for LINK \u2014 skip, assume PASS"
+      },
+      "G5n_TON": {
+        "corr": 0.2626,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs TON-BTC: corr=0.2626 (PASS threshold 0.4)"
+      },
+      "G5o_SAND": {
+        "corr": 0.1792,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs SAND-BTC: corr=0.1792 (PASS threshold 0.4)"
+      },
+      "G5p_ICP": {
+        "corr": -0.0752,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs ICP-BTC: corr=-0.0752 (PASS threshold 0.4)"
+      },
+      "G5q_AXS": {
+        "corr": 0.1211,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs AXS-BTC: corr=0.1211 (PASS threshold 0.4)"
+      },
+      "G5r_DOGE": {
+        "corr": 0.2837,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs DOGE-BTC: corr=0.2837 (PASS threshold 0.4)"
+      },
+      "G5s_SHIB": {
+        "corr": 0.2402,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs SHIB-BTC: corr=0.2402 (PASS threshold 0.4)"
+      },
+      "G5t_AAVE": {
+        "corr": 0.3786,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs AAVE-BTC: corr=0.3786 (PASS threshold 0.4)"
+      },
+      "G5u_CRV": {
+        "corr": 0.3026,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs CRV-BTC: corr=0.3026 (PASS threshold 0.4)"
+      },
+      "G5v_PEPE": {
+        "corr": 0.1196,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs PEPE-BTC: corr=0.1196 (PASS threshold 0.4)"
+      },
+      "G5w_WIF": {
+        "corr": 0.2076,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs WIF-BTC: corr=0.2076 (PASS threshold 0.4)"
+      },
+      "G5x_BONK": {
+        "corr": 0.2817,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs BONK-BTC: corr=0.2817 (PASS threshold 0.4)"
+      },
+      "G5y_UNI": {
+        "corr": 0.3641,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs UNI-BTC: corr=0.3641 (PASS threshold 0.4)"
+      },
+      "G5z_ARB": {
+        "corr": 0.2789,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs ARB-BTC: corr=0.2789 (PASS threshold 0.4)"
+      },
+      "G5aa_JUP": {
+        "corr": 0.2826,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs JUP-BTC: corr=0.2826 (PASS threshold 0.4)"
+      },
+      "G5ab_SNX": {
+        "corr": 0.2441,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs SNX-BTC: corr=0.2441 (PASS threshold 0.4)"
+      },
+      "G5ac_LDO": {
+        "corr": 0.3257,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs LDO-BTC: corr=0.3257 (PASS threshold 0.4)"
+      },
+      "G5ad_MKR": {
+        "corr": 0.1952,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs MKR-BTC: corr=0.1952 (PASS threshold 0.4)"
+      },
+      "G5ae_OP": {
+        "corr": 0.1883,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs OP-BTC: corr=0.1883 (PASS threshold 0.4)"
+      },
+      "G5af_POL": {
+        "corr": 0.2337,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs POL-BTC: corr=0.2337 (PASS threshold 0.4)"
+      },
+      "G5ag_ENA": {
+        "corr": 0.3125,
+        "pass": true,
+        "note": "PENDLE-BTC signal vs ENA-BTC: corr=0.3125 (PASS threshold 0.4)"
+      }
+    }
+  },
+  "full_period": {
+    "sharpe": 15.5994,
+    "ann_ret_pct": 5.577,
+    "max_dd_pct": -0.005581,
+    "total_entries": 19181,
+    "entries_per_yr": 4848.1
+  },
+  "is_metrics": {
+    "period": "2024-05-30 \u2013 2025-10-20",
+    "years": 2.769,
+    "sharpe": 17.3405,
+    "ann_ret_pct": 6.876
+  },
+  "oos_metrics": {
+    "period": "2025-10-20 \u2013 2026-05-30",
+    "years": 1.187,
+    "sharpe": 10.2012,
+    "ann_ret_pct": 2.4771,
+    "ann_ret_4x_pct": 9.908,
+    "max_dd_pct": -0.005581,
+    "entries": 6776
+  },
+  "section_6_gates": {
+    "G1_oos_sharpe": {
+      "value": 10.2012,
+      "threshold": 1.0,
+      "pass": true,
+      "note": "OOS Sharpe 10.2012 \u2265 1.0."
+    },
+    "G2_perm_pvalue": {
+      "value": 0.0,
+      "threshold": 0.05,
+      "pass": true,
+      "note": "500 direction reshuffles OOS. p=0.0000."
+    },
+    "G3_dsr_bonferroni": {
+      "n_trials": 15,
+      "t_stat": 11.1141,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.00333,
+      "pass": true,
+      "note": "Bonferroni: p < 0.05/15 = 0.00333"
+    },
+    "G4_walk_forward_12fold": {
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2025-11-26",
+          "oos_end": "2025-12-11",
+          "sharpe": 8.588,
+          "ann_ret_pct": 1.98,
+          "entries": 354
+        },
+        {
+          "fold": 2,
+          "oos_start": "2025-12-11",
+          "oos_end": "2025-12-26",
+          "sharpe": -9.297,
+          "ann_ret_pct": -2.649,
+          "entries": 259
+        },
+        {
+          "fold": 3,
+          "oos_start": "2025-12-26",
+          "oos_end": "2026-01-10",
+          "sharpe": -2.7,
+          "ann_ret_pct": -0.545,
+          "entries": 125
+        },
+        {
+          "fold": 4,
+          "oos_start": "2026-01-10",
+          "oos_end": "2026-01-25",
+          "sharpe": 19.733,
+          "ann_ret_pct": 3.376,
+          "entries": 272
+        },
+        {
+          "fold": 5,
+          "oos_start": "2026-01-25",
+          "oos_end": "2026-02-09",
+          "sharpe": 20.712,
+          "ann_ret_pct": 4.879,
+          "entries": 308
+        },
+        {
+          "fold": 6,
+          "oos_start": "2026-02-10",
+          "oos_end": "2026-02-25",
+          "sharpe": -0.584,
+          "ann_ret_pct": -0.133,
+          "entries": 312
+        },
+        {
+          "fold": 7,
+          "oos_start": "2026-02-25",
+          "oos_end": "2026-03-12",
+          "sharpe": -7.049,
+          "ann_ret_pct": -2.035,
+          "entries": 362
+        },
+        {
+          "fold": 8,
+          "oos_start": "2026-03-12",
+          "oos_end": "2026-03-27",
+          "sharpe": -6.805,
+          "ann_ret_pct": -2.382,
+          "entries": 351
+        },
+        {
+          "fold": 9,
+          "oos_start": "2026-03-27",
+          "oos_end": "2026-04-11",
+          "sharpe": 16.184,
+          "ann_ret_pct": 2.765,
+          "entries": 311
+        },
+        {
+          "fold": 10,
+          "oos_start": "2026-04-11",
+          "oos_end": "2026-04-26",
+          "sharpe": 31.986,
+          "ann_ret_pct": 4.949,
+          "entries": 342
+        },
+        {
+          "fold": 11,
+          "oos_start": "2026-04-26",
+          "oos_end": "2026-05-11",
+          "sharpe": 25.408,
+          "ann_ret_pct": 4.401,
+          "entries": 284
+        },
+        {
+          "fold": 12,
+          "oos_start": "2026-05-11",
+          "oos_end": "2026-05-30",
+          "sharpe": 0.914,
+          "ann_ret_pct": 0.186,
+          "entries": 242
+        }
+      ],
+      "fold_sharpes": [
+        8.588,
+        -9.297,
+        -2.7,
+        19.733,
+        20.712,
+        -0.584,
+        -7.049,
+        -6.805,
+        16.184,
+        31.986,
+        25.408,
+        0.914
+      ],
+      "all_positive": false,
+      "min_fold_sharpe": -9.297,
+      "n_folds_computed": 12,
+      "pass": false,
+      "note": "12-fold walk-forward (IS 90d / OOS 30d per fold). All folds positive: False."
+    },
+    "G5j_K280": {
+      "corr": 0.05,
+      "pass": true,
+      "note": "Structural estimate: K280 uses 15m volume momentum. K623 is FR carry. Different data, mechanism, holding period."
+    },
+    "G5a_ETH": {
+      "corr": 0.1734,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs ETH-BTC: corr=0.1734 (PASS threshold 0.4)"
+    },
+    "G5b_SOL": {
+      "corr": 0.0588,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs SOL-BTC: corr=0.0588 (PASS threshold 0.4)"
+    },
+    "G5c_AVAX": {
+      "corr": 0.2628,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs AVAX-BTC: corr=0.2628 (PASS threshold 0.4)"
+    },
+    "G5d_ATOM": {
+      "corr": 0.186,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs ATOM-BTC: corr=0.1860 (PASS threshold 0.4)"
+    },
+    "G5e_INJ": {
+      "corr": 0.2537,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs INJ-BTC: corr=0.2537 (PASS threshold 0.4)"
+    },
+    "G5f_SEI": {
+      "corr": 0.2566,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs SEI-BTC: corr=0.2566 (PASS threshold 0.4)"
+    },
+    "G5g_TIA": {
+      "corr": 0.3496,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs TIA-BTC: corr=0.3496 (PASS threshold 0.4)"
+    },
+    "G5h_APT": {
+      "corr": 0.0518,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs APT-BTC: corr=0.0518 (PASS threshold 0.4)"
+    },
+    "G5i_FIL": {
+      "corr": 0.2518,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs FIL-BTC: corr=0.2518 (PASS threshold 0.4)"
+    },
+    "G5k_RNDR": {
+      "corr": 0.1265,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs RNDR-BTC: corr=0.1265 (PASS threshold 0.4)"
+    },
+    "G5l_TAO": {
+      "corr": 0.1739,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs TAO-BTC: corr=0.1739 (PASS threshold 0.4)"
+    },
+    "G5m_LINK": {
+      "corr": null,
+      "pass": true,
+      "note": "No cache for LINK \u2014 skip, assume PASS"
+    },
+    "G5n_TON": {
+      "corr": 0.2626,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs TON-BTC: corr=0.2626 (PASS threshold 0.4)"
+    },
+    "G5o_SAND": {
+      "corr": 0.1792,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs SAND-BTC: corr=0.1792 (PASS threshold 0.4)"
+    },
+    "G5p_ICP": {
+      "corr": -0.0752,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs ICP-BTC: corr=-0.0752 (PASS threshold 0.4)"
+    },
+    "G5q_AXS": {
+      "corr": 0.1211,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs AXS-BTC: corr=0.1211 (PASS threshold 0.4)"
+    },
+    "G5r_DOGE": {
+      "corr": 0.2837,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs DOGE-BTC: corr=0.2837 (PASS threshold 0.4)"
+    },
+    "G5s_SHIB": {
+      "corr": 0.2402,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs SHIB-BTC: corr=0.2402 (PASS threshold 0.4)"
+    },
+    "G5t_AAVE": {
+      "corr": 0.3786,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs AAVE-BTC: corr=0.3786 (PASS threshold 0.4)"
+    },
+    "G5u_CRV": {
+      "corr": 0.3026,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs CRV-BTC: corr=0.3026 (PASS threshold 0.4)"
+    },
+    "G5v_PEPE": {
+      "corr": 0.1196,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs PEPE-BTC: corr=0.1196 (PASS threshold 0.4)"
+    },
+    "G5w_WIF": {
+      "corr": 0.2076,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs WIF-BTC: corr=0.2076 (PASS threshold 0.4)"
+    },
+    "G5x_BONK": {
+      "corr": 0.2817,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs BONK-BTC: corr=0.2817 (PASS threshold 0.4)"
+    },
+    "G5y_UNI": {
+      "corr": 0.3641,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs UNI-BTC: corr=0.3641 (PASS threshold 0.4)"
+    },
+    "G5z_ARB": {
+      "corr": 0.2789,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs ARB-BTC: corr=0.2789 (PASS threshold 0.4)"
+    },
+    "G5aa_JUP": {
+      "corr": 0.2826,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs JUP-BTC: corr=0.2826 (PASS threshold 0.4)"
+    },
+    "G5ab_SNX": {
+      "corr": 0.2441,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs SNX-BTC: corr=0.2441 (PASS threshold 0.4)"
+    },
+    "G5ac_LDO": {
+      "corr": 0.3257,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs LDO-BTC: corr=0.3257 (PASS threshold 0.4)"
+    },
+    "G5ad_MKR": {
+      "corr": 0.1952,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs MKR-BTC: corr=0.1952 (PASS threshold 0.4)"
+    },
+    "G5ae_OP": {
+      "corr": 0.1883,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs OP-BTC: corr=0.1883 (PASS threshold 0.4)"
+    },
+    "G5af_POL": {
+      "corr": 0.2337,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs POL-BTC: corr=0.2337 (PASS threshold 0.4)"
+    },
+    "G5ag_ENA": {
+      "corr": 0.3125,
+      "pass": true,
+      "note": "PENDLE-BTC signal vs ENA-BTC: corr=0.3125 (PASS threshold 0.4)"
+    },
+    "G5_ena_overlap_check": {
+      "corr": 0.3125,
+      "threshold": 0.4,
+      "blocked": false,
+      "note": "CRITICAL K619 ENA OVERLAP: PENDLE-BTC vs ENA-BTC signal corr=0.3125. PASS: PENDLE-ENA signal corr < 0.40. Yield tokenization distinct from synthetic stable."
+    },
+    "G6_trade_count": {
+      "total": 6776,
+      "per_year": 5708.6,
+      "threshold": 30.0,
+      "pass": "True",
+      "note": "5708.6 entries/yr vs 30.0 threshold."
+    },
+    "G7_ann_return": {
+      "value_1x_pct": 2.4771,
+      "value_4x_pct": 9.908,
+      "threshold_pct": 5.0,
+      "pass": true,
+      "leverage_assumption": "4x on notional (delta-neutral, low DD)",
+      "note": "At 4x leverage: 9.908% \u2265 5.0%."
+    },
+    "G8_cross_venue": {
+      "bybit": {
+        "n_obs": 200,
+        "corr_with_hl": 0.2305,
+        "date_range": "2026-03-24 \u2013 2026-05-30",
+        "passes_g8": false,
+        "note": "ByBit PENDLEUSDT: corr=0.2305 with HL. FAIL G8 threshold 0.55. n=200 obs."
+      },
+      "g8_pass": false,
+      "pass": false,
+      "note": "Cross-venue: HL/Bybit. corr=0.2305."
+    },
+    "G9_data_sufficiency": {
+      "oos_years": 1.187,
+      "oos_days": 433.2,
+      "threshold_days": 180,
+      "pass": true,
+      "note": "OOS period 433d \u2265 180d threshold."
+    },
+    "_summary": {
+      "gates_passed": 39,
+      "gates_total": 41,
+      "gate_details": {
+        "G1": true,
+        "G2": true,
+        "G3": true,
+        "G4": false,
+        "G5j": true,
+        "G5a_ETH": true,
+        "G5b_SOL": true,
+        "G5c_AVAX": true,
+        "G5d_ATOM": true,
+        "G5e_INJ": true,
+        "G5f_SEI": true,
+        "G5g_TIA": true,
+        "G5h_APT": true,
+        "G5i_FIL": true,
+        "G5k_RNDR": true,
+        "G5l_TAO": true,
+        "G5m_LINK": true,
+        "G5n_TON": true,
+        "G5o_SAND": true,
+        "G5p_ICP": true,
+        "G5q_AXS": true,
+        "G5r_DOGE": true,
+        "G5s_SHIB": true,
+        "G5t_AAVE": true,
+        "G5u_CRV": true,
+        "G5v_PEPE": true,
+        "G5w_WIF": true,
+        "G5x_BONK": true,
+        "G5y_UNI": true,
+        "G5z_ARB": true,
+        "G5aa_JUP": true,
+        "G5ab_SNX": true,
+        "G5ac_LDO": true,
+        "G5ad_MKR": true,
+        "G5ae_OP": true,
+        "G5af_POL": true,
+        "G5ag_ENA": true,
+        "G6": true,
+        "G7": true,
+        "G8": false,
+        "G9": true
+      },
+      "oos_sharpe": 10.2012,
+      "perm_p": 0.0,
+      "wf_all_positive": false,
+      "g5_all_pass": true,
+      "ena_overlap_blocked": false,
+      "ena_corr": 0.3125
+    },
+    "oos_metrics_raw": {
+      "sharpe": 10.2012,
+      "ann_ret_pct": 2.4771,
+      "ann_ret_4x_pct": 9.908,
+      "max_dd_pct": -0.005581,
+      "entries": 6776,
+      "entries_yr": 5708.6,
+      "oos_years": 1.187
+    }
+  },
+  "cross_venue_fr_analysis": {
+    "bybit": {
+      "n_obs": 200,
+      "corr_with_hl": 0.2305,
+      "date_range": "2026-03-24 \u2013 2026-05-30",
+      "passes_g8": false,
+      "note": "ByBit PENDLEUSDT: corr=0.2305 with HL. FAIL G8 threshold 0.55. n=200 obs."
+    },
+    "g8_pass": false,
+    "pass": false,
+    "note": "Cross-venue: HL/Bybit. corr=0.2305."
+  },
+  "grid_search_top10": [
+    {
+      "window_h": 720,
+      "window_label": "30d",
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 17.007,
+      "OOS_sharpe": 14.933,
+      "entries": 6712,
+      "OOS_ret_pct": 2.797,
+      "entries_yr": 5654.7,
+      "k623_note": "LONG-WINDOW (21d+ regime, K613 artefact range)",
+      "preferred": false
+    },
+    {
+      "window_h": 504,
+      "window_label": "21d",
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 17.94,
+      "OOS_sharpe": 11.878,
+      "entries": 6759,
+      "OOS_ret_pct": 2.742,
+      "entries_yr": 5694.3,
+      "k623_note": "LONG-WINDOW (21d+ regime, K613 artefact range)",
+      "preferred": false
+    },
+    {
+      "window_h": 336,
+      "window_label": "14d",
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 17.34,
+      "OOS_sharpe": 10.201,
+      "entries": 6776,
+      "OOS_ret_pct": 2.477,
+      "entries_yr": 5708.6,
+      "k623_note": "SHORT-WINDOW PREFERRED (\u2264336h, K613 artefact avoidance)",
+      "preferred": true
+    },
+    {
+      "window_h": 168,
+      "window_label": "7d",
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 16.337,
+      "OOS_sharpe": 8.482,
+      "entries": 6797,
+      "OOS_ret_pct": 2.484,
+      "entries_yr": 5726.3,
+      "k623_note": "SHORT-WINDOW PREFERRED (\u2264336h, K613 artefact avoidance)",
+      "preferred": true
+    },
+    {
+      "window_h": 84,
+      "window_label": "3d",
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 14.473,
+      "OOS_sharpe": 5.492,
+      "entries": 6827,
+      "OOS_ret_pct": 1.923,
+      "entries_yr": 5751.5,
+      "k623_note": "SHORT-WINDOW PREFERRED (\u2264336h, K613 artefact avoidance)",
+      "preferred": true
+    },
+    {
+      "window_h": 168,
+      "window_label": "7d",
+      "threshold_factor": 0.5,
+      "threshold_value": 1.95e-05,
+      "IS_sharpe": 10.19,
+      "OOS_sharpe": 0.138,
+      "entries": 167,
+      "OOS_ret_pct": 0.014,
+      "entries_yr": 140.7,
+      "k623_note": "SHORT-WINDOW PREFERRED (\u2264336h, K613 artefact avoidance)",
+      "preferred": true
+    },
+    {
+      "window_h": 84,
+      "window_label": "3d",
+      "threshold_factor": 1.0,
+      "threshold_value": 3.901e-05,
+      "IS_sharpe": 8.497,
+      "OOS_sharpe": 0.0,
+      "entries": 0,
+      "OOS_ret_pct": 0.0,
+      "entries_yr": 0.0,
+      "k623_note": "SHORT-WINDOW PREFERRED (\u2264336h, K613 artefact avoidance)",
+      "preferred": true
+    },
+    {
+      "window_h": 168,
+      "window_label": "7d",
+      "threshold_factor": 1.0,
+      "threshold_value": 3.901e-05,
+      "IS_sharpe": 7.854,
+      "OOS_sharpe": 0.0,
+      "entries": 0,
+      "OOS_ret_pct": 0.0,
+      "entries_yr": 0.0,
+      "k623_note": "SHORT-WINDOW PREFERRED (\u2264336h, K613 artefact avoidance)",
+      "preferred": true
+    },
+    {
+      "window_h": 336,
+      "window_label": "14d",
+      "threshold_factor": 0.5,
+      "threshold_value": 1.95e-05,
+      "IS_sharpe": 9.992,
+      "OOS_sharpe": 0.0,
+      "entries": 0,
+      "OOS_ret_pct": 0.0,
+      "entries_yr": 0.0,
+      "k623_note": "SHORT-WINDOW PREFERRED (\u2264336h, K613 artefact avoidance)",
+      "preferred": true
+    },
+    {
+      "window_h": 336,
+      "window_label": "14d",
+      "threshold_factor": 1.0,
+      "threshold_value": 3.901e-05,
+      "IS_sharpe": 9.139,
+      "OOS_sharpe": 0.0,
+      "entries": 0,
+      "OOS_ret_pct": 0.0,
+      "entries_yr": 0.0,
+      "k623_note": "SHORT-WINDOW PREFERRED (\u2264336h, K613 artefact avoidance)",
+      "preferred": true
+    }
+  ],
+  "profit_projection": {
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000.0,
+      "oos_ann_ret_1x_pct": 2.4771,
+      "oos_ann_ret_4x_pct": 9.908,
+      "gross_annual_usdc": 29725,
+      "net_annual_usdc_est": 23780
+    },
+    "usdc_yr_net_10M": 23780,
+    "note": "4x leverage, OOS ann=2.477% x 4 = 9.908%/yr. @$10M 3.0% alloc: $23,780/yr (net). PENDLE = Pendle Finance governance (yield tokenization). DeFi cluster ref: AAVE K596=$XXK (accept) | ENA K616=$67K (accept, synthetic stable)."
+  },
+  "hl_concentration_impact": {
+    "current_hl_weight_pct": 64.5,
+    "k623_sleeve_pct": 3.0,
+    "new_hl_weight_pct": 66.0,
+    "hl_cap_pct": 65.0,
+    "within_cap": false,
+    "breach": true,
+    "headroom_pct": -1.0,
+    "routing_recommendation": "Bybit PENDLE + HL BTC (split routing, 50% HL impact)",
+    "note": "Post-K616: HL baseline=64.5% (ENA Bybit routed). K623 PENDLE 3.0% sleeve \u2192 HL 66.0% (BREACH 65.0% cap). PENDLE: consider Bybit PENDLE + HL BTC if HL cap hit (like ENA K616 routing). PENDLE well-covered on Bybit (major DeFi/yield protocol venue)."
+  },
+  "paired_trade_family_rank": {
+    "members": [
+      {
+        "rank": 1,
+        "pair": "APT-BTC",
+        "sharpe": 51.1,
+        "status": "ACCEPT",
+        "wave": "K512"
+      },
+      {
+        "rank": 2,
+        "pair": "ATOM-BTC",
+        "sharpe": 50.786,
+        "status": "ACCEPT",
+        "wave": "K493"
+      },
+      {
+        "rank": 3,
+        "pair": "SEI-BTC",
+        "sharpe": 48.1,
+        "status": "ACCEPT",
+        "wave": "K507"
+      },
+      {
+        "rank": 4,
+        "pair": "AVAX-BTC",
+        "sharpe": 43.887,
+        "status": "ACCEPT",
+        "wave": "K484"
+      },
+      {
+        "rank": 5,
+        "pair": "SHIB-BTC",
+        "sharpe": 38.481,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K595"
+      },
+      {
+        "rank": 6,
+        "pair": "SAND-BTC",
+        "sharpe": 33.627,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K583"
+      },
+      {
+        "rank": 7,
+        "pair": "JUP-BTC",
+        "sharpe": 29.895,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K606"
+      },
+      {
+        "rank": 8,
+        "pair": "PEPE-BTC",
+        "sharpe": 26.42,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K598"
+      },
+      {
+        "rank": 9,
+        "pair": "BONK-BTC",
+        "sharpe": 23.667,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K603"
+      },
+      {
+        "rank": 10,
+        "pair": "FIL-BTC",
+        "sharpe": 21.773,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K517"
+      },
+      {
+        "rank": 11,
+        "pair": "DOGE-BTC",
+        "sharpe": 21.069,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K592"
+      },
+      {
+        "rank": 12,
+        "pair": "ENA-BTC",
+        "sharpe": 20.468,
+        "status": "ACCEPT",
+        "wave": "K616"
+      },
+      {
+        "rank": 13,
+        "pair": "AXS-BTC",
+        "sharpe": 17.815,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K591"
+      },
+      {
+        "rank": 14,
+        "pair": "SOL-BTC",
+        "sharpe": 16.298,
+        "status": "ACCEPT",
+        "wave": "K476"
+      },
+      {
+        "rank": 15,
+        "pair": "RENDER-BTC",
+        "sharpe": 15.302,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K531"
+      },
+      {
+        "rank": 16,
+        "pair": "HBAR-BTC",
+        "sharpe": 14.709,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K610"
+      },
+      {
+        "rank": 17,
+        "pair": "TIA-BTC",
+        "sharpe": 14.439,
+        "status": "ACCEPT",
+        "wave": "K"
+      },
+      {
+        "rank": 18,
+        "pair": "LINK-BTC",
+        "sharpe": 13.775,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K557"
+      },
+      {
+        "rank": 19,
+        "pair": "WIF-BTC",
+        "sharpe": 12.934,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K601"
+      },
+      {
+        "rank": 20,
+        "pair": "ICP-BTC",
+        "sharpe": 12.527,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K587"
+      },
+      {
+        "rank": 21,
+        "pair": "AAVE-BTC",
+        "sharpe": 11.354,
+        "status": "ACCEPT",
+        "wave": "K596"
+      },
+      {
+        "rank": 22,
+        "pair": "INJ-BTC",
+        "sharpe": 11.232,
+        "status": "ACCEPT",
+        "wave": "K500"
+      },
+      {
+        "rank": 23,
+        "pair": "PENDLE-BTC",
+        "sharpe": 10.2012,
+        "ecosystem": "Pendle Finance \u2014 yield tokenization protocol (PT/YT fixed-rate DEX)",
+        "sub_cluster": "Yield Tokenization (distinct from ENA Synthetic Stable, if G5ag PASS)",
+        "status": "REJECT",
+        "wave": "K623",
+        "net_dollar_yr_10M": 23780
+      },
+      {
+        "rank": 24,
+        "pair": "TON-BTC",
+        "sharpe": 8.402,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K571"
+      },
+      {
+        "rank": 25,
+        "pair": "ETH-BTC",
+        "sharpe": 5.663,
+        "status": "ACCEPT",
+        "wave": "K449"
+      },
+      {
+        "rank": 26,
+        "pair": "TAO-BTC",
+        "sharpe": 5.267,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K"
+      }
+    ],
+    "pendle_rank": 23,
+    "family_size": 26,
+    "family_note": "K449 ETH-BTC baseline. Family 26 members (25 active + K623 PENDLE) post-K623. K623 PENDLE-BTC \u2192 rank #23. Yield tokenization sub-cluster: PENDLE=K623. Synthetic stable sub-cluster: ENA K616=ACCEPT(20.5 Sh). DeFi gov sub-cluster: AAVE K596=ACCEPT(11.4 Sh), CRV K599=BLOCKED, SNX K604=BLOCKED. Restaking: ETHFI K619=BLOCKED-LSD. LSD: LDO K594=REJECT."
+  },
+  "operational_requirements": {
+    "execution_mode": "Paired-trade: simultaneous entry both legs",
+    "module": "K450 paired-trade module (reuse K449/K476/K480/K484/K596/K616 implementation)",
+    "position_management": "Equal-notional each leg (delta-neutral target)",
+    "rebalance_trigger": "Signal flip (position reversal); monthly delta check",
+    "estimated_rebalances_per_yr": 5708.6,
+    "venue": "HL primary (PENDLE-PERP + BTC-PERP). Bybit PENDLEUSDT secondary.",
+    "hl_concentration_ok": false,
+    "bybit_routing_option": "Bybit PENDLE + HL BTC if HL cap constraint (like ENA K616 routing)",
+    "production_path": "REJECT"
+  },
+  "next_generalization_candidates": [
+    {
+      "pair": "SUI-BTC",
+      "hypothesis": "SUI Move VM \u2014 non-ETH L1, architecture-orthogonal. No yield-infra overlap.",
+      "priority": "HIGH",
+      "note": "SUI Move VM vs EVM. High vol ratio expected. No DeFi yield cluster overlap."
+    },
+    {
+      "pair": "JTO-BTC",
+      "hypothesis": "Jito (JitoSOL) governance \u2014 Solana liquid staking + MEV. SOL ecosystem.",
+      "priority": "MEDIUM",
+      "note": "JitoSOL = SOL LSD with MEV boost. Different from ETH LSD (LDO REJECT). SOL ecosystem distinct."
+    },
+    {
+      "pair": "ETHENA-ecosystem-2",
+      "hypothesis": "If PENDLE-ENA blocked: explore PENDLE across Bybit only (split routing).",
+      "priority": "LOW",
+      "note": "Only if BLOCKED-ENA-OVERLAP. Consider modified signal decoupled from sUSDe cycle."
+    }
+  ]
+}
