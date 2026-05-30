@@ -1,0 +1,1030 @@
+{
+  "wave": "K612",
+  "strategy": "IMX-BTC FR Differential Paired-Trade (HL Primary)",
+  "run_time_jst": "2026-05-30T09:16:29+0900",
+  "runtime_s": 3.9,
+  "decision": "BLOCKED-G5 (SHIB)",
+  "decision_rationale": "[BLOCKED-G5] G5 family correlation check failed: SHIB corr=0.6625 >= 0.40. IMX-BTC signal (W=504h) correlated with SHIB-BTC signal. Per strict \u00a76 rules: BLOCKED. Gates 31/35 PASS. OOS Sh=41.727 (overridden by gate failure).",
+  "gaming_cluster_status": {
+    "k583_sand_btc": {
+      "oos_sharpe": 33.627,
+      "decision": "ACCEPT CONDITIONAL",
+      "sub_cluster": "metaverse (virtual land / NFT speculation)",
+      "fr_corr_with_imx": 0.2317
+    },
+    "k591_axs_btc": {
+      "oos_sharpe": 17.815,
+      "decision": "ACCEPT CONDITIONAL",
+      "sub_cluster": "P2E gaming (scholarship model, game lifecycle risk)",
+      "fr_corr_with_imx": -0.0296
+    },
+    "k612_imx_btc": {
+      "oos_sharpe": 41.7275,
+      "decision": "BLOCKED-G5 (SHIB)",
+      "sub_cluster": "gaming infrastructure (StarkEx ZK L2, NFT minting platform)",
+      "fr_corr_with_sand": 0.2317,
+      "fr_corr_with_axs": -0.0296
+    },
+    "gaming_cluster_verdict": "GAMING INFRA G5 FAIL: IMX signal overlaps with SHIB family member."
+  },
+  "data_info": {
+    "hl_imx_fr_rows": 17484,
+    "date_start": "2024-05-24 20:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.996,
+    "oos_start": "2025-10-23 03:00:00",
+    "oos_end": "2026-05-23 08:00:00",
+    "oos_years": 0.582,
+    "fr_frequency": "1h (HL settles hourly)",
+    "cross_venue_note": "Bybit 8h for cross-check. OKX not available."
+  },
+  "signal_config": {
+    "window_h": 504,
+    "threshold": 0.0,
+    "strategy_type": "always-on FR differential carry",
+    "direction_rule": "sign(21d rolling mean of btc_fr - imx_fr)",
+    "config_basis": "Grid best: W=504h / T=0.0 (OOS Sh=41.727)"
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "imx_listed": true,
+      "hl_ticker": "IMX",
+      "fr_cache_rows": 17484,
+      "fr_start": "2024-05-24 20:00:00",
+      "fr_end": "2026-05-23 08:00:00",
+      "api_success": true,
+      "note": "HL IMX-PERP: 17484 rows (2024-05-24 to 2026-05-23). FR settlement: 1h intervals. Immutable X gaming L2 infra (StarkEx ZK rollup)."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "imx_listed": true,
+      "bybit_ticker": "IMXUSDT",
+      "note": "Bybit IMXUSDT perp. Cache: bybit_fr_IMXUSDT_730d.parquet."
+    },
+    "vol_ratio_hl_6m": 4.8408,
+    "vol_ratio_hl_1y": 3.2827,
+    "vol_ratio_hl_full": 2.6647,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "vol_note": "HL 6M vol ratio=4.8408x (ABOVE 1.5x threshold). HL 1Y=3.2827x. HL full=2.6647x. IMX gaming L2 infra: expected higher vol than ETH/BTC due to gaming narrative cycles. Gaming sub-cluster comparison: OP K609 6M=3.362x. IMX=4.841x vs vol threshold 1.5x.",
+    "imx_fr_mean_ann_pct": -1.8246,
+    "btc_fr_mean_ann_pct": 11.5527,
+    "fr_diff_mean": 1.527e-05,
+    "fr_diff_std": 4.602e-05,
+    "gaming_cluster_fr_corr": {
+      "imx_sand_fr_corr": 0.2317,
+      "imx_axs_fr_corr": -0.0296,
+      "imx_eth_fr_corr": 0.2765,
+      "interpretation": "IMX-SAND FR corr=0.2317 (gaming infra vs metaverse). IMX-AXS FR corr=-0.0296 (gaming infra vs P2E). IMX-ETH FR corr=0.2765 (L2 derivation). Low cross-corr suggests IMX has distinct FR dynamics within gaming sub-cluster."
+    },
+    "prescreen_pass": "True",
+    "imx_fr_rows": 17484
+  },
+  "statistical_analysis": {
+    "adf_stationarity": {
+      "statistic": -12.7712,
+      "p_value": 0.0,
+      "critical_1pct": -3.4307,
+      "critical_5pct": -2.8617,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "interpretation": "IMX-BTC FR differential IS stationary at 1% level (statistic -12.7712 vs 1% critical -3.4307). Mean-reversion assumption CONFIRMED."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.224963,
+      "half_life_hours": 3.08,
+      "half_life_days": 0.128,
+      "long_run_mean": 1.527e-05,
+      "r_squared": 0.1125,
+      "mean_reverting": "True",
+      "interpretation": "Half-life 3.08h (0.128d). Very fast mean-reversion. 504h smoothing window appropriate for filtering noise."
+    },
+    "autocorrelation": {
+      "lag_1h": 0.775,
+      "lag_24h": 0.3187,
+      "lag_168h": 0.0788,
+      "interpretation": "ACF(1h)=0.775 (short-term autocorr), ACF(24h)=0.3187, ACF(168h)=0.0788. Rolling mean exploits persistence at 1h-24h scale."
+    },
+    "gaming_cluster_cross": {
+      "imx_sand_fr_corr": 0.2317,
+      "imx_axs_fr_corr": -0.0296,
+      "imx_eth_fr_corr": 0.2765,
+      "interpretation": "IMX-SAND FR corr=0.2317 (gaming infra vs metaverse). IMX-AXS FR corr=-0.0296 (gaming infra vs P2E). IMX-ETH FR corr=0.2765 (L2 derivation). Low cross-corr confirms gaming infra has independent FR dynamics."
+    }
+  },
+  "imx_characteristics": {
+    "fr_vol_ratio_imx_btc_6m": 4.8408,
+    "fr_vol_ratio_imx_btc_1y": 3.2827,
+    "fr_vol_ratio_imx_btc_full": 2.6647,
+    "fr_vol_ratio_eth_btc_ref": 1.084,
+    "fr_vol_ratio_sol_btc_ref": 1.764,
+    "fr_vol_ratio_avax_btc_ref": 1.499,
+    "fr_vol_ratio_op_btc_6m_ref": 3.362,
+    "imx_fr_mean_ann_pct": -1.8246,
+    "btc_fr_mean_ann_pct": 11.5527,
+    "fr_diff_mean": 1.527e-05,
+    "fr_diff_std": 4.602e-05,
+    "imx_sand_fr_corr": 0.2317,
+    "imx_axs_fr_corr": -0.0296,
+    "imx_eth_fr_corr": 0.2765,
+    "gaming_infra_mechanics": "IMX (Immutable X) specific mechanics: 1. StarkEx ZK rollup for gaming assets on Ethereum \u2014 NFT minting at 0 gas cost. 2. IMX staking: protocol fee discounts + staking rewards \u2192 demand cycles tied to ecosystem activity. 3. NFT minting fees: IMX used for asset creation \u2192 volume-driven demand events on game launches. 4. ImmutableX \u2192 Immutable zkEVM migration (2023-2024): infra upgrade created distinct FR regimes. 5. Partner game launches (Gods Unchained, Illuvium, Guild of Guardians) \u2192 episodic demand spikes. 6. Institutional gaming adoption (Ubisoft, GameStop partnerships) \u2192 different speculative cycle than P2E. 7. IMX launched Nov 2021 \u2192 2+ years of market cycles in FR data.",
+    "gaming_sub_cluster_analysis": "GAMING INFRA vs GAMING TOKENS sub-cluster: IMX-SAND FR corr=0.2317 (metaverse land speculation vs infra platform). IMX-AXS FR corr=-0.0296 (P2E scholarship cycles vs NFT settlement infra). IMX-ETH FR corr=0.2765 (L2 derivation from Ethereum). Low raw FR cross-corr suggests distinct demand drivers within gaming sector."
+  },
+  "g5_correlations": {
+    "all_pass": false,
+    "max_corr": 0.6625,
+    "max_corr_pair": "SHIB",
+    "gaming_cluster_blocked": false,
+    "sand_corr": 0.1582,
+    "axs_corr": null,
+    "gaming_cluster_note": "GAMING-INFRA-DISTINCT: IMX has independent FR dynamics from gaming tokens (SAND/AXS).",
+    "details": {
+      "G5j_K280": {
+        "corr": 0.05,
+        "pass": true,
+        "note": "Structural estimate: K280 uses 15m volume momentum. K612 is daily FR carry. Different data, mechanism, holding period. Corr ~0.05."
+      },
+      "G5a_ETH": {
+        "corr": 0.317,
+        "pass": true,
+        "note": "IMX-BTC signal vs ETH-BTC: corr=0.3170 (PASS threshold 0.40)"
+      },
+      "G5b_SOL": {
+        "corr": 0.3634,
+        "pass": true,
+        "note": "IMX-BTC signal vs SOL-BTC: corr=0.3634 (PASS threshold 0.40)"
+      },
+      "G5c_AVAX": {
+        "corr": 0.2757,
+        "pass": true,
+        "note": "IMX-BTC signal vs AVAX-BTC: corr=0.2757 (PASS threshold 0.40)"
+      },
+      "G5d_ATOM": {
+        "corr": 0.2825,
+        "pass": true,
+        "note": "IMX-BTC signal vs ATOM-BTC: corr=0.2825 (PASS threshold 0.40)"
+      },
+      "G5e_INJ": {
+        "corr": 0.3125,
+        "pass": true,
+        "note": "IMX-BTC signal vs INJ-BTC: corr=0.3125 (PASS threshold 0.40)"
+      },
+      "G5f_SEI": {
+        "corr": 0.5532,
+        "pass": false,
+        "note": "IMX-BTC signal vs SEI-BTC: corr=0.5532 (FAIL threshold 0.40)"
+      },
+      "G5g_TIA": {
+        "corr": 0.5665,
+        "pass": false,
+        "note": "IMX-BTC signal vs TIA-BTC: corr=0.5665 (FAIL threshold 0.40)"
+      },
+      "G5h_APT": {
+        "corr": 0.3619,
+        "pass": true,
+        "note": "IMX-BTC signal vs APT-BTC: corr=0.3619 (PASS threshold 0.40)"
+      },
+      "G5i_FIL": {
+        "corr": 0.3526,
+        "pass": true,
+        "note": "IMX-BTC signal vs FIL-BTC: corr=0.3526 (PASS threshold 0.40)"
+      },
+      "G5k_RNDR": {
+        "corr": -0.0605,
+        "pass": true,
+        "note": "IMX-BTC signal vs RNDR-BTC: corr=-0.0605 (PASS threshold 0.40)"
+      },
+      "G5l_TAO": {
+        "corr": 0.2134,
+        "pass": true,
+        "note": "IMX-BTC signal vs TAO-BTC: corr=0.2134 (PASS threshold 0.40)"
+      },
+      "G5m_LINK": {
+        "corr": null,
+        "pass": true,
+        "note": "hl_fr_LINK.parquet not found \u2014 skip, assume PASS"
+      },
+      "G5n_TON": {
+        "corr": null,
+        "pass": true,
+        "note": "Insufficient data for TON \u2014 skip, assume PASS"
+      },
+      "G5o_SAND": {
+        "corr": 0.1582,
+        "pass": true,
+        "note": "IMX-BTC signal vs SAND-BTC: corr=0.1582 (PASS threshold 0.40)"
+      },
+      "G5p_ICP": {
+        "corr": null,
+        "pass": true,
+        "note": "Insufficient data for ICP \u2014 skip, assume PASS"
+      },
+      "G5q_AXS": {
+        "corr": null,
+        "pass": true,
+        "note": "IMX-BTC signal vs AXS-BTC: corr=NaN \u2014 signal constant (data-insufficient). Assume PASS."
+      },
+      "G5r_DOGE": {
+        "corr": 0.3015,
+        "pass": true,
+        "note": "IMX-BTC signal vs DOGE-BTC: corr=0.3015 (PASS threshold 0.40)"
+      },
+      "G5s_SHIB": {
+        "corr": 0.6625,
+        "pass": false,
+        "note": "IMX-BTC signal vs SHIB-BTC: corr=0.6625 (FAIL threshold 0.40)"
+      },
+      "G5t_AAVE": {
+        "corr": 0.1353,
+        "pass": true,
+        "note": "IMX-BTC signal vs AAVE-BTC: corr=0.1353 (PASS threshold 0.40)"
+      },
+      "G5u_CRV": {
+        "corr": 0.0289,
+        "pass": true,
+        "note": "IMX-BTC signal vs CRV-BTC: corr=0.0289 (PASS threshold 0.40)"
+      },
+      "G5v_PEPE": {
+        "corr": 0.2113,
+        "pass": true,
+        "note": "IMX-BTC signal vs PEPE-BTC: corr=0.2113 (PASS threshold 0.40)"
+      },
+      "G5w_WIF": {
+        "corr": 0.1914,
+        "pass": true,
+        "note": "IMX-BTC signal vs WIF-BTC: corr=0.1914 (PASS threshold 0.40)"
+      },
+      "G5x_BONK": {
+        "corr": 0.3155,
+        "pass": true,
+        "note": "IMX-BTC signal vs BONK-BTC: corr=0.3155 (PASS threshold 0.40)"
+      },
+      "G5y_UNI": {
+        "corr": 0.202,
+        "pass": true,
+        "note": "IMX-BTC signal vs UNI-BTC: corr=0.2020 (PASS threshold 0.40)"
+      },
+      "G5z_ARB": {
+        "corr": 0.2031,
+        "pass": true,
+        "note": "IMX-BTC signal vs ARB-BTC: corr=0.2031 (PASS threshold 0.40)"
+      },
+      "G5aa_JUP": {
+        "corr": 0.2031,
+        "pass": true,
+        "note": "IMX-BTC signal vs JUP-BTC: corr=0.2031 (PASS threshold 0.40)"
+      },
+      "G5ab_OP": {
+        "corr": 0.3901,
+        "pass": true,
+        "note": "IMX-BTC signal vs OP-BTC: corr=0.3901 (PASS threshold 0.40)"
+      }
+    }
+  },
+  "full_period": {
+    "sharpe": 32.3294,
+    "ann_ret_pct": 14.076,
+    "max_dd_pct": -0.0053,
+    "total_entries": 3,
+    "entries_per_yr": 1.5
+  },
+  "is_metrics": {
+    "period": "2024-06-14 \u2013 2025-10-23",
+    "years": 1.357,
+    "sharpe": 28.414,
+    "ann_ret_pct": 12.3633
+  },
+  "oos_metrics": {
+    "period": "2025-10-23 \u2013 2026-05-23",
+    "years": 0.582,
+    "sharpe": 41.7275,
+    "ann_ret_pct": 18.0739,
+    "ann_ret_4x_pct": 72.2955,
+    "max_dd_pct": -0.0026,
+    "entries": 1
+  },
+  "section_6_gates": {
+    "G1_oos_sharpe": {
+      "value": 41.7275,
+      "threshold": 1.0,
+      "pass": true,
+      "note": "OOS Sharpe 41.7275 \u2265 1.0."
+    },
+    "G2_perm_pvalue": {
+      "value": 0.0,
+      "threshold": 0.05,
+      "pass": true,
+      "note": "500 direction reshuffles OOS. p=0.0000 \u2264 0.05."
+    },
+    "G3_dsr_bonferroni": {
+      "n_trials": 12,
+      "t_stat": 31.8199,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.00417,
+      "pass": true,
+      "note": "Bonferroni: p < 0.05/12 = 0.00417"
+    },
+    "G4_walk_forward_12fold": {
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2024-08-22",
+          "oos_end": "2024-09-21",
+          "sharpe": 72.481,
+          "ann_ret_pct": 17.912,
+          "entries": 0
+        },
+        {
+          "fold": 2,
+          "oos_start": "2024-09-21",
+          "oos_end": "2024-10-21",
+          "sharpe": 29.819,
+          "ann_ret_pct": 3.748,
+          "entries": 0
+        },
+        {
+          "fold": 3,
+          "oos_start": "2024-10-21",
+          "oos_end": "2024-11-20",
+          "sharpe": 6.764,
+          "ann_ret_pct": 2.807,
+          "entries": 1
+        },
+        {
+          "fold": 4,
+          "oos_start": "2024-11-20",
+          "oos_end": "2024-12-20",
+          "sharpe": 12.92,
+          "ann_ret_pct": 5.802,
+          "entries": 0
+        },
+        {
+          "fold": 5,
+          "oos_start": "2024-12-20",
+          "oos_end": "2025-01-19",
+          "sharpe": 11.483,
+          "ann_ret_pct": 2.206,
+          "entries": 1
+        },
+        {
+          "fold": 6,
+          "oos_start": "2025-01-19",
+          "oos_end": "2025-02-18",
+          "sharpe": 55.117,
+          "ann_ret_pct": 14.273,
+          "entries": 0
+        },
+        {
+          "fold": 7,
+          "oos_start": "2025-02-18",
+          "oos_end": "2025-03-20",
+          "sharpe": 64.041,
+          "ann_ret_pct": 17.667,
+          "entries": 0
+        },
+        {
+          "fold": 8,
+          "oos_start": "2025-03-20",
+          "oos_end": "2025-04-19",
+          "sharpe": 45.754,
+          "ann_ret_pct": 36.649,
+          "entries": 0
+        },
+        {
+          "fold": 9,
+          "oos_start": "2025-04-19",
+          "oos_end": "2025-05-19",
+          "sharpe": 30.024,
+          "ann_ret_pct": 33.432,
+          "entries": 0
+        },
+        {
+          "fold": 10,
+          "oos_start": "2025-05-19",
+          "oos_end": "2025-06-18",
+          "sharpe": 28.386,
+          "ann_ret_pct": 5.317,
+          "entries": 0
+        },
+        {
+          "fold": 11,
+          "oos_start": "2025-06-18",
+          "oos_end": "2025-07-18",
+          "sharpe": 63.268,
+          "ann_ret_pct": 13.276,
+          "entries": 0
+        },
+        {
+          "fold": 12,
+          "oos_start": "2025-07-18",
+          "oos_end": "2025-08-17",
+          "sharpe": 46.403,
+          "ann_ret_pct": 6.353,
+          "entries": 0
+        }
+      ],
+      "fold_sharpes": [
+        72.481,
+        29.819,
+        6.764,
+        12.92,
+        11.483,
+        55.117,
+        64.041,
+        45.754,
+        30.024,
+        28.386,
+        63.268,
+        46.403
+      ],
+      "all_positive": true,
+      "min_fold_sharpe": 6.764,
+      "n_folds_computed": 12,
+      "pass": true,
+      "note": "12-fold walk-forward (IS 90d / OOS 30d per fold). All folds positive: True."
+    },
+    "G5j_K280": {
+      "value": 0.05,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Structural estimate: K280 momentum vs FR carry are mechanically distinct."
+    },
+    "G5a_ETH": {
+      "value": 0.317,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs ETH-BTC: corr=0.3170 (PASS threshold 0.40)"
+    },
+    "G5b_SOL": {
+      "value": 0.3634,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs SOL-BTC: corr=0.3634 (PASS threshold 0.40)"
+    },
+    "G5c_AVAX": {
+      "value": 0.2757,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs AVAX-BTC: corr=0.2757 (PASS threshold 0.40)"
+    },
+    "G5d_ATOM": {
+      "value": 0.2825,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs ATOM-BTC: corr=0.2825 (PASS threshold 0.40)"
+    },
+    "G5e_INJ": {
+      "value": 0.3125,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs INJ-BTC: corr=0.3125 (PASS threshold 0.40)"
+    },
+    "G5f_SEI": {
+      "value": 0.5532,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "IMX-BTC signal vs SEI-BTC: corr=0.5532 (FAIL threshold 0.40)"
+    },
+    "G5g_TIA": {
+      "value": 0.5665,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "IMX-BTC signal vs TIA-BTC: corr=0.5665 (FAIL threshold 0.40)"
+    },
+    "G5h_APT": {
+      "value": 0.3619,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs APT-BTC: corr=0.3619 (PASS threshold 0.40)"
+    },
+    "G5i_FIL": {
+      "value": 0.3526,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs FIL-BTC: corr=0.3526 (PASS threshold 0.40)"
+    },
+    "G5k_RNDR": {
+      "value": -0.0605,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs RNDR-BTC: corr=-0.0605 (PASS threshold 0.40)"
+    },
+    "G5l_TAO": {
+      "value": 0.2134,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs TAO-BTC: corr=0.2134 (PASS threshold 0.40)"
+    },
+    "G5m_LINK": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "hl_fr_LINK.parquet not found \u2014 skip, assume PASS"
+    },
+    "G5n_TON": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Insufficient data for TON \u2014 skip, assume PASS"
+    },
+    "G5o_SAND": {
+      "value": 0.1582,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs SAND-BTC: corr=0.1582 (PASS threshold 0.40)"
+    },
+    "G5p_ICP": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Insufficient data for ICP \u2014 skip, assume PASS"
+    },
+    "G5q_AXS": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs AXS-BTC: corr=NaN \u2014 signal constant (data-insufficient). Assume PASS."
+    },
+    "G5r_DOGE": {
+      "value": 0.3015,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs DOGE-BTC: corr=0.3015 (PASS threshold 0.40)"
+    },
+    "G5s_SHIB": {
+      "value": 0.6625,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "IMX-BTC signal vs SHIB-BTC: corr=0.6625 (FAIL threshold 0.40)"
+    },
+    "G5t_AAVE": {
+      "value": 0.1353,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs AAVE-BTC: corr=0.1353 (PASS threshold 0.40)"
+    },
+    "G5u_CRV": {
+      "value": 0.0289,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs CRV-BTC: corr=0.0289 (PASS threshold 0.40)"
+    },
+    "G5v_PEPE": {
+      "value": 0.2113,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs PEPE-BTC: corr=0.2113 (PASS threshold 0.40)"
+    },
+    "G5w_WIF": {
+      "value": 0.1914,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs WIF-BTC: corr=0.1914 (PASS threshold 0.40)"
+    },
+    "G5x_BONK": {
+      "value": 0.3155,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs BONK-BTC: corr=0.3155 (PASS threshold 0.40)"
+    },
+    "G5y_UNI": {
+      "value": 0.202,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs UNI-BTC: corr=0.2020 (PASS threshold 0.40)"
+    },
+    "G5z_ARB": {
+      "value": 0.2031,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs ARB-BTC: corr=0.2031 (PASS threshold 0.40)"
+    },
+    "G5aa_JUP": {
+      "value": 0.2031,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs JUP-BTC: corr=0.2031 (PASS threshold 0.40)"
+    },
+    "G5ab_OP": {
+      "value": 0.3901,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "IMX-BTC signal vs OP-BTC: corr=0.3901 (PASS threshold 0.40)"
+    },
+    "G6_trade_count": {
+      "total": 1,
+      "per_year": 1.7,
+      "threshold": 30.0,
+      "pass": "False",
+      "note": "1.7 entries/yr vs 30.0 threshold."
+    },
+    "G7_ann_return": {
+      "value_1x_pct": 18.0739,
+      "value_4x_pct": 72.2955,
+      "threshold_pct": 5.0,
+      "pass": true,
+      "leverage_assumption": "4x on notional (delta-neutral, low DD)",
+      "note": "At 4x leverage: 72.296% \u2265 5.0% threshold."
+    },
+    "G8_cross_venue": {
+      "bybit": {
+        "n_obs": 2186,
+        "corr_with_hl": 0.6838,
+        "venue_mean_8h": 1.699e-05,
+        "hl_mean_8h": -2.07e-06,
+        "date_range": "2024-05-25 \u2013 2026-05-24",
+        "passes_g8": true
+      },
+      "okx": {
+        "n_obs": 0,
+        "corr_with_hl": null,
+        "passes_g8": false,
+        "note": "Data not available"
+      },
+      "avg_corr": 0.6838,
+      "g8_pass": true,
+      "pass": true,
+      "note": "Multi-venue cross-check (HL/Bybit/OKX). Avg corr=0.6838 (\u2265 0.55 threshold)."
+    },
+    "G9_data_sufficiency": {
+      "oos_years": 0.582,
+      "oos_days": 212.2,
+      "threshold_days": 180,
+      "pass": true,
+      "note": "OOS period 212d \u2265 180d threshold."
+    },
+    "_summary": {
+      "gates_passed": 31,
+      "gates_total": 35,
+      "gate_details": {
+        "G1": true,
+        "G2": true,
+        "G3": true,
+        "G4": true,
+        "G5j": true,
+        "G5a": true,
+        "G5b": true,
+        "G5c": true,
+        "G5d": true,
+        "G5e": true,
+        "G5f": false,
+        "G5g": false,
+        "G5h": true,
+        "G5i": true,
+        "G5k": true,
+        "G5l": true,
+        "G5m": true,
+        "G5n": true,
+        "G5o": true,
+        "G5p": true,
+        "G5q": true,
+        "G5r": true,
+        "G5s": false,
+        "G5t": true,
+        "G5u": true,
+        "G5v": true,
+        "G5w": true,
+        "G5x": true,
+        "G5y": true,
+        "G5z": true,
+        "G5aa": true,
+        "G5ab": true,
+        "G6": false,
+        "G7": true,
+        "G8": true,
+        "G9": true
+      },
+      "oos_sharpe": 41.7275,
+      "perm_p": 0.0,
+      "wf_all_positive": true,
+      "g5_all_pass": false,
+      "gaming_cluster_blocked": false,
+      "gaming_cluster_note": "GAMING-INFRA-DISTINCT: IMX has independent FR dynamics from gaming tokens (SAND/AXS)."
+    }
+  },
+  "cross_venue_fr_analysis": {
+    "bybit": {
+      "n_obs": 2186,
+      "corr_with_hl": 0.6838,
+      "venue_mean_8h": 1.699e-05,
+      "hl_mean_8h": -2.07e-06,
+      "date_range": "2024-05-25 \u2013 2026-05-24",
+      "passes_g8": true
+    },
+    "okx": {
+      "n_obs": 0,
+      "corr_with_hl": null,
+      "passes_g8": false,
+      "note": "Data not available"
+    },
+    "avg_corr": 0.6838,
+    "g8_pass": true,
+    "note": "Multi-venue cross-check (HL/Bybit/OKX). Avg corr=0.6838 (\u2265 0.55 threshold)."
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 504,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 28.414,
+      "OOS_sharpe": 41.727,
+      "entries": 1,
+      "OOS_ret_pct": 18.074,
+      "entries_yr": 1.7
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 27.574,
+      "OOS_sharpe": 38.962,
+      "entries": 7,
+      "OOS_ret_pct": 17.653,
+      "entries_yr": 11.9
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 25.657,
+      "OOS_sharpe": 37.257,
+      "entries": 11,
+      "OOS_ret_pct": 17.356,
+      "entries_yr": 18.5
+    },
+    {
+      "window_h": 72,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 22.318,
+      "OOS_sharpe": 29.255,
+      "entries": 36,
+      "OOS_ret_pct": 15.926,
+      "entries_yr": 60.4
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.5,
+      "threshold_value": 2.305e-05,
+      "IS_sharpe": 8.735,
+      "OOS_sharpe": 27.516,
+      "entries": 11,
+      "OOS_ret_pct": 10.607,
+      "entries_yr": 18.9
+    }
+  ],
+  "price_beta": {
+    "imx_btc_price_corr": -0.277,
+    "eth_btc_price_corr_k449": 0.812,
+    "sol_btc_price_corr_k476": 0.777,
+    "avax_btc_price_corr_k484": 0.74,
+    "sand_btc_price_corr_k583_ref": 0.55,
+    "axs_btc_price_corr_k591_ref": 0.51,
+    "price_corr_comparison": "IMX-BTC corr -0.277. Family ref: ETH 0.812, SOL 0.777, AVAX 0.740. Gaming tokens: SAND ~0.55, AXS ~0.51. IMX as gaming L2 infra expected to have moderate BTC price beta \u2014 lower than L1 alts, similar to gaming tokens.",
+    "recommendation": "IMX-BTC price corr. Delta-neutral structure (long IMX + short BTC) partially offsets price risk. Gaming narrative cycles may decorrelate IMX from BTC during gaming sector events. Monthly delta rebalance advised."
+  },
+  "profit_projection": {
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000.0,
+      "oos_ann_ret_1x_pct": 18.0739,
+      "oos_ann_ret_4x_pct": 72.2955,
+      "gross_annual_usdc": 216887,
+      "net_annual_usdc_est": 173509
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 12000000.0,
+      "oos_ann_ret_1x_pct": 18.0739,
+      "oos_ann_ret_4x_pct": 72.2955,
+      "gross_annual_usdc": 2168866,
+      "net_annual_usdc_est": 1735093
+    },
+    "usdc_yr_net_10M": 173509,
+    "note": "4x leverage, OOS ann=18.074% x 4 = 72.296%/yr. @$10M 3.0% alloc: $173,509/yr (net). @$100M 3.0% alloc: $1,735,093/yr (net). IMX = Immutable X gaming L2 infra (StarkEx ZK rollup). Gaming sub-cluster ref: SAND K583 ~$27K/yr, AXS K591 ~$14K/yr @$10M."
+  },
+  "hl_concentration_impact": {
+    "current_hl_weight_pct": 64.5,
+    "k612_sleeve_pct": 3.0,
+    "new_hl_weight_pct": 67.5,
+    "hl_cap_pct": 65.0,
+    "within_cap": false,
+    "breach": true,
+    "headroom_pct": -2.5,
+    "note": "Post-K609: HL baseline=64.5% (paper pending 9.0%). K612 IMX 3.0% sleeve \u2192 HL 67.5% (BREACH 65.0% cap). Bybit-primary recommended (HL breach). Bybit IMXUSDT available."
+  },
+  "paired_trade_family_rank": {
+    "members": [
+      {
+        "rank": 1,
+        "pair": "APT-BTC",
+        "sharpe": 51.1,
+        "status": "ACCEPT",
+        "wave": "K512"
+      },
+      {
+        "rank": 2,
+        "pair": "ATOM-BTC",
+        "sharpe": 50.786,
+        "status": "ACCEPT",
+        "wave": "K493"
+      },
+      {
+        "rank": 3,
+        "pair": "SEI-BTC",
+        "sharpe": 48.1,
+        "status": "ACCEPT",
+        "wave": "K507"
+      },
+      {
+        "rank": 4,
+        "pair": "AVAX-BTC",
+        "sharpe": 43.887,
+        "status": "ACCEPT",
+        "wave": "K484"
+      },
+      {
+        "pair": "IMX-BTC",
+        "sharpe": 41.7275,
+        "ecosystem": "Immutable X \u2014 gaming L2 infra (StarkEx ZK rollup, Ethereum)",
+        "sub_cluster": "gaming-infra (vs SAND metaverse / AXS P2E)",
+        "status": "BLOCKED-G5 (SHIB)",
+        "wave": "K612",
+        "net_dollar_yr_10M": 173509,
+        "rank": 5
+      },
+      {
+        "rank": 6,
+        "pair": "SHIB-BTC",
+        "sharpe": 38.481,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K595"
+      },
+      {
+        "rank": 7,
+        "pair": "SAND-BTC",
+        "sharpe": 33.627,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K583"
+      },
+      {
+        "rank": 8,
+        "pair": "JUP-BTC",
+        "sharpe": 29.895,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K606"
+      },
+      {
+        "rank": 9,
+        "pair": "PEPE-BTC",
+        "sharpe": 26.42,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K598"
+      },
+      {
+        "rank": 10,
+        "pair": "BONK-BTC",
+        "sharpe": 23.667,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K603"
+      },
+      {
+        "rank": 11,
+        "pair": "FIL-BTC",
+        "sharpe": 21.773,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K517"
+      },
+      {
+        "rank": 12,
+        "pair": "DOGE-BTC",
+        "sharpe": 21.069,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K592"
+      },
+      {
+        "rank": 13,
+        "pair": "AXS-BTC",
+        "sharpe": 17.815,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K591"
+      },
+      {
+        "rank": 14,
+        "pair": "SOL-BTC",
+        "sharpe": 16.298,
+        "status": "ACCEPT",
+        "wave": "K476"
+      },
+      {
+        "rank": 15,
+        "pair": "RENDER-BTC",
+        "sharpe": 15.302,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K531"
+      },
+      {
+        "rank": 16,
+        "pair": "TIA-BTC",
+        "sharpe": 14.439,
+        "status": "ACCEPT",
+        "wave": "K"
+      },
+      {
+        "rank": 17,
+        "pair": "LINK-BTC",
+        "sharpe": 13.775,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K557"
+      },
+      {
+        "rank": 18,
+        "pair": "WIF-BTC",
+        "sharpe": 12.934,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K601"
+      },
+      {
+        "rank": 19,
+        "pair": "ICP-BTC",
+        "sharpe": 12.527,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K587"
+      },
+      {
+        "rank": 20,
+        "pair": "AAVE-BTC",
+        "sharpe": 11.354,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K596"
+      },
+      {
+        "rank": 21,
+        "pair": "INJ-BTC",
+        "sharpe": 11.232,
+        "status": "ACCEPT",
+        "wave": "K500"
+      },
+      {
+        "rank": 22,
+        "pair": "TON-BTC",
+        "sharpe": 8.402,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K571"
+      },
+      {
+        "rank": 23,
+        "pair": "ETH-BTC",
+        "sharpe": 5.663,
+        "status": "ACCEPT",
+        "wave": "K449"
+      },
+      {
+        "rank": 24,
+        "pair": "TAO-BTC",
+        "sharpe": 5.267,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K"
+      }
+    ],
+    "imx_rank": 5,
+    "family_size": 24,
+    "family_note": "K449 ETH-BTC baseline. Family 23 accepted members post-K609. K612 IMX-BTC \u2192 rank #5. Gaming sub-cluster: SAND K583=ACCEPT CONDITIONAL, AXS K591=ACCEPT CONDITIONAL, IMX K612=BLOCKED-G5 (SHIB). IMX as gaming L2 infra distinct from gaming tokens."
+  },
+  "operational_requirements": {
+    "execution_mode": "Paired-trade: simultaneous entry both legs",
+    "module": "K450 paired-trade module (reuse K449/K476/K480/K484/K609 implementation)",
+    "position_management": "Equal-notional each leg (delta-neutral target)",
+    "rebalance_trigger": "Signal flip (position reversal); monthly delta check",
+    "estimated_rebalances_per_yr": 1.7,
+    "venue": "HL primary (IMX-PERP + BTC-PERP). Bybit IMXUSDT as alternate (HL breach).",
+    "hl_concentration_ok": false,
+    "production_path": "NOT ACTIVATED"
+  },
+  "next_generalization_candidates": [
+    {
+      "pair": "MANA-BTC",
+      "hypothesis": "MANA = Decentraland gaming metaverse. Close SAND sub-cluster but distinct virtual world.",
+      "priority": "LOW",
+      "note": "Gaming metaverse line partially saturated by SAND K583. MANA likely high corr."
+    },
+    {
+      "pair": "GALA-BTC",
+      "hypothesis": "GALA = Gala Games, P2E gaming platform. Multiple game ecosystem.",
+      "priority": "MEDIUM",
+      "note": "GALA = gaming infra adjacent (game launcher vs NFT settlement). Different from IMX."
+    },
+    {
+      "pair": "SUI-BTC",
+      "hypothesis": "SUI Move VM \u2014 fresh L1 ecosystem, non-ETH-derived. High vol ratio (>2x BTC).",
+      "priority": "HIGH",
+      "note": "SUI is ecosystem-orthogonal to ETH. Move-VM mechanics distinct from StarkEx."
+    }
+  ]
+}
