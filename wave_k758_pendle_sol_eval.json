@@ -1,0 +1,958 @@
+{
+  "wave": "K758",
+  "strategy": "PENDLE-SOL FR Differential (yield-trading DeFi vs SVM)",
+  "pair": "PENDLE-SOL",
+  "run_time_jst": "2026-05-30T21:10:00+09:00",
+  "runtime_s": 2.1,
+  "decision": "BLOCKED-L004-G5q",
+  "decision_rationale": "PENDLE-SOL BLOCKED: dual failure \u2014 L004 carry-stable + G5 collinearity (G5q_k721_ldo_sol, G5s_k735_hbar_sol, G5u_k739_fil_sol). L004: PENDLE_FR>0 full=90.2% OOS=86.9% (BOTH > 80% threshold) \u2192 yield-trading protocol structural carry bias. AAVE K748 parallel: lending protocols and yield-trading protocols both extract carry from DeFi capital \u2192 perpetual positive FR. G5q (LDO-SOL): PENDLE-SOL corr >0.40 at all windows (W=48: 0.4166, W=84: 0.4637, W=168: 0.4486). G5s (HBAR-SOL): max corr=0.5071. G5u (FIL-SOL): max corr=0.4232. Meta-narrative cluster: PENDLE (yield-trading) + LDO (liquid staking) both capture ETH DeFi yield capital flows \u2192 structural signal overlap. G5s/G5u overlap: SOL-beta cluster contamination across windows. Per feedback_meta_narrative_cluster_rule: ETH DeFi yield cluster overlap is stronger reject signal than G5 alone. OOS Sh=58.5527 technically strong but structurally invalid due to carry contamination + cluster overlap.",
+  "blocked_reason": {
+    "l004_carry_stable": true,
+    "l004_full_pct": 90.2,
+    "l004_oos_pct": 86.9,
+    "g5q_ldo_sol_fail": true,
+    "g5q_corr_w48": 0.4166,
+    "g5q_corr_w84": 0.4637,
+    "g5q_corr_w168": 0.4486,
+    "lesson": "ETH DeFi yield cluster: PENDLE yield-trading + LDO liquid staking collinear"
+  },
+  "data_info": {
+    "pendle_rows": 17519,
+    "sol_rows": 17512,
+    "pendle_range": "2024-05-30 to 2026-05-30",
+    "sol_range": "2024-05-23 to 2026-05-23",
+    "is_end": "2025-10-25",
+    "hl_pendle_confirmed": true,
+    "bybit_pendle_confirmed": false,
+    "okx_pendle_confirmed": false,
+    "hl_cap_pct": 66.8
+  },
+  "signal_config": {
+    "canonical_window_h": 48,
+    "threshold": 0.0,
+    "leverage": 4.0,
+    "sleeve_pct": 0.025
+  },
+  "phase0a_mr9": {
+    "verdict": "CLEAR",
+    "mr9_all_clear": true,
+    "pendle_not_in_v_altalt": true,
+    "vertex_set_v": [
+      "APT",
+      "ATOM",
+      "AVAX",
+      "BNB",
+      "ENA",
+      "FIL",
+      "HBAR",
+      "INJ",
+      "LDO",
+      "PEPE",
+      "SEI",
+      "SOL",
+      "TIA",
+      "TAO"
+    ],
+    "algebraic_checks": {
+      "APT": {
+        "max_raw_err_pendle_vs_x": 0.002332326,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002332327,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 APT: max_err=2.332e-03. MR9 CLEAR."
+      },
+      "ATOM": {
+        "max_raw_err_pendle_vs_x": 0.002334068,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002334068,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 ATOM: max_err=2.334e-03. MR9 CLEAR."
+      },
+      "AVAX": {
+        "max_raw_err_pendle_vs_x": 0.002315182,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002315182,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 AVAX: max_err=2.315e-03. MR9 CLEAR."
+      },
+      "BNB": {
+        "max_raw_err_pendle_vs_x": 0.002356747,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002356747,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 BNB: max_err=2.357e-03. MR9 CLEAR."
+      },
+      "ENA": {
+        "max_raw_err_pendle_vs_x": 0.002096549,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002096549,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 ENA: max_err=2.097e-03. MR9 CLEAR."
+      },
+      "FIL": {
+        "max_raw_err_pendle_vs_x": 0.002356747,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002356747,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 FIL: max_err=2.357e-03. MR9 CLEAR."
+      },
+      "HBAR": {
+        "max_raw_err_pendle_vs_x": 0.002318098,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002318098,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 HBAR: max_err=2.318e-03. MR9 CLEAR."
+      },
+      "INJ": {
+        "max_raw_err_pendle_vs_x": 0.002802991,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002802991,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 INJ: max_err=2.803e-03. MR9 CLEAR."
+      },
+      "LDO": {
+        "max_raw_err_pendle_vs_x": 0.002356747,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002356747,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 LDO: max_err=2.357e-03. MR9 CLEAR."
+      },
+      "PEPE": {
+        "max_raw_err_pendle_vs_x": 0.002356747,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002356747,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 PEPE: max_err=2.357e-03. MR9 CLEAR."
+      },
+      "SEI": {
+        "max_raw_err_pendle_vs_x": 0.002325253,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002325253,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 SEI: max_err=2.325e-03. MR9 CLEAR."
+      },
+      "TIA": {
+        "max_raw_err_pendle_vs_x": 0.002217238,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002217238,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 TIA: max_err=2.217e-03. MR9 CLEAR."
+      },
+      "TAO": {
+        "max_raw_err_pendle_vs_x": 0.002316126,
+        "is_pendle_identical_to_x": false,
+        "max_altalt_err_pendlesol_vs_xsol": 0.002316126,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "PENDLE \u2260 TAO: max_err=2.316e-03. MR9 CLEAR."
+      }
+    },
+    "note": "PENDLE-SOL is a NEW alt-alt pair: PENDLE \u2209 V_altalt (14 vertices). PENDLE is yield-trading DeFi (PT/YT protocol) \u2014 structurally distinct from all existing vertices. MR9 CLEAR: PENDLE-SOL signal algebraically distinct from all X-SOL signals."
+  },
+  "phase0b_l003_avax": {
+    "raw_corr_pendle_avax": 0.3307,
+    "threshold": 0.45,
+    "n_obs": 17358,
+    "pass": true,
+    "decision": "PROCEED",
+    "note": "PENDLE_fr \u00d7 AVAX_fr raw corr = 0.3307. PASS (abs < 0.45). AVAX contamination absent \u2192 proceed.",
+    "k746_l003_rule": "K746 lesson L003: raw_corr(candidate_fr, AVAX_fr) < 0.45 mandatory. PENDLE (yield-trading DeFi) expected LOW AVAX contamination: different ecosystems."
+  },
+  "phase0c_l004_carry": {
+    "frac_positive_full": 0.9018,
+    "frac_positive_oos": 0.8691,
+    "n_oos_obs": 5209,
+    "threshold": 0.8,
+    "warn_full": true,
+    "warn_oos": true,
+    "carry_collinearity_risk": true,
+    "hard_block": true,
+    "pass": false,
+    "note": "BLOCKED: PENDLE_FR > 80% positive in BOTH full (90.2%) and OOS (86.9%). PENDLE = yield-trading DeFi protocol: users pay positive FR to access fixed-yield PT tokens and leveraged yield positions (YT tokens). This creates structural positive carry bias analogous to AAVE lending (K748 L004 BLOCKED). Yield-trading protocols systematically extract carry from DeFi capital flows \u2192 perpetual FR biased positive regardless of market phase. OOS 86.9% > 80% threshold \u2192 structural carry-stable collinearity with SOL long bias. ETH DeFi yield cluster: PENDLE carry + SOL bear side creates asymmetric signal.",
+    "aave_k748_lesson": "K748 L004 lesson (AAVE): Lending protocols carry-stable \u2192 FR > 80% positive full+OOS. PENDLE yield-trading is same cluster: fixed-yield arbitrage = carry extraction. L004 BLOCK is correct and expected for yield-protocol category.",
+    "k748_l004_rule": "K748 lesson L004: If candidate FR > 80% positive in BOTH full and OOS \u2192 carry-stable collinearity risk \u2192 structural BLOCK. PENDLE OOS 86.9% \u2192 BOTH trigger \u2192 HARD BLOCK."
+  },
+  "phase0d_l007_sol_beta": {
+    "pendle_sol_vs_fil_sol_corr_prescreen": 0.3773,
+    "window_h": 168,
+    "g5u_expected_fail": false,
+    "threshold": 0.4,
+    "pass": true,
+    "note": "PENDLE-SOL vs FIL-SOL pre-screen corr = 0.3773. OK: PENDLE-SOL and FIL-SOL are orthogonal. Yield-trading (PENDLE) and storage infra (FIL) have structurally distinct FR drivers.",
+    "k749_l007_rule": "K749 lesson L007: FIL-SOL as SOL-beta cluster proxy."
+  },
+  "phase0e_l010_hbar": {
+    "raw_corr_pendle_hbar": 0.3966,
+    "threshold": 0.45,
+    "n_obs": 17518,
+    "pass": true,
+    "decision": "PROCEED",
+    "note": "PENDLE_fr \u00d7 HBAR_fr raw corr = 0.3966. PASS: HBAR contamination absent \u2192 proceed.",
+    "k752_l010_rule": "K752 lesson L010: raw_corr(candidate_fr, HBAR_fr) < 0.45 mandatory."
+  },
+  "phase1_vol_cycle": {
+    "vol_ratio_pendle_sol": 1.1061,
+    "vol_ratio_k744_stated": 1.106,
+    "vol_ratio_confirmed": true,
+    "vol_pendle_std": 3.439e-05,
+    "vol_sol_std": 3.109e-05,
+    "cycle_indep_k744": 0.807,
+    "cycle_indep_note": "K744 cycle_indep=0.807 \u2014 high independence. PENDLE yield-trading cycles (points farming, yield war epochs, maturity cycles) diverge from SOL SVM cycles. Higher than PEPE (0.589) and HBAR (0.694). BUT: yield-protocol FR carry-stable may override cycle independence advantage.",
+    "cluster_note": "PENDLE = yield-trading DeFi protocol (Ethereum, launched Apr 2021). FR driven by: (1) PT/YT token demand \u2014 fixed-yield arbitrage, (2) sUSDe/ENA yield wars \u2014 points farming capital, (3) ETH staking yield cycles (stETH pool LP), (4) DeFi TVL rotation into yield protocols. STRUCTURAL CONCERN: yield-trading protocols extract carry from DeFi capital \u2192 FR structurally positive (users pay FR to get fixed yield or leveraged yield). LDO (liquid staking) is adjacent cluster \u2014 both capture ETH yield capital flows.",
+    "quarterly_analysis": [
+      {
+        "period": "Q2_2024",
+        "pendle_fr_mean_bps": 0.1069,
+        "pendle_fr_std_bps": 0.257,
+        "sol_fr_mean_bps": 0.2151,
+        "sol_fr_std_bps": 0.233,
+        "differential_bps": -0.1083
+      },
+      {
+        "period": "Q3_2024",
+        "pendle_fr_mean_bps": -0.0048,
+        "pendle_fr_std_bps": 0.6657,
+        "sol_fr_mean_bps": 0.1091,
+        "sol_fr_std_bps": 0.1949,
+        "differential_bps": -0.114
+      },
+      {
+        "period": "Q4_2024",
+        "pendle_fr_mean_bps": 0.4269,
+        "pendle_fr_std_bps": 0.4481,
+        "sol_fr_mean_bps": 0.3405,
+        "sol_fr_std_bps": 0.3139,
+        "differential_bps": 0.0864
+      },
+      {
+        "period": "Q1_2025",
+        "pendle_fr_mean_bps": 0.127,
+        "pendle_fr_std_bps": 0.1749,
+        "sol_fr_mean_bps": 0.0413,
+        "sol_fr_std_bps": 0.1865,
+        "differential_bps": 0.0857
+      },
+      {
+        "period": "Q2_2025",
+        "pendle_fr_mean_bps": 0.1114,
+        "pendle_fr_std_bps": 0.1138,
+        "sol_fr_mean_bps": 0.0439,
+        "sol_fr_std_bps": 0.1784,
+        "differential_bps": 0.0675
+      },
+      {
+        "period": "Q3_2025",
+        "pendle_fr_mean_bps": 0.2309,
+        "pendle_fr_std_bps": 0.246,
+        "sol_fr_mean_bps": 0.1626,
+        "sol_fr_std_bps": 0.1766,
+        "differential_bps": 0.0683
+      },
+      {
+        "period": "Q4_2025",
+        "pendle_fr_mean_bps": 0.0934,
+        "pendle_fr_std_bps": 0.1654,
+        "sol_fr_mean_bps": -0.0075,
+        "sol_fr_std_bps": 0.5897,
+        "differential_bps": 0.1008
+      },
+      {
+        "period": "Q1_2026",
+        "pendle_fr_mean_bps": 0.0708,
+        "pendle_fr_std_bps": 0.1233,
+        "sol_fr_mean_bps": -0.0889,
+        "sol_fr_std_bps": 0.2052,
+        "differential_bps": 0.1598
+      },
+      {
+        "period": "Q2_2026",
+        "pendle_fr_mean_bps": 0.0918,
+        "pendle_fr_std_bps": 0.1433,
+        "sol_fr_mean_bps": 0.0165,
+        "sol_fr_std_bps": 0.1071,
+        "differential_bps": 0.0753
+      }
+    ],
+    "fr_extreme_stats": {
+      "PENDLE": {
+        "min_bps": -23.4425,
+        "max_bps": 6.2928,
+        "p1_bps": -0.4762,
+        "p99_bps": 1.2431,
+        "mean_bps": 0.1441,
+        "std_bps": 0.3438
+      },
+      "SOL": {
+        "min_bps": -20.5141,
+        "max_bps": 1.8437,
+        "p1_bps": -0.5099,
+        "p99_bps": 0.9322,
+        "mean_bps": 0.0882,
+        "std_bps": 0.311
+      }
+    },
+    "yield_protocol_risk_note": "PENDLE yield-trading carry risk: FR mean=0.1441bps/hr (positive), P99=1.243bps vs SOL P99=0.932bps. PENDLE FR> 0 in 90.2% of full period. This is structural: fixed-yield demand (PT buyers) creates persistent longs \u2192 positive FR. Identical mechanism to AAVE K748 BLOCK. Strategy signal requires genuine differential vs SOL \u2014 but if PENDLE always positive and SOL cycles up/down, signal is really just 'PENDLE long vs SOL short' which is carry trade not genuine FR differential alpha."
+  },
+  "phase2_backtest": {
+    "canonical_window_h": 48,
+    "threshold": 0.0,
+    "oos_start": "2025-10-25",
+    "all_windows": {
+      "W168": {
+        "window_h": 168,
+        "is_metrics": {
+          "sharpe": 19.5136,
+          "ann_ret": 0.085918,
+          "ann_ret_pct": 8.5918,
+          "ann_std": 0.004403,
+          "max_dd_pct": -0.2889,
+          "years": 1.386,
+          "entries_per_yr": 28.1,
+          "entries_total": 39,
+          "period_start": "2024-06-06",
+          "period_end": "2025-10-25"
+        },
+        "oos_metrics": {
+          "sharpe": 56.6493,
+          "ann_ret": 0.10051,
+          "ann_ret_pct": 10.051,
+          "ann_std": 0.001774,
+          "max_dd_pct": -0.0845,
+          "years": 0.576,
+          "entries_per_yr": 6.9,
+          "entries_total": 4,
+          "period_start": "2025-10-25",
+          "period_end": "2026-05-23"
+        },
+        "full_metrics": {
+          "sharpe": 23.5892,
+          "ann_ret": 0.090203,
+          "ann_ret_pct": 9.0203,
+          "ann_std": 0.003824,
+          "max_dd_pct": -0.2889,
+          "years": 1.962,
+          "entries_per_yr": 21.9,
+          "entries_total": 43,
+          "period_start": "2024-06-06",
+          "period_end": "2026-05-23"
+        },
+        "g6_pass": false
+      },
+      "W84": {
+        "window_h": 84,
+        "is_metrics": {
+          "sharpe": 19.8105,
+          "ann_ret": 0.087084,
+          "ann_ret_pct": 8.7084,
+          "ann_std": 0.004396,
+          "max_dd_pct": -0.344,
+          "years": 1.396,
+          "entries_per_yr": 48.0,
+          "entries_total": 67,
+          "period_start": "2024-06-02",
+          "period_end": "2025-10-25"
+        },
+        "oos_metrics": {
+          "sharpe": 57.6322,
+          "ann_ret": 0.101719,
+          "ann_ret_pct": 10.1719,
+          "ann_std": 0.001765,
+          "max_dd_pct": -0.0574,
+          "years": 0.576,
+          "entries_per_yr": 27.8,
+          "entries_total": 16,
+          "period_start": "2025-10-25",
+          "period_end": "2026-05-23"
+        },
+        "full_metrics": {
+          "sharpe": 23.9172,
+          "ann_ret": 0.091361,
+          "ann_ret_pct": 9.1361,
+          "ann_std": 0.00382,
+          "max_dd_pct": -0.344,
+          "years": 1.972,
+          "entries_per_yr": 42.1,
+          "entries_total": 83,
+          "period_start": "2024-06-02",
+          "period_end": "2026-05-23"
+        },
+        "g6_pass": false
+      },
+      "W48": {
+        "window_h": 48,
+        "is_metrics": {
+          "sharpe": 21.9173,
+          "ann_ret": 0.095842,
+          "ann_ret_pct": 9.5842,
+          "ann_std": 0.004373,
+          "max_dd_pct": -0.2743,
+          "years": 1.4,
+          "entries_per_yr": 87.9,
+          "entries_total": 123,
+          "period_start": "2024-06-01",
+          "period_end": "2025-10-25"
+        },
+        "oos_metrics": {
+          "sharpe": 58.5527,
+          "ann_ret": 0.102883,
+          "ann_ret_pct": 10.2883,
+          "ann_std": 0.001757,
+          "max_dd_pct": -0.0294,
+          "years": 0.576,
+          "entries_per_yr": 48.6,
+          "entries_total": 28,
+          "period_start": "2025-10-25",
+          "period_end": "2026-05-23"
+        },
+        "full_metrics": {
+          "sharpe": 25.7558,
+          "ann_ret": 0.097895,
+          "ann_ret_pct": 9.7895,
+          "ann_std": 0.003801,
+          "max_dd_pct": -0.2743,
+          "years": 1.976,
+          "entries_per_yr": 76.4,
+          "entries_total": 151,
+          "period_start": "2024-06-01",
+          "period_end": "2026-05-23"
+        },
+        "g6_pass": true
+      }
+    },
+    "note": "Canonical window W=48h chosen as first G6-compliant window. W=168h: OOS Sh=56.6493 entries/yr=6.9 (G6=FAIL). W=84h: OOS entries/yr=27.8 (G6=FAIL). W=48h: G6=PASS."
+  },
+  "phase3_grid": {
+    "grid_results": [
+      {
+        "window": 48,
+        "threshold": 0.0,
+        "oos_sharpe": 58.5527,
+        "is_sharpe": 21.9173,
+        "oos_entries_yr": 48.6,
+        "g6_pass": true
+      },
+      {
+        "window": 48,
+        "threshold": 1e-06,
+        "oos_sharpe": 58.9307,
+        "is_sharpe": 26.0085,
+        "oos_entries_yr": 90.2,
+        "g6_pass": true
+      },
+      {
+        "window": 48,
+        "threshold": 2e-06,
+        "oos_sharpe": 58.9423,
+        "is_sharpe": 25.7728,
+        "oos_entries_yr": 107.6,
+        "g6_pass": true
+      },
+      {
+        "window": 84,
+        "threshold": 0.0,
+        "oos_sharpe": 57.6322,
+        "is_sharpe": 19.8105,
+        "oos_entries_yr": 27.8,
+        "g6_pass": false
+      },
+      {
+        "window": 84,
+        "threshold": 1e-06,
+        "oos_sharpe": 57.8915,
+        "is_sharpe": 19.7335,
+        "oos_entries_yr": 59.0,
+        "g6_pass": true
+      },
+      {
+        "window": 84,
+        "threshold": 2e-06,
+        "oos_sharpe": 58.0436,
+        "is_sharpe": 19.5056,
+        "oos_entries_yr": 55.5,
+        "g6_pass": true
+      },
+      {
+        "window": 168,
+        "threshold": 0.0,
+        "oos_sharpe": 56.6493,
+        "is_sharpe": 19.5136,
+        "oos_entries_yr": 6.9,
+        "g6_pass": false
+      },
+      {
+        "window": 168,
+        "threshold": 1e-06,
+        "oos_sharpe": 56.5814,
+        "is_sharpe": 19.428,
+        "oos_entries_yr": 24.3,
+        "g6_pass": false
+      },
+      {
+        "window": 168,
+        "threshold": 2e-06,
+        "oos_sharpe": 56.5352,
+        "is_sharpe": 23.2233,
+        "oos_entries_yr": 38.2,
+        "g6_pass": true
+      },
+      {
+        "window": 336,
+        "threshold": 0.0,
+        "oos_sharpe": 54.8486,
+        "is_sharpe": 18.5561,
+        "oos_entries_yr": 3.5,
+        "g6_pass": false
+      },
+      {
+        "window": 336,
+        "threshold": 1e-06,
+        "oos_sharpe": 54.8583,
+        "is_sharpe": 22.2671,
+        "oos_entries_yr": 13.9,
+        "g6_pass": false
+      },
+      {
+        "window": 336,
+        "threshold": 2e-06,
+        "oos_sharpe": 54.2958,
+        "is_sharpe": 22.2497,
+        "oos_entries_yr": 10.4,
+        "g6_pass": false
+      }
+    ],
+    "best_config": {
+      "window": 48,
+      "threshold": 2e-06,
+      "oos_sharpe": 58.9423,
+      "is_sharpe": 25.7728,
+      "oos_entries_yr": 107.6,
+      "g6_pass": true
+    },
+    "best_g6_compliant": {
+      "window": 48,
+      "threshold": 2e-06,
+      "oos_sharpe": 58.9423,
+      "is_sharpe": 25.7728,
+      "oos_entries_yr": 107.6,
+      "g6_pass": true
+    },
+    "canonical_config": {
+      "window": 48,
+      "threshold": 0.0,
+      "rationale": "W=48h is first G6-compliant window"
+    },
+    "dsr_bonferroni": {
+      "t_stat": 25.9308,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "n_configs": 12,
+      "threshold": 0.004167,
+      "pass": "True"
+    }
+  },
+  "phase5_section6_gates": {
+    "G1_oos_sharpe": {
+      "value": 58.5527,
+      "threshold": 1.0,
+      "pass": true
+    },
+    "G2_perm_pvalue": {
+      "p_value": 0.0,
+      "exceed": 0,
+      "n_perm": 1000,
+      "threshold": 0.05,
+      "pass": true
+    },
+    "G3_dsr_bonferroni": {
+      "t_stat": 25.9308,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "n_trials": 12,
+      "threshold": 0.004167,
+      "pass": true
+    },
+    "G4_walk_forward": {
+      "all_positive": true,
+      "min_fold_sharpe": 25.8915,
+      "max_fold_sharpe": 62.4053,
+      "n_folds": 12,
+      "fold_sharpes": [
+        26.5301,
+        35.5012,
+        25.8915,
+        54.4157,
+        35.793,
+        50.7,
+        47.9809,
+        42.88,
+        38.7046,
+        62.4053,
+        40.0332,
+        31.6138
+      ],
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2024-08-30",
+          "oos_end": "2024-09-29",
+          "sharpe": 26.5301,
+          "ann_ret_pct": 7.8805,
+          "entries": 8
+        },
+        {
+          "fold": 2,
+          "oos_start": "2024-09-29",
+          "oos_end": "2024-10-29",
+          "sharpe": 35.5012,
+          "ann_ret_pct": 4.733,
+          "entries": 6
+        },
+        {
+          "fold": 3,
+          "oos_start": "2024-10-29",
+          "oos_end": "2024-11-28",
+          "sharpe": 25.8915,
+          "ann_ret_pct": 8.6496,
+          "entries": 7
+        },
+        {
+          "fold": 4,
+          "oos_start": "2024-11-28",
+          "oos_end": "2024-12-28",
+          "sharpe": 54.4157,
+          "ann_ret_pct": 22.3785,
+          "entries": 6
+        },
+        {
+          "fold": 5,
+          "oos_start": "2024-12-28",
+          "oos_end": "2025-01-27",
+          "sharpe": 35.793,
+          "ann_ret_pct": 8.3248,
+          "entries": 7
+        },
+        {
+          "fold": 6,
+          "oos_start": "2025-01-27",
+          "oos_end": "2025-02-26",
+          "sharpe": 50.7,
+          "ann_ret_pct": 10.4153,
+          "entries": 6
+        },
+        {
+          "fold": 7,
+          "oos_start": "2025-02-26",
+          "oos_end": "2025-03-28",
+          "sharpe": 47.9809,
+          "ann_ret_pct": 8.0498,
+          "entries": 5
+        },
+        {
+          "fold": 8,
+          "oos_start": "2025-03-28",
+          "oos_end": "2025-04-27",
+          "sharpe": 42.88,
+          "ann_ret_pct": 10.2487,
+          "entries": 7
+        },
+        {
+          "fold": 9,
+          "oos_start": "2025-04-27",
+          "oos_end": "2025-05-27",
+          "sharpe": 38.7046,
+          "ann_ret_pct": 5.4548,
+          "entries": 8
+        },
+        {
+          "fold": 10,
+          "oos_start": "2025-05-27",
+          "oos_end": "2025-06-26",
+          "sharpe": 62.4053,
+          "ann_ret_pct": 7.3102,
+          "entries": 1
+        },
+        {
+          "fold": 11,
+          "oos_start": "2025-06-26",
+          "oos_end": "2025-07-26",
+          "sharpe": 40.0332,
+          "ann_ret_pct": 9.3416,
+          "entries": 6
+        },
+        {
+          "fold": 12,
+          "oos_start": "2025-07-26",
+          "oos_end": "2025-08-25",
+          "sharpe": 31.6138,
+          "ann_ret_pct": 5.3366,
+          "entries": 14
+        }
+      ],
+      "pass": true
+    },
+    "G5_family_corr": {
+      "G5a_k449_eth_btc": {
+        "signal_corr_full": 0.0144,
+        "signal_corr_is": -0.0216,
+        "signal_corr_oos": -0.0948,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5b_k476_sol_btc": {
+        "signal_corr_full": -0.3417,
+        "signal_corr_is": -0.3313,
+        "signal_corr_oos": -0.2788,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5c_k484_avax_btc": {
+        "signal_corr_full": 0.1236,
+        "signal_corr_is": 0.0555,
+        "signal_corr_oos": 0.1582,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5d_k493_atom_btc": {
+        "signal_corr_full": -0.0348,
+        "signal_corr_is": -0.0991,
+        "signal_corr_oos": 0.1377,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5e_k500_inj_btc": {
+        "signal_corr_full": 0.07,
+        "signal_corr_is": 0.0405,
+        "signal_corr_oos": 0.0273,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5f_k517_fil_btc": {
+        "signal_corr_full": 0.1621,
+        "signal_corr_is": 0.1648,
+        "signal_corr_oos": 0.1245,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5g_k594_ldo_btc": {
+        "signal_corr_full": 0.0938,
+        "signal_corr_is": 0.0465,
+        "signal_corr_oos": 0.2276,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5h_k683_apt_sol": {
+        "signal_corr_full": -0.0355,
+        "signal_corr_is": 0.0267,
+        "signal_corr_oos": 0.1521,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5i_k684_atom_sol": {
+        "signal_corr_full": 0.2093,
+        "signal_corr_is": 0.2001,
+        "signal_corr_oos": 0.2247,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5j_k686_sol_inj": {
+        "signal_corr_full": -0.3421,
+        "signal_corr_is": -0.348,
+        "signal_corr_oos": -0.2462,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5k_k687_avax_sol": {
+        "signal_corr_full": 0.3568,
+        "signal_corr_is": 0.3191,
+        "signal_corr_oos": 0.3377,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5l_k689_sei_sol": {
+        "signal_corr_full": 0.2421,
+        "signal_corr_is": 0.2507,
+        "signal_corr_oos": 0.2103,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5m_k694_tia_sol": {
+        "signal_corr_full": 0.3927,
+        "signal_corr_is": 0.3966,
+        "signal_corr_oos": 0.3009,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5n_k696_ena_sol": {
+        "signal_corr_full": 0.3682,
+        "signal_corr_is": 0.3107,
+        "signal_corr_oos": 0.3291,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5o_k700_bnb_sol": {
+        "signal_corr_full": 0.3695,
+        "signal_corr_is": 0.2826,
+        "signal_corr_oos": 0.3962,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5p_k719_ena_atom": {
+        "signal_corr_full": 0.2606,
+        "signal_corr_is": 0.2508,
+        "signal_corr_oos": -0.0821,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5q_k721_ldo_sol": {
+        "signal_corr_full": 0.4166,
+        "signal_corr_is": 0.3669,
+        "signal_corr_oos": 0.5346,
+        "threshold": 0.4,
+        "pass": false
+      },
+      "G5r_k728_inj_atom": {
+        "signal_corr_full": 0.0531,
+        "signal_corr_is": 0.1114,
+        "signal_corr_oos": -0.187,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5s_k735_hbar_sol": {
+        "signal_corr_full": 0.5071,
+        "signal_corr_is": 0.5222,
+        "signal_corr_oos": 0.3621,
+        "threshold": 0.4,
+        "pass": false
+      },
+      "G5t_k736_tia_avax": {
+        "signal_corr_full": 0.1137,
+        "signal_corr_is": 0.1854,
+        "signal_corr_oos": 0.0354,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5u_k739_fil_sol": {
+        "signal_corr_full": 0.4232,
+        "signal_corr_is": 0.4357,
+        "signal_corr_oos": 0.3438,
+        "threshold": 0.4,
+        "pass": false
+      },
+      "G5v_k747_tao_sol": {
+        "signal_corr_full": 0.1809,
+        "signal_corr_is": 0.1719,
+        "signal_corr_oos": 0.2254,
+        "threshold": 0.4,
+        "pass": true
+      },
+      "G5w_k754_pepe_sol": {
+        "signal_corr_full": 0.1413,
+        "signal_corr_is": 0.1295,
+        "signal_corr_oos": 0.2299,
+        "threshold": 0.4,
+        "pass": true
+      }
+    },
+    "G5_all_pass": false,
+    "G5_any_fail": true,
+    "G5_failed_gates": [
+      "G5q_k721_ldo_sol",
+      "G5s_k735_hbar_sol",
+      "G5u_k739_fil_sol"
+    ],
+    "G5_max_corr": 0.5071,
+    "G5_max_corr_gate": "G5s_k735_hbar_sol",
+    "G6_trade_count": {
+      "entries_per_yr_oos": 48.6,
+      "threshold": 30,
+      "pass": true
+    },
+    "G7_ann_return": {
+      "oos_ann_ret_4x_pct": 41.1532,
+      "threshold_pct": 5.0,
+      "pass": true
+    },
+    "G8_cross_venue": {
+      "pass": true,
+      "note": "Bybit PENDLE data unavailable \u2014 conditional pass. PENDLE listed on HL (confirmed 17519 rows). Bybit PENDLE parquet not found in cache. OKX parquet not found. Single-venue HL data \u2014 G8 conditional on HL listing confirmation."
+    },
+    "G9_data_sufficiency": {
+      "oos_days": 210.0,
+      "threshold_days": 180,
+      "pass": true
+    },
+    "_summary": {
+      "all_gates_pass": false,
+      "skipped": false,
+      "gate_statuses": {
+        "G1": true,
+        "G2": true,
+        "G3": true,
+        "G4": true,
+        "G5": false,
+        "G6": true,
+        "G7": true,
+        "G8": true,
+        "G9": true
+      }
+    }
+  },
+  "phase6_decision": {
+    "decision": "BLOCKED-L004-G5q",
+    "l004_blocked": true,
+    "l003_blocked": false,
+    "l010_blocked": false,
+    "gates_pass": false,
+    "rationale": "PENDLE-SOL BLOCKED: dual failure \u2014 L004 carry-stable + G5 collinearity (G5q_k721_ldo_sol, G5s_k735_hbar_sol, G5u_k739_fil_sol). L004: PENDLE_FR>0 full=90.2% OOS=86.9% (BOTH > 80% threshold) \u2192 yield-trading protocol structural carry bias. AAVE K748 parallel: lending protocols and yield-trading protocols both extract carry from DeFi capital \u2192 perpetual positive FR. G5q (LDO-SOL): PENDLE-SOL corr >0.40 at all windows (W=48: 0.4166, W=84: 0.4637, W=168: 0.4486). G5s (HBAR-SOL): max corr=0.5071. G5u (FIL-SOL): max corr=0.4232. Meta-narrative cluster: PENDLE (yield-trading) + LDO (liquid staking) both capture ETH DeFi yield capital flows \u2192 structural signal overlap. G5s/G5u overlap: SOL-beta cluster contamination across windows. Per feedback_meta_narrative_cluster_rule: ETH DeFi yield cluster overlap is stronger reject signal than G5 alone. OOS Sh=58.5527 technically strong but structurally invalid due to carry contamination + cluster overlap.",
+    "profit_projection_k523": {
+      "notional_usd": 1000000,
+      "sleeve_pct": 0.025,
+      "leverage": 4.0,
+      "oos_ann_ret_pct": 10.2883,
+      "canonical_window_h": 48,
+      "conservative_haircut": 0.38,
+      "mid_haircut": 0.65,
+      "optimistic_haircut": 0.9,
+      "conservative_usd_yr": 39095,
+      "mid_usd_yr": 66873,
+      "optimistic_usd_yr": 92594,
+      "note": "K523 3-point mandatory (computed even for BLOCKED wave). Conservative=OOS\u00d70.38 (K518 floor). Mid=\u00d70.65. Optimistic=\u00d70.90. NOTE: These are THEORETICAL \u2014 L004 carry contamination means actual live performance would be structurally lower (carry captured by positioning costs, not strategy alpha). BLOCKED wave: ROI not actionable."
+    },
+    "paper_gate_mandatory": true,
+    "hl_cap_pct": 66.8,
+    "new_vertex": null,
+    "vertex_count": 14,
+    "lesson_recorded": "K758 LESSON: Yield-trading DeFi protocols (PENDLE) share carry-stable positive FR bias with lending protocols (AAVE K748). L004 is structurally correct screening for yield-protocol category. Additionally, ETH DeFi yield cluster (PENDLE yield-trading + LDO liquid staking) creates G5q collinearity. Future yield-protocol candidates (CURVE, CONVEX, BALANCER) should expect same dual failure pattern: L004 carry + G5q ETH DeFi collinearity."
+  },
+  "profit_projection": {
+    "notional_usd": 1000000,
+    "sleeve_pct": 0.025,
+    "leverage": 4.0,
+    "oos_ann_ret_pct": 10.2883,
+    "canonical_window_h": 48,
+    "conservative_haircut": 0.38,
+    "mid_haircut": 0.65,
+    "optimistic_haircut": 0.9,
+    "conservative_usd_yr": 39095,
+    "mid_usd_yr": 66873,
+    "optimistic_usd_yr": 92594,
+    "note": "K523 3-point mandatory (computed even for BLOCKED wave). Conservative=OOS\u00d70.38 (K518 floor). Mid=\u00d70.65. Optimistic=\u00d70.90. NOTE: These are THEORETICAL \u2014 L004 carry contamination means actual live performance would be structurally lower (carry captured by positioning costs, not strategy alpha). BLOCKED wave: ROI not actionable."
+  },
+  "k758_new_lessons": {
+    "L004_yield_protocol_category": "Yield-trading protocols (PENDLE) have same carry-stable L004 failure mode as lending protocols (AAVE K748). L004 screens this category correctly. Category rule: any DeFi protocol whose primary mechanism is yield extraction (lending, borrowing, fixed-yield trading, liquid staking yield capture) will fail L004 due to structural positive FR bias.",
+    "G5q_ETH_DeFi_yield_cluster": "PENDLE (yield-trading) + LDO (liquid staking) form ETH DeFi yield cluster. Signal corr >0.40 at all windows (W=48: 0.4166, W=84: 0.4637, W=168: 0.4486). Meta-narrative: both protocols capture ETH yield capital flows. Future ETH DeFi yield candidates blocked by same cluster rule.",
+    "yield_trading_universe": "PENDLE, CURVE, CONVEX, BALANCER = ETH DeFi yield cluster. All expected to fail L004 (carry-stable) + G5q (LDO-SOL collinearity). These tokens can be used as constituent legs in OTHER strategies but not as standalone alt-alt vertices against SOL."
+  }
+}
