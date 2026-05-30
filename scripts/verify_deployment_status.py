@@ -518,6 +518,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k763_compound_scheduler",
         expected_html_status="SCAFFOLD-READY",  # K763: plist in scripts/ (gitignored); activate: sed REPO_ROOT_PLACEHOLDER + cp + launchctl load; COMPOUND_FREQUENCY=monthly to revert
     ),
+    DaemonSpec(
+        label="com.cryptolab.k767-rwa-diversified",
+        purpose="K767 K297' RWA 4-Provider Diversified Yield Sleeve (sUSDe 35%+Spark sUSDS 25%+USDY 25%+Mountain USDM 15%, weekly rebalance Sunday 03:00 JST, 20% of AUM=$2M sleeve, blended APY ~4.0%, K523 3-point: conservative $56K/$21K | central $79K/$30K | optimistic $103K/$39K gross/realized @$10M K518 38%, +$69K/yr central uplift vs sUSDe-only baseline, HHI 1.0→0.26 diversification, DeFiLlama free API all providers, BEAR_1 sUSDe-50%, geo-strategy US/non-US USDY gating, PAPER_TRADE=True default LIVE 自動変更禁止, data/rwa_allocation.json allocation source-of-truth, 74th daemon K767 scaffold)",
+        scripts=["scripts/k767_rwa_diversified.py"],
+        log_basename="k767_rwa_diversified",
+        expected_html_status="SCAFFOLD-READY",  # K767: plist in scripts/ (gitignored); activate: cp plist to LaunchAgents + launchctl load; fund providers first; USDY non-US only
+    ),
 ]
 
 

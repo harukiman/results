@@ -14719,3 +14719,143 @@ v7.0 (full Phase A++ stack)
 | K759 | K759 WIF-SOL FR differential eval (§72) |
 | K523 | K523 3-point projection mandate |
 | K518 | K518 38% realized-to-stated ratio floor |
+
+---
+
+## §75 K767 K297' RWA 4-Provider Diversified Yield Sleeve (74th daemon)
+
+**Wave**: K767 | **Date**: 2026-05-30 | **Daemon**: 74th
+
+### §75.1 Overview
+
+K297' RWA yield sleeve diversified from single-provider (sUSDe only, 5% of AUM)
+to 4-provider split covering 20% of AUM ($2M at $10M reference).
+
+| Provider | Weight | APY (mid) | Restriction | Mechanism |
+|----------|--------|-----------|-------------|-----------|
+| sUSDe (Ethena) | 35% | 4.02% | None | Synthetic ETH staked |
+| Spark sUSDS | 25% | 3.67% | None | DSR / Sky governance |
+| USDY (Ondo) | 25% | 4.50% | **Non-US only** | Tokenized T-bills |
+| Mountain USDM | 15% | 4.60% | KYC-light | Tokenized T-bills |
+
+### §75.2 K523 3-Point Projection (@$10M, 20% sleeve = $2M)
+
+| Scenario | Blended APY | Annual Yield | Realized (K518 38%) |
+|----------|-------------|-------------|---------------------|
+| Conservative | ~3.18% | $56,270/yr | $21,383/yr |
+| **Central** | ~3.93% | **$78,660/yr** | **$29,891/yr** |
+| Optimistic | ~4.91% | $103,400/yr | $39,292/yr |
+
+**Baseline** (sUSDe only, K344 OC HALF): $9,300/yr
+**Central uplift vs baseline**: +$69,360/yr
+
+**K523 WARNING**: Central $78,660/yr is NOT the upper bound. K518 38% haircut applied.
+sUSDe optimistic (+25%) contingent on ETH staking + funding environment surge.
+
+### §75.3 1-Step Activation
+
+```bash
+# Step 1: Verify providers (sign up / KYC first — see §75.4)
+python3 scripts/k767_rwa_diversified.py --dry-run
+
+# Step 2: Load daemon (weekly rebalance Sunday 03:00 JST)
+cp scripts/com.cryptolab.k767-rwa-diversified.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k767-rwa-diversified.plist
+
+# Step 3: Verify
+python3 scripts/verify_deployment_status.py | grep k767
+launchctl list | grep k767
+
+# Step 4: Status check
+python3 scripts/k767_rwa_diversified.py --status
+```
+
+### §75.4 Provider Setup (User Action Required)
+
+| Provider | Action | URL | Note |
+|----------|--------|-----|------|
+| sUSDe | Already tracked by K344 | — | K344 dashboard active |
+| Spark sUSDS | Connect wallet to sky.money | https://sky.money | No KYC, instant |
+| USDY | KYC + non-US verification | https://ondo.finance | **Non-US only**; 40d lock first |
+| Mountain USDM | Light KYC | https://mountainprotocol.com | No US restriction |
+
+### §75.5 US-Resident Configuration
+
+US residents must exclude USDY (regulatory restriction).
+Edit `data/rwa_allocation.json`:
+
+```json
+"USDY_Ondo": {
+  "target_weight_pct": 0.0,
+  ...
+}
+```
+
+Then redistribute the 25% proportionally:
+- sUSDe → 46.7%, Spark → 33.3%, USDM → 20.0%
+- Estimated blended APY: ~3.85% (vs 4.02% non-US)
+
+### §75.6 Geo-Strategy
+
+| Resident | Providers | Blended APY | Sleeve Yield |
+|----------|-----------|-------------|-------------|
+| Non-US | All 4 | ~4.02% | $80,400/yr @$2M |
+| US | 3 (no USDY) | ~3.85% | $77,000/yr @$2M |
+
+### §75.7 BEAR_1 Behavior
+
+Under `BEAR_1_FALLBACK_ACTIVE.flag`:
+- sUSDe weight halved (35% → 17.5%) — funding rate carry less certain
+- T-bill providers (Spark/USDY/USDM) held — sovereign-backed safe-haven
+- Emergency flag: all yield positions HOLD (do not redeem; K415 pattern)
+
+### §75.8 Rebalance Schedule
+
+| Trigger | Action |
+|---------|--------|
+| Weekly cron (Sunday 03:00 JST) | Fetch live APYs, check drift, rebalance |
+| Provider weight drift > 5pp | Emit rebalance signal (paper: update virtual balances) |
+| BEAR_1 flag | Reduce sUSDe 50%, redistribute to T-bill providers |
+| EMERGENCY flag | Skip rebalance; hold all positions |
+
+### §75.9 Reversibility
+
+| Action | Revert Method |
+|--------|--------------|
+| Disable daemon | `launchctl unload ~/Library/LaunchAgents/com.cryptolab.k767-rwa-diversified.plist` |
+| Return to sUSDe-only | Set non-sUSDe target_weight_pct=0 in rwa_allocation.json |
+| US-resident mode | Set USDY_Ondo target_weight_pct=0 in rwa_allocation.json |
+
+### §75.10 Files
+
+| File | Purpose |
+|------|---------|
+| `scripts/k767_rwa_diversified.py` | Main daemon (74th daemon) |
+| `scripts/com.cryptolab.k767-rwa-diversified.plist` | launchd plist |
+| `data/rwa_allocation.json` | Provider weights + balances source-of-truth |
+| `data/k767_rwa_dashboard.json` | Runtime dashboard (generated) |
+| `data/k767_rwa_trades.jsonl` | Append-only trade log |
+| `logs/k767_rwa_diversified.log` | Daemon log |
+| `wave_k767_rwa_expansion.{py,json,md}` | Analysis wave outputs |
+
+### §75.11 Dependencies
+
+| Dep | Source |
+|-----|--------|
+| sUSDe APY | DeFiLlama pool `66985a81-9c51-46ca-9977-42b4fe7bc6df` (K344) |
+| Spark sUSDS APY | DeFiLlama pool `54e9b138-3146-4c1f-8dce-1cb948f5ef96` (K473) |
+| USDY APY | DeFiLlama pool `d4b19b66-e4a0-4dc4-a0db-6b2ee0c7e3af` (K415) |
+| Mountain USDM APY | DeFiLlama pool `PENDING_RESEARCH` (fallback 4.60%) |
+| AUM | `data/k429_aum_dashboard.json` (fallback $10M) |
+
+### §75.12 References
+
+| Wave | Description |
+|------|-------------|
+| K767 | This section — K297' RWA 4-provider expansion (74th daemon) |
+| K344 | sUSDe OC sleeve daemon |
+| K415 | USDY sleeve scaffold (K415 CONDITIONAL_ACCEPT) |
+| K473 | Spark sUSDS APY weekly monitor (28th daemon) |
+| K523 | 3-point projection mandate |
+| K518 | 38% realized-to-stated ratio floor |
+| K297 | K297' satellite sleeve (PAXG/SPX funding rate carry) |

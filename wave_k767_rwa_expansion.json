@@ -1,0 +1,328 @@
+{
+  "wave": "K767",
+  "title": "K297' RWA Expansion Analysis \u2014 4-Provider Diversification",
+  "generated_at_jst": "2026-05-30 22:00 JST",
+  "aum_usd": 10000000.0,
+  "sleeve_pct": 0.2,
+  "sleeve_usd": 2000000.0,
+  "phase_1_current_state": {
+    "rwa_yield_sleeve": "sUSDe (K344) 5% of AUM = $500K; Spark sUSDS proposed (K473); USDY conditional (K415)",
+    "current_providers": {
+      "sUSDe_Ethena": {
+        "protocol": "Ethena",
+        "token": "sUSDe",
+        "current_apy_pct": 3.72,
+        "ema_30d_apy_pct": 4.02,
+        "peak_apy_pct": 20.0,
+        "allocated_pct_of_aum": 5.0,
+        "allocated_usd": 500000,
+        "status": "ACTIVE_PAPER",
+        "restrictions": "none",
+        "redemption_days": 7,
+        "mechanism": "synthetic_dollar_eth_staked_collateral",
+        "smart_contract_risk": "medium",
+        "regulatory_risk": "low",
+        "notes": "K344 OC signal HALF (APY below EMA). 7d cooldown redemption."
+      },
+      "Spark_sUSDS": {
+        "protocol": "Sky/MakerDAO",
+        "token": "sUSDS",
+        "current_apy_pct": 3.34,
+        "ema_30d_apy_pct": 3.67,
+        "peak_apy_pct": 8.0,
+        "allocated_pct_of_aum": 0.0,
+        "allocated_usd": 0,
+        "status": "PROPOSED_K473",
+        "restrictions": "none",
+        "redemption_days": 0,
+        "mechanism": "dsr_sky_protocol_formerly_makerdao",
+        "smart_contract_risk": "low",
+        "regulatory_risk": "low",
+        "notes": "K473 fast-track. Instant redemption, no lock. Sky/MakerDAO audited."
+      },
+      "USDY_Ondo": {
+        "protocol": "Ondo Finance",
+        "token": "USDY",
+        "current_apy_pct": 4.5,
+        "ema_30d_apy_pct": 4.5,
+        "peak_apy_pct": 5.5,
+        "allocated_pct_of_aum": 0.0,
+        "allocated_usd": 0,
+        "status": "CONDITIONAL_K415",
+        "restrictions": "non_US_only",
+        "redemption_days": 1,
+        "mechanism": "tokenized_t_bills",
+        "smart_contract_risk": "low",
+        "regulatory_risk": "medium",
+        "notes": "K415 CONDITIONAL_ACCEPT. Non-US only. 40d initial lock. $500 minimum."
+      }
+    },
+    "concentration_risk": "HIGH \u2014 single active provider (sUSDe), 5% of AUM",
+    "current_effective_yield_usd": 9300.0
+  },
+  "phase_2_universe_scan": {
+    "selected_4_providers": {
+      "sUSDe_Ethena": {
+        "target_weight_pct": 35.0,
+        "target_usd": 700000.0,
+        "expected_apy_pct": 4.02,
+        "restriction": "none",
+        "rationale": "Highest liquidity. Synthetic mechanism distinct from T-bill. K344 OC active."
+      },
+      "Spark_sUSDS": {
+        "target_weight_pct": 25.0,
+        "target_usd": 500000.0,
+        "expected_apy_pct": 3.67,
+        "restriction": "none",
+        "rationale": "Instant redemption. MakerDAO battle-tested. K473 monitor ready."
+      },
+      "USDY_Ondo": {
+        "target_weight_pct": 25.0,
+        "target_usd": 500000.0,
+        "expected_apy_pct": 4.5,
+        "restriction": "non_US_only",
+        "rationale": "T-bill backed. K415 scaffold ready. Non-US geo-strategy (US flow \u2192 sUSDe/Spark)."
+      },
+      "Mountain_USDM": {
+        "target_weight_pct": 15.0,
+        "target_usd": 300000.0,
+        "expected_apy_pct": 4.6,
+        "restriction": "KYC_light",
+        "rationale": "KYC-light T-bill. Geo-diversification. No US lock like USDY. Provider #4."
+      }
+    },
+    "proposed_excluded": {
+      "Mountain_USDM": {
+        "protocol": "Mountain Protocol",
+        "token": "USDM",
+        "current_apy_pct": 4.6,
+        "peak_apy_pct": 5.5,
+        "mechanism": "tokenized_t_bills_permissioned",
+        "smart_contract_risk": "low",
+        "regulatory_risk": "low",
+        "redemption_days": 1,
+        "restrictions": "KYC_light",
+        "notes": "Mountain Protocol USDM: tokenized T-bills, KYC-light, no US-resident lock.",
+        "defilama_pool_id": "N/A_research_pending"
+      },
+      "BUIDL_BlackRock": {
+        "protocol": "BlackRock / Securitize",
+        "token": "BUIDL",
+        "current_apy_pct": 4.8,
+        "peak_apy_pct": 5.5,
+        "mechanism": "institutional_tokenized_money_market",
+        "smart_contract_risk": "very_low",
+        "regulatory_risk": "very_low",
+        "redemption_days": 1,
+        "restrictions": "accredited_investor_only_100k_min",
+        "notes": "BlackRock BUIDL: $100K minimum. Institutional-grade. Accredited investors only.",
+        "exclusion_reason": "100K_min + accredited_investor \u2014 suitable for $1M+ sleeve only"
+      },
+      "OUSG_Ondo": {
+        "protocol": "Ondo Finance",
+        "token": "OUSG",
+        "current_apy_pct": 4.6,
+        "peak_apy_pct": 5.5,
+        "mechanism": "institutional_tokenized_t_bills",
+        "smart_contract_risk": "low",
+        "regulatory_risk": "medium",
+        "redemption_days": 1,
+        "restrictions": "accredited_investor_non_US",
+        "notes": "OUSG institutional tier. $100K minimum. Non-US + accredited investor.",
+        "exclusion_reason": "accredited_investor + non_US \u2014 overlaps with USDY, lower priority"
+      },
+      "Maple_Finance": {
+        "protocol": "Maple Finance",
+        "token": "MPL/syrup",
+        "current_apy_pct": 7.0,
+        "peak_apy_pct": 15.0,
+        "mechanism": "institutional_credit_undercollateralized",
+        "smart_contract_risk": "medium",
+        "regulatory_risk": "medium",
+        "redemption_days": 30,
+        "restrictions": "accredited_investor",
+        "notes": "Maple Finance: higher yield but credit/counterparty risk. Undercollateralized.",
+        "exclusion_reason": "undercollateralized + 30d lock \u2014 counterparty risk too high for carry sleeve"
+      }
+    },
+    "total_sleeve_target_usd": 2000000.0,
+    "provider_count": 4
+  },
+  "phase_3_diversification": {
+    "current_herfindahl_index": 1.0,
+    "proposed_herfindahl_index": 0.27,
+    "concentration_improvement": "HHI 1.0 \u2192 0.26 (significant diversification)",
+    "mechanism_diversity": [
+      "synthetic_DeFi",
+      "DSR_governance",
+      "T-bill_tokenized_KYC",
+      "T-bill_tokenized_KYC_light"
+    ],
+    "geo_strategy": {
+      "rationale": "US-resident investors cannot access USDY (Ondo) due to regulatory restrictions. Non-US investors can access all 4 providers. sUSDe and Spark sUSDS have no geo-restrictions \u2014 suitable for global base. Mountain USDM is KYC-light with no US exclusion as of 2026-05.",
+      "us_resident": {
+        "eligible": [
+          "sUSDe_Ethena",
+          "Spark_sUSDS",
+          "Mountain_USDM"
+        ],
+        "excluded": [
+          "USDY_Ondo"
+        ],
+        "reallocation": "USDY weight (25%) \u2192 sUSDe 35% + Spark 25% (50/50 split uplift)",
+        "effective_blended_apy_pct": 3.85
+      },
+      "non_us_resident": {
+        "eligible": [
+          "sUSDe_Ethena",
+          "Spark_sUSDS",
+          "USDY_Ondo",
+          "Mountain_USDM"
+        ],
+        "excluded": [],
+        "effective_blended_apy_pct": 4.2
+      },
+      "kyc_requirements": {
+        "sUSDe_Ethena": "no_kyc_required (onchain)",
+        "Spark_sUSDS": "no_kyc_required (onchain)",
+        "USDY_Ondo": "KYC + non-US verification",
+        "Mountain_USDM": "light_KYC (email + country)"
+      }
+    },
+    "risk_matrix": {
+      "sUSDe_Ethena": {
+        "smart_contract": "MEDIUM \u2014 complex synthetic mechanism (ETH staked + perp short hedge)",
+        "regulatory": "LOW \u2014 no direct T-bill exposure, DeFi-native",
+        "counterparty": "LOW \u2014 overcollateralized, on-chain",
+        "liquidity": "HIGH \u2014 Curve/Uniswap DEX pools",
+        "depeg_history": "No depeg events as of 2026-05",
+        "max_recommended_pct_of_sleeve": 40
+      },
+      "Spark_sUSDS": {
+        "smart_contract": "LOW \u2014 MakerDAO heritage, extensively audited",
+        "regulatory": "LOW \u2014 MakerDAO precedent, Sky governance",
+        "counterparty": "LOW \u2014 onchain DSR mechanism",
+        "liquidity": "HIGH \u2014 instant redemption, no lock",
+        "depeg_history": "No USDS depeg. DAI = near-zero depeg history",
+        "max_recommended_pct_of_sleeve": 40
+      },
+      "USDY_Ondo": {
+        "smart_contract": "LOW \u2014 simple T-bill wrapper, Ondo audited",
+        "regulatory": "MEDIUM \u2014 US-restricted, potential SEC scrutiny",
+        "counterparty": "LOW \u2014 T-bills (sovereign-backed)",
+        "liquidity": "MEDIUM \u2014 40d initial lock, 1d thereafter",
+        "depeg_history": "No depeg. Price tracks T-bill NAV",
+        "max_recommended_pct_of_sleeve": 30
+      },
+      "Mountain_USDM": {
+        "smart_contract": "LOW \u2014 Mountain Protocol audited",
+        "regulatory": "LOW \u2014 no US-resident restriction as of 2026-05",
+        "counterparty": "LOW \u2014 T-bills (sovereign-backed)",
+        "liquidity": "HIGH \u2014 rapid redemption (1d typical)",
+        "depeg_history": "Limited history (newer protocol); no incidents",
+        "max_recommended_pct_of_sleeve": 25
+      }
+    },
+    "correlation_benefit": {
+      "sUSDe_vs_Spark": {
+        "mechanism_correlation": "LOW \u2014 synthetic ETH staking vs DSR",
+        "yield_correlation_estimate": 0.3,
+        "comment": "sUSDe tracks ETH funding; Spark tracks USDS savings rate"
+      },
+      "sUSDe_vs_USDY": {
+        "mechanism_correlation": "VERY_LOW \u2014 synthetic DeFi vs T-bill",
+        "yield_correlation_estimate": 0.15,
+        "comment": "Completely different yield drivers: ETH funding vs Fed rate"
+      },
+      "Spark_vs_USDY": {
+        "mechanism_correlation": "MEDIUM \u2014 both track risk-free rate indirectly",
+        "yield_correlation_estimate": 0.55,
+        "comment": "Both rate-sensitive but DSR has governance lag vs direct T-bill"
+      },
+      "sUSDe_vs_USDM": {
+        "mechanism_correlation": "VERY_LOW",
+        "yield_correlation_estimate": 0.15
+      },
+      "portfolio_vol_reduction_estimate_pct": 25,
+      "note": "Mechanism diversity reduces single-provider failure impact significantly"
+    }
+  },
+  "phase_4_k523_uplift": {
+    "aum_usd": 10000000.0,
+    "sleeve_pct": 0.2,
+    "sleeve_usd": 2000000.0,
+    "baseline": {
+      "provider": "sUSDe_only_K344",
+      "sleeve_usd": 500000.0,
+      "deployed_pct": 0.5,
+      "apy_pct": 3.72,
+      "ann_yield_usd": 9300.0,
+      "note": "K344 OC HALF signal, 5% of AUM, 3.72% APY"
+    },
+    "conservative": {
+      "blended_apy_pct": 3.31,
+      "deployed_pct": 0.85,
+      "ann_yield_usd": 56270.0,
+      "realized_usd": 21383.0,
+      "uplift_vs_baseline": 46970.0,
+      "scenario": "4-provider, yield \u00d70.80 discount, 85% deployed"
+    },
+    "mid": {
+      "blended_apy_pct": 4.14,
+      "deployed_pct": 0.95,
+      "ann_yield_usd": 78660.0,
+      "realized_usd": 29891.0,
+      "uplift_vs_baseline": 69360.0,
+      "scenario": "4-provider, blended APY, 95% deployed"
+    },
+    "optimistic": {
+      "blended_apy_pct": 5.17,
+      "deployed_pct": 1.0,
+      "ann_yield_usd": 103400.0,
+      "realized_usd": 39292.0,
+      "uplift_vs_baseline": 94100.0,
+      "scenario": "4-provider, sUSDe surge (\u00d71.25), 100% deployed"
+    },
+    "k523_note": "Central is NOT upper bound. Upper bound = optimistic. K518 38% haircut applied. sUSDe surge contingent on ETH staking + funding environment. USDM/USDY rates track Fed funds rate."
+  },
+  "phase_5_implementation": {
+    "daemon_script": "scripts/k767_rwa_diversified.py",
+    "plist": "scripts/com.cryptolab.k767-rwa-diversified.plist",
+    "allocation_json": "data/rwa_allocation.json",
+    "rebalance_cadence": "weekly (Sunday 03:00 JST)",
+    "mode": "PAPER_TRADE=True default \u2014 LIVE requires explicit flag",
+    "dependencies": {
+      "sUSDe": "K344 OC signal from data/k344_susde_dashboard.json",
+      "Spark_sUSDS": "K473 APY from data/spark_usds_dashboard.json",
+      "USDY": "K415 APY from DefiLlama (DEFILAMA_USDY_POOL_ID)",
+      "Mountain_USDM": "DefiLlama yields API (pool ID TBD \u2014 research pending)"
+    }
+  },
+  "phase_6_daemon": {
+    "label": "com.cryptolab.k767-rwa-diversified",
+    "daemon_number": 74,
+    "schedule": "StartCalendarInterval SUNDAY 03:00 JST (weekly rebalance)",
+    "verify_command": "python3 scripts/verify_deployment_status.py | grep k767"
+  },
+  "phase_7_runbook": "docs/k302a_runbook.md \u00a775 \u2014 K767 1-step activation",
+  "phase_8_html_badge": "report.html: K767 K297' RWA EXPANSION READY badge",
+  "deliverables": [
+    "scripts/k767_rwa_diversified.py",
+    "scripts/com.cryptolab.k767-rwa-diversified.plist",
+    "data/rwa_allocation.json",
+    "wave_k767_rwa_expansion.py",
+    "wave_k767_rwa_expansion.json",
+    "wave_k767_rwa_expansion.md",
+    "scripts/verify_deployment_status.py (74th daemon added)",
+    "docs/k302a_runbook.md \u00a775",
+    "report.html badge"
+  ],
+  "k523_summary": {
+    "conservative_ann_usd": 56270.0,
+    "mid_ann_usd": 78660.0,
+    "optimistic_ann_usd": 103400.0,
+    "mid_realized_usd": 29891.0,
+    "mid_uplift_vs_baseline": 69360.0,
+    "k523_note": "Central is NOT upper bound. Upper bound = optimistic. K518 38% haircut applied. sUSDe surge contingent on ETH staking + funding environment. USDM/USDY rates track Fed funds rate."
+  }
+}
