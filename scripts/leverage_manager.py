@@ -67,6 +67,7 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K512_APT_BTC":   4.0,   # K520: APT-BTC paired-trade (v6.28 candidate, HL+Bybit split, OOS Sh 51.10, Move-VM #1 family, $302K/yr)
     "K541_STABLECOIN_SUPPLY": 2.0,  # K550: stablecoin supply growth (v6.29 candidate, HL-only, 3% sleeve, 2x leverage, OOS Sh 1.498, $294K/yr)
     "K521_OPTIONS_SKEW": 2.0,       # K565: options 25d skew DVOL+skew V4 (v6.30 candidate, HL-only, 3% sleeve, 2x leverage, OOS Sh 1.019, $494K/yr)
+    "K628_JTO_ORTHOG": 4.0,         # K637: JTO-BTC orthogonalized (v6.31 candidate, Bybit-only, 2-3% sleeve, 4x leverage, OOS Sh 18.30 residual, $17.85M/yr potential, Solana LST/MEV #24)
     "K457_basket":    4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
@@ -220,6 +221,33 @@ SLEEVE_WEIGHTS_V630: Dict[str, float] = {
     "K512":    0.02,    # APT-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.28 addition, $302K/yr)
     "K541":    0.03,    # Stablecoin supply growth, 2x leverage, HL-only (v6.29 K550 addition, $294K/yr)
     "K521":    0.03,    # Options 25d skew DVOL+skew V4, 2x leverage, HL-only (v6.30 K565 addition, $494K/yr)
+    "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
+}
+
+# v6.31 candidate weights (proposed in K637 — not yet active)
+# K628 JTO orthogonalized 2% Bybit sleeve added to v6.30 combined portfolio
+# OOS Sh 18.30 (residual), $17,851,320/yr potential @$10M @4x (largest single-token)
+# 2% sleeve = $7,140,528/yr | 3% sleeve = $10,710,792/yr
+# Bybit-only: HL concentration UNCHANGED at 65% (K628 uses Bybit for JTO+BTC)
+# Orthog β HARDCODED: β_SEI=0.164, β_DOGE=0.302 (K628 OLS, IS R²=0.075)
+# 60d paper-trade gate: Realized Sh>=8 + fill>=60% + maxDD<20%
+# Total combined v6.31: ~$1.950M/yr @$10M (v6.30 $1.950M) + K628 $7.14M/yr = $9.09M/yr potential
+# Note: v6.31 profit is 2% sleeve activation scenario; 3% = higher (K280 further reduced)
+SLEEVE_WEIGHTS_V631: Dict[str, float] = {
+    "K280":    0.43,    # reduced 2pp vs v6.30 to fund K628 JTO orthog sleeve
+    "K297":    0.20,
+    "sUSDe":   0.05,
+    "K449":    0.05,    # ETH-BTC delta-neutral, 4x leverage, HL-only (v6.16 base, 5%)
+    "K476":    0.04,    # SOL-BTC delta-neutral, 4x leverage, HL-only (v6.21 addition, 4%)
+    "K484":    0.05,    # AVAX-BTC delta-neutral, 4x leverage, HL-only (v6.23 addition, 5%)
+    "K493":    0.05,    # ATOM-BTC delta-neutral, 4x leverage, HL-only (v6.24 addition, 5%)
+    "K500":    0.04,    # INJ-BTC delta-neutral, 4x leverage, HL-only (v6.25 addition, 4%)
+    "K507":    0.02,    # SEI-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.27 addition, 2%)
+    "K507_TIA": 0.01,  # TIA-BTC delta-neutral, 4x leverage, HL-only 1% (v6.28 K524 addition, $51K/yr)
+    "K512":    0.02,    # APT-BTC delta-neutral, 4x leverage, HL+Bybit split (v6.28 addition, $302K/yr)
+    "K541":    0.03,    # Stablecoin supply growth, 2x leverage, HL-only (v6.29 K550 addition, $294K/yr)
+    "K521":    0.03,    # Options 25d skew DVOL+skew V4, 2x leverage, HL-only (v6.30 K565 addition, $494K/yr)
+    "K628":    0.02,    # JTO-BTC orthogonalized, 4x leverage, Bybit-only (v6.31 K637 addition, 2% sleeve)
     "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
 }
 

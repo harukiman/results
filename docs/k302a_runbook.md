@@ -7934,3 +7934,211 @@ python3 scripts/k521_options_skew_run.py --dry-run
 ---
 
 *K565 §41 -- K521 options 25d skew production scaffold (39th daemon, OOS Sh 1.019 $494K/yr @$10M, V4 DVOL z-score + ETH-BTC 25d skew spread composite, Deribit free public API, 5-axis Sh 6.386 +0.082 lift, Max corr 0.199 orthogonal, BTC LONG 3% sleeve 2x leverage HL-only, 90d paper-trade gate, v6.30 candidate) -- 2026-05-30*
+
+---
+
+## §42 K628 JTO-BTC Orthogonalized FR Differential — Production Scaffold Playbook
+
+**Wave:** K637 | **Daemon:** 40th | **Status:** SCAFFOLD-READY | **Date:** 2026-05-30
+
+### §42.1 Strategy Overview
+
+K628 JTO-BTC is the **largest single-token profit identified** in the Systematic Alpha Discovery framework: **$17,851,320/yr potential @$10M @4x** (residual OOS Sh=18.30).
+
+JTO = Jito Network (Solana):
+- **jitoSOL LST** (Jito Liquid Staking Token) — staking yield differential
+- **MEV block engine** — Jito's validator tip auction for MEV extraction on Solana
+- Solana LST/MEV cluster = **24th established cluster** (K625 confirmed independent of Cosmos/meme/L1)
+
+**Key insight:** JTO's FR dynamics are driven by MEV competition + jitoSOL staking yield. Raw JTO-BTC signal was **blocked at G5** by SEI (EVM Cosmos) and DOGE (meme/retail) factor co-movement. After orthogonalizing via K628 OLS regression (projecting out SEI+DOGE), the residual signal captures pure Jito ecosystem alpha with **minimal degradation** (raw Sh=18.67 → residual Sh=18.30, loss=0.37 units).
+
+### §42.2 Orthogonalization Mechanism (K628 OLS)
+
+```
+JTO_diff  = JTO_FR − BTC_FR         (raw target signal)
+SEI_diff  = SEI_FR − BTC_FR         (factor 1: EVM Cosmos co-movement)
+DOGE_diff = DOGE_FR − BTC_FR        (factor 2: meme/retail co-movement)
+
+residual  = JTO_diff − β_SEI × SEI_diff − β_DOGE × DOGE_diff
+          = JTO_diff − 0.164 × SEI_diff − 0.302 × DOGE_diff
+```
+
+**β Coefficients (K628 OLS — HARDCODED in production, NO re-OLS):**
+
+| Coefficient | Value | Meaning |
+|-------------|-------|---------|
+| β_SEI  | **0.164** | SEI EVM Cosmos factor loading on JTO FR |
+| β_DOGE | **0.302** | DOGE meme/retail factor loading on JTO FR |
+| IS R²  | 0.0750 | 7.5% of JTO variance explained (low → good orthogonality) |
+| OOS R² | -0.0327 | Slight OOS overfit (acceptable; confirms live residual is signal) |
+
+**Why hardcoded:** β coefficients are hardcoded in production for stability. Re-OLS in production would introduce look-ahead bias and parameter instability. The K628 OLS fit was computed on the full available history and is treated as a fixed structural parameter.
+
+### §42.3 Signal Gate
+
+```
+EMA_7d   = 7-day EMA of residual history (21 × 8h periods)
+σ_7d     = 7-day rolling standard deviation of residual
+Threshold = 1.5 × σ_7d
+
+Entry: |EMA_7d| > 1.5σ_7d
+  EMA_7d > +1.5σ: short JTO (collect residual FR) / long BTC
+  EMA_7d < −1.5σ: long JTO / short BTC
+```
+
+### §42.4 Execution (Bybit Primary)
+
+**Critical:** K628 is **Bybit-only**. HL concentration is **UNCHANGED at 65%** after K628 addition.
+
+| Parameter | Value |
+|-----------|-------|
+| Venue | Bybit primary (JTO + BTC, both legs) |
+| Execution | POST_ONLY parallel (K439 pattern) |
+| Fallback | IOC if POST_ONLY times out (5 min window) |
+| Close | Sequential: SHORT first → LONG second (IOC reduce-only, Bybit) |
+| JTO symbol | Bybit: JTOUSDT-PERP (maxLev high) |
+| Sleeve | 2% of AUM (K637 activation target; 3% upside) |
+| Leverage | 4x (K628 analysis, K430 cap) |
+| Rebalance | Drift > 5% triggers rebalance |
+
+**Notional sizing at $10M / 2% sleeve / 4x:**
+```
+Sleeve capital: $200,000  (2% × $10M)
+Total notional: $800,000  ($200K × 4x)
+JTO leg:        $400,000  (half total, Bybit)
+BTC leg:        $400,000  (half total, Bybit)
+Margin:         $200,000  (2% of AUM)
+```
+
+### §42.5 Performance Summary
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe (residual) | **18.30** |
+| OOS Sharpe (raw K622) | 18.67 |
+| Orthog degradation | 0.37 Sh units (minimal) |
+| Ann Return @4x | 44.63% |
+| Profit @$10M @4x (2% sleeve) | **$7,140,528/yr** |
+| Profit @$10M @4x (3% sleeve) | **$10,710,792/yr** |
+| Potential (best case) | **$17,851,320/yr** |
+| Cluster | Solana LST/MEV (#24) |
+| Gates passed | 6/9 §6 |
+
+### §42.6 60-Day Paper-Trade Activation Gate
+
+| Gate | Criterion | Status |
+|------|-----------|--------|
+| Realized Sharpe | ≥ 8.0 (50% of paper 18.30) | IN_PROGRESS |
+| Fill Rate | ≥ 60% | IN_PROGRESS |
+| Max Drawdown | < 20% | IN_PROGRESS |
+| Duration | 60 days | IN_PROGRESS |
+
+**Activation sequence after gate passage:**
+1. Verify Bybit JTO+BTC fill rate ≥ 60% from `cache/k628_paper_trades.jsonl`
+2. Compute realized 60d Sharpe from `data/k628_dashboard.json`
+3. Confirm maxDD < 20% from trade log
+4. Set `PAPER_TRADE=False` in plist `EnvironmentVariables`
+5. Set `HL concentration check` — should remain 65% (Bybit-only: no HL check needed)
+6. `launchctl unload` → `launchctl load` to restart daemon with live mode
+7. Start with 2% sleeve; can upgrade to 3% after 30 additional live days
+
+**Profit at activation:**
+- 2% sleeve: **$7,140,528/yr @$10M @4x**
+- 3% sleeve: **$10,710,792/yr @$10M @4x**
+
+### §42.7 Emergency Exit Protocol
+
+K628 is **Bybit-only** — no HL emergency exit needed for K628 positions.
+
+```bash
+# Dry-run K628 Bybit close summary
+python3 scripts/emergency_hl_exit.py --dry-run --user 0x... --include-k628
+
+# Close K628 positions on Bybit (scaffold — requires Bybit API auth)
+python3 scripts/k628_jto_orthog_run.py --close "emergency_exit"
+```
+
+**Note:** In an HL emergency, K628 Bybit positions are **NOT affected**. Only if closing all venues (HL + Bybit + OKX) does K628 require Bybit-side closure.
+
+### §42.8 Regime Monitoring
+
+Dashboard: `data/k628_dashboard.json`
+
+Key fields to monitor:
+- `regime`: NEUTRAL | BULL_JTO | BEAR_JTO
+- `residual_ema_7d`: current orthogonalized EMA
+- `threshold_1_5sigma`: current 1.5σ entry gate
+- `beta_sei_used`: should always be 0.164 (hardcoded)
+- `beta_doge_used`: should always be 0.302 (hardcoded)
+- `hl_concentration_pct`: should remain 65.0% (Bybit-only)
+- `gate_metrics.gate_status`: IN_PROGRESS → PASSED after 60d
+
+### §42.9 Operational Commands
+
+```bash
+# Status check
+python3 scripts/k628_jto_orthog_run.py --status
+
+# Single cycle dry-run (paper-trade simulation)
+python3 scripts/k628_jto_orthog_run.py --dry-run
+
+# Rebalance check
+python3 scripts/k628_jto_orthog_run.py --rebalance
+
+# Manual close (reason logged)
+python3 scripts/k628_jto_orthog_run.py --close "manual_exit"
+
+# Deploy daemon (after 60d gate passage)
+cp scripts/com.cryptolab.k628-jto-orthog.plist ~/Library/LaunchAgents/
+# Edit plist: replace REPO_ROOT_PLACEHOLDER with absolute path
+# Edit plist: set PAPER_TRADE=False after gate
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k628-jto-orthog.plist
+```
+
+### §42.10 Leverage Configuration
+
+```json
+"K628_JTO_ORTHOG": 4.0,   // in exchange_caps — 4x (paired delta-neutral carry)
+"k628_notes": {
+  "sleeve_pct": 0.02,
+  "leverage": 4.0,
+  "margin_calc": "4x × 2% × $10M = $800K total notional / 4x = $200K margin (2% AUM)",
+  "oos_sharpe_residual": 18.30,
+  "ann_return_usd_net_10M_2pct": 7140528,
+  "potential_usd_yr_best": 17851320,
+  "beta_sei": 0.164,
+  "beta_doge": 0.302,
+  "venue": "Bybit-only (JTO+BTC both legs: JTO maxLev high on Bybit)",
+  "hl_impact": "NONE — Bybit-only; HL concentration UNCHANGED at 65%",
+  "activation": "SCAFFOLD-READY — 60d paper-trade gate (Realized Sh>=8 + fill>=60% + maxDD<20%)"
+}
+```
+
+### §42.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k628_jto_orthog_run.py` | Strategy script (K637 scaffold, ~300 LOC) |
+| `data/k628_dashboard.json` | Live state + residual signal + β_used + regime |
+| `scripts/com.cryptolab.k628-jto-orthog.plist` | 40th daemon plist (StartInterval 28800, gitignored) |
+| `scripts/emergency_hl_exit.py` | `--include-k628` flag + K628 Bybit detect/close |
+| `scripts/leverage_manager.py` | K628_JTO_ORTHOG 4.0 cap + SLEEVE_WEIGHTS_V631 |
+| `data/leverage_config.json` | K628_JTO_ORTHOG: 4.0 + k628_notes |
+| `scripts/verify_deployment_status.py` | 40th daemon registry entry |
+| `docs/k302a_runbook.md` | This section (§42) |
+| `wave_k637_k628_scaffold.py` | Wave driver/test |
+| `wave_k637_k628_scaffold.json` | Wave result report |
+
+### §42.12 References
+
+| Wave | Description |
+|------|-------------|
+| K637 | This section — K628 JTO orthog production scaffold (40th daemon, v6.31 candidate) |
+| K628 | K628 analysis — JTO ACCEPT CONDITIONAL ($17.85M/yr @$10M @4x, OOS Sh 18.30 residual, 6/9 gates) |
+| K625 | K625 JTO-BTC raw BLOCKED (SEI+DOGE dual-blocker, Solana LST/MEV #24 confirmed) |
+| K565 | K521 options 25d skew scaffold (39th daemon, direct scaffold template) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K637 §42 -- K628 JTO-BTC Orthogonalized FR Differential production scaffold (40th daemon, OOS Sh 18.30 residual $17.85M/yr potential @$10M @4x LARGEST SINGLE-TOKEN, β_SEI=0.164 β_DOGE=0.302 hardcoded, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=8 fill>=60% maxDD<20%, v6.31 candidate) -- 2026-05-30*

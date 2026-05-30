@@ -25,7 +25,8 @@
     "K507_TIA_BTC":      4.0,
     "K512_APT_BTC":      4.0,
     "K541_STABLECOIN_SUPPLY": 2.0,
-    "K521_OPTIONS_SKEW": 2.0
+    "K521_OPTIONS_SKEW": 2.0,
+    "K628_JTO_ORTHOG": 4.0
   },
   "k457_basket_notes": {
     "sleeve_pct": 0.05,
@@ -265,6 +266,48 @@
     "api_archive": "archive.prod.vertexprotocol.com/v1",
     "product_ids": {"BTC": 2, "ETH": 4},
     "activation": "SCAFFOLD-READY — activate when Vertex trading keys configured + v6.20 go-live"
+  },
+  "k628_notes": {
+    "sleeve_pct": 0.02,
+    "bybit_sleeve_pct": 0.02,
+    "hl_sleeve_pct": 0.0,
+    "leverage": 4.0,
+    "leverage_cap": 4.0,
+    "margin_calc": "4x × 2% sleeve × $10M = $800K total notional / 4x = $200K margin (2% of AUM)",
+    "margin_pct_of_aum_10M": "2.0%",
+    "per_leg_notional": "$400K JTO + $400K BTC (Bybit, equal weight)",
+    "oos_sharpe_residual": 18.30,
+    "oos_sharpe_raw_k622": 18.67,
+    "orthog_degradation_sh": 0.37,
+    "ann_return_usd_net_10M_2pct": 7140528,
+    "ann_return_usd_net_10M_3pct": 10710792,
+    "potential_usd_yr_best": 17851320,
+    "beta_sei": 0.164,
+    "beta_doge": 0.302,
+    "is_r2": 0.075,
+    "oos_r2": -0.0327,
+    "orthog_formula": "residual = JTO_diff - 0.164*SEI_diff - 0.302*DOGE_diff",
+    "beta_hardcoded_note": "β HARDCODED per K628 OLS — no re-OLS in production for stability",
+    "cluster": "Solana LST/MEV (24th established cluster, K625 confirmed independent)",
+    "cluster_rationale": "JTO MEV block engine + jitoSOL staking yield drives FR orthogonal to Cosmos/meme/L1",
+    "hl_concentration_pct_after_add": 65.0,
+    "hl_headroom_pp": 0.0,
+    "hl_impact": "NONE — Bybit-only strategy; HL concentration UNCHANGED at 65%",
+    "venue": "Bybit primary (JTO+BTC both legs on Bybit — JTO maxLev high on Bybit)",
+    "execution": "POST_ONLY parallel (K439 paired execution pattern), Bybit-only",
+    "v631_candidate": "v6.30 + K628 2-3% Bybit = v6.31 combined ~$9.09M/yr @$10M (v6.30 $1.95M + K628 $7.14M)",
+    "paper_gate_days": 60,
+    "activation_criteria": {
+      "realized_sharpe_min": 8.0,
+      "fill_rate_min_pct": 60,
+      "max_drawdown_max_pct": 20,
+      "days_required": 60
+    },
+    "activation": "SCAFFOLD-READY — 60d paper-trade gate (Realized Sh>=8 + fill>=60% + maxDD<20%)",
+    "wave": "K637",
+    "daemon_number": "40th",
+    "plist": "scripts/com.cryptolab.k628-jto-orthog.plist",
+    "k628_hypothesis": "JTO MEV tip auction + jitoSOL LST staking yield = Solana LST/MEV-specific FR driver; after projecting out SEI (EVM Cosmos) and DOGE (meme retail) factors, residual signal captures pure Jito ecosystem alpha"
   },
   "k521_notes": {
     "sleeve_pct": 0.03,

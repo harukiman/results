@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k628-jto-orthog</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k628_jto_orthog_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 40th daemon: K628 JTO Orthogonalized FR Differential -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 8, fill_rate >= 60%, maxDD < 20% -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k628_jto_orthog.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k628_jto_orthog.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K628 specific notes (do not remove):
+         Strategy:    JTO-BTC FR Differential, orthogonalized vs SEI+DOGE (K628 OLS)
+         Daemon #:    40th daemon (K637 scaffold)
+         OOS Sharpe:  18.30 (residual) vs 18.67 raw K622
+         Profit:      $17,851,320/yr potential @$10M @4x
+         Activation:  2% sleeve = $7,140,528/yr  |  3% sleeve = $10,710,792/yr
+         β coefs:     β_SEI=0.164  β_DOGE=0.302  (HARDCODED, no re-OLS)
+         Venue:       Bybit primary (JTO maxLev high)
+         HL impact:   NONE — Bybit-only; HL concentration unchanged at 65%
+         Gate:        60d paper-trade: Realized Sh>=8 + fill>=60% + maxDD<20%
+         Cluster:     Solana LST/MEV (24th established cluster, K625 confirmed)
+         v6.31:       K628 adds 2-3% Bybit sleeve to v6.30 portfolio
+         Deploy:      cp scripts/com.cryptolab.k628-jto-orthog.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k628-jto-orthog.plist
+    -->
+</dict>
+</plist>

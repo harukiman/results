@@ -322,6 +322,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k521_options_skew",
         expected_html_status="SCAFFOLD-READY",  # K565: plist in scripts/ (gitignored); activate after 90d paper-trade gate (OOS Sh >=0.8 + fill_rate >=60% + maxDD <20% + >=100 trades in 90d)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k628-jto-orthog",
+        purpose="K628 JTO-BTC Orthogonalized FR Differential (Solana LST/MEV, Bybit-only JTO+BTC paired, 4x leverage, 8h cycle, OOS Sh 18.30 residual, $17.85M/yr potential @$10M @4x, β_SEI=0.164 β_DOGE=0.302 hardcoded, HL concentration UNCHANGED 65%, 60d paper-trade gate, v6.31 candidate 2-3% sleeve, 40th daemon)",
+        scripts=["scripts/k628_jto_orthog_run.py"],
+        log_basename="k628_jto_orthog",
+        expected_html_status="SCAFFOLD-READY",  # K637: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=8 + fill_rate>=60% + maxDD<20%)
+    ),
 ]
 
 

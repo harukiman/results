@@ -1,0 +1,138 @@
+{
+  "wave": "K637",
+  "strategy": "K628 JTO Orthogonalized FR Differential",
+  "timestamp_jst": "2026-05-30 11:10 JST",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k628_jto_orthog_run.py",
+        "description": "Phase 1: K628 strategy script (~300 LOC, K339 pattern)",
+        "exists": true,
+        "size_bytes": 44283,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k628-jto-orthog.plist",
+        "description": "Phase 2: 40th daemon plist (StartInterval 28800)",
+        "exists": true,
+        "size_bytes": 2280,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k628_dashboard.json",
+        "description": "Phase 3: Dashboard (residual signal, \u03b2_used, regime)",
+        "exists": true,
+        "size_bytes": 2926,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k628 flag)",
+        "exists": true,
+        "size_bytes": 189501,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K628_JTO_ORTHOG + SLEEVE_WEIGHTS_V631)",
+        "exists": true,
+        "size_bytes": 34693,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K628_JTO_ORTHOG: 4.0 + k628_notes)",
+        "exists": true,
+        "size_bytes": 18706,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (40th daemon registry)",
+        "exists": true,
+        "size_bytes": 25862,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a742 (K628 orthog playbook)",
+        "exists": true,
+        "size_bytes": 312305,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K628 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1531903,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k637_k628_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 12859,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_checks": {
+    "beta_sei_hardcoded": true,
+    "beta_doge_hardcoded": true,
+    "k339_repo_root": true,
+    "paper_trade_default": true,
+    "bybit_primary": true,
+    "post_only": true,
+    "signal_1_5sigma": true,
+    "sleeve_2pct": true,
+    "dashboard_beta_sei": true,
+    "dashboard_beta_doge": true,
+    "dashboard_regime": true,
+    "dashboard_oos_perf": true,
+    "dashboard_orthog_mech": true,
+    "dashboard_hl_65": true,
+    "cfg_k628_cap": true,
+    "cfg_k628_notes": true,
+    "cfg_beta_sei": true,
+    "cfg_beta_doge": true,
+    "emer_include_k628": true,
+    "emer_detect_k628": true,
+    "emer_close_k628": true,
+    "emer_bybit_only_note": true,
+    "lev_k628_cap": true,
+    "lev_v631_weights": true,
+    "vds_40th_daemon": true,
+    "vds_40th_label": true,
+    "runbook_section42": true,
+    "runbook_beta_table": true,
+    "runbook_60d_gate": true
+  },
+  "daemon_count": 40,
+  "daemon_ok": true,
+  "dry_run": {
+    "returncode": 0,
+    "success": true,
+    "stdout_len": 2974,
+    "stderr_len": 0,
+    "status": "PASS"
+  },
+  "k628_summary": {
+    "oos_sharpe_residual": 18.3,
+    "oos_sharpe_raw": 18.67,
+    "beta_sei": 0.164,
+    "beta_doge": 0.302,
+    "profit_2pct_usd_yr": 7140528,
+    "profit_3pct_usd_yr": 10710792,
+    "potential_best_usd_yr": 17851320,
+    "sleeve_activation": "2% Bybit (JTO+BTC both legs)",
+    "hl_concentration": "65% UNCHANGED \u2014 Bybit-only",
+    "cluster": "Solana LST/MEV (#24 established)",
+    "gate_60d": "Realized Sh>=8 + fill>=60% + maxDD<20%",
+    "v631_candidate": "K628 2-3% Bybit + v6.30 portfolio"
+  },
+  "overall_status": "PASS"
+}

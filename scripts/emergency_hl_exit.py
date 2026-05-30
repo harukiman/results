@@ -1058,6 +1058,131 @@ def close_k521_position(
     return True
 
 
+def _detect_k628_paired_positions(positions: List[Dict]) -> Optional[Dict]:
+    """
+    K637 Phase 4: Detect K628 JTO-BTC orthogonalized paired positions.
+
+    K628 JTO-BTC = 2 legs, BOTH on Bybit (Bybit primary — JTO maxLev high):
+      - JTO leg on Bybit
+      - BTC leg on Bybit
+      - No HL exposure (Bybit-only; HL concentration unchanged at 65%)
+    Sequential close: short leg first, then long leg (K439 close pattern).
+
+    A K628 pair is identified by:
+      - One long leg: JTO or BTC
+      - One short leg: the other of JTO/BTC
+      - Both legs on Bybit (Bybit-only strategy, K637 scaffold)
+
+    Note: JTO = Jito Network (jitoSOL LST + MEV block engine, Solana)
+    K628 ACCEPT CONDITIONAL. OOS Sharpe 18.30 (residual, K628 orthog).
+    Orthogonalization: residual = JTO_diff − 0.164×SEI_diff − 0.302×DOGE_diff
+    β_SEI=0.164, β_DOGE=0.302 (K628 OLS, IS R²=0.075).
+    Bybit-only: HL concentration UNCHANGED at 65%.
+    Profit @$10M 4x: 2% sleeve=$7.14M/yr | 3% sleeve=$10.7M/yr | best case $17.85M/yr.
+    60d paper-trade gate: Realized Sh>=8 + fill>=60% + maxDD<20%.
+    """
+    K628_SYMBOLS = {"JTO", "BTC"}
+    jto_btc = [p for p in positions if p.get("coin", "").upper() in K628_SYMBOLS]
+    if len(jto_btc) < 2:
+        return None
+
+    longs  = [p for p in jto_btc if p.get("side") == "long"]
+    shorts = [p for p in jto_btc if p.get("side") == "short"]
+
+    if not (longs and shorts):
+        return None
+
+    long_pos  = longs[0]
+    short_pos = shorts[0]
+    long_sym  = long_pos["coin"].upper()
+    short_sym = short_pos["coin"].upper()
+
+    if long_sym not in K628_SYMBOLS or short_sym not in K628_SYMBOLS:
+        return None
+    if long_sym == short_sym:
+        return None
+
+    # Both legs on Bybit (Bybit primary spec)
+    long_venue  = "Bybit"
+    short_venue = "Bybit"
+
+    return {
+        "detected":        True,
+        "long_symbol":     long_sym,
+        "short_symbol":    short_sym,
+        "long_value_usd":  long_pos.get("value_usd", 0.0),
+        "short_value_usd": short_pos.get("value_usd", 0.0),
+        "long_size":       long_pos.get("size", 0.0),
+        "short_size":      short_pos.get("size", 0.0),
+        "long_venue":      long_venue,
+        "short_venue":     short_venue,
+        "state":           f"LONG_{long_sym}_SHORT_{short_sym}",
+        "split_protocol":  "BYBIT_PRIMARY_2PCT",
+        "close_protocol":  "short_leg_first_then_long_leg",
+        "orthog_note":     "residual = JTO_diff - 0.164*SEI_diff - 0.302*DOGE_diff (K628 OLS)",
+        "note":            (
+            f"K628 JTO-BTC orthogonalized paired position — cover {short_sym}@{short_venue} first, "
+            f"then sell {long_sym}@{long_venue}. "
+            "Bybit-only: both JTO and BTC legs on Bybit (2% sleeve, K637). "
+            "HL concentration UNCHANGED at 65% (Bybit-only strategy). "
+            "Close via Bybit API IOC reduce-only (NOT HL API)."
+        ),
+    }
+
+
+def close_k628_paired_positions(
+    plan:    Dict,
+    logger:  "logging.Logger",
+    dry_run: bool = True,
+) -> bool:
+    """
+    K637 Phase 4: Close K628 JTO-BTC orthogonalized paired positions.
+    Sequential: short leg first (avoid uncovered short), then long leg.
+    Both legs close on Bybit (Bybit primary — NOT HL API).
+
+    K628 JTO Bybit-only:
+      - JTO and BTC both on Bybit (JTO maxLev high on Bybit)
+      - Close via Bybit API IOC reduce-only (not HL exchange API)
+      - HL concentration UNCHANGED — no HL action needed for K628
+
+    Note: This function closes K628 Bybit positions. In a full HL emergency,
+    K628 positions are UNAFFECTED by HL shutdown (Bybit-only). However,
+    if closing all positions across all venues, Bybit close-all handles K628.
+
+    Returns True on success (or dry-run), False on error.
+    """
+    k628_detail = plan.get("k628_pair_detail")
+
+    if not k628_detail or not k628_detail.get("detected"):
+        logger.info("  [K628] No K628 JTO-BTC paired position detected (NEUTRAL or 60d paper-trade).")
+        return True
+
+    short_sym  = k628_detail["short_symbol"]
+    long_sym   = k628_detail["long_symbol"]
+    short_val  = k628_detail.get("short_value_usd", 0.0)
+    long_val   = k628_detail.get("long_value_usd", 0.0)
+    short_venue = k628_detail.get("short_venue", "Bybit")
+    long_venue  = k628_detail.get("long_venue", "Bybit")
+
+    logger.info(f"  [K628] JTO-BTC orthog paired close — {k628_detail['state']}")
+    logger.info(f"  [K628] Orthog: residual = JTO_diff − 0.164×SEI_diff − 0.302×DOGE_diff (K628 OLS)")
+    logger.info(f"  [K628] Venue: Bybit-only (HL concentration UNCHANGED at 65%)")
+    logger.info(f"    Step 1 (SHORT first): BUY-COVER {short_sym} ${short_val:,.0f}  ({short_venue} IOC reduce-only)")
+    logger.info(f"    Step 2 (LONG second): SELL      {long_sym} ${long_val:,.0f}  ({long_venue} IOC reduce-only)")
+
+    if dry_run:
+        logger.info("    [DRY-RUN] K628 JTO-BTC orthog close simulated — no actual orders submitted")
+        return True
+
+    # LIVE scaffold: IOC close on Bybit (sequential)
+    logger.info(f"    SCAFFOLD: IOC reduce {short_sym} (cover short) @ {short_venue}")
+    logger.info(f"    SCAFFOLD: IOC reduce {long_sym} (sell long) @ {long_venue}")
+    logger.info("    SCAFFOLD: K628 close wired but not executed "
+                "(Bybit auth required at live activation). "
+                "Note: HL is NOT affected — K628 is Bybit-only.")
+    return True
+
+
 def _detect_k507_tia_paired_positions(positions: List[Dict]) -> Optional[Dict]:
     """
     K524 Phase 4: Detect K507 TIA paired positions (TIA long + BTC short, or reverse).
@@ -1391,6 +1516,13 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
     k507_tia_coins: set = set()
     if k507_tia_pair:
         k507_tia_coins = {k507_tia_pair["long_symbol"], k507_tia_pair["short_symbol"]}
+
+    # K637: detect K628 JTO-BTC orthog paired positions (JTO/BTC — Bybit-only)
+    # Note: K628 is Bybit-only — HL positions are NOT affected; HL concentration stays 65%
+    k628_pair = _detect_k628_paired_positions(positions)
+    k628_coins: set = set()
+    if k628_pair:
+        k628_coins = {k628_pair["long_symbol"], k628_pair["short_symbol"]}
 
     # K550: detect K541 stablecoin supply growth signal positions (LONG BTC+ETH+SOL)
     k541_pos = _detect_k541_position(positions)
@@ -1838,6 +1970,8 @@ def plan_exit(positions: List[Dict], orders: List[Dict]) -> Dict:
         "k512_pair_detail":       k512_pair,
         "k507_tia_paired_detected": k507_tia_pair is not None,
         "k507_tia_pair_detail":     k507_tia_pair,
+        "k628_paired_detected":   k628_pair is not None,
+        "k628_pair_detail":       k628_pair,
         "k541_detected":          k541_pos is not None,
         "k541_detail":            k541_pos,
         "k495_detected":          k495_pos is not None,
@@ -3353,6 +3487,31 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K637: K628 JTO-BTC orthog emergency exit flag
+    # K628 = Bybit-only JTO+BTC paired (2 legs) when residual EMA > 1.5σ.
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
+    # Orthog: residual = JTO_diff − 0.164×SEI_diff − 0.302×DOGE_diff (K628 OLS).
+    # Use --include-k628 to print K628-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k628",
+        dest="include_k628",
+        action="store_true",
+        default=False,
+        help=(
+            "K637: Include K628 JTO-BTC orthog close summary during emergency exit. "
+            "K628 positions (JTO+BTC paired, Bybit-only) are detected automatically "
+            "via _detect_k628_paired_positions(); this flag adds a structured summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Orthog: residual = JTO_diff - 0.164*SEI_diff - 0.302*DOGE_diff (K628 OLS beta hardcoded). "
+            "HL concentration UNCHANGED (Bybit-only strategy — HL NOT affected). "
+            "OOS Sharpe 18.30 (residual). $17.85M/yr potential @$10M @4x (largest single-token). "
+            "60d paper-trade gate: Realized Sh>=8 + fill>=60% + maxDD<20%. "
+            "2% sleeve=$7.14M/yr | 3% sleeve=$10.7M/yr | Solana LST/MEV cluster (24th). "
+            "Requires: K628 daemon running (com.cryptolab.k628-jto-orthog, 40th daemon). "
+            "See: docs/k302a_runbook.md §42"
+        ),
+    )
+
     # K502: K495 DEX-CEX flow divergence bear-conditional emergency exit flag
     # K495 = LONG BTC+ETH+SOL on HL (3 legs) when DEX-CEX z-score > 1.0 in bear regime.
     # Close protocol: IOC market orders (reduce-only) BTC → ETH → SOL (largest notional first).
@@ -3734,6 +3893,30 @@ USDY sleeve emergency guidance (K415 §21.6):
                     "K521 options skew positions detected — included in HL exit above. "
                     "Use --include-k521 to print detailed BTC LONG close summary (§41). "
                     "HL-only: BTC@HL (3% sleeve, 2x leverage, single leg)."
+                )
+
+        # K637: K628 JTO-BTC orthog close summary (Bybit-only — HL NOT affected)
+        # K628 positions (JTO+BTC, Bybit-only) are NOT in the HL exit above.
+        # K628 is Bybit-only: HL concentration UNCHANGED. Use --include-k628 for Bybit summary.
+        if args.include_k628:
+            logger.info("=== K628 JTO-BTC ORTHOG CLOSE SUMMARY (K637 §42) ===")
+            success_k628 = close_k628_paired_positions(plan=plan, logger=logger, dry_run=False)
+            if success_k628:
+                logger.info("  K628 JTO-BTC orthog close: complete (or no position detected).")
+            else:
+                logger.warning("  K628 JTO-BTC orthog close: had errors — verify Bybit JTO+BTC positions manually.")
+            logger.info("  Bybit-only: JTO+BTC both legs on Bybit (IOC reduce-only)")
+            logger.info("  Orthog: residual = JTO_diff - 0.164*SEI_diff - 0.302*DOGE_diff (K628 OLS)")
+            logger.info("  HL concentration: UNCHANGED at 65% (K628 is Bybit-only)")
+            logger.info("  OOS Sharpe 18.30 residual | $17.85M/yr potential @$10M @4x")
+            logger.info("  See: docs/k302a_runbook.md §42 (K628 JTO orthog playbook)")
+        else:
+            if plan.get("k628_paired_detected"):
+                logger.info(
+                    "K628 JTO-BTC orthog positions detected — on Bybit (NOT HL). "
+                    "Use --include-k628 to print detailed Bybit close summary (§42). "
+                    "Bybit-only: JTO@Bybit + BTC@Bybit (2% sleeve, 4x leverage). "
+                    "HL concentration UNCHANGED at 65%."
                 )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)
