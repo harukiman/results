@@ -86,6 +86,7 @@ DEFAULT_EXCHANGE_CAPS: Dict[str, float] = {
     "K682_ATOM_SOL": 4.0,   # K685: ATOM-SOL FR Differential (SECOND ALT-ALT pair, Bybit-only, 2% standalone sleeve, 4x leverage, OOS Sh 43.43 W=168h direct alt-alt diff, $214,638/yr net @$10M @4x, Cosmos IBC vs SVM DePIN-Retail cluster, HL 62.5% Bybit-only preferred, K493+K476 algebraic overlap anti-corr=-0.5195 HEDGES K493 — standalone, 60d gate Sh>=22, 55th daemon 2nd alt-alt)
     "K684_SOL_INJ":  4.0,   # K687: SOL-INJ FR Differential (THIRD ALT-ALT pair, Bybit-only, 3% standalone sleeve, 4x leverage, OOS Sh 9.65 W=168h direct alt-alt diff, $114,316/yr net @$10M @4x, SVM DePIN-Retail vs Cosmos-DeFi-Perp cluster, HL 62.5% Bybit-only preferred headroom preserved, K476+K500 algebraic overlap standalone, K679+K684 SOL double-exposure monitor, 60d gate Sh>=5, 56th daemon 3rd alt-alt)
     "K686_AVAX_SOL": 4.0,   # K689: AVAX-SOL FR Differential (FOURTH ALT-ALT pair, Bybit-only, 3% standalone sleeve, 4x leverage, OOS Sh 50.27 W=168h direct alt-alt diff, $102,153/yr net @$10M @4x, Avalanche Subnet institutional vs Solana SVM retail, HL 62.5% Bybit-only preferred headroom preserved, K484+K476 algebraic overlap anti-corr=-0.6295 HEDGES K484 — standalone, K682/K679 SOL triple-exposure monitor, 60d gate Sh>=25, 57th daemon 4th alt-alt HIGHEST Sh in family)
+    "K690_SEI_SOL":  4.0,   # K693: SEI-SOL FR Differential (FIFTH ALT-ALT pair, Bybit-only, 3% standalone sleeve, 4x leverage, OOS Sh 25.11 W=168h direct alt-alt diff, $104,174/yr net @$10M @4x, Cosmos EVM parallel vs Solana SVM retail, HL 62.5% Bybit-only preferred headroom preserved, K507+K476 algebraic overlap anti-corr=-0.5109 HEDGES K507 — standalone, K682/K686 SOL triple-exposure monitor, 60d gate Sh>=12, 58th daemon 5th alt-alt WF 12/12 UNPRECEDENTED)
     "K457_basket":    4.0,   # K459: BTC+ETH+SOL multi-asset basket carry (matches K449 4x cap)
 }
 
@@ -790,6 +791,7 @@ SLEEVE_WEIGHTS_V645: Dict[str, float] = {
     "K682":    0.02,    # ATOM-SOL FR Differential, 4x leverage, Bybit-only (v6.45 K685 addition, $214,638/yr net @2%, SECOND ALT-ALT pair Cosmos IBC vs SVM, HL 62.5% Bybit preferred, K493+K476 overlap standalone anti-corr=-0.5195 HEDGES K493, 55th daemon 2nd alt-alt)
     "K684":    0.03,    # SOL-INJ FR Differential, 4x leverage, Bybit-only (v6.46 K687 addition, $114,316/yr net @3%, THIRD ALT-ALT pair SVM DePIN-Retail vs Cosmos-DeFi-Perp, HL 62.5% Bybit-only headroom preserved, K476+K500 algebraic overlap standalone, K679+K684 SOL double-exposure monitor, 56th daemon 3rd alt-alt)
     "K686":    0.03,    # AVAX-SOL FR Differential, 4x leverage, Bybit-only (v6.47 K689 addition, $102,153/yr net @3%, FOURTH ALT-ALT pair Avalanche Subnet institutional vs Solana SVM retail, HL 62.5% Bybit-only headroom preserved, K484+K476 algebraic overlap anti-corr=-0.6295 HEDGES K484 standalone, K682/K679 SOL triple-exposure monitor, 57th daemon 4th alt-alt HIGHEST Sh 50.27)
+    "K690":    0.03,    # SEI-SOL FR Differential, 4x leverage, Bybit-only (v6.48 K693 addition, $104,174/yr net @3%, FIFTH ALT-ALT pair Cosmos EVM parallel vs Solana SVM retail, HL 62.5% Bybit-only headroom preserved, K507+K476 algebraic overlap anti-corr=-0.5109 HEDGES K507 standalone, K682/K686 SOL triple-exposure monitor, 58th daemon 5th alt-alt WF 12/12 UNPRECEDENTED)
     "K495":    0.03,    # DEX-CEX flow divergence, 3x leverage, bear-conditional (v6.25 addition, K502 scaffold)
 }
 
@@ -913,6 +915,7 @@ def compute_position_size(
         "K682":     "K682_ATOM_SOL", # K685: 4x cap for ATOM-SOL paired-trade sleeve (Bybit-only, SECOND ALT-ALT, 2% standalone)
         "K684":     "K684_SOL_INJ",  # K687: 4x cap for SOL-INJ paired-trade sleeve (Bybit-only, THIRD ALT-ALT, 3% standalone)
         "K686":     "K686_AVAX_SOL", # K689: 4x cap for AVAX-SOL paired-trade sleeve (Bybit-only, FOURTH ALT-ALT, 3% standalone, HIGHEST Sh 50.27)
+        "K690":     "K690_SEI_SOL",  # K693: 4x cap for SEI-SOL paired-trade sleeve (Bybit-only, FIFTH ALT-ALT, 3% standalone, WF 12/12 UNPRECEDENTED)
     }
     cap_key = cap_key_map.get(sleeve_name, sleeve_name)
     exchange_caps = cfg.get("exchange_caps", DEFAULT_EXCHANGE_CAPS)

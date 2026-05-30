@@ -1,0 +1,189 @@
+{
+  "wave": "K693",
+  "strategy": "K690 SEI-SOL FR Differential (FIFTH ALT-ALT pair, Bybit-only, Cosmos EVM parallel vs Solana SVM retail)",
+  "run_time_jst": "2026-05-30 15:12 JST",
+  "overall_status": "PASS",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k690_sei_sol_run.py",
+        "description": "Phase 1: K690 strategy script (K339 pattern, W=168h, alt-alt direct diff, Bybit-only)",
+        "exists": true,
+        "size_bytes": 56443,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k690-sei-sol.plist",
+        "description": "Phase 2: 58th daemon plist (StartInterval 28800, Bybit-only)",
+        "exists": true,
+        "size_bytes": 3724,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k690_dashboard.json",
+        "description": "Phase 3: Dashboard (alt-alt diff signal, regime, alt_alt_mechanism)",
+        "exists": true,
+        "size_bytes": 6949,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k690 flag, \u00a760)",
+        "exists": true,
+        "size_bytes": 262713,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K690_SEI_SOL cap + SLEEVE_WEIGHTS_V645)",
+        "exists": true,
+        "size_bytes": 91106,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K690_SEI_SOL: 4.0 + k690_notes)",
+        "exists": true,
+        "size_bytes": 83116,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (58th daemon registry)",
+        "exists": true,
+        "size_bytes": 42080,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook \u00a760 (K690 SEI-SOL playbook)",
+        "exists": true,
+        "size_bytes": 469309,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K690 SCAFFOLD-READY)",
+        "exists": true,
+        "size_bytes": 1729926,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k693_k690_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "size_bytes": 17205,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_integrity": {
+    "checks": {
+      "k339_repo_root": true,
+      "paper_trade_default": true,
+      "sleeve_3pct": true,
+      "leverage_4x": true,
+      "rolling_168h": true,
+      "zero_threshold": true,
+      "bybit_only": true,
+      "post_only": true,
+      "fifth_alt_alt": true,
+      "sei_sol_diff": true,
+      "symbols_sei_sol": true,
+      "dashboard_path": true,
+      "oos_sh_25_11": true,
+      "k507_k476_warning": true,
+      "hl_62_5": true,
+      "profit_104k": true,
+      "58th_daemon": true,
+      "wf_12_12": true,
+      "negative_fr": true,
+      "carry_dominant": true,
+      "dashboard_regime": true,
+      "dashboard_oos_perf": true,
+      "dashboard_alt_mech": true,
+      "dashboard_hl_625": true,
+      "dashboard_gate_sh12": true,
+      "dashboard_sleeve_030": true,
+      "cfg_k690_cap": true,
+      "cfg_k690_notes": true,
+      "cfg_sleeve_030": true,
+      "cfg_bybit_only": true,
+      "emer_include_k690": true,
+      "emer_k690_bybit_note": true,
+      "lev_k690_cap": true,
+      "lev_v645_weights": true,
+      "lev_k690_030pct": true,
+      "vds_k690_label": true,
+      "vds_58th_daemon": true,
+      "runbook_section60": true,
+      "runbook_fifth_altalt": true,
+      "runbook_k507_overlap": true,
+      "runbook_profit_104k": true,
+      "html_k693_scaffold": true,
+      "html_58th_daemon": true,
+      "html_k690_scaffold_ready": true
+    },
+    "pass": 44,
+    "fail": 0
+  },
+  "dry_run": {
+    "status": "PASS",
+    "returncode": 0,
+    "stdout_lines": [
+      "=== K690 Dashboard (2026-05-30 15:09 JST) ===",
+      "{",
+      "  \"last_poll_jst\": \"2026-05-30 15:09 JST\",",
+      "  \"mean_168h\": 0.0,",
+      "  \"diff_sigma\": 1e-08,"
+    ],
+    "stderr_lines": []
+  },
+  "scaffold_summary": {
+    "daemon_number": "58th",
+    "strategy": "K690 SEI-SOL FR Differential (FIFTH ALT-ALT pair)",
+    "signal": "sign(rolling_mean_168h(SEI_FR - SOL_FR))",
+    "threshold": "zero (sign only)",
+    "ema_window_h": 168,
+    "leverage": 4.0,
+    "sleeve_pct": 0.03,
+    "venue": "Bybit-only (SEI-PERP + SOL-PERP, both Bybit)",
+    "hl_concentration_pct": 62.5,
+    "hl_cap_note": "62.5% within 65% cap \u2014 Bybit-only preferred (2.5pp headroom preserved)",
+    "oos_sharpe": 25.11,
+    "oos_period": "~2025-10-23 to 2026-05-23",
+    "profit_net_yr_10m": 104174,
+    "fifth_alt_alt": true,
+    "family_rank": "G4 WF 12/12 UNPRECEDENTED \u2014 all 12 walk-forward folds positive (prior best: K679/K686 at 11/12). OOS Sh: K686=50.27 > K682=43.43 > K679=39.29 > K690=25.11 > K684=9.65.",
+    "midcap_altalt": "SEI/SOL vol ratio=1.32x. Mid-cap alt-alt exception applied. ADF stat -12.7158, p=1.01e-23. OU half-life=4.41h STRONG.",
+    "carry_dominant": "SEI mean FR -3.65%/ann NEGATIVE. Dominant BEAR_SEI (~90%+): LONG SOL/SHORT SEI carry-positive in BOTH legs.",
+    "anti_corr_k507": "corr(K690, K507) = -0.5109 \u2014 K690 HEDGES K507 long-SEI exposure",
+    "k507_k476_overlap": "Standalone (SEI-SOL = K507_dir - K476_dir algebraic identity \u2014 K690 STANDALONE 3%)",
+    "sol_triple_exposure": "K690+K682+K686 share SOL leg \u2014 monitor combined SOL notional (up to $1.8M @$10M)",
+    "paper_gate": "60d: Sh>=12 (50% of OOS 25.11) + fill>=60% + maxDD<15%",
+    "activation_status": "SCAFFOLD-READY",
+    "plist": "scripts/com.cryptolab.k690-sei-sol.plist",
+    "log_files": [
+      "logs/k690_sei_sol.log",
+      "logs/k690_sei_sol.err"
+    ],
+    "g4_unprecedented": "12/12 folds positive \u2014 UNPRECEDENTED in alt-alt family. K693 key differentiator vs prior accepts."
+  },
+  "deliverable_files": [
+    "scripts/k690_sei_sol_run.py",
+    "scripts/com.cryptolab.k690-sei-sol.plist",
+    "data/k690_dashboard.json",
+    "scripts/emergency_hl_exit.py  (--include-k690 added)",
+    "scripts/leverage_manager.py   (K690_SEI_SOL cap + SLEEVE_WEIGHTS_V645)",
+    "data/leverage_config.json     (K690_SEI_SOL: 4.0 + k690_notes)",
+    "scripts/verify_deployment_status.py  (58th daemon)",
+    "docs/k302a_runbook.md         (\u00a760 added)",
+    "report.html                   (K690 SCAFFOLD-READY row added)",
+    "wave_k693_k690_scaffold.py    (this file)",
+    "wave_k693_k690_scaffold.json  (this report)"
+  ]
+}

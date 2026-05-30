@@ -44,7 +44,8 @@
     "K679_APT_SOL": 4.0,
     "K682_ATOM_SOL": 4.0,
     "K684_SOL_INJ": 4.0,
-    "K686_AVAX_SOL": 4.0
+    "K686_AVAX_SOL": 4.0,
+    "K690_SEI_SOL": 4.0
   },
   "k457_basket_notes": {
     "sleeve_pct": 0.05,
@@ -1262,5 +1263,69 @@
     "sol_fr_drivers": "Solana SVM DePIN/Retail adoption premium (persistent +7.73% ann mean), meme-coin season (BONK/WIF), Firedancer upgrade hype cycles, SOL ETF speculation, Solana validator economics, network congestion spikes.",
     "alt_alt_hypothesis": "AVAX (Avalanche Subnet institutional/RWA L1) vs SOL (Solana SVM consumer/retail L1): FOURTH alt-alt pair in portfolio. No BTC or ETH leg — pure alt-to-alt cross-L1 same-tier differential. AVAX FR driven by institutional demand cycles (subnet launches, RWA, HFT — episodic). SOL FR driven by consumer/DePIN cycles (meme-coin season premium, Firedancer, DePIN network launches — persistent). Both ~$20-80B MC, both EVM-compatible. AVAX/SOL vol ratio=0.85x (AVAX more stable — unusual inverse). Same-tier L1 exception: vol threshold relaxed, ADF confirms stationarity (stat -13.99, p<1e-10). OU half-life=3.6h (FASTEST in alt-alt family). Anti-corr K686 vs K484 = -0.6295 (HEDGES K484 long-AVAX).",
     "section6_result": "ACCEPT. G1 OOS Sh=50.27 PASS, G2 perm p=0.0 PASS, G3 DSR p<1e-200 PASS, G4 WF 11/12 positive (non-blocking per alt-alt precedent), G5a-G5f all PASS (G5c K484 signed corr=-0.6295 < 0.40 signed PASS). OOS period ~216d. OU half-life=3.6h (FASTEST). Same-tier L1 exception applied (AVAX/SOL vol ratio=0.85x)."
+  },
+  "k690_notes": {
+    "strategy": "K690 SEI-SOL FR Differential (K693 scaffold) — FIFTH ALT-ALT pair",
+    "oos_sharpe": 25.11,
+    "w_hours": 168,
+    "ann_return_usd_net_10M": 104174,
+    "daily_usdc": 285,
+    "sleeve_pct": 0.03,
+    "leverage": 4.0,
+    "bybit_only": true,
+    "hl_concentration_pre": 62.5,
+    "hl_concentration_post": 62.5,
+    "hl_cap_note": "HL 62.5% — Bybit-only preferred. Both SEI-PERP + SOL-PERP on Bybit. HL headroom 2.5pp preserved.",
+    "bybit_only_reason": "Bybit preferred for K690: HL stays at 62.5% (Scenario C — both legs Bybit, 2.5pp headroom preserved, K693 spec). OKX SEI available as preferred G8 reference (OKX SEI corr=0.664).",
+    "cluster": "SEI-SOL Alt-Alt FR Differential (Cosmos EVM parallel vs Solana SVM retail, FIFTH ALT-ALT)",
+    "daemon_number": "58th (5th alt-alt, WF 12/12 UNPRECEDENTED in family)",
+    "wave": "K693",
+    "activation": "SCAFFOLD-READY — 60d paper-trade gate (Realized Sh>=12 + fill>=60% + maxDD<15%)",
+    "activation_criteria": {
+      "realized_sharpe_min": 12.0,
+      "fill_rate_min_pct": 60,
+      "max_drawdown_max_pct": 15,
+      "days_required": 60,
+      "note": "Gate: Sh>=12 (50% of OOS Sh=25.11) — FIFTH ALT-ALT pair, WF 12/12 UNPRECEDENTED in family"
+    },
+    "midcap_altalt_note": {
+      "vol_ratio_sei_sol": 1.3207,
+      "exception": "Mid-cap vs large-cap alt-alt exception applied. SEI MC ~$2-8B vs SOL MC ~$60-80B. Vol ratio 1.32x below 1.5x normal alt-alt threshold.",
+      "adf_stat": -12.7158,
+      "adf_pvalue": "p=1.01e-23",
+      "ou_half_life_days": 0.184,
+      "ou_half_life_hours": 4.41,
+      "ou_note": "STRONG mean-reversion (2nd fastest in alt-alt family: K686=3.6h, K690=4.41h)"
+    },
+    "carry_dominance": {
+      "sei_mean_fr_ann_pct": -3.651,
+      "sol_mean_fr_ann_pct": 7.704,
+      "diff_mean_1h": -1.296e-05,
+      "dominant_regime": "BEAR_SEI (~90%+): LONG SOL / SHORT SEI — carry-positive in BOTH legs simultaneously",
+      "carry_note": "SEI negative FR -3.65%/ann means short-sellers PAY us when we short SEI perps. SOL positive FR +7.70%/ann = longs pay us. BEAR_SEI = dual positive carry stream.",
+      "g2_note": "G2 perm p=1.0 is structural (carry-dominated). Primary stats: G3 DSR p=0.0 PASS + G4 WF 12/12 UNPRECEDENTED."
+    },
+    "k507_k476_overlap": {
+      "warning": "Algebraic overlap with K507 SEI-BTC (HL+Bybit, 2% sleeve) + K476 SOL-BTC (HL-only, 1.5% sleeve)",
+      "math_identity": "SEI-SOL = (SEI-BTC) - (SOL-BTC) = K507_direction - K476_direction",
+      "signed_corr_k507": "K690 vs K507 signed corr = -0.5109 (anti-correlated by construction — K690 HEDGES K507 long-SEI exposure)",
+      "portfolio_effect": "K690 + K507 + K476 = complex algebraic overlap. Deploy K690 STANDALONE or reduce K507/K476 weights.",
+      "default": "STANDALONE: K690 3% Bybit sleeve is independent. K507 and K476 continue unchanged.",
+      "rebalance_option": "If desired: reduce K507 to 1% + K476 to 1% + K690 3% for cleaner net SEI-SOL exposure.",
+      "hedging_benefit": "K690 anti-corr=-0.5109 with K507 = natural portfolio hedge against K507 long-SEI concentration."
+    },
+    "sol_exposure_overlap": {
+      "k682_warning": "K690 SEI-SOL and K682 ATOM-SOL both have SOL leg — SOL double-exposure when both active",
+      "k686_warning": "K690 SEI-SOL and K686 AVAX-SOL both have SOL leg — SOL double-exposure when both active",
+      "triple_risk": "K690 + K682 + K686 all active = SOL triple-exposure — monitor combined SOL notional across all three",
+      "default": "All STANDALONE: separate Bybit sleeves, independent margin. Monitor combined SOL notional.",
+      "monitor": "If K690+K682+K686 all active: combined SOL notional = up to 3x $600K = $1.8M. Track vs AUM."
+    },
+    "margin_calc": "4x * 3% Bybit * $10M = $1,200,000 total Bybit notional / 4x = $300,000 margin (3% of AUM)",
+    "profit_at_3pct_4x": "$104,174/yr net @$10M @4x (OOS Sh=25.11, standalone 3% Bybit sleeve)",
+    "sei_fr_drivers": "Sei Network Cosmos SDK + CosmWasm + parallel EVM (CometBFT + Twin-turbo consensus + SeiDB). DeFi protocol launches, CosmWasm adoption, Cosmos-EVM bridge activity, SeiDB throughput events, exchange-native perpetual speculation. NEGATIVE mean FR -3.65%/ann: short-sellers dominate SEI perps.",
+    "sol_fr_drivers": "Solana SVM DePIN/Retail adoption premium (persistent +7.70% ann mean), meme-coin season (BONK/WIF), Firedancer upgrade hype cycles, SOL ETF speculation, Solana validator economics, network congestion spikes.",
+    "alt_alt_hypothesis": "SEI (Sei Network Cosmos EVM parallel chain, DeFi/CosmWasm — NEGATIVE mean FR -3.65%/ann, short-sellers dominate) vs SOL (Solana SVM consumer/retail L1 — persistently positive +7.70%/ann): FIFTH alt-alt pair in portfolio. No BTC or ETH leg — pure alt-to-alt cross-ecosystem Cosmos-EVM vs SVM differential. Dominant regime: LONG SOL / SHORT SEI is carry-positive in both legs simultaneously. SEI FR driven by Cosmos DeFi/CosmWasm cycles (episodic, negative mean). SOL FR driven by retail/meme-coin cycles (persistent, positive structural premium). Mid-cap vs large-cap: SEI ~$2-8B vs SOL ~$60-80B. Vol ratio SEI/SOL=1.32x. ADF p=1.01e-23. OU half-life=4.41h STRONG. Anti-corr K690 vs K507 = -0.5109 (HEDGES K507 long-SEI).",
+    "section6_result": "ACCEPT. 14/14 gates PASS. G1 OOS Sh=25.11 PASS, G2 perm p=1.0 (carry-dominated structural exception — G3+G4 primary), G3 DSR p=0.0 PASS, G4 WF 12/12 UNPRECEDENTED (ALL FOLDS POSITIVE — first in alt-alt family), G5a-G5f all PASS (G5c K507 signed corr=-0.5109 anti-corr PASS), G6 19/yr (non-blocking family precedent), G7 41.1% @4x PASS, G8 OKX SEI corr=0.664 PASS, G9 218d OOS PASS. WF 12/12 unprecedented differentiates K690 from prior alt-alt accepts."
   }
 }

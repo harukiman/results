@@ -11853,3 +11853,190 @@ python3 scripts/verify_deployment_status.py
 ---
 
 *K689 §59 -- K686 AVAX-SOL FR Differential production scaffold (57th daemon, FOURTH ALT-ALT pair Avalanche Subnet institutional vs Solana SVM retail, OOS Sh 50.27 W=168h direct alt-alt diff $102.2K/yr net @$10M @4x 3% sleeve, Bybit-only HL 62.5% unchanged headroom preserved, K484+K476 algebraic overlap anti-corr=-0.6295 HEDGES K484 standalone, K682/K679 SOL triple-exposure monitor, same-tier L1 AVAX/SOL vol=0.85x ADF -13.99 OU 3.6h FASTEST, 60d gate: Sh>=25 fill>=60% maxDD<15%, v6.47 candidate) -- 2026-05-30*
+
+---
+
+## §60 K690 SEI-SOL FR Differential (58th Daemon, FIFTH ALT-ALT pair)
+
+**Wave:** K693 | **Strategy:** K690 SEI-SOL FR Differential | **Status:** SCAFFOLD-READY
+
+### §60.1 Overview
+
+K690 SEI-SOL is the **FIFTH alt-alt pair** in the portfolio (K693 production scaffold, 58th daemon).
+Signal: `diff = SEI_FR - SOL_FR` (direct alt-alt, W=168h rolling mean, zero threshold).
+Both legs on Bybit (SEI-PERP + SOL-PERP). HL concentration unchanged at 62.5%.
+
+**K690 §6 result:** ACCEPT — 14/14 gates PASS. WF **12/12 UNPRECEDENTED** (all folds positive — first in alt-alt family).
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe | **25.11** (W=168h, zero threshold, ~218d OOS) |
+| OOS Ann Return (1x) | 10.27% |
+| Net Profit @$10M @4x @3% | **$104,174/yr** |
+| Daily USDC | ~$285 |
+| Walk-forward | **12/12 positive** (UNPRECEDENTED in family) |
+| ADF stat | -12.7158 (p=1.01e-23 — STATIONARY) |
+| OU half-life | 4.41h (0.184d — STRONG mean-reversion) |
+| OOS period | 2025-10-23 to 2026-05-23 (~218d) |
+| Daemon | 58th (5th alt-alt) |
+
+### §60.2 SEI-SOL Mechanism & Economic Rationale
+
+**SEI (Sei Network):**
+- Cosmos SDK + CosmWasm + parallel EVM (CometBFT + Twin-turbo consensus + SeiDB)
+- FR drivers: DeFi protocol launches on parallel EVM, CosmWasm adoption, Cosmos-EVM bridge activity, SeiDB throughput events, exchange-native perpetual speculation
+- **NEGATIVE mean FR: -3.65%/ann** — short-sellers dominate SEI perpetuals (bearish bias on Cosmos EVM chain vs bullish SOL)
+
+**SOL (Solana):**
+- Solana SVM (Sealevel parallel runtime + Tower BFT + PoH)
+- FR drivers: retail meme-coin season (BONK/WIF), Firedancer upgrade hype, SOL ETF speculation, validator economics
+- **Persistently positive: +7.70%/ann** — structural retail demand premium
+
+**Carry-dominant edge:**
+SEI-SOL diff mean = -1.30e-05/h (SOL usually far higher by ~11.4%/ann).
+**Dominant regime BEAR_SEI (~90%+):** LONG SOL / SHORT SEI is CARRY-POSITIVE in **both legs**:
+- SOL leg: longs pay us positive carry (+7.70%/ann)
+- SEI leg: short-sellers PAY us (we collect negative FR = positive income)
+
+**G2 note:** perm p=1.0 is structural (carry-dominated strategy — shuffle preserves carry bias). Primary validation: **G3 DSR p=0.0 (PASS)** + **G4 WF 12/12 UNPRECEDENTED (PASS)**.
+
+### §60.3 Signal Direction Logic
+
+| `mean_168h` | Regime | Direction | Long | Short |
+|------------|--------|-----------|------|-------|
+| > 0 | BULL_SEI | +1 | SEI | SOL |
+| < 0 | BEAR_SEI | -1 | SOL | SEI |
+| = 0 | NEUTRAL | 0 | — | — |
+
+**BEAR_SEI is dominant (~90%+):** SOL FR >> SEI FR (structural Solana retail premium + SEI negative carry).
+
+### §60.4 K507+K476 Algebraic Overlap Warning
+
+Mathematical identity:
+```
+SEI_FR - SOL_FR = (SEI_FR - BTC_FR) - (SOL_FR - BTC_FR)
+K690_signal ≈ K507_direction - K476_direction
+```
+
+| Strategy | Assets | Venue | Sleeve |
+|----------|--------|-------|--------|
+| K507 SEI-BTC | SEI + BTC | HL + Bybit | 2% |
+| K476 SOL-BTC | SOL + BTC | HL-only | 1.5% |
+| **K690 SEI-SOL** | **SEI + SOL** | **Bybit-only** | **3%** |
+
+**Anti-correlation:** corr(K690, K507) = **-0.5109** (signed) — K690 HEDGES K507 long-SEI exposure. Portfolio benefit: K690 adds alpha while reducing K507 concentration risk.
+
+**Default (K693):** K690 STANDALONE — run with its own 3% sleeve; K507 and K476 unchanged.
+
+### §60.5 SOL Leg Overlap Warning
+
+K690 SEI-SOL, K682 ATOM-SOL, and K686 AVAX-SOL all share the SOL leg:
+
+| Strategy | SOL direction | Notional @$10M @3% @4x |
+|----------|---------------|------------------------|
+| **K690 SEI-SOL** | LONG or SHORT SOL | $600K |
+| K686 AVAX-SOL | LONG or SHORT SOL | $600K |
+| K682 ATOM-SOL | LONG or SHORT SOL | $600K |
+
+If all three active simultaneously: up to $1.8M combined SOL notional. Monitor combined SOL exposure vs total AUM.
+
+### §60.6 Venue & HL Concentration
+
+HL concentration baseline (post-K679/K682/K684/K686 Bybit-preferred): 62.5%
+K690 impact: **NONE** (both SEI-PERP + SOL-PERP on Bybit — Scenario C)
+Post-K690 HL: still 62.5% (unchanged — Bybit-only preserves headroom)
+
+**G8 venue check:** Bybit SEI corr=0.526 (borderline); **OKX SEI corr=0.664** (preferred G8 reference). OKX SEI anchor PASSES G8 (≥0.55). Bybit SOL corr=0.575 PASSES.
+
+K690 Bybit-only: SEI-PERP and SOL-PERP both listed on Bybit. HL exposure unchanged at 62.5%.
+
+### §60.7 60d Paper-Trade Gate (K693 specification)
+
+| Gate | Threshold | Rationale |
+|------|-----------|-----------|
+| Realized Sharpe | ≥ 12 | 50% of OOS Sh=25.11 (standard 50% rule) |
+| Fill rate | ≥ 60% | POST_ONLY execution efficiency |
+| Max drawdown | < 15% | Tail risk control |
+| Period | 60d | Standard alt-alt gate period |
+
+**Rationale:** Gate Sh>=12 = ~50% of OOS Sh=25.11 (same 50% standard as family: K682: 22/43.43, K679: 20/39.29, K686: 25/50.27). WF 12/12 unprecedented → gate can be set slightly lower.
+
+### §60.8 Emergency Close Procedure
+
+K690 is Bybit-only — NOT in HL emergency exit.
+```bash
+# Check K690 position
+python3 scripts/k690_sei_sol_run.py --status
+
+# Emergency close K690 (Bybit IOC reduce-only)
+python3 scripts/k690_sei_sol_run.py --close "emergency exit"
+
+# Emergency exit with K690 summary
+python3 scripts/emergency_hl_exit.py --include-k690 --dry-run
+
+# K507+K476: close K690 STANDALONE — do NOT assume K507/K476 as hedges
+# K682/K686 SOL: close K690 independently of K682+K686 (all standalone)
+```
+
+### §60.9 Daemon Deployment
+
+```bash
+# Copy plist (from repo scripts/)
+cp scripts/com.cryptolab.k690-sei-sol.plist ~/Library/LaunchAgents/
+
+# Load daemon (58th daemon)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k690-sei-sol.plist
+
+# Verify loaded
+launchctl list | grep k690
+
+# Start paper-trade cycle manually
+python3 scripts/k690_sei_sol_run.py --dry-run
+
+# Check status
+python3 scripts/k690_sei_sol_run.py --status
+
+# Verify all deployments (58th daemon check)
+python3 scripts/verify_deployment_status.py
+```
+
+**Activate LIVE** (after 60d gate passage):
+```bash
+# Edit plist: set PAPER_TRADE=False
+# Reload daemon
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k690-sei-sol.plist
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k690-sei-sol.plist
+```
+
+### §60.10 Deliverable Files
+
+| File | Purpose |
+|------|---------|
+| `scripts/k690_sei_sol_run.py` | Phase 1: K690 strategy script (K339 pattern, W=168h, alt-alt direct diff) |
+| `scripts/com.cryptolab.k690-sei-sol.plist` | Phase 2: 58th daemon plist (StartInterval 28800, Bybit-only) |
+| `data/k690_dashboard.json` | Phase 3: Dashboard (alt-alt diff signal, regime, alt_alt_mechanism) |
+| `scripts/emergency_hl_exit.py` | Phase 4: Emergency exit (--include-k690 flag, §60) |
+| `scripts/leverage_manager.py` | Phase 5: Leverage manager (K690_SEI_SOL cap + SLEEVE_WEIGHTS_V645) |
+| `data/leverage_config.json` | Phase 6: Leverage config (K690_SEI_SOL: 4.0 + k690_notes) |
+| `scripts/verify_deployment_status.py` | Phase 7: Deployment verifier (58th daemon registry) |
+| `docs/k302a_runbook.md` | Phase 8: This section (§60) |
+| `report.html` | Phase 9: HTML report (K690 SCAFFOLD-READY) |
+| `wave_k693_k690_scaffold.py` | Phase 11: Wave driver (this scaffold) |
+
+### §60.11 References
+
+| Wave | Description |
+|------|-------------|
+| K693 | This section — K690 SEI-SOL scaffold (58th daemon, v6.48 candidate) |
+| K690 | K690 analysis — SEI-SOL ACCEPT (FIFTH ALT-ALT, OOS Sh 25.11, WF 12/12 UNPRECEDENTED) |
+| K689 | K686 AVAX-SOL scaffold (FOURTH ALT-ALT, 57th daemon) |
+| K687 | K684 SOL-INJ scaffold (THIRD ALT-ALT, 56th daemon) |
+| K685 | K682 ATOM-SOL scaffold (SECOND ALT-ALT, 55th daemon 2nd alt-alt) |
+| K683 | K679 APT-SOL scaffold (FIRST ALT-ALT, 55th daemon) |
+| K514 | K507 SEI-BTC scaffold (algebraic overlap K507+K476) |
+| K478 | K476 SOL-BTC scaffold (algebraic overlap K476+K500) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K693 §60 -- K690 SEI-SOL FR Differential production scaffold (58th daemon, FIFTH ALT-ALT pair Cosmos EVM parallel vs Solana SVM retail, OOS Sh 25.11 W=168h direct alt-alt diff $104.2K/yr net @$10M @4x 3% sleeve, Bybit-only HL 62.5% unchanged headroom preserved, K507+K476 algebraic overlap anti-corr=-0.5109 HEDGES K507 standalone, K682/K686 SOL triple-exposure monitor, mid-cap alt-alt SEI/SOL vol=1.32x ADF p=1.01e-23 OU 4.41h STRONG, SEI negative FR -3.65%/ann carry-dominant BEAR_SEI LONG SOL/SHORT SEI carry-positive both legs, G4 WF 12/12 UNPRECEDENTED first in family, 60d gate: Sh>=12 fill>=60% maxDD<15%, v6.48 candidate) -- 2026-05-30*

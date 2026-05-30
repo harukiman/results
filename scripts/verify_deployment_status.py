@@ -455,6 +455,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k686_avax_sol",
         expected_html_status="SCAFFOLD-READY",  # K689: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=25 + fill>=60% + maxDD<15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k690-sei-sol",
+        purpose="K690 SEI-SOL FR Differential (FIFTH ALT-ALT pair Cosmos EVM parallel vs Solana SVM retail, Bybit-only SEI-PERP+SOL-PERP both legs, 4x leverage, 8h cycle, OOS Sh 25.11 W=168h direct alt-alt diff, $104,174/yr net @$10M @4x @3% standalone sleeve, HL 62.5% Bybit-only preferred headroom preserved, K507+K476 algebraic overlap anti-corr=-0.5109 HEDGES K507 — standalone, K682/K686 SOL triple-exposure monitor, SEI FR=Cosmos EVM DeFi/CosmWasm launches NEGATIVE mean -3.65%ann short-sellers dominate, SOL FR=DePIN/Retail meme-coin BONK/WIF Firedancer ETF speculation +7.70%ann persistent, mid-cap alt-alt SEI/SOL vol=1.32x ADF p=1.01e-23 OU 4.41h STRONG, carry-dominant BEAR_SEI LONG SOL/SHORT SEI carry-positive both legs, 60d paper-trade gate Realized Sh>=12 fill>=60% maxDD<15%, v6.48 candidate 3% sleeve, 58th daemon 5th alt-alt WF 12/12 UNPRECEDENTED, K693 scaffold)",
+        scripts=["scripts/k690_sei_sol_run.py"],
+        log_basename="k690_sei_sol",
+        expected_html_status="SCAFFOLD-READY",  # K693: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=12 + fill>=60% + maxDD<15%)
+    ),
 ]
 
 

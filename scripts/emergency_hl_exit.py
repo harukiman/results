@@ -4091,6 +4091,41 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K693: K690 SEI-SOL FR Differential emergency exit flag
+    # K690 = Bybit-only SEI+SOL paired (2 legs, FIFTH ALT-ALT pair).
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — Bybit-only preferred, HL stays at 62.5%).
+    # Signal: diff = SEI_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold).
+    # K507+K476 overlap warning: K690 STANDALONE — close K690 independently of K507/K476.
+    # K682/K686 SOL-exposure: K690+K682+K686 share SOL leg — close independently, monitor SOL.
+    # Bybit-only: SEI-PERP + SOL-PERP both on Bybit. HL UNCHANGED at 62.5%.
+    # Use --include-k690 to print K690-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k690",
+        dest="include_k690",
+        action="store_true",
+        default=False,
+        help=(
+            "K693: Include K690 SEI-SOL close summary during emergency exit. "
+            "K690 positions (SEI+SOL paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Signal: diff = SEI_FR - SOL_FR (direct alt-alt differential, W=168h rolling mean, zero threshold). "
+            "HL concentration UNCHANGED at 62.5% (Bybit-only — no HL positions, headroom preserved). "
+            "OOS Sharpe 25.11 (FIFTH ALT-ALT pair, WF 12/12 UNPRECEDENTED). $104,174/yr net @$10M @4x (3% standalone sleeve). "
+            "K507+K476 algebraic overlap: SEI-SOL = K507_dir - K476_dir. Close K690 STANDALONE. "
+            "Anti-corr K690 vs K507 = -0.5109 (K690 HEDGES K507 long-SEI exposure). "
+            "K682/K686 SOL-exposure: K690+K682+K686 share SOL leg — close independently, monitor SOL notional. "
+            "Math identity: SEI-SOL = (SEI-BTC) - (SOL-BTC) = K507_dir - K476_dir. "
+            "Mid-cap alt-alt exception: SEI/SOL vol ratio=1.32x. ADF stat -12.7158 (p=1.01e-23), OU half-life=4.41h (STRONG). "
+            "60d paper-trade gate: Realized Sh>=12 + fill>=60% + maxDD<15%. "
+            "SEI FR: Cosmos EVM parallel chain demand, DeFi/CosmWasm launches, NEGATIVE mean -3.65%/ann (short-sellers dominate). "
+            "SOL FR: DePIN/Retail/meme-coin premium (BONK/WIF, Firedancer, ETF speculation, +7.70% ann). "
+            "Cluster: SEI-SOL Alt-Alt (Cosmos EVM parallel vs Solana SVM retail, FIFTH ALT-ALT, 58th daemon). "
+            "Requires: K690 daemon running (com.cryptolab.k690-sei-sol, 58th daemon). "
+            "See: docs/k302a_runbook.md §60"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -4941,6 +4976,38 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "K686 positions ARE NOT in the HL exit above (Bybit-only). "
                 "Close K686 on Bybit independently of K484/K476. "
                 "Use --include-k686 for Bybit close summary (§59). "
+                "HL concentration UNCHANGED at 62.5%."
+            )
+
+        # K693: K690 SEI-SOL close summary (Bybit-only — HL NOT affected)
+        # K690 positions (SEI+SOL, Bybit-only) are NOT in the HL exit above.
+        # K690 is Bybit-only (HL at 62.5%, Bybit-only preferred — headroom preserved). HL UNCHANGED at 62.5%.
+        # Close K690 independently of K507 SEI-BTC and K476 SOL-BTC (standalone).
+        # Note: K690+K682+K686 all share SOL leg — close independently, monitor SOL notional.
+        if args.include_k690:
+            logger.info("=== K690 SEI-SOL CLOSE SUMMARY (K693 §60) ===")
+            logger.info("  K690 SEI-SOL: Bybit-only (SEI-PERP + SOL-PERP both legs on Bybit)")
+            logger.info("  FIFTH ALT-ALT pair: SEI vs SOL (no BTC/ETH base)")
+            logger.info("  Signal: diff = SEI_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: UNCHANGED at 62.5% (K690 is Bybit-only, headroom preserved)")
+            logger.info("  K507+K476 overlap: close K690 STANDALONE (SEI-SOL = K507_dir - K476_dir algebraic identity)")
+            logger.info("  Anti-corr K690 vs K507 = -0.5109 (K690 HEDGES K507 long-SEI — close independently)")
+            logger.info("  K682/K686 SOL-exposure: K690+K682+K686 share SOL leg — close independently, monitor SOL notional")
+            logger.info("  OOS Sharpe 25.11 (FIFTH ALT-ALT, WF 12/12 UNPRECEDENTED) | $104,174/yr net @$10M @4x (3% sleeve)")
+            logger.info("  SEI FR: Cosmos EVM parallel chain, DeFi/CosmWasm launches, NEGATIVE mean -3.65%/ann (short-sellers dominate)")
+            logger.info("  SOL FR: DePIN/Retail/meme-coin premium (BONK/WIF, Firedancer, ETF speculation, +7.70% ann)")
+            logger.info("  Mid-cap alt-alt: SEI/SOL vol ratio=1.32x. ADF p=1.01e-23, OU half-life=4.41h (STRONG)")
+            logger.info("  Carry dominant: BEAR_SEI (~90%+): LONG SOL/SHORT SEI = carry-positive in both legs")
+            logger.info("  Cluster: SEI-SOL Alt-Alt (Cosmos EVM parallel vs Solana SVM retail, 58th daemon)")
+            logger.info("  60d gate: Realized Sh>=12 + fill>=60% + maxDD<15%")
+            logger.info("  See: docs/k302a_runbook.md §60 (K690 SEI-SOL playbook)")
+        else:
+            logger.info(
+                "K690 SEI-SOL: Bybit-only (NOT HL — HL at 62.5%, Bybit-only preferred). "
+                "K690 positions ARE NOT in the HL exit above (Bybit-only). "
+                "Close K690 on Bybit independently of K507/K476. "
+                "Use --include-k690 for Bybit close summary (§60). "
                 "HL concentration UNCHANGED at 62.5%."
             )
 
