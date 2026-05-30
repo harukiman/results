@@ -1,0 +1,772 @@
+{
+  "wave": "K691",
+  "strategy": "TIA-APT FR Differential Alt-Alt Cross-Layer Paired-Trade (Celestia DA vs Aptos Move-VM, sixth alt-alt pair, no SOL anchor, K688 algebraic group exit)",
+  "run_time_jst": "2026-05-30 14:57:25 JST",
+  "runtime_s": 8.0,
+  "phase0_venue_check": {
+    "target": "TIA-APT (alt-alt: Celestia DA vs Aptos Move-VM L1, SIXTH alt-alt pair, no SOL anchor)",
+    "venue_check": {
+      "hyperliquid_tia": {
+        "listed": true,
+        "rows": 17519,
+        "file": "hl_fr_TIA.parquet",
+        "result": "LISTED \u2014 17519 hourly FR records"
+      },
+      "hyperliquid_apt": {
+        "listed": true,
+        "rows": 17519,
+        "file": "hl_fr_APT.parquet",
+        "result": "LISTED \u2014 17519 hourly FR records"
+      },
+      "bybit_tia": {
+        "listed": true,
+        "rows": 3670,
+        "file": "bybit_fr_TIAUSDT_730d.parquet",
+        "result": "LISTED \u2014 3670 8h FR records (730d)"
+      },
+      "bybit_apt": {
+        "listed": true,
+        "rows": 2190,
+        "file": "bybit_fr_APTUSDT_730d.parquet",
+        "result": "LISTED \u2014 2190 8h FR records (730d)"
+      }
+    },
+    "hl_tia_exists": true,
+    "hl_apt_exists": true,
+    "bybit_tia_exists": true,
+    "bybit_apt_exists": true,
+    "g8_candidate_pass": true,
+    "phase0_venue_pass": true,
+    "cross_venue_corr": {
+      "tia_hl_bybit": 0.6669,
+      "apt_hl_bybit": 0.7171,
+      "diff_hl_bybit": 0.7594
+    },
+    "venue_decision": "PROCEED \u2014 TIA + APT listed on HL + Bybit. Both legs available for HL execution OR Bybit execution.",
+    "execution_preference": "Bybit (both legs) PREFERRED: avoids HL concentration cap breach (62.5+3=65.5% > 65%). Bybit TIA corr=0.6669 vs HL, Bybit APT corr=0.7171 vs HL -> G8 candidate."
+  },
+  "phase0_vol_ratio": {
+    "tia_fr_std_full": 4.028e-05,
+    "apt_fr_std_full": 5.0087e-05,
+    "vol_ratio_full": 1.2435,
+    "vol_ratio_6m": 1.6515,
+    "threshold": 1.2,
+    "pass": true,
+    "fr_mean_levels": {
+      "tia_fr_ann_pct": 1.09,
+      "apt_fr_ann_pct": -1.41,
+      "diff_mean_1h": 2.854e-06,
+      "interpretation": "TIA FR mean 1.1% ann (DA demand events, rollup ecosystem cycles, modular narrative). APT FR mean -1.4% ann (unlock pressure, Move-VM adoption events, SUI competition). TIA-APT diff mean = 2.85e-06/h (TIA slightly higher FR by ~2.5%/ann)."
+    },
+    "family_context": {
+      "eth_btc_k449_vol_ratio_vs_btc": 1.084,
+      "sol_btc_k476_vol_ratio_vs_btc": 1.764,
+      "avax_btc_k484_vol_ratio_vs_btc": 1.499,
+      "atom_btc_k493_vol_ratio_vs_btc": 2.337,
+      "inj_btc_k500_vol_ratio_vs_btc": 3.826,
+      "apt_btc_k512_vol_ratio_vs_btc": 2.841,
+      "apt_sol_k679_vol_ratio": 1.612,
+      "atom_sol_k682_vol_ratio": 1.326,
+      "sol_inj_k684_vol_ratio": 2.17,
+      "apt_inj_k688_vol_ratio": 1.346,
+      "tia_apt_k691_vol_ratio": 1.2435,
+      "note": "Alt-alt CROSS-LAYER pair: vol ratio APT/TIA directly (not vs BTC). Both small-MC alts with distinct FR drivers."
+    },
+    "architecture_note": "APT/TIA vol ratio 1.243x (APT more volatile). TIA: Modular DA layer (Celestia), MC ~$1-3B, blob-fee-market driven FR. APT: Move-VM Block-STM L1, MC ~$3-4B, unlock-driven FR. Cross-layer alt-alt captures DA demand premium vs execution layer dynamics. NOTE: vol_ratio < 1.2x indicates similar volatility between legs \u2014 signal comes from FR mean-reversion rather than vol differential.",
+    "decision": "PROCEED \u2014 vol_ratio=1.2435. Note: APT and TIA have similar FR volatility. The signal derives from mean-reversion of the differential (ADF stationary, OU half-life ~7h). Low vol ratio is consistent with cross-layer homogeneous risk profile (both small-MC alts). Phase0 focus: confirm stationarity and OU dynamics, not vol ratio."
+  },
+  "data_info": {
+    "hl_rows": 17513,
+    "date_start": "2024-05-25",
+    "date_end": "2026-05-24",
+    "total_years": 1.999,
+    "oos_start": "2025-10-17",
+    "oos_end": "2026-05-24",
+    "oos_days": 218,
+    "trades_per_yr": 18.5,
+    "is_rows": 12260,
+    "oos_rows": 5253,
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4
+  },
+  "statistical_analysis": {
+    "adf": {
+      "statistic": -8.084,
+      "p_value": 0.0,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "critical_1pct": -3.4307,
+      "critical_5pct": -2.8617,
+      "interpretation": "TIA-APT FR differential IS stationary at 5% level. ADF stat -8.0840 vs 5% critical -2.8617. Mean-reversion assumption CONFIRMED."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.09815,
+      "half_life_hours": 7.06,
+      "half_life_days": 0.294,
+      "long_run_mean": 2.854e-06,
+      "r_squared": 0.0491,
+      "mean_reversion_quality": "STRONG (< 2 days)"
+    },
+    "autocorrelation": {
+      "lag_1h": 0.9018,
+      "lag_24h": 0.5094,
+      "lag_168h_7d": 0.3264,
+      "persistence_note": "ACF lag-1h=0.9018: Strong persistence"
+    },
+    "fr_cycle_7d": {
+      "regime_switches_total": 37,
+      "regime_switches_per_yr": 18.5,
+      "note": "7d rolling mean regime switches (position flips)"
+    }
+  },
+  "is_metrics": {
+    "sharpe": 37.629,
+    "ann_ret_pct": 17.876,
+    "max_dd": -0.006382,
+    "entries": 29,
+    "period": "2024-06-01 \u2013 2025-10-19"
+  },
+  "oos_metrics": {
+    "sharpe": 39.216,
+    "ann_ret_pct": 22.508,
+    "max_dd": -0.002979,
+    "entries": 8,
+    "period": "2025-10-20 \u2013 2026-05-24"
+  },
+  "walk_forward_12fold": [
+    {
+      "fold": 1,
+      "oos_start": "2024-08-30",
+      "oos_end": "2024-09-29",
+      "sharpe": 77.257,
+      "ann_ret_pct": 49.686,
+      "entries": 0,
+      "positive": "True"
+    },
+    {
+      "fold": 2,
+      "oos_start": "2024-09-29",
+      "oos_end": "2024-10-29",
+      "sharpe": 126.801,
+      "ann_ret_pct": 74.457,
+      "entries": 0,
+      "positive": "True"
+    },
+    {
+      "fold": 3,
+      "oos_start": "2024-10-29",
+      "oos_end": "2024-11-28",
+      "sharpe": 2.891,
+      "ann_ret_pct": 1.538,
+      "entries": 5,
+      "positive": "True"
+    },
+    {
+      "fold": 4,
+      "oos_start": "2024-11-28",
+      "oos_end": "2024-12-28",
+      "sharpe": 24.914,
+      "ann_ret_pct": 10.716,
+      "entries": 2,
+      "positive": "True"
+    },
+    {
+      "fold": 5,
+      "oos_start": "2024-12-28",
+      "oos_end": "2025-01-27",
+      "sharpe": 58.063,
+      "ann_ret_pct": 11.197,
+      "entries": 0,
+      "positive": "True"
+    },
+    {
+      "fold": 6,
+      "oos_start": "2025-01-27",
+      "oos_end": "2025-02-26",
+      "sharpe": 54.864,
+      "ann_ret_pct": 14.028,
+      "entries": 0,
+      "positive": "True"
+    },
+    {
+      "fold": 7,
+      "oos_start": "2025-02-26",
+      "oos_end": "2025-03-28",
+      "sharpe": 27.428,
+      "ann_ret_pct": 8.25,
+      "entries": 1,
+      "positive": "True"
+    },
+    {
+      "fold": 8,
+      "oos_start": "2025-03-28",
+      "oos_end": "2025-04-27",
+      "sharpe": 45.295,
+      "ann_ret_pct": 11.72,
+      "entries": 1,
+      "positive": "True"
+    },
+    {
+      "fold": 9,
+      "oos_start": "2025-04-27",
+      "oos_end": "2025-05-27",
+      "sharpe": 14.401,
+      "ann_ret_pct": 4.983,
+      "entries": 2,
+      "positive": "True"
+    },
+    {
+      "fold": 10,
+      "oos_start": "2025-05-27",
+      "oos_end": "2025-06-26",
+      "sharpe": 16.57,
+      "ann_ret_pct": 4.047,
+      "entries": 2,
+      "positive": "True"
+    },
+    {
+      "fold": 11,
+      "oos_start": "2025-06-26",
+      "oos_end": "2025-07-26",
+      "sharpe": 32.455,
+      "ann_ret_pct": 9.206,
+      "entries": 1,
+      "positive": "True"
+    },
+    {
+      "fold": 12,
+      "oos_start": "2025-07-26",
+      "oos_end": "2025-08-25",
+      "sharpe": -6.303,
+      "ann_ret_pct": -2.628,
+      "entries": 6,
+      "positive": "False"
+    }
+  ],
+  "walk_forward_summary": {
+    "folds_total": 12,
+    "folds_positive": 11,
+    "g4_pass": false,
+    "min_fold_sharpe": -6.303,
+    "max_fold_sharpe": 126.801
+  },
+  "permutation_p": 0.0,
+  "dsr_bonferroni": {
+    "n_trials": 12,
+    "t_stat": 30.3679,
+    "p_raw": 0.0,
+    "p_bonferroni": 0.0,
+    "threshold": 0.00417,
+    "pass": "True"
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 168,
+      "threshold_factor": 0.5,
+      "threshold_value": 1.544e-05,
+      "IS_sharpe": 38.221,
+      "OOS_sharpe": 40.747,
+      "entries": 5,
+      "OOS_ret_pct": 22.546
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.5,
+      "threshold_value": 1.708e-05,
+      "IS_sharpe": 34.161,
+      "OOS_sharpe": 40.747,
+      "entries": 3,
+      "OOS_ret_pct": 22.546
+    },
+    {
+      "window_h": 72,
+      "threshold_factor": 0.5,
+      "threshold_value": 1.342e-05,
+      "IS_sharpe": 38.687,
+      "OOS_sharpe": 40.187,
+      "entries": 19,
+      "OOS_ret_pct": 22.655
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.25,
+      "threshold_value": 7.72e-06,
+      "IS_sharpe": 39.811,
+      "OOS_sharpe": 39.73,
+      "entries": 11,
+      "OOS_ret_pct": 22.246
+    },
+    {
+      "window_h": 72,
+      "threshold_factor": 0.25,
+      "threshold_value": 6.71e-06,
+      "IS_sharpe": 40.156,
+      "OOS_sharpe": 39.404,
+      "entries": 31,
+      "OOS_ret_pct": 22.623
+    }
+  ],
+  "g5_correlations": {
+    "g5a_corr_vs_k449": 0.0143,
+    "g5a_pass": true,
+    "g5a_n": 17311,
+    "g5b_corr_vs_k512": 0.4712,
+    "g5b_pass": false,
+    "g5b_n": 17311,
+    "g5c_corr_vs_tia_btc": -0.317,
+    "g5c_pass": true,
+    "g5c_n": 17311,
+    "g5d_corr_vs_k679": -0.5074,
+    "g5d_pass": true,
+    "g5d_n": 17311,
+    "g5e_corr_vs_k682": -0.0634,
+    "g5e_pass": true,
+    "g5e_n": 17311,
+    "g5f_corr_vs_k684": -0.1363,
+    "g5f_pass": true,
+    "g5f_n": 17311,
+    "g5g_corr_vs_k280": 0.0598,
+    "g5g_pass": true,
+    "g5g_n": 17178,
+    "altalt_novel_confirmed": false,
+    "signed_corr_convention": "SIGNED correlation < 0.40 threshold (per \u00a76 K266 convention). Negative correlations PASS even if abs(corr) > 0.40.",
+    "k512_note": "K691 vs K512 signed corr=0.4712: TIA-APT vs BTC-APT. APT is shared leg (opposite sign). Math identity: TIA-APT = -(BTC-TIA) + (BTC-APT) = -K_TIA_btc + K512_dir. Signed corr >= 0.40 -> FAILS.",
+    "k679_note": "K691 vs K679 signed corr=-0.5074: APT is shared leg (K679=APT-SOL, K691=TIA-APT). Anti-correlation expected when TIA diverges from SOL direction. Signed corr < 0.40 -> PASSES.",
+    "tia_btc_note": "K691 vs TIA-BTC signed corr=-0.3170: TIA is the new leg (no existing strategy). TIA-APT = -(TIA-BTC) + (APT-BTC). Anti-correlation with BTC-TIA expected. Signed corr < 0.40 -> PASSES.",
+    "mathematical_identity": {
+      "identity": "TIA_fr - APT_fr = -(BTC_fr - TIA_fr) + (BTC_fr - APT_fr) = -K_TIA_BTC_dir + K512_dir",
+      "no_sol_anchor": "K691 TIA-APT has NO intermediate token cancellation. Unlike K688 (APT-INJ = K679+K684 with SOL cancelling), K691 is a direct TIA-APT pair with no bridge. TIA (DA layer) and APT (execution layer) are structurally distinct: different blockchain architecture layers (data availability vs compute).",
+      "k688_comparison": "K688 (APT-INJ) failed G5d because APT-INJ = K679+K684 (SOL bridge). K691 (TIA-APT) has NO such algebraic dependency on existing alt-alt pairs. TIA is not in K679 (APT-SOL), K682 (ATOM-SOL), or K684 (SOL-INJ). K691 represents a truly new direction without SOL anchor.",
+      "implication": "K691 algebraically overlaps with K512 via APT shared leg. G5b check: if corr(K691, K512) > 0.40 -> FAIL (APT concentration risk). Portfolio: TIA-APT adds TIA exposure without any existing position in TIA. Recommend K691 as standalone 3% sleeve (Bybit, both legs)."
+    },
+    "ecosystem_summary": {
+      "ethereum_btc_base": {
+        "k449": 0.014296935055988232,
+        "pass": true
+      },
+      "apt_btc_base": {
+        "k512": 0.47116895922232227,
+        "pass": false,
+        "note": "APT is shared leg"
+      },
+      "tia_btc_anchor": {
+        "tia_btc": -0.3169574175679783,
+        "pass": true,
+        "note": "TIA new in family"
+      },
+      "apt_sol_altalt": {
+        "k679": -0.5073875123671321,
+        "pass": true
+      },
+      "atom_sol_altalt": {
+        "k682": -0.06344796395248377,
+        "pass": true
+      },
+      "sol_inj_altalt": {
+        "k684": -0.13631816008667455,
+        "pass": true
+      },
+      "vol_momentum": {
+        "k280": 0.05976645814580048,
+        "pass": true
+      },
+      "altalt_novel": false
+    },
+    "architecture_verdict": "ALGEBRAIC OVERLAP DETECTED \u2014 K691 TIA-APT signal {'passes' if altalt_novel else 'fails'} all G5 checks (signed convention). TIA (Celestia modular DA, blob-fee-market) vs APT (Aptos Move-VM Block-STM L1). SIXTH alt-alt pair in family. New cross-layer axis: DA demand vs execution layer dynamics. No SOL anchor \u2014 first alt-alt pair that does NOT involve SOL as either leg or bridge."
+  },
+  "cross_venue": {
+    "bybit_tia": {
+      "available": true,
+      "n_obs": 3670,
+      "corr_with_hl": 0.6669,
+      "passes_g8_leg": true,
+      "date_range": "2024-05-23 \u2013 2026-05-23"
+    },
+    "bybit_apt": {
+      "available": true,
+      "n_obs": 2190,
+      "corr_with_hl": 0.7171,
+      "passes_g8_leg": true,
+      "date_range": "2024-05-23 \u2013 2026-05-23"
+    },
+    "diff_corr": {
+      "n_obs": 2186,
+      "corr_hl_vs_bybit_diff": 0.7594,
+      "note": "TIA-APT differential (8h) on Bybit vs HL \u2014 primary G8 metric"
+    },
+    "effective_g8_corr": 0.7594,
+    "g8_pass": true,
+    "note": "Cross-venue check: Bybit TIA-APT diff vs HL TIA-APT diff (8h resampled). Bybit TIA leg corr=0.6669, APT leg corr=0.7171. Diff-level corr=0.7594. G8 threshold=0.55.",
+    "execution_recommendation": "USE BYBIT (both legs) for K691: Bybit TIA and APT available. Reduces HL concentration vs adding HL-only. Bybit execution preserves HL concentration headroom."
+  },
+  "hl_concentration_impact": {
+    "current_hl_pct_baseline": 62.5,
+    "hl_cap_pct": 65.0,
+    "sleeve_pct": 3.0,
+    "scenario_a_hl_only": {
+      "new_hl_pct": 65.5,
+      "within_cap": false,
+      "note": "HL 62.5% + 3.0% = 65.5% OVER cap."
+    },
+    "scenario_b_bybit_both": {
+      "hl_pct": 62.5,
+      "bybit_pct": 3.0,
+      "within_cap": true,
+      "note": "Both legs Bybit: HL stays 62.5%. PREFERRED."
+    },
+    "recommendation": "PREFERRED: Execute K691 on Bybit (both TIA+APT legs). HL stays at 62.5% \u2014 full headroom preserved. Bybit TIA corr=0.6669, APT corr=0.7171 vs HL -> G8 pass."
+  },
+  "section6_gates": {
+    "gates": {
+      "G1_oos_sharpe": {
+        "value": 39.216,
+        "threshold": ">= 1.0",
+        "pass": "True"
+      },
+      "G2_perm_p": {
+        "value": 0.0,
+        "threshold": "<= 0.05",
+        "pass": true
+      },
+      "G3_dsr_bonferroni": {
+        "value": 0.0,
+        "threshold": "< 0.00417",
+        "pass": "True"
+      },
+      "G4_wf_stability": {
+        "all_folds_positive": false,
+        "folds_positive": 11,
+        "total_folds": 12,
+        "min_fold_sharpe": -6.303,
+        "pass": false
+      },
+      "G5a_corr_k449_eth": {
+        "value": 0.0143,
+        "threshold": "< 0.4 (signed)",
+        "pass": true,
+        "note": "ETH-BTC baseline"
+      },
+      "G5b_corr_k512_apt": {
+        "value": 0.4712,
+        "threshold": "< 0.4 (signed)",
+        "pass": false,
+        "note": "CRITICAL: APT-BTC (APT is one leg of K691)"
+      },
+      "G5c_corr_tia_btc": {
+        "value": -0.317,
+        "threshold": "< 0.4 (signed)",
+        "pass": true,
+        "note": "CRITICAL: TIA-BTC (TIA is other leg of K691, new in family)"
+      },
+      "G5d_corr_k679_altalt": {
+        "value": -0.5074,
+        "threshold": "< 0.4 (signed)",
+        "pass": true,
+        "note": "APT-SOL alt-alt family (APT shared leg with K679)"
+      },
+      "G5e_corr_k682_altalt": {
+        "value": -0.0634,
+        "threshold": "< 0.4 (signed)",
+        "pass": true,
+        "note": "ATOM-SOL alt-alt family (Cosmos cluster baseline)"
+      },
+      "G5f_corr_k684_altalt": {
+        "value": -0.1363,
+        "threshold": "< 0.4 (signed)",
+        "pass": true,
+        "note": "SOL-INJ alt-alt family (cross-cluster baseline)"
+      },
+      "G5g_corr_k280": {
+        "value": 0.0598,
+        "threshold": "< 0.4 (signed)",
+        "pass": true,
+        "note": "Vol momentum baseline"
+      },
+      "G6_trades_yr": {
+        "value": 18.5,
+        "threshold": ">= 30",
+        "pass": false
+      },
+      "G7_ann_return_4x": {
+        "value_pct": 90.03,
+        "threshold": "> 5.0%",
+        "pass": "True"
+      },
+      "G8_cross_venue": {
+        "effective_corr": 0.7594,
+        "threshold": ">= 0.55",
+        "pass": true,
+        "bybit_diff_corr": 0.7594
+      },
+      "G9_data_sufficiency": {
+        "oos_days": 218,
+        "threshold": ">= 180d",
+        "pass": true
+      }
+    },
+    "gates_passed": 12,
+    "total_gates": 15,
+    "oos_sharpe": 39.216,
+    "decision": "REJECT",
+    "failing_gates": [
+      "G4_wf_stability",
+      "G5b_corr_k512_apt",
+      "G6_trades_yr"
+    ],
+    "altalt_novel_confirmed": false,
+    "signed_g5_convention": true,
+    "rationale": "[REJECT] K691 TIA-APT passes 12/15 \u00a76 gates. OOS Sharpe 39.216. Vol ratio APT/TIA ~1.24x. G5b(K512 APT-BTC): 0.4712 (FAIL). G5c(TIA-BTC): -0.3170 (PASS). G5d(K679 APT-SOL): -0.5074 (PASS). Perm p=0.0000. DA-layer vs execution-layer novel cross-layer alt-alt pair. No SOL anchor \u2014 first TIA strategy. Execute on Bybit (both legs) to preserve HL headroom. $229,602/yr @$10M."
+  },
+  "altalt_mechanism_analysis": {
+    "mechanism_type": "alt-alt FR differential (sixth in family, cross-layer DA vs execution)",
+    "prior_family_pattern": "K679=APT-SOL (#1 ACCEPT), K682=ATOM-SOL (#2 ACCEPT), K684=SOL-INJ (#3 ACCEPT), K688=APT-INJ (#5 REJECT), K691=TIA-APT (#6 EVAL)",
+    "k691_structure": {
+      "structure": "TIA_fr - APT_fr (TIA minus APT; negative = APT more expensive FR)",
+      "economic_driver": "Cross-layer premium: Celestia DA (modular blob storage) vs Aptos Move-VM (execution L1). TIA FR driven by: DA demand events (rollup TPS spikes, blob fee market), TIA staking APY changes, modular ecosystem growth, competing DA solutions (EigenDA, Avail). APT FR driven by: token unlock schedule (heavy 2024-2026), Move-VM adoption, SUI-APT competition, Aptos DeFi TVL cycles, AptosBFT validator economics. Both are small-MC alts ($1-3B TIA vs $3-4B APT) with distinct FR lifecycle patterns.",
+      "signal_logic": "When TIA_fr > APT_fr: DA demand spike > execution demand -> short TIA perp, long APT perp. When APT_fr > TIA_fr: execution demand > DA demand -> short APT perp, long TIA perp. Captures mean-reversion of cross-layer premium with OU half-life ~7h."
+    },
+    "k688_algebraic_lesson": {
+      "k688_fail_reason": "K688 APT-INJ failed G5d (K679 corr=0.6137) because: APT-INJ = K679_dir + K684_dir (SOL cancels). Running K688 + K679 + K684 creates APT+INJ double exposure \u2014 algebraic dependency confirmed.",
+      "k691_independence": "K691 TIA-APT does NOT have this problem. TIA is not in K679 (APT-SOL), K682 (ATOM-SOL), or K684 (SOL-INJ). TIA is the FIRST token in the alt-alt family not connected via SOL. K691 = -(K_TIA_BTC) + K512_dir \u2014 overlaps only with K512 (APT-BTC). G5b check (K512 corr) is the critical gate for K691 algebraic independence.",
+      "sol_absence": "K679, K682, K684 all use SOL as one leg or bridge. K688 = K679 + K684 (SOL eliminates). K691 TIA-APT: neither TIA nor APT is SOL. SOL is completely absent. First alt-alt pair in the family where SOL does not appear in any algebraic identity."
+    },
+    "vol_comparison": {
+      "tia_fr_std": 4.028e-05,
+      "apt_fr_std": 5.0087e-05,
+      "vol_ratio_max_min": 1.2435,
+      "vs_k679": "K691 TIA-APT vol ratio 1.243x vs K679 APT-SOL 1.61x. TIA and APT have similar volatility.",
+      "vs_k688": "K691 TIA-APT vol ratio 1.243x vs K688 APT-INJ 1.35x. Both cross-layer pairs.",
+      "vs_btc_family": "TIA/APT ratio ~1.24x \u2014 compressed. Both small-MC alts with similar market beta."
+    },
+    "architecture_comparison": {
+      "tia_celestia": {
+        "layer": "Data Availability (DA) \u2014 not an execution layer",
+        "vm": "None (pure DA, blob storage)",
+        "consensus": "Tendermint BFT (Cosmos SDK base)",
+        "mc_approx": "~$1-3B",
+        "fr_drivers": "DA demand (rollup blob fees), TIA staking APY, modular ecosystem events",
+        "key_competitors": "EigenDA, Avail, Ethereum native DA (EIP-4844)",
+        "ecosystem_role": "Provides DA to OP Stack, Fuel, Manta, Sei, Eclipse"
+      },
+      "apt_aptos": {
+        "layer": "Execution Layer (L1)",
+        "vm": "Move-VM (Block-STM parallel execution)",
+        "consensus": "AptosBFT (DiemBFT/HotStuff variant)",
+        "mc_approx": "~$3-4B",
+        "fr_drivers": "Token unlock schedule, Move ecosystem adoption, SUI competition, DeFi TVL",
+        "key_competitors": "SUI (same Move-VM), Solana (SVM), Ethereum (EVM)",
+        "ecosystem_role": "Move-VM smart contract L1"
+      },
+      "independence_analysis": "TIA operates at the DA layer (below execution); APT at the execution layer (above DA). These are fundamentally different blockchain infrastructure layers. TIA FR = demand for data storage by rollups (infrastructure demand). APT FR = demand for execution compute + token speculation. The two FR cycles are structurally independent: rollup activity != L1 adoption. Example: high rollup activity (high TIA FR) can coexist with APT unlock pressure (low APT FR)."
+    },
+    "cycle_analysis_da_vs_move": {
+      "tia_cycle_events": [
+        "Celestia mainnet launch (Oct 2023): DA demand spike",
+        "Rollup migrations (2024): OP Stack chains adopting Celestia DA",
+        "Blob fee market events: EIP-4844 implementation reduced Ethereum DA cost",
+        "TIA staking APY changes: validator economics impact FR",
+        "Modular ecosystem expansion: Fuel, Manta, others using TIA DA"
+      ],
+      "apt_cycle_events": [
+        "APT token unlock cliff events (2024-2026): unlock pressure -> negative FR",
+        "Move-VM ecosystem: SUI competition for developer mindshare",
+        "Aptos DeFi TVL: Aries Markets, Echelon, Thala liquidity events",
+        "AptosBFT upgrades: validator economics changes",
+        "Move language adoption by Facebook/Diem descendants"
+      ],
+      "cycle_divergence": "TIA DA demand cycles run at a DIFFERENT frequency than APT unlock cycles. DA demand: driven by rollup adoption (gradual, narrative-dependent). APT unlocks: driven by vesting schedule (periodic, predetermined). This structural divergence creates the mean-reverting FR differential."
+    },
+    "cross_layer_comparison": {
+      "k679_apt_sol": {
+        "pair": "APT-SOL",
+        "oos_sharpe": 39.285,
+        "cluster": "Move-VM vs SVM"
+      },
+      "k682_atom_sol": {
+        "pair": "ATOM-SOL",
+        "oos_sharpe": 43.43,
+        "cluster": "Cosmos IBC vs SVM"
+      },
+      "k684_sol_inj": {
+        "pair": "SOL-INJ",
+        "oos_sharpe": 9.647,
+        "cluster": "SVM vs Cosmos DeFi"
+      },
+      "k688_apt_inj": {
+        "pair": "APT-INJ",
+        "oos_sharpe": 23.171,
+        "cluster": "Move-VM vs Cosmos DeFi \u2014 REJECT"
+      },
+      "k691_tia_apt": {
+        "pair": "TIA-APT",
+        "oos_sharpe": 39.216,
+        "cluster": "DA Layer vs Move-VM L1 \u2014 EVAL"
+      },
+      "comparison_note": "K691 TIA-APT (OOS Sh=39.216) is the cross-layer pair: Celestia (DA infrastructure) vs Aptos (execution L1). First alt-alt pair in the family with NO SOL anchor in any form. TIA is a new token class in the family (DA-native, not execution-native)."
+    }
+  },
+  "profit_projection": {
+    "strategy": "TIA-APT FR differential alt-alt cross-layer paired-trade",
+    "oos_sharpe": 39.216,
+    "sleeve_pct": 3.0,
+    "leverage": 4.0,
+    "oos_ann_ret_1x_pct": 22.508,
+    "oos_ann_ret_4x_pct": 90.032,
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000,
+      "oos_ann_ret_pct": 22.508,
+      "oos_ann_ret_levered_pct": 90.032,
+      "gross_annual_usd": 270096,
+      "net_annual_usd_est": 229582,
+      "daily_usdc": 629
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 12000000,
+      "oos_ann_ret_pct": 22.508,
+      "oos_ann_ret_levered_pct": 90.032,
+      "gross_annual_usd": 2700960,
+      "net_annual_usd_est": 2295816,
+      "daily_usdc": 6290
+    },
+    "note": "3.0% sleeve, 4.0x leverage, 15% friction buffer. OOS annual return (1x): 22.51%. Execute on Bybit (both legs) to manage HL concentration."
+  },
+  "paired_trade_family_rank": {
+    "members": [
+      {
+        "rank": 1,
+        "pair": "APT-BTC (K512)",
+        "oos_sharpe": 51.102,
+        "net_dollar_yr_10M": 302195,
+        "status": "ACCEPT",
+        "vol_ratio": 2.841,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 2,
+        "pair": "ATOM-BTC (K493)",
+        "oos_sharpe": 50.786,
+        "net_dollar_yr_10M": 231660,
+        "status": "ACCEPT",
+        "vol_ratio": 2.337,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 3,
+        "pair": "SEI-BTC (K507)",
+        "oos_sharpe": 48.1,
+        "net_dollar_yr_10M": 179425,
+        "status": "ACCEPT",
+        "vol_ratio": 2.328,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 4,
+        "pair": "AVAX-BTC (K484)",
+        "oos_sharpe": 43.887,
+        "net_dollar_yr_10M": 75683,
+        "status": "ACCEPT",
+        "vol_ratio": 1.499,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 5,
+        "pair": "ATOM-SOL (K682)",
+        "oos_sharpe": 43.43,
+        "net_dollar_yr_10M": 214638,
+        "status": "ACCEPT",
+        "vol_ratio": 1.326,
+        "type": "alt-alt #2"
+      },
+      {
+        "rank": 6,
+        "pair": "APT-SOL (K679)",
+        "oos_sharpe": 39.285,
+        "net_dollar_yr_10M": 234781,
+        "status": "ACCEPT",
+        "vol_ratio": 1.612,
+        "type": "alt-alt #1"
+      },
+      {
+        "rank": 7,
+        "pair": "SOL-BTC (K476)",
+        "oos_sharpe": 16.298,
+        "net_dollar_yr_10M": 187456,
+        "status": "ACCEPT",
+        "vol_ratio": 1.764,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 8,
+        "pair": "INJ-BTC (K500)",
+        "oos_sharpe": 11.232,
+        "net_dollar_yr_10M": 124190,
+        "status": "ACCEPT",
+        "vol_ratio": 3.826,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 9,
+        "pair": "SOL-INJ (K684)",
+        "oos_sharpe": 9.647,
+        "net_dollar_yr_10M": 114316,
+        "status": "ACCEPT",
+        "vol_ratio": 2.17,
+        "type": "alt-alt #3"
+      },
+      {
+        "rank": 10,
+        "pair": "APT-INJ (K688)",
+        "oos_sharpe": 23.171,
+        "net_dollar_yr_10M": 290181,
+        "status": "REJECT (G5d)",
+        "vol_ratio": 1.346,
+        "type": "alt-alt #5 CROSS-CLUSTER"
+      },
+      {
+        "rank": 11,
+        "pair": "ETH-BTC (K449)",
+        "oos_sharpe": 5.663,
+        "net_dollar_yr_10M": 13100,
+        "status": "ACCEPT (baseline)",
+        "vol_ratio": 1.084,
+        "type": "alt-btc"
+      },
+      {
+        "rank": 12,
+        "pair": "TIA-APT (K691)",
+        "oos_sharpe": 39.216,
+        "net_dollar_yr_10M": 229582,
+        "status": "EVAL",
+        "vol_ratio": 1.244,
+        "type": "alt-alt #6 CROSS-LAYER DA vs Execution (EVAL)",
+        "note": "Sixth alt-alt pair; Celestia DA layer vs Aptos Move-VM. No SOL anchor. TIA new in family."
+      }
+    ],
+    "family_type_breakdown": {
+      "alt_btc_pairs": 7,
+      "alt_alt_pairs": 5,
+      "note": "K691 = sixth alt-alt pair in family (K679, K682, K684, K688 REJECT, K691). First cross-layer DA pair."
+    },
+    "portfolio_note": "K691 TIA-APT: APT is shared leg with K512 (APT-BTC) and K679 (APT-SOL). Running K691 alongside K512+K679 increases APT exposure. TIA is NEW: not in any existing strategy. Algebraic independence: K691 = -(K_TIA_BTC) + K512_dir. G5b check (corr vs K512) is the critical gate. Recommend: deploy K691 as STANDALONE at 3% sleeve (Bybit, both legs) if G5b passes. If G5b fails, REJECT (APT concentration risk)."
+  },
+  "decision": "REJECT",
+  "decision_rationale": "[REJECT] K691 TIA-APT passes 12/15 \u00a76 gates. OOS Sharpe 39.216. Vol ratio APT/TIA ~1.24x. G5b(K512 APT-BTC): 0.4712 (FAIL). G5c(TIA-BTC): -0.3170 (PASS). G5d(K679 APT-SOL): -0.5074 (PASS). Perm p=0.0000. DA-layer vs execution-layer novel cross-layer alt-alt pair. No SOL anchor \u2014 first TIA strategy. Execute on Bybit (both legs) to preserve HL headroom. $229,602/yr @$10M.",
+  "k691_lessons": {
+    "altalt_sixth_cross_layer": "K691 = sixth alt-alt pair, FIRST cross-layer bridge (DA + Execution). No SOL anchor.",
+    "k688_algebraic_group_lesson": "K688 lesson: APT-INJ = K679+K684 (SOL bridge). K691 avoids this: TIA is not in any existing alt-alt pair. The algebraic group for {APT, SOL, INJ, ATOM} does not include TIA. TIA introduces a genuinely new vertex to the alt-alt graph.",
+    "g5b_critical_gate": "G5b: corr(K691, K512) must be < 0.40. APT shared leg -> this is the binding constraint.",
+    "tia_da_narrative": "TIA = modular DA layer. FR driven by rollup adoption, blob fees, not execution compute.",
+    "apt_unlock_risk": "APT = Aptos Move-VM. Monitor token unlock schedule, Move ecosystem adoption.",
+    "hl_solution": "Bybit execution for both legs solves HL concentration cap issue.",
+    "portfolio_context": "K691 + K679 = APT double exposure (TIA+APT both carry APT). Standalone deployment recommended.",
+    "tia_competitive_risk": "EigenDA, Avail, EIP-4844 compete with Celestia. Monitor DA market share.",
+    "no_sol_first": "K691 is the FIRST alt-alt pair in the entire family (K679-K691) with no SOL involvement."
+  }
+}
