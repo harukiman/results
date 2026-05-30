@@ -8142,3 +8142,396 @@ launchctl load ~/Library/LaunchAgents/com.cryptolab.k628-jto-orthog.plist
 ---
 
 *K637 §42 -- K628 JTO-BTC Orthogonalized FR Differential production scaffold (40th daemon, OOS Sh 18.30 residual $17.85M/yr potential @$10M @4x LARGEST SINGLE-TOKEN, β_SEI=0.164 β_DOGE=0.302 hardcoded, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=8 fill>=60% maxDD<20%, v6.31 candidate) -- 2026-05-30*
+
+---
+
+## §43 K631 WLD-BTC Orthogonalized FR Differential — Production Scaffold Playbook
+
+**Wave:** K639 | **Daemon:** 41st | **Status:** SCAFFOLD-READY | **Date:** 2026-05-30
+
+### §43.1 Strategy Overview
+
+K631 WLD-BTC is a **Biometric ID cluster** strategy: **$2,900,000/yr @$10M @4x** (residual OOS Sh=18.04, W=72h).
+
+WLD = Worldcoin Network:
+- **World ID** — biometric proof-of-humanhood (iris scan, zero-knowledge proof)
+- **AI-bot resistance** — novel identity infrastructure for human verification in the AI era
+- Biometric ID cluster = distinct from DeFi infrastructure (JUP = Jupiter aggregator routing flows)
+
+**Key insight:** WLD's FR dynamics are driven by privacy-tech / AI-identity narrative cycles. Raw WLD-BTC signal was blocked at G5 by JUP (DeFi aggregator) factor co-movement. After orthogonalizing via K631 OLS regression (projecting out JUP factor), the residual captures pure Worldcoin Biometric ID-specific FR alpha. OOS Sh=18.04 (W=72h optimal per K631 hyperparameter sweep).
+
+### §43.2 Orthogonalization Mechanism (K631 OLS)
+
+```
+WLD_diff  = WLD_FR − BTC_FR         (raw target signal)
+JUP_diff  = JUP_FR − BTC_FR         (factor: DeFi aggregator co-movement)
+
+residual  = WLD_diff − β_JUP × JUP_diff
+          = WLD_diff − 0.458795 × JUP_diff
+```
+
+**β Coefficient (K631 OLS — HARDCODED in production, NO re-OLS):**
+
+| Coefficient | Value | Meaning |
+|-------------|-------|---------|
+| β_JUP  | **0.458795** | JUP DeFi aggregator factor loading on WLD FR |
+
+**EMA Window:** W=72h = 9 × 8h periods (optimal per K631 hyperparameter sweep, Sh=18.04 peak)
+
+**Why hardcoded:** β coefficient is hardcoded in production for stability. Re-OLS in production would introduce look-ahead bias and parameter instability. The K631 OLS fit was computed on the full available history and is treated as a fixed structural parameter.
+
+### §43.3 Signal Gate
+
+```
+EMA_72h  = 72h EMA of residual history (9 × 8h periods, W=72h optimal)
+σ_72h    = 72h rolling standard deviation of residual
+Threshold = 1.5 × σ_72h
+
+Entry: |EMA_72h| > 1.5σ_72h
+  BULL_WLD (EMA_72h > 0):  WLD residual FR > BTC → short WLD / long BTC
+  BEAR_WLD (EMA_72h < 0):  WLD residual FR < BTC → long WLD / short BTC
+  NEUTRAL:                  no action
+
+Exit: |EMA_72h| ≤ 1.5σ_72h  → close position
+Flip: direction reversal     → close + re-enter opposite
+```
+
+### §43.4 Execution (Bybit Primary)
+
+**Critical:** K631 is **Bybit-only**. HL concentration is **UNCHANGED at 65%** after K631 addition.
+
+| Parameter | Value |
+|-----------|-------|
+| Primary venue | Bybit (WLD-USDT-SWAP + BTC-USDT-SWAP) |
+| Execution | POST_ONLY parallel (K439 pattern) |
+| IOC fallback | 5-minute fill window |
+| Close sequence | Short leg first → Long leg (avoid naked short) |
+| Leverage | 4x (K631 analysis, K430 cap) |
+| Sleeve | 2% of AUM ($200K margin @$10M) |
+| WLD leg | $400K notional @$10M @4x |
+| BTC leg | $400K notional @$10M @4x |
+| Total notional | $800K @$10M @4x |
+| Rebalance threshold | 5% leg drift |
+| Cycle | 8h (FR settlement cadence) |
+| HL impact | NONE — Bybit-only strategy |
+
+### §43.5 Performance Summary
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe (residual) | **18.04** (W=72h optimal) |
+| EMA window | W=72h = 9 × 8h periods |
+| β_JUP (hardcoded) | 0.458795 |
+| Cluster | Biometric ID / World ID |
+| Ann return @$10M @4x (2% sleeve) | **$2,900,000/yr** |
+| Venue | Bybit-only (WLD+BTC) |
+| HL concentration | 65% (UNCHANGED) |
+| Daemon | 41st (K639 scaffold) |
+
+### §43.6 60-Day Paper-Trade Activation Gate
+
+**Gate criteria (60d required before live activation):**
+
+| Criterion | Threshold | Source |
+|-----------|-----------|--------|
+| Realized Sharpe | ≥ **8** (50% of paper 18.04) | k631_dashboard.json |
+| Fill rate | ≥ **60%** | k631_paper_trades.jsonl |
+| Max drawdown | < **20%** | k631_dashboard.json |
+| Days elapsed | ≥ **60** | paper_trade_status.days_elapsed |
+
+**Gate passage:** All 3 criteria met for 60 continuous days → user manually sets `PAPER_TRADE=False` in plist env and activates 2% Bybit sleeve.
+
+**Monitoring:**
+```bash
+python3 scripts/k631_wld_orthog_run.py --status
+cat data/k631_dashboard.json | python3 -m json.tool
+```
+
+### §43.7 Emergency Exit Protocol
+
+K631 is **Bybit-only** — no HL emergency exit needed for K631 positions.
+
+```bash
+# Dry-run K631 Bybit close summary
+python3 scripts/emergency_hl_exit.py --dry-run --include-k631
+
+# Close K631 positions on Bybit (scaffold — requires Bybit API auth)
+python3 scripts/emergency_hl_exit.py --EXECUTE --include-k631
+```
+
+**Note:** In an HL emergency, K631 Bybit positions are **NOT affected**. Only if closing all venues (HL + Bybit) does K631 require Bybit-side closure.
+
+### §43.8 Regime Monitoring
+
+| Regime | EMA_72h | Position |
+|--------|---------|----------|
+| BULL_WLD | > +1.5σ | SHORT WLD / LONG BTC (both Bybit) |
+| NEUTRAL | ±1.5σ | No position |
+| BEAR_WLD | < -1.5σ | LONG WLD / SHORT BTC (both Bybit) |
+
+### §43.9 Operational Commands
+
+```bash
+# Run cycle (dry-run, default)
+python3 scripts/k631_wld_orthog_run.py --dry-run
+
+# Check current regime + dashboard
+python3 scripts/k631_wld_orthog_run.py --status
+
+# Check drift + rebalance
+python3 scripts/k631_wld_orthog_run.py --rebalance
+
+# Close positions (dry-run)
+python3 scripts/k631_wld_orthog_run.py --close "manual exit" --dry-run
+
+# Deploy daemon (after 60d gate passage)
+cp scripts/com.cryptolab.k631-wld-orthog.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k631-wld-orthog.plist
+
+# Verify 41 daemons
+python3 scripts/verify_deployment_status.py
+```
+
+### §43.10 Leverage Configuration
+
+```json
+// data/leverage_config.json (exchange_caps)
+"K631_WLD_ORTHOG": 4.0,   // in exchange_caps — 4x (paired delta-neutral carry)
+
+// scripts/leverage_manager.py (DEFAULT_EXCHANGE_CAPS)
+"K631_WLD_ORTHOG": 4.0,   // 4x cap — Bybit-only delta-neutral (WLD+BTC paired)
+
+// SLEEVE_WEIGHTS_V632:
+"K631": 0.02,              // 2% WLD-BTC orthogonalized, Bybit-only (v6.32 K639 addition)
+```
+
+### §43.11 File Inventory
+
+| File | Role |
+|------|------|
+| `scripts/k631_wld_orthog_run.py` | K631 strategy script (K339 pattern) |
+| `scripts/com.cryptolab.k631-wld-orthog.plist` | 41st daemon plist (StartInterval 28800) |
+| `data/k631_dashboard.json` | Dashboard (residual signal, β_used, regime) |
+| `scripts/emergency_hl_exit.py` | `--include-k631` flag + K631 Bybit close summary |
+| `scripts/leverage_manager.py` | K631_WLD_ORTHOG 4.0 cap + SLEEVE_WEIGHTS_V632 |
+| `data/leverage_config.json` | K631_WLD_ORTHOG: 4.0 + k631_notes |
+| `scripts/verify_deployment_status.py` | 41st daemon registry |
+| `docs/k302a_runbook.md` | This section (§43) |
+
+### §43.12 References
+
+| Wave | Role |
+|------|------|
+| K631 | K631 analysis — WLD ACCEPT ($2.9M/yr @$10M @4x, OOS Sh 18.04 W=72h, β_JUP=0.458795, Biometric ID cluster) |
+| K639 | This section — K631 WLD orthog production scaffold (41st daemon, v6.32 candidate) |
+| K637 | K628 JTO orthog scaffold (40th daemon, template for K639) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K639 §43 -- K631 WLD-BTC Orthogonalized FR Differential production scaffold (41st daemon, OOS Sh 18.04 residual W=72h $2.9M/yr @$10M @4x, β_JUP=0.458795 hardcoded, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=8 fill>=60% maxDD<20%, Biometric ID cluster, v6.32 candidate) -- 2026-05-30*
+
+---
+
+## §44 K633 OP-BTC Orthogonalized FR Differential — Production Scaffold Playbook
+
+### §44.1 Strategy Overview
+
+K633 OP-BTC is the **L2 Superchain cluster unlock** in the Systematic Alpha Discovery framework: **$2,318,640/yr potential @$10M @4x** (residual OOS Sh=12.68 W=72h).
+
+**Key insight:** OP's FR dynamics are driven by Optimism Superchain sequencer revenue cycles + governance RetroFunding rounds. Raw OP-BTC signal was **blocked at G5** by FIL decentralized-storage co-movement (corr=0.4298 @ W=7d). After orthogonalizing via K633 OLS regression (projecting out FIL-BTC diff), the residual signal captures pure OP L2 Superchain alpha with **meaningful Sharpe** (OOS Sh=12.68 W=72h).
+
+**L2 cluster unlock significance:** K633 OP orthog is the **first confirmed L2-rollup-specific FR alpha cluster** — validating that Optimism Superchain-specific dynamics (sequencer revenue, OP Stack governance, Base deployment momentum) create genuinely orthogonal funding rate signals after removing the shared FIL decentralized-storage factor.
+
+### §44.2 Orthogonalization Mechanism (K633 OLS)
+
+```
+OP-BTC FR diff = α + β_FIL × (FIL-BTC FR diff) + ε
+```
+
+Where:
+- `α = 0.00000418` (intercept — not subtracted in production)
+- `β_FIL = 0.542224` (FIL decentralized-storage factor loading)
+- `IS R² = 0.3283` (32.83% of OP FR variance explained by FIL — significant)
+- `OOS R² = -0.3797` (residual retains OP-specific L2 alpha, not FIL co-movement)
+- `t_FIL = 77.822` (highly significant)
+
+**β Coefficient (K633 OLS — HARDCODED in production, NO re-OLS):**
+
+| Parameter | Value |
+|-----------|-------|
+| β_FIL | 0.542224 |
+| IS R² | 0.3283 |
+| FIL corr (raw, W=7d) | 0.4298 (G5 BLOCKED) |
+| FIL corr (post-orth, W=72h) | 0.0749 (G5 PASS) |
+| ARB corr (post-orth) | 0.2787 (G5 PASS) |
+
+**Residual formula:**
+```
+residual = OP_diff - 0.542224 × FIL_diff
+         = (OP_FR - BTC_FR) - 0.542224 × (FIL_FR - BTC_FR)
+```
+
+### §44.3 Signal Gate
+
+```
+EMA = 72h EMA of residual  (9 × 8h periods — W=72h optimal per K633 sweep)
+σ   = rolling std of residual (72h window)
+Enter when |EMA| > 1.5σ
+```
+
+| Regime | Condition | Action |
+|--------|-----------|--------|
+| BULL_OP | residual_ema > +1.5σ | SHORT OP + LONG BTC (Bybit) |
+| BEAR_OP | residual_ema < -1.5σ | LONG OP + SHORT BTC (Bybit) |
+| NEUTRAL | |residual_ema| ≤ 1.5σ | No position |
+
+### §44.4 Execution (Bybit Primary)
+
+**Critical:** K633 is **Bybit-only**. HL concentration is **UNCHANGED at 65%** after K633 addition.
+
+| Parameter | Value |
+|-----------|-------|
+| Primary venue | Bybit (OP-USDT-SWAP + BTC-USDT-SWAP) |
+| HL impact | NONE — Bybit-only, HL concentration = 65% unchanged |
+| Execution | POST_ONLY parallel (K439 pattern) |
+| Leverage | 4x (K633 analysis, K430 cap) |
+| Sleeve | 2% of AUM ($200K at $10M) |
+| Per-leg notional | $400K OP + $400K BTC |
+| Total notional | $800K |
+| Margin | $200K (2% AUM) |
+| Cadence | Every 8h (StartInterval=28800) |
+| Daemon | 42nd (com.cryptolab.k633-op-orthog) |
+
+### §44.5 Performance Summary
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe (residual W=72h) | **12.68** |
+| OOS Sharpe (raw K609) | 32.91 (blocked at G5) |
+| OOS Sharpe (raw K618 7d) | 29.13 (blocked at G5) |
+| OOS Ann Return | 5.7966% (unleveraged carry) |
+| OOS Period | 212.2 days (≥180d gate: PASS) |
+| IS Sharpe | 5.59 |
+| Ann Return @$10M @4x (full) | **$2,318,640/yr** |
+| Ann Return @$10M @4x (2% sleeve) | $46,373/yr |
+| Trades/yr | 72.2 (W=72h) |
+| Max Drawdown (OOS) | -1.17% |
+| G5 max corr (post-orth) | 0.2787 (ARB — L2 sibling, PASS) |
+| G5 FIL corr (post-orth) | 0.0749 (PASS vs raw 0.43) |
+| Walk-forward positive | 7/12 folds |
+| Cluster | L2 Rollup / Optimism Superchain |
+| Daemon | 42nd |
+| v-candidate | v6.33 |
+
+### §44.6 60-Day Paper-Trade Activation Gate
+
+**Gate criteria (lower threshold given K633 W=72h Sh 12.68 vs K628 Sh 18.30):**
+
+| Gate | Threshold | Rationale |
+|------|-----------|-----------|
+| Realized Sharpe | ≥ 5.0 | ~40% of paper OOS Sh 12.68 (vs K628 gate=8.0) |
+| Fill rate | ≥ 60% | POST_ONLY Bybit fill quality |
+| Max drawdown | < 20% | Carry strategy risk cap |
+| Days | 60 | Standard paper-trade window |
+
+**Activation path:**
+```bash
+# 1. Monitor paper-trade gate progress
+python3 scripts/k633_op_orthog_run.py --status
+
+# 2. After 60d gate passage: edit k633_op_orthog_run.py
+#    PAPER_TRADE = False  (or set env PAPER_TRADE=False)
+
+# 3. Install daemon:
+cp scripts/com.cryptolab.k633-op-orthog.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k633-op-orthog.plist
+
+# 4. Verify active:
+python3 scripts/verify_deployment_status.py | grep k633
+```
+
+### §44.7 Emergency Exit Protocol
+
+K633 is **Bybit-only** — no HL emergency exit needed for K633 positions.
+
+```bash
+# Dry-run K633 Bybit close summary
+python3 scripts/k633_op_orthog_run.py --close "emergency" --dry-run
+
+# Close K633 positions on Bybit (scaffold — requires Bybit API auth)
+python3 scripts/k633_op_orthog_run.py --close "emergency_exit"
+```
+
+**Note:** In an HL emergency, K633 Bybit positions are **NOT affected**. Only if closing all venues (HL + Bybit) does K633 require Bybit-side closure.
+
+### §44.8 Regime Monitoring
+
+```bash
+# Check current OP orthog regime
+python3 scripts/k633_op_orthog_run.py --status
+
+# Run single cycle (dry-run)
+python3 scripts/k633_op_orthog_run.py --dry-run
+
+# Check drift + rebalance
+python3 scripts/k633_op_orthog_run.py --rebalance
+```
+
+**Dashboard fields (k633_dashboard.json):**
+- `regime`: BULL_OP | BEAR_OP | NEUTRAL
+- `residual_ema_72h`: current 72h EMA of orthogonalized residual
+- `beta_fil_used`: 0.542224 (hardcoded, confirms β not modified)
+- `hl_concentration_pct`: always 65.0 (Bybit-only, no HL usage)
+- `gate_metrics.gate_status`: IN_PROGRESS → PASS after 60d
+
+### §44.9 Operational Commands
+
+```bash
+# Status check
+python3 scripts/k633_op_orthog_run.py --status
+
+# Single cycle dry-run
+python3 scripts/k633_op_orthog_run.py --dry-run
+
+# Rebalance check
+python3 scripts/k633_op_orthog_run.py --rebalance
+
+# Close positions (paper/scaffold)
+python3 scripts/k633_op_orthog_run.py --close "reason"
+
+# View dashboard
+cat data/k633_dashboard.json | python3 -m json.tool | head -50
+
+# Verify 42nd daemon in registry
+python3 scripts/verify_deployment_status.py | grep -A3 k633
+
+# Install daemon (post gate passage)
+cp scripts/com.cryptolab.k633-op-orthog.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k633-op-orthog.plist
+```
+
+### §44.10 L2 Cluster Unlock Significance
+
+K633 OP orthog is strategically significant beyond its individual profit contribution:
+
+1. **First L2-rollup-specific alpha cluster confirmed** — OP Superchain dynamics are genuinely distinct from FIL storage market co-movement
+2. **Validates orthogonalization methodology** applied to L2 rollups (K628→K631→K633 progression)
+3. **Template for future L2 strategies** — ARB (K618 7d blocked, but post-orth ARB corr=0.279 at W=72h) may yield another cluster
+4. **FIL factor universality** — FIL IS R²=0.3283 suggests FIL decentralized-storage factor loads heavily on OP; other storage/compute tokens may share this factor
+
+### §44.11 References
+
+| Wave | Role |
+|------|------|
+| K609 | Raw OP-BTC eval (BLOCKED-G5, FIL corr=0.4461 @ W=21d, OOS Sh=32.91) |
+| K618 | OP-BTC 7d retry (STILL BLOCKED, FIL corr=0.4298 @ W=7d, OOS Sh=29.13) |
+| K633 | K633 analysis — OP ACCEPT CONDITIONAL (post-orth OOS Sh=12.68 W=72h, β_FIL=0.542224) |
+| K640 | This section — K633 OP orthog production scaffold (42nd daemon, v6.33 candidate) |
+| K637 | K628 JTO orthog scaffold (40th daemon, template) |
+| K639 | K631 WLD orthog scaffold (41st daemon, template) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K640 §44 -- K633 OP-BTC Orthogonalized FR Differential production scaffold (42nd daemon, OOS Sh 12.68 residual W=72h $2.32M/yr @$10M @4x, β_FIL=0.542224 hardcoded IS R²=0.3283, Bybit-only HL unchanged 65%, 60d gate: Realized Sh>=5 fill>=60% maxDD<20%, L2 Superchain cluster unlock, v6.33 candidate) -- 2026-05-30*

@@ -3512,6 +3512,88 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K641: K635 IMX-BTC orthog emergency exit flag
+    # K635 = Bybit-only IMX+BTC paired (2 legs) when residual EMA_168h > 1.5sigma.
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
+    # Orthog: residual = IMX_diff - 0.254*SHIB_diff - 0.068*TIA_diff - 0.158*SEI_diff (K635 OLS MF, beta hardcoded).
+    # EMA window: W=168h = 21 x 8h periods (optimal per K635 analysis).
+    # Use --include-k635 to print K635-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k635",
+        dest="include_k635",
+        action="store_true",
+        default=False,
+        help=(
+            "K641: Include K635 IMX-BTC orthog close summary during emergency exit. "
+            "K635 positions (IMX+BTC paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Orthog: residual = IMX_diff - 0.254*SHIB_diff - 0.068*TIA_diff - 0.158*SEI_diff (K635 OLS MF beta hardcoded). "
+            "EMA window: W=168h = 21 x 8h periods (optimal per K635 analysis). "
+            "HL concentration UNCHANGED (Bybit-only strategy — HL NOT affected). "
+            "OOS Sharpe 24.81 (residual MF W=168h). $4.78M/yr @$10M @4x (2% sleeve). "
+            "60d paper-trade gate: Realized Sh>=12 + fill>=60% + maxDD<20%. "
+            "Cluster: Gaming L2 Infra (ImmutableX StarkEx ZK rollup for NFT/gaming). "
+            "Requires: K635 daemon running (com.cryptolab.k635-imx-orthog, 43rd daemon). "
+            "See: docs/k302a_runbook.md §44"
+        ),
+    )
+
+    # K639: K631 WLD-BTC orthog emergency exit flag
+    # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
+    # Orthog: residual = WLD_diff - 0.458795*JUP_diff (K631 OLS, beta hardcoded).
+    # EMA window: W=72h = 9 x 8h periods (optimal per K631 sweep).
+    # Use --include-k631 to print K631-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k631",
+        dest="include_k631",
+        action="store_true",
+        default=False,
+        help=(
+            "K639: Include K631 WLD-BTC orthog close summary during emergency exit. "
+            "K631 positions (WLD+BTC paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Orthog: residual = WLD_diff - 0.458795*JUP_diff (K631 OLS beta hardcoded). "
+            "EMA window: W=72h = 9 × 8h periods (optimal per K631 sweep). "
+            "HL concentration UNCHANGED (Bybit-only strategy — HL NOT affected). "
+            "OOS Sharpe 18.04 (residual W=72h). $2.9M/yr @$10M @4x (2% sleeve). "
+            "60d paper-trade gate: Realized Sh>=8 + fill>=60% + maxDD<20%. "
+            "Cluster: Biometric ID / World ID (privacy-tech + AI-identity narrative). "
+            "Requires: K631 daemon running (com.cryptolab.k631-wld-orthog, 41st daemon). "
+            "See: docs/k302a_runbook.md §43"
+        ),
+    )
+
+    # K640: K633 OP-BTC orthog emergency exit flag
+    # K633 = Bybit-only OP+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
+    # Orthog: residual = OP_diff - 0.542224*FIL_diff (K633 OLS, beta hardcoded).
+    # EMA window: W=72h = 9 x 8h periods (optimal per K633 sweep).
+    # Use --include-k633 to print K633-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k633",
+        dest="include_k633",
+        action="store_true",
+        default=False,
+        help=(
+            "K640: Include K633 OP-BTC orthog close summary during emergency exit. "
+            "K633 positions (OP+BTC paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Orthog: residual = OP_diff - 0.542224*FIL_diff (K633 OLS beta hardcoded). "
+            "EMA window: W=72h = 9 × 8h periods (optimal per K633 sweep). "
+            "HL concentration UNCHANGED (Bybit-only strategy — HL NOT affected). "
+            "OOS Sharpe 12.68 (residual W=72h). $2.32M/yr @$10M @4x (full potential). "
+            "2% sleeve: $46,373/yr carry contribution. "
+            "60d paper-trade gate: Realized Sh>=5 + fill>=60% + maxDD<20%. "
+            "Cluster: L2 Rollup / Optimism Superchain (L2 cluster unlock, 42nd daemon). "
+            "Requires: K633 daemon running (com.cryptolab.k633-op-orthog, 42nd daemon). "
+            "See: docs/k302a_runbook.md §44"
+        ),
+    )
+
     # K502: K495 DEX-CEX flow divergence bear-conditional emergency exit flag
     # K495 = LONG BTC+ETH+SOL on HL (3 legs) when DEX-CEX z-score > 1.0 in bear regime.
     # Close protocol: IOC market orders (reduce-only) BTC → ETH → SOL (largest notional first).
@@ -3918,6 +4000,70 @@ USDY sleeve emergency guidance (K415 §21.6):
                     "Bybit-only: JTO@Bybit + BTC@Bybit (2% sleeve, 4x leverage). "
                     "HL concentration UNCHANGED at 65%."
                 )
+
+        # K641: K635 IMX-BTC orthog close summary (Bybit-only — HL NOT affected)
+        # K635 positions (IMX+BTC, Bybit-only) are NOT in the HL exit above.
+        # K635 is Bybit-only: HL concentration UNCHANGED. Use --include-k635 for Bybit summary.
+        if args.include_k635:
+            logger.info("=== K635 IMX-BTC ORTHOG CLOSE SUMMARY (K641 §44) ===")
+            logger.info("  K635 IMX-BTC orthog: Bybit-only (IMX+BTC both legs on Bybit)")
+            logger.info("  Orthog: residual = IMX_diff - 0.254*SHIB_diff - 0.068*TIA_diff - 0.158*SEI_diff (K635 OLS MF, beta hardcoded)")
+            logger.info("  EMA window: W=168h = 21 x 8h periods (optimal per K635 analysis)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: UNCHANGED at 65% (K635 is Bybit-only)")
+            logger.info("  OOS Sharpe 24.81 (residual MF W=168h) | $4.78M/yr @$10M @4x (2% sleeve)")
+            logger.info("  Cluster: Gaming L2 Infra (ImmutableX StarkEx ZK rollup for NFT/gaming)")
+            logger.info("  60d gate: Realized Sh>=12 + fill>=60% + maxDD<20%")
+            logger.info("  See: docs/k302a_runbook.md §44 (K635 IMX orthog playbook)")
+        else:
+            logger.info(
+                "K635 IMX-BTC orthog: Bybit-only (NOT HL). "
+                "Use --include-k635 for Bybit close summary (§44). "
+                "HL concentration UNCHANGED at 65%."
+            )
+
+        # K639: K631 WLD-BTC orthog close summary (Bybit-only — HL NOT affected)
+        # K631 positions (WLD+BTC, Bybit-only) are NOT in the HL exit above.
+        # K631 is Bybit-only: HL concentration UNCHANGED. Use --include-k631 for Bybit summary.
+        if args.include_k631:
+            logger.info("=== K631 WLD-BTC ORTHOG CLOSE SUMMARY (K639 §43) ===")
+            logger.info("  K631 WLD-BTC orthog: Bybit-only (WLD+BTC both legs on Bybit)")
+            logger.info(f"  Orthog: residual = WLD_diff - 0.458795*JUP_diff (K631 OLS, β hardcoded)")
+            logger.info("  EMA window: W=72h = 9 × 8h periods (optimal per K631 sweep)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: UNCHANGED at 65% (K631 is Bybit-only)")
+            logger.info("  OOS Sharpe 18.04 (residual W=72h) | $2.9M/yr @$10M @4x (2% sleeve)")
+            logger.info("  Cluster: Biometric ID / World ID (privacy-tech + AI-identity)")
+            logger.info("  60d gate: Realized Sh>=8 + fill>=60% + maxDD<20%")
+            logger.info("  See: docs/k302a_runbook.md §43 (K631 WLD orthog playbook)")
+        else:
+            logger.info(
+                "K631 WLD-BTC orthog: Bybit-only (NOT HL). "
+                "Use --include-k631 for Bybit close summary (§43). "
+                "HL concentration UNCHANGED at 65%."
+            )
+
+        # K640: K633 OP-BTC orthog close summary (Bybit-only — HL NOT affected)
+        # K633 positions (OP+BTC, Bybit-only) are NOT in the HL exit above.
+        # K633 is Bybit-only: HL concentration UNCHANGED. Use --include-k633 for Bybit summary.
+        if args.include_k633:
+            logger.info("=== K633 OP-BTC ORTHOG CLOSE SUMMARY (K640 §44) ===")
+            logger.info("  K633 OP-BTC orthog: Bybit-only (OP+BTC both legs on Bybit)")
+            logger.info(f"  Orthog: residual = OP_diff - 0.542224*FIL_diff (K633 OLS, β hardcoded)")
+            logger.info("  EMA window: W=72h = 9 × 8h periods (optimal per K633 sweep)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: UNCHANGED at 65% (K633 is Bybit-only)")
+            logger.info("  OOS Sharpe 12.68 (residual W=72h) | $2.32M/yr @$10M @4x (full potential)")
+            logger.info("  2% sleeve: $46,373/yr carry contribution")
+            logger.info("  Cluster: L2 Rollup / Optimism Superchain (L2 cluster unlock, 42nd daemon)")
+            logger.info("  60d gate: Realized Sh>=5 + fill>=60% + maxDD<20%")
+            logger.info("  See: docs/k302a_runbook.md §44 (K633 OP orthog playbook)")
+        else:
+            logger.info(
+                "K633 OP-BTC orthog: Bybit-only (NOT HL). "
+                "Use --include-k633 for Bybit close summary (§44). "
+                "HL concentration UNCHANGED at 65%."
+            )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)
         # K457 basket positions (BTC/ETH/SOL HL+Bybit) are included in the main HL exit.

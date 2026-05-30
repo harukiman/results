@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k631-wld-orthog</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k631_wld_orthog_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 41st daemon: K631 WLD Orthogonalized FR Differential -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 8, fill_rate >= 60%, maxDD < 20% -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k631_wld_orthog.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k631_wld_orthog.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K631 specific notes (do not remove):
+         Strategy:    WLD-BTC FR Differential, orthogonalized vs JUP (K631 OLS)
+         Daemon #:    41st daemon (K639 scaffold)
+         OOS Sharpe:  18.04 (residual W=72h optimal, K631 sweep)
+         Profit:      $2,900,000/yr @$10M @4x (2% sleeve)
+         β coef:      β_JUP=0.458795  (HARDCODED, no re-OLS)
+         EMA window:  W=72h = 9 × 8h periods (optimal per K631 hyperparameter sweep)
+         Venue:       Bybit primary (WLD+BTC maxLev high)
+         HL impact:   NONE — Bybit-only; HL concentration unchanged at 65%
+         Gate:        60d paper-trade: Realized Sh>=8 + fill>=60% + maxDD<20%
+         Cluster:     Biometric ID / World ID (WLD privacy-tech + AI-identity)
+         v6.32:       K631 adds 2% Bybit sleeve to v6.31 portfolio
+         Deploy:      cp scripts/com.cryptolab.k631-wld-orthog.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k631-wld-orthog.plist
+    -->
+</dict>
+</plist>

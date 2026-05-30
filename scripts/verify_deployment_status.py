@@ -329,6 +329,27 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k628_jto_orthog",
         expected_html_status="SCAFFOLD-READY",  # K637: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=8 + fill_rate>=60% + maxDD<20%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k631-wld-orthog",
+        purpose="K631 WLD-BTC Orthogonalized FR Differential (Biometric ID cluster, Bybit-only WLD+BTC paired, 4x leverage, 8h cycle, OOS Sh 18.04 residual W=72h, $2.9M/yr @$10M @4x, β_JUP=0.458795 hardcoded, HL concentration UNCHANGED 65%, 60d paper-trade gate, v6.32 candidate 2% sleeve, 41st daemon)",
+        scripts=["scripts/k631_wld_orthog_run.py"],
+        log_basename="k631_wld_orthog",
+        expected_html_status="SCAFFOLD-READY",  # K639: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=8 + fill_rate>=60% + maxDD<20%)
+    ),
+    DaemonSpec(
+        label="com.cryptolab.k633-op-orthog",
+        purpose="K633 OP-BTC Orthogonalized FR Differential (L2 Superchain cluster unlock, Bybit-only OP+BTC paired, 4x leverage, 8h cycle, OOS Sh 12.68 residual W=72h, $2.32M/yr @$10M @4x full potential, beta_FIL=0.542224 hardcoded, IS R2=0.3283, FIL corr 0.43 to 0.07 post-orth, HL concentration UNCHANGED 65%, 60d paper-trade gate, v6.33 candidate 2% sleeve, 42nd daemon)",
+        scripts=["scripts/k633_op_orthog_run.py"],
+        log_basename="k633_op_orthog",
+        expected_html_status="SCAFFOLD-READY",  # K640: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=5 + fill_rate>=60% + maxDD<20%)
+    ),
+    DaemonSpec(
+        label="com.cryptolab.k635-imx-orthog",
+        purpose="K635 IMX-BTC Orthogonalized FR Differential (Gaming L2 Infra cluster, Bybit-only IMX+BTC paired, 4x leverage, 8h cycle, OOS Sh 24.81 residual MF W=168h, $4.78M/yr @$10M @4x, beta_SHIB=0.254 beta_TIA=0.068 beta_SEI=0.158 hardcoded, HL concentration UNCHANGED 65%, 60d paper-trade gate, v6.34 candidate 2% sleeve, 43rd daemon)",
+        scripts=["scripts/k635_imx_orthog_run.py"],
+        log_basename="k635_imx_orthog",
+        expected_html_status="SCAFFOLD-READY",  # K641: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=12 + fill_rate>=60% + maxDD<20%)
+    ),
 ]
 
 

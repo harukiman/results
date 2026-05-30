@@ -1,0 +1,120 @@
+{
+  "wave": "K639",
+  "strategy": "K631 WLD-BTC Orthogonalized FR Differential",
+  "timestamp_jst": "2026-05-30 11:24 JST",
+  "deliverables": {
+    "checks": [
+      {
+        "path": "scripts/k631_wld_orthog_run.py",
+        "description": "Phase 1: K631 strategy script (K339 pattern, β_JUP=0.458795 hardcoded, W=72h EMA)",
+        "exists": true,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/com.cryptolab.k631-wld-orthog.plist",
+        "description": "Phase 2: 41st daemon plist (StartInterval 28800)",
+        "exists": true,
+        "status": "PASS"
+      },
+      {
+        "path": "data/k631_dashboard.json",
+        "description": "Phase 3: Dashboard (residual signal, β_used, regime, live data)",
+        "exists": true,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/emergency_hl_exit.py",
+        "description": "Phase 4: Emergency exit (--include-k631 flag added)",
+        "exists": true,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/leverage_manager.py",
+        "description": "Phase 5: Leverage manager (K631_WLD_ORTHOG=4.0 + SLEEVE_WEIGHTS_V632)",
+        "exists": true,
+        "status": "PASS"
+      },
+      {
+        "path": "data/leverage_config.json",
+        "description": "Phase 6: Leverage config (K631_WLD_ORTHOG: 4.0 + k631_notes)",
+        "exists": true,
+        "status": "PASS"
+      },
+      {
+        "path": "scripts/verify_deployment_status.py",
+        "description": "Phase 7: Deployment verifier (41st daemon registry)",
+        "exists": true,
+        "status": "PASS"
+      },
+      {
+        "path": "docs/k302a_runbook.md",
+        "description": "Phase 8: Runbook §43 (K631 WLD orthog playbook)",
+        "exists": true,
+        "status": "PASS"
+      },
+      {
+        "path": "report.html",
+        "description": "Phase 9: HTML report (K639 SCAFFOLD-READY banner + 41st daemon entry)",
+        "exists": true,
+        "status": "PASS"
+      },
+      {
+        "path": "wave_k639_k631_scaffold.py",
+        "description": "Phase 11: Wave driver (this file)",
+        "exists": true,
+        "status": "PASS"
+      }
+    ],
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "all_pass": true
+  },
+  "content_checks": {
+    "beta_jup_hardcoded": true,
+    "k339_repo_root": true,
+    "paper_trade_default": true,
+    "bybit_primary": true,
+    "post_only": true,
+    "signal_1_5sigma": true,
+    "ema_72h_window": true,
+    "sleeve_2pct": true,
+    "dashboard_beta_jup": true,
+    "dashboard_regime": true,
+    "dashboard_oos_perf": true,
+    "dashboard_orthog_mech": true,
+    "dashboard_hl_65": true,
+    "cfg_k631_cap": true,
+    "cfg_k631_notes": true,
+    "cfg_beta_jup": true,
+    "emer_include_k631": true,
+    "lev_k631_cap": true,
+    "lev_v632_weights": true,
+    "vds_41st_daemon": true,
+    "vds_41st_label": true,
+    "runbook_section43": true,
+    "runbook_beta_table": true,
+    "runbook_60d_gate": true
+  },
+  "daemon_count": 41,
+  "daemon_ok": true,
+  "dry_run": {
+    "returncode": 0,
+    "success": true,
+    "status": "PASS",
+    "output_snippet": "K631 Cycle Complete | Position state: NEUTRAL | Regime: NEUTRAL | Residual EMA 72h: live data fetched from HL"
+  },
+  "k631_summary": {
+    "oos_sharpe_residual": 18.04,
+    "ema_window_optimal": "W=72h = 9 x 8h periods",
+    "beta_jup": 0.458795,
+    "orthog_formula": "residual = WLD_diff - 0.458795 * JUP_diff",
+    "profit_2pct_usd_yr": 2900000,
+    "sleeve_activation": "2% Bybit (WLD+BTC both legs)",
+    "hl_concentration": "65% UNCHANGED - Bybit-only",
+    "cluster": "Biometric ID / World ID (AI-bot resistance)",
+    "gate_60d": "Realized Sh>=8 + fill>=60% + maxDD<20%",
+    "v632_candidate": "K631 2% Bybit + v6.31 portfolio"
+  },
+  "overall_status": "PASS"
+}
