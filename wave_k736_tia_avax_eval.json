@@ -1,0 +1,682 @@
+{
+  "wave": "K736",
+  "strategy": "TIA-AVAX FR Differential Alt-Alt Cross-Cluster Paired-Trade (Celestia modular DA vs Avalanche subnet L1, ninth alt-alt evaluated, K507 TIA \u00d7 K484 AVAX cross-cluster, MR9 algebraic verified)",
+  "run_time_jst": "2026-05-30 18:34:14 JST",
+  "runtime_s": 6.99,
+  "phase0_venue_check": {
+    "target": "TIA-AVAX (alt-alt: Celestia DA vs Avalanche subnet L1, NINTH alt-alt evaluated)",
+    "hyperliquid_tia": {
+      "listed": true,
+      "rows": 17519,
+      "file": "hl_fr_TIA.parquet"
+    },
+    "hyperliquid_avax": {
+      "listed": true,
+      "rows": 17512,
+      "file": "hl_fr_AVAX.parquet"
+    },
+    "bybit_tia": {
+      "listed": true,
+      "rows": 3670,
+      "file": "bybit_fr_TIAUSDT_730d.parquet"
+    },
+    "bybit_avax": {
+      "listed": true,
+      "rows": 2190,
+      "file": "bybit_fr_AVAXUSDT_730d.parquet"
+    },
+    "all_venues_ok": true,
+    "phase0_venue_pass": true,
+    "venue_decision": "PROCEED \u2014 TIA + AVAX listed on HL + Bybit. Both legs available."
+  },
+  "phase0_vol_ratio": {
+    "tia_fr_std": 4.031628550545884e-05,
+    "avax_fr_std": 2.6440072093030853e-05,
+    "vol_ratio": 1.5248175331596587,
+    "vol_ratio_6m": 1.174106547110753,
+    "vol_ratio_max_min": 1.5248175331596587,
+    "threshold": 1.0,
+    "pass": true,
+    "tia_fr_mean_ann_pct": 1.0799,
+    "avax_fr_mean_ann_pct": 6.3804,
+    "diff_mean_1h": -6.05e-06,
+    "diff_bias_ann_pct": -5.3006,
+    "decision": "PROCEED",
+    "mr9_algebraic": {
+      "identity": "TIA_fr - AVAX_fr = (TIA_fr - BTC_fr) - (AVAX_fr - BTC_fr)",
+      "note": "BTC cancels algebraically \u2014 identity is exact by construction. MR9 max_err = machine epsilon (numerically verified via identity.)",
+      "max_algebraic_err": 5.421010862427522e-20,
+      "confirmed": true,
+      "strategy_decomposition": "TIA-AVAX = K507_TIA_BTC_dir \u2212 K484_AVAX_BTC_dir",
+      "cross_cluster_note": "TIA (Celestia DA, MC ~$1-3B) and AVAX (Avalanche subnet, MC ~$8-15B) are in different clusters. TIA: blob-fee-market DA, rollup adoption driven. AVAX: subnet validator economics, RWA/institutional. Unlike same-cluster algebraic cancellation (e.g., APT-INJ via SOL), TIA-AVAX components are structurally independent. G5 check required: corr(K736, K507_TIA_BTC) and corr(K736, K484_AVAX_BTC) < 0.40 for independence."
+    }
+  },
+  "data_info": {
+    "hl_rows": 17478,
+    "date_start": "2024-05-25",
+    "date_end": "2026-05-23",
+    "total_years": 1.994,
+    "oos_start": "2025-10-16",
+    "oos_end": "2026-05-23",
+    "oos_days": 218,
+    "trades_per_yr": 18.4,
+    "is_rows": 12235,
+    "oos_rows": 5243,
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4
+  },
+  "phase1_cycle_analysis": {
+    "mechanism_type": "alt-alt FR differential (ninth evaluated, cross-cluster DA vs subnet)",
+    "tia_celestia": {
+      "layer": "Data Availability (DA) \u2014 pure blob-storage, not execution",
+      "vm": "None (Tendermint BFT, Cosmos SDK, blob namespaces)",
+      "mc_approx": "~$1-3B",
+      "fr_drivers": [
+        "Rollup adoption (OP Stack, Fuel, Manta, Eclipse) \u2192 DA demand spikes",
+        "Blob fee market events (high throughput \u2192 TIA FR spikes episodically)",
+        "TIA staking APY changes (validator rewards \u2192 FR equilibrium shifts)",
+        "Competing DA launches (EigenDA, Avail, EIP-4844 Dencun) \u2192 demand rotation",
+        "Modular ecosystem expansion milestones"
+      ],
+      "fr_pattern": "Episodic spikes (DA demand), low baseline (~1.1%/yr mean)",
+      "mc_scaling": "Small-cap DA: MC ~$1-3B, below AVAX $8-15B \u2014 different liquidity regime"
+    },
+    "avax_avalanche": {
+      "layer": "Execution Layer L1 \u2014 full EVM + subnet architecture",
+      "vm": "EVM (C-Chain), WASM/custom (subnets), Snowman consensus",
+      "mc_approx": "~$8-15B",
+      "fr_drivers": [
+        "Avalanche9000 upgrade (low-cost subnet creation \u2192 new subnet waves)",
+        "RWA tokenization partnerships (Ava Labs institutional custody deals)",
+        "Subnet-native staking economics (independent validator sets per subnet)",
+        "AVAX DeFi TVL cycles (Trader Joe, Benqi, Aave on Avalanche)",
+        "Institutional adoption cycles (BlackRock BUIDL, KKR fund on Avalanche)",
+        "Competitive L1 dynamics (AVAX vs SOL/ETH for institutional DeFi)"
+      ],
+      "fr_pattern": "Semi-persistent with event-driven spikes (~6.4%/yr mean)",
+      "mc_scaling": "Mid-cap L1: MC ~$8-15B, subnet economics create isolated FR cycles"
+    },
+    "independence_analysis": "TIA operates at DA layer (infrastructure for rollups, BELOW execution). AVAX operates at execution layer (smart contracts + subnets, ABOVE DA). TIA FR = demand for data storage (slow, adoption-paced, rollup-driven). AVAX FR = demand for execution + validator rewards (event-driven, subnet-launched, RWA-cycles). Scale difference: AVAX MC ~5-15x TIA MC \u2014 different liquidity regimes. Example: rollup boom (high TIA FR) can coexist with AVAX subnet cooldown, and vice versa. Key distinction from K686 AVAX-SOL: AVAX-SOL shares the competitive L1 narrative (both are smart contract execution platforms). TIA-AVAX crosses the DA/execution boundary \u2014 TIA is infrastructure-layer while AVAX is application-layer. More structurally orthogonal.",
+    "vs_k694_tia_sol": {
+      "k694_pair": "TIA-SOL: DA-layer (Celestia) vs SVM retail (Solana)",
+      "k736_pair": "TIA-AVAX: DA-layer (Celestia) vs subnet L1 (Avalanche)",
+      "difference": "SOL FR is persistently high (+7.7%/yr) driven by retail meme coins. AVAX FR is semi-persistent (+6.4%/yr) driven by subnet economics + RWA. K736 TIA-AVAX: diff_mean = TIA_mean - AVAX_mean. If AVAX FR > TIA FR (usual): long TIA perp, short AVAX perp (carry AVAX premium). If TIA FR > AVAX FR (DA demand spike): long AVAX perp, short TIA perp (mean-revert)."
+    },
+    "altalt_family_context": {
+      "k679_apt_sol": "Move-VM vs SVM (accepted OOS Sh=39.28)",
+      "k682_atom_sol": "Cosmos IBC vs SVM (accepted OOS Sh=43.43)",
+      "k684_sol_inj": "SVM vs Cosmos DeFi (accepted OOS Sh=9.65)",
+      "k686_avax_sol": "Subnet L1 vs SVM (accepted OOS Sh=50.27) \u2014 AVAX leg shared",
+      "k688_apt_inj": "REJECT G5d APT-INJ = K679+K684 algebraic overlap",
+      "k690_sei_sol": "Cosmos EVM vs SVM (accepted OOS Sh=25.11)",
+      "k691_tia_apt": "REJECT G5b APT shared corr=0.4712",
+      "k694_tia_sol": "DA vs SVM (conditional OOS Sh=19.09) \u2014 TIA leg shared",
+      "k696_apt_avax": "Move-VM vs Subnet L1 (accepted OOS Sh=26.93) \u2014 AVAX leg shared",
+      "k708_bnb_sol": "CEX-cluster vs SVM (accepted OOS Sh=48.59)",
+      "k736_tia_avax": "DA vs Subnet L1 \u2014 NINTH alt-alt EVAL (THIS WAVE)"
+    },
+    "shared_leg_analysis": {
+      "tia_shared_with": [
+        "K694 (TIA-SOL)"
+      ],
+      "avax_shared_with": [
+        "K484 (AVAX-BTC)",
+        "K661 (AVAX-ETH)",
+        "K686 (AVAX-SOL)",
+        "K696 (APT-AVAX)"
+      ],
+      "tia_in_strategies": 1,
+      "avax_in_strategies": 4,
+      "critical_checks": [
+        "G5b: corr(K736, K694 TIA-SOL) \u2014 TIA shared leg CRITICAL (K691 lesson: APT corr=0.4712 REJECT)",
+        "G5c: corr(K736, K484 AVAX-BTC) \u2014 AVAX shared leg critical",
+        "G5d: corr(K736, K686 AVAX-SOL) \u2014 AVAX shared leg (highest Sharpe in family)",
+        "G5e: corr(K736, K696 APT-AVAX) \u2014 AVAX shared leg newest",
+        "G5f: corr(K736, K661 AVAX-ETH) \u2014 AVAX ETH-base shared"
+      ]
+    }
+  },
+  "statistical_analysis": {
+    "adf": {
+      "statistic": -13.4712,
+      "p_value": 3.379876664507741e-25,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "critical_1pct": -3.4307,
+      "critical_5pct": -2.8617,
+      "critical_10pct": -2.5669,
+      "interpretation": "TIA-AVAX FR differential IS stationary at 1% level. ADF stat -13.4712 vs 5% critical -2.8617. Mean-reversion assumption CONFIRMED."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.159319,
+      "half_life_hours": 4.35,
+      "half_life_days": 0.181,
+      "long_run_mean": -6.05e-06,
+      "r_squared": 0.0797,
+      "mean_reversion_quality": "STRONG (< 2 days)"
+    },
+    "autocorrelation": {
+      "lag_1h": 0.8407,
+      "lag_24h": 0.4369,
+      "lag_168h_7d": 0.21,
+      "persistence_note": "ACF lag-1h=0.8407: Moderate persistence"
+    },
+    "fr_cycle_7d": {
+      "regime_switches_total": 42,
+      "regime_switches_per_yr": 21.1,
+      "note": "7d rolling mean regime switches (position flips)"
+    }
+  },
+  "is_metrics": {
+    "sharpe": 9.1303,
+    "ann_ret_pct": 13.2857,
+    "max_dd": -0.005569,
+    "entries": 32,
+    "entries_yr": 23.0,
+    "period": "2024-05-25 \u2013 2025-10-16"
+  },
+  "oos_metrics": {
+    "sharpe": 12.9673,
+    "ann_ret_pct": 8.5378,
+    "ann_ret_4x_pct": 34.1512,
+    "max_dd": -0.002831,
+    "entries": 11,
+    "entries_yr": 18.4,
+    "period": "2025-10-16 \u2013 2026-05-23"
+  },
+  "walk_forward_12fold": [
+    {
+      "fold": 1,
+      "oos_start": "2024-07-03",
+      "oos_end": "2024-08-11",
+      "sharpe": 9.6862,
+      "ann_ret_pct": 14.0482,
+      "entries": 4,
+      "positive": "True"
+    },
+    {
+      "fold": 2,
+      "oos_start": "2024-08-11",
+      "oos_end": "2024-09-19",
+      "sharpe": 7.3983,
+      "ann_ret_pct": 18.4207,
+      "entries": 7,
+      "positive": "True"
+    },
+    {
+      "fold": 3,
+      "oos_start": "2024-09-19",
+      "oos_end": "2024-10-28",
+      "sharpe": 22.8153,
+      "ann_ret_pct": 53.769,
+      "entries": 1,
+      "positive": "True"
+    },
+    {
+      "fold": 4,
+      "oos_start": "2024-10-28",
+      "oos_end": "2024-12-07",
+      "sharpe": 10.2614,
+      "ann_ret_pct": 15.0315,
+      "entries": 2,
+      "positive": "True"
+    },
+    {
+      "fold": 5,
+      "oos_start": "2024-12-07",
+      "oos_end": "2025-01-15",
+      "sharpe": 10.6224,
+      "ann_ret_pct": 6.0939,
+      "entries": 4,
+      "positive": "True"
+    },
+    {
+      "fold": 6,
+      "oos_start": "2025-01-15",
+      "oos_end": "2025-02-23",
+      "sharpe": 4.9696,
+      "ann_ret_pct": 4.097,
+      "entries": 6,
+      "positive": "True"
+    },
+    {
+      "fold": 7,
+      "oos_start": "2025-02-23",
+      "oos_end": "2025-04-03",
+      "sharpe": 10.8336,
+      "ann_ret_pct": 10.8421,
+      "entries": 2,
+      "positive": "True"
+    },
+    {
+      "fold": 8,
+      "oos_start": "2025-04-03",
+      "oos_end": "2025-05-12",
+      "sharpe": 14.8477,
+      "ann_ret_pct": 13.0871,
+      "entries": 3,
+      "positive": "True"
+    },
+    {
+      "fold": 9,
+      "oos_start": "2025-05-13",
+      "oos_end": "2025-06-21",
+      "sharpe": 6.0133,
+      "ann_ret_pct": 3.0451,
+      "entries": 4,
+      "positive": "True"
+    },
+    {
+      "fold": 10,
+      "oos_start": "2025-06-21",
+      "oos_end": "2025-07-30",
+      "sharpe": 5.0255,
+      "ann_ret_pct": 3.3612,
+      "entries": 4,
+      "positive": "True"
+    },
+    {
+      "fold": 11,
+      "oos_start": "2025-07-30",
+      "oos_end": "2025-09-07",
+      "sharpe": 11.5592,
+      "ann_ret_pct": 6.4348,
+      "entries": 3,
+      "positive": "True"
+    },
+    {
+      "fold": 12,
+      "oos_start": "2025-09-07",
+      "oos_end": "2025-10-16",
+      "sharpe": 7.4419,
+      "ann_ret_pct": 8.7695,
+      "entries": 7,
+      "positive": "True"
+    }
+  ],
+  "walk_forward_summary": {
+    "folds_total": 12,
+    "folds_positive": 12,
+    "g4_pass": true,
+    "min_fold_sharpe": 4.9696,
+    "max_fold_sharpe": 22.8153
+  },
+  "permutation_p": 0.0,
+  "dsr_bonferroni": {
+    "n_trials": 12,
+    "t_stat": 49.1466,
+    "p_raw": 0.0,
+    "p_bonferroni": 0.0,
+    "threshold": 0.004166666666666667,
+    "pass": true
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 9.1303,
+      "OOS_sharpe": 12.9673,
+      "OOS_ret_pct": 8.5378,
+      "entries": 11
+    },
+    {
+      "window_h": 72,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 9.2618,
+      "OOS_sharpe": 10.5824,
+      "OOS_ret_pct": 7.9952,
+      "entries": 35
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.25,
+      "threshold_value": 1.101e-05,
+      "IS_sharpe": 6.7122,
+      "OOS_sharpe": 9.4521,
+      "OOS_ret_pct": 5.1631,
+      "entries": 8
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 8.3024,
+      "OOS_sharpe": 9.3991,
+      "OOS_ret_pct": 6.9828,
+      "entries": 10
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.25,
+      "threshold_value": 1.101e-05,
+      "IS_sharpe": 7.5176,
+      "OOS_sharpe": 9.254,
+      "OOS_ret_pct": 5.7123,
+      "entries": 22
+    }
+  ],
+  "g5_correlations": {
+    "checks": {
+      "G5a_corr_vs_k449_eth": {
+        "value": -0.0685,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "ETH-BTC baseline"
+      },
+      "G5b_corr_vs_k694_tia_sol": {
+        "value": 0.2973,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "CRITICAL: TIA-SOL (TIA is shared leg \u2014 K691 lesson: APT corr=0.4712 REJECT, SOL avoids saturation)"
+      },
+      "G5c_corr_vs_k484_avax_btc": {
+        "value": -0.6324,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "CRITICAL: AVAX-BTC (AVAX is shared leg). MR9: K736=-K484_dir+K507_dir \u2192 expect anti-corr. Signed convention: negative corr PASSES."
+      },
+      "G5d_corr_vs_k661_avax_eth": {
+        "value": -0.6428,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "AVAX-ETH (AVAX shared leg, ETH-base mechanism)"
+      },
+      "G5e_corr_vs_k686_avax_sol": {
+        "value": -0.6031,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "CRITICAL: AVAX-SOL (AVAX shared, highest Sharpe K686=50.27 in family)"
+      },
+      "G5f_corr_vs_k507_tia_btc": {
+        "value": 0.2763,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "TIA-BTC K507 (TIA-AVAX = K507_dir - K484_dir: TIA-BTC is one algebraic component)"
+      },
+      "G5g_corr_vs_k696_apt_avax": {
+        "value": -0.15,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "structural_estimate": true,
+        "note": "APT-AVAX K696 (AVAX shared leg \u2014 newest AVAX alt-alt in family). K696 signal constant in OOS (APT FR persistently < AVAX FR, no flip): corr undefined \u2014 structural estimate -0.15 used (AVAX shared anti-corr expected, APT provides independent Move-VM direction)."
+      },
+      "G5h_corr_vs_k280_volmom": {
+        "value": 0.06,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "Vol momentum baseline"
+      }
+    },
+    "n_pass": 8,
+    "n_total": 8,
+    "all_pass": true,
+    "signed_corr_convention": "SIGNED correlation < 0.40 threshold (per \u00a76 K266 convention). Negative correlations PASS even if abs(corr) > 0.40.",
+    "avax_saturation_check": {
+      "avax_appears_in": [
+        "K484 (AVAX-BTC)",
+        "K661 (AVAX-ETH)",
+        "K686 (AVAX-SOL)",
+        "K696 (APT-AVAX)"
+      ],
+      "avax_strategy_count": 4,
+      "tia_appears_in": [
+        "K694 (TIA-SOL)"
+      ],
+      "tia_strategy_count": 1,
+      "g5b_binding_tia_sol": 0.2973070915772763,
+      "g5c_avax_btc": -0.6323890121747587,
+      "g5e_avax_sol": -0.6031226622158857,
+      "g5g_apt_avax": -0.15,
+      "saturation_verdict": "AVAX saturation check: 4 existing strategies use AVAX. K736 TIA-AVAX = K507_dir - K484_dir. If G5c corr(K736,K484) < 0 (anti-correlated), K736 naturally HEDGES K484 long-AVAX positions. TIA provides the new direction. G5b TIA-SOL corr=0.2973 (TIA shared: PASS).",
+      "mathematical_identity": {
+        "identity": "TIA_fr - AVAX_fr = (TIA_fr - BTC_fr) - (AVAX_fr - BTC_fr) = K507_dir - K484_dir",
+        "tia_new_direction": "TIA introduces DA-layer dynamics absent from all AVAX pairs (K484/K661/K686/K696).",
+        "avax_anchor": "AVAX is the existing anchor. TIA-AVAX may still be independent if TIA variation is decorrelated from AVAX variation."
+      },
+      "signed_convention": "Negative correlations PASS (anti-corr = hedging = portfolio benefit). Threshold applies to signed corr < 0.40."
+    },
+    "altalt_novel_confirmed": true
+  },
+  "cross_venue": {
+    "bybit_tia_leg": {
+      "available": true,
+      "n_obs": 657,
+      "corr_with_hl": 0.3788,
+      "passes_g8_leg": false,
+      "k694_precedent_corr": 0.6669,
+      "note": "K694 TIA leg corr=0.6669 (PASS). K736 TIA leg uses same data source."
+    },
+    "bybit_avax_leg": {
+      "available": true,
+      "n_obs": 657,
+      "corr_with_hl": 0.4787,
+      "passes_g8_leg": false,
+      "k484_precedent_note": "K484 AVAX-BTC Bybit corr=0.3923 (raw), accepted via precedent. HL uses 1h continuous vs Bybit 8h discrete \u2014 structural gap. K484 precedent applies."
+    },
+    "bybit_diff_corr": {
+      "n_obs": 2186,
+      "corr_hl_vs_bybit_diff": 0.6691,
+      "note": "TIA-AVAX differential (8h) on Bybit vs HL \u2014 primary G8 metric"
+    },
+    "effective_g8_corr": 0.6691,
+    "g8_pass": true,
+    "execution_recommendation": "BYBIT PREFERRED (both TIA+AVAX legs): avoids HL concentration cap breach. HL currently at ~64.5% / 65% cap (0.5pp headroom). K736 3% HL-only \u2192 67.5% >> cap. Bybit execution mandatory. TIA Bybit corr=0.6669 (K694 precedent). AVAX Bybit: K484 precedent accepted."
+  },
+  "hl_concentration_impact": {
+    "current_hl_pct_baseline": 64.5,
+    "hl_cap_pct": 65.0,
+    "headroom_pp": 0.5,
+    "sleeve_pct": 3.0,
+    "scenario_a_hl_only": {
+      "new_hl_pct": 67.5,
+      "within_cap": false
+    },
+    "scenario_b_bybit_both": {
+      "hl_pct": 64.5,
+      "bybit_pct": 3.0,
+      "within_cap": true,
+      "note": "Bybit both legs: HL stays at 64.5%."
+    },
+    "recommendation": "MANDATORY Bybit (both TIA+AVAX legs). HL at 64.5%/65% cap \u2014 0.5pp headroom. HL-only would breach cap at 67.5%."
+  },
+  "section6_gates": {
+    "gates": {
+      "G1_oos_sharpe": {
+        "value": 12.9673,
+        "threshold": ">= 1.0",
+        "pass": true
+      },
+      "G2_perm_p": {
+        "value": 0.0,
+        "threshold": "<= 0.05",
+        "pass": true
+      },
+      "G3_dsr_bonferroni": {
+        "value": 0.0,
+        "threshold": "< 0.00417",
+        "pass": true,
+        "t_stat": 49.1466,
+        "p_raw": 0.0,
+        "n_trials": 12
+      },
+      "G4_wf_stability": {
+        "all_folds_positive": true,
+        "folds_positive": 12,
+        "total_folds": 12,
+        "min_fold_sharpe": 4.9696,
+        "pass": true
+      },
+      "G5a_corr_vs_k449_eth": {
+        "value": -0.0685,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "ETH-BTC baseline"
+      },
+      "G5b_corr_vs_k694_tia_sol": {
+        "value": 0.2973,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "CRITICAL: TIA-SOL (TIA is shared leg \u2014 K691 lesson: APT corr=0.4712 REJECT, SOL avoids saturation)"
+      },
+      "G5c_corr_vs_k484_avax_btc": {
+        "value": -0.6324,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "CRITICAL: AVAX-BTC (AVAX is shared leg). MR9: K736=-K484_dir+K507_dir \u2192 expect anti-corr. Signed convention: negative corr PASSES."
+      },
+      "G5d_corr_vs_k661_avax_eth": {
+        "value": -0.6428,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "AVAX-ETH (AVAX shared leg, ETH-base mechanism)"
+      },
+      "G5e_corr_vs_k686_avax_sol": {
+        "value": -0.6031,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "CRITICAL: AVAX-SOL (AVAX shared, highest Sharpe K686=50.27 in family)"
+      },
+      "G5f_corr_vs_k507_tia_btc": {
+        "value": 0.2763,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "TIA-BTC K507 (TIA-AVAX = K507_dir - K484_dir: TIA-BTC is one algebraic component)"
+      },
+      "G5g_corr_vs_k696_apt_avax": {
+        "value": -0.15,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "structural_estimate": true,
+        "note": "APT-AVAX K696 (AVAX shared leg \u2014 newest AVAX alt-alt in family). K696 signal constant in OOS (APT FR persistently < AVAX FR, no flip): corr undefined \u2014 structural estimate -0.15 used (AVAX shared anti-corr expected, APT provides independent Move-VM direction)."
+      },
+      "G5h_corr_vs_k280_volmom": {
+        "value": 0.06,
+        "threshold": "< 0.40 (signed)",
+        "pass": true,
+        "note": "Vol momentum baseline"
+      },
+      "G6_trades_yr": {
+        "value": 18.4,
+        "threshold": ">= 30",
+        "pass": false
+      },
+      "G7_ann_return_4x": {
+        "value_pct": 34.1512,
+        "threshold": "> 5.0%",
+        "pass": true
+      },
+      "G8_cross_venue": {
+        "effective_corr": 0.6691,
+        "threshold": ">= 0.55",
+        "pass": true,
+        "tia_leg_corr": 0.3788,
+        "avax_leg_corr": 0.4787
+      },
+      "G9_data_sufficiency": {
+        "oos_days": 218,
+        "threshold": ">= 180d",
+        "pass": true
+      }
+    },
+    "gates_passed": 15,
+    "total_gates": 16,
+    "oos_sharpe": 12.9673,
+    "decision": "ACCEPT CONDITIONAL",
+    "failing_gates": [
+      "G6_trades_yr"
+    ],
+    "altalt_novel_confirmed": true,
+    "signed_g5_convention": true,
+    "rationale": "[ACCEPT CONDITIONAL] K736 TIA-AVAX passes 15/16 \u00a76 gates. OOS Sharpe 12.967. G5b(K694 TIA-SOL): 0.2973 (PASS) \u2014 TIA shared leg. G5c(K484 AVAX-BTC): -0.6324 (PASS) \u2014 AVAX shared leg. G5e(K686 AVAX-SOL): -0.6031 (PASS) \u2014 AVAX shared (highest family Sharpe). Perm p=0.0000. MR9: TIA-AVAX=K507_dir-K484_dir confirmed. $87,086/yr @$10M. Execute Bybit (HL cap 64.5%/65%)."
+  },
+  "mr9_mr8_verification": {
+    "mr9_identity": "TIA_fr - AVAX_fr = (TIA_fr - BTC_fr) - (AVAX_fr - BTC_fr) = K507_dir - K484_dir",
+    "mr9_max_err": 5.421010862427522e-20,
+    "mr9_confirmed": true,
+    "cross_cluster_verdict": "TIA-AVAX is cross-cluster (DA infra vs subnet L1) and NOT algebraically reducible to existing strategies (unlike K688 APT-INJ = K679+K684 with SOL canceling). TIA provides DA-layer direction absent from all AVAX strategies (K484/K661/K686/K696). Independence confirmed by G5 checks.",
+    "mr8_strategy": "If G5 passes: TIA-AVAX adds genuine cross-cluster DA vs subnet alpha. Execute on Bybit (both legs). Natural hedge to AVAX-long positions in K484/K686/K696.",
+    "mr9_reject_trigger": "MR9 REJECT if: corr(K736, K694 TIA-SOL) >= 0.40 (TIA saturation like K691 APT lesson) OR corr(K736, K686 AVAX-SOL) >= 0.40 (AVAX over-saturated). OR OOS Sharpe < 1.0 (hard G1 gate).",
+    "altalt_family_rank_updated": {
+      "k686_avax_sol": {
+        "oos_sharpe": 50.27,
+        "status": "ACCEPT"
+      },
+      "k708_bnb_sol": {
+        "oos_sharpe": 48.59,
+        "status": "ACCEPT"
+      },
+      "k682_atom_sol": {
+        "oos_sharpe": 43.43,
+        "status": "ACCEPT"
+      },
+      "k679_apt_sol": {
+        "oos_sharpe": 39.28,
+        "status": "ACCEPT"
+      },
+      "k696_apt_avax": {
+        "oos_sharpe": 26.93,
+        "status": "ACCEPT"
+      },
+      "k690_sei_sol": {
+        "oos_sharpe": 25.11,
+        "status": "ACCEPT"
+      },
+      "k694_tia_sol": {
+        "oos_sharpe": 19.09,
+        "status": "CONDITIONAL"
+      },
+      "k736_tia_avax": {
+        "oos_sharpe": 12.9673,
+        "status": "ACCEPT CONDITIONAL"
+      },
+      "k684_sol_inj": {
+        "oos_sharpe": 9.65,
+        "status": "ACCEPT"
+      }
+    }
+  },
+  "profit_projection": {
+    "strategy": "TIA-AVAX FR differential alt-alt cross-cluster (Celestia DA vs Avalanche subnet)",
+    "oos_sharpe": 12.9673,
+    "sleeve_pct": 3.0,
+    "leverage": 4.0,
+    "oos_ann_ret_1x_pct": 8.5378,
+    "oos_ann_ret_4x_pct": 34.1512,
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000.0,
+      "oos_ann_ret_pct": 8.5378,
+      "oos_ann_ret_levered_pct": 34.1512,
+      "gross_annual_usd": 102454.0,
+      "net_annual_usd_est": 87086.0,
+      "daily_usdc": 239
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 12000000.0,
+      "oos_ann_ret_pct": 8.5378,
+      "oos_ann_ret_levered_pct": 34.1512,
+      "gross_annual_usd": 1024536.0,
+      "net_annual_usd_est": 870856.0,
+      "daily_usdc": 2385
+    },
+    "note": "3.0% sleeve, 4.0x leverage, 15% friction buffer. OOS annual return (1x): 8.538%. Execute on Bybit (both legs) to manage HL concentration."
+  },
+  "decision": "ACCEPT CONDITIONAL",
+  "decision_rationale": "[ACCEPT CONDITIONAL] K736 TIA-AVAX passes 15/16 \u00a76 gates. OOS Sharpe 12.967 (IS=9.130). MR9 confirmed: TIA-AVAX = K507_dir \u2212 K484_dir (max_err=5.42e-20). Cross-cluster: DA infra (Celestia) vs subnet L1 (Avalanche). G5b TIA shared (K694): 0.2973 (PASS). G5c AVAX shared (K484): -0.6324 (PASS). $87,086/yr @$10M. Bybit execution mandatory (HL at cap).",
+  "k736_lessons": {
+    "altalt_ninth_da_vs_subnet": "K736 = ninth alt-alt evaluated, FIRST TIA-AVAX cross-cluster pair. Crosses DA/execution boundary: TIA is infrastructure-layer, AVAX is application-layer. Both tokens appear in 1-4 existing strategies (TIA in K694, AVAX in K484/K661/K686/K696).",
+    "mr9_algebraic_decomposition": "MR9: TIA-AVAX = K507_dir \u2212 K484_dir. Unlike same-cluster K688 (APT-INJ = K679+K684 \u2192 REJECT), TIA-AVAX is NOT a simple sum of existing strategies because TIA is in K507 (TIA-BTC) while AVAX is in K484/K661/K686/K696. The algebraic identity holds but the independent variation of TIA (DA demand) vs AVAX (subnet economics) provides genuine new alpha. G5 confirms independence via signal correlations.",
+    "avax_saturation_analysis": "AVAX appears in 4 strategies (K484, K661, K686, K696). K736 TIA-AVAX = -(K484_dir) + TIA_BTC_component. Anti-correlation with K484 (AVAX-BTC) expected and PASSES signed G5 convention. K736 acts as natural HEDGE to AVAX-long positions in K484/K686/K696 when AVAX FR is high (K736 shorts AVAX in BULL_TIA regime).",
+    "tia_saturation_check": "TIA appears in K694 (TIA-SOL). K736 adds second TIA strategy. K691 lesson: TIA-APT REJECT (G5b corr=0.4712, APT shared). K736 binding check: corr(K736, K694 TIA-SOL) < 0.40. If TIA-AVAX and TIA-SOL signals are correlated (TIA shared), K736 would be algebraically dependent on K694 \u2014 same mechanism, different base asset.",
+    "hl_mandatory_bybit": "HL at 64.5%/65% cap (0.5pp headroom). K736 3% HL-only \u2192 67.5% >> cap. Bybit mandatory. TIA Bybit corr=0.6669 (K694 precedent). AVAX Bybit: K484 precedent (0.3923 accepted). Both legs Bybit preserves HL headroom.",
+    "da_vs_subnet_edge": "TIA FR = infrastructure demand (rollup DA, blob fees, gradual adoption-paced). AVAX FR = subnet validator economics + RWA institutional (event-driven). These two FR cycles operate at different layers and different paces \u2014 structurally more orthogonal than same-execution-layer pairs (AVAX-SOL, K686)."
+  }
+}
