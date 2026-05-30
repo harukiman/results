@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.cryptolab.k721-ena-atom</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>scripts/k719_ena_atom_run.py</string>
+        <string>--dry-run</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>REPO_ROOT_PLACEHOLDER</string>
+
+    <!-- 63rd daemon: K719 ENA-ATOM FR Differential (synth stable vs Cosmos IBC, Bybit primary, 9th alt-alt scaffold) -->
+    <!-- StartInterval: 28800 = 8 hours (matches FR settlement cycle) -->
+    <key>StartInterval</key>
+    <integer>28800</integer>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PAPER_TRADE</key>
+        <string>True</string>
+        <!-- Set PAPER_TRADE=False only after 60d gate passage:
+             Realized Sh >= 15 (50% of OOS 29.67), fill_rate >= 60%, maxDD < 15%
+             Bybit primary: ENA maxLev=50, ATOM maxLev=50
+             ENA notional cap: K719 3% + K696 3% + K616 existing < 9% AUM total
+             ATOM notional cap: K719 3% + K682 existing — G5f corr=-0.4666 borderline
+             G5f K682 ATOM-SOL conflict (corr=-0.4666) — monitor if K682 scales up -->
+        <key>PYTHONUNBUFFERED</key>
+        <string>1</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>logs/k721_ena_atom.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>logs/k721_ena_atom.err</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- K719/K721 specific notes (do not remove):
+         Strategy:    ENA-ATOM FR Differential, synthetic stable infra vs Cosmos Hub IBC (K719, K721 scaffold)
+         Daemon #:    63rd daemon (9th alt-alt scaffold, LARGEST single alt-alt $634K/yr)
+         OOS Sharpe:  29.67 (W=168h, zero threshold, 216d OOS period)
+         IS Sharpe:   36.99 (IS/OOS ratio 0.80 — OOS conservative vs IS, healthy)
+         Profit:      $634,464/yr net @$10M @4x (3% sleeve, OOS 15.55% ann ret @1x)
+         Signal:      diff = ENA_FR - ATOM_FR (= K616_dir - K493_dir per MR9, W=168h rolling mean)
+         Venue:       Bybit primary (ENA-PERP + ATOM-PERP, both Bybit)
+         HL impact:   UNCHANGED 64.5% (HL-only would push 64.5%+3.0%=67.5% > 65% cap)
+         Gate:        60d paper-trade: Realized Sh>=15 (50% OOS) + fill>=60% + maxDD<15%
+         Cluster A:   ENA (Ethena synthetic stable infrastructure)
+                      FR mechanism: sUSDe APY = stETH staking + short perp FR capture
+                      ENA FR mean = -7.65%/yr (structurally negative, perp yield driven)
+                      sUSDe TVL cycles: bull=high APY=ENA FR up; bear=TVL collapse
+                      HypurrFi DROP_LINE K337/K345: sUSDe TVL 14d -49% confirms volatility
+         Cluster B:   ATOM (Cosmos Hub IBC ecosystem reserve currency)
+                      FR mechanism: validator staking (21% inflation -> sellers -> FR negative)
+                      ATOM FR mean = -3.27%/yr (governance-driven, ICS cycle)
+                      Key events: PROP 848 hub minimalism, dYdX v4/Noble/Neutron launches
+                      ATOM FR spikes on governance crises (ICS adoption cycles)
+         MR8:         ENA is outside {APT,ATOM,SOL,INJ,AVAX,SEI,TIA} algebraic group — new vertex PASS
+                      K696 precedent: ENA-SOL passed MR8 same way (K619=ENA-ATOM continues ENA exploration)
+         MR9:         ENA-ATOM = K616_dir - K493_dir (K616⊥K493 corr=0.0465 ≈ 0)
+                      Both near-zero -> genuine independent alpha. MR9 PASS.
+         G4:          12/12 WF ALL POSITIVE (UNPRECEDENTED in alt-alt family — min fold Sh=2.919)
+                      Folds: [40.01, 62.95, 37.84, 47.26, 19.56, 40.81, 24.53, 2.92, 12.94, 8.34, 15.35, 16.72]
+         G5c K616:    corr=+0.1511 PASS signed convention (ENA shared leg, direction may diverge)
+         G5d K493:    corr=-0.5477 PASS signed convention (ATOM shared leg, signed convention)
+         G5f K682:    corr=-0.4666 FAIL (ATOM-SOL: ATOM shared leg, borderline — monitor K682)
+         G8:          avg=0.3392 FAIL (Bybit ENA/ATOM data limited — informational, not disqualifying)
+         ATOM pct:    ATOM FR > ENA FR 51.1% of time (IBC premium over synthetic stable)
+                      K719 predominantly SHORT ATOM / LONG ENA (earn ATOM IBC carry over ENA)
+         ENA caps:    K719 3% + K696 3% + K616 existing — total ENA exposure < 9% AUM
+         ATOM caps:   K719 3% + K682 existing — monitor combined ATOM notional
+         Alt-alt rank: LARGEST single alt-alt by net USD/yr at $634,464
+                       K719=$634K > K682=$232K > K693=$175K > K696=$93K > K708=$75K
+         60d gate:    Realized Sh>=15 (50% of OOS 29.67) + fill>=60% + maxDD<15%
+         Deploy:      cp scripts/com.cryptolab.k721-ena-atom.plist ~/Library/LaunchAgents/
+                      launchctl load ~/Library/LaunchAgents/com.cryptolab.k721-ena-atom.plist
+    -->
+</dict>
+</plist>

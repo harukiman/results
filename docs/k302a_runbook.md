@@ -12493,3 +12493,96 @@ python3 scripts/k696_ena_sol_run.py --close "reason"
 | K616 | K616 ENA-BTC ACCEPT (ENA anchor, OOS Sh=20.47) |
 | K478 | K476 SOL-BTC scaffold (SOL algebraic component of ENA-SOL) |
 | K266 | §6 strict gate framework |
+
+---
+
+## §64 K721 — K719 ENA-ATOM Alt-Alt Production Scaffold (63rd Daemon)
+
+**Wave:** K721 | **Date:** 2026-05-30 | **Daemon:** 63rd | **Alt-alt pair:** 9th
+
+### §64.1 Overview
+
+K721 scaffolds K719 ENA-ATOM into production: the **LARGEST single alt-alt profit at $634,464/yr net @$10M @4x** (>2.7x K682 $232K). Cross-cluster: ENA (Ethena synthetic stable infra, FR mean -7.65%/yr) vs ATOM (Cosmos Hub IBC reserve, FR mean -3.27%/yr). 12/12 walk-forward folds ALL POSITIVE (UNPRECEDENTED in alt-alt family).
+
+### §64.2 Strategy Parameters
+
+| Parameter | Value |
+|-----------|-------|
+| Signal | `ENA_FR - ATOM_FR` (= K616_dir - K493_dir per MR9) |
+| Window | W=168h rolling mean (21 x 8h periods) |
+| Threshold | Zero (sign only) |
+| Leverage | 4x |
+| Sleeve | 3% standalone |
+| Venue | Bybit-only (ENA-PERP + ATOM-PERP) |
+| Cadence | 8h (FR settlement) |
+
+### §64.3 Performance
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe | 29.67 (W=168h, 216d OOS) |
+| IS Sharpe | 36.99 |
+| OOS Ann Ret @1x | 15.55% |
+| OOS Ann Ret @4x | 62.20% |
+| Net @$10M @4x @3% | **$634,464/yr** |
+| §6 gates | **13/15 PASS** (G5f K682 borderline, G8 data limited) |
+| Walk-forward | **12/12 ALL POSITIVE (UNPRECEDENTED)** |
+| ADF | t=-11.36, p=0.0 (stationary) |
+| Trade count | 42.3/yr |
+| MR8 | PASS (ENA outside alt-alt group) |
+| MR9 | PASS (K616⊥K493 corr=0.0465) |
+
+### §64.4 60d Gate Criteria
+
+| Metric | Threshold |
+|--------|-----------|
+| Realized Sharpe | ≥15 (50% of OOS 29.67) |
+| Fill rate | ≥60% |
+| Max drawdown | <15% |
+
+### §64.5 Deploy Commands
+
+```bash
+# Copy plist to LaunchAgents (after 60d gate passage)
+cp scripts/com.cryptolab.k721-ena-atom.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k721-ena-atom.plist
+
+# Verify
+launchctl list | grep k721
+
+# Monitor logs
+tail -f logs/k721_ena_atom.log
+tail -f logs/k721_ena_atom.err
+
+# Check status
+python3 scripts/k719_ena_atom_run.py --status
+```
+
+### §64.6 Risk Factors
+
+1. **G5f K682 ATOM-SOL corr=-0.4666** — ATOM shared leg. Monitor K682 scaling and combined ATOM notional.
+2. **ENA concentration** — K719 3% + K696 3% + K616 existing: total ENA < 9% AUM. Monitor.
+3. **HypurrFi DROP_LINE** — sUSDe TVL -49% (K337/K345). ENA FR can collapse; strategy adapts via 168h rolling mean.
+4. **HL concentration** — 64.5% UNCHANGED (Bybit-only mandatory — HL-only 67.5% > 65% cap).
+
+### §64.7 Files
+
+| File | Description |
+|------|-------------|
+| `scripts/k719_ena_atom_run.py` | Main strategy script |
+| `scripts/com.cryptolab.k721-ena-atom.plist` | LaunchAgent plist |
+| `wave_k721_k719_scaffold.py` | Scaffold orchestration |
+| `wave_k721_k719_scaffold.json` | Scaffold results |
+| `data/k719_dashboard.json` | Live dashboard |
+
+### §64.8 References
+
+| Wave | Description |
+|------|-------------|
+| K721 | This section — K719 ENA-ATOM scaffold (63rd daemon, 9th alt-alt, LARGEST $634K) |
+| K719 | K719 analysis — ENA-ATOM ACCEPT (13/15 §6 gates, 12/12 WF UNPRECEDENTED) |
+| K710 | K708 BNB-SOL scaffold (62nd daemon, 8th alt-alt) |
+| K616 | K616 ENA-BTC ACCEPT (ENA anchor, OOS Sh=20.47) |
+| K493 | K493 ATOM-BTC ACCEPT (ATOM anchor, OOS Sh=50.79) |
+| K696 | K696 ENA-SOL ACCEPT (7th alt-alt, cross-cluster precedent) |
+| K266 | §6 strict gate framework |
