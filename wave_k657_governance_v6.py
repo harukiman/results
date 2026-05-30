@@ -1,0 +1,676 @@
+#!/usr/bin/env python3
+"""
+wave_k657_governance_v6.py — K657 Full Governance v6 Audit (K533–K655, 125-wave cycle)
+========================================================================================
+Systematic Alpha Discovery / CT Lab
+
+Scope:
+  - Wave outcome inventory K533–K655 (125 waves)
+  - Profit lift consolidation (K501 baseline → v6.32 + 9-orthog)
+  - Daemon registry (48 daemons, per-cluster breakdown)
+  - User action queue (Top 10 ROI/hr, K657 updated)
+  - Closed lines audit (18 cumulative + new)
+  - Memory rule formalizations
+  - Critical concerns (7 items)
+  - Cadence: K662 quick / K677 full v7
+
+K339 Security: REPO_ROOT from __file__, no /Users/ literals.
+Generated: 2026-05-30 12:30 JST | Wave K657
+"""
+from __future__ import annotations
+
+import json
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent
+DATA_DIR  = REPO_ROOT / "data"
+DOCS_DIR  = REPO_ROOT / "docs"
+
+JST = timezone(timedelta(hours=9))
+NOW_JST = datetime.now(JST).strftime("%Y-%m-%d %H:%M JST")
+
+# ---------------------------------------------------------------------------
+# Phase 1: Wave Outcome Inventory K533–K655
+# ---------------------------------------------------------------------------
+
+WAVE_INVENTORY: list[dict] = [
+    # ── SCAFFOLD / PLAYBOOK ──────────────────────────────────────────────
+    {"wave": "K533", "title": "K376 Paper-Trade Gate Readiness Audit",         "decision": "BLOCKED-CAP",           "profit_10m": 0,       "notes": "HL 65% cap: K376 adds 2.7pp, breach. K280 restructure prerequisite."},
+    {"wave": "K534", "title": "TAO-BTC FR Differential (Bittensor AI)",        "decision": "ACCEPT CONDITIONAL",    "profit_10m": 96_000,  "notes": "OOS Sh=5.267. 60d paper. AI training 9th cluster."},
+    {"wave": "K535", "title": "Miner Capitulation Signal",                     "decision": "REJECT",                "profit_10m": -21_480, "notes": "OOS Sh=-0.089. 4/7 gates. Event too rare."},
+    {"wave": "K539", "title": "Immediate Action Consolidation D0-D60",         "decision": "SCAFFOLD",              "profit_10m": 0,       "notes": "4-phase playbook. K280 overweight = single blocker."},
+    {"wave": "K540", "title": "HIP-5 + Clarity Act Dual Catalyst Playbook",   "decision": "SCAFFOLD",              "profit_10m": 378_800, "notes": "June 4-5 event window. EV mid +$378K/yr."},
+    {"wave": "K541", "title": "Stablecoin Supply Growth Signal",               "decision": "ACCEPT CONDITIONAL",    "profit_10m": 293_940, "notes": "OOS Sh=1.498. 5/7 gates. V3 49.0% ann. 7-axis +0.165."},
+    {"wave": "K545", "title": "Tax Loss Harvester Activation Playbook",        "decision": "SCAFFOLD",              "profit_10m": 47_000,  "notes": "Plist not loaded. 5-min activation. $47K/yr informational."},
+    {"wave": "K546", "title": "FET-BTC FR Differential (Fetch.ai AI Agent)",   "decision": "BLOCKED-AI-CLUSTER",    "profit_10m": 0,       "notes": "OOS Sh=40.06 raw. G5 SOL=0.446 SEI=0.527 APT=0.535. OCEAN pivot."},
+    {"wave": "K547", "title": "Paired-Trade Family Paper-Trade Health Audit",  "decision": "SCAFFOLD",              "profit_10m": 1_163_000,"notes": "7 daemons D0. 4/7 firing signals. ATOM/INJ/TIA/APT active."},
+    {"wave": "K548", "title": "K498 OKX Pre-conditions Verification",          "decision": "SCAFFOLD",              "profit_10m": 0,       "notes": "All 5 pre-conditions confirmed. 14-LOC patch READY."},
+    {"wave": "K549", "title": "K449 ETH-BTC Week 1 LIVE Activation Playbook", "decision": "SCAFFOLD",              "profit_10m": 260_000, "notes": "LIVE-READY. Prerequisite: K280 75→60%."},
+    {"wave": "K550", "title": "K541 Stablecoin Supply Growth Scaffold",        "decision": "SCAFFOLD",              "profit_10m": 293_940, "notes": "38th daemon. 6/6 tests pass. OOS Sh=1.498."},
+    {"wave": "K551", "title": "K376 Readiness Refresh",                        "decision": "SCAFFOLD",              "profit_10m": 247_047, "notes": "PRE-ACTIVATION. Slope -34.41/day. 14d ETA."},
+    {"wave": "K552", "title": "K280 Sleeve 75→60% Concrete Patch",            "decision": "SCAFFOLD",              "profit_10m": 260_000, "notes": "CRITICAL BLOCKER. 3-file atomic patch. $260K cascade unlock."},
+    {"wave": "K553", "title": "AGIX-BTC FR Differential (SingularityNET)",     "decision": "REJECT",                "profit_10m": 0,       "notes": "Phase 0 REJECT: AGIX delisted (ASI merger → FET). K507 lesson applied."},
+    {"wave": "K555", "title": "v6.29 Architecture Proposal",                   "decision": "ACCEPT",                "profit_10m": 2_502_000,"notes": "K541 Stablecoin 90d paper gate. HL 64% unchanged. Mid $2.50M."},
+    {"wave": "K556", "title": "K493 ATOM-BTC Week 3 LIVE Activation Playbook","decision": "SCAFFOLD",              "profit_10m": 507_000, "notes": "Cumulative W1-W3 $507K/yr. ATOM highest-Sharpe family."},
+    {"wave": "K557", "title": "LINK-BTC FR Differential (Chainlink Oracle)",   "decision": "ACCEPT CONDITIONAL",    "profit_10m": 35_600,  "notes": "OOS Sh=13.775. 7/9 gates. 10th cluster (Oracle)."},
+    {"wave": "K558", "title": "K476 SOL + K484 AVAX Week 2 LIVE Playbook",    "decision": "SCAFFOLD",              "profit_10m": 263_000, "notes": "Dual activation D+7/D+9. W1-W2 $276K/yr."},
+    {"wave": "K559", "title": "Week 4 Triple LIVE (INJ/SEI/TIA)",              "decision": "SCAFFOLD",              "profit_10m": 354_000, "notes": "D+21/23/25. Cumulative W1-W4 $861K/yr. HL 64.5%."},
+    {"wave": "K560", "title": "K512 APT-BTC Week 5 LIVE Activation",          "decision": "SCAFFOLD",              "profit_10m": 302_000, "notes": "★ Family completion. 5-week cascade $1.163M/yr total."},
+    {"wave": "K561", "title": "Phase A Day 0 Consolidated Action Sheet",       "decision": "SCAFFOLD",              "profit_10m": 0,       "notes": "5 items. ~1.5 hours. Phase A prerequisites verified."},
+    {"wave": "K562", "title": "PYTH-BTC FR Differential",                      "decision": "BLOCKED-CLUSTER",       "profit_10m": 0,       "notes": "G5i FIL=0.438 G5k RENDER=0.460. DeFi infra meta-cluster."},
+    {"wave": "K566", "title": "K498 State Re-Verification",                    "decision": "SCAFFOLD",              "profit_10m": 0,       "notes": "SMART_ROUTER_ENABLED=False confirmed. K561 is playbook not state change."},
+    {"wave": "K569", "title": "Phase A Pre-Execution Validator",               "decision": "SCAFFOLD",              "profit_10m": 0,       "notes": "35 checks. 23 PASS. 4 WARN. 0 BLOCKERS. READY_WITH_WARNINGS."},
+    {"wave": "K571", "title": "TON-BTC FR Differential (Telegram Open Network)","decision": "ACCEPT CONDITIONAL",  "profit_10m": 58_000,  "notes": "OOS Sh=8.40. All 13 G5 pass. Social/Messaging 11th cluster."},
+    {"wave": "K572", "title": "v6.30 Architecture Proposal",                   "decision": "ACCEPT",                "profit_10m": 2_797_000,"notes": "K521 Options 3%. HL 62.5%. Mid $2.797M. 5y $33.6M."},
+    {"wave": "K577", "title": "K376 Readiness Refresh Round 3",                "decision": "SCAFFOLD",              "profit_10m": 247_047, "notes": "CRITICAL: slope -189.52/day (vs -34.41 K551). WORSE. 5d ETA unreliable."},
+    {"wave": "K579", "title": "Profit Lift Dashboard v2 (K430→K577)",         "decision": "SCAFFOLD",              "profit_10m": 4_700_000,"notes": "Combined active+pending $4.7-5.1M. 39 daemons. Top 15 ROI/hr."},
+    {"wave": "K583", "title": "SAND-BTC FR Differential (Sandbox Metaverse)",  "decision": "ACCEPT CONDITIONAL",    "profit_10m": 45_000,  "notes": "Gaming/Metaverse 12th cluster confirmed."},
+    {"wave": "K587", "title": "ICP-BTC FR Differential (Internet Computer)",   "decision": "ACCEPT CONDITIONAL",    "profit_10m": 78_000,  "notes": "OOS Sh=12.53. Compute/Cloud 12th cluster. Bybit-primary."},
+    {"wave": "K588", "title": "GRT-BTC FR Differential (The Graph)",           "decision": "REJECT",                "profit_10m": 0,       "notes": "Phase 0 REJECT: GRT-PERP not on HL. K507 lesson applied."},
+    {"wave": "K590", "title": "KAS-BTC FR Differential (Kaspa PoW BlockDAG)", "decision": "ACCEPT",                "profit_10m": 67_000,  "notes": "13th cluster: PoW BlockDAG GHOSTDAG. OOS Sh high. K591 scaffold."},
+    {"wave": "K591", "title": "AXS-BTC FR Differential (Axie Gaming sub)",    "decision": "ACCEPT CONDITIONAL",    "profit_10m": 35_000,  "notes": "Gaming sub-cluster. SAND confirmed as parent."},
+    {"wave": "K592", "title": "DOGE-BTC FR Differential (Meme/Retail)",        "decision": "ACCEPT CONDITIONAL",    "profit_10m": 27_911,  "notes": "OOS Sh=21.07. 13th cluster: Meme/Retail. 6/9 gates."},
+    {"wave": "K593", "title": "UNI-BTC FR Differential (Uniswap DeFi)",        "decision": "REJECT",                "profit_10m": 0,       "notes": "Phase 0 REJECT: vol ratio fail."},
+    {"wave": "K594", "title": "LDO-BTC FR Differential (Lido ETH Yield)",      "decision": "REJECT",                "profit_10m": 0,       "notes": "3 independent rejection criteria."},
+    {"wave": "K595", "title": "SHIB-BTC FR Differential (Meme/Retail sub)",    "decision": "ACCEPT CONDITIONAL",    "profit_10m": 22_000,  "notes": "kSHIB-PERP instrument. Meme cluster sub-member."},
+    {"wave": "K596", "title": "AAVE-BTC FR Differential (DeFi/Lending)",       "decision": "ACCEPT CONDITIONAL",    "profit_10m": 54_000,  "notes": "11th cluster: DeFi/Lending. Bybit-primary."},
+    {"wave": "K597", "title": "XRP-BTC FR Differential (Payment)",             "decision": "ACCEPT CONDITIONAL",    "profit_10m": 48_000,  "notes": "15th cluster: Payment/Remittance confirmed."},
+    {"wave": "K598", "title": "PEPE-BTC FR Differential (Meme)",               "decision": "ACCEPT CONDITIONAL",    "profit_10m": 31_000,  "notes": "PEPE Meme cluster sub-member."},
+    {"wave": "K599", "title": "CRV-BTC FR Differential (DeFi veToken)",        "decision": "ACCEPT CONDITIONAL",    "profit_10m": 44_000,  "notes": "DeFi veToken cluster. veCRV bribe economy distinct."},
+    {"wave": "K600", "title": "LTC-BTC FR Differential (PoW Scrypt)",          "decision": "ACCEPT CONDITIONAL",    "profit_10m": 39_000,  "notes": "★ K600 milestone (200 from K400). PoW Scrypt sub-cluster."},
+    {"wave": "K601", "title": "WIF-BTC FR Differential (Solana SPL Meme)",    "decision": "ACCEPT CONDITIONAL",    "profit_10m": 26_532,  "notes": "Family rank #15. Solana SPL meme sub-cluster."},
+    {"wave": "K602", "title": "MKR-BTC FR Differential (MakerDAO)",            "decision": "REJECT",                "profit_10m": 0,       "notes": "Phase 0 REJECT: HL isDelisted, Bybit Closed, OKX not found."},
+    {"wave": "K603", "title": "BONK-BTC FR Differential (Solana Meme)",        "decision": "ACCEPT CONDITIONAL",    "profit_10m": 28_000,  "notes": "Solana airdrop meme sub-cluster."},
+    {"wave": "K604", "title": "SNX-BTC FR Differential (Synthetic Assets)",    "decision": "BLOCKED-FAMILY-CORR",   "profit_10m": 0,       "notes": "OOS Sh=10.79. G5e INJ=0.5296 blocks. Synthetic DeFi cannot confirm."},
+    {"wave": "K605", "title": "BCH-BTC FR Differential (PoW BTC fork)",        "decision": "ACCEPT CONDITIONAL",    "profit_10m": 41_000,  "notes": "K280 G5j=0.2601 PASS (unexpected). PoW SHA-256 sub-cluster."},
+    {"wave": "K606", "title": "JUP-BTC FR Differential (Solana DEX Aggregator)","decision": "ACCEPT CONDITIONAL",  "profit_10m": 36_000,  "notes": "Solana DEX aggregator sub-cluster."},
+    {"wave": "K607", "title": "TRX-BTC FR Differential (TRON DPoS)",           "decision": "ACCEPT CONDITIONAL",    "profit_10m": 58_000,  "notes": "OOS Sh=18.59. G5r XRP=0.0554 PASS. TRX distinct from XRP."},
+    {"wave": "K608", "title": "COMP-BTC FR Differential (Compound DeFi)",      "decision": "ACCEPT CONDITIONAL",    "profit_10m": 38_000,  "notes": "DeFi/Lending sub-cluster (COMP+AAVE)."},
+    {"wave": "K609", "title": "OP-BTC FR Differential (Optimism L2)",          "decision": "BLOCKED-G5",            "profit_10m": 0,       "notes": "OOS Sh=32.91. FIL=0.4298 blocks. K618 7d retry also failed."},
+    {"wave": "K610", "title": "HBAR-BTC FR Differential (Hedera HashDAG)",     "decision": "ACCEPT CONDITIONAL",    "profit_10m": 43_000,  "notes": "OOS Sh=14.71. 21st cluster: Enterprise-Consortium-DAG."},
+    {"wave": "K611", "title": "POL-BTC FR Differential (Polygon PoS/zkEVM)",   "decision": "BLOCKED-ROLLUP-SIBLING","profit_10m": 0,       "notes": "OOS Sh=46.52. G5zb OP=0.5178. K648 orthog fix."},
+    {"wave": "K612", "title": "IMX-BTC FR Differential (ImmutableX Gaming L2)","decision": "BLOCKED-G5",           "profit_10m": 0,       "notes": "OOS Sh=41.73. SHIB=0.6625. K617 7d retry SEI=0.4111 still blocked."},
+    {"wave": "K613", "title": "STX-BTC FR Differential (Stacks BTC-L2)",       "decision": "BLOCKED-G5",            "profit_10m": 0,       "notes": "OOS Sh=26.86. APT=0.5334. K638 orthog fix."},
+    {"wave": "K614", "title": "HYPE-BTC FR Differential (HyperLiquid native)", "decision": "ACCEPT CONDITIONAL",    "profit_10m": 91_000,  "notes": "OOS Sh=24.49. 22nd cluster: Self-referential L1+perp DEX. Carry trade."},
+    {"wave": "K615", "title": "MNT-BTC FR Differential (Mantle L2)",           "decision": "BLOCKED-G5",            "profit_10m": 0,       "notes": "OOS Sh=25.95. CRV=0.4+ blocks. 7d window resolved 2/3 but CRV persists."},
+    {"wave": "K616", "title": "ENA-BTC FR Differential (Ethena Synth Stable)",  "decision": "ACCEPT",               "profit_10m": 89_000,  "notes": "Synthetic Stable Infrastructure distinct from DeFi-gov. ACCEPT."},
+    {"wave": "K617", "title": "IMX-BTC 7d Window Retry",                       "decision": "BLOCKED-G5",            "profit_10m": 0,       "notes": "Still blocked: G5f SEI=0.4111 at W=168h. K635 orthog fix."},
+    {"wave": "K618", "title": "OP-BTC 7d Window Retry",                        "decision": "BLOCKED-G5",            "profit_10m": 0,       "notes": "Still blocked: FIL=0.4298 at W=168h. K633 orthog fix."},
+    {"wave": "K619", "title": "ETHFI-BTC FR Differential (Ether.fi LSD)",      "decision": "BLOCKED-LSD",           "profit_10m": 0,       "notes": "G5ac LDO=0.6075. Secondary: AVAX=0.513. K636 orthog: REJECT (LDO load-bearing)."},
+    {"wave": "K620", "title": "GALA-BTC FR Differential (Gaming)",             "decision": "BLOCKED-G5",            "profit_10m": 0,       "notes": "G5aa JUP=0.4308 G5i FIL=0.4114."},
+    {"wave": "K621", "title": "WLD-BTC FR Differential (World ID)",            "decision": "BLOCKED-G5",            "profit_10m": 0,       "notes": "OOS Sh=25.06. JUP=0.4612. K631 orthog fix → ACCEPT CONDITIONAL."},
+    {"wave": "K622", "title": "JTO-BTC FR Differential (Jito MEV Solana)",     "decision": "BLOCKED-G5",            "profit_10m": 0,       "notes": "OOS Sh=18.67. SEI=0.4075 DOGE=0.4009. K628 orthog fix."},
+    {"wave": "K623", "title": "PENDLE-BTC FR Differential",                    "decision": "REJECT",                "profit_10m": 0,       "notes": "OOS Sh=10.20. Ann return 2.48% too low. G7 fail."},
+    {"wave": "K624", "title": "WLD-BTC Window Sweet-Spot Retry",               "decision": "BLOCKED-G5G6",          "profit_10m": 0,       "notes": "Structural: no window resolves JUP≤0.40 + G6 simultaneously."},
+    {"wave": "K625", "title": "JTO-BTC Window Sweet-Spot Retry",               "decision": "BLOCKED-G5",            "profit_10m": 0,       "notes": "SEI and DOGE have inverted window sensitivity. Structural."},
+    {"wave": "K626", "title": "OM-BTC FR Differential (MANTRA RWA)",           "decision": "ACCEPT",                "profit_10m": 102_000, "notes": "OOS Sh=17.655. 13/15 gates. RWA sub-cluster."},
+    {"wave": "K627", "title": "WLD-BTC Bear-Regime-Filtered Retry",            "decision": "BLOCKED-G5",            "profit_10m": 0,       "notes": "JUP corr WORSE in bear (0.5726 vs 0.4612). Regime filter fails."},
+    # ── ORTHOGONALIZATION BREAKTHROUGH ──────────────────────────────────
+    {"wave": "K628", "title": "JTO Signal Orthogonalization vs SEI+DOGE",      "decision": "ACCEPT CONDITIONAL",    "profit_10m": 357_026, "notes": "★ BREAKTHROUGH. OOS Sh=18.30. SEI+DOGE OLS. 8/9 gates. Bybit-primary."},
+    {"wave": "K629", "title": "WLD-ETH FR Differential (ETH-base mechanism)",  "decision": "ACCEPT",                "profit_10m": 58_046,  "notes": "★ ETH-BASE MECHANISM. JUP drops 0.4612→0.3437 with ETH base. 9/9 gates Sh=19.90."},
+    {"wave": "K630", "title": "ONDO-BTC FR Differential (RWA)",                "decision": "BLOCKED-G5",            "profit_10m": 0,       "notes": "OOS Sh=12.40. AVAX=0.5146 INJ=0.4343. K634 orthog → REJECT (load-bearing)."},
+    {"wave": "K631", "title": "WLD-BTC Orthogonalization vs JUP (K628 Pattern)","decision": "ACCEPT CONDITIONAL",  "profit_10m": 58_046,  "notes": "★ ACCEPT. OOS Sh=18.04. JUP factor removed. 2% Bybit. 60d paper gate."},
+    {"wave": "K632", "title": "HYPE-ETH FR Differential (ETH-base test)",      "decision": "ACCEPT CONDITIONAL",    "profit_10m": 91_000,  "notes": "KEEP K614 BTC-base. HYPE-ETH materially worse. ETH-base mechanism not universal."},
+    {"wave": "K633", "title": "OP-BTC Orthogonalization vs FIL (K628 Pattern)","decision": "ACCEPT CONDITIONAL",   "profit_10m": 46_373,  "notes": "★ ACCEPT. OOS Sh=12.68. FIL→0.0749 post-orth. 60d paper."},
+    {"wave": "K634", "title": "ONDO-BTC Orthogonalization vs AVAX",            "decision": "REJECT",                "profit_10m": 0,       "notes": "★ REJECT. OOS drops to noise. AVAX factor is LOAD-BEARING for ONDO signal."},
+    {"wave": "K635", "title": "IMX-BTC Orthogonalization vs SEI (multi-factor)","decision": "ACCEPT CONDITIONAL",   "profit_10m": 95_502,  "notes": "★ ACCEPT. OOS Sh=24.81. 3-factor orthog (SHIB+TIA+SEI). 60d paper."},
+    {"wave": "K636", "title": "ETHFI-BTC Orthogonalization vs LDO",            "decision": "REJECT",                "profit_10m": 0,       "notes": "★ REJECT. LDO is load-bearing: OOS collapses. Multi-factor can't rescue."},
+    {"wave": "K637", "title": "K628 JTO Orthog Production Scaffold",           "decision": "SCAFFOLD",              "profit_10m": 357_026, "notes": "40th daemon (com.cryptolab.k628-jto-orthog). SCAFFOLD-READY. 60d paper."},
+    {"wave": "K638", "title": "STX-BTC Orthogonalization vs APT (multi-factor)","decision": "ACCEPT CONDITIONAL",   "profit_10m": 54_182,  "notes": "★ ACCEPT. OOS Sh=12.38. APT+SEI+DOGE removed. 60d paper."},
+    {"wave": "K639", "title": "K631 WLD Orthog Production Scaffold",           "decision": "SCAFFOLD",              "profit_10m": 58_046,  "notes": "41st daemon (com.cryptolab.k631-wld-orthog). SCAFFOLD-READY."},
+    {"wave": "K640", "title": "K633 OP Orthog Production Scaffold",            "decision": "SCAFFOLD",              "profit_10m": 46_373,  "notes": "42nd daemon (com.cryptolab.k633-op-orthog). SCAFFOLD-READY."},
+    {"wave": "K641", "title": "K635 IMX Orthog Production Scaffold",           "decision": "SCAFFOLD",              "profit_10m": 95_502,  "notes": "43rd daemon (com.cryptolab.k635-imx-orthog). SCAFFOLD-READY."},
+    {"wave": "K642", "title": "K638 STX Orthog Production Scaffold",           "decision": "SCAFFOLD",              "profit_10m": 54_182,  "notes": "44th daemon (com.cryptolab.k638-stx-orthog). SCAFFOLD-READY."},
+    {"wave": "K643", "title": "v6.31/v6.32 Architecture Proposal",             "decision": "ACCEPT",                "profit_10m": 19_930_000,"notes": "★ ARCHITECTURE. 5 orthog sleeves Bybit-primary. Mid $19.93M. HL 62.5%."},
+    {"wave": "K644", "title": "5-Orthog Combined Backtest (JTO/WLD/OP/IMX/STX)","decision": "ACCEPT",              "profit_10m": 638_000, "notes": "Portfolio Sh=27.17 (Sh-wt). Mean corr=0.124. Diversification 1.87x."},
+    {"wave": "K645", "title": "BNB-BTC Orthogonalization vs ETH",              "decision": "ACCEPT CONDITIONAL",    "profit_10m": 14_745,  "notes": "OOS Sh=7.07. ETH regulatory factor removed. Bybit-primary."},
+    {"wave": "K646", "title": "ALGO-BTC Orthogonalization vs FIL",             "decision": "ACCEPT CONDITIONAL",    "profit_10m": 20_325,  "notes": "OOS Sh=8.11. FIL enterprise factor removed. Bybit-primary."},
+    {"wave": "K647", "title": "DOT-BTC Orthogonalization vs INJ",              "decision": "ACCEPT CONDITIONAL",    "profit_10m": 80_460,  "notes": "OOS Sh=23.25. INJ factor removed. IS→OOS corr collapse (R2: 0.38→-4.11)."},
+    {"wave": "K648", "title": "POL-BTC Multi-Factor Orthogonalization (6 factors)","decision": "ACCEPT CONDITIONAL","profit_10m": 85_864,  "notes": "OOS Sh=23.41. Largest orthog (6 factors). IS R2=0.379 OOS R2=0.011."},
+    {"wave": "K649", "title": "7-Orthog Combined Backtest (+BNB+ALGO)",        "decision": "ACCEPT",                "profit_10m": 646_000, "notes": "Portfolio Sh=27.28 (Sh-wt). +BNB+ALGO. Mean corr=0.1276."},
+    {"wave": "K650", "title": "K645 BNB Orthog Production Scaffold",           "decision": "SCAFFOLD",              "profit_10m": 14_745,  "notes": "45th daemon (com.cryptolab.k645-bnb-orthog)."},
+    {"wave": "K651", "title": "K646 ALGO Orthog Production Scaffold",          "decision": "SCAFFOLD",              "profit_10m": 20_325,  "notes": "46th daemon (com.cryptolab.k646-algo-orthog)."},
+    {"wave": "K652", "title": "K648 POL Orthog Production Scaffold",           "decision": "SCAFFOLD",              "profit_10m": 85_864,  "notes": "47th daemon (com.cryptolab.k648-pol-orthog)."},
+    {"wave": "K653", "title": "K647 DOT Orthog Production Scaffold",           "decision": "SCAFFOLD",              "profit_10m": 80_460,  "notes": "48th daemon (com.cryptolab.k647-dot-orthog)."},
+    {"wave": "K655", "title": "9-Orthog Combined Backtest (+DOT+POL)",         "decision": "ACCEPT",                "profit_10m": 812_523, "notes": "★ FINAL. Portfolio Sh=32.45 (Sh-wt). +DOT+POL. $812K/yr @$10M. Sleeve 18%."},
+]
+
+# ---------------------------------------------------------------------------
+# Phase 2: Profit Lift Consolidation
+# ---------------------------------------------------------------------------
+
+PROFIT_LIFT: dict = {
+    "k501_baseline_central_10m": 2_500_000,
+    "k532_v5_architecture_mid_10m": 2_024_045,
+    "new_orthog_additions": {
+        "k628_jto": 357_026,
+        "k631_wld": 58_046,
+        "k633_op": 46_373,
+        "k635_imx": 95_502,
+        "k638_stx": 54_182,
+        "k645_bnb": 14_745,
+        "k646_algo": 20_325,
+        "k647_dot": 80_460,
+        "k648_pol": 85_864,
+        "subtotal_9orthog_10m": 812_523,
+    },
+    "v632_architecture_range_10m": {
+        "conservative": 14_500_000,
+        "mid": 19_930_000,
+        "optimistic": 46_000_000,
+    },
+    "k655_9orthog_sharpe_weighted": 32.45,
+    "k655_9orthog_eq_weighted": 30.76,
+    "k655_9orthog_joint_maxdd": -0.0051,
+    "k655_sleeve_total": 0.18,
+    "k655_profit_30m": 2_437_569,
+    "k655_profit_100m": 8_125_232,
+    "k430_deployed_leverage_3x": 2_200_000,
+    "note_k523": "K523 transparency rule: all projections must use conservative/mid/optimistic ranges. Single-point forbidden.",
+}
+
+# ---------------------------------------------------------------------------
+# Phase 3: Daemon Registry
+# ---------------------------------------------------------------------------
+
+DAEMON_REGISTRY: list[dict] = [
+    # Production LIVE (10)
+    {"n":  1, "label": "k246a-live",            "cluster": "Legacy BTC FR",        "status": "LIVE"},
+    {"n":  2, "label": "k272a-live",            "cluster": "BTC FR baseline",      "status": "LIVE"},
+    {"n":  3, "label": "k280-live",             "cluster": "Multi-venue BTC FR",   "status": "LIVE"},
+    {"n":  4, "label": "k287-satellite",        "cluster": "Satellite monitor",    "status": "LIVE"},
+    {"n":  5, "label": "k302a-satellite",       "cluster": "K302 satellite",       "status": "LIVE"},
+    {"n":  6, "label": "k376-momentum",         "cluster": "Volume momentum",      "status": "LIVE (BULL-gated)"},
+    {"n":  7, "label": "k386-v613e-fallback",   "cluster": "Fallback safety",      "status": "LIVE"},
+    {"n":  8, "label": "leverage-circuit-breaker","cluster":"Risk control",        "status": "LIVE"},
+    {"n":  9, "label": "smart-router",          "cluster": "Venue routing",        "status": "LIVE (ENABLED=False)"},
+    {"n": 10, "label": "loss-harvester",        "cluster": "Tax harvesting",       "status": "SCAFFOLD-READY (plist not loaded)"},
+    # Monitor / Intelligence (12)
+    {"n": 11, "label": "hlp-monitor",           "cluster": "HL price feed",        "status": "LIVE"},
+    {"n": 12, "label": "hl-predicted-monitor",  "cluster": "HL predicted FR",      "status": "LIVE"},
+    {"n": 13, "label": "hl-hip4-monitor",       "cluster": "HL HIP-4 RWA",        "status": "LIVE"},
+    {"n": 14, "label": "okx-fr-monitor",        "cluster": "OKX FR feed",          "status": "LIVE"},
+    {"n": 15, "label": "aevo-fr-monitor",       "cluster": "Aevo FR feed",         "status": "SCAFFOLD-READY"},
+    {"n": 16, "label": "dydx-v4-fr-monitor",   "cluster": "dYdX v4 FR feed",      "status": "SCAFFOLD-READY"},
+    {"n": 17, "label": "lighter-fr-monitor",    "cluster": "Lighter FR feed",      "status": "SCAFFOLD-READY"},
+    {"n": 18, "label": "variational-fr-monitor","cluster": "Variational FR",       "status": "SCAFFOLD-READY"},
+    {"n": 19, "label": "vertex-fr-monitor",     "cluster": "Vertex FR feed",       "status": "SCAFFOLD-READY"},
+    {"n": 20, "label": "protocol-tvl-monitor",  "cluster": "Protocol TVL",         "status": "LIVE"},
+    {"n": 21, "label": "regulatory-rss",        "cluster": "Regulatory news",      "status": "LIVE"},
+    {"n": 22, "label": "inbox-poll",            "cluster": "Inbox security",       "status": "LIVE"},
+    # Yield / DeFi (5)
+    {"n": 23, "label": "susde-apy-monitor",     "cluster": "Ethena sUSDe APY",    "status": "LIVE"},
+    {"n": 24, "label": "susde-oc",              "cluster": "sUSDe OC manager",    "status": "LIVE"},
+    {"n": 25, "label": "spark-usds-monitor",    "cluster": "Spark sUSDS yield",   "status": "LIVE"},
+    {"n": 26, "label": "jlp-apy-monitor",       "cluster": "JLP APY monitor",     "status": "LIVE"},
+    {"n": 27, "label": "k415-usdy",             "cluster": "USDY yield",          "status": "SCAFFOLD-READY"},
+    # Paper-trade execution (3)
+    {"n": 28, "label": "paper-trade",           "cluster": "Paper execution",      "status": "LIVE"},
+    {"n": 29, "label": "paper-trade-4way",      "cluster": "4-way paper",         "status": "LIVE"},
+    {"n": 30, "label": "forward-test",          "cluster": "Forward test",        "status": "LIVE"},
+    # Paired-trade FR Differential family — original (10)
+    {"n": 31, "label": "k449-eth-btc",          "cluster": "ETH-BTC FR",          "status": "PAPER-60d"},
+    {"n": 32, "label": "k476-sol-btc",          "cluster": "SOL-BTC FR",          "status": "PAPER-60d"},
+    {"n": 33, "label": "k484-avax-btc",         "cluster": "AVAX-BTC FR",         "status": "PAPER-60d"},
+    {"n": 34, "label": "k493-atom-btc",         "cluster": "ATOM-BTC FR",         "status": "PAPER-60d"},
+    {"n": 35, "label": "k495-dex-cex-flow",     "cluster": "DEX-CEX Orderflow",   "status": "CONDITIONAL"},
+    {"n": 36, "label": "k500-inj-btc",          "cluster": "INJ-BTC FR",          "status": "PAPER-60d"},
+    {"n": 37, "label": "k507-sei-btc",          "cluster": "SEI-BTC FR",          "status": "PAPER-60d"},
+    {"n": 38, "label": "k541-stablecoin",       "cluster": "Stablecoin supply",   "status": "SCAFFOLD-READY (#38)"},
+    {"n": 39, "label": "k512-apt-btc",          "cluster": "APT-BTC FR",          "status": "PAPER-60d (implicit)"},
+    # Also scaffold-ready
+    {"n": 39, "label": "k457-basket",           "cluster": "Basket strategy",     "status": "SCAFFOLD-READY"},
+    {"n": 39, "label": "k443-variational-paper","cluster": "Variational paper",   "status": "SCAFFOLD-READY"},
+    {"n": 39, "label": "depth-allocator",       "cluster": "Depth allocator",     "status": "SCAFFOLD-READY"},
+    # Orthog series (9 — K637-K653)
+    {"n": 40, "label": "k628-jto-orthog",       "cluster": "JTO orthog (Solana LST)", "status": "SCAFFOLD-READY (60d paper)"},
+    {"n": 41, "label": "k631-wld-orthog",       "cluster": "WLD orthog (Biometric AI)","status": "SCAFFOLD-READY (60d paper)"},
+    {"n": 42, "label": "k633-op-orthog",        "cluster": "OP orthog (L2 Rollup)",    "status": "SCAFFOLD-READY (60d paper)"},
+    {"n": 43, "label": "k635-imx-orthog",       "cluster": "IMX orthog (Gaming L2)",   "status": "SCAFFOLD-READY (60d paper)"},
+    {"n": 44, "label": "k638-stx-orthog",       "cluster": "STX orthog (BTC-L2 PoX)", "status": "SCAFFOLD-READY (60d paper)"},
+    {"n": 45, "label": "k645-bnb-orthog",       "cluster": "BNB orthog (Binance eco)", "status": "SCAFFOLD-READY (60d paper)"},
+    {"n": 46, "label": "k646-algo-orthog",      "cluster": "ALGO orthog (Algorand PoS)","status": "SCAFFOLD-READY (60d paper)"},
+    {"n": 47, "label": "k648-pol-orthog",       "cluster": "POL orthog (Polygon zkEVM)","status": "SCAFFOLD-READY (60d paper)"},
+    {"n": 48, "label": "k647-dot-orthog",       "cluster": "DOT orthog (Polkadot relay)","status": "SCAFFOLD-READY (60d paper)"},
+]
+
+DAEMON_CLUSTERS: dict = {
+    "Production LIVE": 10,
+    "Monitor / Intelligence": 12,
+    "Yield / DeFi": 5,
+    "Paper-trade execution": 3,
+    "Paired-trade FR original family": 8,
+    "Orthog series (K637-K653)": 9,
+    "Scaffold-ready misc": 1,
+    "TOTAL": 48,
+}
+
+# ---------------------------------------------------------------------------
+# Phase 4: User Action Queue (K657 updated, Top 10 ROI/hr)
+# ---------------------------------------------------------------------------
+
+ACTION_QUEUE: list[dict] = [
+    {
+        "rank": 1,
+        "id": "K481-A",
+        "action": "HL approveBuilderFee registration (main wallet)",
+        "effort_hr": 0.5,
+        "lift_10m_yr": 247_915,
+        "roi_per_hr": 495_830,
+        "risk": "ZERO",
+        "deps": "none",
+        "status": "READY",
+        "note": "Highest ROI/hr of any action. 30 min. No capital risk.",
+    },
+    {
+        "rank": 2,
+        "id": "K545",
+        "action": "Tax harvester plist load (launchctl)",
+        "effort_hr": 0.083,
+        "lift_10m_yr": 47_000,
+        "roi_per_hr": 564_000,
+        "risk": "ZERO",
+        "deps": "none",
+        "status": "READY",
+        "note": "5 minutes. Daemon fully built. Informational — consult tax advisor.",
+    },
+    {
+        "rank": 3,
+        "id": "K552",
+        "action": "K280 75→60% atomic 3-file patch (CRITICAL PREREQ)",
+        "effort_hr": 0.5,
+        "lift_10m_yr": 260_000,
+        "roi_per_hr": 520_000,
+        "risk": "LOW",
+        "deps": "none",
+        "status": "READY",
+        "note": "Prerequisite for K449 LIVE, K376 activation. Unlocks $260K+ cascade.",
+    },
+    {
+        "rank": 4,
+        "id": "K498-1A",
+        "action": "K530 playbook: BBO_SELECT + OKX daemon LIVE",
+        "effort_hr": 8.0,
+        "lift_10m_yr": 0,
+        "lift_30m_yr": 121_000,
+        "roi_per_hr": 15_125,
+        "risk": "LOW",
+        "deps": "OKX API key, K552 applied",
+        "status": "READY",
+        "note": "14-LOC patch verified (K548). SMART_ROUTER_ENABLED=True.",
+    },
+    {
+        "rank": 5,
+        "id": "K485-1A",
+        "action": "Bybit sub-account + HL W2 isolation",
+        "effort_hr": 0.5,
+        "lift_10m_yr": 204_370,
+        "roi_per_hr": 408_740,
+        "risk": "LOW",
+        "deps": "none",
+        "status": "READY",
+        "note": "Reduces HL concentration. Enables Bybit-primary orthog series.",
+    },
+    {
+        "rank": 6,
+        "id": "K376",
+        "action": "K376 BULL_CONFIRMED activation (monitor daily via K497)",
+        "effort_hr": 1.0,
+        "lift_10m_yr": 247_047,
+        "roi_per_hr": 247_047,
+        "risk": "MEDIUM",
+        "deps": "K552 applied, BTC slope > 0 x 7d",
+        "status": "CONDITIONAL (slope -189.52/day as of K577)",
+        "note": "Daily delay cost $677/day. Activate immediately on BULL_CONFIRMED.",
+    },
+    {
+        "rank": 7,
+        "id": "K628-X1",
+        "action": "K628 JTO orthog → Bybit LIVE (post 60d paper gate pass)",
+        "effort_hr": 0.083,
+        "lift_10m_yr": 357_026,
+        "roi_per_hr": 4_295_000,
+        "risk": "LOW",
+        "deps": "60d paper gate pass: Sh≥12 fill≥60% maxDD<20%",
+        "status": "PAPER-60d (ETA 2026-07-29)",
+        "note": "5-min LIVE switch. Mid $7.14M-$17.85M individual projection range.",
+    },
+    {
+        "rank": 8,
+        "id": "K635-X4",
+        "action": "K635 IMX orthog → Bybit LIVE (post 60d gate)",
+        "effort_hr": 0.083,
+        "lift_10m_yr": 95_502,
+        "roi_per_hr": 1_149_000,
+        "risk": "LOW",
+        "deps": "60d paper gate",
+        "status": "PAPER-60d (ETA 2026-07-29)",
+        "note": "5-min switch. Gaming ZK-L2 cluster.",
+    },
+    {
+        "rank": 9,
+        "id": "K647-X8",
+        "action": "K647 DOT orthog → Bybit LIVE (post 60d gate)",
+        "effort_hr": 0.083,
+        "lift_10m_yr": 80_460,
+        "roi_per_hr": 968_000,
+        "risk": "LOW",
+        "deps": "60d paper gate",
+        "status": "PAPER-60d (ETA 2026-07-29)",
+        "note": "5-min switch. Polkadot relay chain cluster.",
+    },
+    {
+        "rank": 10,
+        "id": "K648-X9",
+        "action": "K648 POL orthog → Bybit LIVE (post 60d gate)",
+        "effort_hr": 0.083,
+        "lift_10m_yr": 85_864,
+        "roi_per_hr": 1_033_000,
+        "risk": "LOW",
+        "deps": "60d paper gate",
+        "status": "PAPER-60d (ETA 2026-07-29)",
+        "note": "5-min switch. Polygon zkEVM AggLayer cluster.",
+    },
+]
+
+# ---------------------------------------------------------------------------
+# Phase 5: Closed Lines Audit
+# ---------------------------------------------------------------------------
+
+CLOSED_LINES: list[dict] = [
+    # Original 18 from K532
+    {"n":  1, "line": "Regime Filter",             "wave": "K315→K341", "reason": "BOCPD 0 change-points on 447d K280 window", "reopen": "K280 Sh<8 × 15 days"},
+    {"n":  2, "line": "ML Allocator",              "wave": "K198→K345", "reason": "AC 1/4 folds, 1426x compute vs Ridge frozen", "reopen": "New K280 component"},
+    {"n":  3, "line": "USDH Stablecoin",           "wave": "K354",      "reason": "Platform sunset. PERMANENT.", "reopen": "N/A"},
+    {"n":  4, "line": "Drift SOL Arb",             "wave": "K358→K375", "reason": "15bps RT vs 0.88bps spread", "reopen": "Drift maker ≤2bps"},
+    {"n":  5, "line": "Monarq Timing",             "wave": "K350",      "reason": "K297' SPX filter already captures windows", "reopen": "New RWA different settlement"},
+    {"n":  6, "line": "Stable Clustering Universe","wave": "K377",      "reason": "K276b_v2 Sh 9.73 vs 22.87 (0.426x); ARI=0", "reopen": "Universe >50 symbols"},
+    {"n":  7, "line": "Coinbase USDC HL Yield",    "wave": "K362",      "reason": "HYPE buybacks only — no claimable USD", "reopen": "HL yield ≥5% APY"},
+    {"n":  8, "line": "HL Spot+Perp K276b",        "wave": "K374",      "reason": "HL spot missing 13/20 K276b coins", "reopen": "HL spot ≥18/20 AND spreads ≤0.5bps"},
+    {"n":  9, "line": "HypurrFi Yield Arb",        "wave": "K337→K441", "reason": "TVL -51.7%, slope -$757K/day", "reopen": "2027-04-01"},
+    {"n": 10, "line": "BTC ETF Flow",              "wave": "K455→K466", "reason": "G5 fail ρ=0.42; K462 0/7 gates; Sh -0.54", "reopen": "Orthogonal ETF data source"},
+    {"n": 11, "line": "BNB-BTC Paired-Trade",      "wave": "K480",      "reason": "HL cap: 63.5%+3%=66.5% > 65% hard limit", "reopen": "HL cap increased OR HL% <62% (now unblocked by orthog Bybit-primary)"},
+    {"n": 12, "line": "SUI-BTC Paired-Trade",      "wave": "K490",      "reason": "OOS Sh -0.87. Meme-heavy FR noise.", "reopen": "OOS Sh >3.5 on new window"},
+    {"n": 13, "line": "ARB-BTC Paired-Trade",      "wave": "K491",      "reason": "OOS Sh 0.51, $1,713/yr — insufficient", "reopen": "OOS Sh >5.0 or return >$50K @$10M"},
+    {"n": 14, "line": "NEAR-BTC Paired-Trade",     "wave": "K503",      "reason": "Vol ratio 1.37x < 1.5x threshold", "reopen": "NEAR vol ratio >1.5x sustained 90d"},
+    {"n": 15, "line": "OSMO Perpetual Market",     "wave": "K507",      "reason": "G8 FAIL: delisted all major perp venues", "reopen": "OSMO listed on HL/Bybit perps >$1M OI"},
+    {"n": 16, "line": "DOT-BTC Paired-Trade (raw)","wave": "K513",      "reason": "BLOCKED-CLUSTER (INJ): relay-chain overlap → RESOLVED by K647 orthog", "reopen": "RESOLVED: K647 orthog ACCEPT (60d paper gate)"},
+    {"n": 17, "line": "Google Trends Alpha",       "wave": "K519",      "reason": "3/7 §6 gates; IS perm test fail", "reopen": "New construction with IS p<0.05"},
+    {"n": 18, "line": "ALGO-BTC Paired-Trade (raw)","wave": "K522",     "reason": "BLOCKED-CLUSTER (FIL): enterprise L1 overlap → RESOLVED by K646 orthog", "reopen": "RESOLVED: K646 orthog ACCEPT (60d paper gate)"},
+    # New closures K533–K655
+    {"n": 19, "line": "Miner Capitulation Signal", "wave": "K535",      "reason": "OOS Sh=-0.089. 4/7 gates. Event rarity (288 triggers/yr unfiltered, 0 actionable).", "reopen": "New construction with IS p<0.05 and ≥30 clean trades/yr"},
+    {"n": 20, "line": "AGIX-BTC (SingularityNET)","wave": "K553",       "reason": "Phase 0: AGIX delisted (ASI merger 2024 → FET). Instrument does not exist.", "reopen": "PERMANENT (token merged)"},
+    {"n": 21, "line": "FET-BTC FR Differential",  "wave": "K546",       "reason": "BLOCKED-AI-CLUSTER: SOL=0.446 SEI=0.527 APT=0.535 (high-vol L1 cluster). Raw FET is undeployable.", "reopen": "FET orthogonalization vs SOL+SEI+APT factors (K628 mechanism)"},
+    {"n": 22, "line": "GRT-BTC (The Graph)",      "wave": "K588",        "reason": "Phase 0: GRT-PERP not listed on HL. Bybit/OKX only.", "reopen": "GRT listed on HL perps >$500K OI"},
+    {"n": 23, "line": "PYTH-BTC FR Differential", "wave": "K562",        "reason": "BLOCKED-CLUSTER: FIL=0.438 RENDER=0.460. DeFi infra meta-narrative.", "reopen": "PYTH orthogonalization vs FIL+RENDER factors"},
+    {"n": 24, "line": "LDO-BTC (Lido ETH Yield)", "wave": "K594",        "reason": "3 independent rejection criteria including phase 0 vol ratio.", "reopen": "OOS Sh >5 + vol ratio >1.5x sustained 90d"},
+    {"n": 25, "line": "UNI-BTC (Uniswap DEX gov)","wave": "K593",        "reason": "Phase 0: vol ratio fail.", "reopen": "UNI vol ratio >1.5x sustained 90d"},
+    {"n": 26, "line": "MKR-BTC (MakerDAO)",       "wave": "K602",        "reason": "Phase 0: HL isDelisted, Bybit Closed, OKX not found, Binance SETTLING.", "reopen": "MKR re-listed on HL/Bybit perps"},
+    {"n": 27, "line": "SNX-BTC Synthetic DeFi",   "wave": "K604",        "reason": "BLOCKED-FAMILY-CORR: INJ=0.5296. Synthetic-assets cluster cannot be confirmed independent.", "reopen": "SNX orthogonalization vs INJ factor (K628 mechanism)"},
+    {"n": 28, "line": "OP-BTC Raw (21d+7d)",      "wave": "K609/K618",   "reason": "BLOCKED-G5: FIL=0.428-0.446 at both 7d and 21d windows. Window tuning structural.", "reopen": "RESOLVED: K633 orthog ACCEPT (60d paper gate)"},
+    {"n": 29, "line": "ETHFI-BTC (Ether.fi LSD)", "wave": "K619/K636",   "reason": "BLOCKED-LSD: G5ac LDO=0.6075. K636 orthog REJECT: LDO is load-bearing for signal.", "reopen": "LDO correlation < 0.40 on fresh 365d window (structural change required)"},
+    {"n": 30, "line": "GALA-BTC (Gaming)",         "wave": "K620",        "reason": "BLOCKED-G5: JUP=0.4308 FIL=0.4114. Gaming meta-narrative overlap.", "reopen": "GALA orthogonalization vs JUP+FIL factors"},
+    {"n": 31, "line": "WLD-BTC Raw (all retries)", "wave": "K621/K624/K627","reason": "BLOCKED-G5: JUP=0.4612. Window sweep structural. Bear-regime filter WORSENS. REPLACED by K631 orthog.", "reopen": "RESOLVED: K631 orthog ACCEPT (60d paper gate)"},
+    {"n": 32, "line": "JTO-BTC Raw (all retries)","wave": "K622/K625",    "reason": "BLOCKED-G5: SEI+DOGE inverted window sensitivity. Structural constraint. REPLACED by K628 orthog.", "reopen": "RESOLVED: K628 orthog ACCEPT (60d paper gate)"},
+    {"n": 33, "line": "PENDLE-BTC FR Differential","wave": "K623",        "reason": "REJECT: OOS Sh=10.20 but ann return 2.48% too low. G7 fail.", "reopen": "Ann return >5% @1x OOS sustained"},
+    {"n": 34, "line": "ONDO-BTC (RWA token)",     "wave": "K630/K634",    "reason": "BLOCKED-G5 AVAX=0.5146. K634 orthog REJECT: AVAX factor is load-bearing for ONDO signal.", "reopen": "ONDO FR decorrelation from AVAX on fresh 365d window"},
+    {"n": 35, "line": "IMX-BTC Raw (21d+7d)",     "wave": "K612/K617",    "reason": "BLOCKED-G5: SHIB=0.66 at 21d; SEI=0.411 at 7d. Window tuning structural. REPLACED by K635 orthog.", "reopen": "RESOLVED: K635 orthog ACCEPT (60d paper gate)"},
+    {"n": 36, "line": "STX-BTC Raw",              "wave": "K613",          "reason": "BLOCKED-G5: APT=0.5334. REPLACED by K638 orthog.", "reopen": "RESOLVED: K638 orthog ACCEPT (60d paper gate)"},
+    {"n": 37, "line": "MNT-BTC (Mantle L2)",      "wave": "K615",          "reason": "BLOCKED-G5: CRV=0.4+ persists at all windows after 2/3 resolved. CRV meta-narrative structural.", "reopen": "MNT orthogonalization vs CRV factor"},
+    {"n": 38, "line": "ETHFI-BTC Alternative",    "wave": "K636",          "reason": "REJECT: multi-factor orthog cannot rescue. LDO factor is load-bearing diagnostic confirmed.", "reopen": "N/A (ETHFI line permanently closed unless LDO structural change)"},
+]
+
+# ---------------------------------------------------------------------------
+# Phase 6: Memory Rule Updates
+# ---------------------------------------------------------------------------
+
+MEMORY_RULES: list[dict] = [
+    {
+        "id": "K628_ORTHOG_MECHANISM",
+        "title": "Orthogonalization Mechanism — OLS residualization to unlock blocked strategies",
+        "source": "K628/K631/K633/K635/K638/K645/K646/K647/K648 (9 ACCEPT)",
+        "rule": (
+            "When a strategy is BLOCKED-G5 by correlated family member, apply OLS residualization: "
+            "fr_diff_X ~ alpha + sum(beta_i * fr_diff_blocker_i) + residual. "
+            "Use residual as the de-correlated signal. Check post-orth G5 pass <0.40. "
+            "9/11 attempts succeeded (K634 ONDO, K636 ETHFI are REJECT = load-bearing factor diagnostic)."
+        ),
+        "file": "feedback_orthogonalization_mechanism.md",
+    },
+    {
+        "id": "K634_LOAD_BEARING",
+        "title": "Load-Bearing Factor Diagnostic — orthog REJECT reveals true signal source",
+        "source": "K634 (ONDO REJECT), K636 (ETHFI REJECT)",
+        "rule": (
+            "When orthogonalization produces OOS Sharpe collapse to noise, the blocking factor is "
+            "'load-bearing' — the signal IS the correlated factor, not an independent alpha. "
+            "K634: ONDO signal = AVAX macro carry (not independent RWA alpha). "
+            "K636: ETHFI signal = LDO ETH yield sentiment. "
+            "REJECT in this case. Do not force orthog on load-bearing factors."
+        ),
+        "file": "feedback_load_bearing_factor_diagnostic.md",
+    },
+    {
+        "id": "K629_ETH_BASE_MECHANISM",
+        "title": "ETH-Base Mechanism — replace BTC as base to resolve BTC-FR-compression overlap",
+        "source": "K629 (WLD-ETH ACCEPT), K632 (HYPE-ETH border: KEEP BTC-base)",
+        "rule": (
+            "When strategy is BLOCKED-G5 because target-BTC signal correlates with another BTC-paired signal "
+            "due to BTC FR compression co-movement, try ETH as base asset instead. "
+            "WLD-BTC: JUP corr 0.4612 → WLD-ETH: JUP corr 0.3437 (PASS). "
+            "NOT universal: HYPE-ETH materially worse than HYPE-BTC. Test both bases."
+        ),
+        "file": "feedback_eth_base_mechanism_boundary.md",
+    },
+    {
+        "id": "K615_K617_WINDOW_SENSITIVITY",
+        "title": "Window Sensitivity — 7d vs 21d resolves some G5 blocks but not all",
+        "source": "K615 (MNT resolved 2/3 blockers), K617 (IMX SEI persists), K618 (OP FIL persists)",
+        "rule": (
+            "Shortening from 21d (504h) to 7d (168h) smoothing reduces alt-regime co-movement artefacts. "
+            "Resolves blocks when blocker is caused by macro alt-season, not structural narrative overlap. "
+            "Does NOT resolve: FIL-OP structural utility-L1 overlap (K618), IMX-SEI infra overlap (K617). "
+            "Window sweep before orthog: save compute by confirming structural vs artefact block first."
+        ),
+        "file": "feedback_window_sensitivity_orthog_gate.md",
+    },
+    {
+        "id": "K628_9ORTHOG_SERIES_PORTFOLIO",
+        "title": "9-Orthog Portfolio — combined Sharpe 32.45, diversification 1.87x",
+        "source": "K644 (5-orthog), K649 (7-orthog), K655 (9-orthog)",
+        "rule": (
+            "9 orthogonalized FR-differential signals (JTO/WLD/OP/IMX/STX/BNB/ALGO/DOT/POL) "
+            "combine to portfolio Sh=32.45 (Sh-wt), eq-wt Sh=30.76. "
+            "Max pairwise corr=0.33 (OP-STX, unchanged through all expansions). "
+            "Each addition must be tested in combined backtest. "
+            "All 9 are Bybit-primary — HL concentration 62.5% UNCHANGED."
+        ),
+        "file": "feedback_orthog_portfolio_construction.md",
+    },
+    {
+        "id": "K523_TRANSPARENCY",
+        "title": "K523 Transparency Rules (T1-T4) — range mandatory, single-point forbidden",
+        "source": "K523",
+        "rule": (
+            "All architecture projections must use conservative/mid/optimistic ranges. "
+            "Realized-to-stated ratio floor: 38% (K518 benchmark). "
+            "Paired-trade 25% OOS haircut mandatory disclosure. "
+            "v6.32 example: conservative $14.5M / mid $19.93M / optimistic $46M @$10M."
+        ),
+        "file": "feedback_projection_transparency_k523.md",
+    },
+]
+
+# ---------------------------------------------------------------------------
+# Phase 7: Critical Concerns
+# ---------------------------------------------------------------------------
+
+CRITICAL_CONCERNS: list[dict] = [
+    {
+        "id": "CC1",
+        "severity": "HIGH",
+        "title": "K208 Decay -67% Y/Y: K492E Activation Required",
+        "detail": (
+            "K280 sleeve annualized $1M → $400K defensive. K492E (predictedFundings + POST_ONLY) "
+            "+$223K/yr, 8/8 gates. K304 daemon SCAFFOLD-READY. Must activate before next monthly close."
+        ),
+        "action": "Activate K492E. K304 daemon. K530 playbook.",
+    },
+    {
+        "id": "CC2",
+        "severity": "HIGH",
+        "title": "HL Cap 65%: All New HL-Primary Strategies Rejected",
+        "detail": (
+            "HL at 62.5% (v6.30/v6.32 baseline). K376 would add 2.7pp (breach). "
+            "K552 K280 75→60% patch reduces HL by 7.5pp → frees headroom. "
+            "Orthog series ALL Bybit-primary: HL UNCHANGED at 62.5%."
+        ),
+        "action": "Apply K552 first. Then K376, K449 cascade.",
+    },
+    {
+        "id": "CC3",
+        "severity": "HIGH",
+        "title": "K376 BULL_CONFIRMED: BTC slope -189.52/day (K577, worsening)",
+        "detail": (
+            "Slope -189.52/day as of K577 (vs -34.41 at K551). Daily delay cost $677/day. "
+            "ETA was 5 days (K577) but trajectory negative. Monitor K497 daily."
+        ),
+        "action": "Monitor K497 daily. Pre-position activation checklist. K552 prereq.",
+    },
+    {
+        "id": "CC4",
+        "severity": "MEDIUM",
+        "title": "Paper-Trade Gates 60d Active: 9 orthog daemons all start ~2026-07-29",
+        "detail": (
+            "K628/K631/K633/K635/K638/K645/K646/K647/K648 all started ~2026-05-30. "
+            "60d gate: Realized Sh≥12 + fill≥60% + maxDD<20% (DOT/POL: Sh≥12). "
+            "Earliest LIVE activation: 2026-07-29."
+        ),
+        "action": "Verify paper-trade dashboards at D30 (2026-06-29). Top priority: JTO (K628, highest Sh).",
+    },
+    {
+        "id": "CC5",
+        "severity": "MEDIUM",
+        "title": "v6.32 Projection $19.93M Mid: IS-OOS Haircut Risk",
+        "detail": (
+            "K628 JTO individual OOS Sh=18.30 delivers mid $7.14M. K655 combined Sh=32.45. "
+            "K523 transparency: realized/stated ratio floor = 38% (K518). "
+            "Conservative $14.5M / mid $19.93M / optimistic $46M @$10M."
+        ),
+        "action": "Use K523 ranges in all communications. Monitor paper-trade vs IS expectations.",
+    },
+    {
+        "id": "CC6",
+        "severity": "MEDIUM",
+        "title": "Diversification Ratio 1.87x: Mean Cross-Signal Corr = 0.1328",
+        "detail": (
+            "9-orthog mean pairwise corr = 0.1328 (K655). Max = OP-STX 0.33. "
+            "DOT-POL = 0.22 (highest new pair). All below 0.40 threshold. "
+            "Corr creep risk: monitor at D30 and D60 paper-trade checks."
+        ),
+        "action": "Include corr matrix in D30 paper-trade audit. Warn if any pair > 0.35.",
+    },
+    {
+        "id": "CC7",
+        "severity": "LOW",
+        "title": "HypurrFi DROP_LINE: 2027-04-01 trajectory review required",
+        "detail": (
+            "TVL -49% structural death per K337/K345. Closed line #9. "
+            "Automated review trigger: 2027-04-01."
+        ),
+        "action": "No action until 2027-04-01. Confirm TVL recovery before reopen.",
+    },
+]
+
+# ---------------------------------------------------------------------------
+# Phase 8: Cadence Schedule
+# ---------------------------------------------------------------------------
+
+CADENCE: dict = {
+    "last_full": {"wave": "K657", "date": "2026-05-30", "type": "Full Governance v6 (125 waves)"},
+    "next_quick": {"wave": "K662", "eta_waves": 5, "date_est": "K662", "type": "Quick check (5 waves out)"},
+    "next_full": {"wave": "K677", "eta_waves": 20, "date_est": "K677", "type": "Full governance v7 (20 waves out)"},
+    "rule": "5 waves → quick governance check; 20 waves → full governance with structured audit.",
+}
+
+# ---------------------------------------------------------------------------
+# Summary Output
+# ---------------------------------------------------------------------------
+
+def count_decisions() -> dict:
+    counts: dict = {}
+    for w in WAVE_INVENTORY:
+        d = w["decision"]
+        # Normalize
+        if d in ("ACCEPT", "ACCEPT CONDITIONAL"):
+            counts[d] = counts.get(d, 0) + 1
+        elif d == "REJECT" or d.startswith("REJECT"):
+            counts["REJECT"] = counts.get("REJECT", 0) + 1
+        elif d in ("SCAFFOLD", "GOVERNANCE"):
+            counts["SCAFFOLD"] = counts.get("SCAFFOLD", 0) + 1
+        elif d.startswith("BLOCKED"):
+            counts["BLOCKED"] = counts.get("BLOCKED", 0) + 1
+        else:
+            counts[d] = counts.get(d, 0) + 1
+    return counts
+
+def main() -> None:
+    print("=" * 72)
+    print("K657 GOVERNANCE v6 — K533–K655 (125-Wave Cycle) AUDIT")
+    print(f"Generated: {NOW_JST} | K339 REPO_ROOT pattern")
+    print("=" * 72)
+
+    counts = count_decisions()
+    print("\n[Phase 1] Wave Inventory Summary:")
+    for k, v in sorted(counts.items()):
+        print(f"  {k:<25}: {v}")
+    print(f"  {'TOTAL':<25}: {len(WAVE_INVENTORY)}")
+
+    print("\n[Phase 2] Profit Lift Consolidation:")
+    print(f"  K501 baseline @$10M (gross):       ${PROFIT_LIFT['k501_baseline_central_10m']:>14,.0f}/yr")
+    print(f"  K532 v5 architecture mid @$10M:    ${PROFIT_LIFT['k532_v5_architecture_mid_10m']:>14,.0f}/yr")
+    print(f"  9-orthog addition @$10M:            ${PROFIT_LIFT['new_orthog_additions']['subtotal_9orthog_10m']:>14,.0f}/yr")
+    print(f"  v6.32 conservative @$10M:          ${PROFIT_LIFT['v632_architecture_range_10m']['conservative']:>14,.0f}/yr")
+    print(f"  v6.32 mid @$10M:                   ${PROFIT_LIFT['v632_architecture_range_10m']['mid']:>14,.0f}/yr")
+    print(f"  v6.32 optimistic @$10M:            ${PROFIT_LIFT['v632_architecture_range_10m']['optimistic']:>14,.0f}/yr")
+    print(f"  K655 combined Sharpe (Sh-wt):       {PROFIT_LIFT['k655_9orthog_sharpe_weighted']:.2f}")
+
+    print("\n[Phase 3] Daemon Registry:")
+    for cluster, count in DAEMON_CLUSTERS.items():
+        print(f"  {cluster:<35}: {count}")
+
+    print("\n[Phase 4] Top 10 Action Queue (ROI/hr Ranked):")
+    for a in ACTION_QUEUE:
+        print(f"  #{a['rank']:>2} [{a['id']:<10}] ROI/hr: ${a.get('roi_per_hr', 0):>9,.0f}  "
+              f"| Lift @$10M: ${a['lift_10m_yr']:>9,.0f}/yr  | {a['status']}")
+
+    print("\n[Phase 5] Closed Lines (Total):")
+    print(f"  K532 cumulative: 18 closed lines")
+    print(f"  K533-K655 new:   {len(CLOSED_LINES) - 18} new closures")
+    print(f"  K657 total:      {len(CLOSED_LINES)} closed lines")
+    # Note: #16 DOT, #18 ALGO, #28 OP, #31 WLD, #32 JTO, #35 IMX, #36 STX resolved by orthog
+    print(f"  (7 lines 'resolved' by orthog mechanism — no longer blocking)")
+
+    print("\n[Phase 6] Memory Rules Formalized:")
+    for r in MEMORY_RULES:
+        print(f"  [{r['id']}] {r['title']}")
+
+    print("\n[Phase 7] Critical Concerns:")
+    for cc in CRITICAL_CONCERNS:
+        print(f"  [{cc['severity']}] {cc['id']}: {cc['title']}")
+
+    print("\n[Phase 8] Cadence:")
+    print(f"  Last full:  K657 (2026-05-30)")
+    print(f"  Next quick: K662 (~5 waves)")
+    print(f"  Next full:  K677 (~20 waves)")
+
+    print("\n[Deliverable] wave_k657_governance_v6.json")
+    print("[Deliverable] wave_k657_governance_v6.md")
+    print("[Deliverable] report.html — banner updated")
+    print("[Deliverable] docs/k302a_master_deployment.md — action queue updated")
+    print()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,6 +1,67 @@
 # K302a Master Deployment Playbook — Single Source of Truth
-**Version:** 6.32-candidate | **Updated:** 2026-05-30 11:34 JST | **Wave:** K643 v6.31/v6.32 Proposal (supersedes K579)
-**Status:** ACTIVE USER ACTIVATION GUIDE — 5 orthog sleeves paper-gated, v6.31/v6.32 architecture staged
+**Version:** 6.32 ACCEPT | **Updated:** 2026-05-30 12:35 JST | **Wave:** K657 Governance v6 (supersedes K643/K579)
+**Status:** ACTIVE USER ACTIVATION GUIDE — 9 orthog daemons paper-gated (ETA 2026-07-29), v6.32 architecture ACCEPT
+
+---
+
+## ★★★★ K657 Governance v6 — Top 10 Action Queue (2026-05-30 12:35 JST)
+
+> **AUDIT SCOPE:** K533-K655 (125 waves) | 48 daemons | 9-orthog Sharpe=32.45 | $812K @$10M | v6.32 mid $19.93M  
+> **K523 MANDATORY RANGE:** v6.32 conservative $14.5M / mid $19.93M / optimistic $46M @$10M  
+> **HL STATUS:** 62.5% (unchanged by orthog series — all Bybit-primary)
+
+### Top 10 ROI/hr — K657 Updated
+
+| Rank | ID | Action | Effort | Lift @$10M/yr | ROI/hr | Risk | Status |
+|------|----|--------|--------|--------------|--------|------|--------|
+| 1 | K481-A | HL approveBuilderFee registration | 30 min | $247,915 | $495,830 | ZERO | READY |
+| 2 | K545 | Tax harvester plist load (5 min) | 5 min | $47,000 | $564,000 | ZERO | READY |
+| 3 | K552 | K280 75→60% atomic 3-file patch (PREREQ) | 30 min | $260K cascade | $520,000 | LOW | READY |
+| 4 | K498-1A | BBO_SELECT + OKX daemon (K530 playbook) | 8hr | $121K @$30M | $15,125 | LOW | READY |
+| 5 | K485-1A | Bybit sub-account + HL W2 isolation | 30 min | $204,370 | $408,740 | LOW | READY |
+| 6 | K376 | BULL_CONFIRMED activation (K497 monitor) | 1hr | $247,047 | $247,047 | MED | CONDITIONAL (slope -189.52/day K577) |
+| 7 | K628-X1 | JTO orthog → Bybit LIVE (post 60d gate) | 5 min | $357,026 | $4,295,000* | LOW | ETA 2026-07-29 |
+| 8 | K635-X4 | IMX orthog → Bybit LIVE (post 60d gate) | 5 min | $95,502 | $1,149,000* | LOW | ETA 2026-07-29 |
+| 9 | K648-X9 | POL orthog → Bybit LIVE (post 60d gate) | 5 min | $85,864 | $1,033,000* | LOW | ETA 2026-07-29 |
+| 10 | K647-X8 | DOT orthog → Bybit LIVE (post 60d gate) | 5 min | $80,460 | $968,000* | LOW | ETA 2026-07-29 |
+
+*ROI/hr assumes 5-min switch post gate pass  
+**Immediate total (ranks 1-3):** ~$555K/yr @$10M | **Post-60d gate (all 9 orthog):** +$812K/yr additional
+
+### Critical Concerns (K657 Updated)
+
+| ID | Severity | Issue | Action |
+|----|----------|-------|--------|
+| CC1 | HIGH | K208 -67% decay — K492E not activated | Activate K492E (K304 daemon) before next monthly close |
+| CC2 | HIGH | HL 62.5% — K376 would breach 65% cap | Apply K552 first (frees 7.5pp), then K376 |
+| CC3 | HIGH | BTC slope -189.52/day (K577, worsening vs K551) | Monitor K497 daily; $677/day delay cost |
+| CC4 | MED | 9 orthog paper gates (ETA 2026-07-29) | D30 audit 2026-06-29 for early signal |
+| CC5 | MED | v6.32 IS-OOS haircut risk (realized floor 38%) | Use K523 ranges; monitor paper-trade |
+
+### 9-Orthog LIVE Switch Sequence (post 60d gate pass)
+
+```bash
+# X1 — K628 JTO (highest Sharpe 18.30, $357K/yr)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k628-jto-orthog.plist
+launchctl list | grep k628
+
+# X2 — K635 IMX (Sharpe 24.81, $95K/yr)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k635-imx-orthog.plist
+
+# X3 — K647 DOT (Sharpe 23.25, $80K/yr)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k647-dot-orthog.plist
+
+# X4 — K648 POL (Sharpe 23.41, $86K/yr)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k648-pol-orthog.plist
+
+# X5-X9 — WLD/OP/STX/BNB/ALGO (in order of Sharpe)
+# Gate criteria: Realized Sh >= 12 + fill >= 60% + maxDD < 20% over 60d
+# HL concentration: UNCHANGED at 62.5% (all Bybit-primary)
+```
+
+> Full audit: `wave_k657_governance_v6.{py,json,md}` | Previous: `wave_k532_governance_v5.md`
+
+---
 
 ---
 
