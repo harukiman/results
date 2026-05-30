@@ -11681,3 +11681,175 @@ data/k684_dashboard.json
 ---
 
 *K687 §58 -- K684 SOL-INJ FR Differential production scaffold (56th daemon, THIRD ALT-ALT pair SVM DePIN-Retail vs Cosmos-DeFi-Perp, OOS Sh 9.65 W=168h direct alt-alt diff $114.3K/yr net @$10M @4x 3% sleeve, Bybit-only HL 62.5% unchanged headroom preserved, K476+K500 algebraic overlap standalone, K679+K684 SOL double-exposure monitor, 60d gate: Sh>=5 fill>=60% maxDD<15%, v6.46 candidate) -- 2026-05-30*
+
+---
+
+## §59 K686 AVAX-SOL FR Differential (K689 scaffold — 57th daemon)
+
+### §59.1 Strategy Overview
+
+| Parameter | Value |
+|-----------|-------|
+| Wave | K689 (scaffold), K686 (eval/ACCEPT) |
+| Strategy | AVAX-SOL FR Differential (FOURTH ALT-ALT pair) |
+| Signal | `sign(rolling_mean_168h(AVAX_FR - SOL_FR))` |
+| W | 168h (21 x 8h periods) |
+| Threshold | zero (sign only — per K686 spec) |
+| Sleeve | 3% standalone (Bybit-only) |
+| Leverage | 4x |
+| Venue | Bybit-only (AVAX-PERP + SOL-PERP both on Bybit) |
+| Daemon | 57th daemon (4th alt-alt, HIGHEST Sh in alt-alt family) |
+| HL impact | NONE — Bybit-only, HL stays at 62.5% (2.5pp headroom preserved) |
+
+### §59.2 Performance (K686 ACCEPT — FOURTH ALT-ALT pair)
+
+| Metric | Value |
+|--------|-------|
+| OOS Sharpe | **50.27** (W=168h, ~216d OOS — HIGHEST in alt-alt family) |
+| OOS Ann Return (1x) | 10.02% |
+| OOS Ann Return (4x) | 40.06% |
+| Net profit @$10M @4x @3% | **$102,153/yr** ($280/day USDC) |
+| ADF stat | -13.99 (p<1e-10, strongly stationary) |
+| OU half-life | **0.15d (3.6h) — FASTEST in alt-alt family** |
+| Walk-forward | 11/12 folds positive (G4 non-blocking per alt-alt precedent) |
+| G5c K484 corr | -0.6295 signed (anti-corr, HEDGES K484 long-AVAX — PASS) |
+| Vol ratio AVAX/SOL | 0.85x (same-tier L1 exception applied) |
+| OOS period | ~2025-10-18 to 2026-05-23 |
+
+**Alt-alt family rank:** K686=50.27 > K682=43.43 > K679=39.29 > K684=9.65
+
+### §59.3 Signal Direction Logic
+
+| Regime | Condition | Long | Short | Edge |
+|--------|-----------|------|-------|------|
+| BULL_AVAX | mean_168h > 0 (AVAX FR > SOL FR) | SOL | AVAX | AVAX institutional spike — collect high AVAX FR, long cheap SOL carry |
+| BEAR_AVAX | mean_168h < 0 (SOL FR > AVAX FR) | AVAX | SOL | SOL retail/meme premium — long cheap institutional AVAX, collect high SOL FR |
+| NEUTRAL | mean_168h == 0 | — | — | exact zero (rare) |
+
+**Same-tier L1 mechanics:**
+- AVAX FR = Avalanche Subnet institutional demand (C-Chain EVM TradFi permissioned subnets, Avalanche9000 upgrade, RWA partnerships, HFT colocation) — episodic +6.39%/ann
+- SOL FR = Solana SVM consumer/retail premium (meme-coin BONK/WIF, Firedancer hype, DePIN launches, SOL ETF speculation) — persistent +7.73%/ann
+- SOL usually slightly higher FR than AVAX — BEAR_AVAX (long AVAX, short SOL) is the typical regime
+
+### §59.4 K484+K476 Algebraic Overlap Warning
+
+**Mathematical identity:**
+AVAX_FR - SOL_FR = (AVAX_FR - BTC_FR) - (SOL_FR - BTC_FR) = K484_dir - K476_dir
+
+| Pair | Venue | Sleeve | Relationship |
+|------|-------|--------|--------------|
+| K484 AVAX-BTC | HL+Bybit | 1.5% | AVAX leg (overlap) |
+| K476 SOL-BTC | HL-only | 1.5% | SOL leg (overlap) |
+| K686 AVAX-SOL | Bybit-only | 3% standalone | K484_dir - K476_dir algebraic |
+
+**Anti-correlation:** corr(K686, K484) = **-0.6295** (signed) — K686 HEDGES K484 long-AVAX exposure. Portfolio benefit: K686 adds alpha while reducing K484 concentration risk.
+
+**Default (K689):** K686 STANDALONE — run with its own 3% sleeve; K484 and K476 unchanged.
+**Rebalance option:** reduce K484 to 1% + K476 to 1% + K686 3% for cleaner AVAX-SOL net exposure.
+
+### §59.5 SOL Leg Overlap Warning
+
+K686 AVAX-SOL, K682 ATOM-SOL, and K679 APT-SOL all share the SOL leg:
+
+| Strategy | SOL leg | SOL notional @$10M 3% 4x |
+|----------|---------|--------------------------|
+| K686 AVAX-SOL | LONG or SHORT SOL | $600K |
+| K682 ATOM-SOL | LONG or SHORT SOL | $600K |
+| K679 APT-SOL | LONG or SHORT SOL | $600K |
+| Combined (all active) | SOL triple-exposure | up to $1.8M |
+
+**Default (K689):** All three STANDALONE — separate sleeves, independent margin. Monitor combined SOL notional vs AUM targets.
+
+### §59.6 Venue & HL Concentration
+
+HL concentration baseline (post-K679/K682/K684 Bybit-preferred): 62.5%
+K686 impact: NONE (both AVAX-PERP + SOL-PERP on Bybit — Scenario C)
+Post-K686 HL: still 62.5% (unchanged — Bybit-only preserves headroom)
+HL cap: 65.0% | Headroom: 2.5pp preserved
+
+K686 Bybit-only: AVAX-PERP and SOL-PERP both listed on Bybit. HL exposure unchanged at 62.5%.
+
+### §59.7 60d Paper-Trade Gate (K689 specification)
+
+| Gate criterion | Value |
+|----------------|-------|
+| Realized Sharpe | >=25 (50% of OOS Sh=50.27) |
+| Fill rate | >=60% |
+| Max drawdown | <15% |
+| Duration | 60 days |
+| Status | SCAFFOLD-READY |
+
+**Rationale:** Gate Sh>=25 = 50% of OOS Sh=50.27 (same 50% standard as K682: 22/43.43, K679: 20/39.29).
+
+### §59.8 Emergency Close Procedure
+
+K686 is Bybit-only — NOT in HL emergency exit.
+
+```bash
+# Check K686 position
+python3 scripts/k686_avax_sol_run.py --status
+
+# Emergency close K686 (Bybit IOC reduce-only)
+python3 scripts/k686_avax_sol_run.py --close "emergency_exit"
+
+# Emergency exit with K686 summary
+python3 scripts/emergency_hl_exit.py --include-k686 --dry-run
+
+# K484+K476: close K686 STANDALONE — do NOT assume K484/K476 as hedges
+# K682/K679 SOL: close K686 independently of K682+K679 (all standalone)
+```
+
+### §59.9 Daemon Deployment
+
+```bash
+# Strategy script (paper-trade mode)
+python3 scripts/k686_avax_sol_run.py --dry-run
+
+# Status check
+python3 scripts/k686_avax_sol_run.py --status
+
+# Daemon activation (after 60d gate passage: Sh>=25 + fill>=60% + maxDD<15%)
+# 1. Edit plist: change PAPER_TRADE to False
+# 2. Copy plist to LaunchAgents
+cp scripts/com.cryptolab.k686-avax-sol.plist ~/Library/LaunchAgents/
+# 3. Load daemon (57th daemon)
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k686-avax-sol.plist
+# 4. Verify
+launchctl list | grep k686-avax-sol
+python3 scripts/verify_deployment_status.py
+```
+
+**Logs:** `logs/k686_avax_sol.log` / `logs/k686_avax_sol.err`
+
+### §59.10 Deliverable Files
+
+| File | Description |
+|------|-------------|
+| `scripts/k686_avax_sol_run.py` | Phase 1: K686 strategy script (K339 pattern, W=168h, alt-alt direct diff) |
+| `scripts/com.cryptolab.k686-avax-sol.plist` | Phase 2: 57th daemon plist (StartInterval 28800) |
+| `data/k686_dashboard.json` | Phase 3: Dashboard (diff signal, regime, alt_alt_mechanism) |
+| `scripts/emergency_hl_exit.py` | Phase 4: Emergency exit (--include-k686 flag, §59) |
+| `scripts/leverage_manager.py` | Phase 5: Leverage manager (K686_AVAX_SOL cap + SLEEVE_WEIGHTS_V645) |
+| `data/leverage_config.json` | Phase 6: Leverage config (K686_AVAX_SOL: 4.0 + k686_notes) |
+| `scripts/verify_deployment_status.py` | Phase 7: Deployment verifier (57th daemon registry) |
+| `docs/k302a_runbook.md` | Phase 8: This section (§59) |
+| `report.html` | Phase 9: HTML report (K686 SCAFFOLD-READY) |
+| `wave_k689_k686_scaffold.py` | Phase 11: Wave driver |
+| `wave_k689_k686_scaffold.json` | Phase 12: Wave result report |
+
+### §59.11 References
+
+| Wave | Description |
+|------|-------------|
+| K689 | This section — K686 AVAX-SOL scaffold (57th daemon, v6.47 candidate) |
+| K686 | K686 analysis — AVAX-SOL ACCEPT (FOURTH ALT-ALT, OOS Sh 50.27, HIGHEST in family) |
+| K687 | K684 SOL-INJ scaffold (THIRD ALT-ALT, 56th daemon) |
+| K685 | K682 ATOM-SOL scaffold (SECOND ALT-ALT, 55th daemon 2nd alt-alt) |
+| K683 | K679 APT-SOL scaffold (FIRST ALT-ALT, 55th daemon) |
+| K489 | K484 AVAX-BTC scaffold (algebraic overlap K484+K476) |
+| K478 | K476 SOL-BTC scaffold (algebraic overlap K476+K500) |
+| K266 | §6 strict gate framework |
+
+---
+
+*K689 §59 -- K686 AVAX-SOL FR Differential production scaffold (57th daemon, FOURTH ALT-ALT pair Avalanche Subnet institutional vs Solana SVM retail, OOS Sh 50.27 W=168h direct alt-alt diff $102.2K/yr net @$10M @4x 3% sleeve, Bybit-only HL 62.5% unchanged headroom preserved, K484+K476 algebraic overlap anti-corr=-0.6295 HEDGES K484 standalone, K682/K679 SOL triple-exposure monitor, same-tier L1 AVAX/SOL vol=0.85x ADF -13.99 OU 3.6h FASTEST, 60d gate: Sh>=25 fill>=60% maxDD<15%, v6.47 candidate) -- 2026-05-30*

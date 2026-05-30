@@ -448,6 +448,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k684_sol_inj",
         expected_html_status="SCAFFOLD-READY",  # K687: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=5 + fill>=60% + maxDD<15%)
     ),
+    DaemonSpec(
+        label="com.cryptolab.k686-avax-sol",
+        purpose="K686 AVAX-SOL FR Differential (FOURTH ALT-ALT pair Avalanche Subnet institutional vs Solana SVM retail, Bybit-only AVAX-PERP+SOL-PERP both legs, 4x leverage, 8h cycle, OOS Sh 50.27 W=168h direct alt-alt diff, $102,153/yr net @$10M @4x @3% standalone sleeve, HL 62.5% Bybit-only preferred headroom preserved, K484+K476 algebraic overlap anti-corr=-0.6295 HEDGES K484 — standalone, K682/K679 SOL triple-exposure monitor, AVAX FR=Subnet launches Avalanche9000 RWA institutional HFT colocation +6.39%ann episodic, SOL FR=DePIN/Retail meme-coin BONK/WIF Firedancer ETF speculation +7.73%ann persistent, same-tier L1 AVAX/SOL vol=0.85x ADF -13.99 OU 3.6h FASTEST, 60d paper-trade gate Realized Sh>=25 fill>=60% maxDD<15%, v6.47 candidate 3% sleeve, 57th daemon 4th alt-alt HIGHEST Sh in family, K689 scaffold)",
+        scripts=["scripts/k686_avax_sol_run.py"],
+        log_basename="k686_avax_sol",
+        expected_html_status="SCAFFOLD-READY",  # K689: plist in scripts/ (gitignored); activate after 60d paper-trade gate (Realized Sh>=25 + fill>=60% + maxDD<15%)
+    ),
 ]
 
 

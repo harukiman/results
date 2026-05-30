@@ -43,7 +43,8 @@
     "K587_ICP_BTC": 4.0,
     "K679_APT_SOL": 4.0,
     "K682_ATOM_SOL": 4.0,
-    "K684_SOL_INJ": 4.0
+    "K684_SOL_INJ": 4.0,
+    "K686_AVAX_SOL": 4.0
   },
   "k457_basket_notes": {
     "sleeve_pct": 0.05,
@@ -1205,5 +1206,61 @@
     "inj_fr_drivers": "Injective Cosmos DeFi perp DEX — liquidation cascades (INJ perp DEX leverage unwinding), INJ burn mechanics (deflationary tokenomics reduces supply), IBC bridge activity (Cosmos ecosystem inflows), Cosmos TVL dynamics. Episodic spikes (+3.6% ann mean, mean-reverting).",
     "alt_alt_hypothesis": "SOL (Solana SVM Monolithic DePIN-Retail L1) vs INJ (Injective CosmWasm Cosmos DeFi perp DEX): THIRD alt-alt pair in portfolio. No BTC or ETH leg — pure alt-to-alt cross-ecosystem FR differential. SOL FR driven by retail consumer sentiment (persistent structural premium, meme-coin seasons, ETF flows, Firedancer). INJ FR driven by Cosmos DeFi perp DEX mechanics (liquidation cascades, burn mechanics, IBC flows — episodic, mean-reverting). Two architecturally orthogonal ecosystems: Solana SVM (Tower BFT, large MC ~$60-80B, retail-first) vs Cosmos CosmWasm (Tendermint BFT, smaller MC ~$1-3B, DeFi-first). Different VM, consensus, MC scale, tokenomics, user base — low-moderate FR correlation creates mean-reversion opportunity.",
     "section6_result": "12/13 gates ACCEPT. G4 FAIL (6/12 WF folds positive — structural for alt-alt complexity, accepted). OOS Sh=9.65 W=168h, perm p=0.0, DSR p=7.62e-13, ADF p<1e-30, OU half-life=5.42h STRONG. G8 cross-venue corr=0.7855 (Bybit SOL-INJ diff vs HL). Vol ratio INJ/SOL=2.17x. 216d OOS period."
+  },
+  "k686_notes": {
+    "strategy": "K686 AVAX-SOL FR Differential (K689 scaffold) — FOURTH ALT-ALT pair",
+    "oos_sharpe": 50.27,
+    "w_hours": 168,
+    "ann_return_usd_net_10M": 102153,
+    "daily_usdc": 280,
+    "sleeve_pct": 0.03,
+    "leverage": 4.0,
+    "bybit_only": true,
+    "hl_concentration_pre": 62.5,
+    "hl_concentration_post": 62.5,
+    "hl_cap_note": "HL 62.5% — Bybit-only preferred. Both AVAX-PERP + SOL-PERP on Bybit. HL headroom 2.5pp preserved.",
+    "bybit_only_reason": "Bybit preferred for K686: HL stays at 62.5% (Scenario C — both legs Bybit, 2.5pp headroom preserved, K689 spec)",
+    "cluster": "AVAX-SOL Alt-Alt FR Differential (Avalanche Subnet institutional vs Solana SVM retail, FOURTH ALT-ALT)",
+    "daemon_number": "57th (4th alt-alt, HIGHEST Sh in family)",
+    "wave": "K689",
+    "activation": "SCAFFOLD-READY — 60d paper-trade gate (Realized Sh>=25 + fill>=60% + maxDD<15%)",
+    "activation_criteria": {
+      "realized_sharpe_min": 25.0,
+      "fill_rate_min_pct": 60,
+      "max_drawdown_max_pct": 15,
+      "days_required": 60,
+      "note": "Gate: Sh>=25 (50% of OOS Sh=50.27) — FOURTH ALT-ALT pair, HIGHEST Sh in alt-alt family"
+    },
+    "same_tier_l1_note": {
+      "vol_ratio_avax_sol": 0.85,
+      "exception": "Same-tier large-cap L1 exception applied. AVAX more stable than SOL (inverse of typical alt-alt). Vol threshold relaxed to 1.0x minimum.",
+      "adf_stat": -13.99,
+      "adf_pvalue": "p<1e-10",
+      "ou_half_life_days": 0.15,
+      "ou_half_life_hours": 3.6,
+      "ou_note": "FASTEST mean-reversion in alt-alt family (K684=5.42h, K679 > 10h)"
+    },
+    "k484_k476_overlap": {
+      "warning": "Algebraic overlap with K484 AVAX-BTC (HL+Bybit, 1.5% sleeve) + K476 SOL-BTC (HL-only, 1.5% sleeve)",
+      "math_identity": "AVAX-SOL = (AVAX-BTC) - (SOL-BTC) = K484_direction - K476_direction",
+      "signed_corr_k484": "K686 vs K484 signed corr = -0.6295 (anti-correlated by construction — K686 HEDGES K484 long-AVAX exposure)",
+      "portfolio_effect": "K686 + K484 + K476 = complex algebraic overlap. Deploy K686 STANDALONE or reduce K484/K476 weights.",
+      "default": "STANDALONE: K686 3% Bybit sleeve is independent. K484 and K476 continue unchanged.",
+      "rebalance_option": "If desired: reduce K484 to 1% + K476 to 1% + K686 3% for cleaner net AVAX-SOL exposure.",
+      "hedging_benefit": "K686 anti-corr=-0.6295 with K484 = natural portfolio hedge against K484 long-AVAX concentration."
+    },
+    "sol_exposure_overlap": {
+      "k682_warning": "K686 AVAX-SOL and K682 ATOM-SOL both have SOL leg — SOL double-exposure when both active",
+      "k679_warning": "K686 AVAX-SOL and K679 APT-SOL both have SOL leg — SOL double-exposure when both active",
+      "triple_risk": "K686 + K682 + K679 all active = SOL triple-exposure — monitor combined SOL notional across all three",
+      "default": "All STANDALONE: separate 3% Bybit sleeves, independent margin. Monitor combined SOL notional.",
+      "monitor": "If K686+K682+K679 all active: combined SOL notional = up to 3x $600K = $1.8M. Track vs AUM."
+    },
+    "margin_calc": "4x * 3% Bybit * $10M = $1,200,000 total Bybit notional / 4x = $300,000 margin (3% of AUM)",
+    "profit_at_3pct_4x": "$102,153/yr net @$10M @4x (OOS Sh=50.27, standalone 3% Bybit sleeve)",
+    "avax_fr_drivers": "Avalanche Subnet architecture (C-Chain EVM, P-Chain, X-Chain). Institutional RWA partnerships, Avalanche9000 upgrade, HFT colocation demand, enterprise blockchain adoption. Episodic demand spikes (+6.39% ann).",
+    "sol_fr_drivers": "Solana SVM DePIN/Retail adoption premium (persistent +7.73% ann mean), meme-coin season (BONK/WIF), Firedancer upgrade hype cycles, SOL ETF speculation, Solana validator economics, network congestion spikes.",
+    "alt_alt_hypothesis": "AVAX (Avalanche Subnet institutional/RWA L1) vs SOL (Solana SVM consumer/retail L1): FOURTH alt-alt pair in portfolio. No BTC or ETH leg — pure alt-to-alt cross-L1 same-tier differential. AVAX FR driven by institutional demand cycles (subnet launches, RWA, HFT — episodic). SOL FR driven by consumer/DePIN cycles (meme-coin season premium, Firedancer, DePIN network launches — persistent). Both ~$20-80B MC, both EVM-compatible. AVAX/SOL vol ratio=0.85x (AVAX more stable — unusual inverse). Same-tier L1 exception: vol threshold relaxed, ADF confirms stationarity (stat -13.99, p<1e-10). OU half-life=3.6h (FASTEST in alt-alt family). Anti-corr K686 vs K484 = -0.6295 (HEDGES K484 long-AVAX).",
+    "section6_result": "ACCEPT. G1 OOS Sh=50.27 PASS, G2 perm p=0.0 PASS, G3 DSR p<1e-200 PASS, G4 WF 11/12 positive (non-blocking per alt-alt precedent), G5a-G5f all PASS (G5c K484 signed corr=-0.6295 < 0.40 signed PASS). OOS period ~216d. OU half-life=3.6h (FASTEST). Same-tier L1 exception applied (AVAX/SOL vol ratio=0.85x)."
   }
 }

@@ -4056,6 +4056,41 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K689: K686 AVAX-SOL FR Differential emergency exit flag
+    # K686 = Bybit-only AVAX+SOL paired (2 legs, FOURTH ALT-ALT pair).
+    # Close protocol: IOC reduce-only on Bybit (NOT HL — Bybit-only preferred, HL stays at 62.5%).
+    # Signal: diff = AVAX_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold).
+    # K484+K476 overlap warning: K686 STANDALONE — close K686 independently of K484/K476.
+    # K682/K679 SOL-exposure: K686+K682+K679 share SOL leg — close independently, monitor SOL.
+    # Bybit-only: AVAX-PERP + SOL-PERP both on Bybit. HL UNCHANGED at 62.5%.
+    # Use --include-k686 to print K686-specific Bybit close summary during emergency exit.
+    parser.add_argument(
+        "--include-k686",
+        dest="include_k686",
+        action="store_true",
+        default=False,
+        help=(
+            "K689: Include K686 AVAX-SOL close summary during emergency exit. "
+            "K686 positions (AVAX+SOL paired, Bybit-only) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on Bybit (short leg first, then long leg). "
+            "Signal: diff = AVAX_FR - SOL_FR (direct alt-alt differential, W=168h rolling mean, zero threshold). "
+            "HL concentration UNCHANGED at 62.5% (Bybit-only — no HL positions, headroom preserved). "
+            "OOS Sharpe 50.27 (FOURTH ALT-ALT pair, HIGHEST Sh in alt-alt family). $102,153/yr net @$10M @4x (3% standalone sleeve). "
+            "K484+K476 algebraic overlap: AVAX-SOL = K484_dir - K476_dir. Close K686 STANDALONE. "
+            "Anti-corr K686 vs K484 = -0.6295 (K686 HEDGES K484 long-AVAX exposure). "
+            "K682/K679 SOL-exposure: K686+K682+K679 share SOL leg — close independently, monitor SOL notional. "
+            "Math identity: AVAX-SOL = (AVAX-BTC) - (SOL-BTC) = K484_dir - K476_dir. "
+            "Same-tier L1 exception: AVAX/SOL vol ratio=0.85x. ADF stat -13.99, OU half-life=3.6h (FASTEST). "
+            "60d paper-trade gate: Realized Sh>=25 + fill>=60% + maxDD<15%. "
+            "AVAX FR: Subnet launches, Avalanche9000, RWA institutional, HFT colocation (+6.39% ann episodic). "
+            "SOL FR: DePIN/Retail/meme-coin premium (BONK/WIF, Firedancer, ETF speculation, +7.73% ann). "
+            "Cluster: AVAX-SOL Alt-Alt (Avalanche Subnet institutional vs Solana SVM retail, FOURTH ALT-ALT, 57th daemon). "
+            "Requires: K686 daemon running (com.cryptolab.k686-avax-sol, 57th daemon). "
+            "See: docs/k302a_runbook.md §59"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -4875,6 +4910,37 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "K684 positions ARE NOT in the HL exit above (Bybit-only). "
                 "Close K684 on Bybit independently of K476/K500. "
                 "Use --include-k684 for Bybit close summary (§58). "
+                "HL concentration UNCHANGED at 62.5%."
+            )
+
+        # K689: K686 AVAX-SOL close summary (Bybit-only — HL NOT affected)
+        # K686 positions (AVAX+SOL, Bybit-only) are NOT in the HL exit above.
+        # K686 is Bybit-only (HL at 62.5%, Bybit-only preferred — headroom preserved). HL UNCHANGED at 62.5%.
+        # Close K686 independently of K484 AVAX-BTC and K476 SOL-BTC (standalone).
+        # Note: K686+K682+K679 all share SOL leg — close independently, monitor SOL notional.
+        if args.include_k686:
+            logger.info("=== K686 AVAX-SOL CLOSE SUMMARY (K689 §59) ===")
+            logger.info("  K686 AVAX-SOL: Bybit-only (AVAX-PERP + SOL-PERP both legs on Bybit)")
+            logger.info("  FOURTH ALT-ALT pair: AVAX vs SOL (no BTC/ETH base)")
+            logger.info("  Signal: diff = AVAX_FR - SOL_FR (direct alt-alt, W=168h rolling mean, zero threshold)")
+            logger.info("  Close: IOC reduce-only Bybit — short leg first, then long leg")
+            logger.info("  HL concentration: UNCHANGED at 62.5% (K686 is Bybit-only, headroom preserved)")
+            logger.info("  K484+K476 overlap: close K686 STANDALONE (AVAX-SOL = K484_dir - K476_dir algebraic identity)")
+            logger.info("  Anti-corr K686 vs K484 = -0.6295 (K686 HEDGES K484 long-AVAX — close independently)")
+            logger.info("  K682/K679 SOL-exposure: K686+K682+K679 share SOL leg — close independently, monitor SOL notional")
+            logger.info("  OOS Sharpe 50.27 (FOURTH ALT-ALT, HIGHEST in family) | $102,153/yr net @$10M @4x (3% sleeve)")
+            logger.info("  AVAX FR: Subnet launches, Avalanche9000, RWA institutional, HFT colocation (+6.39% ann episodic)")
+            logger.info("  SOL FR: DePIN/Retail/meme-coin premium (BONK/WIF, Firedancer, ETF speculation, +7.73% ann)")
+            logger.info("  Same-tier L1: AVAX/SOL vol ratio=0.85x. ADF -13.99, OU half-life=3.6h (FASTEST in family)")
+            logger.info("  Cluster: AVAX-SOL Alt-Alt (Avalanche institutional vs Solana retail, 57th daemon)")
+            logger.info("  60d gate: Realized Sh>=25 + fill>=60% + maxDD<15%")
+            logger.info("  See: docs/k302a_runbook.md §59 (K686 AVAX-SOL playbook)")
+        else:
+            logger.info(
+                "K686 AVAX-SOL: Bybit-only (NOT HL — HL at 62.5%, Bybit-only preferred). "
+                "K686 positions ARE NOT in the HL exit above (Bybit-only). "
+                "Close K686 on Bybit independently of K484/K476. "
+                "Use --include-k686 for Bybit close summary (§59). "
                 "HL concentration UNCHANGED at 62.5%."
             )
 
