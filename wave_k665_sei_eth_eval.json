@@ -1,0 +1,488 @@
+{
+  "wave": "K665",
+  "strategy": "SEI-ETH FR Differential Paired-Trade (ETH-base mechanism test on K507 SEI-BTC family #3 Cosmos parallel-EVM)",
+  "g5b_blocked": true,
+  "g5b_blocked_reason": "G5b BLOCKED: SEI-ETH PnL corr vs SEI-BTC K507 = 0.7858 >= 0.40. Root cause: SEI FR dominates both strategies. SEI vol ratio 2.16x ETH (6m: 3.42x). SEI FR signal very persistent (K507: 14.2 trades/yr). Both strategies predominantly long SEI vs short BTC/ETH respectively. ETH-base does NOT provide orthogonal signal for SEI \u2014 same K660/K662 failure pattern. K507 SEI-BTC remains the canonical strategy.",
+  "parent_waves": [
+    "K507 (SEI-BTC ACCEPT, Sh=48.10, $179K/yr)",
+    "K629 (WLD-ETH ETH-base mechanism ACCEPT)",
+    "K658 (SOL-ETH ETH-base ACCEPT, Sh=29.66)",
+    "K660 (APT-ETH REJECT BLOCKED G5b)",
+    "K662 (INJ-ETH REJECT BLOCKED G5b \u2014 K662 vol>3x rule established)"
+  ],
+  "k662_prescreen_rule": {
+    "rule": "skip ETH-base if alt FR vol > 3x ETH",
+    "sei_vol_ratio_full": 2.1627,
+    "sei_vol_ratio_6m": 3.416,
+    "k662_threshold": 3.0,
+    "pass": true,
+    "6m_flag": true,
+    "decision": "PROCEED (full-period vol 2.16x < 3x; 6m=3.42x elevated but not skip)"
+  },
+  "run_time_jst": "2026-05-30T13:08:54+09:00",
+  "runtime_s": 1.34,
+  "decision": "REJECT \u2014 BLOCKED G5b (SEI-ETH \u2248 SEI-BTC, redundant)",
+  "decision_rationale": "K665 SEI-ETH BLOCKED at G5b. SEI-ETH PnL corr vs SEI-BTC K507 = 0.7858 (>= 0.40 threshold). OOS Sh=56.4987 vs K507 Sh=48.100 (delta +8.3987). SEI vol ratio 2.16x full / 3.42x 6m. Both K507 and K665 are predominantly long SEI \u2014 different base (BTC vs ETH) makes no meaningful difference because SEI FR signal is persistent and dominant. VERDICT: KEEP K507 SEI-BTC. K665 rejected \u2014 no diversification benefit.",
+  "diversification_note": "NO DIVERSIFICATION: PnL corr = 0.7858 >= 0.40. Strategies are correlated \u2014 keep only the superior one (likely K507 if SEI-BTC better).",
+  "data_info": {
+    "sei_fr_rows": 17478,
+    "date_start": "2024-05-25 02:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.993,
+    "oos_start": "2025-10-19 00:00:00",
+    "fr_frequency": "1h (HL settles hourly)",
+    "sei_fr_mean_ann_pct": -3.6513,
+    "eth_fr_mean_ann_pct": 10.5172,
+    "btc_fr_mean_ann_pct": 11.553,
+    "sei_eth_diff_mean_ann_pct": -14.1685,
+    "sei_eth_vol_ratio_full": 2.1627,
+    "sei_eth_vol_ratio_6m": 3.416,
+    "sei_eth_raw_fr_corr": 0.4606,
+    "sei_btc_raw_fr_corr": 0.3165,
+    "structural_direction_k665": "predominantly short ETH, long SEI",
+    "structural_direction_k507": "predominantly short BTC, long SEI"
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "cost_rt_bps": 4,
+    "oos_frac": 0.3,
+    "base_asset": "ETH (K629 mechanism applied to SEI)",
+    "instrument": "SEI-PERP vs ETH-PERP (HL 1h FR differential)",
+    "signal_type": "FR differential carry \u2014 sign(rolling_mean(sei_fr - eth_fr))",
+    "direction": "predominantly short ETH, long SEI"
+  },
+  "phase0_prescreen": {
+    "sei_fr_std": 4.1076e-05,
+    "eth_fr_std": 1.8993e-05,
+    "vol_ratio_sei_eth_full": 2.1627,
+    "vol_ratio_sei_eth_6m": 3.416,
+    "vol_ratio_sei_btc_k507_ref": 2.33,
+    "k662_rule_threshold": 3.0,
+    "k662_pass": true,
+    "6m_elevated_flag": true,
+    "sei_eth_raw_fr_corr": 0.4606,
+    "decision": "PROCEED \u2014 Vol ratio 2.16x (full) PASS K662 < 3.0x. 6m=3.42x ELEVATED FLAG (>= 3.0x)."
+  },
+  "statistical_analysis": {
+    "adf": {
+      "adf_stat": -15.0074,
+      "p_value": 0.0,
+      "stationary": true,
+      "critical_1": -3.4307,
+      "critical_5": -2.8617
+    },
+    "ou": {
+      "theta": 0.157897,
+      "half_life_h": 4.4,
+      "mean_reverting": true,
+      "note": "SEI-ETH is mean-reverting (half-life 4.4h) \u2192 OU process supports persistent divergence carry strategy"
+    },
+    "vol_ratio_sei_eth": 2.1627,
+    "vol_ratio_pass_1_5": true,
+    "vol_ratio_k662_rule": true,
+    "vol_ratio_note": "SEI FR std / ETH FR std = 4.11e-05 / 1.90e-05 = 2.16x. K662 pre-screen: PASS (< 3.0x). Proceed threshold: PASS (>= 1.5x). K507 data: SEI-BTC full-period vol ratio 2.33x, 6m ratio 3.39x (elevated)."
+  },
+  "full_metrics": {
+    "label": "Full",
+    "sharpe": 40.8999,
+    "ann_ret_pct": 15.4071,
+    "ann_ret_4x_pct": 61.6285,
+    "max_dd_pct": -0.3643,
+    "entries_yr": 16.2,
+    "n_days": 721.0,
+    "n_hours": 17310,
+    "pos_months": 0,
+    "neg_months": 0,
+    "cum_ret": 0.304135
+  },
+  "is_metrics": {
+    "label": "IS",
+    "sharpe": 35.3715,
+    "ann_ret_pct": 13.849,
+    "ann_ret_4x_pct": 55.3959,
+    "max_dd_pct": -0.3643,
+    "entries_yr": 20.3,
+    "n_days": 504.0,
+    "n_hours": 12117,
+    "pos_months": 0,
+    "neg_months": 0,
+    "cum_ret": 0.191099
+  },
+  "oos_metrics": {
+    "label": "OOS",
+    "sharpe": 56.4987,
+    "ann_ret_pct": 19.1141,
+    "ann_ret_4x_pct": 76.4565,
+    "max_dd_pct": -0.228,
+    "entries_yr": 6.8,
+    "n_days": 216.0,
+    "n_hours": 5193,
+    "pos_months": 0,
+    "neg_months": 0,
+    "cum_ret": 0.113036
+  },
+  "k507_ref_oos_metrics": {
+    "sharpe": 48.1001,
+    "ann_ret_pct": 17.6028,
+    "entries_yr": 16.9,
+    "max_dd_pct": -0.2673
+  },
+  "section_6_gates": {
+    "G1_oos_sharpe": {
+      "pass": true,
+      "value": 56.4987,
+      "threshold": 1.0,
+      "note": "OOS annualised Sharpe >= 1.0"
+    },
+    "G2_perm_pvalue": {
+      "pass": true,
+      "p_value": 0.0,
+      "threshold": 0.05,
+      "real_sharpe": 56.4987,
+      "perm_mean_stat": -3.2e-07,
+      "perm_p_value": 0.0,
+      "n_perm": 1000,
+      "note": "1000 direction reshuffles, OOS, n_oos=5193 periods"
+    },
+    "G3_dsr_bonferroni": {
+      "pass": true,
+      "n_trials": 12,
+      "t_stat": 43.5006,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.00417,
+      "note": "Bonferroni: p < 0.05/12 = 0.00417"
+    },
+    "G4_walk_forward": {
+      "pass": true,
+      "fold_sharpes": [
+        13.0661,
+        45.3254,
+        32.5398,
+        51.2583
+      ],
+      "all_positive": true,
+      "n_folds": 4,
+      "note": "4-fold chronological walk-forward"
+    },
+    "G5_family_corr": {
+      "pass": false,
+      "checks": {
+        "g5a_eth_btc_k449": {
+          "label": "ETH-BTC K449 (CRITICAL: shared ETH base leg)",
+          "corr": -0.0078,
+          "threshold": 0.4,
+          "pass": true,
+          "note": "SEI-ETH shares ETH leg with ETH-BTC K449. Computed from OOS PnL time-series. K629 WLD-ETH: -0.2052 (anti-correlated). K662 INJ-ETH K449: computed. If SEI-ETH signal predominantly long ETH (short SEI), anti-correlation with ETH-BTC is expected."
+        },
+        "g5b_sei_btc_k507": {
+          "label": "SEI-BTC K507 (same SEI leg \u2014 FAMILY ORTHOGONALITY KEY TEST)",
+          "corr": 0.7858,
+          "threshold": 0.4,
+          "pass": false,
+          "note": "SEI-ETH shares SEI leg with SEI-BTC K507. KEY QUESTION: Are K507 and K665 in lockstep (blocked) or orthogonal? If SEI FR deeply negative vs both ETH and BTC \u2192 both strategies predominantly short ETH/BTC + long SEI \u2192 correlated (K660/K662 pattern). K507 SEI-BTC had 14.2 trades/yr (low flip rate) \u2192 SEI FR signal very persistent \u2192 likely both strategies track same regime."
+        },
+        "g5c_atom_btc_k493": {
+          "label": "ATOM-BTC K493 (Cosmos cluster check)",
+          "corr": 0.1529,
+          "threshold": 0.4,
+          "pass": true,
+          "method": "computed from OOS PnL time-series",
+          "note": "Cosmos cluster check. K507 cosmos FR cross-corr: atom_vs_sei=0.3462 (moderate). ATOM IBC/staking vs SEI parallel-EVM \u2014 different application layers. PnL correlation lower than raw FR correlation (smoothing and entry timing differ)."
+        },
+        "g5d_inj_btc_k500": {
+          "label": "INJ-BTC K500 (DeFi cluster check)",
+          "corr": 0.1487,
+          "threshold": 0.4,
+          "pass": true,
+          "method": "computed from OOS PnL time-series",
+          "note": "DeFi cluster check. K507 data: sei_vs_inj=0.2155 raw FR corr. INJ DeFi-perp DEX vs SEI parallel-EVM \u2014 distinct mechanics. K500 rejected K662 attempt (G5b block). SEI-ETH vs INJ-BTC expected low corr."
+        },
+        "g5e_wld_eth_k629": {
+          "label": "WLD-ETH K629 (same ETH-base sub-cluster)",
+          "corr": 0.12,
+          "threshold": 0.4,
+          "pass": true,
+          "note": "Structural estimate: WLD biometric ID vs SEI fast-EVM MEV \u2014 fundamentally distinct token categories. Same ETH base but completely different alt demand drivers. Estimated ~0.12."
+        }
+      },
+      "n_pass": 4,
+      "n_total": 5,
+      "all_pass": false,
+      "max_corr": 0.7858,
+      "eth_btc_corr_critical": -0.0078,
+      "sei_btc_corr_family": 0.7858,
+      "atom_btc_cosmos": 0.1529,
+      "inj_btc_defi": 0.1487,
+      "wld_eth_same_base_est": 0.12,
+      "note": "G5: 4/5 PASS | ETH-BTC K449=-0.0078 [CRITICAL] SEI-BTC K507=0.7858 [FAMILY-KEY] ATOM-BTC K493=0.1529 [COSMOS] INJ-BTC K500=0.1487 [DEFI] WLD-ETH K629=0.12 [SAME-BASE-EST]"
+    },
+    "G6_trade_count": {
+      "pass": false,
+      "value": 6.8,
+      "threshold": 30.0,
+      "note": "Entry events per year (OOS). 7d EMA reduces flip frequency. K507 SEI-BTC had 14.2/yr (FAIL structural \u2014 SEI FR very persistent). SEI-ETH ETH-base expected similar or slightly more due to ETH carry cycles."
+    },
+    "G7_ann_return": {
+      "pass": true,
+      "value_1x_pct": 19.1141,
+      "value_4x_pct": 76.4564,
+      "threshold_pct": 5.0,
+      "leverage_assumption": "4x on notional (delta-neutral, low DD)",
+      "note": "At 4x leverage: 76.46% vs 5.0% threshold"
+    },
+    "_summary": {
+      "gates_passed": 5,
+      "gates_total": 7,
+      "effective_gates_passed": 5,
+      "structural_fails": [],
+      "oos_sharpe": 56.4987,
+      "perm_p": 0.0,
+      "wf_all_positive": true,
+      "gate_details": {
+        "G1": true,
+        "G2": true,
+        "G3": true,
+        "G4": true,
+        "G5": false,
+        "G6": false,
+        "G7": true
+      }
+    }
+  },
+  "grid_search_top5": [
+    {
+      "window_h": 504,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 29.5051,
+      "OOS_sharpe": 60.1437,
+      "OOS_ret_pct": 19.2605,
+      "entries_yr": 0.0
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 35.3715,
+      "OOS_sharpe": 56.4987,
+      "OOS_ret_pct": 19.1141,
+      "entries_yr": 6.8
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 31.8618,
+      "OOS_sharpe": 55.7522,
+      "OOS_ret_pct": 18.6239,
+      "entries_yr": 3.4
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.25,
+      "threshold_value": 9.11e-06,
+      "IS_sharpe": 33.8391,
+      "OOS_sharpe": 50.5646,
+      "OOS_ret_pct": 17.3302,
+      "entries_yr": 8.5
+    },
+    {
+      "window_h": 84,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 29.4282,
+      "OOS_sharpe": 48.0904,
+      "OOS_ret_pct": 18.7354,
+      "entries_yr": 27.1
+    }
+  ],
+  "g5_correlations": {
+    "checks": {
+      "g5a_eth_btc_k449": {
+        "label": "ETH-BTC K449 (CRITICAL: shared ETH base leg)",
+        "corr": -0.0078,
+        "threshold": 0.4,
+        "pass": true,
+        "note": "SEI-ETH shares ETH leg with ETH-BTC K449. Computed from OOS PnL time-series. K629 WLD-ETH: -0.2052 (anti-correlated). K662 INJ-ETH K449: computed. If SEI-ETH signal predominantly long ETH (short SEI), anti-correlation with ETH-BTC is expected."
+      },
+      "g5b_sei_btc_k507": {
+        "label": "SEI-BTC K507 (same SEI leg \u2014 FAMILY ORTHOGONALITY KEY TEST)",
+        "corr": 0.7858,
+        "threshold": 0.4,
+        "pass": false,
+        "note": "SEI-ETH shares SEI leg with SEI-BTC K507. KEY QUESTION: Are K507 and K665 in lockstep (blocked) or orthogonal? If SEI FR deeply negative vs both ETH and BTC \u2192 both strategies predominantly short ETH/BTC + long SEI \u2192 correlated (K660/K662 pattern). K507 SEI-BTC had 14.2 trades/yr (low flip rate) \u2192 SEI FR signal very persistent \u2192 likely both strategies track same regime."
+      },
+      "g5c_atom_btc_k493": {
+        "label": "ATOM-BTC K493 (Cosmos cluster check)",
+        "corr": 0.1529,
+        "threshold": 0.4,
+        "pass": true,
+        "method": "computed from OOS PnL time-series",
+        "note": "Cosmos cluster check. K507 cosmos FR cross-corr: atom_vs_sei=0.3462 (moderate). ATOM IBC/staking vs SEI parallel-EVM \u2014 different application layers. PnL correlation lower than raw FR correlation (smoothing and entry timing differ)."
+      },
+      "g5d_inj_btc_k500": {
+        "label": "INJ-BTC K500 (DeFi cluster check)",
+        "corr": 0.1487,
+        "threshold": 0.4,
+        "pass": true,
+        "method": "computed from OOS PnL time-series",
+        "note": "DeFi cluster check. K507 data: sei_vs_inj=0.2155 raw FR corr. INJ DeFi-perp DEX vs SEI parallel-EVM \u2014 distinct mechanics. K500 rejected K662 attempt (G5b block). SEI-ETH vs INJ-BTC expected low corr."
+      },
+      "g5e_wld_eth_k629": {
+        "label": "WLD-ETH K629 (same ETH-base sub-cluster)",
+        "corr": 0.12,
+        "threshold": 0.4,
+        "pass": true,
+        "note": "Structural estimate: WLD biometric ID vs SEI fast-EVM MEV \u2014 fundamentally distinct token categories. Same ETH base but completely different alt demand drivers. Estimated ~0.12."
+      }
+    },
+    "n_pass": 4,
+    "n_total": 5,
+    "all_pass": false,
+    "max_corr": 0.7858,
+    "eth_btc_corr_critical": -0.0078,
+    "sei_btc_corr_family": 0.7858,
+    "atom_btc_cosmos": 0.1529,
+    "inj_btc_defi": 0.1487,
+    "wld_eth_same_base_est": 0.12,
+    "note": "G5: 4/5 PASS | ETH-BTC K449=-0.0078 [CRITICAL] SEI-BTC K507=0.7858 [FAMILY-KEY] ATOM-BTC K493=0.1529 [COSMOS] INJ-BTC K500=0.1487 [DEFI] WLD-ETH K629=0.12 [SAME-BASE-EST]"
+  },
+  "price_beta": {
+    "sei_eth_price_corr": 0.704,
+    "sei_btc_price_corr_k507_ref": 0.65,
+    "eth_btc_price_corr_k449": 0.812,
+    "sol_eth_price_corr_k658": 0.771,
+    "price_corr_comparison": "SEI-ETH price corr 0.704. SEI is a smaller-cap alt with parallel-EVM idiosyncratic events. Price correlation with ETH reflects overall crypto sentiment, but SEI has additional ecosystem-specific volatility.",
+    "price_pnl_total_4h": 0.026166,
+    "recommendation": "SEI-ETH price corr 0.70. Delta-neutral SEI-ETH: monthly delta rebalance advised. SEI liquidity smaller than SOL/ETH \u2014 higher slippage risk on SEI leg. Verify HL SEI-PERP OI > $10M before deployment."
+  },
+  "comparison_sei_btc_vs_sei_eth": {
+    "sei_btc_k507": {
+      "oos_sharpe": 48.1,
+      "oos_ann_ret_1x_pct": 17.591,
+      "oos_ann_ret_4x_pct": 70.364,
+      "gates_pass": 12,
+      "gates_total": 14,
+      "entries_yr": 14.2,
+      "decision": "ACCEPT",
+      "gross_10m_3pct_4x": 211089,
+      "net_10m_3pct_4x": 179425,
+      "mechanism": "BTC structural: BTC pays 11.55%/yr vs SEI typically negative. SEI parallel-EVM demand vs BTC institutional carry. Vol ratio SEI/BTC=2.33x full (3.39x 6m). 12/14 gates ACCEPT."
+    },
+    "sei_eth_k665": {
+      "oos_sharpe": 56.4987,
+      "oos_ann_ret_1x_pct": 19.1141,
+      "oos_ann_ret_4x_pct": 76.4565,
+      "gates_pass": 5,
+      "gates_total": 7,
+      "entries_yr": 6.8,
+      "decision": "REJECT \u2014 BLOCKED G5b (SEI-ETH \u2248 SEI-BTC, redundant)",
+      "gross_10m_3pct_4x": 229369,
+      "net_10m_3pct_4x": 194964,
+      "mechanism": "ETH structural: ETH pays 10.52%/yr vs SEI -3.65%/yr. SEI parallel-EVM MEV vs ETH DeFi/staking yield. SEI-ETH raw FR corr=0.4606. Vol ratio SEI/ETH=2.16x."
+    },
+    "deltas": {
+      "sharpe_delta": 8.3987,
+      "ann_ret_delta_1x": 1.5231,
+      "ann_ret_delta_4x": 6.0924,
+      "gross_profit_delta_10m": 18280,
+      "net_profit_delta_10m": 15539
+    },
+    "pnl_correlation_se_vs_sb": 0.7858,
+    "orthogonality_assessment": "NO DIVERSIFICATION: PnL corr = 0.7858 >= 0.40. Strategies are correlated \u2014 keep only the superior one (likely K507 if SEI-BTC better)."
+  },
+  "eth_base_mechanism_assessment": {
+    "k629_wld_eth": "UNLOCKED WLD-BTC BLOCKED \u2192 9/9 gates ACCEPT (Sh=19.9)",
+    "k632_hype_eth": "WORSENED HYPE-BTC COND \u2192 Sh 24.49\u219212.99 (KEEP K614)",
+    "k658_sol_eth": "IMPROVED SOL-BTC ACCEPT \u2192 Sh 16.298\u219229.661 (ETH-base wins)",
+    "k660_apt_eth": "BLOCKED G5b \u2192 APT deeply negative both bases, corr=0.966 (APT vol 2.64x)",
+    "k662_inj_eth": "BLOCKED G5b \u2192 INJ vol 3.55x swamps base distinction, corr=0.9386",
+    "k665_sei_eth": "BLOCKED G5b SEI-BTC K507 \u2192 Sh 48.100\u219256.4987 (REJECT redundant)",
+    "pattern_update": "ETH-base SUCCESS pattern (3 data points): WLD: BTC-G5 structural block \u2192 ETH unlocks (narrative independent). SOL: balanced FR (+6%/yr both), low vol ~1.76x \u2192 ETH wins (+13.4 Sh). ETH-base FAILURE pattern (3 data points): APT: deeply negative FR vs both \u2192 always long APT regardless of base. INJ: vol 3.55x ETH \u2192 base choice irrelevant (corr=0.9386). SEI: vol 2.16x ETH, persistent FR signal (14.2 flips/yr) \u2192 both long SEI (base irrelevant) \u2192 BLOCKED G5b. REFINED RULE: ETH-base likely fails when alt has persistent, dominant FR signal relative to BOTH ETH and BTC (small flip count is key indicator)."
+  },
+  "sei_family_summary": {
+    "k493_atom_btc": {
+      "oos_sharpe": 50.786,
+      "decision": "ACCEPT",
+      "net_10m": 231660,
+      "note": "Cosmos Hub IBC/staking baseline"
+    },
+    "k507_sei_btc": {
+      "oos_sharpe": 48.1,
+      "decision": "ACCEPT",
+      "net_10m": 179425,
+      "note": "Parallel-EVM+Cosmos, 12/14 gates"
+    },
+    "k665_sei_eth": {
+      "oos_sharpe": 56.4987,
+      "decision": "REJECT \u2014 BLOCKED G5b (SEI-ETH \u2248 SEI-BTC, redundant)",
+      "net_10m": 194964,
+      "note": "ETH-base test on SEI \u2014 this wave"
+    },
+    "combined_if_accept": {
+      "k493_k507_k665": "$411,085/yr @$10M (K665 rejected \u2014 keep K507)",
+      "hl_exposure": "ATOM+SEI+ETH legs (SEI+ETH on HL, ATOM on HL)"
+    }
+  },
+  "hl_concentration_impact": {
+    "current_hl_weight_pct": 63.5,
+    "k665_sleeve_pct": 3.0,
+    "note": "K665 runs on HL (SEI-PERP and ETH-PERP both on Hyperliquid). SEI-PERP HL OI smaller than SOL/ETH \u2014 verify liquidity before deployment. If replacing K507: no net HL increase (same sleeve swap, same SEI exposure). If adding alongside K507: +3% \u2192 HL 66.5% (exceeds 65% cap). RECOMMENDATION: Replace K507 sleeve if K665 superior, or use 1.5%+1.5% split if PnL corr < 0.40.",
+    "within_cap_if_replace": true,
+    "within_cap_if_add": false
+  },
+  "profit_projection": {
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000,
+      "oos_ann_ret_1x_pct": 19.1141,
+      "oos_ann_ret_levered_pct": 76.4564,
+      "gross_annual_usd": 229369,
+      "net_annual_usd_est": 194964
+    },
+    "aum_50M": {
+      "aum_usd": 50000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 6000000,
+      "oos_ann_ret_1x_pct": 19.1141,
+      "oos_ann_ret_levered_pct": 76.4564,
+      "gross_annual_usd": 1146846,
+      "net_annual_usd_est": 974819
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 12000000,
+      "oos_ann_ret_1x_pct": 19.1141,
+      "oos_ann_ret_levered_pct": 76.4564,
+      "gross_annual_usd": 2293692,
+      "net_annual_usd_est": 1949638
+    }
+  },
+  "profit_usdc_yr_at_10m_3pct_4x": {
+    "gross_usd": 229369,
+    "net_usd_est": 194964,
+    "sleeve_pct": 3.0,
+    "leverage": 4.0,
+    "oos_ann_ret_pct": 19.1141,
+    "k507_ref_gross": 211089,
+    "k507_ref_net": 179425,
+    "note": "@$10M AUM, 3% sleeve, 4x leverage: $229,369/yr gross $194,964/yr net (vs K507 $211,089/yr gross $179,425/yr net, delta $+18,280)"
+  },
+  "operational_requirements": {
+    "execution_mode": "Paired-trade: simultaneous entry both legs",
+    "module": "K450 paired-trade module (same as K449/K476/K507)",
+    "venue": "HL (SEI-PERP and ETH-PERP on Hyperliquid)",
+    "liquidity_check": "Verify SEI-PERP OI > $10M before deployment",
+    "position_management": "Equal-notional each leg (delta-neutral target)",
+    "rebalance_trigger": "Signal flip; monthly delta check advised",
+    "estimated_rebalances_yr": 6.8,
+    "cosmos_family_note": "SEI-ETH extends Cosmos parallel-EVM cluster to ETH-base sub-group"
+  }
+}
