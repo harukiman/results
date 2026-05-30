@@ -4451,6 +4451,51 @@ USDY sleeve emergency guidance (K415 §21.6):
         ),
     )
 
+    # K779: K777 EIGEN-SOL alt-alt emergency exit flag
+    # K777 = HL primary EIGEN-PERP+SOL-PERP paired when EIGEN_FR-SOL_FR rolling mean 84h changes sign.
+    # Close protocol: IOC reduce-only on HL (short leg first, then long leg). Bybit fallback available.
+    # EIGEN = 19th vertex (1st ETH-restaking cluster). HL concentration: 66.8% AT CAP (paper-gate strict).
+    # G5z BLUR-SOL OOS=0.441 borderline (W=84); W=48=0.345 PASS. Monthly recheck.
+    # G9 marginal: OOS=118.6d < 120d (1.4d short). Monitor for full 180d.
+    # Use --include-k777 to print K777-specific HL close summary during emergency exit.
+    parser.add_argument(
+        "--include-k777",
+        dest="include_k777",
+        action="store_true",
+        default=False,
+        help=(
+            "K779: Include K777 EIGEN-SOL close summary during emergency exit. "
+            "K777 positions (EIGEN+SOL paired, HL primary) are detected automatically; "
+            "this flag adds a structured close summary. "
+            "Close protocol: IOC reduce-only on HL (short leg first, then long leg). "
+            "Signal: diff = EIGEN_FR - SOL_FR (direct differential, W=84h rolling mean, zero threshold). "
+            "HL primary: EIGEN-PERP + SOL-PERP on HL. Bybit fallback: EIGENUSDT + SOLUSDT. "
+            "HL concentration 66.8% AT CAP — paper-gate strict (PAPER_TRADE=True default). "
+            "G4 WF 4/4 positive (fold Sh: 64.1/32.3/36.7/35.4 — all strong). "
+            "G5 24/25 PASS; G5z BLUR-SOL OOS=0.441 borderline (W=84; W=48=0.345 PASS). "
+            "G5z root cause: ETH-ecosystem alts vs SOL macro factor (Apr-May 2026 ETH/SOL divergence). "
+            "G5q LDO-SOL sig_corr=0.147 PASS (restaking distinct from LSD mechanism). "
+            "G6: 33.9 entries/yr OOS PASS (W=84h vs 20/yr threshold PASS). "
+            "G8: PASS — HL EIGEN-PERP (from 2025-10-12) + Bybit EIGENUSDT (from 2024-09-18). "
+            "G9: MARGINAL OOS=118.6d < 120d (1.4d short, operational data limit). Monitor 180d. "
+            "OOS Sharpe 35.90 (W=84h, 118.6d OOS). MaxDD OOS=-0.5541%. "
+            "EIGEN FR: AVS launches, EigenLayer milestones, restaking yield vs ETH staking competition, "
+            "operator registration cycles, institutional adoption. FR structural negative ~-12%/yr. "
+            "vol_ratio=1.868x (full) / 3.97x (30d). "
+            "SOL FR: DePIN/Retail Phantom Firedancer ETF persistent positive. Min=-20.51bps cascade. "
+            "L003 AVAX: corr=0.0656 PASS. L007 FIL: corr=0.0546 PASS. "
+            "L010 HBAR: corr=0.1835 PASS. L011 SOL: corr=0.1276 PASS. "
+            "L004 EIGEN carry: full=0.514 OOS=0.436 PASS (bidirectional confirmed). "
+            "EIGEN = 19th vertex (1st ETH-restaking cluster). MR9 L002: all future EIGEN-X blocked. "
+            "V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO,EIGEN} "
+            "K523 3-point: conservative=$63,230 central=$84,307 optimistic=$295,813/yr @$10M @4x @1.5%. "
+            "Live gate: Sh>=15 + fill>=60% + maxDD<15% + K498/v6.52 + G9 180d + G5z<0.40. "
+            "Cluster: ETH restaking AVS economy (EigenLayer) × Solana SVM (20th alt-alt, 78th daemon). "
+            "Requires: K777 daemon running (com.cryptolab.k777-eigen-sol, 78th daemon). "
+            "See: docs/k302a_runbook.md §79"
+        ),
+    )
+
     # K639: K631 WLD-BTC orthog emergency exit flag
     # K631 = Bybit-only WLD+BTC paired (2 legs) when residual EMA_72h > 1.5sigma.
     # Close protocol: IOC reduce-only on Bybit (NOT HL — HL concentration UNCHANGED at 65%).
@@ -5687,6 +5732,51 @@ USDY sleeve emergency guidance (K415 §21.6):
                 "G5 26/26 PASS (max_corr=0.2778). G9 marginal: OOS=150.2d < 180d. "
                 "G5s HBAR-SOL monthly recheck (IS=0.352 borderline). "
                 "Use --include-k774 for structured HL close summary (§78)."
+            )
+
+        # ── K777 EIGEN-SOL close summary (K779 §79) ──────────────────────────
+        # HL concentration: 66.8% AT CAP (paper-gate: PAPER_TRADE=True default — no live capital yet).
+        # Live only after K498/v6.52 OKX activation + live gate (Sh>=15 + fill>=60% + maxDD<15%)
+        #   + G9 full 180d OOS + G5z BLUR-SOL W=84 OOS < 0.40 monthly recheck.
+        if args.include_k777:
+            logger.info("=== K777 EIGEN-SOL CLOSE SUMMARY (K779 §79) ===")
+            logger.info("  K777 EIGEN-SOL: HL primary (EIGEN-PERP + SOL-PERP both legs on HL)")
+            logger.info("  Bybit fallback: EIGENUSDT + SOLUSDT (G8 PASS — both venues confirmed)")
+            logger.info("  Close protocol: IOC reduce-only SHORT first (avoid naked short), then LONG")
+            logger.info("  BULL_EIGEN (AVS spike): short SOL first → sell long EIGEN second")
+            logger.info("  BEAR_EIGEN (SVM season, structural dominant): short EIGEN first → sell long SOL second")
+            logger.info("  HL concentration: 66.8% AT CAP — paper-gate strict")
+            logger.info("  PAPER_TRADE=True default — no live capital until live gate + K498/v6.52 + G9 + G5z")
+            logger.info("  G4 WF: 4/4 positive (fold Sh: 64.1/32.3/36.7/35.4 — all strong)")
+            logger.info("  G5: 24/25 PASS; G5z BLUR-SOL OOS=0.441 borderline (W=84; W=48=0.345 PASS)")
+            logger.info("  G5z root cause: ETH-ecosystem alts vs SOL macro (Apr-May 2026 ETH/SOL divergence)")
+            logger.info("  G5q: LDO-SOL sig_corr=0.147 PASS — restaking distinct from LSD mechanism")
+            logger.info("  G6: 33.9 entries/yr OOS PASS (W=84h vs 20/yr threshold PASS)")
+            logger.info("  G8: PASS — HL EIGEN-PERP (from 2025-10-12) + Bybit EIGENUSDT (from 2024-09-18)")
+            logger.info("  G9: MARGINAL OOS=118.6d < 120d (1.4d short, operational data limit). Monitor 180d.")
+            logger.info("  L003 AVAX corr=0.0656 PASS | L007 FIL corr=0.0546 PASS")
+            logger.info("  L010 HBAR corr=0.1835 PASS | L011 SOL corr=0.1276 PASS")
+            logger.info("  L004 EIGEN carry: full=0.514 OOS=0.436 PASS (bidirectional confirmed)")
+            logger.info("  EIGEN = 19th vertex (1st ETH-restaking cluster). MR9 L002: all future EIGEN-X blocked.")
+            logger.info("  V = {APT,ATOM,AVAX,BNB,ENA,FIL,HBAR,INJ,LDO,SEI,SOL,TIA,TAO,PEPE,WIF,BLUR,AXS,IO,EIGEN}")
+            logger.info("  EIGEN FR: AVS launches, EigenLayer milestones, restaking yield vs ETH staking,")
+            logger.info("         operator registration cycles, institutional adoption.")
+            logger.info("  EIGEN FR: structural negative ~-12%/yr. vol_ratio=1.868x (full) / 3.97x (30d).")
+            logger.info("  SOL FR: DePIN/Retail Phantom Firedancer ETF persistent positive. Min=-20.51bps cascade.")
+            logger.info("  MaxDD OOS=-0.5541% (W=84h) | OOS Sh=35.90 (W=84h, 118.6d OOS)")
+            logger.info("  K523 3-point: conservative=$63,230 central=$84,307 optimistic=$295,813/yr")
+            logger.info("  Sleeve 1.5% (@$10M). EIGEN HL vol $1.10M/day. maxLeverage=5. Deploy at 4x.")
+            logger.info("  Live gate: Sh>=15 + fill>=60% + maxDD<15% + K498/v6.52 + G9 180d + G5z<0.40")
+            logger.info("  G5z monthly recheck: target W=84 OOS < 0.40 for ACCEPT escalation")
+            logger.info("  20th alt-alt scaffold, 78th daemon. HL primary (positions in main HL exit)")
+            logger.info("  See: docs/k302a_runbook.md §79 (K777 EIGEN-SOL playbook)")
+        else:
+            logger.info(
+                "K777 EIGEN-SOL: HL primary (positions ARE in HL exit above — EIGEN-PERP + SOL-PERP on HL). "
+                "HL 66.8% AT CAP — paper-gate strict; no live capital until K498/v6.52 + live gate + G9 + G5z. "
+                "G4 WF 4/4 positive (fold Sh: 64.1/32.3/36.7/35.4). EIGEN = 19th vertex (ETH-restaking). "
+                "G5 24/25 PASS (G5z BLUR-SOL OOS=0.441 borderline W=84; W=48=0.345 PASS). G9 marginal: 118.6d. "
+                "Use --include-k777 for structured HL close summary (§79)."
             )
 
         # K459: K457 basket close summary (documentation; positions auto-detected in plan_exit)

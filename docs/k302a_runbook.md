@@ -15346,3 +15346,153 @@ python3 scripts/k774_io_sol_run.py --dry-run
 | K532 | Governance v5 (HL 65.0% cap rule) |
 | K735 | HBAR-SOL precedent (G8 STRUCTURAL_NA HL-only asset) |
 | K747 | TAO-SOL precedent (G8 STRUCTURAL_NA Bybit floor-capped) |
+
+---
+
+## §79 K777 EIGEN-SOL FR Differential (K779 scaffold — 78th daemon, 20th alt-alt, 19th vertex EIGEN)
+
+### §79.1 Strategy Overview
+
+**K777 EIGEN-SOL FR Differential** — ACCEPT CONDITIONAL (G5z BLUR-SOL borderline + G9 marginal).
+
+| Parameter | Value |
+|-----------|-------|
+| Pair | EIGEN-SOL (EigenLayer restaking × Solana SVM) |
+| Wave | K779 (scaffold), K777 (eval) |
+| OOS Sharpe | 35.90 (W=84h, zero threshold, 118.6d OOS) |
+| Signal | EIGEN_FR - SOL_FR (W=84h rolling mean, sign) |
+| Sleeve | 1.5% of AUM |
+| Leverage | 4x |
+| Venue | HL primary (EIGEN-PERP + SOL-PERP) + Bybit fallback (EIGENUSDT confirmed) |
+| Daemon | 78th (com.cryptolab.k777-eigen-sol) |
+| Interval | 8h (28800s) |
+| PAPER_TRADE | True (default — paper-gate strict) |
+| K523 central | $84,307/yr @$10M @4x @1.5% |
+
+**Alt-alt edge**: EIGEN (ETH restaking AVS economy) vs SOL (Solana SVM L1).
+- EIGEN FR driven by: AVS launches, EigenLayer protocol milestones (slashing, Stage 2),
+  restaking yield competition vs direct ETH staking, operator registration cycles,
+  institutional adoption (Binance/Coinbase restaking integration).
+- SOL FR driven by: SVM retail (Phantom, Firedancer), SOL ETF, DeFi TVL (Jupiter/Drift/Jito).
+- Structurally orthogonal: ETH L1 restaking security economy vs Solana SVM throughput.
+- G5q: LDO-SOL sig_corr=0.147 PASS (W=84) — restaking distinct from LSD mechanism.
+
+**Restaking vs LSD distinction**:
+- LDO = liquid staking (issues stETH, earns consensus layer yield)
+- EIGEN = restaking (secures AVS, earns restaking yield + slashing risk)
+- Mechanism distinct: G5q confirmed, meta-narrative distinct (ETH restaking ≠ ETH LSD)
+
+### §79.2 §6 Gate Results (K777)
+
+| Gate | Result | Value | Threshold |
+|------|--------|-------|-----------|
+| G1 OOS Sharpe | PASS | 35.90 (W=84h) | ≥ 1.0 |
+| G2 Perm p-value | PASS | 0.000 | < 0.05 |
+| G3 DSR Bonferroni | PASS | adj_Sh=15.42 | < 0.05/9 |
+| G4 Walk-Forward | PASS | 4/4 positive (avg 42.14) | all positive |
+| G5 (25 gates) | CONDITIONAL | 24/25 PASS; G5z BLUR-SOL OOS=0.441 borderline | all < 0.40 |
+| G5z BLUR-SOL | BORDERLINE | OOS=0.441 (W=84); W=48 OOS=0.345 PASS | < 0.40 |
+| G5q LDO-SOL | PASS | sig_corr=0.147 (W=84) | < 0.40 |
+| G6 Trade count | PASS | 33.9/yr | ≥ 20/yr |
+| G7 Ann return | PASS | 49.3% OOS @4x | ≥ 5% |
+| G8 Cross-venue | PASS | HL + Bybit (EIGENUSDT 2024-09-18) | ≥ 2 venues |
+| G9 Data sufficiency | MARGINAL | 118.6d OOS (1.4d short) | ≥ 120d |
+
+**G5z note**: OOS=0.441 at W=84 (borderline fail, threshold=0.40). Root cause: both EIGEN-SOL
+and BLUR-SOL are ETH-ecosystem alts vs SOL — Apr-May 2026 ETH/SOL divergence caused same direction.
+At W=48: G5z OOS=0.345 (PASS). Window-sensitivity artifact, not true signal overlap.
+Monthly recheck: if W=84 OOS settles < 0.40, escalate to ACCEPT.
+
+**G9 note**: OOS=118.6d < 120d minimum (1.4d short — operational data limitation).
+EIGEN HL listing: 2025-10-12. As of K777 eval: ~230d Bybit history, 118.6d HL OOS.
+
+### §79.3 K523 3-Point Profit Projection (@$10M @4x @1.5%)
+
+| Scenario | Annual | Basis |
+|----------|--------|-------|
+| Conservative | $63,230/yr | R2S=38% × OOS-haircut=25% |
+| Central | $84,307/yr | R2S=38% × net-fee (K523 mandate) |
+| Optimistic | $295,813/yr | Stated OOS × net-fee |
+| Upper bound | >$295,813/yr | OOS raw return (NOT central per K523) |
+
+Notional: $600K (1.5% sleeve × 4x × $10M). OOS ann return raw=49.3% @4x.
+
+### §79.4 HL Concentration Status
+
+| Metric | Value |
+|--------|-------|
+| HL pre-K777 | 66.8% |
+| HL post-K777 | 66.8% (UNCHANGED — paper-only) |
+| HL cap | 65.0% |
+| Status | AT CAP — paper-gate STRICT |
+| Live trigger | K498/v6.52 OKX activation reduces HL% below 65% |
+
+### §79.5 EIGEN Vertex Rule (MR9 L002)
+
+EIGEN = **19th vertex** (1st ETH-restaking cluster):
+```
+V (after K777) = {APT, ATOM, AVAX, BNB, ENA, FIL, HBAR, INJ, LDO, SEI, SOL, TIA,
+                   TAO, PEPE, WIF, BLUR, AXS, IO, EIGEN}
+```
+MR9 L002: **All future EIGEN-X pairs are auto-blocked** (EIGEN exhausted as new vertex).
+EIGEN-SOL is the only permissible EIGEN-X pair given V composition at K777.
+
+Note: EIGEN is distinct from LDO (K721 LSD cluster). Restaking ≠ liquid staking.
+G5q (K721 LDO-SOL vs K777 EIGEN-SOL): sig_corr=0.147 PASS — signal independence confirmed.
+
+### §79.6 G5z Monitoring Protocol
+
+G5z BLUR-SOL is borderline (OOS=0.441 at W=84, threshold=0.40). Actions:
+1. Monthly recheck: re-run G5z corr(EIGEN-SOL signal, BLUR-SOL signal) over rolling 90d OOS
+2. If W=84 OOS settles < 0.40 consistently: escalate CONDITIONAL_ACCEPT → ACCEPT
+3. At W=48: G5z OOS=0.345 PASS — alternate window confirms signal independence
+4. Root cause monitor: watch ETH/SOL macro divergence events (structural vs temporary)
+
+### §79.7 G9 Monitoring Protocol
+
+G9 is marginal (OOS=118.6d < 120d minimum — 1.4d short). Actions:
+1. EIGEN HL listing date: 2025-10-12. Full 180d OOS achieved ~2026-04-10
+2. Re-run G9 check at 120d+ OOS: if OOS Sh ≥ 15, G9 PASS at live gate threshold
+3. Before live deployment: confirm G9 full 180d OOS data available
+4. G5z and G9 gates are additive: BOTH must pass before live deployment
+
+### §79.8 Live Gate
+
+| Criterion | Threshold | Rationale |
+|-----------|-----------|-----------|
+| Realized Sharpe | ≥ 15 | Higher than standard (G5z + G9 borderline compensation) |
+| Fill rate | ≥ 60% | Standard HL paired-trade fill requirement |
+| Max drawdown | < 15% | Standard alt-alt pair max loss gate |
+| K498/v6.52 | OKX activation required | HL% must drop below 65% |
+| G9 gate | Full 180d OOS achieved | Monitor since HL listing 2025-10-12 |
+| G5z gate | W=84 OOS < 0.40 | Monthly recheck required |
+
+### §79.9 Daemon Activation
+
+```bash
+# Deploy (after all gate conditions met):
+sed -i '' "s|REPO_ROOT_PLACEHOLDER|$(pwd)|g" scripts/com.cryptolab.k777-eigen-sol.plist
+cp scripts/com.cryptolab.k777-eigen-sol.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k777-eigen-sol.plist
+launchctl list | grep k777
+```
+
+**Status check:**
+```bash
+python3 scripts/k777_eigen_sol_run.py --status
+python3 scripts/k777_eigen_sol_run.py --dry-run
+```
+
+### §79.10 References
+
+| Wave | Description |
+|------|-------------|
+| K773 | HIP-3 Round 2 screen — EIGEN candidate identified |
+| K777 | K777 EIGEN-SOL evaluation (ACCEPT CONDITIONAL — 21st alt-alt scaffold evaluated) |
+| K779 | This section — K777 EIGEN-SOL production scaffold (78th daemon) |
+| K498 | OKX activation prerequisite (reduces HL% below 65%) |
+| K523 | 3-point projection mandate |
+| K518 | 38% realized-to-stated ratio floor |
+| K532 | Governance v5 (HL 65.0% cap rule) |
+| K721 | LDO-SOL (G5q reference — restaking distinct from LSD confirmed) |
+| K768 | BLUR-SOL (G5z reference — ETH NFT × SOL; EIGEN-SOL G5z check) |
