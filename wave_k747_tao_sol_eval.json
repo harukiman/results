@@ -1,0 +1,867 @@
+{
+  "wave": "K747",
+  "strategy": "TAO-SOL FR Differential Alt-Alt (AI L1 vs SVM \u2014 new vertex #2)",
+  "run_time_jst": "2026-05-30 19:43:12 JST",
+  "runtime_s": 3.7,
+  "data_info": {
+    "tao_fr_source": "cache/k163_hl/hl_fr_TAO.parquet",
+    "sol_fr_source": "cache/k163_hl/hl_fr_SOL.parquet",
+    "merged_rows": 17485,
+    "date_start": "2024-05-24 19:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.993,
+    "oos_start": "2025-10-18",
+    "fr_frequency": "1h (HL settles hourly)",
+    "k744_context": "TAO ranked #2 new vertex candidate (vol_ratio=1.573x, cycle_indep=0.591, score=1.763)",
+    "k746_context": "K746 ONDO-SOL BLOCKED-G5c-G5k-AVAX (structural). TAO distinct AI L1 cluster.",
+    "hl_meta": "TAO on HL confirmed: maxLeverage=5, asset index=116, 230 total assets"
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "strategy_type": "7d FR differential carry (alt-alt, new vertex)",
+    "direction_rule": "sign(7d rolling mean of tao_fr - sol_fr)",
+    "legs": {
+      "long": "TAO-PERP (when tao_fr > sol_fr, receive TAO premium)",
+      "short": "SOL-PERP (and vice versa when SOL premium exceeds TAO)"
+    },
+    "config_basis": "W=168h T=0 \u2014 consistent K449\u2192K744 family winner"
+  },
+  "phase0_mr9_prescreen": {
+    "pair": "TAO-SOL",
+    "tao_not_in_V": true,
+    "vertex_set_V": [
+      "APT",
+      "ATOM",
+      "AVAX",
+      "BNB",
+      "ENA",
+      "FIL",
+      "HBAR",
+      "INJ",
+      "LDO",
+      "SEI",
+      "SOL",
+      "TIA"
+    ],
+    "mr9_algebraic_checks": {
+      "APT": {
+        "max_raw_err_tao_vs_x": 0.001962,
+        "mean_raw_err_tao_vs_x": 3e-05,
+        "is_tao_identical_to_x": false,
+        "max_altalt_err_taosol_vs_xsol": 0.001962,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "TAO \u2260 APT: max_err=1.962e-03 >> 1e-10. MR9 CLEAR."
+      },
+      "ATOM": {
+        "max_raw_err_tao_vs_x": 0.001749,
+        "mean_raw_err_tao_vs_x": 3e-05,
+        "is_tao_identical_to_x": false,
+        "max_altalt_err_taosol_vs_xsol": 0.001749,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "TAO \u2260 ATOM: max_err=1.749e-03 >> 1e-10. MR9 CLEAR."
+      },
+      "AVAX": {
+        "max_raw_err_tao_vs_x": 0.001749,
+        "mean_raw_err_tao_vs_x": 2.2e-05,
+        "is_tao_identical_to_x": false,
+        "max_altalt_err_taosol_vs_xsol": 0.001749,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "TAO \u2260 AVAX: max_err=1.749e-03 >> 1e-10. MR9 CLEAR."
+      },
+      "BNB": {
+        "max_raw_err_tao_vs_x": 0.001723,
+        "mean_raw_err_tao_vs_x": 2.2e-05,
+        "is_tao_identical_to_x": false,
+        "max_altalt_err_taosol_vs_xsol": 0.001723,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "TAO \u2260 BNB: max_err=1.723e-03 >> 1e-10. MR9 CLEAR."
+      },
+      "ENA": {
+        "max_raw_err_tao_vs_x": 0.001746,
+        "mean_raw_err_tao_vs_x": 3.8e-05,
+        "is_tao_identical_to_x": false,
+        "max_altalt_err_taosol_vs_xsol": 0.001746,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "TAO \u2260 ENA: max_err=1.746e-03 >> 1e-10. MR9 CLEAR."
+      },
+      "FIL": {
+        "max_raw_err_tao_vs_x": 0.002044,
+        "mean_raw_err_tao_vs_x": 2.1e-05,
+        "is_tao_identical_to_x": false,
+        "max_altalt_err_taosol_vs_xsol": 0.002044,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "TAO \u2260 FIL: max_err=2.044e-03 >> 1e-10. MR9 CLEAR."
+      },
+      "HBAR": {
+        "max_raw_err_tao_vs_x": 0.001749,
+        "mean_raw_err_tao_vs_x": 2e-05,
+        "is_tao_identical_to_x": false,
+        "max_altalt_err_taosol_vs_xsol": 0.001749,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "TAO \u2260 HBAR: max_err=1.749e-03 >> 1e-10. MR9 CLEAR."
+      },
+      "INJ": {
+        "max_raw_err_tao_vs_x": 0.002791,
+        "mean_raw_err_tao_vs_x": 2.4e-05,
+        "is_tao_identical_to_x": false,
+        "max_altalt_err_taosol_vs_xsol": 0.002791,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "TAO \u2260 INJ: max_err=2.791e-03 >> 1e-10. MR9 CLEAR."
+      },
+      "LDO": {
+        "max_raw_err_tao_vs_x": 0.001749,
+        "mean_raw_err_tao_vs_x": 1.8e-05,
+        "is_tao_identical_to_x": false,
+        "max_altalt_err_taosol_vs_xsol": 0.001749,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "TAO \u2260 LDO: max_err=1.749e-03 >> 1e-10. MR9 CLEAR."
+      },
+      "SEI": {
+        "max_raw_err_tao_vs_x": 0.001749,
+        "mean_raw_err_tao_vs_x": 3.2e-05,
+        "is_tao_identical_to_x": false,
+        "max_altalt_err_taosol_vs_xsol": 0.001749,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "TAO \u2260 SEI: max_err=1.749e-03 >> 1e-10. MR9 CLEAR."
+      },
+      "SOL": {
+        "max_raw_err_tao_vs_x": 0.001706,
+        "mean_raw_err_tao_vs_x": 2e-05,
+        "is_tao_identical_to_x": false,
+        "max_altalt_err_taosol_vs_xsol": 0.001706,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "TAO \u2260 SOL: max_err=1.706e-03 >> 1e-10. MR9 CLEAR."
+      },
+      "TIA": {
+        "max_raw_err_tao_vs_x": 0.001749,
+        "mean_raw_err_tao_vs_x": 2.8e-05,
+        "is_tao_identical_to_x": false,
+        "max_altalt_err_taosol_vs_xsol": 0.001749,
+        "is_altalt_identity": false,
+        "mr9_clear": true,
+        "note": "TAO \u2260 TIA: max_err=1.749e-03 >> 1e-10. MR9 CLEAR."
+      }
+    },
+    "mr9_all_clear": true,
+    "vol_prescreen": {
+      "tao_fr_std": 4.893e-05,
+      "sol_fr_std": 3.109e-05,
+      "diff_std": 4.6e-05,
+      "vol_ratio_tao_sol_full": 1.5734,
+      "last_7d": 0.7353,
+      "last_30d": 1.3153,
+      "last_90d": 3.3553,
+      "last_365d": 1.1802,
+      "mr9_threshold": 1.5,
+      "mr9_vol_pass": true,
+      "mr9_note": "TAO/SOL vol ratio 1.5734x \u2014 ABOVE 1.5x threshold. K744 confirmed 1.573x.",
+      "tao_fr_mean_ann_pct": 16.335,
+      "sol_fr_mean_ann_pct": 7.7056,
+      "raw_corr_tao_sol": 0.409
+    },
+    "pass": true
+  },
+  "phase1_cycle_analysis": {
+    "adf_stationarity": {
+      "statistic": -12.2254,
+      "p_value": 0.0,
+      "is_stationary_5pct": true,
+      "critical_1pct": -3.4307,
+      "critical_5pct": -2.8617,
+      "interpretation": "TAO-SOL FR differential ADF=-12.2254. STATIONARY (5% level). Mean-reversion CONFIRMED."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.346001,
+      "half_life_hours": 2.0,
+      "half_life_days": 0.08,
+      "long_run_mean": 9.851e-06,
+      "r_squared": 0.173,
+      "interpretation": "OU half-life 2.00h (0.08d). 7d smoothing (168h) appropriately captures multi-day AI L1 vs SVM regime drift."
+    },
+    "autocorrelation": {
+      "lag_1h": 0.654,
+      "lag_24h": 0.1753,
+      "lag_168h": 0.0332
+    },
+    "dominance_rolling": {
+      "tao_dominant_pct": 100.0,
+      "sol_dominant_pct": 0.0
+    },
+    "ai_l1_vs_svm_mechanics": {
+      "tao_fr_drivers": [
+        "NVDA/H100 GPU AI narrative cycles (Q4 2023 AI peak, Q1 2024 NVIDIA highs)",
+        "Bittensor subnet launch events (new subnet = higher validator staking demand)",
+        "AI infrastructure institutional adoption (validator set expansion)",
+        "TAO staking/subnet yield vs perpetual leverage premium differential",
+        "Compute market pricing cycles (H100 supply/demand \u2192 TAO subnet demand)",
+        "AI regulation events (SEC/CFTC AI asset classification impact)"
+      ],
+      "sol_fr_drivers": [
+        "Retail momentum / meme coin seasons (BONK, WIF, POPCAT cycles)",
+        "Firedancer upgrade cycles (validator throughput expectations)",
+        "Solana ETF narrative events (institutional SOL demand)",
+        "SVM DeFi TVL expansion (Jupiter, Drift Protocol, Jito restaking)",
+        "SOL staking yield vs perpetual leverage premium",
+        "NFT/gaming/AI agent cycles on Solana ecosystem"
+      ],
+      "cross_cluster_independence": "AI L1 (TAO) vs SVM (SOL): primary independence from completely different demand drivers. TAO driven by AI compute narrative cycles and subnet mechanics. SOL driven by retail DeFi speculation and SVM ecosystem. KEY: TAO-SOL does NOT inherit AVAX subnet overlap \u2014 AI inference \u2260 AVAX app-chain subnets. AVAX subnet narrative is 'L2-like appchain customization' \u2014 structurally different from TAO's AI compute marketplace. This explains why G5c/G5k PASS for TAO (unlike ONDO).",
+      "k746_comparison": "ONDO-SOL BLOCKED because AVAX-SOL and ONDO-SOL both captured 'institutional DeFi' FR premium. TAO-SOL: TAO FR driven by AI-GPU scarcity narrative, NOT DeFi yield. Result: G5c (AVAX-BTC)=0.0126 PASS (vs ONDO -0.4148 FAIL). G5k (AVAX-SOL)=0.1286 PASS (vs ONDO -0.5842 FAIL)."
+    },
+    "cycle_by_quarter": {
+      "2024Q2": {
+        "tao_fr_mean_ann_pct": 45.936,
+        "sol_fr_mean_ann_pct": 18.384,
+        "diff_mean_ann_pct": 27.552,
+        "dominant": "TAO"
+      },
+      "2024Q3": {
+        "tao_fr_mean_ann_pct": 23.593,
+        "sol_fr_mean_ann_pct": 9.648,
+        "diff_mean_ann_pct": 13.945,
+        "dominant": "TAO"
+      },
+      "2024Q4": {
+        "tao_fr_mean_ann_pct": 45.758,
+        "sol_fr_mean_ann_pct": 29.645,
+        "diff_mean_ann_pct": 16.113,
+        "dominant": "TAO"
+      },
+      "2025Q1": {
+        "tao_fr_mean_ann_pct": 10.06,
+        "sol_fr_mean_ann_pct": 3.621,
+        "diff_mean_ann_pct": 6.44,
+        "dominant": "TAO"
+      },
+      "2025Q2": {
+        "tao_fr_mean_ann_pct": 4.206,
+        "sol_fr_mean_ann_pct": 3.92,
+        "diff_mean_ann_pct": 0.286,
+        "dominant": "TAO"
+      },
+      "2025Q3": {
+        "tao_fr_mean_ann_pct": 18.219,
+        "sol_fr_mean_ann_pct": 14.193,
+        "diff_mean_ann_pct": 4.026,
+        "dominant": "TAO"
+      },
+      "2025Q4": {
+        "tao_fr_mean_ann_pct": 8.553,
+        "sol_fr_mean_ann_pct": -0.544,
+        "diff_mean_ann_pct": 9.097,
+        "dominant": "TAO"
+      },
+      "2026Q1": {
+        "tao_fr_mean_ann_pct": -3.331,
+        "sol_fr_mean_ann_pct": -7.764,
+        "diff_mean_ann_pct": 4.433,
+        "dominant": "TAO"
+      },
+      "2026Q2": {
+        "tao_fr_mean_ann_pct": 6.89,
+        "sol_fr_mean_ann_pct": 1.447,
+        "diff_mean_ann_pct": 5.443,
+        "dominant": "TAO"
+      }
+    }
+  },
+  "phase2_backtest": {
+    "full_period": {
+      "period": "2024-05-31 \u2013 2026-05-23",
+      "years": 1.977,
+      "sharpe": 22.764,
+      "ann_ret_pct": 9.755,
+      "max_dd_pct": -0.5359,
+      "entries_per_yr": 35.4
+    },
+    "is_metrics": {
+      "period": "2024-05-31 \u2013 2025-10-18",
+      "years": 1.384,
+      "sharpe": 27.491,
+      "ann_ret_pct": 11.652,
+      "max_dd_pct": -0.2998,
+      "entries_per_yr": 36.1
+    },
+    "oos_metrics": {
+      "period": "2025-10-18 \u2013 2026-05-23",
+      "years": 0.593,
+      "sharpe": 12.233,
+      "ann_ret_pct": 5.328,
+      "max_dd_pct": -0.5359,
+      "entries_per_yr": 33.7,
+      "entries_total": 20,
+      "ann_ret_4x_pct": 21.313
+    }
+  },
+  "grid_search_top6": [
+    {
+      "window_h": 72,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 28.034,
+      "OOS_sharpe": 16.492,
+      "entries_oos": 49,
+      "OOS_ret_pct": 7.135
+    },
+    {
+      "window_h": 72,
+      "threshold_factor": 0.25,
+      "threshold_value": 1.1521e-05,
+      "IS_sharpe": 25.603,
+      "OOS_sharpe": 13.765,
+      "entries_oos": 88,
+      "OOS_ret_pct": 4.693
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.5,
+      "threshold_value": 2.3042e-05,
+      "IS_sharpe": 11.695,
+      "OOS_sharpe": 12.253,
+      "entries_oos": 1,
+      "OOS_ret_pct": 0.298
+    },
+    {
+      "window_h": 168,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 26.025,
+      "OOS_sharpe": 12.233,
+      "entries_oos": 20,
+      "OOS_ret_pct": 5.328
+    },
+    {
+      "window_h": 336,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 24.171,
+      "OOS_sharpe": 12.198,
+      "entries_oos": 8,
+      "OOS_ret_pct": 5.313
+    },
+    {
+      "window_h": 504,
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 23.284,
+      "OOS_sharpe": 9.706,
+      "entries_oos": 12,
+      "OOS_ret_pct": 4.241
+    }
+  ],
+  "phase3_section6_gates": {
+    "G1_oos_sharpe": {
+      "value": 12.233,
+      "threshold": 1.0,
+      "pass": true,
+      "note": "OOS annualised Sharpe 12.233 >= 1.0."
+    },
+    "G2_perm_pvalue": {
+      "value": 0.0,
+      "threshold": 0.05,
+      "pass": true,
+      "note": "1000 direction reshuffles OOS. p=0.0000."
+    },
+    "G3_dsr_bonferroni": {
+      "n_trials": 12,
+      "t_stat": 12.7015,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.00417,
+      "pass": true,
+      "note": "Bonferroni: p < 0.05/12 = 0.00417."
+    },
+    "G4_walk_forward_12fold": {
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2025-05-28",
+          "oos_end": "2025-06-27",
+          "sharpe": 50.116,
+          "ann_ret_pct": 7.163,
+          "entries": 0
+        },
+        {
+          "fold": 2,
+          "oos_start": "2025-06-27",
+          "oos_end": "2025-07-27",
+          "sharpe": 23.51,
+          "ann_ret_pct": 5.381,
+          "entries": 4
+        },
+        {
+          "fold": 3,
+          "oos_start": "2025-07-27",
+          "oos_end": "2025-08-26",
+          "sharpe": 7.398,
+          "ann_ret_pct": 1.191,
+          "entries": 5
+        },
+        {
+          "fold": 4,
+          "oos_start": "2025-08-26",
+          "oos_end": "2025-09-25",
+          "sharpe": 29.235,
+          "ann_ret_pct": 3.488,
+          "entries": 3
+        },
+        {
+          "fold": 5,
+          "oos_start": "2025-09-25",
+          "oos_end": "2025-10-25",
+          "sharpe": 30.418,
+          "ann_ret_pct": 19.026,
+          "entries": 0
+        },
+        {
+          "fold": 6,
+          "oos_start": "2025-10-25",
+          "oos_end": "2025-11-24",
+          "sharpe": 67.893,
+          "ann_ret_pct": 9.933,
+          "entries": 0
+        },
+        {
+          "fold": 7,
+          "oos_start": "2025-11-24",
+          "oos_end": "2025-12-24",
+          "sharpe": 26.077,
+          "ann_ret_pct": 3.824,
+          "entries": 1
+        },
+        {
+          "fold": 8,
+          "oos_start": "2025-12-24",
+          "oos_end": "2026-01-23",
+          "sharpe": 8.213,
+          "ann_ret_pct": 0.991,
+          "entries": 5
+        },
+        {
+          "fold": 9,
+          "oos_start": "2026-01-23",
+          "oos_end": "2026-02-22",
+          "sharpe": 13.766,
+          "ann_ret_pct": 11.463,
+          "entries": 1
+        },
+        {
+          "fold": 10,
+          "oos_start": "2026-02-22",
+          "oos_end": "2026-03-24",
+          "sharpe": 6.334,
+          "ann_ret_pct": 3.608,
+          "entries": 7
+        },
+        {
+          "fold": 11,
+          "oos_start": "2026-03-24",
+          "oos_end": "2026-04-23",
+          "sharpe": 3.248,
+          "ann_ret_pct": 1.664,
+          "entries": 5
+        },
+        {
+          "fold": 12,
+          "oos_start": "2026-04-23",
+          "oos_end": "2026-05-23",
+          "sharpe": 36.956,
+          "ann_ret_pct": 5.207,
+          "entries": 1
+        }
+      ],
+      "fold_sharpes": [
+        50.116,
+        23.51,
+        7.398,
+        29.235,
+        30.418,
+        67.893,
+        26.077,
+        8.213,
+        13.766,
+        6.334,
+        3.248,
+        36.956
+      ],
+      "all_positive": true,
+      "n_negative_folds": 0,
+      "min_fold_sharpe": 3.248,
+      "n_folds_computed": 12,
+      "pass": true,
+      "note": "12-fold WF. All positive: True. Neg folds: 0/12."
+    },
+    "G5a_k449_eth_btc": {
+      "value": 0.0724,
+      "value_is": 0.0861,
+      "value_oos": 0.0158,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K449 ETH-BTC = 0.0724 (IS=0.0861, OOS=0.0158). PASS."
+    },
+    "G5b_k476_sol_btc": {
+      "value": 0.2229,
+      "value_is": 0.2681,
+      "value_oos": 0.0749,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K476 SOL-BTC = 0.2229 (IS=0.2681, OOS=0.0749). PASS."
+    },
+    "G5c_k484_avax_btc": {
+      "value": 0.0126,
+      "value_is": 0.0123,
+      "value_oos": 0.0019,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K484 AVAX-BTC = 0.0126 (IS=0.0123, OOS=0.0019). PASS."
+    },
+    "G5d_k493_atom_btc": {
+      "value": 0.0487,
+      "value_is": 0.1037,
+      "value_oos": -0.01,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K493 ATOM-BTC = 0.0487 (IS=0.1037, OOS=-0.0100). PASS."
+    },
+    "G5e_k500_inj_btc": {
+      "value": 0.0176,
+      "value_is": 0.0883,
+      "value_oos": 0.004,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K500 INJ-BTC = 0.0176 (IS=0.0883, OOS=0.0040). PASS."
+    },
+    "G5f_k517_fil_btc": {
+      "value": 0.0771,
+      "value_is": 0.1576,
+      "value_oos": 0.0032,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K517 FIL-BTC = 0.0771 (IS=0.1576, OOS=0.0032). PASS."
+    },
+    "G5g_k594_ldo_btc": {
+      "value": 0.077,
+      "value_is": 0.0918,
+      "value_oos": 0.0204,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K594 LDO-BTC = 0.0770 (IS=0.0918, OOS=0.0204). PASS."
+    },
+    "G5h_k683_apt_sol": {
+      "value": -0.0659,
+      "value_is": -0.1182,
+      "value_oos": 0.0255,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K683 APT-SOL = -0.0659 (IS=-0.1182, OOS=0.0255). PASS."
+    },
+    "G5i_k684_atom_sol": {
+      "value": -0.0549,
+      "value_is": -0.066,
+      "value_oos": -0.006,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K684 ATOM-SOL = -0.0549 (IS=-0.0660, OOS=-0.0060). PASS."
+    },
+    "G5j_k686_sol_inj": {
+      "value": 0.0603,
+      "value_is": 0.2141,
+      "value_oos": -0.0026,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K686 SOL-INJ = 0.0603 (IS=0.2141, OOS=-0.0026). PASS."
+    },
+    "G5k_k687_avax_sol": {
+      "value": 0.1286,
+      "value_is": 0.1728,
+      "value_oos": 0.0008,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K687 AVAX-SOL = 0.1286 (IS=0.1728, OOS=0.0008). PASS."
+    },
+    "G5l_k689_sei_sol": {
+      "value": -0.0324,
+      "value_is": -0.0358,
+      "value_oos": -0.031,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K689 SEI-SOL = -0.0324 (IS=-0.0358, OOS=-0.0310). PASS."
+    },
+    "G5m_k694_tia_sol": {
+      "value": 0.002,
+      "value_is": -0.0181,
+      "value_oos": 0.0561,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K694 TIA-SOL = 0.0020 (IS=-0.0181, OOS=0.0561). PASS."
+    },
+    "G5n_k696_ena_sol": {
+      "value": 0.0944,
+      "value_is": 0.1003,
+      "value_oos": 0.0341,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K696 ENA-SOL = 0.0944 (IS=0.1003, OOS=0.0341). PASS."
+    },
+    "G5o_k700_bnb_sol": {
+      "value": -0.0354,
+      "value_is": -0.0573,
+      "value_oos": 0.076,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K700 BNB-SOL = -0.0354 (IS=-0.0573, OOS=0.0760). PASS."
+    },
+    "G5p_k719_ena_atom": {
+      "value": 0.0523,
+      "value_is": 0.0624,
+      "value_oos": 0.0124,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K719 ENA-ATOM = 0.0523 (IS=0.0624, OOS=0.0124). PASS."
+    },
+    "G5q_k721_ldo_sol": {
+      "value": 0.2697,
+      "value_is": 0.3264,
+      "value_oos": 0.0965,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K721 LDO-SOL = 0.2697 (IS=0.3264, OOS=0.0965). PASS."
+    },
+    "G5r_k728_inj_atom": {
+      "value": 0.0191,
+      "value_is": 0.0782,
+      "value_oos": 0.0052,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K728 INJ-ATOM = 0.0191 (IS=0.0782, OOS=0.0052). PASS."
+    },
+    "G5s_k735_hbar_sol": {
+      "value": 0.2235,
+      "value_is": 0.2752,
+      "value_oos": 0.0465,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K735 HBAR-SOL = 0.2235 (IS=0.2752, OOS=0.0465). PASS."
+    },
+    "G5t_k736_tia_avax": {
+      "value": 0.009,
+      "value_is": 0.0068,
+      "value_oos": -0.01,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K736 TIA-AVAX = 0.0090 (IS=0.0068, OOS=-0.0100). PASS."
+    },
+    "G5u_k739_fil_sol": {
+      "value": -0.0167,
+      "value_is": -0.0252,
+      "value_oos": 0.007,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "TAO-SOL vs K739 FIL-SOL = -0.0167 (IS=-0.0252, OOS=0.0070). PASS."
+    },
+    "G6_trade_count": {
+      "entries_per_yr": 33.7,
+      "threshold": 30,
+      "pass": true,
+      "note": "33.7 entries/yr vs 30 threshold. PASS."
+    },
+    "G7_ann_return": {
+      "value_1x_pct": 5.328,
+      "value_4x_pct": 21.313,
+      "threshold_pct": 5.0,
+      "leverage": 4.0,
+      "pass": true,
+      "note": "At 4.0x leverage: 21.313% > 5.0%."
+    },
+    "G8_cross_venue": {
+      "bybit_tao_exists": true,
+      "hl_vs_bybit_diff_corr": 0.2651,
+      "n_common_obs": 2187,
+      "threshold": 0.55,
+      "pass": false,
+      "note": "HL vs Bybit TAO-SOL diff corr=0.2651. Bybit TAO 84.6% at floor (0.0001/0.00005) \u2014 floor constraint causes structural noise. FAIL \u2014 Bybit TAO floor-capped: cross-venue noisy. HL-only deployment viable (TAO maxLeverage=5 on HL).",
+      "bybit_floor_constraint": "Bybit TAO 84.6% at floor (0.0001/0.00005). Structural venue noise. HL-only viable (maxLeverage=5)."
+    },
+    "G9_data_sufficiency": {
+      "oos_days": 216.6,
+      "threshold_days": 180,
+      "pass": true,
+      "note": "OOS: 216.6d >= 180d minimum."
+    },
+    "_summary": {
+      "gates_passed": 28,
+      "gates_total": 29,
+      "gate_details": {
+        "G1": true,
+        "G2": true,
+        "G3": true,
+        "G4": true,
+        "G5a_k449_eth_btc": true,
+        "G5b_k476_sol_btc": true,
+        "G5c_k484_avax_btc": true,
+        "G5d_k493_atom_btc": true,
+        "G5e_k500_inj_btc": true,
+        "G5f_k517_fil_btc": true,
+        "G5g_k594_ldo_btc": true,
+        "G5h_k683_apt_sol": true,
+        "G5i_k684_atom_sol": true,
+        "G5j_k686_sol_inj": true,
+        "G5k_k687_avax_sol": true,
+        "G5l_k689_sei_sol": true,
+        "G5m_k694_tia_sol": true,
+        "G5n_k696_ena_sol": true,
+        "G5o_k700_bnb_sol": true,
+        "G5p_k719_ena_atom": true,
+        "G5q_k721_ldo_sol": true,
+        "G5r_k728_inj_atom": true,
+        "G5s_k735_hbar_sol": true,
+        "G5t_k736_tia_avax": true,
+        "G5u_k739_fil_sol": true,
+        "G6": true,
+        "G7": true,
+        "G8": false,
+        "G9": true
+      },
+      "any_g5_fail": false,
+      "failed_g5_gates": [],
+      "g5_avax_key_finding": {
+        "G5c_avax_btc_full": 0.0126,
+        "G5k_avax_sol_full": 0.1286,
+        "comparison_vs_ondo": "ONDO G5c=-0.4148 FAIL, G5k=-0.5842 FAIL vs TAO G5c=0.013 PASS, G5k=0.129 PASS",
+        "insight": "AI L1 (TAO) does NOT share AVAX subnet narrative cluster. TAO clears AVAX family barrier."
+      },
+      "oos_sharpe": 12.233,
+      "perm_p": 0.0,
+      "wf_all_positive": true,
+      "n_negative_wf_folds": 0
+    }
+  },
+  "phase4_decision": {
+    "decision": "ACCEPT CONDITIONAL",
+    "conditions": [
+      "HL-only deployment mandatory (Bybit TAO 84.6% floor-capped \u2014 G8 structural venue issue, not signal failure)",
+      "Paper-trade until HL concentration drops below 65% via K498 OKX activation",
+      "TAO vertex added to V (blocks all future TAO-X pairs per MR9 L002)",
+      "Monitor Bybit TAO FR quality improvement \u2014 if floor constraint resolved, G8 upgrades to PASS",
+      "K523 3-point: conservative=$12,907 central=$17,210 optimistic=$45,289/yr @$10M"
+    ],
+    "g8_precedent": "K735 HBAR-SOL ACCEPT CONDITIONAL with G8 FAIL (HL-1h vs Bybit-8h structural mismatch). Same pattern applies: G8 fail = venue data quality, not signal quality. HL TAO liquid ($12.3M/24h volume, 5x max leverage).",
+    "rationale": "[ACCEPT CONDITIONAL] K747 TAO-SOL passes 28/29 \u00a76 gates. OOS Sharpe 12.233. Perm p=0.0000. WF 12-fold: 12/12 positive (all positive \u2014 best WF result in family). G5 ALL PASS including critical G5c (AVAX-BTC=0.013) and G5k (AVAX-SOL=0.129) \u2014 AI L1 cluster distinct from AVAX subnet narrative (unlike ONDO-SOL BLOCKED-G5c-G5k). G8 FAIL: Bybit TAO 84.6% floor-capped causing structural cross-venue noise (not signal failure). K735 precedent: HBAR-SOL ACCEPT CONDITIONAL with same G8 structural issue. TAO becomes 13th vertex. HL-only + paper-gate until HL cap resolved."
+  },
+  "profit_projection": {
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 2.5,
+      "leverage": 4.0,
+      "notional_usd": 1000000,
+      "oos_ann_ret_1x_pct": 5.328,
+      "oos_ann_ret_4x_pct": 21.313,
+      "k523_haircuts": {
+        "R2S_realized_to_stated": 0.38,
+        "OOS_haircut_25pct": 0.25,
+        "fee_friction_15pct": 0.15
+      },
+      "conservative_usdc_yr": 12907,
+      "central_usdc_yr": 17210,
+      "optimistic_usdc_yr": 45289,
+      "upper_bound_usdc_yr": 53281,
+      "k523_note": "K523 MANDATORY: conservative/central/optimistic 3-point. Upper bound is NOT central. R2S=38% (K518 floor). OOS 25% haircut. Fee 15%."
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "notional_usd": 10000000,
+      "conservative_usdc_yr": 129074,
+      "central_usdc_yr": 172099,
+      "optimistic_usdc_yr": 452891,
+      "upper_bound_usdc_yr": 532813
+    },
+    "hl_cap_awareness": {
+      "current_hl_pct": 65.0,
+      "hl_cap_pct": 65.0,
+      "k747_both_legs_hl": true,
+      "k747_sleeve_pct": 2.5,
+      "scenario_if_accept": {
+        "full_hl": {
+          "hl_pct": 67.5,
+          "over_cap": true,
+          "note": "2.5% all-HL \u2192 65.0% \u2192 67.5%"
+        },
+        "hl_only_with_cap_resolution": {
+          "hl_pct": 65.0,
+          "over_cap": false,
+          "note": "Defer to after K498 OKX activation reduces HL concentration"
+        },
+        "paper_trade": {
+          "hl_pct": 65.0,
+          "over_cap": false,
+          "note": "Paper-trade: HL unchanged"
+        },
+        "recommendation": "IF ACCEPT: HL-only deployment (TAO + SOL both on HL). Defer live capital until HL% drops below 65% via K498 OKX rebalancing. G8 FAIL means Bybit-only scaffold is lower confidence \u2014 HL preferred venue."
+      }
+    }
+  },
+  "next_steps": [
+    {
+      "action": "WLD-SOL (K744 rank #3)",
+      "wave": "K748",
+      "detail": "WLD (Worldcoin biometric) vol_ratio=1.129, cycle_indep=0.720. Identity/AI cluster. Lower vol ratio but higher cycle independence.",
+      "priority": "MEDIUM"
+    },
+    {
+      "action": "PENDLE-SOL (K744 rank #4)",
+      "wave": "K749",
+      "detail": "PENDLE (yield tokenization) vol_ratio=1.106, cycle_indep=0.807. DeFi yield cluster.",
+      "priority": "MEDIUM"
+    },
+    {
+      "action": "K498 OKX activation",
+      "wave": "K498",
+      "detail": "OKX activation reduces HL concentration from 65% enabling K747 TAO-SOL live deployment.",
+      "priority": "HIGH"
+    }
+  ],
+  "family_context": {
+    "k744_saturation": "12-vertex alt-alt family 100% saturated",
+    "k744_tao_rank": "#2 new vertex candidate (score=1.763, vol_ratio=1.573x, cycle_indep=0.591)",
+    "k746_ondo_result": "BLOCKED-G5c-G5k-AVAX (structural RWA vs AVAX institutional cluster)",
+    "k747_innovation": "AI L1 (TAO) distinct from AVAX subnet cluster \u2014 G5c/G5k PASS confirmed",
+    "family_g5_btc_base_pairs": [
+      "K449 ETH-BTC",
+      "K476 SOL-BTC",
+      "K484 AVAX-BTC",
+      "K493 ATOM-BTC",
+      "K500 INJ-BTC",
+      "K517 FIL-BTC",
+      "K594 LDO-BTC"
+    ],
+    "family_g5_alt_alt_pairs": [
+      "K683 APT-SOL",
+      "K684 ATOM-SOL",
+      "K686 SOL-INJ",
+      "K687 AVAX-SOL",
+      "K689 SEI-SOL",
+      "K694 TIA-SOL",
+      "K696 ENA-SOL",
+      "K700 BNB-SOL",
+      "K719 ENA-ATOM",
+      "K721 LDO-SOL",
+      "K728 INJ-ATOM",
+      "K735 HBAR-SOL",
+      "K736 TIA-AVAX",
+      "K739 FIL-SOL"
+    ]
+  },
+  "decision": "ACCEPT CONDITIONAL",
+  "decision_rationale": "[ACCEPT CONDITIONAL] K747 TAO-SOL passes 28/29 \u00a76 gates. OOS Sharpe 12.233. Perm p=0.0000. WF 12-fold: 12/12 positive (all positive). G5 ALL PASS including critical G5c (AVAX-BTC=0.013) and G5k (AVAX-SOL=0.129). G8 FAIL: Bybit TAO 84.6% floor-capped (structural venue noise, not signal failure). K735 HBAR-SOL precedent applies. TAO becomes 13th vertex. HL-only + paper-gate until HL concentration < 65% (requires K498 OKX activation)."
+}
