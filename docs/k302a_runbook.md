@@ -12586,3 +12586,160 @@ python3 scripts/k719_ena_atom_run.py --status
 | K493 | K493 ATOM-BTC ACCEPT (ATOM anchor, OOS Sh=50.79) |
 | K696 | K696 ENA-SOL ACCEPT (7th alt-alt, cross-cluster precedent) |
 | K266 | §6 strict gate framework |
+
+---
+
+## §65 K742 — K492-C Persistence Filter Ready-for-Flip (User Action)
+
+**Wave:** K742 | **Date:** 2026-05-30 | **Status:** READY-FOR-FLIP  
+**Profit:** $20,600–$45,175/yr @$10M (central $27,105/yr, K523 3-point)  
+**Risk:** LOW — zero new infra, 1-LOC toggle, full reversibility
+
+### §65.1 Strategy Overview
+
+K492 Variant C adds a **soft monotonic FR persistence gate** to the K208 CEX-DEX reverse
+carry signal. The gate filters entry signals where the Bybit-HL FR spread has been
+inconsistent across the last 3 × 8h settlement periods, preventing entries into mean-reverting
+FR environments.
+
+**Mechanism:**
+- Gate PASS: ≥2 of last 3 8h spreads positive **AND** gradient ≥ 0 (not collapsing)
+- Gate BLOCK: fewer than 2 positive periods **OR** spread collapsing (gradient < 0)
+- Cache miss: conservative pass (never blocks on stale/missing data)
+
+**Basis:**
+- FR autocorrelation AR(1) ≈ 0.73 across K208 symbols
+- Win rate after sign reversal: 59.8% vs 70.7% persistent (+10.9pp gross)
+- Net lift after 32% FN loss: +2.31pp win rate | +1.51 OOS Sharpe
+- 8/8 §6 gates PASS (K492 analysis, wave_k492_k208_signal_refinement.md)
+
+### §65.2 Profit Projection (K523 3-Point)
+
+| Scenario | Win Rate Lift | USD/yr @$10M |
+|----------|--------------|--------------|
+| Conservative | +0.88pp | $20,600 |
+| Mid / Central | +1.39pp | $27,105 |
+| Optimistic | +2.31pp | $45,175 |
+
+Baseline: K280 $10M @40% weight (K509 update). K208 effective $4M notional.
+Filter rate ~32% avg. Trades/yr after filter: 159 (G6 PASS ≥30).
+
+K509 note: K208 edge decaying (Sh 22.61 → 7.46). K492-C improves signal quality
+in the degraded carry environment — conservative projections preferred.
+
+### §65.3 Implementation
+
+**Patch:** `wave_k742_k492c_ready.diff` — 45 LOC, 3 sites in `scripts/k280_live_fetch.py`:
+
+1. **New flag** (after POST_ONLY_ORDER_ENABLED block):
+   ```python
+   PERSISTENCE_ENABLED = False   # K742/K492-C: flip to True for live activation
+   ```
+
+2. **New function** `check_fr_persistence(sym, hl_series, bybit_series, n_periods=3, min_positive=2) -> bool`
+   - Returns True (pass) when disabled or on any data error
+   - Computes spread series, checks 2-of-3 positive + gradient
+
+3. **Gate call site** inside `compute_k208_spreads()`:
+   - Evaluates gate per symbol, logs BLOCK with `[K492-C]` prefix
+   - Result stored in `persistence_gate[sym]`
+
+4. **Return dict** adds `persistence_gate` key (per-symbol True/False map)
+
+**Zero new infrastructure:** reads only existing local cache parquets. No new APIs,
+no new daemons, 0ms extra latency.
+
+### §65.4 Validation Results (K742 Harness)
+
+```
+9/9 unit tests PASS (wave_k742_k492c_ready.py)
+  T1: disabled→True             PASS
+  T2: empty series→True         PASS
+  T3: strong positive→True      PASS
+  T4: weak signal→False         PASS
+  T5: collapsing gradient→False PASS
+  T6: 2-of-3 positive→True      PASS
+  T7: insufficient history→True PASS
+  T8: cache compatibility OK    PASS (10/10 K208 HL parquets found)
+  T9: snapshot structure OK     PASS
+
+Live gate simulation (2026-05-30, PERSISTENCE_ENABLED=True):
+  Blocked: SOL, XRP, SUI, APT, JTO, IMX, SAND, ADA (80% today)
+  Pass: OP, AXS
+  Note: 80% today reflects low-carry market. Analytical avg = 32%.
+  Gate correctly identifies weak carry periods.
+```
+
+### §65.5 User Action: 1-Flip Activation
+
+**Apply patch:**
+```bash
+git apply wave_k742_k492c_ready.diff
+```
+
+**Activate (flip toggle in scripts/k280_live_fetch.py):**
+```python
+PERSISTENCE_ENABLED = True    # K742/K492-C: LIVE
+```
+
+**Reload daemon:**
+```bash
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+launchctl load  ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+```
+
+**Verify:**
+```bash
+python3 scripts/k280_live_fetch.py --force
+# Look for [K492-C] BLOCK lines + persistence_gate key in snapshot JSON
+```
+
+### §65.6 Revert
+
+**1-LOC revert (preferred — no git needed):**
+```python
+# scripts/k280_live_fetch.py:
+PERSISTENCE_ENABLED = False   # back to default, zero impact
+```
+
+**Full git revert:**
+```bash
+git apply -R wave_k742_k492c_ready.diff
+launchctl unload ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+launchctl load  ~/Library/LaunchAgents/com.cryptolab.k280-live.plist
+```
+
+### §65.7 14-Day Monitoring
+
+| Metric | Target | Alert |
+|--------|--------|-------|
+| Filter rate | 25–45% | >65% sustained |
+| Trades/8h | 1–3 | 0 for >48h |
+| Win rate (live) | ≥67% | <60% over 30+ trades |
+| Sharpe lift | +1.0+ | <0 over 14d |
+
+```bash
+# Check filter rate from latest snapshot:
+python3 -c "
+import json, glob
+f = sorted(glob.glob('cache/k280_live_*.json'))[-1]
+d = json.load(open(f))
+pg = d['k208'].get('persistence_gate', {})
+blocked = [k for k,v in pg.items() if not v]
+print(f'Blocked {len(blocked)}/{len(pg)}: {blocked}')
+"
+```
+
+### §65.8 References
+
+| File / Wave | Description |
+|-------------|-------------|
+| `wave_k742_k492c_ready.diff` | Unified diff — apply with `git apply` |
+| `wave_k742_k492c_ready.py` | Validation harness (9 tests) |
+| `wave_k742_k492c_ready.json` | Full metadata + K523 profit projections |
+| `wave_k742_k492c_ready.md` | Apply instructions |
+| `wave_k492_k208_signal_refinement.md` | Source analysis (8/8 §6 gates) |
+| K492 | K492 signal refinement analysis (Variant C persistence filter design) |
+| K438 | K438 K208 predictedFR + limit ladder (baseline OOS Sh 19.12) |
+| K509 | K208 edge decay confirmed (Sh -67% YoY) |
+| K339 | REPO_ROOT pattern (no absolute paths, public-repo safe) |

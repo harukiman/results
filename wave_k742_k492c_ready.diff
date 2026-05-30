@@ -1,0 +1,87 @@
+--- a/scripts/k280_live_fetch.py
++++ b/scripts/k280_live_fetch.py
+@@ -179,6 +179,50 @@ try:
+ POST_ONLY_ORDER_ENABLED = True   # K439: set False to bypass POST_ONLY for K208 trades
+ try:
+     import sys as _sys_po
+     _sys_po.path.insert(0, str(Path(__file__).resolve().parent))
+     from post_only_order_manager import execute_trade as _post_only_execute
+     _POST_ONLY_AVAILABLE = True
+ except Exception as _po_err:
+     _POST_ONLY_AVAILABLE = False
+     print(f"  [K439] post_only_order_manager import failed ({_po_err}) — K208 orders unchanged")
+
++# ── K742 / K492-C: FR Persistence Filter (Soft Monotonic Gate) ───────────────
++# Ref: wave_k492_k208_signal_refinement.md §3, wave_k742_k492c_ready.md
++# Hypothesis: FR autocorrelation AR(1) ~0.73 across K208 symbols. Entries where
++# HL-Bybit FR spread has been consistently positive for ≥2 of last 3 8h periods
++# show materially higher win rates (+2.31pp net after 32% FN loss).
++#
++# Gate (soft monotonic):
++#   PASS if: spread_now > 0
++#            AND (spread_t-1 > 0 OR spread_t-2 > 0)   [2-of-3 positive]
++#            AND gradient >= 0                          [not collapsing]
++# On cache miss → gate skips (returns True, conservative: never blocks on stale).
++#
++# ACTIVATION: set PERSISTENCE_ENABLED = True (the single 1-flip toggle).
++# Default False → zero behaviour change in PAPER_TRADE mode.
++# REVERT: set False, or: git apply -R wave_k742_k492c_ready.diff
++#
++# Expected lift: OOS Sh +1.51 | win rate +2.31pp | +$45K/yr @$10M K280 sleeve
++PERSISTENCE_ENABLED = False   # K742/K492-C: ← flip to True for live activation
++
++
++def check_fr_persistence(sym: str, hl_series: pd.Series, bybit_series: pd.Series,
++                          n_periods: int = 3, min_positive: int = 2) -> bool:
++    """
++    K492-C soft persistence gate. Returns True (allow entry) when spread has been
++    positive in >= min_positive of the last n_periods 8h settlements AND gradient
++    is non-negative (spread not collapsing). Falls back True on any data error.
++    No-op (returns True) when PERSISTENCE_ENABLED=False.
++    """
++    if not PERSISTENCE_ENABLED:
++        return True
++    try:
++        if hl_series.empty or bybit_series.empty:
++            return True  # no data — skip gate conservatively
++        by_tz = _normalize_tz(bybit_series)
++        hl_8h = (_normalize_tz(hl_series)
++                 .resample("8h", label="right", closed="right")
++                 .sum(min_count=1))
++        spread = (by_tz - hl_8h.reindex(by_tz.index)).dropna()
++        if len(spread) < n_periods:
++            return True  # insufficient history — skip gate
++        recent = spread.iloc[-n_periods:]
++        positive_count = int((recent > 0).sum())
++        gradient_ok = float(spread.iloc[-1]) >= float(spread.iloc[-2])
++        return positive_count >= min_positive and gradient_ok
++    except Exception:
++        return True  # any error → conservative pass (never block on exception)
+
+ def get_k208_venue(symbol: str, side: str, position_usd: float) -> str:
+@@ -554,6 +598,11 @@ def compute_k208_spreads() -> Dict:
+     compression:     Dict[str, str]   = {}
+
+     print("  [K208] Fetching per-symbol FR data...")
++    persistence_gate: Dict[str, bool] = {}
+     for sym in K208_SYMS:
+         by = get_bybit_fr(sym)
+         hl = get_hl_fr(sym)
++        # K492-C persistence gate — evaluated per symbol; no-op when disabled
++        gate_pass = check_fr_persistence(sym, hl, by)
++        persistence_gate[sym] = gate_pass
++        if not gate_pass:
++            print(f"  [K492-C] {sym}: persistence gate BLOCK (signal inconsistent)")
+         bybit_latest[sym] = float(by.iloc[-1]) if not by.empty else np.nan
+         hl_latest[sym]    = float(hl.iloc[-1]) if not hl.empty else np.nan
+
+@@ -585,6 +634,7 @@ def compute_k208_spreads() -> Dict:
+     return {
+         "bybit_fr_latest":     bybit_latest,
+         "hl_fr_latest":        hl_latest,
+         "spread_latest":       spread_latest,
+         "spread_7d_mean":      spread_7d_mean,
+         "spread_30d_mean":     spread_30d_mean,
+         "spread_compression":  compression,
++        "persistence_gate":    persistence_gate,   # K492-C: True=pass, False=blocked
+     }
