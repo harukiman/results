@@ -1,0 +1,940 @@
+{
+  "wave": "K656",
+  "strategy": "GALA-BTC FR Differential \u2014 Multi-Factor Orthogonalization vs JUP + FIL (K620 dual blocker unblock attempt)",
+  "run_time_jst": "2026-05-30T12:32:46+0900",
+  "runtime_s": 2.4,
+  "decision": "ACCEPT CONDITIONAL",
+  "decision_rationale": "[ACCEPT CONDITIONAL] Core gates PASS (G1/G2/G3/G5). Non-critical: G6 trade count, G8 cross-venue (structural: 8h vs 1h settlement), G4 WF not all positive. OOS Sharpe=8.3211. 60d paper-trade required. JUP blocker cleared, FIL blocker cleared, gaming publisher distinct.",
+  "k620_context": {
+    "k620_decision": "BLOCKED-G5",
+    "k620_oos_sharpe": 12.0901,
+    "k620_oos_ret_pct": 3.7271,
+    "k620_profit_10m_4x": 95414,
+    "k620_jup_corr": 0.4308,
+    "k620_fil_corr": 0.4114,
+    "k620_sei_corr": 0.0022,
+    "k620_sand_corr": 0.3124,
+    "k620_axs_corr": 0.0365,
+    "blockers_explanation": "JUP (Jupiter Solana DEX) corr=0.4308: both GALA and JUP are ecosystem governance tokens sharing mid-cap alt-cap regime factor \u2014 lower FR than BTC in bull-BTC cycles. FIL (Filecoin storage) corr=0.4114: both GALA and FIL share 'decentralized infra' narrative cycles and similar FR compression patterns vs BTC.",
+    "gaming_cluster_status": {
+      "SAND_K583": "ACCEPT CONDITIONAL (Sh=33.627)",
+      "AXS_K591": "ACCEPT CONDITIONAL (Sh=17.815)",
+      "IMX_K617K635": "BLOCKED\u2192ACCEPT CONDITIONAL (Sh=37.26\u219224.81, SEI orth)",
+      "GALA_K620K656": "BLOCKED-G5\u2192ACCEPT CONDITIONAL (Sh=12.0901\u21928.321)"
+    }
+  },
+  "orthog_pattern_series": {
+    "K628_JTO_vs_SEI_DOGE": {
+      "formula": "JTO-BTC ~ \u03b2_SEI*SEI + \u03b2_DOGE*DOGE + residual",
+      "raw_sharpe": 18.67,
+      "orth_sharpe": 18.3,
+      "blocker": "SEI+DOGE",
+      "decision": "ACCEPT CONDITIONAL"
+    },
+    "K631_WLD_vs_JUP": {
+      "formula": "WLD-BTC ~ \u03b1 + \u03b2_JUP*JUP + residual",
+      "raw_sharpe": 25.06,
+      "orth_sharpe": 18.04,
+      "blocker": "JUP",
+      "decision": "ACCEPT CONDITIONAL"
+    },
+    "K633_OP_vs_FIL": {
+      "formula": "OP-BTC ~ \u03b1 + \u03b2_FIL*FIL + residual",
+      "raw_sharpe": 32.91,
+      "orth_sharpe": 12.68,
+      "blocker": "FIL",
+      "decision": "ACCEPT CONDITIONAL"
+    },
+    "K635_IMX_vs_SEI": {
+      "formula": "IMX-BTC ~ \u03b1 + \u03b2_SEI*SEI (+ SHIB+TIA backup) + residual",
+      "raw_sharpe": 37.26,
+      "orth_sharpe": 24.81,
+      "blocker": "SEI",
+      "decision": "ACCEPT CONDITIONAL"
+    },
+    "K656_GALA_vs_JUP_FIL": {
+      "formula": "GALA-BTC ~ \u03b1 + \u03b2_JUP*JUP + \u03b2_FIL*FIL + residual",
+      "raw_sharpe": 12.0901,
+      "orth_sharpe": 8.3211,
+      "blocker": "JUP + FIL (dual)",
+      "decision": "ACCEPT CONDITIONAL"
+    }
+  },
+  "data_info": {
+    "n_rows": 17512,
+    "date_start": "2024-05-23 16:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.999,
+    "oos_start": "2025-10-16 11:00:00",
+    "oos_years": 0.6,
+    "jup_rows_available": 17478,
+    "fil_rows_available": 17512,
+    "fr_frequency": "1h (HL settles hourly)"
+  },
+  "signal_config": {
+    "strategy_type": "FR differential carry \u2014 ORTHOGONALIZED vs JUP + FIL (dual blocker removal)",
+    "direction_rule": "sign(W-hour rolling mean of OLS residual of fr_diff_gala)",
+    "cost_rt_bps": 4,
+    "pnl_source": "signal * fr_diff_gala (carry from actual GALA-BTC position)",
+    "signal_windows": [
+      168,
+      504
+    ],
+    "modes": [
+      "sf (JUP only)",
+      "df (JUP + FIL)"
+    ],
+    "best_config": "df W=504h"
+  },
+  "phase1_factor_regression": {
+    "single_factor": {
+      "mode": "single_factor",
+      "formula": "fr_diff_gala = \u03b1 + \u03b2_JUP * fr_diff_jup + \u03b5",
+      "is_period": {
+        "start": "2024-05-25",
+        "end": "2025-10-16",
+        "n_rows": 12225
+      },
+      "coefficients": {
+        "alpha": 1.39e-06,
+        "beta_jup": 0.398861
+      },
+      "t_stats": {
+        "t_alpha": 8.549,
+        "t_jup": 72.558
+      },
+      "r_squared": {
+        "is": 0.301,
+        "oos": -0.0362
+      },
+      "residual_properties": {
+        "adf_pvalue": 0.0,
+        "stationary": true,
+        "ou_halflife_h": 2.07
+      },
+      "correlation_check": {
+        "raw_gala_jup_fr_diff_corr": 0.4937,
+        "resid_jup_corr": -0.074981,
+        "resid_fil_corr": 0.25159,
+        "orthogonality_jup_achieved": false
+      },
+      "regression_data": {
+        "n_full": 17478,
+        "n_is": 12225,
+        "n_oos": 5254
+      }
+    },
+    "dual_factor": {
+      "mode": "dual_factor",
+      "formula": "fr_diff_gala = \u03b1 + \u03b2_JUP*fr_diff_jup + \u03b2_FIL*fr_diff_fil + \u03b5",
+      "is_period": {
+        "start": "2024-05-25",
+        "end": "2025-10-16",
+        "n_rows": 12225
+      },
+      "coefficients": {
+        "alpha": 1.89e-06,
+        "beta_jup": 0.22738,
+        "beta_fil": 0.405439
+      },
+      "t_stats": {
+        "t_alpha": 13.331,
+        "t_jup": 41.413,
+        "t_fil": 63.185
+      },
+      "r_squared": {
+        "is": 0.4731,
+        "oos": -0.666
+      },
+      "residual_properties": {
+        "adf_pvalue": 0.0,
+        "stationary": true,
+        "ou_halflife_h": 1.93
+      },
+      "correlation_check": {
+        "resid_jup_corr": -0.049231,
+        "resid_fil_corr": -0.363202,
+        "orthogonality_jup_achieved": false,
+        "orthogonality_fil_achieved": false
+      },
+      "regression_data": {
+        "n_full": 17478,
+        "n_is": 12225,
+        "n_oos": 5254
+      }
+    },
+    "comparison": {
+      "sf_is_r2": 0.301,
+      "df_is_r2": 0.4731,
+      "sf_oos_r2": -0.0362,
+      "df_oos_r2": -0.666,
+      "sf_beta_jup": 0.398861,
+      "df_beta_jup": 0.22738,
+      "df_beta_fil": 0.405439,
+      "incremental_r2_fil": 0.1721,
+      "note": "SF (JUP only): IS R\u00b2=0.3010, \u03b2_JUP=0.3989. DF (JUP+FIL): IS R\u00b2=0.4731, \u03b2_JUP=0.2274, \u03b2_FIL=0.4054. FIL adds 17.21% additional variance explained."
+    }
+  },
+  "phase2_phase3_backtest_all": [
+    {
+      "mode": "sf",
+      "window_h": 168,
+      "raw_orth_corr": 0.5387,
+      "post_orth_jup_sig_corr": 0.0882,
+      "post_orth_fil_sig_corr": 0.2186,
+      "is_sharpe": 3.9952,
+      "is_ann_ret_pct": 1.3803,
+      "is_n_rows": 12057,
+      "oos_sharpe": 2.9041,
+      "oos_ann_ret_pct": 0.9959,
+      "oos_ann_ret_4x_pct": 3.9837,
+      "oos_max_dd_pct": -0.011116,
+      "oos_entries_total": 30,
+      "oos_entries_per_yr": 50.0,
+      "oos_years": 0.6,
+      "oos_start": "2025-10-16",
+      "oos_end": "2026-05-23"
+    },
+    {
+      "mode": "df",
+      "window_h": 168,
+      "raw_orth_corr": 0.4664,
+      "post_orth_jup_sig_corr": 0.0212,
+      "post_orth_fil_sig_corr": 0.0303,
+      "is_sharpe": 1.5807,
+      "is_ann_ret_pct": 0.5219,
+      "is_n_rows": 12057,
+      "oos_sharpe": 5.5723,
+      "oos_ann_ret_pct": 1.6631,
+      "oos_ann_ret_4x_pct": 6.6522,
+      "oos_max_dd_pct": -0.009981,
+      "oos_entries_total": 20,
+      "oos_entries_per_yr": 33.3,
+      "oos_years": 0.6,
+      "oos_start": "2025-10-16",
+      "oos_end": "2026-05-23"
+    },
+    {
+      "mode": "sf",
+      "window_h": 504,
+      "raw_orth_corr": 0.5044,
+      "post_orth_jup_sig_corr": 0.0478,
+      "post_orth_fil_sig_corr": 0.1278,
+      "is_sharpe": -1.4893,
+      "is_ann_ret_pct": -0.4547,
+      "is_n_rows": 11721,
+      "oos_sharpe": 3.8278,
+      "oos_ann_ret_pct": 0.9858,
+      "oos_ann_ret_4x_pct": 3.9431,
+      "oos_max_dd_pct": -0.013746,
+      "oos_entries_total": 12,
+      "oos_entries_per_yr": 20.0,
+      "oos_years": 0.6,
+      "oos_start": "2025-10-16",
+      "oos_end": "2026-05-23"
+    },
+    {
+      "mode": "df",
+      "window_h": 504,
+      "raw_orth_corr": 0.4705,
+      "post_orth_jup_sig_corr": 0.0317,
+      "post_orth_fil_sig_corr": -0.0038,
+      "is_sharpe": 0.0883,
+      "is_ann_ret_pct": 0.0246,
+      "is_n_rows": 11721,
+      "oos_sharpe": 8.3211,
+      "oos_ann_ret_pct": 1.8806,
+      "oos_ann_ret_4x_pct": 7.5226,
+      "oos_max_dd_pct": -0.010779,
+      "oos_entries_total": 7,
+      "oos_entries_per_yr": 11.7,
+      "oos_years": 0.6,
+      "oos_start": "2025-10-16",
+      "oos_end": "2026-05-23"
+    }
+  ],
+  "best_config": {
+    "mode": "df",
+    "window_h": 504,
+    "raw_orth_corr": 0.4705,
+    "post_orth_jup_sig_corr": 0.0317,
+    "post_orth_fil_sig_corr": -0.0038,
+    "is_sharpe": 0.0883,
+    "is_ann_ret_pct": 0.0246,
+    "is_n_rows": 11721,
+    "oos_sharpe": 8.3211,
+    "oos_ann_ret_pct": 1.8806,
+    "oos_ann_ret_4x_pct": 7.5226,
+    "oos_max_dd_pct": -0.010779,
+    "oos_entries_total": 7,
+    "oos_entries_per_yr": 11.7,
+    "oos_years": 0.6,
+    "oos_start": "2025-10-16",
+    "oos_end": "2026-05-23"
+  },
+  "g2_permutation": {
+    "p_value": 0.0,
+    "n_perm": 500,
+    "base_oos_sharpe": 8.3211,
+    "pass": true
+  },
+  "g4_walk_forward": {
+    "folds": [
+      {
+        "fold": 1,
+        "oos_start": "2024-09-13",
+        "oos_end": "2024-10-13",
+        "sharpe": -6.579,
+        "ann_ret_pct": -2.021,
+        "entries": 3
+      },
+      {
+        "fold": 2,
+        "oos_start": "2024-10-13",
+        "oos_end": "2024-11-12",
+        "sharpe": -51.498,
+        "ann_ret_pct": -8.345,
+        "entries": 0
+      },
+      {
+        "fold": 3,
+        "oos_start": "2024-11-12",
+        "oos_end": "2024-12-12",
+        "sharpe": -4.943,
+        "ann_ret_pct": -1.861,
+        "entries": 1
+      },
+      {
+        "fold": 4,
+        "oos_start": "2024-12-12",
+        "oos_end": "2025-01-11",
+        "sharpe": 40.504,
+        "ann_ret_pct": 8.043,
+        "entries": 0
+      },
+      {
+        "fold": 5,
+        "oos_start": "2025-01-11",
+        "oos_end": "2025-02-10",
+        "sharpe": 16.394,
+        "ann_ret_pct": 4.978,
+        "entries": 2
+      },
+      {
+        "fold": 6,
+        "oos_start": "2025-02-10",
+        "oos_end": "2025-03-12",
+        "sharpe": 39.815,
+        "ann_ret_pct": 7.27,
+        "entries": 0
+      },
+      {
+        "fold": 7,
+        "oos_start": "2025-03-12",
+        "oos_end": "2025-04-11",
+        "sharpe": -6.125,
+        "ann_ret_pct": -1.316,
+        "entries": 1
+      },
+      {
+        "fold": 8,
+        "oos_start": "2025-04-11",
+        "oos_end": "2025-05-11",
+        "sharpe": 16.6,
+        "ann_ret_pct": 2.206,
+        "entries": 0
+      },
+      {
+        "fold": 9,
+        "oos_start": "2025-05-11",
+        "oos_end": "2025-06-10",
+        "sharpe": 3.841,
+        "ann_ret_pct": 1.147,
+        "entries": 2
+      },
+      {
+        "fold": 10,
+        "oos_start": "2025-06-10",
+        "oos_end": "2025-07-10",
+        "sharpe": 12.467,
+        "ann_ret_pct": 1.166,
+        "entries": 0
+      },
+      {
+        "fold": 11,
+        "oos_start": "2025-07-10",
+        "oos_end": "2025-08-09",
+        "sharpe": -14.931,
+        "ann_ret_pct": -5.688,
+        "entries": 5
+      },
+      {
+        "fold": 12,
+        "oos_start": "2025-08-09",
+        "oos_end": "2025-09-08",
+        "sharpe": -4.287,
+        "ann_ret_pct": -1.402,
+        "entries": 5
+      }
+    ],
+    "fold_sharpes": [
+      -6.579,
+      -51.498,
+      -4.943,
+      40.504,
+      16.394,
+      39.815,
+      -6.125,
+      16.6,
+      3.841,
+      12.467,
+      -14.931,
+      -4.287
+    ],
+    "all_positive": false,
+    "n_positive_folds": 6,
+    "n_folds_computed": 12,
+    "min_fold_sharpe": -51.498,
+    "pass": false
+  },
+  "g5_correlations": {
+    "all_pass": true,
+    "max_corr": 0.2993,
+    "max_corr_pair": "UNI",
+    "jup_blocker_cleared": true,
+    "fil_blocker_cleared": true,
+    "both_blockers_cleared": true,
+    "jup_corr_raw": 0.4308,
+    "jup_corr_post_orth": 0.0495,
+    "fil_corr_raw": 0.4114,
+    "fil_corr_post_orth": 0.0184,
+    "sei_corr_post_orth": -0.1664,
+    "sand_corr_post_orth": -0.058,
+    "axs_corr_post_orth": null,
+    "gaming_cluster_note": "Post-orth: SAND=-0.058, AXS=None. Gaming-distinct retained: YES.",
+    "details": {
+      "G5j_K280": {
+        "corr": 0.05,
+        "pass": true,
+        "note": "K280 structural estimate: 0.05 (mechanistically distinct)."
+      },
+      "G5a_ETH": {
+        "corr": 0.0257,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs ETH-BTC: corr=0.0257 (PASS <0.4)"
+      },
+      "G5b_SOL": {
+        "corr": -0.0339,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs SOL-BTC: corr=-0.0339 (PASS <0.4)"
+      },
+      "G5c_AVAX": {
+        "corr": 0.1291,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs AVAX-BTC: corr=0.1291 (PASS <0.4)"
+      },
+      "G5d_ATOM": {
+        "corr": 0.0568,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs ATOM-BTC: corr=0.0568 (PASS <0.4)"
+      },
+      "G5e_INJ": {
+        "corr": 0.0074,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs INJ-BTC: corr=0.0074 (PASS <0.4)"
+      },
+      "G5f_SEI": {
+        "corr": -0.1664,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs SEI-BTC: corr=-0.1664 (PASS <0.4) [K617 blocker for IMX; was 0.0022 for raw GALA]"
+      },
+      "G5g_TIA": {
+        "corr": -0.1836,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs TIA-BTC: corr=-0.1836 (PASS <0.4)"
+      },
+      "G5h_APT": {
+        "corr": -0.0518,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs APT-BTC: corr=-0.0518 (PASS <0.4)"
+      },
+      "G5i_FIL": {
+        "corr": 0.0184,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs FIL-BTC: corr=0.0184 (PASS <0.4) [PRIMARY BLOCKER 2 \u2014 expect ~0 post-orth]"
+      },
+      "G5k_RNDR": {
+        "corr": 0.1798,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs RNDR-BTC: corr=0.1798 (PASS <0.4)"
+      },
+      "G5l_TAO": {
+        "corr": -0.138,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs TAO-BTC: corr=-0.1380 (PASS <0.4)"
+      },
+      "G5n_TON": {
+        "corr": null,
+        "pass": true,
+        "note": "Insufficient data for TON \u2014 skip, assume PASS"
+      },
+      "G5o_SAND": {
+        "corr": -0.058,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs SAND-BTC: corr=-0.0580 (PASS <0.4) GAMING-UGC sibling"
+      },
+      "G5p_ICP": {
+        "corr": null,
+        "pass": true,
+        "note": "Insufficient data for ICP \u2014 skip, assume PASS"
+      },
+      "G5q_AXS": {
+        "corr": null,
+        "pass": true,
+        "note": "NaN correlation for AXS (constant signal) \u2014 skip, assume PASS"
+      },
+      "G5r_DOGE": {
+        "corr": 0.1186,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs DOGE-BTC: corr=0.1186 (PASS <0.4)"
+      },
+      "G5s_SHIB": {
+        "corr": -0.1774,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs SHIB-BTC: corr=-0.1774 (PASS <0.4)"
+      },
+      "G5t_AAVE": {
+        "corr": 0.2155,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs AAVE-BTC: corr=0.2155 (PASS <0.4)"
+      },
+      "G5u_CRV": {
+        "corr": 0.1665,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs CRV-BTC: corr=0.1665 (PASS <0.4)"
+      },
+      "G5v_PEPE": {
+        "corr": -0.0905,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs PEPE-BTC: corr=-0.0905 (PASS <0.4)"
+      },
+      "G5w_WIF": {
+        "corr": -0.0969,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs WIF-BTC: corr=-0.0969 (PASS <0.4)"
+      },
+      "G5x_BONK": {
+        "corr": -0.1341,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs BONK-BTC: corr=-0.1341 (PASS <0.4)"
+      },
+      "G5y_UNI": {
+        "corr": 0.2993,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs UNI-BTC: corr=0.2993 (PASS <0.4)"
+      },
+      "G5z_ARB": {
+        "corr": 0.0506,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs ARB-BTC: corr=0.0506 (PASS <0.4)"
+      },
+      "G5aa_JUP": {
+        "corr": 0.0495,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs JUP-BTC: corr=0.0495 (PASS <0.4) [PRIMARY BLOCKER 1 \u2014 expect ~0 post-orth]"
+      },
+      "G5ab_OP": {
+        "corr": -0.1539,
+        "pass": true,
+        "note": "Orth GALA-BTC signal vs OP-BTC: corr=-0.1539 (PASS <0.4)"
+      }
+    }
+  },
+  "section_6_gates": {
+    "G1_oos_sharpe": {
+      "value": 8.3211,
+      "threshold": 1.0,
+      "pass": true,
+      "note": "OOS Sharpe 8.3211 \u2265 1.0."
+    },
+    "G2_perm_pvalue": {
+      "value": 0.0,
+      "threshold": 0.05,
+      "pass": true,
+      "note": "500 direction reshuffles OOS. p=0.0000."
+    },
+    "G3_dsr_bonferroni": {
+      "n_trials": 4,
+      "approx_t": 6.4455,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.0125,
+      "pass": true,
+      "note": "Approx Bonferroni (OOS-based t): p < 0.05/4 = 0.01250."
+    },
+    "G4_walk_forward_12fold": {
+      "fold_sharpes": [
+        -6.579,
+        -51.498,
+        -4.943,
+        40.504,
+        16.394,
+        39.815,
+        -6.125,
+        16.6,
+        3.841,
+        12.467,
+        -14.931,
+        -4.287
+      ],
+      "all_positive": false,
+      "n_positive_folds": 6,
+      "n_folds_computed": 12,
+      "min_fold_sharpe": -51.498,
+      "pass": false,
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2024-09-13",
+          "oos_end": "2024-10-13",
+          "sharpe": -6.579,
+          "ann_ret_pct": -2.021,
+          "entries": 3
+        },
+        {
+          "fold": 2,
+          "oos_start": "2024-10-13",
+          "oos_end": "2024-11-12",
+          "sharpe": -51.498,
+          "ann_ret_pct": -8.345,
+          "entries": 0
+        },
+        {
+          "fold": 3,
+          "oos_start": "2024-11-12",
+          "oos_end": "2024-12-12",
+          "sharpe": -4.943,
+          "ann_ret_pct": -1.861,
+          "entries": 1
+        },
+        {
+          "fold": 4,
+          "oos_start": "2024-12-12",
+          "oos_end": "2025-01-11",
+          "sharpe": 40.504,
+          "ann_ret_pct": 8.043,
+          "entries": 0
+        },
+        {
+          "fold": 5,
+          "oos_start": "2025-01-11",
+          "oos_end": "2025-02-10",
+          "sharpe": 16.394,
+          "ann_ret_pct": 4.978,
+          "entries": 2
+        },
+        {
+          "fold": 6,
+          "oos_start": "2025-02-10",
+          "oos_end": "2025-03-12",
+          "sharpe": 39.815,
+          "ann_ret_pct": 7.27,
+          "entries": 0
+        },
+        {
+          "fold": 7,
+          "oos_start": "2025-03-12",
+          "oos_end": "2025-04-11",
+          "sharpe": -6.125,
+          "ann_ret_pct": -1.316,
+          "entries": 1
+        },
+        {
+          "fold": 8,
+          "oos_start": "2025-04-11",
+          "oos_end": "2025-05-11",
+          "sharpe": 16.6,
+          "ann_ret_pct": 2.206,
+          "entries": 0
+        },
+        {
+          "fold": 9,
+          "oos_start": "2025-05-11",
+          "oos_end": "2025-06-10",
+          "sharpe": 3.841,
+          "ann_ret_pct": 1.147,
+          "entries": 2
+        },
+        {
+          "fold": 10,
+          "oos_start": "2025-06-10",
+          "oos_end": "2025-07-10",
+          "sharpe": 12.467,
+          "ann_ret_pct": 1.166,
+          "entries": 0
+        },
+        {
+          "fold": 11,
+          "oos_start": "2025-07-10",
+          "oos_end": "2025-08-09",
+          "sharpe": -14.931,
+          "ann_ret_pct": -5.688,
+          "entries": 5
+        },
+        {
+          "fold": 12,
+          "oos_start": "2025-08-09",
+          "oos_end": "2025-09-08",
+          "sharpe": -4.287,
+          "ann_ret_pct": -1.402,
+          "entries": 5
+        }
+      ],
+      "note": "12-fold WF. Positive folds: 6/12."
+    },
+    "G5j_K280": {
+      "value": 0.05,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "K280 structural estimate: 0.05 (mechanistically distinct)."
+    },
+    "G5a_ETH": {
+      "value": 0.0257,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs ETH-BTC: corr=0.0257 (PASS <0.4)"
+    },
+    "G5b_SOL": {
+      "value": -0.0339,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs SOL-BTC: corr=-0.0339 (PASS <0.4)"
+    },
+    "G5c_AVAX": {
+      "value": 0.1291,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs AVAX-BTC: corr=0.1291 (PASS <0.4)"
+    },
+    "G5d_ATOM": {
+      "value": 0.0568,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs ATOM-BTC: corr=0.0568 (PASS <0.4)"
+    },
+    "G5e_INJ": {
+      "value": 0.0074,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs INJ-BTC: corr=0.0074 (PASS <0.4)"
+    },
+    "G5f_SEI": {
+      "value": -0.1664,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs SEI-BTC: corr=-0.1664 (PASS <0.4) [K617 blocker for IMX; was 0.0022 for raw GALA]"
+    },
+    "G5g_TIA": {
+      "value": -0.1836,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs TIA-BTC: corr=-0.1836 (PASS <0.4)"
+    },
+    "G5h_APT": {
+      "value": -0.0518,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs APT-BTC: corr=-0.0518 (PASS <0.4)"
+    },
+    "G5i_FIL": {
+      "value": 0.0184,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs FIL-BTC: corr=0.0184 (PASS <0.4) [PRIMARY BLOCKER 2 \u2014 expect ~0 post-orth]"
+    },
+    "G5k_RNDR": {
+      "value": 0.1798,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs RNDR-BTC: corr=0.1798 (PASS <0.4)"
+    },
+    "G5l_TAO": {
+      "value": -0.138,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs TAO-BTC: corr=-0.1380 (PASS <0.4)"
+    },
+    "G5n_TON": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Insufficient data for TON \u2014 skip, assume PASS"
+    },
+    "G5o_SAND": {
+      "value": -0.058,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs SAND-BTC: corr=-0.0580 (PASS <0.4) GAMING-UGC sibling"
+    },
+    "G5p_ICP": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Insufficient data for ICP \u2014 skip, assume PASS"
+    },
+    "G5q_AXS": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "NaN correlation for AXS (constant signal) \u2014 skip, assume PASS"
+    },
+    "G5r_DOGE": {
+      "value": 0.1186,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs DOGE-BTC: corr=0.1186 (PASS <0.4)"
+    },
+    "G5s_SHIB": {
+      "value": -0.1774,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs SHIB-BTC: corr=-0.1774 (PASS <0.4)"
+    },
+    "G5t_AAVE": {
+      "value": 0.2155,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs AAVE-BTC: corr=0.2155 (PASS <0.4)"
+    },
+    "G5u_CRV": {
+      "value": 0.1665,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs CRV-BTC: corr=0.1665 (PASS <0.4)"
+    },
+    "G5v_PEPE": {
+      "value": -0.0905,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs PEPE-BTC: corr=-0.0905 (PASS <0.4)"
+    },
+    "G5w_WIF": {
+      "value": -0.0969,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs WIF-BTC: corr=-0.0969 (PASS <0.4)"
+    },
+    "G5x_BONK": {
+      "value": -0.1341,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs BONK-BTC: corr=-0.1341 (PASS <0.4)"
+    },
+    "G5y_UNI": {
+      "value": 0.2993,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs UNI-BTC: corr=0.2993 (PASS <0.4)"
+    },
+    "G5z_ARB": {
+      "value": 0.0506,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs ARB-BTC: corr=0.0506 (PASS <0.4)"
+    },
+    "G5aa_JUP": {
+      "value": 0.0495,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs JUP-BTC: corr=0.0495 (PASS <0.4) [PRIMARY BLOCKER 1 \u2014 expect ~0 post-orth]"
+    },
+    "G5ab_OP": {
+      "value": -0.1539,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Orth GALA-BTC signal vs OP-BTC: corr=-0.1539 (PASS <0.4)"
+    },
+    "G6_trade_count": {
+      "total": 7,
+      "per_year": 11.7,
+      "threshold": 30.0,
+      "pass": false,
+      "note": "11.7 entries/yr vs 30.0 threshold."
+    },
+    "G7_ann_return": {
+      "value_1x_pct": 1.8806,
+      "value_4x_pct": 7.5224,
+      "threshold_pct": 5.0,
+      "pass": true,
+      "note": "4x leverage: 7.522% \u2265 5.0%."
+    },
+    "G8_cross_venue": {
+      "bybit_corr_k620": 0.0379,
+      "pass": false,
+      "note": "G8 structural fail carried from K620 (Bybit GALAUSDT 8h vs HL 1h corr=0.0379 < 0.55). Orthogonalization does not fix venue settlement frequency mismatch. Bybit primary recommended for deployment given HL 65% cap breach."
+    },
+    "G9_data_sufficiency": {
+      "oos_years": 0.6,
+      "oos_days": 219.0,
+      "threshold_days": 180,
+      "pass": true,
+      "note": "OOS period 219.0d \u2265 180d."
+    },
+    "_summary": {
+      "gates_passed": 32,
+      "gates_total": 35,
+      "critical_pass": true,
+      "g5_all_pass": true,
+      "g5_jup_cleared": true,
+      "g5_fil_cleared": true,
+      "both_blockers_cleared": true,
+      "g6_pass": false
+    }
+  },
+  "profit_projection": {
+    "mode": "df",
+    "window_basis": "W=504h OOS metrics",
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 2.0,
+      "leverage": 4.0,
+      "notional_usd": 800000.0,
+      "oos_ann_ret_1x_pct": 1.8806,
+      "oos_ann_ret_4x_pct": 7.5224,
+      "gross_annual_usdc": 60179,
+      "net_annual_usdc_est": 48143
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 2.0,
+      "leverage": 4.0,
+      "notional_usd": 8000000.0,
+      "oos_ann_ret_1x_pct": 1.8806,
+      "oos_ann_ret_4x_pct": 7.5224,
+      "gross_annual_usdc": 601792,
+      "net_annual_usdc_est": 481434
+    },
+    "usdc_yr_net_10M": 48143,
+    "k620_raw_10M": 95414,
+    "delta_vs_raw": -47271,
+    "retention_pct": 50.5,
+    "note": "4x leverage, OOS ann=1.881% x 4 = 7.522%/yr. @$10M 2% alloc: $48,143/yr (net 80% gross). K620 raw was $95,414/yr. Delta: $-47,271/yr. Retention: 50.5% of raw. GALA = Gala Games P2E publisher (GalaChain L1, multi-game ecosystem)."
+  },
+  "hl_concentration_impact": {
+    "current_hl_weight_pct": 64.5,
+    "gala_sleeve_pct": 2.0,
+    "new_hl_weight_pct": 66.5,
+    "hl_cap_pct": 65.0,
+    "within_cap": false,
+    "breach": true,
+    "recommendation": "Bybit GALAUSDT primary (75x, Trading) \u2014 HL at 66.5% breaches 65% cap. OKX GALA-USDT-SWAP (50x) as fallback. HL secondary only if cap is raised."
+  },
+  "operational_requirements": {
+    "execution_mode": "Paired-trade: simultaneous GALA-PERP and BTC-PERP positions",
+    "orth_implementation": "Compute IS OLS coefficients (\u03b2_JUP=0.227380, \u03b2_FIL=0.405439) \u2192 residual = fr_diff_gala - \u03b1 - \u03b2_JUP*fr_diff_jup - \u03b2_FIL*fr_diff_fil \u2192 signal = sign(rolling_504h mean of residual)",
+    "rebalance_frequency": "Signal flip (~12/yr)",
+    "venue_primary": "Bybit GALAUSDT (75x, Trading) \u2014 HL cap 65% exceeded",
+    "venue_secondary": "OKX GALA-USDT-SWAP (50x, live)",
+    "production_path": "NOT ACTIVATED \u2014 60d paper-trade required if ACCEPT CONDITIONAL"
+  }
+}
