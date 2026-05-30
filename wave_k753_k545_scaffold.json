@@ -1,0 +1,122 @@
+{
+  "wave": "K753",
+  "title": "K545 Tax Loss Harvester Full Scaffold (70th Daemon)",
+  "generated_jst": "2026-05-30 20:30 JST",
+  "disclaimer": "INFORMATIONAL ONLY. NOT TAX ADVICE. User must consult a licensed CPA.",
+  "mission_fit": "K753 builds the production-grade K545 scaffold that was pending in Phase A. Profit-max mandate: +$185K/yr central tax shield @$10M 37% rate. 1-step activation.",
+
+  "audit": {
+    "existing_k444_loss_harvester_py": "PRESENT — 729 LOC, Phase 11 PASS, K444 concept",
+    "existing_k545_wave_files": "PRESENT — K545 wave JSON/py/md at repo root",
+    "k545_tax_harvester_py": "NEW (K753) — full scaffold 490 LOC, scan+identify+execute+reentry",
+    "k545_plist": "NEW (K753) — com.cryptolab.k545-tax-harvester.plist, 70th daemon, daily 03:00 UTC",
+    "relationship": "K753 upgrades K444 concept to production daemon with paper-mode default, K523 3-point, multi-venue reentry, regime stress guard"
+  },
+
+  "deliverables": {
+    "scripts/k545_tax_harvester.py": {
+      "lines": "~490 LOC",
+      "key_functions": [
+        "scan_open_positions() — AUM state + K302a/K443 trade logs + K545 explicit tracking",
+        "identify_loss_candidates() — min_loss filter + wash-sale window + regime stress guard",
+        "execute_harvest() — paper default, LIVE requires explicit flag, max_harvest_usd cap",
+        "reentry_after_window() — wash-sale window expiry check, multi-venue routing",
+        "compute_k523_projection() — 3-point conservative/central/optimistic",
+        "write_dashboard() — data/k545_tax_harvester_dashboard.json",
+        "run_mock_test() — synthetic ETH/LINK/AVAX positions, K523 assertion"
+      ],
+      "k339_pattern": "REPO_ROOT = Path(__file__).resolve().parent.parent",
+      "paper_mode": "PAPER_TRADE=True default, LIVE requires explicit --live + env PAPER_TRADE=False",
+      "status": "SCAFFOLD-READY"
+    },
+    "scripts/com.cryptolab.k545-tax-harvester.plist": {
+      "label": "com.cryptolab.k545-tax-harvester",
+      "daemon_number": 70,
+      "schedule": "Daily 03:00 UTC (12:00 JST, low-vol window)",
+      "run_at_load": false,
+      "paper_trade_default": "True (env var)",
+      "env_vars": ["PAPER_TRADE=True", "TAX_RATE_PCT=37", "TAX_JURISDICTION=US_STCG", "MIN_LOSS_THRESHOLD_USD=500", "MAX_HARVEST_USD=50000", "WASH_SALE_DAYS=30", "MAX_DD_CANCEL_PCT=15"],
+      "activation_1step": "sed -i '' 's|CRYPTO_LAB_PATH|$(pwd)|' scripts/com.cryptolab.k545-tax-harvester.plist && cp scripts/com.cryptolab.k545-tax-harvester.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.k545-tax-harvester.plist",
+      "status": "SCAFFOLD-READY"
+    },
+    "wave_k753_k545_scaffold.py": "Wave runner script",
+    "wave_k753_k545_scaffold.json": "This file",
+    "wave_k753_k545_scaffold.md": "User runbook addendum",
+    "scripts/verify_deployment_status.py": "70th daemon entry added to REGISTRY",
+    "docs/k302a_runbook.md": "§69 K545 Tax Loss Harvester section added",
+    "report.html": "K753 K545 TAX HARVESTER READY badge + K523 3-point shield"
+  },
+
+  "harvest_logic": {
+    "scan_trigger": "Daily 03:00 UTC via launchd",
+    "year_end_window": "Dec 15-31 (primary harvest period)",
+    "min_loss_threshold_usd": 500,
+    "max_harvest_per_run_usd": 50000,
+    "wash_sale_window_days": 30,
+    "wash_sale_note": "Conservative 30d for US; 0d for JP/KOR/DE (no crypto wash-sale equivalent as of 2026-05). User confirms with CPA.",
+    "multi_venue_reentry": "Close HL -> re-enter Bybit; Close Bybit -> re-enter HL; OKX as 3rd venue",
+    "regime_stress_cancel": "Cancel harvest if portfolio max_dd > 15%",
+    "basis_method": "FIFO (default); K302a/K443 trade logs as source of truth"
+  },
+
+  "k523_3point_shield": {
+    "aum_usd": 10000000,
+    "tax_rate_pct": 37,
+    "k523_mandate": "Single-number projection PROHIBITED (K523 rule)",
+    "gross_tax_shield_usd": {
+      "conservative": 74000,
+      "central": 185000,
+      "optimistic": 370000,
+      "basis": "conservative=$200K losses/yr, central=$500K, optimistic=$1M @$10M AUM"
+    },
+    "k518_realized_shield_usd": {
+      "conservative": 28120,
+      "central": 70300,
+      "optimistic": 140600,
+      "k518_haircut": "38% realized-to-stated ratio (K518 floor)"
+    },
+    "disclaimer": "INFORMATIONAL ONLY. NOT TAX ADVICE."
+  },
+
+  "safeguards": {
+    "live_auto_change_prohibited": true,
+    "paper_mode_default": true,
+    "live_requires": ["--live flag explicit", "PAPER_TRADE=False env var", "CPA consultation documented"],
+    "min_loss_threshold": "$500 per harvest (avoid micro-harvest overhead)",
+    "max_harvest_run": "$50K per run (avoid market impact)",
+    "wash_sale_conservative": "30d default (US_STCG); 0d available for JP/KOR/DE",
+    "regime_stress_guard": "max_dd > 15% -> cancel harvest",
+    "reversibility": "Set PAPER_TRADE=True + launchctl reload -> no harvests, no re-entry"
+  },
+
+  "1step_activation": {
+    "prerequisites": [
+      "1. Consult CPA: confirm marginal rate, jurisdiction, wash-sale treatment",
+      "2. python3 scripts/k545_tax_harvester.py --set-rate <RATE> --set-juris <JURIS>",
+      "3. python3 scripts/k545_tax_harvester.py --mock-test  (verify PASS)"
+    ],
+    "activate": "sed -i '' 's|CRYPTO_LAB_PATH|/path/to/crypto-lab|' scripts/com.cryptolab.k545-tax-harvester.plist && cp scripts/com.cryptolab.k545-tax-harvester.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.cryptolab.k545-tax-harvester.plist",
+    "verify": "launchctl list | grep k545-tax-harvester && python3 scripts/k545_tax_harvester.py --status",
+    "live_upgrade": "Edit PAPER_TRADE=False in plist + add --live to ProgramArguments + launchctl unload/load"
+  },
+
+  "daemon_registry": {
+    "label": "com.cryptolab.k545-tax-harvester",
+    "number": 70,
+    "prior_k444": {
+      "label": "com.cryptolab.loss-harvester",
+      "number": 18,
+      "status": "SCAFFOLD-READY (annual Dec 28 trigger, K444 concept)"
+    },
+    "k753_upgrade": "K545 daemon (70th) replaces/extends K444 with daily monitoring + full harvest logic"
+  },
+
+  "report_html_badge": {
+    "id": "k753-k545-badge",
+    "title": "K753 K545 TAX HARVESTER READY",
+    "shield_central": "$185K/yr",
+    "daemon": "70th daemon",
+    "schedule": "Daily 03:00 UTC",
+    "mode": "PAPER default"
+  }
+}

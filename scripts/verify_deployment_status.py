@@ -490,6 +490,13 @@ REGISTRY: list[DaemonSpec] = [
         log_basename="k747_tao_sol",
         expected_html_status="SCAFFOLD-READY",  # K750: plist in scripts/ (gitignored); activate after 60d gate (Sh>=6 + fill>=60% + maxDD<15%) AND K498 OKX reduces HL% below 65%
     ),
+    DaemonSpec(
+        label="com.cryptolab.k545-tax-harvester",
+        purpose="K545 Tax Loss Harvester (K753 full scaffold: daily 03:00 UTC, paper-mode default, scan_open_positions+identify_loss_candidates+execute_harvest+reentry_after_window, min_loss $500, max_harvest $50K/run, wash-sale 30d conservative, regime-stress cancel max_dd>15%, K523 3-point shield: conservative $74K / central $185K / optimistic $370K @$10M 37%, multi-venue reentry HL/Bybit/OKX, LIVE requires explicit --live + PAPER_TRADE=False, NOT TAX ADVICE, 70th daemon, K753 scaffold)",
+        scripts=["scripts/k545_tax_harvester.py"],
+        log_basename="k545_tax_harvester",
+        expected_html_status="SCAFFOLD-READY",  # K753: plist in scripts/ (gitignored); 1-step activation: sed CRYPTO_LAB_PATH + cp plist + launchctl load; LIVE requires CPA review + explicit --live flag
+    ),
 ]
 
 

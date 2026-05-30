@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.cryptolab.k545-tax-harvester</string>
+
+	<!-- K753 K545: 70th daemon — daily 03:00 UTC (low-vol window)        -->
+	<!-- Dec 15-31: year-end harvest focus; rest of year: daily monitoring -->
+	<!-- PAPER_TRADE=True default — LIVE requires explicit env var change   -->
+	<!-- K339: script uses REPO_ROOT = Path(__file__).resolve().parent.parent -->
+	<key>ProgramArguments</key>
+	<array>
+		<string>/usr/bin/python3</string>
+		<string>scripts/k545_tax_harvester.py</string>
+		<string>--harvest</string>
+	</array>
+
+	<!-- WorkingDirectory must be repo root for K339 REPO_ROOT resolution -->
+	<key>WorkingDirectory</key>
+	<string>CRYPTO_LAB_PATH</string>
+
+	<!-- Daily 03:00 UTC = 12:00 JST (low-vol window, K280 off-peak) -->
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Hour</key>
+		<integer>3</integer>
+		<key>Minute</key>
+		<integer>0</integer>
+	</dict>
+
+	<key>RunAtLoad</key>
+	<false/>
+
+	<key>StandardOutPath</key>
+	<string>logs/k545_tax_harvester.log</string>
+
+	<key>StandardErrorPath</key>
+	<string>logs/k545_tax_harvester.err</string>
+
+	<key>TimeOut</key>
+	<integer>180</integer>
+
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PATH</key>
+		<string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+		<!-- PAPER_TRADE=True is the mandatory default.                         -->
+		<!-- To enable LIVE harvesting:                                         -->
+		<!--   Step 1: Consult CPA and confirm marginal rate + jurisdiction      -->
+		<!--   Step 2: python3 scripts/k545_tax_harvester.py --set-rate 37       -->
+		<!--           python3 scripts/k545_tax_harvester.py --set-juris US_STCG -->
+		<!--   Step 3: Change PAPER_TRADE to False below                        -->
+		<!--   Step 4: Add --live to ProgramArguments above                     -->
+		<!--   Step 5: launchctl unload + load to apply                         -->
+		<!--   LIVE auto-change PROHIBITED (K753 constraint)                    -->
+		<key>PAPER_TRADE</key>
+		<string>True</string>
+		<key>TAX_RATE_PCT</key>
+		<string>37</string>
+		<key>TAX_JURISDICTION</key>
+		<string>US_STCG</string>
+		<key>MIN_LOSS_THRESHOLD_USD</key>
+		<string>500</string>
+		<key>MAX_HARVEST_USD</key>
+		<string>50000</string>
+		<key>WASH_SALE_DAYS</key>
+		<string>30</string>
+		<key>MAX_DD_CANCEL_PCT</key>
+		<string>15</string>
+	</dict>
+
+</dict>
+</plist>

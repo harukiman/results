@@ -13237,3 +13237,229 @@ git commit -m 'v6.52: K751 Kelly-optimal weights (+\$195K/yr central K523)'
 | K509 | K208 decay confirmed (-67% Y/Y): justifies K280 ≥30% floor |
 | K524 | HL 65% cap exact: K751 fixes v6.51 violation (66.8% → 53.6%) |
 | K523 | 3-point projection mandate (conservative/central/optimistic required) |
+
+---
+
+## §69 K545 Tax Loss Harvester (K753 Scaffold, 70th Daemon)
+
+**Wave:** K753 | **Generated:** 2026-05-30 | **Status:** SCAFFOLD-READY  
+**DISCLAIMER: INFORMATIONAL ONLY. NOT TAX ADVICE. Consult a licensed CPA before any action.**
+
+---
+
+### §69.1 Overview
+
+K753 builds the production-grade K545 tax loss harvester as the **70th daemon** — a daily monitoring + year-end harvest automation tool. It upgrades the K444 concept (18th daemon, annual Dec 28 trigger) to a full daily scan + harvest pipeline with paper-mode default.
+
+**K523 3-Point Tax Shield @$10M AUM, 37% rate (INFORMATIONAL ONLY):**
+
+| Scenario | Losses Harvested/yr | Gross Tax Shield | K518 Realized |
+|----------|---------------------|------------------|---------------|
+| Conservative | $200K | **$74K/yr** | $28K/yr |
+| Central | $500K | **$185K/yr** | $70K/yr |
+| Optimistic | $1M | **$370K/yr** | $141K/yr |
+
+K518 realized-to-stated ratio: 38% (floor haircut applied).
+
+---
+
+### §69.2 Architecture
+
+```
+K545 Tax Harvester (70th daemon)
+  ↓  Daily 03:00 UTC via launchd
+  scripts/k545_tax_harvester.py --harvest
+
+  scan_open_positions()
+    ← AUM state (K544 compatibility)
+    ← K302a/K443 trade logs (JSONL)
+    ← K545 explicit position tracker
+
+  identify_loss_candidates()
+    ← min_loss $500 threshold
+    ← wash-sale window check (30d US conservative; 0d JP/KOR/DE)
+    ← regime stress guard (cancel if max_dd > 15%)
+    → sorted by loss DESC
+
+  execute_harvest()
+    ← PAPER mode default (LIVE requires explicit flag + env var)
+    ← max $50K per run cap
+    → writes K545_HARVEST_LOG_JSONL
+    → updates K545 state JSON
+
+  reentry_after_window()
+    ← check wash-sale window expiry
+    → recommend re-entry via alternate venue
+
+Multi-venue re-entry routing:
+  Close HL    → re-enter Bybit
+  Close Bybit → re-enter HL
+  OKX         → 3rd venue fallback
+```
+
+---
+
+### §69.3 Daemon Specification
+
+| Property | Value |
+|----------|-------|
+| Label | `com.cryptolab.k545-tax-harvester` |
+| Daemon Number | 70th |
+| Schedule | Daily 03:00 UTC (12:00 JST, low-vol window) |
+| Run At Load | `false` |
+| Default Mode | PAPER (`PAPER_TRADE=True`) |
+| Script | `scripts/k545_tax_harvester.py` |
+| Plist | `scripts/com.cryptolab.k545-tax-harvester.plist` |
+| Log | `logs/k545_tax_harvester.log` |
+
+---
+
+### §69.4 Safeguards
+
+| Safeguard | Value | Rationale |
+|-----------|-------|-----------|
+| Min loss threshold | $500/position | Avoid micro-harvest overhead |
+| Max harvest/run | $50K | Avoid market impact |
+| Wash-sale window | 30d (US conservative) | Conservative until legislation clarifies |
+| Wash-sale (JP/KOR/DE) | 0d | No crypto wash-sale equivalent as of 2026-05 |
+| Regime stress cancel | max_dd > 15% | Don't harvest during crisis |
+| LIVE auto-change | PROHIBITED | Requires manual edit + explicit `--live` flag |
+| Paper mode | DEFAULT | PAPER_TRADE=True env var in plist |
+
+---
+
+### §69.5 1-Step Activation (Paper Mode)
+
+**Prerequisites:**
+1. Consult a licensed CPA — confirm marginal rate, jurisdiction, wash-sale treatment
+2. Set tax configuration:
+   ```bash
+   python3 scripts/k545_tax_harvester.py --set-rate 37 --set-juris US_STCG
+   python3 scripts/k545_tax_harvester.py --mock-test  # verify PASS
+   ```
+3. Check status:
+   ```bash
+   python3 scripts/k545_tax_harvester.py --status
+   ```
+
+**Activate daemon (paper mode, 1 step):**
+```bash
+# Replace CRYPTO_LAB_PATH with actual repo path
+CRYPTO_LAB=$(python3 -c "from pathlib import Path; print(Path('scripts/k545_tax_harvester.py').resolve().parent.parent)")
+sed -i '' "s|CRYPTO_LAB_PATH|${CRYPTO_LAB}|g" scripts/com.cryptolab.k545-tax-harvester.plist
+cp scripts/com.cryptolab.k545-tax-harvester.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.cryptolab.k545-tax-harvester.plist
+```
+
+**Verify:**
+```bash
+launchctl list | grep k545-tax-harvester
+python3 scripts/k545_tax_harvester.py --status
+```
+
+**Expected output:**
+```
+com.cryptolab.k545-tax-harvester (loaded, not running — daily 03:00 UTC trigger)
+Mode:   PAPER
+K523 Central Shield: $185,000/yr (INFORMATIONAL)
+```
+
+---
+
+### §69.6 Upgrade to LIVE Mode
+
+**LIVE mode requires ALL of the following (LIVE auto-change PROHIBITED):**
+
+1. CPA consultation completed and documented
+2. `python3 scripts/k545_tax_harvester.py --set-rate <RATE> --set-juris <JURIS>`
+3. Manually edit `~/Library/LaunchAgents/com.cryptolab.k545-tax-harvester.plist`:
+   - Change `<string>True</string>` under `PAPER_TRADE` key to `<string>False</string>`
+   - Add `<string>--live</string>` to `ProgramArguments`
+4. Reload daemon:
+   ```bash
+   launchctl unload ~/Library/LaunchAgents/com.cryptolab.k545-tax-harvester.plist
+   launchctl load ~/Library/LaunchAgents/com.cryptolab.k545-tax-harvester.plist
+   ```
+
+**Reversibility:** Set `PAPER_TRADE=True` + remove `--live` + `launchctl unload/load` → no harvests.
+
+---
+
+### §69.7 Jurisdiction Configuration
+
+| Code | Jurisdiction | Rate | Wash-Sale | Loss Carryforward |
+|------|-------------|------|-----------|-------------------|
+| US_STCG | US Short-Term CG | 37% | 30d conservative | N/A (annual) |
+| US_LTCG | US Long-Term CG | 20% | 30d conservative | N/A |
+| JP | Japan (zatsushotoku) | 55% | 0d (no equivalent) | None — harvest by Dec 31 |
+| KOR | South Korea | 22% | 0d | 5 years |
+| SG | Singapore | 0% | N/A | N/A (no CGT) |
+| DE | Germany | 26.375% | 0d | Indefinite |
+
+**Set jurisdiction:**
+```bash
+python3 scripts/k545_tax_harvester.py --set-rate 55 --set-juris JP
+```
+
+---
+
+### §69.8 Year-End Protocol (Dec 15-31)
+
+The daemon runs daily but the critical harvest window is **Dec 15-31**:
+
+| Date | Action |
+|------|--------|
+| Dec 1 | Review YTD PnL + unrealized losses |
+| Dec 15 | Begin daily scan — harvest any positions > $500 loss |
+| Dec 28 | K444 legacy annual daemon also fires (18th daemon) |
+| Dec 31 | Final harvest window — Japan: MANDATORY (no carryforward) |
+
+**Manual year-end harvest review:**
+```bash
+python3 scripts/k545_tax_harvester.py --scan        # View candidates
+python3 scripts/k545_tax_harvester.py --harvest     # Execute (paper)
+python3 scripts/k545_tax_harvester.py --annual-report  # Full report
+```
+
+---
+
+### §69.9 Risk Table
+
+| Risk | Probability | Impact | Mitigation |
+|------|------------|--------|-----------|
+| Wash-sale violation (US) | LOW | MEDIUM | 30d conservative wait; crypto not codified as of 2026-05 |
+| Japan no-carryforward | CERTAIN (JP) | HIGH | Dec 31 hard deadline; daemon fires Dec 28 |
+| HL API cost basis gap | MEDIUM | MEDIUM | K302a/K443 JSONL log entry prices at open |
+| K357 emergency exit + tax | LOW | HIGH | If K357 fires Nov-Dec, run `--harvest` immediately |
+| Micro-harvest overhead | LOW | LOW | $500 min threshold guards against it |
+
+---
+
+### §69.10 Files
+
+| File | Description |
+|------|-------------|
+| `scripts/k545_tax_harvester.py` | Full daemon script (~490 LOC, K339) |
+| `scripts/com.cryptolab.k545-tax-harvester.plist` | launchd plist, 70th daemon |
+| `wave_k753_k545_scaffold.py` | Wave runner |
+| `wave_k753_k545_scaffold.json` | Wave summary JSON |
+| `wave_k753_k545_scaffold.md` | This section |
+| `data/k545_tax_harvester_state.json` | Persistent config + harvest log |
+| `data/k545_tax_harvester_dashboard.json` | Dashboard JSON for report.html |
+| `data/k545_harvest_log.jsonl` | Audit trail (JSONL, append-only) |
+| `docs/k302a_runbook.md` | This section §69 |
+| `report.html` | K753 badge |
+
+---
+
+### §69.11 References
+
+| Wave | Description |
+|------|-------------|
+| K753 | This section — K545 full scaffold, 70th daemon, +$185K central @$10M |
+| K545 | Prior K545 wave — Phase A pending item, activation deep-dive |
+| K444 | K444 loss harvester (18th daemon, annual Dec 28, 729 LOC — K444 legacy) |
+| K442 | K442 tax optimization (10 jurisdictions, jurisdiction comparison) |
+| K523 | 3-point projection mandate (conservative/central/optimistic) |
+| K518 | Realized-to-stated ratio 38% floor |
+| K357 | Emergency exit — triggers mass realization event (tax impact) |
