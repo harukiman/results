@@ -826,12 +826,60 @@ window.__renderWhenReady = function(fn, label) {
         <div style="color:#f85149;font-size:0.70rem;margin-top:6px;">K523 WARNING: Central is NOT upper bound. K763 $1.25M realized contingent on all sleeves live @ v6.52 r=218%/yr.</div>
       </div>
       <div style="color:#8b949e;font-size:0.75rem;margin-top:4px;">
-        最終更新: 2026-05-30 21:50 JST (K764 Phase A++ governance synthesis — 10 items, 4 tiers, $1.60M central realized incremental, v7.0 $2.81M central total) &nbsp;|&nbsp; K339 REPO_ROOT &nbsp;|&nbsp; K523 3-point mandatory &nbsp;|&nbsp; LIVE 自動変更禁止 &nbsp;|&nbsp; <a href="docs/k302a_runbook.md#74" style="color:#58a6ff;">docs §74</a>
+        最終更新: 2026-05-30 21:53 JST (K765 smart routing axis #6 — 33 sleeves, BBO+split+TOD, 5bps→3bps -40%, $12K central/$4.6K realized @$10M, SMART_ROUTER_ENABLED=true 1-flip, 5/5 mock PASS) &nbsp;|&nbsp; K339 REPO_ROOT &nbsp;|&nbsp; K523 3-point mandatory &nbsp;|&nbsp; LIVE 自動変更禁止 &nbsp;|&nbsp; <a href="docs/k302a_runbook.md#74" style="color:#58a6ff;">docs §74</a>
       </div>
     </div>
   </div>
 </div>
 <!-- /K764_PHASE_A_PLUS_BANNER -->
+<!-- K765_SMART_ROUTING: K765 Smart Order Routing + Slippage Minimization | profit-max axis #6 (execution edge) | 33 sleeves | BBO aggregation HL/Bybit/OKX | order-split notional>$500K depth-proportional | time-of-day routing (avoid 00-06 UTC) | improved slippage model: half-spread×0.5 POST_ONLY + linear impact | data/slippage_log.jsonl per-order tracking | route_order(strategy_id, side, notional) → venue+legs | K523 3-point: cons=$6K/$2.3K | ctr=$12K/$4.6K | opt=$30K/$11.4K gross/realized @$10M 300% turnover K518 38% | baseline 5bps → target 3bps -40% reduction | SMART_ROUTER_ENABLED=true 1-flip activation | scripts/k765_smart_router.py ~530 LOC K339 | 5/5 mock tests PASS | wave_k765_smart_routing.{py,json,md} docs/k302a_runbook.md §74 | K339 REPO_ROOT | PAPER_TRADE=True LIVE 自動変更禁止 | 2026-05-30 21:53 JST -->
+<!-- K765 SMART ROUTING AXIS #6 BADGE -->
+<div id="k765-smart-routing-banner" style="background:linear-gradient(135deg,#000a14 0%,#001428 25%,#001414 50%,#000a28 75%,#001414 100%);border:4px solid #0ea5e9;border-radius:16px;padding:20px 26px;margin:0 0 20px 0;box-shadow:0 0 80px rgba(14,165,233,0.35),0 6px 48px rgba(14,165,233,0.18);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;" data-mobile-responsive="true">
+  <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;">
+    <div style="flex:1;min-width:260px;">
+      <div style="color:#0ea5e9;font-size:1.25rem;font-weight:900;letter-spacing:0.05em;margin-bottom:8px;text-shadow:0 0 12px rgba(14,165,233,0.5);">&#9654; K765 Smart Order Routing + Slippage Minimization &mdash; Profit-Max Axis #6 &mdash; 2026-05-30</div>
+      <div style="font-size:0.84rem;color:#cdd9e5;line-height:1.6;">
+        <strong style="color:#ffd700;">Axis #6 Execution Edge:</strong> BBO aggregation HL/Bybit/OKX | order-split notional &gt;$500K depth-proportional | time-of-day routing (avoid 00&ndash;06 UTC)<br>
+        <strong style="color:#0ea5e9;">Slippage Model (K765 vs K434):</strong> half-spread &times; 0.5 (POST_ONLY discount) + linear market impact | baseline 5 bps &rarr; target 3 bps (-40%)<br>
+        <strong style="color:#39d353;">Coverage:</strong> 33 sleeves (K208/K276b/K449/K476/K484/K493+28 alt-alts) via <code style="color:#6e7681;background:#0a0a1a;padding:1px 4px;border-radius:3px;">route_order(strategy_id, side, notional)</code><br>
+        <strong style="color:#bc8cff;">Slippage Tracking:</strong> <code style="color:#6e7681;background:#0a0a1a;padding:1px 4px;border-radius:3px;">data/slippage_log.jsonl</code> — per-order expected mid vs actual fill, 60d rolling stats<br>
+        <strong style="color:#ffd700;">Activation:</strong> <code style="color:#39d353;background:#0a1400;padding:1px 4px;border-radius:3px;">SMART_ROUTER_ENABLED=true</code> env var — zero code change, instant revert<br>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start;justify-content:flex-end;">
+      <div style="background:#001428;border-radius:6px;padding:7px 9px;text-align:center;">
+        <span style="color:#6e7681;font-size:0.67rem;">Conservative</span><br>
+        <strong style="color:#0ea5e9;">$6K</strong><br>
+        <span style="color:#6e7681;font-size:0.67rem;">$2.3K realized</span>
+      </div>
+      <div style="background:#001428;border-radius:6px;padding:7px 9px;text-align:center;">
+        <span style="color:#6e7681;font-size:0.67rem;">Central</span><br>
+        <strong style="color:#ffd700;">$12K</strong><br>
+        <span style="color:#6e7681;font-size:0.67rem;">$4.6K realized</span>
+      </div>
+      <div style="background:#001428;border-radius:6px;padding:7px 9px;text-align:center;">
+        <span style="color:#6e7681;font-size:0.67rem;">Optimistic</span><br>
+        <strong style="color:#bc8cff;">$30K</strong><br>
+        <span style="color:#6e7681;font-size:0.67rem;">$11.4K realized</span>
+      </div>
+      <div style="background:#001428;border-radius:6px;padding:7px 9px;text-align:center;">
+        <span style="color:#6e7681;font-size:0.67rem;">Tests</span><br>
+        <strong style="color:#39d353;">5/5 &#10003;</strong><br>
+        <span style="color:#6e7681;font-size:0.67rem;">mock PASS</span>
+      </div>
+      <div style="background:#001428;border-radius:6px;padding:7px 9px;text-align:center;">
+        <span style="color:#6e7681;font-size:0.67rem;">Sleeves</span><br>
+        <strong style="color:#0ea5e9;">33</strong><br>
+        <span style="color:#6e7681;font-size:0.67rem;">registered</span>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:10px;font-size:0.73rem;color:#6e7681;">
+    <strong style="color:#f85149;">K523 MANDATORY:</strong> Central $12K/yr gross is NOT upper bound. K518 38% realized ratio applied. Realized: $2.3K/$4.6K/$11.4K conservative/central/optimistic. Upper bound = optimistic $30K/yr gross. @$10M 300% turnover ($30M traded/yr, both sides). &nbsp;|&nbsp;
+    最終更新: 2026-05-30 21:53 JST (K765 smart routing axis #6 — 33 sleeves, 5bps→3bps -40%, BBO+split+TOD, SMART_ROUTER_ENABLED=true 1-flip) &nbsp;|&nbsp; K339 REPO_ROOT &nbsp;|&nbsp; LIVE 自動変更禁止
+  </div>
+</div>
+<!-- /K765 SMART ROUTING AXIS #6 BADGE -->
 <!-- K700_MILESTONE: ★★★ v6.50 MEGA Architecture | 35 sleeves | 10 orthog + 3 ETH-base + 7 alt-alt + 8 paired + 9-axis + stablecoin | HL 63.5%/65% cap 1.5pp headroom | K523 $15.2M/$21.1M/$48M @$10M | v6.40 $20.9M baseline + K694+K696+K698 +$176K | alt-alt 7-pair $919K all Bybit-only | 5y $105M @$10M / $1054M @$100M | D60 cascade 2026-07-29 | v6.50 full LIVE target 2027-Q1 | 2026-05-30 15:34 JST -->
 <!-- K700_MILESTONE_BANNER -->
 <div id="k700-milestone-banner" style="background:linear-gradient(135deg,#000814 0%,#001a00 15%,#000a28 35%,#1a0028 55%,#280a00 75%,#000814 100%);border:5px solid #ffd700;border-radius:18px;padding:22px 28px;margin:0 0 22px 0;box-shadow:0 0 120px rgba(255,215,0,0.70),0 0 60px rgba(255,165,0,0.40),0 8px 64px rgba(255,215,0,0.35);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;position:relative;overflow:hidden;">
