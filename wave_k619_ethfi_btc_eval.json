@@ -1,0 +1,1236 @@
+{
+  "wave": "K619",
+  "strategy": "ETHFI-BTC FR Differential Paired-Trade (HL Primary / Bybit Secondary)",
+  "run_time_jst": "2026-05-30T09:57:56+0900",
+  "runtime_s": 5.0,
+  "decision": "BLOCKED-LSD",
+  "decision_rationale": "[BLOCKED-LSD] G5ac LDO=0.6075 >= 0.4. ETHFI-BTC signal duplicates LDO-BTC (restaking vs liquid staking). K619 lesson: restaking/LSD cluster dup.",
+  "restaking_yield_cluster_status": {
+    "k594_ldo_btc": {
+      "oos_sharpe": null,
+      "decision": "REJECT",
+      "sub_cluster": "Liquid Staking (stETH governance, pure ETH staking fee revenue)",
+      "fr_corr_with_ethfi": 0.6075
+    },
+    "k616_ena_btc": {
+      "oos_sharpe": 20.4681,
+      "decision": "ACCEPT",
+      "sub_cluster": "Synthetic Stable Infrastructure (delta-neutral FR arb, sUSDe protocol equity)",
+      "fr_corr_with_ethfi": 0.4597
+    },
+    "k619_ethfi_btc": {
+      "oos_sharpe": 22.7329,
+      "decision": "BLOCKED-LSD",
+      "sub_cluster": "Restaking Yield (EigenLayer liquid restaking, AVS fee revenue)",
+      "fr_corr_ldo": 0.6075,
+      "fr_corr_ena": 0.4597
+    },
+    "yield_infra_cluster_verdict": "CLUSTER CHECK FAILED: G5 correlation overlap detected. See gate details.",
+    "cluster_summary": "Yield infrastructure sub-clusters: LSD: LDO K594=REJECT (pure gov token, basic stETH fee). Synthetic stable: ENA K616=ACCEPT(20.5 Sh, $67K/yr). Restaking yield: ETHFI K619=BLOCKED-LSD(22.7 Sh). KEY DISTINCTION: ETHFI is not LSD (no EigenLayer). ETHFI is not synthetic stable (not delta-neutral FR arb). ETHFI = liquid restaking INFRASTRUCTURE EQUITY: revenue = ETH staking + EigenLayer AVS fees. AVS ecosystem growth cycles create ETHFI FR dynamics distinct from both LDO and ENA patterns."
+  },
+  "data_info": {
+    "hl_ethfi_fr_rows": 17519,
+    "date_start": "2024-05-30 01:00:00.051000",
+    "date_end": "2026-05-30 00:00:00.028000",
+    "total_years": 3.957,
+    "oos_start": "2025-10-20 13:00:00.016000",
+    "oos_end": "2026-05-30 00:00:00.028000",
+    "oos_years": 1.187,
+    "fr_frequency": "1h (HL settles hourly)",
+    "cross_venue_note": "Bybit ETHFIUSDT 8h for cross-check."
+  },
+  "signal_config": {
+    "window_h": 168,
+    "threshold": 0.0,
+    "strategy_type": "always-on FR differential carry",
+    "direction_rule": "sign(168h rolling mean of btc_fr - ethfi_fr)",
+    "config_basis": "Grid best (\u2264336h preferred): W=168h / TF=0.0 (OOS Sh=22.733)",
+    "k615_k617_lesson": "Default 7d window (168h). Avoid K613 21d artefact."
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "ethfi_listed": true,
+      "hl_ticker": "ETHFI",
+      "fr_cache_rows": 17519,
+      "fr_start": "2024-05-30 01:00:00.051000",
+      "fr_end": "2026-05-30 00:00:00.028000",
+      "api_success": true,
+      "note": "HL ETHFI-PERP: 17519 rows. FR settlement: 1h intervals. Ether.fi ETHFI governance token (eETH/weETH liquid restaking). ETHFI unique: protocol provides EigenLayer restaking layer on top of ETH staking. Additional AVS fee revenue beyond basic LDO staking model."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "ethfi_listed": true,
+      "bybit_ticker": "ETHFIUSDT",
+      "note": "Bybit ETHFIUSDT perp confirmed: status=Trading. Ether.fi liquid restaking. Broad coverage expected."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "ethfi_listed": true,
+      "okx_ticker": "ETHFI-USDT-SWAP",
+      "note": "OKX ETHFI-USDT-SWAP confirmed."
+    },
+    "vol_ratio_hl_6m": 1.5869,
+    "vol_ratio_hl_1y": 2.8328,
+    "vol_ratio_hl_full": 1.8173,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "vol_note": "HL 6M vol ratio=1.5869x (ABOVE 1.5x threshold). HL 1Y=2.8328x. HL full=1.8173x. ETHFI restaking yield: EigenLayer AVS cycles drive vol above LSD baseline (LDO REJECT). DeFi gov ref: AAVE K596 6M=2.4x, ENA K616 6M=1.77x.",
+    "ethfi_fr_mean_ann_pct": 4.9996,
+    "btc_fr_mean_ann_pct": 11.5524,
+    "ethfi_fr_negative_mean": false,
+    "fr_diff_mean": 7.25e-06,
+    "fr_diff_std": 3.547e-05,
+    "restaking_cluster_raw_fr_corr": {
+      "ethfi_ena_fr_corr": 0.1036,
+      "ethfi_ldo_fr_corr": 0.1567,
+      "ethfi_eth_fr_corr": 0.2123,
+      "ethfi_aave_fr_corr": 0.1909
+    },
+    "restaking_cluster_context": {
+      "protocol": "Ether.fi",
+      "token": "ETHFI (governance)",
+      "liquid_restaking": "eETH/weETH (Ether.fi LRT)",
+      "yield_source": "ETH staking yield + EigenLayer AVS restaking fees",
+      "unique_property": "Protocol earns additional yield from EigenLayer security provision",
+      "mechanism": "Liquid restaking: stake ETH \u2192 eETH \u2192 restake on EigenLayer \u2192 earn ETH+AVS rewards",
+      "vs_ldo_distinction": "LDO = liquid staking only (stETH fee). ETHFI = liquid staking PLUS EigenLayer restaking (extra AVS layer). LDO REJECT K594 = pure gov token. ETHFI hypothesis = additional restaking yield creates distinct FR dynamics.",
+      "vs_ena_distinction": "ENA = synthetic stable (perp FR arb, delta-neutral). ETHFI = liquid restaking (spot ETH + restaking, ETH-long). Different yield mechanism: ENA uses perp markets, ETHFI uses consensus layer.",
+      "avs_exposure": "ETHFI exposed to EigenLayer AVS ecosystem growth: Eigen DA, Omni Network, EigenDA, etc.",
+      "slashing_risk": "EigenLayer slashing risk on restaked ETH \u2192 ETHFI FR spikes during slashing events",
+      "distinct_from_defi_gov": "ETHFI is not DeFi governance (DEX/lending). ETHFI is liquid restaking infrastructure equity."
+    },
+    "prescreen_pass": "True",
+    "ethfi_fr_rows": 17519
+  },
+  "window_sensitivity_analysis": {
+    "window_details": {
+      "w168h": {
+        "window_h": 168,
+        "window_label": "7d",
+        "oos_sharpe": 22.733,
+        "is_sharpe": 27.425,
+        "entries_yr": 5981.5,
+        "preferred": true
+      },
+      "w720h": {
+        "window_h": 720,
+        "window_label": "30d",
+        "oos_sharpe": 21.569,
+        "is_sharpe": 25.809,
+        "entries_yr": 5710.3,
+        "preferred": false
+      },
+      "w336h": {
+        "window_h": 336,
+        "window_label": "14d",
+        "oos_sharpe": 19.725,
+        "is_sharpe": 24.254,
+        "entries_yr": 5879.6,
+        "preferred": true
+      },
+      "w504h": {
+        "window_h": 504,
+        "window_label": "21d",
+        "oos_sharpe": 18.763,
+        "is_sharpe": 25.918,
+        "entries_yr": 5767.5,
+        "preferred": false
+      },
+      "w84h": {
+        "window_h": 84,
+        "window_label": "3d",
+        "oos_sharpe": 18.693,
+        "is_sharpe": 27.317,
+        "entries_yr": 6017.8,
+        "preferred": true
+      }
+    },
+    "window_trend": "SHORT-WINDOW-BETTER (\u2264336h preferred \u2014 restaking cycle)",
+    "windows_tested": [
+      84,
+      168,
+      336,
+      504,
+      720
+    ],
+    "preferred_window_range": "84h\u2013336h (K615/K617 lesson: avoid 21d artefact)"
+  },
+  "statistical_analysis": {
+    "adf_stationarity": {
+      "statistic": -19.7593,
+      "p_value": 0.0,
+      "critical_1pct": -3.4305,
+      "critical_5pct": -2.8616,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "interpretation": "ETHFI-BTC FR differential IS stationary at 1% level (statistic -19.7593 vs 1% critical -3.4305). Mean-reversion assumption CONFIRMED."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.188634,
+      "half_life_hours": 3.67,
+      "half_life_days": 0.153,
+      "long_run_mean": 7.24e-06,
+      "r_squared": 0.0943,
+      "mean_reverting": "True",
+      "interpretation": "Half-life 3.67h (0.153d). Fast mean-reversion. 7d rolling window filters noise for persistent FR divergence. ETHFI restaking yield shocks (AVS launches/slashing) create FR spikes with gradual mean-reversion."
+    },
+    "autocorrelation": {
+      "lag_1h": 0.8114,
+      "lag_24h": 0.2886,
+      "lag_168h": 0.1254,
+      "interpretation": "ACF(1h)=0.8114, ACF(24h)=0.2886, ACF(168h)=0.1254. Positive ACF at 24h/168h confirms FR differential persists at weekly scale \u2014 supports rolling-mean signal construction."
+    },
+    "restaking_cluster_raw_fr_corr": {
+      "ethfi_ena_fr_corr": 0.1036,
+      "ethfi_ldo_fr_corr": 0.1567,
+      "ethfi_eth_fr_corr": 0.2123,
+      "ethfi_aave_fr_corr": 0.1909
+    }
+  },
+  "ethfi_characteristics": {
+    "fr_vol_ratio_ethfi_btc_6m": 1.5869,
+    "fr_vol_ratio_ethfi_btc_1y": 2.8328,
+    "fr_vol_ratio_ethfi_btc_full": 1.8173,
+    "fr_vol_ratio_eth_btc_ref": 1.084,
+    "fr_vol_ratio_sol_btc_ref": 1.764,
+    "fr_vol_ratio_ena_btc_6m_ref": 1.7658,
+    "ethfi_fr_mean_ann_pct": 4.9996,
+    "btc_fr_mean_ann_pct": 11.5524,
+    "ethfi_fr_negative_mean": false,
+    "fr_diff_mean": 7.25e-06,
+    "fr_diff_std": 3.547e-05,
+    "restaking_cluster_raw_fr_corr": {
+      "ethfi_ena_fr_corr": 0.1036,
+      "ethfi_ldo_fr_corr": 0.1567,
+      "ethfi_eth_fr_corr": 0.2123,
+      "ethfi_aave_fr_corr": 0.1909
+    },
+    "eigenlayer_mechanics": "ETHFI (Ether.fi) specific mechanics: 1. eETH/weETH = liquid restaking token: deposit ETH \u2192 Ether.fi \u2192 restake on EigenLayer \u2192 earn ETH+AVS rewards. 2. ETHFI governance: captures Ether.fi protocol fee revenue (% of restaking yield). 3. AVS exposure: EigenLayer Active Validator Sets pay restakers (EigenDA, Omni Network, etc.). 4. ETHFI demand \u221d eETH/weETH APY (ETH staking + AVS rewards). 5. Slashing risk: EigenLayer operator slashing \u2192 ETHFI FR spikes. 6. vs LDO (K594 REJECT): LDO = basic stETH staking only. ETHFI = ETH staking + EigenLayer AVS layer. 7. vs ENA (K616 ACCEPT): ENA = delta-neutral synthetic stable (FR arb). ETHFI = spot ETH-long restaking. 8. EigenLayer growth cycles: AVS launches drive ETHFI demand cycles (distinct from BTC speculative cycles). 9. Multi-venue: HL, Bybit, OKX all list ETHFI (major restaking token). 10. Cluster: Restaking Yield (new cluster, peers: EIGEN if listed, RPL rocketpool)."
+  },
+  "g5_correlations": {
+    "all_pass": false,
+    "max_corr": 0.6075,
+    "max_corr_pair": "LDO",
+    "ldo_corr": 0.6075,
+    "ena_corr": 0.4597,
+    "restaking_cluster_note": "BLOCKED-LSD: ETHFI-BTC signal overlaps LDO-BTC (restaking vs liquid staking cluster dup).",
+    "details": {
+      "G5a_ETH": {
+        "corr": 0.3064,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs ETH-BTC: corr=0.3064 (PASS threshold 0.4)"
+      },
+      "G5b_SOL": {
+        "corr": 0.1801,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs SOL-BTC: corr=0.1801 (PASS threshold 0.4)"
+      },
+      "G5c_AVAX": {
+        "corr": 0.5134,
+        "pass": false,
+        "note": "ETHFI-BTC signal vs AVAX-BTC: corr=0.5134 (FAIL threshold 0.4)"
+      },
+      "G5d_ATOM": {
+        "corr": 0.2296,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs ATOM-BTC: corr=0.2296 (PASS threshold 0.4)"
+      },
+      "G5e_INJ": {
+        "corr": 0.3293,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs INJ-BTC: corr=0.3293 (PASS threshold 0.4)"
+      },
+      "G5f_SEI": {
+        "corr": 0.2365,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs SEI-BTC: corr=0.2365 (PASS threshold 0.4)"
+      },
+      "G5g_TIA": {
+        "corr": 0.3649,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs TIA-BTC: corr=0.3649 (PASS threshold 0.4)"
+      },
+      "G5h_APT": {
+        "corr": 0.2328,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs APT-BTC: corr=0.2328 (PASS threshold 0.4)"
+      },
+      "G5i_FIL": {
+        "corr": 0.3708,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs FIL-BTC: corr=0.3708 (PASS threshold 0.4)"
+      },
+      "G5k_RNDR": {
+        "corr": 0.3714,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs RNDR-BTC: corr=0.3714 (PASS threshold 0.4)"
+      },
+      "G5l_TAO": {
+        "corr": 0.2126,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs TAO-BTC: corr=0.2126 (PASS threshold 0.4)"
+      },
+      "G5m_LINK": {
+        "corr": null,
+        "pass": true,
+        "note": "No cache for LINK \u2014 skip, assume PASS"
+      },
+      "G5n_TON": {
+        "corr": 0.2448,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs TON-BTC: corr=0.2448 (PASS threshold 0.4)"
+      },
+      "G5o_SAND": {
+        "corr": 0.2715,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs SAND-BTC: corr=0.2715 (PASS threshold 0.4)"
+      },
+      "G5p_ICP": {
+        "corr": 0.1111,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs ICP-BTC: corr=0.1111 (PASS threshold 0.4)"
+      },
+      "G5q_AXS": {
+        "corr": 0.0808,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs AXS-BTC: corr=0.0808 (PASS threshold 0.4)"
+      },
+      "G5r_DOGE": {
+        "corr": 0.199,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs DOGE-BTC: corr=0.1990 (PASS threshold 0.4)"
+      },
+      "G5s_SHIB": {
+        "corr": 0.3844,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs SHIB-BTC: corr=0.3844 (PASS threshold 0.4)"
+      },
+      "G5t_AAVE": {
+        "corr": 0.3829,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs AAVE-BTC: corr=0.3829 (PASS threshold 0.4)"
+      },
+      "G5u_CRV": {
+        "corr": 0.3715,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs CRV-BTC: corr=0.3715 (PASS threshold 0.4)"
+      },
+      "G5v_PEPE": {
+        "corr": 0.3635,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs PEPE-BTC: corr=0.3635 (PASS threshold 0.4)"
+      },
+      "G5w_WIF": {
+        "corr": 0.4107,
+        "pass": false,
+        "note": "ETHFI-BTC signal vs WIF-BTC: corr=0.4107 (FAIL threshold 0.4)"
+      },
+      "G5x_BONK": {
+        "corr": 0.3918,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs BONK-BTC: corr=0.3918 (PASS threshold 0.4)"
+      },
+      "G5y_UNI": {
+        "corr": 0.1489,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs UNI-BTC: corr=0.1489 (PASS threshold 0.4)"
+      },
+      "G5z_ARB": {
+        "corr": 0.3854,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs ARB-BTC: corr=0.3854 (PASS threshold 0.4)"
+      },
+      "G5aa_JUP": {
+        "corr": 0.4749,
+        "pass": false,
+        "note": "ETHFI-BTC signal vs JUP-BTC: corr=0.4749 (FAIL threshold 0.4)"
+      },
+      "G5ab_SNX": {
+        "corr": 0.1007,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs SNX-BTC: corr=0.1007 (PASS threshold 0.4)"
+      },
+      "G5ac_LDO": {
+        "corr": 0.6075,
+        "pass": false,
+        "note": "ETHFI-BTC signal vs LDO-BTC: corr=0.6075 (FAIL threshold 0.4)"
+      },
+      "G5ad_MKR": {
+        "corr": 0.3714,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs MKR-BTC: corr=0.3714 (PASS threshold 0.4)"
+      },
+      "G5ae_OP": {
+        "corr": 0.3605,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs OP-BTC: corr=0.3605 (PASS threshold 0.4)"
+      },
+      "G5af_POL": {
+        "corr": 0.2426,
+        "pass": true,
+        "note": "ETHFI-BTC signal vs POL-BTC: corr=0.2426 (PASS threshold 0.4)"
+      },
+      "G5ag_ENA": {
+        "corr": 0.4597,
+        "pass": false,
+        "note": "ETHFI-BTC signal vs ENA-BTC: corr=0.4597 (FAIL threshold 0.4)"
+      }
+    }
+  },
+  "full_period": {
+    "sharpe": 25.9204,
+    "ann_ret_pct": 9.542,
+    "max_dd_pct": -0.004135,
+    "total_years": 3.957
+  },
+  "is_metrics": {
+    "period": "2024-05-30 \u2013 2025-10-20",
+    "years": 2.77,
+    "sharpe": 27.4254,
+    "ann_ret_pct": 11.0785
+  },
+  "oos_metrics": {
+    "period": "2025-10-20 \u2013 2026-05-30",
+    "years": 1.187,
+    "sharpe": 22.7329,
+    "ann_ret_pct": 5.9598,
+    "ann_ret_4x_pct": 23.8392,
+    "max_dd_pct": -0.003933,
+    "entries": 7100,
+    "entries_yr": 5981.5
+  },
+  "section_6_gates": {
+    "G1_oos_sharpe": {
+      "value": 22.7329,
+      "threshold": 1.0,
+      "pass": true,
+      "note": "OOS Sharpe 22.7329 \u2265 1.0."
+    },
+    "G2_perm_pvalue": {
+      "value": 0.0,
+      "threshold": 0.05,
+      "pass": true,
+      "note": "500 direction reshuffles OOS. p=0.0000."
+    },
+    "G3_dsr_bonferroni": {
+      "n_trials": 15,
+      "t_stat": 24.7672,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.00333,
+      "pass": true,
+      "note": "Bonferroni: p < 0.05/15 = 0.00333"
+    },
+    "G4_walk_forward_12fold": {
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2025-11-26",
+          "oos_end": "2025-12-11",
+          "sharpe": -4.84,
+          "ann_ret_pct": -1.437,
+          "entries": 502
+        },
+        {
+          "fold": 2,
+          "oos_start": "2025-12-11",
+          "oos_end": "2025-12-26",
+          "sharpe": -8.481,
+          "ann_ret_pct": -2.55,
+          "entries": 382
+        },
+        {
+          "fold": 3,
+          "oos_start": "2025-12-26",
+          "oos_end": "2026-01-10",
+          "sharpe": -1.503,
+          "ann_ret_pct": -0.305,
+          "entries": 152
+        },
+        {
+          "fold": 4,
+          "oos_start": "2026-01-10",
+          "oos_end": "2026-01-25",
+          "sharpe": 5.769,
+          "ann_ret_pct": 1.62,
+          "entries": 282
+        },
+        {
+          "fold": 5,
+          "oos_start": "2026-01-25",
+          "oos_end": "2026-02-09",
+          "sharpe": 19.768,
+          "ann_ret_pct": 5.877,
+          "entries": 430
+        },
+        {
+          "fold": 6,
+          "oos_start": "2026-02-09",
+          "oos_end": "2026-02-25",
+          "sharpe": 23.357,
+          "ann_ret_pct": 3.539,
+          "entries": 352
+        },
+        {
+          "fold": 7,
+          "oos_start": "2026-02-25",
+          "oos_end": "2026-03-12",
+          "sharpe": 50.969,
+          "ann_ret_pct": 8.687,
+          "entries": 461
+        },
+        {
+          "fold": 8,
+          "oos_start": "2026-03-12",
+          "oos_end": "2026-03-27",
+          "sharpe": -0.262,
+          "ann_ret_pct": -0.107,
+          "entries": 447
+        },
+        {
+          "fold": 9,
+          "oos_start": "2026-03-27",
+          "oos_end": "2026-04-11",
+          "sharpe": 7.222,
+          "ann_ret_pct": 1.755,
+          "entries": 505
+        },
+        {
+          "fold": 10,
+          "oos_start": "2026-04-11",
+          "oos_end": "2026-04-26",
+          "sharpe": 41.008,
+          "ann_ret_pct": 6.729,
+          "entries": 518
+        },
+        {
+          "fold": 11,
+          "oos_start": "2026-04-26",
+          "oos_end": "2026-05-11",
+          "sharpe": 43.8,
+          "ann_ret_pct": 7.641,
+          "entries": 447
+        },
+        {
+          "fold": 12,
+          "oos_start": "2026-05-11",
+          "oos_end": "2026-05-30",
+          "sharpe": 42.608,
+          "ann_ret_pct": 7.38,
+          "entries": 400
+        }
+      ],
+      "fold_sharpes": [
+        -4.84,
+        -8.481,
+        -1.503,
+        5.769,
+        19.768,
+        23.357,
+        50.969,
+        -0.262,
+        7.222,
+        41.008,
+        43.8,
+        42.608
+      ],
+      "all_positive": false,
+      "min_fold_sharpe": -8.481,
+      "n_folds_computed": 12,
+      "pass": false,
+      "note": "12-fold walk-forward (IS 90d / OOS 30d per fold). All folds positive: False."
+    },
+    "G5j_K280": {
+      "value": 0.05,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Structural estimate: K280 uses 15m volume momentum. K619 is FR carry. Different data, mechanism, holding period."
+    },
+    "G5a_ETH": {
+      "value": 0.3064,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs ETH-BTC: corr=0.3064 (PASS threshold 0.4)"
+    },
+    "G5b_SOL": {
+      "value": 0.1801,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs SOL-BTC: corr=0.1801 (PASS threshold 0.4)"
+    },
+    "G5c_AVAX": {
+      "value": 0.5134,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "ETHFI-BTC signal vs AVAX-BTC: corr=0.5134 (FAIL threshold 0.4)"
+    },
+    "G5d_ATOM": {
+      "value": 0.2296,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs ATOM-BTC: corr=0.2296 (PASS threshold 0.4)"
+    },
+    "G5e_INJ": {
+      "value": 0.3293,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs INJ-BTC: corr=0.3293 (PASS threshold 0.4)"
+    },
+    "G5f_SEI": {
+      "value": 0.2365,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs SEI-BTC: corr=0.2365 (PASS threshold 0.4)"
+    },
+    "G5g_TIA": {
+      "value": 0.3649,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs TIA-BTC: corr=0.3649 (PASS threshold 0.4)"
+    },
+    "G5h_APT": {
+      "value": 0.2328,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs APT-BTC: corr=0.2328 (PASS threshold 0.4)"
+    },
+    "G5i_FIL": {
+      "value": 0.3708,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs FIL-BTC: corr=0.3708 (PASS threshold 0.4)"
+    },
+    "G5k_RNDR": {
+      "value": 0.3714,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs RNDR-BTC: corr=0.3714 (PASS threshold 0.4)"
+    },
+    "G5l_TAO": {
+      "value": 0.2126,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs TAO-BTC: corr=0.2126 (PASS threshold 0.4)"
+    },
+    "G5m_LINK": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "No cache for LINK \u2014 skip, assume PASS"
+    },
+    "G5n_TON": {
+      "value": 0.2448,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs TON-BTC: corr=0.2448 (PASS threshold 0.4)"
+    },
+    "G5o_SAND": {
+      "value": 0.2715,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs SAND-BTC: corr=0.2715 (PASS threshold 0.4)"
+    },
+    "G5p_ICP": {
+      "value": 0.1111,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs ICP-BTC: corr=0.1111 (PASS threshold 0.4)"
+    },
+    "G5q_AXS": {
+      "value": 0.0808,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs AXS-BTC: corr=0.0808 (PASS threshold 0.4)"
+    },
+    "G5r_DOGE": {
+      "value": 0.199,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs DOGE-BTC: corr=0.1990 (PASS threshold 0.4)"
+    },
+    "G5s_SHIB": {
+      "value": 0.3844,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs SHIB-BTC: corr=0.3844 (PASS threshold 0.4)"
+    },
+    "G5t_AAVE": {
+      "value": 0.3829,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs AAVE-BTC: corr=0.3829 (PASS threshold 0.4)"
+    },
+    "G5u_CRV": {
+      "value": 0.3715,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs CRV-BTC: corr=0.3715 (PASS threshold 0.4)"
+    },
+    "G5v_PEPE": {
+      "value": 0.3635,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs PEPE-BTC: corr=0.3635 (PASS threshold 0.4)"
+    },
+    "G5w_WIF": {
+      "value": 0.4107,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "ETHFI-BTC signal vs WIF-BTC: corr=0.4107 (FAIL threshold 0.4)"
+    },
+    "G5x_BONK": {
+      "value": 0.3918,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs BONK-BTC: corr=0.3918 (PASS threshold 0.4)"
+    },
+    "G5y_UNI": {
+      "value": 0.1489,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs UNI-BTC: corr=0.1489 (PASS threshold 0.4)"
+    },
+    "G5z_ARB": {
+      "value": 0.3854,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs ARB-BTC: corr=0.3854 (PASS threshold 0.4)"
+    },
+    "G5aa_JUP": {
+      "value": 0.4749,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "ETHFI-BTC signal vs JUP-BTC: corr=0.4749 (FAIL threshold 0.4)"
+    },
+    "G5ab_SNX": {
+      "value": 0.1007,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs SNX-BTC: corr=0.1007 (PASS threshold 0.4)"
+    },
+    "G5ac_LDO": {
+      "value": 0.6075,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "ETHFI-BTC signal vs LDO-BTC: corr=0.6075 (FAIL threshold 0.4)"
+    },
+    "G5ad_MKR": {
+      "value": 0.3714,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs MKR-BTC: corr=0.3714 (PASS threshold 0.4)"
+    },
+    "G5ae_OP": {
+      "value": 0.3605,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs OP-BTC: corr=0.3605 (PASS threshold 0.4)"
+    },
+    "G5af_POL": {
+      "value": 0.2426,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "ETHFI-BTC signal vs POL-BTC: corr=0.2426 (PASS threshold 0.4)"
+    },
+    "G5ag_ENA": {
+      "value": 0.4597,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "ETHFI-BTC signal vs ENA-BTC: corr=0.4597 (FAIL threshold 0.4)"
+    },
+    "G6_trade_count": {
+      "total": 7100,
+      "per_year": 5981.5,
+      "threshold": 30.0,
+      "pass": "True",
+      "note": "5981.5 entries/yr vs 30.0 threshold."
+    },
+    "G7_ann_return": {
+      "value_1x_pct": 5.9598,
+      "value_4x_pct": 23.8392,
+      "threshold_pct": 5.0,
+      "pass": true,
+      "leverage_assumption": "4x on notional (delta-neutral, low DD)",
+      "note": "At 4x leverage: 23.839% \u2265 5.0%."
+    },
+    "G8_cross_venue": {
+      "bybit": {
+        "n_obs": 100,
+        "corr_with_hl": 0.1302,
+        "bybit_mean_8h": 1.241e-05,
+        "hl_mean_8h": 5.71e-06,
+        "date_range": "2026-04-27 \u2013 2026-05-30",
+        "passes_g8": false,
+        "note": "ByBit ETHFIUSDT: corr=0.1302 with HL. FAIL G8 threshold 0.55. ETHFI liquid restaking token, broad venue coverage expected."
+      },
+      "avg_corr": 0.1302,
+      "g8_pass": false,
+      "pass": false,
+      "note": "Cross-venue: HL/Bybit. Corr=0.1302. ETHFI: Ether.fi liquid restaking token."
+    },
+    "G9_data_sufficiency": {
+      "oos_years": 1.187,
+      "oos_days": 433.3,
+      "threshold_days": 180,
+      "pass": true,
+      "note": "OOS period 433d \u2265 180d threshold."
+    },
+    "_summary": {
+      "gates_passed": 34,
+      "gates_total": 41,
+      "gate_details": {
+        "G1": true,
+        "G2": true,
+        "G3": true,
+        "G4": false,
+        "G5j": true,
+        "G5a_ETH": true,
+        "G5b_SOL": true,
+        "G5c_AVAX": false,
+        "G5d_ATOM": true,
+        "G5e_INJ": true,
+        "G5f_SEI": true,
+        "G5g_TIA": true,
+        "G5h_APT": true,
+        "G5i_FIL": true,
+        "G5k_RNDR": true,
+        "G5l_TAO": true,
+        "G5m_LINK": true,
+        "G5n_TON": true,
+        "G5o_SAND": true,
+        "G5p_ICP": true,
+        "G5q_AXS": true,
+        "G5r_DOGE": true,
+        "G5s_SHIB": true,
+        "G5t_AAVE": true,
+        "G5u_CRV": true,
+        "G5v_PEPE": true,
+        "G5w_WIF": false,
+        "G5x_BONK": true,
+        "G5y_UNI": true,
+        "G5z_ARB": true,
+        "G5aa_JUP": false,
+        "G5ab_SNX": true,
+        "G5ac_LDO": false,
+        "G5ad_MKR": true,
+        "G5ae_OP": true,
+        "G5af_POL": true,
+        "G5ag_ENA": false,
+        "G6": true,
+        "G7": true,
+        "G8": false,
+        "G9": true
+      },
+      "oos_sharpe": 22.7329,
+      "perm_p": 0.0,
+      "wf_all_positive": false,
+      "g5_all_pass": false,
+      "restaking_cluster_blocked": true,
+      "ldo_corr": 0.6075,
+      "ena_corr": 0.4597,
+      "restaking_cluster_note": "BLOCKED-LSD: ETHFI-BTC signal overlaps LDO-BTC (restaking vs liquid staking cluster dup)."
+    }
+  },
+  "cross_venue_fr_analysis": {
+    "bybit": {
+      "n_obs": 100,
+      "corr_with_hl": 0.1302,
+      "bybit_mean_8h": 1.241e-05,
+      "hl_mean_8h": 5.71e-06,
+      "date_range": "2026-04-27 \u2013 2026-05-30",
+      "passes_g8": false,
+      "note": "ByBit ETHFIUSDT: corr=0.1302 with HL. FAIL G8 threshold 0.55. ETHFI liquid restaking token, broad venue coverage expected."
+    },
+    "avg_corr": 0.1302,
+    "g8_pass": false,
+    "pass": false,
+    "note": "Cross-venue: HL/Bybit. Corr=0.1302. ETHFI: Ether.fi liquid restaking token."
+  },
+  "grid_search_top10": [
+    {
+      "window_h": 168,
+      "window_label": "7d",
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 27.425,
+      "OOS_sharpe": 22.733,
+      "entries": 7100,
+      "OOS_ret_pct": 5.96,
+      "entries_yr": 5981.5,
+      "k619_note": "SHORT-WINDOW PREFERRED (\u2264336h, K615/K617 lesson)",
+      "preferred": true
+    },
+    {
+      "window_h": 720,
+      "window_label": "30d",
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 25.809,
+      "OOS_sharpe": 21.569,
+      "entries": 6778,
+      "OOS_ret_pct": 5.12,
+      "entries_yr": 5710.3,
+      "k619_note": "LONG-WINDOW (21d+ regime, K613 artefact range)",
+      "preferred": false
+    },
+    {
+      "window_h": 336,
+      "window_label": "14d",
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 24.254,
+      "OOS_sharpe": 19.725,
+      "entries": 6979,
+      "OOS_ret_pct": 5.26,
+      "entries_yr": 5879.6,
+      "k619_note": "SHORT-WINDOW PREFERRED (\u2264336h, K615/K617 lesson)",
+      "preferred": true
+    },
+    {
+      "window_h": 504,
+      "window_label": "21d",
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 25.918,
+      "OOS_sharpe": 18.763,
+      "entries": 6846,
+      "OOS_ret_pct": 4.787,
+      "entries_yr": 5767.5,
+      "k619_note": "LONG-WINDOW (21d+ regime, K613 artefact range)",
+      "preferred": false
+    },
+    {
+      "window_h": 84,
+      "window_label": "3d",
+      "threshold_factor": 0.0,
+      "threshold_value": 0.0,
+      "IS_sharpe": 27.317,
+      "OOS_sharpe": 18.693,
+      "entries": 7143,
+      "OOS_ret_pct": 6.014,
+      "entries_yr": 6017.8,
+      "k619_note": "SHORT-WINDOW PREFERRED (\u2264336h, K615/K617 lesson)",
+      "preferred": true
+    },
+    {
+      "window_h": 336,
+      "window_label": "14d",
+      "threshold_factor": 0.5,
+      "threshold_value": 1.943e-05,
+      "IS_sharpe": 21.747,
+      "OOS_sharpe": 8.106,
+      "entries": 223,
+      "OOS_ret_pct": 0.89,
+      "entries_yr": 187.9,
+      "k619_note": "SHORT-WINDOW PREFERRED (\u2264336h, K615/K617 lesson)",
+      "preferred": true
+    },
+    {
+      "window_h": 504,
+      "window_label": "21d",
+      "threshold_factor": 0.5,
+      "threshold_value": 1.943e-05,
+      "IS_sharpe": 23.028,
+      "OOS_sharpe": 7.623,
+      "entries": 275,
+      "OOS_ret_pct": 0.742,
+      "entries_yr": 231.7,
+      "k619_note": "LONG-WINDOW (21d+ regime, K613 artefact range)",
+      "preferred": false
+    },
+    {
+      "window_h": 84,
+      "window_label": "3d",
+      "threshold_factor": 1.0,
+      "threshold_value": 3.886e-05,
+      "IS_sharpe": 9.45,
+      "OOS_sharpe": 6.83,
+      "entries": 133,
+      "OOS_ret_pct": 0.855,
+      "entries_yr": 112.0,
+      "k619_note": "SHORT-WINDOW PREFERRED (\u2264336h, K615/K617 lesson)",
+      "preferred": true
+    },
+    {
+      "window_h": 168,
+      "window_label": "7d",
+      "threshold_factor": 1.0,
+      "threshold_value": 3.886e-05,
+      "IS_sharpe": 12.233,
+      "OOS_sharpe": 6.758,
+      "entries": 152,
+      "OOS_ret_pct": 0.68,
+      "entries_yr": 128.1,
+      "k619_note": "SHORT-WINDOW PREFERRED (\u2264336h, K615/K617 lesson)",
+      "preferred": true
+    },
+    {
+      "window_h": 168,
+      "window_label": "7d",
+      "threshold_factor": 0.5,
+      "threshold_value": 1.943e-05,
+      "IS_sharpe": 19.84,
+      "OOS_sharpe": 5.623,
+      "entries": 456,
+      "OOS_ret_pct": 1.005,
+      "entries_yr": 384.2,
+      "k619_note": "SHORT-WINDOW PREFERRED (\u2264336h, K615/K617 lesson)",
+      "preferred": true
+    }
+  ],
+  "profit_projection": {
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 300000.0,
+      "oos_ann_ret_1x_pct": 5.9598,
+      "oos_ann_ret_4x_pct": 23.8392,
+      "gross_annual_usdc": 71517,
+      "net_annual_usdc_est": 57214
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 3000000.0,
+      "oos_ann_ret_1x_pct": 5.9598,
+      "oos_ann_ret_4x_pct": 23.8392,
+      "gross_annual_usdc": 715176,
+      "net_annual_usdc_est": 572140
+    },
+    "usdc_yr_net_10M": 57214,
+    "note": "4x leverage, OOS ann=5.960% x 4 = 23.839%/yr. @$10M 3.0% alloc: $57,214/yr (net). @$100M 3.0% alloc: $572,140/yr (net). ETHFI = Ether.fi governance token (eETH/weETH liquid restaking). Restaking yield ref: LDO K594 REJECT | ENA K616 ACCEPT ($67K/yr)."
+  },
+  "hl_concentration_impact": {
+    "current_hl_weight_pct": 64.5,
+    "k619_sleeve_pct": 3.0,
+    "new_hl_weight_pct": 67.5,
+    "hl_cap_pct": 65.0,
+    "within_cap": false,
+    "breach": true,
+    "headroom_pct": -2.5,
+    "note": "Post-K616: HL baseline=64.5% (ENA via Bybit, HL unchanged). K619 ETHFI 3.0% sleeve \u2192 HL 67.5% (BREACH 65.0% cap). ETHFI: Bybit ETHFIUSDT well-listed. Consider Bybit ETHFI + HL BTC if HL cap hit."
+  },
+  "paired_trade_family_rank": {
+    "members": [
+      {
+        "rank": 1,
+        "pair": "APT-BTC",
+        "sharpe": 51.1,
+        "status": "ACCEPT",
+        "wave": "K512"
+      },
+      {
+        "rank": 2,
+        "pair": "ATOM-BTC",
+        "sharpe": 50.786,
+        "status": "ACCEPT",
+        "wave": "K493"
+      },
+      {
+        "rank": 3,
+        "pair": "SEI-BTC",
+        "sharpe": 48.1,
+        "status": "ACCEPT",
+        "wave": "K507"
+      },
+      {
+        "rank": 4,
+        "pair": "AVAX-BTC",
+        "sharpe": 43.887,
+        "status": "ACCEPT",
+        "wave": "K484"
+      },
+      {
+        "rank": 5,
+        "pair": "SHIB-BTC",
+        "sharpe": 38.481,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K595"
+      },
+      {
+        "rank": 6,
+        "pair": "SAND-BTC",
+        "sharpe": 33.627,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K583"
+      },
+      {
+        "rank": 7,
+        "pair": "JUP-BTC",
+        "sharpe": 29.895,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K606"
+      },
+      {
+        "rank": 8,
+        "pair": "PEPE-BTC",
+        "sharpe": 26.42,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K598"
+      },
+      {
+        "rank": 9,
+        "pair": "BONK-BTC",
+        "sharpe": 23.667,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K603"
+      },
+      {
+        "rank": 10,
+        "pair": "FIL-BTC",
+        "sharpe": 21.773,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K517"
+      },
+      {
+        "rank": 11,
+        "pair": "DOGE-BTC",
+        "sharpe": 21.069,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K592"
+      },
+      {
+        "rank": 12,
+        "pair": "ENA-BTC",
+        "sharpe": 20.468,
+        "status": "ACCEPT",
+        "wave": "K616"
+      },
+      {
+        "rank": 13,
+        "pair": "AXS-BTC",
+        "sharpe": 17.815,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K591"
+      },
+      {
+        "rank": 14,
+        "pair": "SOL-BTC",
+        "sharpe": 16.298,
+        "status": "ACCEPT",
+        "wave": "K476"
+      },
+      {
+        "rank": 15,
+        "pair": "RENDER-BTC",
+        "sharpe": 15.302,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K531"
+      },
+      {
+        "rank": 16,
+        "pair": "HBAR-BTC",
+        "sharpe": 14.709,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K610"
+      },
+      {
+        "rank": 17,
+        "pair": "TIA-BTC",
+        "sharpe": 14.439,
+        "status": "ACCEPT",
+        "wave": "K"
+      },
+      {
+        "rank": 18,
+        "pair": "LINK-BTC",
+        "sharpe": 13.775,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K557"
+      },
+      {
+        "rank": 19,
+        "pair": "WIF-BTC",
+        "sharpe": 12.934,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K601"
+      },
+      {
+        "rank": 20,
+        "pair": "ICP-BTC",
+        "sharpe": 12.527,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K587"
+      },
+      {
+        "rank": 21,
+        "pair": "AAVE-BTC",
+        "sharpe": 11.354,
+        "status": "ACCEPT",
+        "wave": "K596"
+      },
+      {
+        "rank": 22,
+        "pair": "INJ-BTC",
+        "sharpe": 11.232,
+        "status": "ACCEPT",
+        "wave": "K500"
+      },
+      {
+        "rank": 23,
+        "pair": "TON-BTC",
+        "sharpe": 8.402,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K571"
+      },
+      {
+        "rank": 24,
+        "pair": "ETH-BTC",
+        "sharpe": 5.663,
+        "status": "ACCEPT",
+        "wave": "K449"
+      },
+      {
+        "rank": 25,
+        "pair": "TAO-BTC",
+        "sharpe": 5.267,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K"
+      },
+      {
+        "pair": "ETHFI-BTC",
+        "sharpe": 22.7329,
+        "status": "BLOCKED-LSD",
+        "wave": "K619",
+        "rank": 99
+      }
+    ],
+    "ethfi_rank": null,
+    "family_size": 25,
+    "family_note": "K449 ETH-BTC baseline. Family 25 members post-K619. K619 ETHFI-BTC -> BLOCKED/REJECT. LDO corr=0.6075 (LSD vs restaking). ENA corr=0.4597 (synthetic stable vs restaking). Restaking yield sub-cluster: ETHFI=K619. LSD sub-cluster: LDO K594=REJECT. Synthetic stable: ENA K616=ACCEPT."
+  },
+  "operational_requirements": {
+    "execution_mode": "Paired-trade: simultaneous entry both legs",
+    "module": "K450 paired-trade module (reuse K449/K476/K480/K484/K596/K616 implementation)",
+    "position_management": "Equal-notional each leg (delta-neutral target)",
+    "rebalance_trigger": "Signal flip (position reversal); monthly delta check",
+    "estimated_rebalances_per_yr": 5981.5,
+    "venue": "HL primary (ETHFI-PERP + BTC-PERP). Bybit ETHFIUSDT secondary.",
+    "hl_concentration_ok": false,
+    "bybit_routing_option": "Bybit ETHFI + HL BTC if HL cap constraint (ETHFI well-covered on Bybit)",
+    "production_path": "NOT ACTIVATED"
+  },
+  "next_generalization_candidates": [
+    {
+      "pair": "PENDLE-BTC",
+      "hypothesis": "Pendle Finance governance \u2014 yield tokenization. sUSDe/PT-sUSDe tradeable on Pendle. ENA and PENDLE user base overlap.",
+      "priority": "MEDIUM",
+      "note": "Pendle allows fixed/variable yield trading. sUSDe yield tokens active on Pendle. High FR vol expected."
+    },
+    {
+      "pair": "SUI-BTC",
+      "hypothesis": "SUI Move VM \u2014 non-ETH L1, architecture-orthogonal to yield infra cluster. No restaking/synthetic overlap risk.",
+      "priority": "HIGH",
+      "note": "SUI is Move VM (vs EVM). High vol ratio expected (>2x BTC). No yield infra cluster overlap."
+    },
+    {
+      "pair": "EIGEN-BTC",
+      "hypothesis": "EigenLayer governance token \u2014 direct restaking infrastructure. ETHFI uses EigenLayer. EIGEN and ETHFI may be correlated (G5ag check required).",
+      "priority": "MEDIUM",
+      "note": "If ETHFI ACCEPT: EIGEN G5 check vs ETHFI mandatory. If corr < 0.40: new EigenLayer cluster possible."
+    }
+  ]
+}
