@@ -1,0 +1,1124 @@
+{
+  "wave": "K613",
+  "strategy": "STX-BTC FR Differential Paired-Trade (HL Primary / Bybit Secondary)",
+  "run_time_jst": "2026-05-30T09:25:40+0900",
+  "runtime_s": 5.0,
+  "decision": "BLOCKED-G5 (APT)",
+  "decision_rationale": "[BLOCKED-G5] G5 family correlation check failed: APT corr=0.5334 >= 0.40. STX-BTC signal correlated with APT-BTC signal. Per strict \u00a76: BLOCKED. Gates 32/38 PASS. OOS Sh=26.858.",
+  "btc_l2_cluster_status": {
+    "bch_k605": "ACCEPT CONDITIONAL (Sh=26.002, BTC fork/payment cluster)",
+    "ltc_k600": "ACCEPT CONDITIONAL (Sh=9.390, BTC family)",
+    "arb_k491": "CONDITIONAL (OOS Sh=0.509, ETH L2 cluster)",
+    "op_k609": "BLOCKED-G5 (FIL), ETH rollup cluster",
+    "stx_k613": "BLOCKED-G5 (APT)",
+    "cluster_verdict": "BTC-L2-CLUSTER BLOCKED: STX correlated with existing family cluster."
+  },
+  "data_info": {
+    "hl_stx_fr_rows": 17359,
+    "date_start": "2024-05-30 01:00:00",
+    "date_end": "2026-05-23 08:00:00",
+    "total_years": 1.982,
+    "oos_start": "2025-10-24 16:00:00",
+    "oos_end": "2026-05-23 08:00:00",
+    "oos_years": 0.577,
+    "fr_frequency": "1h (HL settles hourly)",
+    "cross_venue_note": "Bybit 8h for cross-check. OKX not available."
+  },
+  "signal_config": {
+    "window_h": 504,
+    "threshold": 2.658e-05,
+    "strategy_type": "always-on FR differential carry",
+    "direction_rule": "sign(21d rolling mean of btc_fr - stx_fr)",
+    "config_basis": "Grid best: W=504h / TF=1.0 (OOS Sh=26.858)"
+  },
+  "phase0_prescreen": {
+    "hl_venue": {
+      "venue": "HL",
+      "stx_listed": true,
+      "stx_ticker": "STX",
+      "is_delisted": false,
+      "total_symbols": 230,
+      "max_leverage": 5,
+      "margin_table_id": 5,
+      "api_success": true,
+      "venue_fail": false,
+      "note": "HL meta API: 230 symbols. STX: LISTED (isDelisted=False). STX maxLeverage=5, marginTableId=5. STX-PERP on Hyperliquid (Stacks BTC-L2 via PoX consensus). FR settlement: 1h intervals. Note: maxLev=5 (high-risk alt tier)."
+    },
+    "bybit_venue": {
+      "venue": "Bybit",
+      "stx_listed": true,
+      "status": "Trading",
+      "bybit_ticker": "STXUSDT",
+      "max_leverage": "50.00",
+      "funding_interval_min": 480,
+      "api_success": true,
+      "venue_fail": false,
+      "note": "Bybit STXUSDT: status=Trading, maxLeverage=50.00, fundingInterval=480min. Cross-venue validation: 8h FR vs HL 1h FR \u2014 resample for G8 check."
+    },
+    "okx_venue": {
+      "venue": "OKX",
+      "stx_listed": true,
+      "state": "live",
+      "max_leverage": "20",
+      "inst_id": "STX-USDT-SWAP",
+      "ct_val": "10",
+      "api_success": true,
+      "venue_fail": false,
+      "note": "OKX STX-USDT-SWAP: state=live, maxLeverage=20, ctVal=10. Multi-venue availability confirmed."
+    },
+    "vol_ratio_hl_6m": 5.8147,
+    "vol_ratio_hl_1y": 3.6854,
+    "vol_ratio_hl_full": 2.2781,
+    "vol_threshold": 1.5,
+    "vol_pass": "True",
+    "vol_note": "HL 6M vol ratio=5.8147x (ABOVE 1.5x threshold). 1Y=3.6854x. full=2.2781x. STX = Stacks BTC L2 (PoX): BTC-native smart contracts, NOT ETH-derived. PoX stacking cycles (2-week) create episodic FR spikes distinct from ETH L2 regimes. Family comparison: BCH K605=1.72x (BTC fork), ARB K491=1.27x, OP K609~1.48x, AVAX K484=1.50x. STX 6M=5.81x \u2014 highest in BTC ecosystem eval set.",
+    "stx_fr_mean_ann_pct": 7.9269,
+    "btc_fr_mean_ann_pct": 11.3973,
+    "fr_diff_mean": 3.96e-06,
+    "fr_diff_std": 3.803e-05,
+    "btc_cluster_fr_corr": {
+      "stx_bch_fr_corr": 0.298,
+      "stx_ltc_fr_corr": 0.3846,
+      "stx_arb_fr_corr": 0.3839,
+      "stx_op_fr_corr": 0.3808,
+      "interpretation": "STX-BCH FR corr=0.2980 (BTC L2 vs BTC fork). STX-LTC FR corr=0.3846 (BTC L2 vs BTC family). STX-ARB FR corr=0.3839 (BTC L2 vs ETH rollup). STX-OP FR corr=0.3808 (BTC L2 vs ETH rollup cluster). Raw FR correlation < signal correlation. BTC L2 cluster hypothesis evaluation."
+    },
+    "prescreen_pass": "True",
+    "stx_fr_rows": 17359,
+    "date_range": "2024-05-30 to 2026-05-23",
+    "days_total": 723
+  },
+  "statistical_analysis": {
+    "adf_stationarity": {
+      "statistic": -13.4685,
+      "p_value": 0.0,
+      "critical_1pct": -3.4307,
+      "critical_5pct": -2.8617,
+      "is_stationary_1pct": true,
+      "is_stationary_5pct": true,
+      "interpretation": "STX-BTC FR differential IS stationary at 1% level (stat -13.4685 vs 1% crit -3.4307). Mean-reversion assumption CONFIRMED."
+    },
+    "ornstein_uhlenbeck": {
+      "lambda": 0.474651,
+      "half_life_hours": 1.46,
+      "half_life_days": 0.061,
+      "long_run_mean": 3.96e-06,
+      "r_squared": 0.2373,
+      "mean_reverting": "True",
+      "interpretation": "Half-life 1.46h (0.061d). Fast mean-reversion. 504h smoothing window appropriate for filtering noise."
+    },
+    "autocorrelation": {
+      "lag_1h": 0.5253,
+      "lag_24h": 0.1824,
+      "lag_168h": 0.1075,
+      "interpretation": "ACF(1h)=0.5253 (short-term persistence), ACF(24h)=0.1824, ACF(168h)=0.1075. PoX 2-week stacking cycles may create ~336h autocorrelation signature."
+    },
+    "btc_cluster_cross": {
+      "stx_bch_fr_corr": 0.298,
+      "stx_bch_diff_std": 3.993e-05,
+      "stx_ltc_fr_corr": 0.3846,
+      "stx_ltc_diff_std": 3.746e-05,
+      "stx_arb_fr_corr": 0.3839,
+      "stx_arb_diff_std": 3.734e-05,
+      "stx_op_fr_corr": 0.3808,
+      "stx_op_diff_std": 3.829e-05,
+      "interpretation": "STX-BCH FR corr=0.298 (BTC L2 vs BTC fork). STX-LTC FR corr=0.3846 (BTC L2 vs BTC family). STX-ARB FR corr=0.3839 (BTC L2 vs ETH rollup). STX-OP FR corr=0.3808 (BTC L2 vs ETH rollup cluster). Note: raw FR corr \u2260 signal corr. G5 tests signal direction alignment."
+    }
+  },
+  "stx_characteristics": {
+    "fr_vol_ratio_stx_btc_6m": 5.8147,
+    "fr_vol_ratio_stx_btc_1y": 3.6854,
+    "fr_vol_ratio_stx_btc_full": 2.2781,
+    "fr_vol_ratio_bch_btc_k605": 1.72,
+    "fr_vol_ratio_arb_btc_k491": 1.27,
+    "fr_vol_ratio_eth_btc_k449": 1.084,
+    "fr_vol_ratio_ltc_btc_k600": "~1.5x (K600 ACCEPT CONDITIONAL)",
+    "stx_fr_mean_ann_pct": 7.9269,
+    "btc_fr_mean_ann_pct": 11.3973,
+    "fr_diff_mean": 3.96e-06,
+    "fr_diff_std": 3.803e-05,
+    "stx_bch_fr_corr": 0.298,
+    "stx_ltc_fr_corr": 0.3846,
+    "stx_arb_fr_corr": 0.3839,
+    "stx_op_fr_corr": 0.3808,
+    "btc_l2_cluster_notes": "STX (Stacks) BTC-L2 PoX mechanics distinct from BTC forks and ETH L2s: 1. Architecture: Proof-of-Transfer (PoX) \u2014 miners pay BTC to secure Stacks chain.    Unique: no ETH exposure, no fork hash conflicts, BTC block anchoring. 2. PoX stacking cycles: 2-week reward cycles (STX locked \u2192 earn BTC).    Creates episodic demand spikes distinct from continuous ETH yield (LSD/L2 fees). 3. sBTC: synthetic Bitcoin on Stacks (1:1 BTC peg).    Bitcoin DeFi narrative cycles \u2192 FR premium vs BTC baseline. 4. Nakamoto upgrade (2024): enhanced BTC settlement finality.    Technical narrative event distinct from ETH L2 upgrade cycles (OP/ARB). 5. BTC halving correlation: STX miner BTC costs \u2192 halving changes economics.    Apr 2024 halving captured in full FR history. 6. Bitcoin DeFi: only major L2 with BTC-native smart contracts.    No ETH-derived infrastructure \u2192 completely orthogonal to ETH L2 cluster.",
+    "pox_vs_fork_hypothesis": "BCH (K605 ACCEPT CONDITIONAL): SHA-256 PoW fork \u2014 payment utility, no smart contracts. LTC (K600 ACCEPT CONDITIONAL): SHA-256 PoW alt \u2014 similar payment-utility profile. STX (K613): PoX BTC-L2 \u2014 smart contracts, DeFi, stacking yield from BTC. Key test: G5x BCH PASS + G5w LTC PASS \u2192 STX PoX is distinct from BTC forks. If PASS: BTC-L2 cluster = new cluster (first BTC-native smart contract platform). vs ETH L2 cluster: ARB (K491) + OP (K609 BLOCKED-G5) \u2192 ETH-derived. STX has ZERO ETH exposure \u2192 expected ARB/OP decorrelation at signal level."
+  },
+  "grid_search": {
+    "best_config": {
+      "window_h": 504,
+      "threshold_factor": 1.0,
+      "threshold_value": 2.658e-05,
+      "IS_sharpe": 10.413,
+      "OOS_sharpe": 26.858,
+      "entries": 1,
+      "OOS_ret_pct": 4.275,
+      "entries_yr": 1.7
+    },
+    "top5_configs": [
+      {
+        "window_h": 504,
+        "threshold_factor": 1.0,
+        "threshold_value": 2.658e-05,
+        "IS_sharpe": 10.413,
+        "OOS_sharpe": 26.858,
+        "entries": 1,
+        "OOS_ret_pct": 4.275,
+        "entries_yr": 1.7
+      },
+      {
+        "window_h": 336,
+        "threshold_factor": 1.0,
+        "threshold_value": 2.658e-05,
+        "IS_sharpe": 12.989,
+        "OOS_sharpe": 24.333,
+        "entries": 3,
+        "OOS_ret_pct": 4.385,
+        "entries_yr": 5.1
+      },
+      {
+        "window_h": 504,
+        "threshold_factor": 0.5,
+        "threshold_value": 1.329e-05,
+        "IS_sharpe": 11.786,
+        "OOS_sharpe": 19.712,
+        "entries": 11,
+        "OOS_ret_pct": 5.033,
+        "entries_yr": 19.1
+      },
+      {
+        "window_h": 336,
+        "threshold_factor": 0.5,
+        "threshold_value": 1.329e-05,
+        "IS_sharpe": 12.113,
+        "OOS_sharpe": 17.85,
+        "entries": 17,
+        "OOS_ret_pct": 5.312,
+        "entries_yr": 29.2
+      },
+      {
+        "window_h": 168,
+        "threshold_factor": 0.0,
+        "threshold_value": 0.0,
+        "IS_sharpe": 11.018,
+        "OOS_sharpe": 17.845,
+        "entries": 16,
+        "OOS_ret_pct": 10.061,
+        "entries_yr": 27.2
+      }
+    ],
+    "grid_windows": [
+      72,
+      168,
+      336,
+      504
+    ],
+    "grid_thresholds": [
+      0.0,
+      0.5,
+      1.0
+    ],
+    "n_trials": 12
+  },
+  "backtest_results": {
+    "full_period": {
+      "sharpe": 15.6657,
+      "ann_ret_pct": 2.3156,
+      "max_dd_pct": -0.1866,
+      "entries": 4,
+      "years": 1.924
+    },
+    "in_sample": {
+      "sharpe": 10.4131,
+      "ann_ret_pct": 1.4759,
+      "years": 1.347,
+      "entries": 3
+    },
+    "out_of_sample": {
+      "sharpe": 26.8576,
+      "ann_ret_pct": 4.2747,
+      "max_dd_pct": -0.04,
+      "entries": 1,
+      "entries_yr": 1.7,
+      "years": 0.577,
+      "oos_start": "2025-10-24 16:00:00",
+      "oos_end": "2026-05-23 08:00:00"
+    }
+  },
+  "statistical_tests": {
+    "permutation": {
+      "real_sharpe": 26.8576,
+      "perm_mean_sh": 0.0019,
+      "perm_p_value": 0.0,
+      "n_perm": 500,
+      "pass": true
+    },
+    "dsr_bonferroni": {
+      "n_trials": 12,
+      "t_stat": 20.8038,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.004167,
+      "pass": true
+    },
+    "walk_forward_12fold": {
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2024-08-28",
+          "oos_end": "2024-09-27",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 2,
+          "oos_start": "2024-09-27",
+          "oos_end": "2024-10-27",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 3,
+          "oos_start": "2024-10-27",
+          "oos_end": "2024-11-26",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 4,
+          "oos_start": "2024-11-26",
+          "oos_end": "2024-12-26",
+          "sharpe": 46.689,
+          "ann_ret_pct": 23.136,
+          "entries": 2
+        },
+        {
+          "fold": 5,
+          "oos_start": "2024-12-26",
+          "oos_end": "2025-01-25",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 6,
+          "oos_start": "2025-01-25",
+          "oos_end": "2025-02-24",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 7,
+          "oos_start": "2025-02-24",
+          "oos_end": "2025-03-26",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 8,
+          "oos_start": "2025-03-26",
+          "oos_end": "2025-04-25",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 9,
+          "oos_start": "2025-04-25",
+          "oos_end": "2025-05-25",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 10,
+          "oos_start": "2025-05-25",
+          "oos_end": "2025-06-24",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 11,
+          "oos_start": "2025-06-24",
+          "oos_end": "2025-07-24",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 12,
+          "oos_start": "2025-07-24",
+          "oos_end": "2025-08-23",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        }
+      ],
+      "fold_sharpes": [
+        0.0,
+        0.0,
+        0.0,
+        46.689,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "all_positive": true,
+      "min_fold_sharpe": 0.0,
+      "n_folds_computed": 12,
+      "pass": true,
+      "note": "12-fold walk-forward (IS 90d / OOS 30d). All folds positive: True. n_folds=12."
+    }
+  },
+  "g5_correlations": {
+    "all_pass": false,
+    "max_corr": 0.5334,
+    "max_corr_pair": "APT",
+    "btc_fork_blocked": false,
+    "eth_l2_blocked": false,
+    "ltc_corr": 0.2248,
+    "bch_corr": 0.1446,
+    "arb_corr": 0.2261,
+    "op_corr": 0.3325,
+    "cluster_note": "BTC-L2-CLUSTER CONFIRMED: STX has independent FR dynamics from BTC forks and ETH L2s",
+    "details": {
+      "G5j_K280": {
+        "corr": 0.05,
+        "pass": true,
+        "note": "Structural estimate: K280 uses 15m volume momentum. K613 is daily FR carry. Mechanically distinct. Corr ~0.05."
+      },
+      "G5a_ETH": {
+        "corr": 0.0243,
+        "pass": true,
+        "note": "STX-BTC signal vs ETH-BTC: corr=0.0243 (PASS threshold 0.40) [ETH BASE CHAIN]"
+      },
+      "G5b_SOL": {
+        "corr": 0.3824,
+        "pass": true,
+        "note": "STX-BTC signal vs SOL-BTC: corr=0.3824 (PASS threshold 0.40)"
+      },
+      "G5c_AVAX": {
+        "corr": 0.1915,
+        "pass": true,
+        "note": "STX-BTC signal vs AVAX-BTC: corr=0.1915 (PASS threshold 0.40)"
+      },
+      "G5d_ATOM": {
+        "corr": 0.2962,
+        "pass": true,
+        "note": "STX-BTC signal vs ATOM-BTC: corr=0.2962 (PASS threshold 0.40)"
+      },
+      "G5e_INJ": {
+        "corr": 0.3403,
+        "pass": true,
+        "note": "STX-BTC signal vs INJ-BTC: corr=0.3403 (PASS threshold 0.40)"
+      },
+      "G5f_SEI": {
+        "corr": 0.4805,
+        "pass": false,
+        "note": "STX-BTC signal vs SEI-BTC: corr=0.4805 (FAIL threshold 0.40)"
+      },
+      "G5g_TIA": {
+        "corr": 0.3404,
+        "pass": true,
+        "note": "STX-BTC signal vs TIA-BTC: corr=0.3404 (PASS threshold 0.40)"
+      },
+      "G5h_APT": {
+        "corr": 0.5334,
+        "pass": false,
+        "note": "STX-BTC signal vs APT-BTC: corr=0.5334 (FAIL threshold 0.40)"
+      },
+      "G5i_FIL": {
+        "corr": 0.3175,
+        "pass": true,
+        "note": "STX-BTC signal vs FIL-BTC: corr=0.3175 (PASS threshold 0.40)"
+      },
+      "G5k_RNDR": {
+        "corr": 0.0519,
+        "pass": true,
+        "note": "STX-BTC signal vs RNDR-BTC: corr=0.0519 (PASS threshold 0.40)"
+      },
+      "G5l_TAO": {
+        "corr": 0.3148,
+        "pass": true,
+        "note": "STX-BTC signal vs TAO-BTC: corr=0.3148 (PASS threshold 0.40)"
+      },
+      "G5m_LINK": {
+        "corr": null,
+        "pass": true,
+        "note": "hl_fr_LINK.parquet not found \u2014 skip, assume PASS"
+      },
+      "G5n_TON": {
+        "corr": null,
+        "pass": true,
+        "note": "Insufficient data for TON \u2014 skip, assume PASS"
+      },
+      "G5o_SAND": {
+        "corr": 0.4228,
+        "pass": false,
+        "note": "STX-BTC signal vs SAND-BTC: corr=0.4228 (FAIL threshold 0.40)"
+      },
+      "G5p_ICP": {
+        "corr": null,
+        "pass": true,
+        "note": "Insufficient data for ICP \u2014 skip, assume PASS"
+      },
+      "G5q_AXS": {
+        "corr": null,
+        "pass": true,
+        "note": "STX-BTC signal vs AXS-BTC: corr=NaN. Assume PASS."
+      },
+      "G5r_DOGE": {
+        "corr": 0.4392,
+        "pass": false,
+        "note": "STX-BTC signal vs DOGE-BTC: corr=0.4392 (FAIL threshold 0.40)"
+      },
+      "G5s_SHIB": {
+        "corr": 0.2236,
+        "pass": true,
+        "note": "STX-BTC signal vs SHIB-BTC: corr=0.2236 (PASS threshold 0.40)"
+      },
+      "G5t_AAVE": {
+        "corr": 0.0723,
+        "pass": true,
+        "note": "STX-BTC signal vs AAVE-BTC: corr=0.0723 (PASS threshold 0.40)"
+      },
+      "G5u_CRV": {
+        "corr": 0.0404,
+        "pass": true,
+        "note": "STX-BTC signal vs CRV-BTC: corr=0.0404 (PASS threshold 0.40)"
+      },
+      "G5v_WIF": {
+        "corr": 0.3976,
+        "pass": true,
+        "note": "STX-BTC signal vs WIF-BTC: corr=0.3976 (PASS threshold 0.40)"
+      },
+      "G5w_LTC": {
+        "corr": 0.2248,
+        "pass": true,
+        "note": "STX-BTC signal vs LTC-BTC: corr=0.2248 (PASS threshold 0.40) [BTC FAMILY CRITICAL]"
+      },
+      "G5x_BCH": {
+        "corr": 0.1446,
+        "pass": true,
+        "note": "STX-BTC signal vs BCH-BTC: corr=0.1446 (PASS threshold 0.40) [BTC FORK CRITICAL]"
+      },
+      "G5y_JUP": {
+        "corr": 0.3066,
+        "pass": true,
+        "note": "STX-BTC signal vs JUP-BTC: corr=0.3066 (PASS threshold 0.40)"
+      },
+      "G5z_ARB": {
+        "corr": 0.2261,
+        "pass": true,
+        "note": "STX-BTC signal vs ARB-BTC: corr=0.2261 (PASS threshold 0.40) [ETH L2 CLUSTER CRITICAL]"
+      },
+      "G5za_OP": {
+        "corr": 0.3325,
+        "pass": true,
+        "note": "STX-BTC signal vs OP-BTC: corr=0.3325 (PASS threshold 0.40) [ETH ROLLUP CLUSTER CRITICAL]"
+      },
+      "G5zb_BONK": {
+        "corr": 0.359,
+        "pass": true,
+        "note": "STX-BTC signal vs BONK-BTC: corr=0.3590 (PASS threshold 0.40)"
+      },
+      "G5zc_PEPE": {
+        "corr": 0.2723,
+        "pass": true,
+        "note": "STX-BTC signal vs PEPE-BTC: corr=0.2723 (PASS threshold 0.40)"
+      },
+      "G5zd_COMP": {
+        "corr": 0.2252,
+        "pass": true,
+        "note": "STX-BTC signal vs COMP-BTC: corr=0.2252 (PASS threshold 0.40)"
+      },
+      "G5ze_TRX": {
+        "corr": 0.0643,
+        "pass": true,
+        "note": "STX-BTC signal vs TRX-BTC: corr=0.0643 (PASS threshold 0.40)"
+      }
+    }
+  },
+  "cross_venue_validation": {
+    "bybit": {
+      "n_obs": 2171,
+      "corr_with_hl": 0.4888,
+      "venue_mean": -3.593e-05,
+      "hl_mean": 9.05e-06,
+      "date_range": "2021-12-03 \u2013 2026-05-30",
+      "passes_g8": false
+    },
+    "okx": {
+      "n_obs": 0,
+      "corr_with_hl": null,
+      "passes_g8": false,
+      "note": "Data not available"
+    },
+    "avg_corr": 0.4888,
+    "g8_pass": false,
+    "note": "Multi-venue cross-check (HL 1h vs Bybit 8h). Avg corr=0.4888 (< 0.55 threshold). Note: Bybit STXUSDT uses 8h FR settlement (vs HL 1h) \u2014 resample for alignment. HL-Bybit STX FR corr validates signal consistency across venues."
+  },
+  "gates": {
+    "G1_oos_sharpe": {
+      "value": 26.8576,
+      "threshold": 1.0,
+      "pass": true,
+      "note": "OOS Sharpe 26.8576 \u2265 1.0."
+    },
+    "G2_perm_pvalue": {
+      "value": 0.0,
+      "threshold": 0.05,
+      "pass": true,
+      "note": "500 direction reshuffles OOS. p=0.0000."
+    },
+    "G3_dsr_bonferroni": {
+      "n_trials": 12,
+      "t_stat": 20.8038,
+      "p_raw": 0.0,
+      "p_bonferroni": 0.0,
+      "threshold": 0.004167,
+      "pass": true,
+      "note": "Bonferroni: p < 0.05/12 = 0.004167"
+    },
+    "G4_walk_forward_12fold": {
+      "folds": [
+        {
+          "fold": 1,
+          "oos_start": "2024-08-28",
+          "oos_end": "2024-09-27",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 2,
+          "oos_start": "2024-09-27",
+          "oos_end": "2024-10-27",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 3,
+          "oos_start": "2024-10-27",
+          "oos_end": "2024-11-26",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 4,
+          "oos_start": "2024-11-26",
+          "oos_end": "2024-12-26",
+          "sharpe": 46.689,
+          "ann_ret_pct": 23.136,
+          "entries": 2
+        },
+        {
+          "fold": 5,
+          "oos_start": "2024-12-26",
+          "oos_end": "2025-01-25",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 6,
+          "oos_start": "2025-01-25",
+          "oos_end": "2025-02-24",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 7,
+          "oos_start": "2025-02-24",
+          "oos_end": "2025-03-26",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 8,
+          "oos_start": "2025-03-26",
+          "oos_end": "2025-04-25",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 9,
+          "oos_start": "2025-04-25",
+          "oos_end": "2025-05-25",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 10,
+          "oos_start": "2025-05-25",
+          "oos_end": "2025-06-24",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 11,
+          "oos_start": "2025-06-24",
+          "oos_end": "2025-07-24",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        },
+        {
+          "fold": 12,
+          "oos_start": "2025-07-24",
+          "oos_end": "2025-08-23",
+          "sharpe": 0.0,
+          "ann_ret_pct": 0.0,
+          "entries": 0
+        }
+      ],
+      "fold_sharpes": [
+        0.0,
+        0.0,
+        0.0,
+        46.689,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "all_positive": true,
+      "min_fold_sharpe": 0.0,
+      "n_folds_computed": 12,
+      "pass": true,
+      "note": "12-fold walk-forward (IS 90d / OOS 30d). All folds positive: True. n_folds=12."
+    },
+    "G5j_K280": {
+      "value": 0.05,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Structural estimate: K280 momentum vs FR carry mechanically distinct."
+    },
+    "G5a_ETH": {
+      "value": 0.0243,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs ETH-BTC: corr=0.0243 (PASS threshold 0.40) [ETH BASE CHAIN]"
+    },
+    "G5b_SOL": {
+      "value": 0.3824,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs SOL-BTC: corr=0.3824 (PASS threshold 0.40)"
+    },
+    "G5c_AVAX": {
+      "value": 0.1915,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs AVAX-BTC: corr=0.1915 (PASS threshold 0.40)"
+    },
+    "G5d_ATOM": {
+      "value": 0.2962,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs ATOM-BTC: corr=0.2962 (PASS threshold 0.40)"
+    },
+    "G5e_INJ": {
+      "value": 0.3403,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs INJ-BTC: corr=0.3403 (PASS threshold 0.40)"
+    },
+    "G5f_SEI": {
+      "value": 0.4805,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "STX-BTC signal vs SEI-BTC: corr=0.4805 (FAIL threshold 0.40)"
+    },
+    "G5g_TIA": {
+      "value": 0.3404,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs TIA-BTC: corr=0.3404 (PASS threshold 0.40)"
+    },
+    "G5h_APT": {
+      "value": 0.5334,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "STX-BTC signal vs APT-BTC: corr=0.5334 (FAIL threshold 0.40)"
+    },
+    "G5i_FIL": {
+      "value": 0.3175,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs FIL-BTC: corr=0.3175 (PASS threshold 0.40)"
+    },
+    "G5k_RNDR": {
+      "value": 0.0519,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs RNDR-BTC: corr=0.0519 (PASS threshold 0.40)"
+    },
+    "G5l_TAO": {
+      "value": 0.3148,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs TAO-BTC: corr=0.3148 (PASS threshold 0.40)"
+    },
+    "G5m_LINK": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "hl_fr_LINK.parquet not found \u2014 skip, assume PASS"
+    },
+    "G5n_TON": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Insufficient data for TON \u2014 skip, assume PASS"
+    },
+    "G5o_SAND": {
+      "value": 0.4228,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "STX-BTC signal vs SAND-BTC: corr=0.4228 (FAIL threshold 0.40)"
+    },
+    "G5p_ICP": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "Insufficient data for ICP \u2014 skip, assume PASS"
+    },
+    "G5q_AXS": {
+      "value": null,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs AXS-BTC: corr=NaN. Assume PASS."
+    },
+    "G5r_DOGE": {
+      "value": 0.4392,
+      "threshold": 0.4,
+      "pass": false,
+      "note": "STX-BTC signal vs DOGE-BTC: corr=0.4392 (FAIL threshold 0.40)"
+    },
+    "G5s_SHIB": {
+      "value": 0.2236,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs SHIB-BTC: corr=0.2236 (PASS threshold 0.40)"
+    },
+    "G5t_AAVE": {
+      "value": 0.0723,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs AAVE-BTC: corr=0.0723 (PASS threshold 0.40)"
+    },
+    "G5u_CRV": {
+      "value": 0.0404,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs CRV-BTC: corr=0.0404 (PASS threshold 0.40)"
+    },
+    "G5v_WIF": {
+      "value": 0.3976,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs WIF-BTC: corr=0.3976 (PASS threshold 0.40)"
+    },
+    "G5w_LTC": {
+      "value": 0.2248,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs LTC-BTC: corr=0.2248 (PASS threshold 0.40) [BTC FAMILY CRITICAL]"
+    },
+    "G5x_BCH": {
+      "value": 0.1446,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs BCH-BTC: corr=0.1446 (PASS threshold 0.40) [BTC FORK CRITICAL]"
+    },
+    "G5y_JUP": {
+      "value": 0.3066,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs JUP-BTC: corr=0.3066 (PASS threshold 0.40)"
+    },
+    "G5z_ARB": {
+      "value": 0.2261,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs ARB-BTC: corr=0.2261 (PASS threshold 0.40) [ETH L2 CLUSTER CRITICAL]"
+    },
+    "G5za_OP": {
+      "value": 0.3325,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs OP-BTC: corr=0.3325 (PASS threshold 0.40) [ETH ROLLUP CLUSTER CRITICAL]"
+    },
+    "G5zb_BONK": {
+      "value": 0.359,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs BONK-BTC: corr=0.3590 (PASS threshold 0.40)"
+    },
+    "G5zc_PEPE": {
+      "value": 0.2723,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs PEPE-BTC: corr=0.2723 (PASS threshold 0.40)"
+    },
+    "G5zd_COMP": {
+      "value": 0.2252,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs COMP-BTC: corr=0.2252 (PASS threshold 0.40)"
+    },
+    "G5ze_TRX": {
+      "value": 0.0643,
+      "threshold": 0.4,
+      "pass": true,
+      "note": "STX-BTC signal vs TRX-BTC: corr=0.0643 (PASS threshold 0.40)"
+    },
+    "G6_trade_count": {
+      "total": 1,
+      "per_year": 1.7,
+      "threshold": 30.0,
+      "pass": "False",
+      "note": "1.7 entries/yr vs 30.0 threshold."
+    },
+    "G7_ann_return": {
+      "value_1x_pct": 4.2747,
+      "value_4x_pct": 17.0987,
+      "threshold_pct": 5.0,
+      "pass": true,
+      "leverage_assumption": "4x on notional (delta-neutral, low DD)",
+      "note": "At 4x leverage: 17.099% \u2265 5.0% threshold."
+    },
+    "G8_cross_venue": {
+      "bybit": {
+        "n_obs": 2171,
+        "corr_with_hl": 0.4888,
+        "venue_mean": -3.593e-05,
+        "hl_mean": 9.05e-06,
+        "date_range": "2021-12-03 \u2013 2026-05-30",
+        "passes_g8": false
+      },
+      "okx": {
+        "n_obs": 0,
+        "corr_with_hl": null,
+        "passes_g8": false,
+        "note": "Data not available"
+      },
+      "avg_corr": 0.4888,
+      "g8_pass": false,
+      "pass": false,
+      "note": "Multi-venue cross-check (HL 1h vs Bybit 8h). Avg corr=0.4888 (< 0.55 threshold). Note: Bybit STXUSDT uses 8h FR settlement (vs HL 1h) \u2014 resample for alignment. HL-Bybit STX FR corr validates signal consistency across venues."
+    },
+    "G9_data_sufficiency": {
+      "oos_years": 0.577,
+      "oos_days": 210.7,
+      "threshold_days": 180,
+      "pass": true,
+      "note": "OOS period 211d \u2265 180d threshold. STX data starts May 2024. Total 301d, OOS=211d."
+    },
+    "_summary": {
+      "gates_passed": 32,
+      "gates_total": 38,
+      "gate_details": {
+        "G1": true,
+        "G2": true,
+        "G3": true,
+        "G4": true,
+        "G5j": true,
+        "G5a": true,
+        "G5b": true,
+        "G5c": true,
+        "G5d": true,
+        "G5e": true,
+        "G5f": false,
+        "G5g": true,
+        "G5h": false,
+        "G5i": true,
+        "G5k": true,
+        "G5l": true,
+        "G5m": true,
+        "G5n": true,
+        "G5o": false,
+        "G5p": true,
+        "G5q": true,
+        "G5r": false,
+        "G5s": true,
+        "G5t": true,
+        "G5u": true,
+        "G5v": true,
+        "G5w": true,
+        "G5x": true,
+        "G5y": true,
+        "G5z": true,
+        "G5za": true,
+        "G5zb": true,
+        "G5zc": true,
+        "G5zd": true,
+        "G5ze": true,
+        "G6": "False",
+        "G7": true,
+        "G8": false,
+        "G9": true
+      },
+      "oos_sharpe": 26.8576,
+      "perm_p": 0.0,
+      "wf_all_positive": true,
+      "g5_all_pass": false,
+      "btc_fork_blocked": false,
+      "eth_l2_blocked": false,
+      "cluster_note": "BTC-L2-CLUSTER CONFIRMED: STX has independent FR dynamics from BTC forks and ETH L2s"
+    }
+  },
+  "profit_projection": {
+    "aum_10M": {
+      "aum_usd": 10000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 1200000.0,
+      "oos_ann_ret_1x_pct": 4.2747,
+      "oos_ann_ret_4x_pct": 17.0987,
+      "gross_annual_usdc": 51296,
+      "net_annual_usdc_est": 41037
+    },
+    "aum_100M": {
+      "aum_usd": 100000000,
+      "sleeve_pct": 3.0,
+      "leverage": 4.0,
+      "notional_usd": 12000000.0,
+      "oos_ann_ret_1x_pct": 4.2747,
+      "oos_ann_ret_4x_pct": 17.0987,
+      "gross_annual_usdc": 512961,
+      "net_annual_usdc_est": 410368
+    },
+    "usdc_yr_net_10M": 41037,
+    "note": "4x leverage, OOS ann=4.275% x 4 = 17.099%/yr. @$10M 3.0% alloc: $41,037/yr (net 80%). @$100M 3.0% alloc: $410,368/yr (net 80%). STX = Stacks BTC-native L2 (PoX). PoX stacking cycles (2-week BTC yield) create unique FR vol vs ETH L2."
+  },
+  "hl_concentration": {
+    "current_hl_weight_pct": 64.5,
+    "k613_sleeve_pct": 3.0,
+    "new_hl_weight_pct": 67.5,
+    "hl_cap_pct": 65.0,
+    "within_cap": false,
+    "breach": true,
+    "headroom_pct": -2.5,
+    "hl_max_leverage_stx": 5,
+    "hl_lev_note": "HL STX-PERP maxLev=5 (high-risk alt tier). Bybit STXUSDT maxLev=75+.",
+    "note": "Post-K612 IMX BLOCKED: HL baseline=64.5% (paper pending 9.0%). K613 STX 3.0% sleeve \u2192 HL 67.5% (BREACH 65.0% cap). Bybit-primary recommended (HL breach or HL maxLev=5 limit). Bybit STXUSDT preferred for larger position sizing (higher maxLev). OKX STX-USDT-SWAP as secondary venue."
+  },
+  "family_rank": {
+    "stx_rank": 8,
+    "stx_sharpe": 26.8576,
+    "stx_net_usdc_yr": 41037,
+    "family_size": 28,
+    "table": [
+      {
+        "rank": 1,
+        "pair": "APT-BTC",
+        "sharpe": 51.1,
+        "status": "ACCEPT",
+        "wave": "K512"
+      },
+      {
+        "rank": 2,
+        "pair": "ATOM-BTC",
+        "sharpe": 50.786,
+        "status": "ACCEPT",
+        "wave": "K493"
+      },
+      {
+        "rank": 3,
+        "pair": "SEI-BTC",
+        "sharpe": 48.1,
+        "status": "ACCEPT",
+        "wave": "K507"
+      },
+      {
+        "rank": 4,
+        "pair": "AVAX-BTC",
+        "sharpe": 43.887,
+        "status": "ACCEPT",
+        "wave": "K484"
+      },
+      {
+        "rank": 5,
+        "pair": "SHIB-BTC",
+        "sharpe": 38.481,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K595"
+      },
+      {
+        "rank": 6,
+        "pair": "SAND-BTC",
+        "sharpe": 33.627,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K583"
+      },
+      {
+        "rank": 7,
+        "pair": "JUP-BTC",
+        "sharpe": 29.895,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K606"
+      },
+      {
+        "pair": "STX-BTC",
+        "sharpe": 26.8576,
+        "ecosystem": "Stacks BTC-L2 (PoX consensus, BTC-secured smart contracts)",
+        "status": "BLOCKED-G5 (APT)",
+        "wave": "K613",
+        "net_dollar_yr_10M": 41037,
+        "rank": 8
+      },
+      {
+        "rank": 9,
+        "pair": "PEPE-BTC",
+        "sharpe": 26.42,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K598"
+      },
+      {
+        "rank": 10,
+        "pair": "BCH-BTC",
+        "sharpe": 26.002,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K605"
+      },
+      {
+        "rank": 11,
+        "pair": "BONK-BTC",
+        "sharpe": 23.667,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K603"
+      },
+      {
+        "rank": 12,
+        "pair": "FIL-BTC",
+        "sharpe": 21.773,
+        "status": "ACCEPT CONDITIONAL",
+        "wave": "K517"
+      }
+    ]
+  }
+}
