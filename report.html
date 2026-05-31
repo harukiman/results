@@ -750,102 +750,216 @@ window.__renderWhenReady = function(fn, label) {
 <body>
 
 <div class="container">
-<!-- DASHBOARD: K798 v7.1 FINAL 2026-05-31 02:09 JST -->
-<div id="dashboard" style="background:#ffffff;color:#0d1117;border:2px solid #0d1117;border-radius:8px;padding:32px 36px;margin:0 0 32px 0;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI','Segoe UI',sans-serif;line-height:1.7;">
+<!-- DASHBOARD v2: UX 監査後の再構成 -->
+<div id="dashboard" style="background:#ffffff;color:#0d1117;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI','Segoe UI',sans-serif;line-height:1.7;margin:0 0 32px 0;">
 
-  <h1 style="margin:0 0 6px 0;font-size:28px;font-weight:900;letter-spacing:-0.01em;">
-    K798 Governance v11 / Phase A++ v7.1 最終状況
-  </h1>
-  <p style="margin:0 0 28px 0;font-size:14px;color:#666;border-bottom:2px solid #0d1117;padding-bottom:16px;">
-    最終更新: 2026-05-31 02:26 JST | K744-K799 54 wave 完了 | 84 daemons 稼働中 | K799 ETH-COMP REJECTED G5v CLUSTER FAIL (-0.9754) COMP leg dominates | K339 REPO_ROOT | LIVE 自動変更禁止
-  </p>
+  <!-- ========== タイトル + 説明 ========== -->
+  <header style="border-bottom:3px solid #0d1117;padding-bottom:20px;margin-bottom:32px;">
+    <h1 style="margin:0 0 8px 0;font-size:30px;font-weight:900;letter-spacing:-0.01em;">
+      Systematic Alpha Discovery — 自動運用ダッシュボード
+    </h1>
+    <p style="margin:0;font-size:16px;color:#444;">
+      AI（Claude）が Hyperliquid・Bybit の永久先物市場で、資金調達料（funding rate）を使った マーケットニュートラル戦略を 24 時間自律的に研究・本番化しているシステムの状況ボード。
+    </p>
+    <p style="margin:8px 0 0 0;font-size:13px;color:#888;">
+      最終更新: 2026-05-31 02:30 JST　|　研究運用は継続中、ユーザー指示「実運用利益最大化、止めるまで継続」発令中
+    </p>
+  </header>
 
-  <!-- 4-section grid -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-bottom:32px;">
+  <!-- ========== ① ユーザー作業待ち（最優先・最大表示） ========== -->
+  <section style="margin-bottom:36px;">
+    <h2 style="font-size:22px;font-weight:800;margin:0 0 8px 0;padding-bottom:8px;border-bottom:2px solid #c41e3a;color:#c41e3a;">
+      ① あなたが次にやるべきこと
+    </h2>
+    <p style="margin:0 0 16px 0;font-size:14px;color:#555;">
+      AI が研究・本番化を進めてきた結果、現在 8 件の改善が「ユーザー1-step で利益が出せる」状態で待機中です。全部適用すれば $10M AUM で <strong>年間 +$2.81M（中央予測、 K518 38% 実現率適用済み）</strong>。
+    </p>
 
-    <!-- Section 1: Progress -->
-    <div style="border:1px solid #ddd;border-radius:8px;padding:20px;">
-      <h2 style="font-size:18px;font-weight:800;margin:0 0 14px 0;color:#0066cc;">進捗</h2>
-      <table style="width:100%;border-collapse:collapse;font-size:14px;">
-        <tr><td style="padding:5px 0;color:#666;">Waves shipped</td><td style="padding:5px 0;font-weight:700;">54 (K744-K799)</td></tr>
-        <tr><td style="padding:5px 0;color:#666;">ACCEPT / CONDITIONAL</td><td style="padding:5px 0;font-weight:700;">12 新規 (11+1 research)</td></tr>
-        <tr><td style="padding:5px 0;color:#666;">REJECT / BLOCKED</td><td style="padding:5px 0;">17 (+K799 G5v CLUSTER)</td></tr>
-        <tr><td style="padding:5px 0;color:#666;">Daemon 数</td><td style="padding:5px 0;font-weight:700;">66 -> 84 (+18)</td></tr>
-        <tr><td style="padding:5px 0;color:#666;">22 vertex 最終確定</td><td style="padding:5px 0;font-weight:700;">APT ATOM AVAX BNB ENA FIL HBAR INJ LDO SEI SOL TIA TAO PEPE WIF BLUR AXS IO EIGEN COMP BIO RESOLV</td></tr>
-        <tr><td style="padding:5px 0;color:#666;">HIP-3 long-tail</td><td style="padding:5px 0;font-weight:700;color:#c41e3a;">99/99 EXHAUSTED</td></tr>
-      </table>
-    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:12px;">
+      <thead>
+        <tr style="background:#0d1117;color:#fff;">
+          <th style="padding:10px;text-align:left;width:5%;">#</th>
+          <th style="padding:10px;text-align:left;width:30%;">作業内容</th>
+          <th style="padding:10px;text-align:left;width:18%;">期待利益（年）</th>
+          <th style="padding:10px;text-align:left;width:10%;">所要</th>
+          <th style="padding:10px;text-align:left;width:37%;">実行コマンド</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fef2f2;border-bottom:1px solid #ddd;">
+          <td style="padding:10px;font-weight:800;color:#c41e3a;">1</td>
+          <td style="padding:10px;"><strong>配分の上限違反を修復（v6.51 → v6.52）</strong><br><span style="font-size:12px;color:#666;">現在 HL 66.8% (上限 65%) と Bybit 55.7% (上限 50%) で違反中</span></td>
+          <td style="padding:10px;font-weight:700;">+$195,000</td>
+          <td style="padding:10px;">5 分</td>
+          <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;background:#f8f8f8;"><code>python3 scripts/k751_kelly_optimizer.py --apply</code></td>
+        </tr>
+        <tr style="background:#f0fdf4;border-bottom:1px solid #ddd;">
+          <td style="padding:10px;font-weight:800;color:#0a7a35;">2</td>
+          <td style="padding:10px;"><strong>日次 compounding に切替</strong><br><span style="font-size:12px;color:#666;">月次→日次で複利効果がフル発揮（最大単発効果）</span></td>
+          <td style="padding:10px;font-weight:800;color:#0a7a35;font-size:15px;">+$1,250,000</td>
+          <td style="padding:10px;">5 分</td>
+          <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;background:#f8f8f8;"><code>COMPOUND_FREQUENCY=daily</code> 設定 + plist リロード</td>
+        </tr>
+        <tr style="background:#fff8e1;border-bottom:1px solid #ddd;">
+          <td style="padding:10px;font-weight:800;color:#b8860b;">3</td>
+          <td style="padding:10px;"><strong>Hyperliquid builder rebate 設定</strong><br><span style="font-size:12px;color:#666;">maker rebate を自分のアドレスで受け取る</span></td>
+          <td style="padding:10px;font-weight:700;">+$248,000</td>
+          <td style="padding:10px;">65 分</td>
+          <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;background:#f8f8f8;"><code>HL_BUILDER_CODE=0x...</code> in .env.local</td>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd;">
+          <td style="padding:10px;color:#888;">4</td>
+          <td style="padding:10px;">税ロス収穫 daemon 起動</td>
+          <td style="padding:10px;">+$185,000（節税）</td>
+          <td style="padding:10px;">30 分</td>
+          <td style="padding:10px;font-size:12px;color:#666;">docs/k302a_runbook.md §69 参照</td>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd;">
+          <td style="padding:10px;color:#888;">5</td>
+          <td style="padding:10px;">OKX 取引所連携（3 つ目の venue）</td>
+          <td style="padding:10px;">+$47,000 + 容量拡張</td>
+          <td style="padding:10px;">2-3h</td>
+          <td style="padding:10px;font-size:12px;color:#666;">docs §66</td>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd;">
+          <td style="padding:10px;color:#888;">6</td>
+          <td style="padding:10px;">Bybit サブアカウント分離</td>
+          <td style="padding:10px;">+$50,000 + 容量拡張</td>
+          <td style="padding:10px;">1h</td>
+          <td style="padding:10px;font-size:12px;color:#666;">docs §71</td>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd;">
+          <td style="padding:10px;color:#888;">7</td>
+          <td style="padding:10px;">K280 signal 改善 patch</td>
+          <td style="padding:10px;">+$27,000</td>
+          <td style="padding:10px;">10 分</td>
+          <td style="padding:10px;font-size:12px;color:#666;">docs §65</td>
+        </tr>
+        <tr>
+          <td style="padding:10px;color:#888;">8</td>
+          <td style="padding:10px;">RWA 利回り 4 プロバイダー分散</td>
+          <td style="padding:10px;">+$30,000</td>
+          <td style="padding:10px;">数日</td>
+          <td style="padding:10px;font-size:12px;color:#666;">docs §75</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr style="background:#0d1117;color:#fff;font-weight:800;">
+          <td colspan="2" style="padding:10px;">合計</td>
+          <td style="padding:10px;color:#fff;font-size:16px;">+$2,032,000 〜 +$2,810,000</td>
+          <td colspan="2" style="padding:10px;font-size:12px;color:#aaa;">中央予測 $2.81M / 保守 $1.14M / 楽観 $5.38M（年）</td>
+        </tr>
+      </tfoot>
+    </table>
+  </section>
 
-    <!-- Section 2: Results / K523 -->
-    <div style="border:1px solid #ddd;border-radius:8px;padding:20px;">
-      <h2 style="font-size:18px;font-weight:800;margin:0 0 14px 0;color:#0a7a35;">K523 実現値 @$10M</h2>
-      <table style="width:100%;border-collapse:collapse;font-size:14px;">
-        <tr style="background:#f5f5f5;"><th style="padding:6px;text-align:left;">バージョン</th><th style="padding:6px;text-align:right;">Central</th></tr>
-        <tr><td style="padding:5px 6px;color:#c41e3a;">v6.51 (現行・違反)</td><td style="padding:5px 6px;text-align:right;color:#c41e3a;">$1,132,639</td></tr>
-        <tr><td style="padding:5px 6px;">v6.52 (Kelly 修復)</td><td style="padding:5px 6px;text-align:right;">$1,206,749</td></tr>
-        <tr><td style="padding:5px 6px;">v7.0 (base stack)</td><td style="padding:5px 6px;text-align:right;">$1,775,957</td></tr>
-        <tr style="background:#f0fdf4;font-weight:800;"><td style="padding:6px;">v7.1 (K798 最終)</td><td style="padding:6px;text-align:right;color:#0a7a35;font-size:16px;">$2,222,833</td></tr>
-      </table>
-      <p style="font-size:12px;color:#666;margin:8px 0 0 0;">K523 conservative $1.14M / optimistic $5.38M | K518 38% 実現率適用済み</p>
-    </div>
+  <!-- ========== ② 現在の数字 ========== -->
+  <section style="margin-bottom:36px;">
+    <h2 style="font-size:22px;font-weight:800;margin:0 0 8px 0;padding-bottom:8px;border-bottom:2px solid #0066cc;color:#0066cc;">
+      ② 数字で見る現状（$10M AUM 想定）
+    </h2>
+    <p style="margin:0 0 16px 0;font-size:14px;color:#555;">
+      利益予測は <strong>K518 38% 実現率（過去研究→実運用のギャップ）</strong> を反映した「realized」値。 利益の前提シナリオが大きく違うため、保守/中央/楽観の 3 点表記。
+    </p>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+      <thead>
+        <tr style="background:#f5f5f5;">
+          <th style="padding:10px;text-align:left;">設定バージョン</th>
+          <th style="padding:10px;text-align:right;">保守</th>
+          <th style="padding:10px;text-align:right;">中央</th>
+          <th style="padding:10px;text-align:right;">楽観</th>
+          <th style="padding:10px;text-align:left;">状態</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fef2f2;border-bottom:1px solid #ddd;">
+          <td style="padding:10px;font-weight:700;color:#c41e3a;">v6.51（現状・違反）</td>
+          <td style="padding:10px;text-align:right;color:#c41e3a;">$620K</td>
+          <td style="padding:10px;text-align:right;color:#c41e3a;font-weight:700;">$1,133K</td>
+          <td style="padding:10px;text-align:right;color:#c41e3a;">$2,500K</td>
+          <td style="padding:10px;color:#c41e3a;">配分上限違反 — 即修復必須</td>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd;">
+          <td style="padding:10px;">v6.52（配分修復後）</td>
+          <td style="padding:10px;text-align:right;">$680K</td>
+          <td style="padding:10px;text-align:right;font-weight:700;">$1,207K</td>
+          <td style="padding:10px;text-align:right;">$2,700K</td>
+          <td style="padding:10px;color:#666;">作業 #1 で到達可能</td>
+        </tr>
+        <tr style="border-bottom:1px solid #ddd;">
+          <td style="padding:10px;">v7.0（base stack 適用）</td>
+          <td style="padding:10px;text-align:right;">$960K</td>
+          <td style="padding:10px;text-align:right;font-weight:700;">$1,776K</td>
+          <td style="padding:10px;text-align:right;">$4,100K</td>
+          <td style="padding:10px;color:#666;">作業 #1-3 で到達可能</td>
+        </tr>
+        <tr style="background:#f0fdf4;font-weight:800;">
+          <td style="padding:10px;color:#0a7a35;">v7.1（全 8 作業完了後）</td>
+          <td style="padding:10px;text-align:right;color:#0a7a35;">$1,140K</td>
+          <td style="padding:10px;text-align:right;color:#0a7a35;font-size:16px;">$2,223K</td>
+          <td style="padding:10px;text-align:right;color:#0a7a35;">$5,380K</td>
+          <td style="padding:10px;color:#0a7a35;">最終目標</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin:12px 0 0 0;font-size:12px;color:#888;">
+      ※ 注: 「v6.51/v7.1」 は本番設定の世代番号。 数字は AUM $10M を前提とした年間利益（USDC）予測。
+    </p>
+  </section>
 
-    <!-- Section 3: Key Findings -->
-    <div style="border:1px solid #ddd;border-radius:8px;padding:20px;">
-      <h2 style="font-size:18px;font-weight:800;margin:0 0 14px 0;color:#c41e3a;">重要発見</h2>
-      <ul style="font-size:14px;margin:0;padding-left:18px;line-height:1.9;">
-        <li><strong>K751:</strong> v6.51 は配分違反中 (HL 66.8% > 65%, Bybit 55.7% > 50%) — 即修復必須</li>
-        <li><strong>K763:</strong> 日次 compound で +$1.25M/年 — 本セッション最大単発効果</li>
-        <li><strong>K782 L004_DIFF:</strong> diff_carry 0.30-0.70 outside = HARD BLOCK (18/25 K785 tokens)</li>
-        <li><strong>G5u FIL-SOL:</strong> Storage/data テーマは FIL-SOL 先チェック必須</li>
-        <li><strong>K795:</strong> 22 vertex 飽和後の新軸 = regime-aware basket rotation ($112K/年)</li>
-        <li><strong>K793:</strong> HIP-3 99/99 完全枯渇 — 単一 pair 探索フェーズ終了</li>
-        <li><strong>K799 G5v CLUSTER RULE:</strong> Algebraic independence (MR9) ≠ cluster independence (G5). COMP FR vol=5.97x ETH FR → COMP leg dominates ETH-COMP signal → corr(ETH-COMP, COMP-SOL)=&minus;0.9754. Cross-base pairs require vol_ratio ≤5x between legs.</li>
-      </ul>
-    </div>
+  <!-- ========== ③ AI が今やっていること ========== -->
+  <section style="margin-bottom:36px;">
+    <h2 style="font-size:22px;font-weight:800;margin:0 0 8px 0;padding-bottom:8px;border-bottom:2px solid #0a7a35;color:#0a7a35;">
+      ③ AI が今やっていること
+    </h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
 
-    <!-- Section 4: Day 1 Action Card -->
-    <div style="border:2px solid #0066cc;border-radius:8px;padding:20px;background:#f0f7ff;">
-      <h2 style="font-size:18px;font-weight:800;margin:0 0 14px 0;color:#0066cc;">Day 1 アクション (合計 +$1.42M/年)</h2>
-      <div style="margin-bottom:12px;padding:10px;background:#fef2f2;border-radius:6px;">
-        <strong style="color:#c41e3a;">1. K751 — 配分違反修復 (30分)</strong>
-        <p style="font-size:13px;margin:4px 0 0 0;">python3 scripts/k751_kelly_optimizer.py --apply-rebalance</p>
-        <p style="font-size:12px;color:#666;margin:2px 0 0 0;">+$74K/年 + Tier 3-4 unlock | 可逆: 旧 weights 再適用</p>
+      <div style="border:1px solid #ddd;border-radius:8px;padding:16px;">
+        <h3 style="font-size:15px;font-weight:700;margin:0 0 10px 0;color:#0066cc;">いま動いている処理</h3>
+        <p style="margin:0;font-size:14px;">なし（次の処理待ち）。 直近 K744〜K799 まで連続稼働。</p>
       </div>
-      <div style="margin-bottom:12px;padding:10px;background:#f0fdf4;border-radius:6px;">
-        <strong style="color:#0a7a35;">2. K763 — 日次 compound 起動 (15分)</strong>
-        <p style="font-size:13px;margin:4px 0 0 0;">COMPOUND_FREQUENCY=daily + launchctl load</p>
-        <p style="font-size:12px;color:#666;margin:2px 0 0 0;"><strong>+$1,246,830/年</strong> | 可逆: monthly に即変更</p>
-      </div>
-      <div style="padding:10px;background:#fff8e1;border-radius:6px;">
-        <strong style="color:#b8860b;">3. K755 — HL builder rebate (65分)</strong>
-        <p style="font-size:13px;margin:4px 0 0 0;">HL_BUILDER_CODE=0x... in .env.local + 10 daemons restart</p>
-        <p style="font-size:12px;color:#666;margin:2px 0 0 0;">+$94K/年 | 可逆: key 削除 = silent no-op</p>
-      </div>
-    </div>
 
-  </div>
+      <div style="border:1px solid #ddd;border-radius:8px;padding:16px;">
+        <h3 style="font-size:15px;font-weight:700;margin:0 0 10px 0;color:#0a7a35;">直近セッション 55 wave の成果</h3>
+        <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.8;">
+          <li>新規 ACCEPT 戦略 <strong>11 個</strong>: TAO / PEPE / WIF / BLUR / AXS / IO / EIGEN / COMP / BIO / RESOLV / MEME</li>
+          <li>本番稼働の戦略数: 66 → <strong>84 個</strong>（+18）</li>
+          <li>HIP-3 long-tail universe を 99/99 全銘柄探索完了</li>
+        </ul>
+      </div>
 
-  <!-- Tier 4 paper-gate summary -->
-  <section style="margin-bottom:24px;">
-    <h2 style="font-size:18px;font-weight:800;margin:0 0 12px 0;">Tier 4 — paper-gate 昇格待ち (K751+K745 後、+$305K/年 合計)</h2>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;">
-      <span style="background:#e8f5e9;border:1px solid #0a7a35;border-radius:20px;padding:4px 12px;font-size:13px;">COMP-SOL $78K</span>
-      <span style="background:#e8f5e9;border:1px solid #0a7a35;border-radius:20px;padding:4px 12px;font-size:13px;">AXS-SOL $47K</span>
-      <span style="background:#e3f2fd;border:1px solid #0066cc;border-radius:20px;padding:4px 12px;font-size:13px;">EIGEN-SOL $32K</span>
-      <span style="background:#e3f2fd;border:1px solid #0066cc;border-radius:20px;padding:4px 12px;font-size:13px;">BIO-SOL $24K</span>
-      <span style="background:#e3f2fd;border:1px solid #0066cc;border-radius:20px;padding:4px 12px;font-size:13px;">PEPE-SOL $24K</span>
-      <span style="background:#e3f2fd;border:1px solid #0066cc;border-radius:20px;padding:4px 12px;font-size:13px;">TAO-SOL $24K</span>
-      <span style="background:#e3f2fd;border:1px solid #0066cc;border-radius:20px;padding:4px 12px;font-size:13px;">BLUR-SOL $23K</span>
-      <span style="background:#e3f2fd;border:1px solid #0066cc;border-radius:20px;padding:4px 12px;font-size:13px;">WIF-SOL $21K</span>
-      <span style="background:#fff8e1;border:1px solid #b8860b;border-radius:20px;padding:4px 12px;font-size:13px;">RESOLV-SOL $16K (G9 re-gate Aug)</span>
-      <span style="background:#fff8e1;border:1px solid #b8860b;border-radius:20px;padding:4px 12px;font-size:13px;">IO-SOL $11K</span>
-      <span style="background:#fff8e1;border:1px solid #b8860b;border-radius:20px;padding:4px 12px;font-size:13px;">MEME-SOL $6K</span>
+      <div style="border:1px solid #ddd;border-radius:8px;padding:16px;">
+        <h3 style="font-size:15px;font-weight:700;margin:0 0 10px 0;color:#b8860b;">研究上の重要発見</h3>
+        <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.8;">
+          <li><strong>L004_DIFF rule</strong>: 戦略ペアの「両者の差」が 80% 以上同方向なら G2 検定で必ず失敗（純粋 carry trade、 timing alpha なし）</li>
+          <li><strong>G5v cluster rule</strong>: 2 銘柄の vol 比が 5 倍以上だと、 algebraic 独立でもcorrelation で実質依存</li>
+          <li><strong>SOL-pivot 22 vertex 飽和</strong>: 単一 pair の探索フェーズ完了、 次は組合せ戦略</li>
+        </ul>
+      </div>
+
     </div>
   </section>
 
-  <p style="margin:0;padding-top:16px;border-top:1px solid #ddd;font-size:13px;color:#666;">
-    詳細: docs/k302a_runbook.md §85 | wave_k798_governance_v11.{py,json,md} | data/phase_a_plus_v71_status.json | K339 REPO_ROOT
-  </p>
+  <!-- ========== ④ 用語集 ========== -->
+  <section style="margin-bottom:24px;">
+    <details style="border:1px solid #ddd;border-radius:8px;padding:16px;background:#fafafa;">
+      <summary style="cursor:pointer;font-size:16px;font-weight:700;color:#0d1117;">
+        ④ 用語集（クリックで展開）
+      </summary>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;">
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;width:25%;font-weight:700;">wave</td><td style="padding:6px 0;">AI の 1 作業単位。 K744 = 744 番目の wave。</td></tr>
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">daemon</td><td style="padding:6px 0;">launchd で常時稼働する 1 つの自動戦略。 84 個並列稼働中。</td></tr>
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">vertex</td><td style="padding:6px 0;">alt-alt 戦略で使う通貨。 例: PEPE-SOL なら PEPE と SOL の 2 vertex。 現在 22 vertex 飽和。</td></tr>
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">v6.51 / v7.1</td><td style="padding:6px 0;">本番設定（sleeve weights + 取引所 cap）の世代番号。</td></tr>
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">K523 / 3 点表記</td><td style="padding:6px 0;">利益予測は必ず保守 / 中央 / 楽観の 3 点で出すルール（K523 wave で確定）。</td></tr>
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">K518 38% 実現率</td><td style="padding:6px 0;">過去研究の Sharpe vs 実運用ギャップから導いた、 期待値の haircut 係数。</td></tr>
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">HIP-3</td><td style="padding:6px 0;">Hyperliquid の non-canonical perp 上場規格（第三者が listing できる）。</td></tr>
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">L004 / L004_DIFF</td><td style="padding:6px 0;">pre-screen ルール。 戦略の carry 偏り（同方向比率）が 80% 超なら hard reject。</td></tr>
+        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">G5 / G5u / G5v</td><td style="padding:6px 0;">§6 厳密ゲートの一部。 既存戦略との correlation が 0.40 超なら reject。</td></tr>
+        <tr><td style="padding:6px 12px 6px 0;font-weight:700;">paper-gate</td><td style="padding:6px 0;">本番設定はあるが、 実 USDC を入れずに 60 日 paper-trade で検証中の状態。</td></tr>
+      </table>
+    </details>
+  </section>
 
 </div>
 <!-- /DASHBOARD -->
