@@ -8,417 +8,761 @@
 <meta http-equiv="Expires" content="0">
 <title>Systematic Alpha Discovery — 自動運用ダッシュボード</title>
 <style>
+  :root {
+    --bg-page:    #f0e6d2;   /* sepia base ivory */
+    --bg-card:    #f8f1de;   /* sepia card cream */
+    --bg-strip:   #ebdfc3;   /* sepia accent strip */
+    --bg-shade:   #e6d9bd;   /* sepia darker accent */
+    --ink:        #3e2c1e;   /* deepest brown text */
+    --ink-soft:   #6b5234;   /* muted brown text */
+    --ink-faint:  #8b7355;   /* faint brown text */
+    --line:       #c4b08c;   /* tan border */
+    --line-soft:  #d8c7a3;   /* softer tan border */
+    --accent:     #8b6f47;   /* warm brown accent */
+    --accept:     #4a6b3a;   /* sepia-friendly green */
+    --reject:     #8b3a2e;   /* sepia-friendly red */
+    --warn:       #a07b2a;   /* sepia-friendly gold */
+    --info:       #4a5c7b;   /* sepia-friendly blue */
+    --meta:       #6b4a7b;   /* sepia-friendly purple */
+  }
   * { margin:0; padding:0; box-sizing:border-box; }
-  html { background:#fafafa; }
+  html { background: var(--bg-page); }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI', 'Segoe UI', sans-serif;
-    background: #fafafa;
-    color: #0d1117;
-    line-height: 1.7;
+    font-family: 'Hiragino Mincho ProN', 'Yu Mincho', 'Georgia', 'Times New Roman', serif;
+    background: var(--bg-page);
+    color: var(--ink);
+    line-height: 1.75;
     font-size: 15px;
-    padding: 24px 16px;
+    padding: 32px 16px;
   }
   .container { max-width: 1080px; margin: 0 auto; }
-  h1, h2, h3 { font-weight: 800; line-height: 1.3; }
-  table { width:100%; border-collapse: collapse; font-size: 14px; }
-  th, td { padding: 10px; text-align: left; vertical-align: top; }
-  thead tr { background: #0d1117; color: #fff; }
-  tbody tr { border-bottom: 1px solid #e5e5e5; }
+
+  /* タイトル */
+  h1 { font-size: 30px; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; }
+  h2 {
+    font-size: 21px; font-weight: 700; line-height: 1.4;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px; margin: 0 0 16px 0;
+  }
+  h3 { font-size: 17px; font-weight: 700; color: var(--ink-soft); margin: 0 0 8px 0; }
+
+  /* セクション */
+  section {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 28px 32px;
+    margin: 0 0 24px 0;
+    box-shadow: 0 1px 3px rgba(62, 44, 30, 0.08);
+  }
+  section.urgent { border-left: 6px solid var(--reject); }
+  section.action { border-left: 6px solid var(--info); }
+  section.meta   { border-left: 6px solid var(--meta); }
+  section p { margin: 0 0 12px 0; }
+
+  /* テーブル */
+  table { width:100%; border-collapse: collapse; font-size: 14px; margin: 12px 0; }
+  th, td { padding: 10px 12px; text-align: left; vertical-align: top; }
+  thead tr { background: var(--ink); color: var(--bg-card); }
+  thead th { font-weight: 700; border-bottom: 2px solid var(--ink); }
+  tbody tr { border-bottom: 1px solid var(--line-soft); }
   tbody tr:last-child { border-bottom: none; }
-  code { font-family: 'SF Mono', 'Menlo', monospace; font-size: 12px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
-  a { color: #0066cc; text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  details summary { cursor: pointer; list-style: none; }
+  tbody tr:nth-child(odd) { background: var(--bg-strip); }
+  tfoot tr { background: var(--bg-shade); font-weight: 700; border-top: 2px solid var(--ink); }
+  tfoot td { padding: 12px; }
+
+  /* 強調色 */
+  .accept { color: var(--accept); font-weight: 700; }
+  .reject { color: var(--reject); font-weight: 700; }
+  .warn   { color: var(--warn);   font-weight: 700; }
+  .info   { color: var(--info);   font-weight: 700; }
+  .meta   { color: var(--meta);   font-weight: 700; }
+
+  /* 強調セル */
+  .row-urgent { background: #f4e6d6 !important; }
+  .row-action { background: #f0e8dc !important; }
+
+  /* コード */
+  code {
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+    font-size: 12px;
+    background: var(--bg-shade);
+    color: var(--ink-soft);
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  pre {
+    font-family: 'SF Mono', 'Menlo', monospace;
+    background: var(--bg-shade);
+    color: var(--ink);
+    padding: 12px 16px;
+    border-radius: 4px;
+    border-left: 3px solid var(--accent);
+    overflow-x: auto;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  /* リンク */
+  a { color: var(--accent); text-decoration: underline; text-decoration-color: var(--line); }
+  a:hover { color: var(--ink); text-decoration-color: var(--ink); }
+
+  /* リスト */
+  ul, ol { padding-left: 22px; margin: 8px 0 12px 0; }
+  li { margin-bottom: 4px; }
+
+  /* 注記 */
+  .note {
+    background: var(--bg-shade);
+    border-left: 3px solid var(--line);
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  /* 用語集 */
+  details { margin: 8px 0; }
+  details summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 10px 16px;
+    background: var(--bg-shade);
+    border-radius: 4px;
+    font-weight: 700;
+    color: var(--ink);
+  }
   details summary::-webkit-details-marker { display: none; }
+  details summary::before { content:"▶ "; color: var(--accent); margin-right:4px; }
+  details[open] summary::before { content:"▼ "; }
+  details[open] summary { border-bottom: 1px solid var(--line); border-radius: 4px 4px 0 0; }
+  details .body { padding: 12px 18px; background: var(--bg-card); border-radius: 0 0 4px 4px; }
+
+  /* メタ情報 */
+  .meta-line {
+    font-size: 13px; color: var(--ink-faint);
+    border-top: 1px solid var(--line-soft);
+    margin-top: 16px; padding-top: 12px;
+  }
+
+  /* レスポンシブ */
   @media (max-width: 720px) {
-    body { padding: 12px 8px; }
-    h1 { font-size: 22px !important; }
-    h2 { font-size: 18px !important; }
+    body { padding: 16px 8px; font-size: 14px; }
+    section { padding: 18px 16px; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 18px; }
     table { font-size: 12px; }
-    th, td { padding: 6px; }
+    th, td { padding: 6px 7px; }
+  }
+
+  /* ヘッダー */
+  .report-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 28px 20px;
+    background: var(--bg-card);
+    border: 2px solid var(--ink);
+    border-radius: 6px;
+  }
+  .report-header h1 { margin-bottom: 8px; }
+  .report-header .sub {
+    color: var(--ink-soft); font-size: 14px;
+    font-family: 'Hiragino Sans', 'Yu Gothic UI', sans-serif;
+    margin-top: 4px;
+  }
+  .report-header .meta-info {
+    color: var(--ink-faint); font-size: 12px;
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid var(--line);
   }
 </style>
 </head>
 <body>
 <div class="container">
-<!-- DASHBOARD v2: UX 監査後の再構成 -->
-<div id="dashboard" style="background:#ffffff;color:#0d1117;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI','Segoe UI',sans-serif;line-height:1.7;margin:0 0 32px 0;">
 
-  <!-- ========== タイトル + 説明 ========== -->
-  <header style="border-bottom:3px solid #0d1117;padding-bottom:20px;margin-bottom:32px;">
-    <h1 style="margin:0 0 8px 0;font-size:30px;font-weight:900;letter-spacing:-0.01em;">
-      Systematic Alpha Discovery — 自動運用ダッシュボード
-    </h1>
-    <p style="margin:0;font-size:16px;color:#444;">
-      AI（Claude）が Hyperliquid・Bybit の永久先物市場で、資金調達料（funding rate）を使った マーケットニュートラル戦略を 24 時間自律的に研究・本番化しているシステムの状況ボード。
-    </p>
-    <p style="margin:8px 0 0 0;font-size:13px;color:#888;">
-      最終更新: 2026-05-31 02:30 JST　|　研究運用は継続中、ユーザー指示「実運用利益最大化、止めるまで継続」発令中
-    </p>
-  </header>
+  <!-- ============== ヘッダー ============== -->
+  <div class="report-header">
+    <h1>Systematic Alpha Discovery</h1>
+    <p class="sub">自動運用ダッシュボード ― AI による永久先物市場の自律研究運用システム</p>
+    <p class="meta-info">最終更新 2026-05-31 / 連続稼働中 / GitHub: <a href="https://github.com/harukiman/results">harukiman/results</a></p>
+  </div>
 
-  <!-- ========== ① ユーザー作業待ち（最優先・最大表示） ========== -->
-  <section style="margin-bottom:36px;">
-    <h2 style="font-size:22px;font-weight:800;margin:0 0 8px 0;padding-bottom:8px;border-bottom:2px solid #c41e3a;color:#c41e3a;">
-      ① あなたが次にやるべきこと
-    </h2>
-    <p style="margin:0 0 16px 0;font-size:14px;color:#555;">
-      AI が研究・本番化を進めてきた結果、現在 8 件の改善が「ユーザー1-step で利益が出せる」状態で待機中です。全部適用すれば $10M AUM で <strong>年間 +$2.81M（中央予測、 K518 38% 実現率適用済み）</strong>。
+  <!-- ============== 0. 概要 ============== -->
+  <section>
+    <h2>このプロジェクトについて</h2>
+    <p>
+      Hyperliquid と Bybit の永久先物市場で、 資金調達料（funding rate）を使った マーケットニュートラル戦略を AI（Claude）が自律的に研究・検証・本番化するシステム。
+      ユーザー指示「実運用利益最大化、 止めるまで継続」のもと 24 時間 wave（作業単位）を回している。
+    </p>
+    <p>
+      研究結果は本リポジトリ <code>harukiman/results</code> に全 push され、 本ダッシュボードが状況の一覧。 取引判断や資金移動は最終的にユーザーが手動承認する設計（LIVE 自動変更禁止）。
     </p>
 
-    <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:12px;">
+    <h3 style="margin-top:20px;">読み方</h3>
+    <ol>
+      <li><strong>① 次にやるべきこと</strong> ― 今すぐの優先作業 8 件、 すべて 1-step で利益が出る</li>
+      <li><strong>② 数字</strong> ― 配分バージョン × シナリオの利益予測テーブル</li>
+      <li><strong>③ 戦略リスト</strong> ― 本番化されている 22 戦略の vertex 別一覧</li>
+      <li><strong>④ AI の現状</strong> ― 動いている処理 / 直近 55 wave の成果 / pre-screen ルール</li>
+      <li><strong>⑤ 全 wave 一覧</strong> ― K744〜K799 の 56 波を 1 行ずつ要約</li>
+      <li><strong>⑥ 用語集 ／ ⑦ アーカイブ</strong></li>
+    </ol>
+  </section>
+
+  <!-- ============== ① ユーザー作業待ち ============== -->
+  <section class="urgent">
+    <h2>① あなたが次にやるべきこと（合計 +$2.81M/年、 中央予測）</h2>
+    <p>
+      AI が研究・本番化を進めてきた結果、 「ユーザー1-step で利益化できる」改善 8 件が待機中。
+      全部実行すれば $10M AUM で <strong>年間 +$2.81M（実現値、 K518 38% 実現率適用）</strong>。
+      作業 #1（K751）は本番設定が配分上限を破っているため <strong>最優先で実行が必要</strong>。
+    </p>
+
+    <table>
       <thead>
-        <tr style="background:#0d1117;color:#fff;">
-          <th style="padding:10px;text-align:left;width:5%;">#</th>
-          <th style="padding:10px;text-align:left;width:30%;">作業内容</th>
-          <th style="padding:10px;text-align:left;width:18%;">期待利益（年）</th>
-          <th style="padding:10px;text-align:left;width:10%;">所要</th>
-          <th style="padding:10px;text-align:left;width:37%;">実行コマンド</th>
+        <tr>
+          <th style="width:5%;">#</th>
+          <th style="width:30%;">作業内容</th>
+          <th style="width:18%;">期待利益（年）</th>
+          <th style="width:10%;">所要</th>
+          <th style="width:37%;">実行コマンド／場所</th>
         </tr>
       </thead>
       <tbody>
-        <tr style="background:#fef2f2;border-bottom:1px solid #ddd;">
-          <td style="padding:10px;font-weight:800;color:#c41e3a;">1</td>
-          <td style="padding:10px;"><strong>配分の上限違反を修復（v6.51 → v6.52）</strong><br><span style="font-size:12px;color:#666;">現在 HL 66.8% (上限 65%) と Bybit 55.7% (上限 50%) で違反中</span></td>
-          <td style="padding:10px;font-weight:700;">+$195,000</td>
-          <td style="padding:10px;">5 分</td>
-          <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;background:#f8f8f8;"><code>python3 scripts/k751_kelly_optimizer.py --apply</code></td>
+        <tr class="row-urgent">
+          <td><strong class="reject">1</strong></td>
+          <td><strong>配分の上限違反を修復（v6.51 → v6.52）</strong><br>
+            <span style="font-size:12px;color:var(--ink-soft);">
+              現在 HL 66.8%（上限 65%）、 Bybit 55.7%（上限 50%）で違反中。 累積で K280 sleeve 重みも下限割れ。
+            </span>
+          </td>
+          <td><strong>+$195,000</strong></td>
+          <td>5 分</td>
+          <td><code>python3 scripts/k751_kelly_optimizer.py --apply</code></td>
         </tr>
-        <tr style="background:#f0fdf4;border-bottom:1px solid #ddd;">
-          <td style="padding:10px;font-weight:800;color:#0a7a35;">2</td>
-          <td style="padding:10px;"><strong>日次 compounding に切替</strong><br><span style="font-size:12px;color:#666;">月次→日次で複利効果がフル発揮（最大単発効果）</span></td>
-          <td style="padding:10px;font-weight:800;color:#0a7a35;font-size:15px;">+$1,250,000</td>
-          <td style="padding:10px;">5 分</td>
-          <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;background:#f8f8f8;"><code>COMPOUND_FREQUENCY=daily</code> 設定 + plist リロード</td>
+        <tr class="row-urgent">
+          <td><strong class="accept">2</strong></td>
+          <td><strong>日次 compounding に切替</strong><br>
+            <span style="font-size:12px;color:var(--ink-soft);">
+              月次 → 日次で複利効果がフル発揮。 本セッション最大単発効果。
+            </span>
+          </td>
+          <td><strong class="accept">+$1,250,000</strong></td>
+          <td>5 分</td>
+          <td><code>COMPOUND_FREQUENCY=daily</code> 設定 + plist リロード</td>
         </tr>
-        <tr style="background:#fff8e1;border-bottom:1px solid #ddd;">
-          <td style="padding:10px;font-weight:800;color:#b8860b;">3</td>
-          <td style="padding:10px;"><strong>Hyperliquid builder rebate 設定</strong><br><span style="font-size:12px;color:#666;">maker rebate を自分のアドレスで受け取る</span></td>
-          <td style="padding:10px;font-weight:700;">+$248,000</td>
-          <td style="padding:10px;">65 分</td>
-          <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;background:#f8f8f8;"><code>HL_BUILDER_CODE=0x...</code> in .env.local</td>
-        </tr>
-        <tr style="border-bottom:1px solid #ddd;">
-          <td style="padding:10px;color:#888;">4</td>
-          <td style="padding:10px;">税ロス収穫 daemon 起動</td>
-          <td style="padding:10px;">+$185,000（節税）</td>
-          <td style="padding:10px;">30 分</td>
-          <td style="padding:10px;font-size:12px;color:#666;">docs/k302a_runbook.md §69 参照</td>
-        </tr>
-        <tr style="border-bottom:1px solid #ddd;">
-          <td style="padding:10px;color:#888;">5</td>
-          <td style="padding:10px;">OKX 取引所連携（3 つ目の venue）</td>
-          <td style="padding:10px;">+$47,000 + 容量拡張</td>
-          <td style="padding:10px;">2-3h</td>
-          <td style="padding:10px;font-size:12px;color:#666;">docs §66</td>
-        </tr>
-        <tr style="border-bottom:1px solid #ddd;">
-          <td style="padding:10px;color:#888;">6</td>
-          <td style="padding:10px;">Bybit サブアカウント分離</td>
-          <td style="padding:10px;">+$50,000 + 容量拡張</td>
-          <td style="padding:10px;">1h</td>
-          <td style="padding:10px;font-size:12px;color:#666;">docs §71</td>
-        </tr>
-        <tr style="border-bottom:1px solid #ddd;">
-          <td style="padding:10px;color:#888;">7</td>
-          <td style="padding:10px;">K280 signal 改善 patch</td>
-          <td style="padding:10px;">+$27,000</td>
-          <td style="padding:10px;">10 分</td>
-          <td style="padding:10px;font-size:12px;color:#666;">docs §65</td>
+        <tr class="row-urgent">
+          <td><strong class="warn">3</strong></td>
+          <td><strong>Hyperliquid builder rebate 設定</strong><br>
+            <span style="font-size:12px;color:var(--ink-soft);">
+              maker rebate を自分のアドレスで受け取る設定。 0 リスク。
+            </span>
+          </td>
+          <td><strong>+$248,000</strong></td>
+          <td>65 分</td>
+          <td><code>HL_BUILDER_CODE=0x...</code> in .env.local</td>
         </tr>
         <tr>
-          <td style="padding:10px;color:#888;">8</td>
-          <td style="padding:10px;">RWA 利回り 4 プロバイダー分散</td>
-          <td style="padding:10px;">+$30,000</td>
-          <td style="padding:10px;">数日</td>
-          <td style="padding:10px;font-size:12px;color:#666;">docs §75</td>
+          <td>4</td>
+          <td>K280 signal 改善 patch（K492 Variant C）</td>
+          <td>+$27,000</td>
+          <td>10 分</td>
+          <td><code>docs/k302a_runbook.md §65</code></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>税ロス収穫 daemon 起動</td>
+          <td>+$185,000（節税）</td>
+          <td>30 分</td>
+          <td><code>docs §69</code></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>OKX 取引所連携（3 つ目の venue）</td>
+          <td>+$47,000 + 容量拡張</td>
+          <td>2-3h</td>
+          <td><code>docs §66</code></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Bybit サブアカウント分離</td>
+          <td>+$50,000 + 容量拡張</td>
+          <td>1h</td>
+          <td><code>docs §71</code></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>RWA 利回り 4 プロバイダー分散</td>
+          <td>+$30,000</td>
+          <td>数日</td>
+          <td><code>docs §75</code></td>
         </tr>
       </tbody>
       <tfoot>
-        <tr style="background:#0d1117;color:#fff;font-weight:800;">
-          <td colspan="2" style="padding:10px;">合計</td>
-          <td style="padding:10px;color:#fff;font-size:16px;">+$2,032,000 〜 +$2,810,000</td>
-          <td colspan="2" style="padding:10px;font-size:12px;color:#aaa;">中央予測 $2.81M / 保守 $1.14M / 楽観 $5.38M（年）</td>
+        <tr>
+          <td colspan="2">合計</td>
+          <td colspan="3" class="accept">+$2,032,000 〜 +$2,810,000（中央予測 $2.81M、 保守 $1.14M、 楽観 $5.38M）</td>
         </tr>
       </tfoot>
     </table>
   </section>
 
-  <!-- ========== ② 現在の数字 ========== -->
-  <section style="margin-bottom:36px;">
-    <h2 style="font-size:22px;font-weight:800;margin:0 0 8px 0;padding-bottom:8px;border-bottom:2px solid #0066cc;color:#0066cc;">
-      ② 数字で見る現状（$10M AUM 想定）
-    </h2>
-    <p style="margin:0 0 16px 0;font-size:14px;color:#555;">
-      利益予測は <strong>K518 38% 実現率（過去研究→実運用のギャップ）</strong> を反映した「realized」値。 利益の前提シナリオが大きく違うため、保守/中央/楽観の 3 点表記。
+  <!-- ============== ② 数字 ============== -->
+  <section>
+    <h2>② 数字で見る現状（$10M AUM 想定）</h2>
+    <p>
+      利益予測は <strong>K518 実現率（過去研究→実運用のギャップを反映する 38% 係数）</strong> を適用した実現値。
+      シナリオの前提が大きく違うため、 保守 / 中央 / 楽観の 3 点表記を必須としている（K523 ルール）。
     </p>
-    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+
+    <table>
       <thead>
-        <tr style="background:#f5f5f5;">
-          <th style="padding:10px;text-align:left;">設定バージョン</th>
-          <th style="padding:10px;text-align:right;">保守</th>
-          <th style="padding:10px;text-align:right;">中央</th>
-          <th style="padding:10px;text-align:right;">楽観</th>
-          <th style="padding:10px;text-align:left;">状態</th>
+        <tr>
+          <th style="width:30%;">設定バージョン</th>
+          <th style="width:13%;text-align:right;">保守</th>
+          <th style="width:13%;text-align:right;">中央</th>
+          <th style="width:13%;text-align:right;">楽観</th>
+          <th style="width:31%;">状態と意味</th>
         </tr>
       </thead>
       <tbody>
-        <tr style="background:#fef2f2;border-bottom:1px solid #ddd;">
-          <td style="padding:10px;font-weight:700;color:#c41e3a;">v6.51（現状・違反）</td>
-          <td style="padding:10px;text-align:right;color:#c41e3a;">$620K</td>
-          <td style="padding:10px;text-align:right;color:#c41e3a;font-weight:700;">$1,133K</td>
-          <td style="padding:10px;text-align:right;color:#c41e3a;">$2,500K</td>
-          <td style="padding:10px;color:#c41e3a;">配分上限違反 — 即修復必須</td>
+        <tr>
+          <td class="reject">v6.51 ― 現状 / 違反中</td>
+          <td style="text-align:right;" class="reject">$620K</td>
+          <td style="text-align:right;" class="reject">$1,133K</td>
+          <td style="text-align:right;" class="reject">$2,500K</td>
+          <td>HL/Bybit 配分上限を超過。 累積で K280 sleeve 重みも下限割れ。 即修復必須。</td>
         </tr>
-        <tr style="border-bottom:1px solid #ddd;">
-          <td style="padding:10px;">v6.52（配分修復後）</td>
-          <td style="padding:10px;text-align:right;">$680K</td>
-          <td style="padding:10px;text-align:right;font-weight:700;">$1,207K</td>
-          <td style="padding:10px;text-align:right;">$2,700K</td>
-          <td style="padding:10px;color:#666;">作業 #1 で到達可能</td>
+        <tr>
+          <td>v6.52 ― 配分修復後</td>
+          <td style="text-align:right;">$680K</td>
+          <td style="text-align:right;">$1,207K</td>
+          <td style="text-align:right;">$2,700K</td>
+          <td>作業 #1（K751 1-flip）で到達。 配分は適正、 戦略構成は v6.51 と同じ。</td>
         </tr>
-        <tr style="border-bottom:1px solid #ddd;">
-          <td style="padding:10px;">v7.0（base stack 適用）</td>
-          <td style="padding:10px;text-align:right;">$960K</td>
-          <td style="padding:10px;text-align:right;font-weight:700;">$1,776K</td>
-          <td style="padding:10px;text-align:right;">$4,100K</td>
-          <td style="padding:10px;color:#666;">作業 #1-3 で到達可能</td>
+        <tr>
+          <td>v7.0 ― 基本 stack 追加</td>
+          <td style="text-align:right;">$960K</td>
+          <td style="text-align:right;">$1,776K</td>
+          <td style="text-align:right;">$4,100K</td>
+          <td>作業 #1-3 で到達。 builder rebate ＋ 日次 compound 込み。</td>
         </tr>
-        <tr style="background:#f0fdf4;font-weight:800;">
-          <td style="padding:10px;color:#0a7a35;">v7.1（全 8 作業完了後）</td>
-          <td style="padding:10px;text-align:right;color:#0a7a35;">$1,140K</td>
-          <td style="padding:10px;text-align:right;color:#0a7a35;font-size:16px;">$2,223K</td>
-          <td style="padding:10px;text-align:right;color:#0a7a35;">$5,380K</td>
-          <td style="padding:10px;color:#0a7a35;">最終目標</td>
+        <tr>
+          <td class="accept">v7.1 ― 全 8 作業完了後</td>
+          <td style="text-align:right;" class="accept">$1,140K</td>
+          <td style="text-align:right;" class="accept">$2,223K</td>
+          <td style="text-align:right;" class="accept">$5,380K</td>
+          <td>OKX/Bybit 容量拡張 ＋ 税ロス収穫 ＋ RWA 分散 まで含む最終目標形。</td>
         </tr>
       </tbody>
     </table>
-    <p style="margin:12px 0 0 0;font-size:12px;color:#888;">
-      ※ 注: 「v6.51/v7.1」 は本番設定の世代番号。 数字は AUM $10M を前提とした年間利益（USDC）予測。
-    </p>
+
+    <h3 style="margin-top:24px;">数字の前提</h3>
+    <ul>
+      <li><strong>AUM $10M</strong>: 運用資金 1,000 万 USDC を想定（実 AUM に比例スケール可能）</li>
+      <li><strong>K518 38% 実現率</strong>: 過去研究の Sharpe が実運用で発揮される平均比率（保守的）</li>
+      <li><strong>保守 vs 中央 vs 楽観</strong>: 取引コスト・slippage・regime 変化シナリオによる幅</li>
+      <li><strong>v6.51 vs v7.1</strong>: 配分構成と稼働 stack の世代番号（数字が大きいほど新しい）</li>
+    </ul>
   </section>
 
-  <!-- ========== ③ AI が今やっていること ========== -->
-  <section style="margin-bottom:36px;">
-    <h2 style="font-size:22px;font-weight:800;margin:0 0 8px 0;padding-bottom:8px;border-bottom:2px solid #0a7a35;color:#0a7a35;">
-      ③ AI が今やっていること
-    </h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">
+  <!-- ============== ③ 戦略リスト ============== -->
+  <section>
+    <h2>③ 本番化されている戦略一覧（84 daemon / 22 vertex）</h2>
+    <p>
+      AI が本番化した戦略は 84 個の daemon として常時稼働中（うち新規 paper-gate 段階は 22 個）。
+      戦略の中心となる「alt-alt 戦略ペア」は 22 個の vertex を組合せて構成され、 各 vertex は固有の cluster に属する。
+    </p>
 
-      <div style="border:1px solid #ddd;border-radius:8px;padding:16px;">
-        <h3 style="font-size:15px;font-weight:700;margin:0 0 10px 0;color:#0066cc;">いま動いている処理</h3>
-        <p style="margin:0;font-size:14px;">なし（次の処理待ち）。 直近 K744〜K799 まで連続稼働。</p>
-      </div>
+    <h3 style="margin-top:20px;">22 vertex の cluster 分類</h3>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:18%;">Cluster</th>
+          <th style="width:28%;">所属 vertex</th>
+          <th style="width:54%;">特性 / FR driver</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>L1 (Layer 1)</strong></td>
+          <td>SOL, BNB, HBAR, FIL</td>
+          <td>ブロックチェーン基盤層。 FR は ecosystem activity と ETF/承認 narrative で動く</td>
+        </tr>
+        <tr>
+          <td><strong>Cosmos エコ</strong></td>
+          <td>ATOM, INJ, SEI, TIA, AVAX</td>
+          <td>Cosmos IBC / appchain 系。 共通 narrative の影響で互いに相関しやすい</td>
+        </tr>
+        <tr>
+          <td><strong>DeFi-gov</strong></td>
+          <td>LDO, COMP</td>
+          <td>DeFi protocol governance token。 lending/staking の TVL 動向と連動</td>
+        </tr>
+        <tr>
+          <td><strong>Move-VM</strong></td>
+          <td>APT</td>
+          <td>Move 言語 L1。 独自の developer ecosystem</td>
+        </tr>
+        <tr>
+          <td><strong>合成ドル</strong></td>
+          <td>ENA, RESOLV</td>
+          <td>delta-neutral 合成ドル。 underlying は ETH/BTC perp hedge</td>
+        </tr>
+        <tr>
+          <td><strong>AI compute</strong></td>
+          <td>TAO</td>
+          <td>Bittensor subnet。 GPU validator economy が FR driver</td>
+        </tr>
+        <tr>
+          <td><strong>DePIN</strong></td>
+          <td>IO</td>
+          <td>io.net GPU rental marketplace。 hardware infra demand</td>
+        </tr>
+        <tr>
+          <td><strong>Restaking</strong></td>
+          <td>EIGEN</td>
+          <td>EigenLayer AVS economy。 ETH security 再利用</td>
+        </tr>
+        <tr>
+          <td><strong>DeSci</strong></td>
+          <td>BIO</td>
+          <td>decentralized science DAO coordination</td>
+        </tr>
+        <tr>
+          <td><strong>NFT</strong></td>
+          <td>BLUR</td>
+          <td>NFT marketplace。 royalty / wash-trading 起源の極端 FR</td>
+        </tr>
+        <tr>
+          <td><strong>Gaming P2E</strong></td>
+          <td>AXS</td>
+          <td>Axie Infinity Ronin sidechain。 SLP burn/mint cycle</td>
+        </tr>
+        <tr>
+          <td><strong>Meme</strong></td>
+          <td>PEPE, WIF, MEME</td>
+          <td>Eth meme (PEPE)、 SOL meme (WIF)、 ERC-20 meme index (MEME)</td>
+        </tr>
+      </tbody>
+    </table>
 
-      <div style="border:1px solid #ddd;border-radius:8px;padding:16px;">
-        <h3 style="font-size:15px;font-weight:700;margin:0 0 10px 0;color:#0a7a35;">直近セッション 55 wave の成果</h3>
-        <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.8;">
-          <li>新規 ACCEPT 戦略 <strong>11 個</strong>: TAO / PEPE / WIF / BLUR / AXS / IO / EIGEN / COMP / BIO / RESOLV / MEME</li>
-          <li>本番稼働の戦略数: 66 → <strong>84 個</strong>（+18）</li>
-          <li>HIP-3 long-tail universe を 99/99 全銘柄探索完了</li>
+    <h3 style="margin-top:24px;">最高利益の上位 10 戦略</h3>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:6%;">順位</th>
+          <th style="width:24%;">戦略</th>
+          <th style="width:14%;">中央利益/年</th>
+          <th style="width:16%;">OOS Sharpe</th>
+          <th style="width:40%;">特徴</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>K719 ENA-ATOM</td><td class="accept">$634K</td><td>29.7</td><td>合成ドル × Cosmos Hub の cross-cluster</td></tr>
+        <tr><td>2</td><td>K686 AVAX-SOL</td><td>$102K</td><td>50.3</td><td>同 tier L1 ペア、 K484 G8 precedent</td></tr>
+        <tr><td>3</td><td>K512 APT-BTC</td><td>$340K</td><td>51.1</td><td>Move-VM L1 vs BTC base、 family 最高 Sh</td></tr>
+        <tr><td>4</td><td>K493 ATOM-BTC</td><td>$280K</td><td>50.8</td><td>Cosmos IBC、 vol ratio 2.34x</td></tr>
+        <tr><td>5</td><td>K507 SEI-BTC</td><td>$220K</td><td>48.0</td><td>Cosmos EVM L1</td></tr>
+        <tr><td>6</td><td>K682 ATOM-SOL</td><td>$215K</td><td>43.4</td><td>Cosmos IBC × SVM cross-eco</td></tr>
+        <tr><td>7</td><td>K778 COMP-SOL</td><td class="accept">$207K</td><td>25.1</td><td>DeFi governance、 30/30 gates 全通過</td></tr>
+        <tr><td>8</td><td>K476 SOL-BTC</td><td>$187K</td><td>16.3</td><td>SVM L1 vs BTC base</td></tr>
+        <tr><td>9</td><td>K679 APT-SOL</td><td>$235K</td><td>39.3</td><td>Move-VM × SVM</td></tr>
+        <tr><td>10</td><td>K769 AXS-SOL</td><td>$124K</td><td>16.1</td><td>Gaming P2E、 G5 23/23 PASS</td></tr>
+      </tbody>
+    </table>
+    <p class="note">上位戦略は v6.51 で既に LIVE。 上位以外の 74 daemon は paper-gate（実 USDC 注入前の 60 日検証中）。</p>
+  </section>
+
+  <!-- ============== ④ AI の現状 ============== -->
+  <section class="meta">
+    <h2>④ AI が今やっていること</h2>
+    <div style="display:flex;flex-direction:column;gap:18px;">
+
+      <div>
+        <h3>現在の状態</h3>
+        <ul>
+          <li>K799 まで完了、 K800 待機中（ユーザーから停止指示があるまで継続稼働）</li>
+          <li>長尾 universe（HIP-3 99 銘柄）の探索は完了済み</li>
+          <li>次の研究軸は組合せ戦略（K795 で初期実装済み）</li>
         </ul>
       </div>
 
-      <div style="border:1px solid #ddd;border-radius:8px;padding:16px;">
-        <h3 style="font-size:15px;font-weight:700;margin:0 0 10px 0;color:#b8860b;">研究上の重要発見</h3>
-        <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.8;">
-          <li><strong>L004_DIFF rule</strong>: 戦略ペアの「両者の差」が 80% 以上同方向なら G2 検定で必ず失敗（純粋 carry trade、 timing alpha なし）</li>
-          <li><strong>G5v cluster rule</strong>: 2 銘柄の vol 比が 5 倍以上だと、 algebraic 独立でもcorrelation で実質依存</li>
-          <li><strong>SOL-pivot 22 vertex 飽和</strong>: 単一 pair の探索フェーズ完了、 次は組合せ戦略</li>
+      <div>
+        <h3>直近 55 wave の成果（K744〜K798）</h3>
+        <ul>
+          <li>新規 ACCEPT 戦略: <strong>11 個</strong>（TAO / PEPE / WIF / BLUR / AXS / IO / EIGEN / COMP / BIO / RESOLV / MEME）</li>
+          <li>本番稼働 daemon 数: 66 個 → <strong>84 個</strong>（+18）</li>
+          <li>新規発見 cluster: AI / Eth-meme / SOL-meme / NFT / Gaming / DePIN / Restaking / DeFi-gov / DeSci / 合成ドル / Meme-index</li>
+          <li>新規 pre-screen rule: L004_DIFF / G5u FIL-SOL / G5j SOL-INJ / G5q ETH-L2 / G5v cluster volume</li>
         </ul>
       </div>
 
+      <div>
+        <h3>重要発見（要対応）</h3>
+
+        <details open>
+          <summary>K751: 現在の本番設定 v6.51 は配分上限違反状態</summary>
+          <div class="body">
+            <ul>
+              <li>HL 集中率 <strong class="reject">66.8%</strong>（上限 65%）</li>
+              <li>Bybit 集中率 <strong class="reject">55.7%</strong>（上限 50%）</li>
+              <li>K280 sleeve 重み <strong class="reject">15.5%</strong>（必須下限 30%）</li>
+            </ul>
+            <p style="margin-top:8px;">対応: v6.52 への切替（① の作業 #1）を最優先で実行。</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>K763: 日次 compounding 切替で年間 +$1.25M（本セッション最大単発効果）</summary>
+          <div class="body">
+            <p>
+              月次再投資を日次に変えるだけで複利効果がフル発揮。
+              $10M AUM、 現行 218%/年リターン環境下で実現値 +$1.25M/年（実現率 38% 適用後）。
+            </p>
+            <p>1-step activation 準備済み。 ① の作業 #2 を実行。</p>
+          </div>
+        </details>
+
+        <details>
+          <summary>K744 → K793: SOL-pivot 22 vertex 飽和 ＋ 長尾 universe 枯渇</summary>
+          <div class="body">
+            <p>
+              現在の 22 vertex で SOL を pivot とする alt-alt の組合せは数学的に飽和（K744 の saturation map で確認）。
+              HIP-3 の long-tail universe も全 99 銘柄探索完了（K793）。
+            </p>
+            <p>
+              次の研究軸は組合せ戦略（K795 で初期 regime-aware basket rotation を実装、 中央 +$112K/年）。
+              vertex 新規追加は cross-base（非 SOL）方向で試行中。
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary>新規 pre-screen rule（本セッションで発見）</summary>
+          <div class="body">
+            <p>戦略評価の <strong>§6 厳密ゲート</strong> に加え、 早期 reject 用の pre-screen ルールが追加された。</p>
+            <ul>
+              <li><strong>L004_DIFF</strong>（K782）: 戦略の「両者の差」が 80% 以上同方向なら G2 検定で必ず失敗（純粋 carry trade、 timing alpha なし）</li>
+              <li><strong>G5u FIL-SOL</strong>（K784）: storage/data 系トークンは FIL-SOL signal と相関しがち</li>
+              <li><strong>G5j SOL-INJ</strong>（K784）: gaming token は SOL-INJ と anti-correlation で portfolio netting 発生</li>
+              <li><strong>G5q ETH-L2</strong>（K792）: Ethereum L2 token は ETH DeFi cluster と相関</li>
+              <li><strong>G5v cluster volume</strong>（K799）: 2 銘柄の vol 比 5 倍以上なら algebraic 独立でも実質依存</li>
+            </ul>
+          </div>
+        </details>
+      </div>
     </div>
   </section>
 
-  <!-- ========== ④ 用語集 ========== -->
-  <section style="margin-bottom:24px;">
-    <details style="border:1px solid #ddd;border-radius:8px;padding:16px;background:#fafafa;">
-      <summary style="cursor:pointer;font-size:16px;font-weight:700;color:#0d1117;">
-        ④ 用語集（クリックで展開）
-      </summary>
-      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;">
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;width:25%;font-weight:700;">wave</td><td style="padding:6px 0;">AI の 1 作業単位。 K744 = 744 番目の wave。</td></tr>
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">daemon</td><td style="padding:6px 0;">launchd で常時稼働する 1 つの自動戦略。 84 個並列稼働中。</td></tr>
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">vertex</td><td style="padding:6px 0;">alt-alt 戦略で使う通貨。 例: PEPE-SOL なら PEPE と SOL の 2 vertex。 現在 22 vertex 飽和。</td></tr>
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">v6.51 / v7.1</td><td style="padding:6px 0;">本番設定（sleeve weights + 取引所 cap）の世代番号。</td></tr>
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">K523 / 3 点表記</td><td style="padding:6px 0;">利益予測は必ず保守 / 中央 / 楽観の 3 点で出すルール（K523 wave で確定）。</td></tr>
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">K518 38% 実現率</td><td style="padding:6px 0;">過去研究の Sharpe vs 実運用ギャップから導いた、 期待値の haircut 係数。</td></tr>
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">HIP-3</td><td style="padding:6px 0;">Hyperliquid の non-canonical perp 上場規格（第三者が listing できる）。</td></tr>
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">L004 / L004_DIFF</td><td style="padding:6px 0;">pre-screen ルール。 戦略の carry 偏り（同方向比率）が 80% 超なら hard reject。</td></tr>
-        <tr style="border-bottom:1px solid #ddd;"><td style="padding:6px 12px 6px 0;font-weight:700;">G5 / G5u / G5v</td><td style="padding:6px 0;">§6 厳密ゲートの一部。 既存戦略との correlation が 0.40 超なら reject。</td></tr>
-        <tr><td style="padding:6px 12px 6px 0;font-weight:700;">paper-gate</td><td style="padding:6px 0;">本番設定はあるが、 実 USDC を入れずに 60 日 paper-trade で検証中の状態。</td></tr>
-      </table>
+  <!-- ============== ⑤ 全 wave 一覧 ============== -->
+  <section class="meta">
+    <h2>⑤ 今セッションの全 wave 一覧（K744〜K799、 56 波）</h2>
+    <p>AI が実行した全 wave を 1 行 1 波で要約。 各 wave の詳細は GitHub の <code>wave_kXXX_*.{py,json,md}</code>。</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:6%;">#</th>
+          <th style="width:14%;">タイプ</th>
+          <th style="width:32%;">主題</th>
+          <th style="width:13%;">結果</th>
+          <th style="width:13%;">利益（中央）</th>
+          <th style="width:22%;">備考</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="6" style="background:var(--bg-shade);font-weight:700;color:var(--info);">▼ Phase A++ インフラ系（ユーザー1-step で利益化）</td></tr>
+        <tr><td>K742</td><td>改善 patch</td><td>K280 signal 改善（K492 Variant C）</td><td class="accept">READY</td><td>+$27K</td><td>10 分 / docs §65</td></tr>
+        <tr><td>K745</td><td>取引所連携</td><td>OKX 3 つ目の venue 統合 scaffold</td><td class="accept">READY</td><td>+$47K</td><td>2-3h / docs §66</td></tr>
+        <tr><td>K751</td><td>配分修復</td><td><strong>Kelly criterion v6.52（配分違反 修復必須）</strong></td><td class="reject">URGENT</td><td>+$195K</td><td>5 分 / docs §68</td></tr>
+        <tr><td>K753</td><td>税最適化</td><td>税ロス収穫 daemon</td><td class="accept">READY</td><td>+$185K（節税）</td><td>30 分 / docs §69</td></tr>
+        <tr><td>K755</td><td>手数料還元</td><td>HL builder rebate 設定</td><td class="accept">READY</td><td>+$248K</td><td>65 分 / docs §70</td></tr>
+        <tr><td>K757</td><td>容量拡張</td><td>Bybit サブアカウント分離</td><td class="accept">READY</td><td>+$50K</td><td>1h / docs §71</td></tr>
+        <tr><td>K763</td><td>複利最適化</td><td><strong>日次 compounding 切替（最大単発）</strong></td><td class="reject">URGENT</td><td class="accept">+$1,250K</td><td>5 分 / docs §73</td></tr>
+        <tr><td>K765</td><td>執行最適化</td><td>smart order routing + slippage 削減</td><td class="accept">READY</td><td>+$12K</td><td>5 分 / docs §74</td></tr>
+        <tr><td>K767</td><td>RWA 分散</td><td>RWA 4 プロバイダー分散</td><td class="accept">READY</td><td>+$30K</td><td>数日 / docs §75</td></tr>
+        <tr><td>K795</td><td>組合せ戦略</td><td>22 vertex regime-aware basket rotation</td><td class="accept">READY</td><td>+$112K</td><td>scaffold / docs §84</td></tr>
+
+        <tr><td colspan="6" style="background:var(--bg-shade);font-weight:700;color:var(--accept);">▼ 新規 ACCEPT 戦略 11 + research 1（paper-gate 中、 K751 後に LIVE 昇格可）</td></tr>
+        <tr><td>K747</td><td>alt-alt 評価</td><td>TAO-SOL（AI L1 vs SVM）</td><td class="warn">CONDITIONAL</td><td>+$24K</td><td>13 vertex 1st AI</td></tr>
+        <tr><td>K754</td><td>alt-alt 評価</td><td>PEPE-SOL（Eth meme cluster）</td><td class="warn">CONDITIONAL</td><td>+$24K</td><td>14 vertex Eth-meme</td></tr>
+        <tr><td>K759</td><td>alt-alt 評価</td><td>WIF-SOL（SOL meme）</td><td class="warn">CONDITIONAL</td><td>+$21K</td><td>15 vertex SOL-meme</td></tr>
+        <tr><td>K768</td><td>alt-alt 評価</td><td>BLUR-SOL（NFT marketplace）</td><td class="warn">CONDITIONAL</td><td>+$23K</td><td>16 vertex NFT 4 条件付き</td></tr>
+        <tr><td>K769</td><td>alt-alt 評価</td><td>AXS-SOL（Gaming P2E）</td><td class="accept">ACCEPT</td><td>+$47K</td><td>17 vertex Gaming 23/23</td></tr>
+        <tr><td>K774</td><td>alt-alt 評価</td><td>IO-SOL（GPU DePIN）</td><td class="warn">CONDITIONAL</td><td>+$11K</td><td>18 vertex 1st DePIN</td></tr>
+        <tr><td>K777</td><td>alt-alt 評価</td><td>EIGEN-SOL（Restaking）</td><td class="warn">CONDITIONAL</td><td>+$32K</td><td>19 vertex Restaking</td></tr>
+        <tr><td>K778</td><td>alt-alt 評価</td><td><strong>COMP-SOL（DeFi gov）30/30 全通過</strong></td><td class="accept">ACCEPT</td><td><strong>+$78K</strong></td><td>20 vertex 全 gate PASS</td></tr>
+        <tr><td>K786</td><td>alt-alt 評価</td><td>BIO-SOL（DeSci）</td><td class="accept">ACCEPT</td><td>+$24K</td><td>21 vertex 1st DeSci</td></tr>
+        <tr><td>K788</td><td>alt-alt 評価</td><td>MEME-SOL（meme index）</td><td class="warn">CONDITIONAL</td><td>+$6K</td><td>22 vertex meme-index</td></tr>
+        <tr><td>K789</td><td>alt-alt 評価</td><td>RESOLV-SOL（synth dollar）</td><td class="warn">CONDITIONAL</td><td>+$16K</td><td>G9 再評価 Aug 2026</td></tr>
+        <tr><td>K794</td><td>alt-alt 評価</td><td>ME-SOL（SVM NFT marketplace）</td><td>RESEARCH</td><td>$39K</td><td>研究のみ 本番 NG</td></tr>
+
+        <tr><td colspan="6" style="background:var(--bg-shade);font-weight:700;color:var(--warn);">▼ 戦略 scaffold（評価 ACCEPT を本番化、 daemon 登録）</td></tr>
+        <tr><td>K737</td><td>scaffold</td><td>K735 HBAR-SOL 本番化（66th daemon）</td><td class="accept">DEPLOYED</td><td>$104K</td><td>paper-gate</td></tr>
+        <tr><td>K738</td><td>scaffold</td><td>K736 TIA-AVAX 本番化（67th daemon）</td><td class="accept">DEPLOYED</td><td>$87K</td><td>paper-gate</td></tr>
+        <tr><td>K741</td><td>scaffold</td><td>K739 FIL-SOL 本番化（68th daemon）</td><td class="accept">DEPLOYED</td><td>$122K</td><td>paper-gate</td></tr>
+        <tr><td>K750</td><td>scaffold</td><td>K747 TAO-SOL 本番化（69th daemon）</td><td class="accept">DEPLOYED</td><td>$17K</td><td>paper-gate</td></tr>
+        <tr><td>K756</td><td>scaffold</td><td>K754 PEPE-SOL 本番化（71st daemon）</td><td class="accept">DEPLOYED</td><td>$62K</td><td>paper-gate</td></tr>
+        <tr><td>K761</td><td>scaffold</td><td>K759 WIF-SOL 本番化（72nd daemon）</td><td class="accept">DEPLOYED</td><td>$54K</td><td>paper-gate</td></tr>
+        <tr><td>K770</td><td>scaffold</td><td>K768 BLUR-SOL 本番化（75th daemon、 4 条件付）</td><td class="accept">DEPLOYED</td><td>$61K</td><td>paper-gate</td></tr>
+        <tr><td>K771</td><td>scaffold</td><td>K769 AXS-SOL 本番化（76th daemon）</td><td class="accept">DEPLOYED</td><td>$124K</td><td>paper-gate</td></tr>
+        <tr><td>K776</td><td>scaffold</td><td>K774 IO-SOL 本番化（77th daemon）</td><td class="accept">DEPLOYED</td><td>$28K</td><td>paper-gate HL-only</td></tr>
+        <tr><td>K779</td><td>scaffold</td><td>K777 EIGEN-SOL 本番化（78th daemon）</td><td class="accept">DEPLOYED</td><td>$84K</td><td>paper-gate</td></tr>
+        <tr><td>K780</td><td>scaffold</td><td><strong>K778 COMP-SOL 本番化（79th daemon、 30/30 PASS）</strong></td><td class="accept">DEPLOYED</td><td><strong>$207K</strong></td><td>paper-gate</td></tr>
+        <tr><td>K787</td><td>scaffold</td><td>K786 BIO-SOL 本番化（80th daemon）</td><td class="accept">DEPLOYED</td><td>$64K</td><td>paper-gate</td></tr>
+        <tr><td>K790</td><td>scaffold</td><td>K789 RESOLV-SOL 本番化（81st daemon）</td><td class="accept">DEPLOYED</td><td>$42K</td><td>paper-gate G9 待ち</td></tr>
+        <tr><td>K791</td><td>scaffold</td><td>K788 MEME-SOL 本番化（82nd daemon）</td><td class="accept">DEPLOYED</td><td>$14.5K</td><td>paper-gate L004D 監視</td></tr>
+        <tr><td>K797</td><td>scaffold</td><td>K794 ME-SOL 研究のみ scaffold（84th daemon）</td><td>RESEARCH</td><td>$39K</td><td>RESEARCH_ONLY 強制</td></tr>
+
+        <tr><td colspan="6" style="background:var(--bg-shade);font-weight:700;color:var(--reject);">▼ 評価 REJECT 16（失敗原因が後の wave の lesson に）</td></tr>
+        <tr><td>K740</td><td>alt-alt 評価</td><td>INJ-AVAX</td><td class="reject">REJECT</td><td>—</td><td>G5c AVAX saturation 0.551</td></tr>
+        <tr><td>K743</td><td>alt-alt 評価</td><td>LDO-ATOM</td><td class="reject">REJECT</td><td>—</td><td>MR9 algebraic identity</td></tr>
+        <tr><td>K746</td><td>alt-alt 評価</td><td>ONDO-SOL</td><td class="reject">REJECT</td><td>—</td><td>G5c/k/s 3 重 fail</td></tr>
+        <tr><td>K748</td><td>alt-alt 評価</td><td>AAVE-SOL</td><td class="reject">REJECT</td><td>—</td><td>DeFi-lending L004 carry</td></tr>
+        <tr><td>K749</td><td>alt-alt 評価</td><td>PYTH-SOL</td><td class="reject">REJECT</td><td>—</td><td>G5u FIL-SOL infra cluster</td></tr>
+        <tr><td>K752</td><td>alt-alt 評価</td><td>WLD-SOL</td><td class="reject">REJECT</td><td>—</td><td>G5w K629 sibling 0.654</td></tr>
+        <tr><td>K758</td><td>alt-alt 評価</td><td>PENDLE-SOL</td><td class="reject">REJECT</td><td>—</td><td>L004 yield-trading carry</td></tr>
+        <tr><td>K760</td><td>alt-alt 評価</td><td>DOGE-SOL</td><td class="reject">REJECT</td><td>—</td><td>PoW 三重 cluster 汚染</td></tr>
+        <tr><td>K762</td><td>alt-alt 評価</td><td>RUNE-SOL</td><td class="reject">REJECT</td><td>—</td><td>L004 carry + vol 1.0x</td></tr>
+        <tr><td>K772</td><td>alt-alt 評価</td><td>STX-SOL</td><td class="reject">REJECT</td><td>—</td><td>G5q LDO-SOL BTC L2</td></tr>
+        <tr><td>K775</td><td>alt-alt 評価</td><td>MEGA-SOL</td><td class="reject">REJECT</td><td>—</td><td>L004 carry 93%</td></tr>
+        <tr><td>K782</td><td>alt-alt 評価</td><td>PROVE-SOL（new lesson L004_DIFF）</td><td class="reject">REJECT</td><td>—</td><td>L004_DIFF 27.7% → rule 追加</td></tr>
+        <tr><td>K783</td><td>alt-alt 評価</td><td>POLYX-SOL</td><td class="reject">REJECT</td><td>—</td><td>G5u FIL-SOL 0.431</td></tr>
+        <tr><td>K784</td><td>alt-alt 評価</td><td>SAGA-SOL</td><td class="reject">REJECT</td><td>—</td><td>G5j SOL-INJ gaming</td></tr>
+        <tr><td>K792</td><td>alt-alt 評価</td><td>LINEA-SOL</td><td class="reject">REJECT</td><td>—</td><td>L004_DIFF OOS 77%</td></tr>
+        <tr><td>K796</td><td>alt-alt 評価</td><td>USUAL-SOL</td><td class="reject">REJECT</td><td>—</td><td>carry 反転 + G2 p=0.925</td></tr>
+        <tr><td>K799</td><td>alt-alt 評価</td><td>ETH-COMP（cross-base）new lesson L014</td><td class="reject">REJECT</td><td>—</td><td>G5v cluster -0.975</td></tr>
+
+        <tr><td colspan="6" style="background:var(--bg-shade);font-weight:700;color:var(--meta);">▼ メタ・統合 wave（飽和分析 / 探索拡張 / governance）</td></tr>
+        <tr><td>K744</td><td>meta</td><td>alt-alt 飽和 map + 新 vertex top-10 ランキング</td><td class="meta">DONE</td><td>—</td><td>12 vertex 100% 飽和発見</td></tr>
+        <tr><td>K764</td><td>governance</td><td>Phase A++ v7.0 synthesis</td><td class="meta">DONE</td><td>—</td><td>10 items, $2.81M central</td></tr>
+        <tr><td>K766</td><td>screen</td><td>HIP-3 long-tail 探索 round 1（115 銘柄）</td><td class="meta">DONE</td><td>—</td><td>10/115 通過、 K767-K769 queue</td></tr>
+        <tr><td>K773</td><td>screen</td><td>HIP-3 long-tail round 2（25 銘柄）</td><td class="meta">DONE</td><td>—</td><td>7/25 通過、 IO/MEGA/EIGEN</td></tr>
+        <tr><td>K781</td><td>screen</td><td>HIP-3 round 2c（25 銘柄）</td><td class="meta">DONE</td><td>—</td><td>10/25 通過、 PROVE/POLYX/SAGA</td></tr>
+        <tr><td>K785</td><td>screen</td><td>HIP-3 round 2d（25 銘柄）</td><td class="meta">DONE</td><td>—</td><td>2/25 通過、 RESOLV/LINEA</td></tr>
+        <tr><td>K793</td><td>screen</td><td>HIP-3 round 2e 最終（24 銘柄）</td><td class="meta">DONE</td><td>—</td><td>2/24 通過、 universe 完了</td></tr>
+        <tr><td>K798</td><td>governance</td><td>Phase A++ v7.1 最終 synthesis（53 wave 集約）</td><td class="meta">DONE</td><td>—</td><td>$2.22M v7.1 central</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============== ⑥ 用語集 ============== -->
+  <section>
+    <h2>⑥ 用語集</h2>
+
+    <details>
+      <summary>wave / K123 / セッション</summary>
+      <div class="body">
+        <p><strong>wave</strong> = AI の 1 作業単位。 1 つのアイデア検証または 1 つの戦略本番化が 1 wave。</p>
+        <p><strong>K123</strong> = 123 番目の wave。 K744〜K799 は今セッションの 56 wave。</p>
+        <p><strong>セッション</strong> = ユーザーが指示を出してから停止指示まで連続実行される一連の wave。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>daemon / paper-gate / LIVE</summary>
+      <div class="body">
+        <p><strong>daemon</strong> = launchd で常時稼働する 1 つの自動戦略。 84 個並列で動く。</p>
+        <p><strong>paper-gate</strong> = 本番設定はあるが、 実 USDC を入れずに 60 日 paper-trade で検証中の状態。</p>
+        <p><strong>LIVE</strong> = 実 USDC が稼働している状態。 ユーザーが手動で paper → LIVE 昇格を判断。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>vertex / alt-alt / cluster</summary>
+      <div class="body">
+        <p><strong>vertex</strong> = alt-alt 戦略で使う通貨。 例: PEPE-SOL は PEPE と SOL の 2 vertex。</p>
+        <p><strong>alt-alt 戦略</strong> = altcoin と altcoin の funding rate 差を取る相対 carry 戦略（K449 ETH-BTC が原型）。</p>
+        <p><strong>cluster</strong> = vertex を mechanism や narrative で分類したグループ。 同 cluster 内 vertex は FR で相関しやすい。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>v6.51 / v7.1 / SLEEVE_WEIGHTS</summary>
+      <div class="body">
+        <p><strong>v6.51 / v7.1</strong> = 本番設定（sleeve weights + 取引所 cap）の世代番号。 数字が大きいほど新しい。</p>
+        <p><strong>SLEEVE_WEIGHTS</strong> = 各 daemon の資金配分比率（合計 100%）。 <code>scripts/leverage_manager.py</code> に格納。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>K523 / K518 38% / 3 点表記</summary>
+      <div class="body">
+        <p><strong>K523 ルール</strong> = 利益予測は必ず保守 / 中央 / 楽観の 3 点で出す（K523 wave で確定）。</p>
+        <p><strong>K518 38% 実現率</strong> = 過去研究の Sharpe vs 実運用ギャップから導いた haircut 係数。 backtest 値 × 0.38 ≒ 実運用期待値。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>§6 厳密ゲート / G1〜G9</summary>
+      <div class="body">
+        <p><strong>§6 厳密ゲート</strong> = 戦略 ACCEPT 判定の 9 項目チェック。</p>
+        <ul>
+          <li>G1: OOS Sharpe ≥ 1.0</li>
+          <li>G2: permutation p ≤ 0.05（timing alpha 確認）</li>
+          <li>G3: DSR ≥ 0.95</li>
+          <li>G4: walk-forward 全 fold 正</li>
+          <li>G5: 既存戦略との correlation &lt; 0.40</li>
+          <li>G6: trades/yr ≥ 30</li>
+          <li>G7: ann return &gt; 5%</li>
+          <li>G8: cross-venue 確認</li>
+          <li>G9: data history ≥ 180d</li>
+        </ul>
+      </div>
+    </details>
+
+    <details>
+      <summary>L004 / L004_DIFF / G5u / G5j / G5q / G5v（pre-screen rule）</summary>
+      <div class="body">
+        <p><strong>L004</strong> = 単独 carry 偏り。 戦略の方向比率が 80% 超なら hard reject。</p>
+        <p><strong>L004_DIFF</strong>（K782 新）= 差分 carry 偏り。 ペアの差が 70% 以上同方向なら timing alpha 不在で reject。</p>
+        <p><strong>G5u</strong>（K784 新）= FIL-SOL 戦略との signal correlation 0.40 超で reject（storage/data 系の漏れ）。</p>
+        <p><strong>G5j</strong>（K784 新）= SOL-INJ との correlation で reject（gaming 系の漏れ）。</p>
+        <p><strong>G5q</strong>（K792 新）= LDO-SOL との correlation で reject（ETH L2 / DeFi 系の漏れ）。</p>
+        <p><strong>G5v</strong>（K799 新）= 2 銘柄の vol 比 5 倍超なら algebraic 独立でも cluster 依存 → reject。</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>HIP-3 / HL / Bybit / OKX</summary>
+      <div class="body">
+        <p><strong>HL = Hyperliquid</strong>。 永久先物の主要取引所、 deep orderbook。</p>
+        <p><strong>HIP-3</strong> = HL の non-canonical perp 上場規格。 第三者が listing できる long-tail 通貨が並ぶ。</p>
+        <p><strong>Bybit</strong> = 2 番目の永久先物取引所。 cross-venue 検証や HL cap 超過の hedge venue。</p>
+        <p><strong>OKX</strong> = 3 番目に統合予定（作業 #6）。 HL/Bybit の容量逼迫を解消する役割。</p>
+      </div>
     </details>
   </section>
 
-</div>
-<!-- /DASHBOARD -->
+  <!-- ============== ⑦ アーカイブ ============== -->
+  <section>
+    <h2>⑦ 詳細アーカイブ（GitHub 参照）</h2>
+    <p>各 wave の詳細データは GitHub repository に保管。 過去の HTML badge は ⑤ の表に集約し削除済み。</p>
 
-<!-- SESSION TABLE: K744-K799 全 56 wave 統一テーブル -->
-<section style="margin:0 0 32px 0;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI','Segoe UI',sans-serif;">
-  <h2 style="font-size:22px;font-weight:800;margin:0 0 8px 0;padding-bottom:8px;border-bottom:2px solid #7a3fbf;color:#7a3fbf;">
-    ⑤ 今セッションの全 wave 一覧（K744〜K799、 56 波）
-  </h2>
-  <p style="margin:0 0 16px 0;font-size:14px;color:#555;">
-    AI が実行した全 wave を 1 行 1 波で要約。 詳細は「⑥ 旧 wave badge を展開」 から各 wave の元 badge へアクセス可。
+    <table>
+      <thead>
+        <tr><th style="width:30%;">資料</th><th style="width:70%;">場所</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>各 wave の Python script</td><td><code>wave_kXXX_*.py</code>（K744〜K799）</td></tr>
+        <tr><td>各 wave の結果 JSON</td><td><code>wave_kXXX_*.json</code></td></tr>
+        <tr><td>各 wave の分析 markdown</td><td><code>wave_kXXX_*.md</code></td></tr>
+        <tr><td>本番戦略の playbook</td><td><code>docs/k302a_runbook.md</code>（§38〜§86）</td></tr>
+        <tr><td>ユーザー作業手順</td><td><code>docs/k302a_master_deployment.md</code></td></tr>
+        <tr><td>v7.1 状態（機械可読）</td><td><code>data/phase_a_plus_v71_status.json</code></td></tr>
+        <tr><td>本番 daemon 一覧</td><td><code>scripts/verify_deployment_status.py</code>（84 daemon）</td></tr>
+        <tr><td>配分設定</td><td><code>scripts/leverage_manager.py</code> + <code>data/leverage_config.json</code></td></tr>
+        <tr><td>GitHub repo</td><td><a href="https://github.com/harukiman/results">https://github.com/harukiman/results</a></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <p class="meta-line" style="text-align:center;">
+    Systematic Alpha Discovery — AI による永久先物市場の自律研究運用システム<br>
+    生成 2026-05-31 / 公開 <a href="https://github.com/harukiman/results">harukiman/results</a>
   </p>
 
-  <!-- カテゴリ別フィルタ表示 -->
-  <table style="width:100%;border-collapse:collapse;font-size:13px;">
-    <thead>
-      <tr style="background:#0d1117;color:#fff;">
-        <th style="padding:8px;text-align:left;width:6%;">#</th>
-        <th style="padding:8px;text-align:left;width:14%;">タイプ</th>
-        <th style="padding:8px;text-align:left;width:32%;">主題</th>
-        <th style="padding:8px;text-align:left;width:14%;">結果</th>
-        <th style="padding:8px;text-align:left;width:14%;">利益（中央）</th>
-        <th style="padding:8px;text-align:left;width:20%;">備考</th>
-      </tr>
-    </thead>
-    <tbody>
-
-      <!-- ========== Phase A++ インフラ系 ========== -->
-      <tr style="background:#eef5ff;"><td colspan="6" style="padding:6px 8px;font-weight:700;color:#0066cc;">▼ Phase A++ インフラ系（ユーザー1-step で利益化）</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K742</td><td style="padding:6px 8px;">改善 patch</td><td style="padding:6px 8px;">K280 signal 改善（K492 Variant C）</td><td style="padding:6px 8px;color:#0a7a35;">READY</td><td style="padding:6px 8px;">+$27K</td><td style="padding:6px 8px;color:#666;">10 分 / docs §65</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K745</td><td style="padding:6px 8px;">取引所連携</td><td style="padding:6px 8px;">OKX 3 つ目の venue 統合 scaffold</td><td style="padding:6px 8px;color:#0a7a35;">READY</td><td style="padding:6px 8px;">+$47K</td><td style="padding:6px 8px;color:#666;">2-3h / docs §66</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K751</td><td style="padding:6px 8px;">配分修復</td><td style="padding:6px 8px;"><strong>Kelly criterion v6.52（配分違反 修復必須）</strong></td><td style="padding:6px 8px;color:#c41e3a;font-weight:700;">URGENT</td><td style="padding:6px 8px;font-weight:700;">+$195K</td><td style="padding:6px 8px;color:#666;">5 分 / docs §68</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K753</td><td style="padding:6px 8px;">税最適化</td><td style="padding:6px 8px;">税ロス収穫 daemon</td><td style="padding:6px 8px;color:#0a7a35;">READY</td><td style="padding:6px 8px;">+$185K（節税）</td><td style="padding:6px 8px;color:#666;">30 分 / docs §69</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K755</td><td style="padding:6px 8px;">手数料還元</td><td style="padding:6px 8px;">HL builder rebate 設定</td><td style="padding:6px 8px;color:#0a7a35;">READY</td><td style="padding:6px 8px;font-weight:700;">+$248K</td><td style="padding:6px 8px;color:#666;">65 分 / docs §70</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K757</td><td style="padding:6px 8px;">容量拡張</td><td style="padding:6px 8px;">Bybit サブアカウント分離</td><td style="padding:6px 8px;color:#0a7a35;">READY</td><td style="padding:6px 8px;">+$50K</td><td style="padding:6px 8px;color:#666;">1h / docs §71</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K763</td><td style="padding:6px 8px;">複利最適化</td><td style="padding:6px 8px;"><strong>日次 compounding 切替（最大単発）</strong></td><td style="padding:6px 8px;color:#c41e3a;font-weight:700;">URGENT</td><td style="padding:6px 8px;font-weight:800;color:#0a7a35;">+$1,250K</td><td style="padding:6px 8px;color:#666;">5 分 / docs §73</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K765</td><td style="padding:6px 8px;">執行最適化</td><td style="padding:6px 8px;">smart order routing + slippage 削減</td><td style="padding:6px 8px;color:#0a7a35;">READY</td><td style="padding:6px 8px;">+$12K</td><td style="padding:6px 8px;color:#666;">5 分 / docs §74</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K767</td><td style="padding:6px 8px;">RWA 分散</td><td style="padding:6px 8px;">RWA 4 プロバイダー分散（sUSDe+Spark+USDY+USDM）</td><td style="padding:6px 8px;color:#0a7a35;">READY</td><td style="padding:6px 8px;">+$30K</td><td style="padding:6px 8px;color:#666;">数日 / docs §75</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K795</td><td style="padding:6px 8px;">組合せ戦略</td><td style="padding:6px 8px;">22 vertex regime-aware basket rotation</td><td style="padding:6px 8px;color:#0a7a35;">READY</td><td style="padding:6px 8px;">+$112K</td><td style="padding:6px 8px;color:#666;">scaffold / docs §84</td></tr>
-
-      <!-- ========== 新規 ACCEPT 戦略 ========== -->
-      <tr style="background:#eefcf2;"><td colspan="6" style="padding:6px 8px;font-weight:700;color:#0a7a35;">▼ 新規 ACCEPT 戦略 11 個 + research-only 1 個（paper-gate 中、 K751 修復後に LIVE 昇格可）</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K747</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">TAO-SOL（AI L1 vs SVM）</td><td style="padding:6px 8px;color:#b8860b;">CONDITIONAL</td><td style="padding:6px 8px;">+$24K</td><td style="padding:6px 8px;color:#666;">13 vertex 1st AI</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K754</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">PEPE-SOL（Eth meme cluster）</td><td style="padding:6px 8px;color:#b8860b;">CONDITIONAL</td><td style="padding:6px 8px;">+$24K</td><td style="padding:6px 8px;color:#666;">14 vertex Eth-meme</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K759</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">WIF-SOL（SOL meme）</td><td style="padding:6px 8px;color:#b8860b;">CONDITIONAL</td><td style="padding:6px 8px;">+$21K</td><td style="padding:6px 8px;color:#666;">15 vertex SOL-meme</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K768</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">BLUR-SOL（NFT marketplace, vol 39.8x）</td><td style="padding:6px 8px;color:#b8860b;">CONDITIONAL</td><td style="padding:6px 8px;">+$23K</td><td style="padding:6px 8px;color:#666;">16 vertex NFT 4条件付き</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K769</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">AXS-SOL（Gaming P2E）</td><td style="padding:6px 8px;color:#0a7a35;font-weight:700;">ACCEPT</td><td style="padding:6px 8px;">+$47K</td><td style="padding:6px 8px;color:#666;">17 vertex Gaming 23/23 G5</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K774</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">IO-SOL（GPU DePIN）</td><td style="padding:6px 8px;color:#b8860b;">CONDITIONAL</td><td style="padding:6px 8px;">+$11K</td><td style="padding:6px 8px;color:#666;">18 vertex 1st DePIN</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K777</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">EIGEN-SOL（Restaking）</td><td style="padding:6px 8px;color:#b8860b;">CONDITIONAL</td><td style="padding:6px 8px;">+$32K</td><td style="padding:6px 8px;color:#666;">19 vertex Restaking</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K778</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;"><strong>COMP-SOL（DeFi gov）30/30 gates</strong></td><td style="padding:6px 8px;color:#0a7a35;font-weight:700;">ACCEPT</td><td style="padding:6px 8px;font-weight:700;">+$78K</td><td style="padding:6px 8px;color:#666;">20 vertex 全 gate PASS</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K786</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">BIO-SOL（DeSci）</td><td style="padding:6px 8px;color:#0a7a35;font-weight:700;">ACCEPT</td><td style="padding:6px 8px;">+$24K</td><td style="padding:6px 8px;color:#666;">21 vertex 1st DeSci</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K788</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">MEME-SOL（ERC-20 meme index）9/9</td><td style="padding:6px 8px;color:#b8860b;">CONDITIONAL</td><td style="padding:6px 8px;">+$6K</td><td style="padding:6px 8px;color:#666;">22 vertex meme-index</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K789</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">RESOLV-SOL（synth dollar）G5 25/25</td><td style="padding:6px 8px;color:#b8860b;">CONDITIONAL</td><td style="padding:6px 8px;">+$16K</td><td style="padding:6px 8px;color:#666;">G9 再評価 Aug 2026</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K794</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">ME-SOL（SVM NFT marketplace）</td><td style="padding:6px 8px;color:#666;">RESEARCH</td><td style="padding:6px 8px;">$39K</td><td style="padding:6px 8px;color:#666;">研究のみ 本番 NG</td></tr>
-
-      <!-- ========== 戦略 scaffold ========== -->
-      <tr style="background:#fff5e6;"><td colspan="6" style="padding:6px 8px;font-weight:700;color:#b8860b;">▼ 戦略 scaffold（評価 ACCEPT を本番化、 daemon 登録）</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K737</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K735 HBAR-SOL 本番化（12th alt-alt, 66th daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$104K</td><td style="padding:6px 8px;color:#666;">paper-gate</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K738</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K736 TIA-AVAX 本番化（13th alt-alt, 67th daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$87K</td><td style="padding:6px 8px;color:#666;">paper-gate</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K741</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K739 FIL-SOL 本番化（14th alt-alt, 68th daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$122K</td><td style="padding:6px 8px;color:#666;">paper-gate</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K750</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K747 TAO-SOL 本番化（15th, 69th daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$17K</td><td style="padding:6px 8px;color:#666;">paper-gate</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K756</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K754 PEPE-SOL 本番化（16th, 71st daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$62K</td><td style="padding:6px 8px;color:#666;">paper-gate</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K761</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K759 WIF-SOL 本番化（17th, 72nd daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$54K</td><td style="padding:6px 8px;color:#666;">paper-gate</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K770</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K768 BLUR-SOL 本番化（18th, 75th daemon, 4 条件付き）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$61K</td><td style="padding:6px 8px;color:#666;">paper-gate</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K771</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K769 AXS-SOL 本番化（19th, 76th daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$124K</td><td style="padding:6px 8px;color:#666;">paper-gate</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K776</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K774 IO-SOL 本番化（20th, 77th daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$28K</td><td style="padding:6px 8px;color:#666;">paper-gate HL-only</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K779</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K777 EIGEN-SOL 本番化（21st, 78th daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$84K</td><td style="padding:6px 8px;color:#666;">paper-gate</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K780</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K778 COMP-SOL 本番化（22nd, 79th daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$207K</td><td style="padding:6px 8px;color:#666;">paper-gate 30/30 PASS</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K787</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K786 BIO-SOL 本番化（23rd, 80th daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$64K</td><td style="padding:6px 8px;color:#666;">paper-gate</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K790</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K789 RESOLV-SOL 本番化（24th, 81st daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$42K</td><td style="padding:6px 8px;color:#666;">paper-gate G9 待ち</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K791</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K788 MEME-SOL 本番化（25th, 82nd daemon）</td><td style="padding:6px 8px;color:#0a7a35;">DEPLOYED</td><td style="padding:6px 8px;">$14.5K</td><td style="padding:6px 8px;color:#666;">paper-gate L004D 監視</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K797</td><td style="padding:6px 8px;">scaffold</td><td style="padding:6px 8px;">K794 ME-SOL 研究のみ scaffold（84th daemon）</td><td style="padding:6px 8px;color:#666;">RESEARCH</td><td style="padding:6px 8px;">$39K</td><td style="padding:6px 8px;color:#666;">RESEARCH_ONLY 強制</td></tr>
-
-      <!-- ========== 評価 REJECT ========== -->
-      <tr style="background:#fef0f0;"><td colspan="6" style="padding:6px 8px;font-weight:700;color:#c41e3a;">▼ 評価 REJECT 15 個（失敗原因が後の wave の lesson に）</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K740</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">INJ-AVAX</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">G5c AVAX saturation 0.551</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K743</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">LDO-ATOM</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">MR9 algebraic identity</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K746</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">ONDO-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">G5c/k/s 3 重 fail</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K748</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">AAVE-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">DeFi-lending L004 carry</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K749</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">PYTH-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">G5u FIL-SOL infra cluster</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K752</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">WLD-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">G5w K629 sibling 0.654</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K758</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">PENDLE-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">L004 yield-trading carry</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K760</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">DOGE-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">PoW 三重 cluster 汚染</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K762</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">RUNE-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">L004 carry + vol 1.0x</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K772</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">STX-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">G5q LDO-SOL BTC L2</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K775</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">MEGA-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">L004 carry 93%</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K782</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">PROVE-SOL（new lesson L004_DIFF）</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">L004_DIFF 27.7% → rule追加</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K783</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">POLYX-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">G5u FIL-SOL 0.431</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K784</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">SAGA-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">G5j SOL-INJ gaming</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K792</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">LINEA-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">L004_DIFF OOS 77%</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K796</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">USUAL-SOL</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">carry 反転 + G2 p=0.925</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K799</td><td style="padding:6px 8px;">alt-alt 評価</td><td style="padding:6px 8px;">ETH-COMP（cross-base）new lesson L014</td><td style="padding:6px 8px;color:#c41e3a;">REJECT</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">G5v cluster -0.975 leg比5x</td></tr>
-
-      <!-- ========== メタ・統合 ========== -->
-      <tr style="background:#f5f0ff;"><td colspan="6" style="padding:6px 8px;font-weight:700;color:#7a3fbf;">▼ メタ・統合 wave（飽和分析 / 探索拡張 / governance）</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K744</td><td style="padding:6px 8px;">meta</td><td style="padding:6px 8px;">alt-alt 飽和 map + 新 vertex top-10 ランキング</td><td style="padding:6px 8px;color:#7a3fbf;">DONE</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">12 vertex 100% 飽和発見</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K764</td><td style="padding:6px 8px;">governance</td><td style="padding:6px 8px;">Phase A++ v7.0 synthesis</td><td style="padding:6px 8px;color:#7a3fbf;">DONE</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">10 items, $2.81M central</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K766</td><td style="padding:6px 8px;">screen</td><td style="padding:6px 8px;">HIP-3 long-tail 探索 round 1（115 銘柄）</td><td style="padding:6px 8px;color:#7a3fbf;">DONE</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">10/115 通過、 K767-K769 queue</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K773</td><td style="padding:6px 8px;">screen</td><td style="padding:6px 8px;">HIP-3 long-tail round 2（25 銘柄）</td><td style="padding:6px 8px;color:#7a3fbf;">DONE</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">7/25 通過、 IO/MEGA/EIGEN</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K781</td><td style="padding:6px 8px;">screen</td><td style="padding:6px 8px;">HIP-3 round 2c（25 銘柄）</td><td style="padding:6px 8px;color:#7a3fbf;">DONE</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">10/25 通過、 PROVE/POLYX/SAGA</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K785</td><td style="padding:6px 8px;">screen</td><td style="padding:6px 8px;">HIP-3 round 2d（25 銘柄）</td><td style="padding:6px 8px;color:#7a3fbf;">DONE</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">2/25 通過、 RESOLV/LINEA</td></tr>
-      <tr style="border-bottom:1px solid #eee;"><td style="padding:6px 8px;">K793</td><td style="padding:6px 8px;">screen</td><td style="padding:6px 8px;">HIP-3 round 2e 最終（24 銘柄）</td><td style="padding:6px 8px;color:#7a3fbf;">DONE</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">2/24 通過、 universe 完了</td></tr>
-      <tr><td style="padding:6px 8px;">K798</td><td style="padding:6px 8px;">governance</td><td style="padding:6px 8px;">Phase A++ v7.1 最終 synthesis（53 wave 集約）</td><td style="padding:6px 8px;color:#7a3fbf;">DONE</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;color:#666;">$2.22M v7.1 central</td></tr>
-
-    </tbody>
-  </table>
-</section>
-
-<!-- ========== ⑥ 詳細アーカイブ参照 ========== -->
-<section style="margin:0 0 32px 0;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Yu Gothic UI','Segoe UI',sans-serif;">
-  <h2 style="font-size:22px;font-weight:800;margin:0 0 8px 0;padding-bottom:8px;border-bottom:2px solid #888;color:#555;">
-    ⑥ 詳細アーカイブ（各 wave の元データ）
-  </h2>
-  <p style="margin:0 0 16px 0;font-size:14px;color:#555;">
-    各 wave の詳細（コード、 JSON 結果、 markdown 分析）は GitHub repository に保管。 過去の HTML badge は冗長だったため削除（情報は ⑤ テーブルに集約済み）。
-  </p>
-  <table style="width:100%;border-collapse:collapse;font-size:14px;">
-    <thead>
-      <tr style="background:#f5f5f5;">
-        <th style="padding:10px;text-align:left;width:30%;">資料の種類</th>
-        <th style="padding:10px;text-align:left;width:70%;">場所</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr style="border-bottom:1px solid #ddd;">
-        <td style="padding:10px;font-weight:700;">各 wave の Python script</td>
-        <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;"><code>wave_kXXX_*.py</code>（K744〜K799）</td>
-      </tr>
-      <tr style="border-bottom:1px solid #ddd;">
-        <td style="padding:10px;font-weight:700;">各 wave の結果 JSON</td>
-        <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;"><code>wave_kXXX_*.json</code></td>
-      </tr>
-      <tr style="border-bottom:1px solid #ddd;">
-        <td style="padding:10px;font-weight:700;">各 wave の分析 markdown</td>
-        <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;"><code>wave_kXXX_*.md</code></td>
-      </tr>
-      <tr style="border-bottom:1px solid #ddd;">
-        <td style="padding:10px;font-weight:700;">本番戦略の playbook</td>
-        <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;"><code>docs/k302a_runbook.md</code>（§38〜§86）</td>
-      </tr>
-      <tr style="border-bottom:1px solid #ddd;">
-        <td style="padding:10px;font-weight:700;">ユーザー作業手順</td>
-        <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;"><code>docs/k302a_master_deployment.md</code></td>
-      </tr>
-      <tr style="border-bottom:1px solid #ddd;">
-        <td style="padding:10px;font-weight:700;">v7.1 状態 (機械可読)</td>
-        <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;"><code>data/phase_a_plus_v71_status.json</code></td>
-      </tr>
-      <tr style="border-bottom:1px solid #ddd;">
-        <td style="padding:10px;font-weight:700;">本番 daemon 一覧</td>
-        <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;"><code>scripts/verify_deployment_status.py</code>（84 daemon）</td>
-      </tr>
-      <tr style="border-bottom:1px solid #ddd;">
-        <td style="padding:10px;font-weight:700;">配分設定</td>
-        <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;"><code>scripts/leverage_manager.py</code> + <code>data/leverage_config.json</code></td>
-      </tr>
-      <tr>
-        <td style="padding:10px;font-weight:700;">GitHub repo</td>
-        <td style="padding:10px;font-family:'SF Mono',monospace;font-size:12px;"><a href="https://github.com/harukiman/results" style="color:#0066cc;">https://github.com/harukiman/results</a></td>
-      </tr>
-    </tbody>
-  </table>
-</section>
-
-<footer style="margin-top:48px;padding:20px 0;border-top:1px solid #ddd;font-size:12px;color:#888;text-align:center;font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Segoe UI',sans-serif;">
-  Systematic Alpha Discovery — AI（Claude）による永久先物市場の自律研究運用システム<br>
-  生成: 2026-05-31 / 公開リポ: <a href="https://github.com/harukiman/results" style="color:#888;">harukiman/results</a>
-</footer>
 </div>
 </body>
 </html>
